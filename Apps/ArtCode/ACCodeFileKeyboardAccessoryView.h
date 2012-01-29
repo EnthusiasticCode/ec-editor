@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECKeyboardAccessoryView.h>
+#import "ECKeyboardAccessoryView.h"
 #import "ACCodeFileKeyboardAccessoryPopoverView.h"
 
 @interface ACCodeFileKeyboardAccessoryView : ECKeyboardAccessoryView

@@ -10,7 +10,7 @@
 
 #import "AppStyle.h"
 
-#import <ECUIKit/NSURL+URLDuplicate.h>
+#import "NSURL+URLDuplicate.h"
 
 
 @implementation ACMoveConflictController {

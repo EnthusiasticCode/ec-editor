@@ -8,7 +8,7 @@
 
 #import "ACApplication.h"
 #import "ACTab.h"
-#import <ECFoundation/NSURL+ECAdditions.h>
+#import "NSURL+ECAdditions.h"
 
 
 @interface ACApplication ()

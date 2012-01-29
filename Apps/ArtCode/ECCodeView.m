@@ -10,9 +10,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ECTextPosition.h"
 #import "ECTextRange.h"
-#import <ECFoundation/NSTimer+block.h>
+#import "NSTimer+block.h"
 #import "ECKeyboardAccessoryView.h"
-#import <ECUIKit/ECBezelAlert.h>
+#import "ECBezelAlert.h"
 
 #define CARET_WIDTH 2
 #define ACCESSORY_HEIGHT 45

@@ -7,7 +7,7 @@
 //
 
 #import "ACCodeFileAccessoryAction.h"
-#import <ECUIKit/ECCodeView.h>
+#import "ECCodeView.h"
 
 @implementation ACCodeFileAccessoryAction
 

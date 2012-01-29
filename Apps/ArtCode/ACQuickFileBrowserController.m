@@ -9,7 +9,7 @@
 #import "ACQuickFileBrowserController.h"
 #import "ACQuickBrowsersContainerController.h"
 
-#import <ECFoundation/NSTimer+block.h>
+#import "NSTimer+block.h"
 
 #import "ACTab.h"
 #import "ACProject.h"

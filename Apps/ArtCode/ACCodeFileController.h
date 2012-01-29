@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECUIKit/ECCodeView.h>
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECCodeView.h"
+#import "ECFileBuffer.h"
 #import "ACCodeFileMinimapView.h"
 
 @class ACTab, ACCodeFile;

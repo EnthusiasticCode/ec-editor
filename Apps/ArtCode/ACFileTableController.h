@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import <ECFoundation/ECDirectoryPresenter.h>
+#import "ECDirectoryPresenter.h"
 
 @class ACToolFiltersView, ACGroup, ACTab;
 

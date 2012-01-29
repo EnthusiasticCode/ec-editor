@@ -7,9 +7,8 @@
 //
 
 #import "ECDirectoryPresenter.h"
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECFoundation/NSString+ECAdditions.h>
-#import <ECFoundation/NSOperationQueue+ECAdditions.h>
+#import "NSURL+ECAdditions.h"
+#import "NSString+ECAdditions.h"
 #import <objc/runtime.h>
 
 @interface ECDirectoryPresenter () <NSFilePresenter>

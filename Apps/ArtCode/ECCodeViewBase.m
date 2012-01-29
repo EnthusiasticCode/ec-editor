@@ -7,7 +7,7 @@
 //
 
 #import "ECCodeViewBase.h"
-#import "ECCodeStringDataSource.h"
+//#import "ECCodeStringDataSource.h"
 
 #define TILE_HEIGHT 1024
 

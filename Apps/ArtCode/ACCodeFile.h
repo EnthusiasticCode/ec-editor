@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ECUIKit/ECCodeView.h>
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECCodeView.h"
+#import "ECFileBuffer.h"
 @class TMTheme;
 
 @interface ACCodeFile : NSObject <ECCodeViewDataSource, ECFileBufferConsumer>

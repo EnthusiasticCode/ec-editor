@@ -7,7 +7,7 @@
 //
 
 #import "ACCodeFileMinimapView.h"
-#import <ECUIKit/ECTextRenderer.h>
+#import "ECTextRenderer.h"
 #import <QuartzCore/QuartzCore.h>
 
 static const void *rendererContext;

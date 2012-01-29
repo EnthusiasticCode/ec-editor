@@ -7,9 +7,9 @@
 //
 
 #import "ACProject.h"
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECArchive/ECArchive.h>
-#import <ECFoundation/ECCache.h>
+#import "NSURL+ECAdditions.h"
+#import "ECArchive.h"
+#import "ECCache.h"
 #import "UIColor+HexColor.h"
 
 static NSString * const ACProjectsDirectoryName = @"ACLocalProjects";

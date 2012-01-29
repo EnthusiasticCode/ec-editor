@@ -11,10 +11,10 @@
 #import "ACCodeFileSearchBarController.h"
 
 #import <QuartzCore/QuartzCore.h>
-#import <ECFoundation/NSTimer+block.h>
-#import <ECFoundation/ECFileBuffer.h>
-#import <ECUIKit/ECBezelAlert.h>
-#import <ECUIKit/ECTabController.h>
+#import "NSTimer+block.h"
+#import "ECFileBuffer.h"
+#import "ECBezelAlert.h"
+#import "ECTabController.h"
 
 #import "ACCodeFileKeyboardAccessoryView.h"
 #import "ACCodeFileKeyboardAccessoryPopoverView.h"

@@ -9,8 +9,8 @@
 #import "ACQuickBookmarkBrowserController.h"
 #import "ACQuickBrowsersContainerController.h"
 
-#import <ECFoundation/NSTimer+block.h>
-#import <ECFoundation/NSArray+ECAdditions.h>
+#import "NSTimer+block.h"
+#import "NSArray+ECAdditions.h"
 
 #import "ACTab.h"
 #import "ACProject.h"

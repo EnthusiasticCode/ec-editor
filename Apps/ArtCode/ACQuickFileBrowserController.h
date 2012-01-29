@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ECFoundation/ECDirectoryPresenter.h>
+#import "ECDirectoryPresenter.h"
 
 
 @interface ACQuickFileBrowserController : UIViewController <UISearchBarDelegate, ECDirectoryPresenterDelegate, UITableViewDelegate, UITableViewDataSource>

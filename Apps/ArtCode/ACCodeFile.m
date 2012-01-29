@@ -8,9 +8,9 @@
 
 #import "ACCodeFile.h"
 #import "TMTheme.h"
-#import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/TMIndex.h>
-#import <ECCodeIndexing/TMUnit.h>
+#import "ECFileBuffer.h"
+#import "TMIndex.h"
+#import "TMUnit.h"
 
 @interface ACCodeFile ()
 {

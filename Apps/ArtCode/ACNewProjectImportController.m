@@ -10,9 +10,9 @@
 #import "ACNewProjectNavigationController.h"
 
 #import "ACProject.h"
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECFoundation/ECDirectoryPresenter.h>
-#import <ECUIKit/ECBezelAlert.h>
+#import "NSURL+ECAdditions.h"
+#import "ECDirectoryPresenter.h"
+#import "ECBezelAlert.h"
 
 
 @implementation ACNewProjectImportController {

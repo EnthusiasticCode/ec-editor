@@ -9,10 +9,10 @@
 #import "ACCodeFileCompletionsController.h"
 #import "ACCodeFileCompletionCell.h"
 
-#import <ECFoundation/ECFileBuffer.h>
-#import <ECCodeIndexing/TMIndex.h>
-#import <ECCodeIndexing/TMUnit.h>
-#import <ECUIKit/ECTextRange.h>
+#import "ECFileBuffer.h"
+#import "TMIndex.h"
+#import "TMUnit.h"
+#import "ECTextRange.h"
 
 #import "ACCodeFileController.h"
 #import "ACCodeFile.h"

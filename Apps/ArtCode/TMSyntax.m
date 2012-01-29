@@ -10,8 +10,8 @@
 #import "TMBundle.h"
 #import "TMPattern.h"
 #import "OnigRegexp.h"
-#import <ECFoundation/ECDiscardableMutableDictionary.h>
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECDiscardableMutableDictionary.h"
+#import "ECFileBuffer.h"
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";

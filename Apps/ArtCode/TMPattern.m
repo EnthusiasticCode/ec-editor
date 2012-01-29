@@ -9,7 +9,7 @@
 #import "TMPattern.h"
 #import "TMSyntax.h"
 #import "OnigRegexp.h"
-#import <ECFoundation/ECWeakDictionary.h>
+#import "ECWeakDictionary.h"
 
 static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternNameKey = @"name";

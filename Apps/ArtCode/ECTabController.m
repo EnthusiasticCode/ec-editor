@@ -9,11 +9,31 @@
 
 #import "ECTabController.h"
 #import "UIView+ReuseIdentifier.h"
-#import "ECCustomizableScrollView.h"
 
 #define TABBAR_HEIGHT 40
 
 static void *childViewControllerTitleContext;
+
+/// A scroll view that can perform custom code blocks on common overloaded operations.
+@interface ECCustomizableScrollView : UIScrollView
+
+@property (nonatomic, copy) void (^layoutSubviewsBlock)(UIScrollView *view);
+
+@end
+
+@implementation ECCustomizableScrollView
+
+@synthesize layoutSubviewsBlock;
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (layoutSubviewsBlock)
+        layoutSubviewsBlock(self);
+}
+
+@end
 
 @interface ECTabController () {
     NSMutableArray *orderedChildViewControllers;

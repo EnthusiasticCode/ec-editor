@@ -11,11 +11,11 @@
 
 #import "ACCodeFileController.h"
 #import "ACCodeFile.h"
-#import <ECFoundation/ECFileBuffer.h>
-#import <ECFoundation/NSTimer+block.h>
-#import <ECUIKit/ECCodeView.h>
-#import <ECUIKit/ECTextRange.h>
-#import <ECUIKit/ECBezelAlert.h>
+#import "ECFileBuffer.h"
+#import "NSTimer+block.h"
+#import "ECCodeView.h"
+#import "ECTextRange.h"
+#import "ECBezelAlert.h"
 
 #import "ACCodeFileSearchOptionsController.h"
 

@@ -9,7 +9,7 @@
 #import "TMTheme.h"
 #import <CoreText/CoreText.h>
 #import "UIColor+HexColor.h"
-#import <ECUIKit/ECTextRenderer.h>
+#import "ECTextRenderer.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";

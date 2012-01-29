@@ -8,16 +8,16 @@
 
 #import "ArtCodeAppDelegate.h"
 
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECUIKit/ECCodeViewBase.h>
-#import <ECUIKit/UIControl+BlockAction.h>
+#import "NSURL+ECAdditions.h"
+#import "ECCodeViewBase.h"
+#import "UIControl+BlockAction.h"
 
 #import "AppStyle.h"
-#import <ECUIKit/ECTabController.h>
+#import "ECTabController.h"
 
 #import "ACSingleTabController.h"
 
-#import <ECUIKit/ECTabBar.h>
+#import "ECTabBar.h"
 #import "ACTopBarToolbar.h"
 #import "ACTopBarTitleControl.h"
 #import "ACCodeFileSearchBarController.h"

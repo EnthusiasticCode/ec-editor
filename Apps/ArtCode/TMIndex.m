@@ -9,8 +9,8 @@
 #import "TMIndex+Internal.h"
 #import "TMUnit+Internal.h"
 #import "TMSyntax.h"
-#import <ECFoundation/ECCache.h>
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECCache.h"
+#import "ECFileBuffer.h"
 
 static NSMutableDictionary *_extensionClasses;
 

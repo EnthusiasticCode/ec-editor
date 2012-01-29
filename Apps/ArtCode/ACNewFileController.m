@@ -7,7 +7,7 @@
 //
 
 #import "ACNewFileController.h"
-#import <ECFoundation/NSURL+ECAdditions.h>
+#import "NSURL+ECAdditions.h"
 
 
 

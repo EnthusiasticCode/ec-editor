@@ -8,7 +8,7 @@
 
 #import "TMUnit+Internal.h"
 #import "TMIndex+Internal.h"
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECFileBuffer.h"
 #import "TMScope.h"
 #import "TMBundle.h"
 #import "TMSyntax.h"

@@ -16,11 +16,11 @@
 #import "ACDirectoryBrowserController.h"
 #import "ACMoveConflictController.h"
 
-#import <ECFoundation/NSTimer+block.h>
-#import <ECFoundation/NSString+ECAdditions.h>
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECUIKit/NSURL+URLDuplicate.h>
-#import <ECUIKit/ECBezelAlert.h>
+#import "NSTimer+block.h"
+#import "NSString+ECAdditions.h"
+#import "NSURL+ECAdditions.h"
+#import "NSURL+URLDuplicate.h"
+#import "ECBezelAlert.h"
 
 #import "ACTab.h"
 #import "ACProject.h"

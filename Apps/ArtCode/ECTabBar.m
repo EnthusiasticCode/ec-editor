@@ -11,7 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 
-#import <ECFoundation/NSTimer+block.h>
+#import "NSTimer+block.h"
 #import "UIView+ReuseIdentifier.h"
 
 typedef void (^ScrollViewBlock)(UIScrollView *scrollView);

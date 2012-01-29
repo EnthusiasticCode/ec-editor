@@ -9,7 +9,7 @@
 #import "ACDirectoryBrowserController.h"
 #import "UIImage+AppStyle.h"
 
-#import <ECFoundation/NSString+ECAdditions.h>
+#import "NSString+ECAdditions.h"
 
 @interface ACDirectoryBrowserController (/*Private methods*/)
 

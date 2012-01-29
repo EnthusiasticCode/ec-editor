@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import <ECUIKit/ECGridView.h>
-#import <ECFoundation/ECDirectoryPresenter.h>
+#import "ECGridView.h"
+#import "ECDirectoryPresenter.h"
 
 @class ACApplication, ACTab, ACProjectCell;
 

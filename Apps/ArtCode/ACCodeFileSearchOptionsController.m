@@ -9,8 +9,8 @@
 #import "ACCodeFileSearchOptionsController.h"
 #import "ACCodeFileSearchBarController.h"
 #import "ACCodeFileController.h"
-#import <ECUIKit/ECCodeView.h>
-#import <ECUIKit/ECTextRenderer.h>
+#import "ECCodeView.h"
+#import "ECTextRenderer.h"
 
 #define OPTIONS_SECTION 0
 #define PREVIEW_SECTION 1

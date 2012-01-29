@@ -20,10 +20,10 @@
 #import "ACSingleTabController.h"
 #import "ACNewProjectNavigationController.h"
 
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECFoundation/NSString+ECAdditions.h>
-#import <ECArchive/ECArchive.h>
-#import <ECUIKit/ECBezelAlert.h>
+#import "NSURL+ECAdditions.h"
+#import "NSString+ECAdditions.h"
+#import "ECArchive.h"
+#import "ECBezelAlert.h"
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 

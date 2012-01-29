@@ -9,7 +9,7 @@
 #import "ACNewProjectController.h"
 #import "ACNewProjectNavigationController.h"
 
-#import <ECUIKit/ECBezelAlert.h>
+#import "ECBezelAlert.h"
 
 #import "ACProject.h"
 #import "AppStyle.h"

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <ECFoundation/ECFileBuffer.h>
+#import "ECFileBuffer.h"
 #import <clang-c/Index.h>
 @class TMIndex;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
