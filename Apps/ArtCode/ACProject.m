@@ -7,7 +7,6 @@
 //
 
 #import "ACProject.h"
-#import <ECFoundation/ECFileCoordinator.h>
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECArchive/ECArchive.h>
 #import <ECFoundation/ECCache.h>
@@ -61,7 +60,7 @@ static ECCache *openProjects = nil;
     ECASSERT(![[self class] projectWithNameExists:name]);
     [self willChangeValueForKey:@"name"];
     NSURL *newURL = [[self.URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:name];
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [coordinator coordinateWritingItemAtURL:self.URL options:NSFileCoordinatorWritingForMoving writingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL1, NSURL *newURL2) {
         [[NSFileManager new] moveItemAtURL:newURL1 toURL:newURL2 error:NULL];
         [coordinator itemAtURL:newURL1 didMoveToURL:newURL2];
@@ -99,7 +98,7 @@ static ECCache *openProjects = nil;
     
     _plistUrl = [URL URLByAppendingPathComponent:ACProjectPlistFileName];
     __block NSDictionary *plist = nil;
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
         if ([[NSFileManager new] fileExistsAtPath:[newURL path]])
             plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:newURL] options:NSPropertyListImmutable format:NULL error:NULL];
     }];
@@ -122,7 +121,7 @@ static ECCache *openProjects = nil;
 
 - (id)initByDecompressingFileAtURL:(NSURL *)compressedFileUrl toURL:(NSURL *)url
 {
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:compressedFileUrl options:0 writingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:compressedFileUrl options:0 writingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
         [[NSFileManager new] createDirectoryAtURL:newWritingURL withIntermediateDirectories:YES attributes:nil error:NULL];
         [ECArchive extractArchiveAtURL:newReadingURL toDirectory:newWritingURL];
     }];
@@ -151,7 +150,7 @@ static ECCache *openProjects = nil;
         [plist setObject:plistBookmarks forKey:@"bookmarks"];
     }
     
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
         [[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:newURL atomically:YES];
     }];
     
@@ -163,7 +162,7 @@ static ECCache *openProjects = nil;
     [self flush];
     
     __block BOOL result = NO;
-    [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.URL options:0 writingItemAtURL:exportUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.URL options:0 writingItemAtURL:exportUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
         result = [ECArchive compressDirectoryAtURL:newReadingURL toArchive:newWritingURL];
     }];
     return result;
@@ -365,7 +364,7 @@ static ECCache *openProjects = nil;
     // Create project direcotry
     if (![[NSFileManager new] fileExistsAtPath:[projectUrl path]])
     {
-        [[[ECFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
+        [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
             [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:NO attributes:nil error:NULL];
         }];
     }

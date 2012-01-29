@@ -253,7 +253,7 @@
 //    if (![textField.text length])
 //        return NO;
 //    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
-//    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
 //    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
 //        NSFileManager *fileManager = [[NSFileManager alloc] init];
 //        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
@@ -278,7 +278,7 @@
             [self setEditing:NO animated:YES];
             
             // Remove files
-            ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
                 NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
@@ -334,7 +334,7 @@
                 NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
                 __block NSURL *workingDirectory = nil;
                 __block BOOL workingDirectoryAlreadyExists = YES;
-                ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] init];
+                NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
                 NSFileManager *fileManager = [[NSFileManager alloc] init];
                 do
                 {
@@ -457,7 +457,7 @@
     self.loading = YES;
 
     NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     NSFileManager *fileManager = [NSFileManager new];
     
     [self setEditing:NO animated:YES];

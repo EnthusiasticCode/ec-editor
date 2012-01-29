@@ -47,7 +47,7 @@ static dispatch_queue_t _fileBuffersQueue;
     _fileURL = fileURL;
     _fileAccessQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
     _consumers = [[NSMutableArray alloc] init];
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateReadingItemAtURL:fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         _contents = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithContentsOfURL:newURL encoding:NSUTF8StringEncoding error:NULL]];
     }];

@@ -9,12 +9,14 @@
 #import "ECDirectoryPresenter.h"
 #import <ECFoundation/NSURL+ECAdditions.h>
 #import <ECFoundation/NSString+ECAdditions.h>
+#import <ECFoundation/NSOperationQueue+ECAdditions.h>
 #import <objc/runtime.h>
 
-@interface ECDirectoryPresenter ()
+@interface ECDirectoryPresenter () <NSFilePresenter>
 {
     NSDirectoryEnumerationOptions _options;
     NSOperationQueue *_presentedItemOperationQueue;
+    NSOperationQueue *_delegateOperationQueue;
     BOOL _isBatchUpdating;
     NSMutableArray *_batchInsertFileURLs;
     NSMutableArray *_batchRemoveFileURLs;
@@ -26,10 +28,9 @@
     dispatch_queue_t _internalAccessQueue;
     struct
     {
-        unsigned accommodateDeletion : 1;
         unsigned didMove : 1;
         unsigned didInsertRemoveChange : 1;
-        unsigned reserved : 5;
+        unsigned reserved : 6;
     } _delegateFlags;
 }
 @property (atomic, strong) NSURL *directoryURL;
@@ -59,20 +60,21 @@
     _internalAccessQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
     _presentedItemOperationQueue = [[NSOperationQueue alloc] init];
     _presentedItemOperationQueue.maxConcurrentOperationCount = 1;
+    _delegateOperationQueue = [NSOperationQueue currentQueue];
     _mutableFileURLs = [[NSMutableArray alloc] init];
-    ECFileCoordinator *fileCoordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateReadingItemAtURL:directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *fileURL in [fileManager enumeratorAtURL:newURL includingPropertiesForKeys:nil options:options errorHandler:nil])
             [_mutableFileURLs addObject:fileURL];
-        [ECFileCoordinator addFilePresenter:self];
+        [NSFileCoordinator addFilePresenter:self];
     }];
     return self;
 }
 
 - (void)dealloc
 {
-    [ECFileCoordinator removeFilePresenter:self];
+    [NSFileCoordinator removeFilePresenter:self];
 }
 
 - (id<ECDirectoryPresenterDelegate>)delegate
@@ -90,9 +92,26 @@
         if (delegate == _delegate)
             return;
         _delegate = delegate;
-        _delegateFlags.accommodateDeletion = [delegate respondsToSelector:@selector(accommodateDirectoryDeletionForDirectoryPresenter:)];
         _delegateFlags.didMove = [delegate respondsToSelector:@selector(directoryPresenter:directoryDidMoveToURL:)];
         _delegateFlags.didInsertRemoveChange = [delegate respondsToSelector:@selector(directoryPresenter:didInsertFileURLsAtIndexes:removeFileURLsAtIndexes:changeFileURLsAtIndexes:)];
+    });
+}
+
+- (NSOperationQueue *)delegateOperationQueue
+{
+    __block NSOperationQueue *delegateOperationQueue;
+    dispatch_sync(_internalAccessQueue, ^{
+        delegateOperationQueue = _delegateOperationQueue;
+    });
+    return delegateOperationQueue;
+}
+
+- (void)setDelegateOperationQueue:(NSOperationQueue *)delegateOperationQueue
+{
+    dispatch_async(_internalAccessQueue, ^{
+        if (delegateOperationQueue == _delegateOperationQueue)
+            return;
+        _delegateOperationQueue = delegateOperationQueue;
     });
 }
 
@@ -177,7 +196,7 @@
         [indexesOfInsertedFileURLs addIndex:index];
     }
     if (_delegateFlags.didInsertRemoveChange)
-        [[_delegate delegateOperationQueue] addOperationWithBlock:^{
+        [[self delegateOperationQueue] addOperationWithBlock:^{
             [_delegate directoryPresenter:self didInsertFileURLsAtIndexes:indexesOfInsertedFileURLs removeFileURLsAtIndexes:indexesOfRemovedFileURLs changeFileURLsAtIndexes:nil];
         }];
     _batchInsertFileURLs = nil;
@@ -259,76 +278,16 @@
 {
     dispatch_async(_internalAccessQueue, ^{
         if (_delegateFlags.didMove)
-            [[_delegate delegateOperationQueue] addOperationWithBlock:^{
+            [[self delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self directoryDidMoveToURL:newURL];
             }];
     });
     self.directoryURL = newURL;
 }
 
-- (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
+- (void)presentedItemDidChange
 {
-    dispatch_barrier_sync(_internalAccessQueue, ^{
-        if (_delegateFlags.accommodateDeletion)
-            [[_delegate delegateOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [_delegate accommodateDirectoryDeletionForDirectoryPresenter:self];
-            }]] waitUntilFinished:YES];
-        if ([_mutableFileURLs count] && _delegateFlags.didInsertRemoveChange)
-        {
-            NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [_mutableFileURLs count])];
-            [_mutableFileURLs removeAllObjects];
-            [[_delegate delegateOperationQueue] addOperationWithBlock:^{
-                [_delegate directoryPresenter:self didInsertFileURLsAtIndexes:nil removeFileURLsAtIndexes:indexSet changeFileURLsAtIndexes:nil];
-            }];
-        }
-        else
-        {
-            [_mutableFileURLs removeAllObjects];
-        }
-    });
-    self.directoryURL = nil;
-    completionHandler(nil);
-}
-
-- (void)presentedSubitemDidAppearAtURL:(NSURL *)url
-{
-    dispatch_async(_internalAccessQueue, ^{
-        if ([self _shouldIgnoreFileURL:url])
-            return;
-        [self _beginUpdates];
-        [self _insertFileURL:url];
-        [self _endUpdates];
-    });
-}
-
-- (void)accommodatePresentedSubitemDeletionAtURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler
-{
-    dispatch_barrier_sync(_internalAccessQueue, ^{
-        if ([self _shouldIgnoreFileURL:url])
-            return;
-        if ([self _indexOfFileURL:url options:0] == NSNotFound)
-            return;
-        [self _beginUpdates];
-        [self _removeFileURL:url];
-        [self _endUpdates];
-    });
-    completionHandler(nil);
-}
-
-- (void)presentedSubitemAtURL:(NSURL *)oldURL didMoveToURL:(NSURL *)newURL
-{
-    dispatch_barrier_async(_internalAccessQueue, ^{
-        BOOL ignoreOldURL = [self _shouldIgnoreFileURL:oldURL];
-        BOOL ignoreNewURL = [self _shouldIgnoreFileURL:newURL];
-        if (ignoreOldURL && ignoreNewURL)
-            return;
-        [self _beginUpdates];
-        if (!ignoreOldURL)
-            [self _removeFileURL:oldURL];
-        if (!ignoreNewURL)
-            [self _insertFileURL:newURL];
-        [self _endUpdates];
-    });
+    NSLog(@"did change");
 }
 
 #pragma mark - NSFastEnumeration
@@ -347,7 +306,7 @@
 @interface ECSmartFilteredDirectoryPresenter ()
 {
     ECDirectoryPresenter *_directoryPresenter;
-    NSOperationQueue *_delegateQueue;
+    NSOperationQueue *_directoryPresenterDelegateQueue;
     NSString *_filterString;
     const void *_scoreAssociationKey;
     const void *_hitMaskAssociationKey;
@@ -365,11 +324,17 @@
         return nil;
     _directoryPresenter = [[ECDirectoryPresenter alloc] initWithDirectoryURL:directoryURL options:options];
     ECASSERT(_directoryPresenter);
+    _directoryPresenterDelegateQueue = [[NSOperationQueue alloc] init];
+    _directoryPresenter.delegateOperationQueue = _directoryPresenterDelegateQueue;
     _directoryPresenter.delegate = self;
     _internalAccessQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
-    _delegateQueue = [[NSOperationQueue alloc] init];
     _mutableFileURLs = [[NSMutableArray alloc] init];
     return self;
+}
+
+- (NSURL *)directoryURL
+{
+    return _directoryPresenter.directoryURL;
 }
 
 - (NSDirectoryEnumerationOptions)options
@@ -460,7 +425,7 @@
         _filterString = filterString;
         
         if (_delegateFlags.didInsertRemoveChange)
-            [[_delegate delegateOperationQueue] addOperationWithBlock:^{
+            [[self delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self didInsertFileURLsAtIndexes:indexesOfInsertedFileURLs removeFileURLsAtIndexes:indexesOfRemovedFileURLs changeFileURLsAtIndexes:indexesOfChangedFileURLs];
             }];
     });
@@ -502,26 +467,11 @@
 
 #pragma mark - ECDirectoryPresenter delegate
 
-- (NSOperationQueue *)delegateOperationQueue
-{
-    return _delegateQueue;
-}
-
-- (void)accommodateDirectoryDeletionForDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter
-{
-    dispatch_barrier_sync(_internalAccessQueue, ^{
-        if (_delegateFlags.accommodateDeletion)
-            [[_delegate delegateOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                [_delegate accommodateDirectoryDeletionForDirectoryPresenter:self];
-            }]] waitUntilFinished:YES];
-    });
-}
-
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter directoryDidMoveToURL:(NSURL *)dstURL
 {
     dispatch_async(_internalAccessQueue, ^{
         if (_delegateFlags.didMove)
-            [[_delegate delegateOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
+            [[self delegateOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
                 [_delegate directoryPresenter:self directoryDidMoveToURL:dstURL];
             }]] waitUntilFinished:YES];
     });
@@ -584,7 +534,7 @@
             }
         }
         if (_delegateFlags.didInsertRemoveChange)
-            [[_delegate delegateOperationQueue] addOperationWithBlock:^{
+            [[self delegateOperationQueue] addOperationWithBlock:^{
                 [_delegate directoryPresenter:self didInsertFileURLsAtIndexes:indexesOfInsertedFileURLs removeFileURLsAtIndexes:indexesOfRemovedFileURLs changeFileURLsAtIndexes:nil];
             }];
     });

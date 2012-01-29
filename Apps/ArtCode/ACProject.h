@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class ACProjectBookmark;
+@class ACProjectBookmark, UIColor;
 
 @interface ACProject : NSObject
 

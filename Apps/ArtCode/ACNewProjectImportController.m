@@ -72,7 +72,7 @@
 
 - (IBAction)importAction:(id)sender
 {
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     NSFileManager *fileManager = [NSFileManager new];
     NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
     [indexPaths enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {

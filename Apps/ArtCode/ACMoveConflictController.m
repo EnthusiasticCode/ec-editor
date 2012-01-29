@@ -10,7 +10,6 @@
 
 #import "AppStyle.h"
 
-#import <ECFoundation/ECFileCoordinator.h>
 #import <ECUIKit/NSURL+URLDuplicate.h>
 
 
@@ -100,7 +99,7 @@
     self.progressView.progress = 0;
     _conflictURLs = [NSMutableArray new];
     
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     NSFileManager *fileManager = [NSFileManager new];
     CGFloat itemCount = [itemURLs count];
     [itemURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
@@ -165,7 +164,7 @@
 
 - (IBAction)keepBothAction:(id)sender
 {
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     NSFileManager *fileManager = [NSFileManager new];
     for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
     {
@@ -187,7 +186,7 @@
 
 - (IBAction)replaceAction:(id)sender
 {
-    ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
     {
         NSURL *sourceURL = [_conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];

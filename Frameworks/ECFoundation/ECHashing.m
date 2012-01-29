@@ -6,6 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <Foundation/NSObjCRuntime.h>
 #import "ECHashing.h"
 #import "MurmurHash3.h"
 

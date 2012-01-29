@@ -6,6 +6,8 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <Foundation/NSURL.h>
+
 @interface NSURL (ECAdditions)
 
 /// Returns the application's documents directory

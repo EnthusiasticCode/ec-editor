@@ -18,8 +18,6 @@
 		B71707751428D50000DF7794 /* ECDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = B71707741428D50000DF7794 /* ECDebug.h */; };
 		B71707851428D52F00DF7794 /* ECHashing.h in Headers */ = {isa = PBXBuildFile; fileRef = B71707781428D52E00DF7794 /* ECHashing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B71707861428D52F00DF7794 /* ECHashing.m in Sources */ = {isa = PBXBuildFile; fileRef = B71707791428D52E00DF7794 /* ECHashing.m */; };
-		B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */ = {isa = PBXBuildFile; fileRef = B717077A1428D52F00DF7794 /* ECPatriciaTrie.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B71707881428D52F00DF7794 /* ECPatriciaTrie.m in Sources */ = {isa = PBXBuildFile; fileRef = B717077B1428D52F00DF7794 /* ECPatriciaTrie.m */; };
 		B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B717077C1428D52F00DF7794 /* NSURL+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B717078A1428D52F00DF7794 /* NSURL+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B717077D1428D52F00DF7794 /* NSURL+ECAdditions.m */; };
 		B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */ = {isa = PBXBuildFile; fileRef = B717077E1428D52F00DF7794 /* MurmurHash3.c */; };
@@ -103,8 +101,6 @@
 		B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */; };
 		B7A4BB34143F918200BB6F29 /* NSString+ECAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7A4BB35143F918200BB6F29 /* NSString+ECAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */; };
-		B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */; };
 		B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */; };
 		B7F4867514C9768D005DF3AE /* ECWeakArray.h in Headers */ = {isa = PBXBuildFile; fileRef = B7F4867314C9768D005DF3AE /* ECWeakArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -143,8 +139,6 @@
 		B71707741428D50000DF7794 /* ECDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECDebug.h; sourceTree = SOURCE_ROOT; };
 		B71707781428D52E00DF7794 /* ECHashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECHashing.h; sourceTree = "<group>"; };
 		B71707791428D52E00DF7794 /* ECHashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECHashing.m; sourceTree = "<group>"; };
-		B717077A1428D52F00DF7794 /* ECPatriciaTrie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECPatriciaTrie.h; sourceTree = "<group>"; };
-		B717077B1428D52F00DF7794 /* ECPatriciaTrie.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECPatriciaTrie.m; sourceTree = "<group>"; };
 		B717077C1428D52F00DF7794 /* NSURL+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ECAdditions.h"; sourceTree = "<group>"; };
 		B717077D1428D52F00DF7794 /* NSURL+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ECAdditions.m"; sourceTree = "<group>"; };
 		B717077E1428D52F00DF7794 /* MurmurHash3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MurmurHash3.c; sourceTree = "<group>"; };
@@ -311,8 +305,6 @@
 		B726573B146160F000E4C9F1 /* ECDiscardableMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECDiscardableMutableDictionary.m; sourceTree = "<group>"; };
 		B7A4BB32143F918200BB6F29 /* NSString+ECAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ECAdditions.h"; sourceTree = "<group>"; };
 		B7A4BB33143F918200BB6F29 /* NSString+ECAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ECAdditions.m"; sourceTree = "<group>"; };
-		B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileCoordinator.h; sourceTree = "<group>"; };
-		B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileCoordinator.m; sourceTree = "<group>"; };
 		B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECFileBuffer.h; sourceTree = "<group>"; };
 		B7D4DDB9146BD04D002DF6D4 /* ECFileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECFileBuffer.m; sourceTree = "<group>"; };
 		B7F4867314C9768D005DF3AE /* ECWeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECWeakArray.h; sourceTree = "<group>"; };
@@ -435,8 +427,6 @@
 		B71707911428D56600DF7794 /* Data Structures */ = {
 			isa = PBXGroup;
 			children = (
-				B717077A1428D52F00DF7794 /* ECPatriciaTrie.h */,
-				B717077B1428D52F00DF7794 /* ECPatriciaTrie.m */,
 				B726571014613FBE00E4C9F1 /* ECCache.h */,
 				B726571114613FBF00E4C9F1 /* ECCache.m */,
 				B726573A146160EF00E4C9F1 /* ECDiscardableMutableDictionary.h */,
@@ -631,8 +621,6 @@
 		B7C9A83E142BAFF7009D8FF3 /* File Coordination */ = {
 			isa = PBXGroup;
 			children = (
-				B7D25F4D149156D8002CD5C9 /* ECFileCoordinator.h */,
-				B7D25F4E149156D8002CD5C9 /* ECFileCoordinator.m */,
 				B701296F143860490070CCDF /* ECDirectoryPresenter.h */,
 				B7012970143860490070CCDF /* ECDirectoryPresenter.m */,
 				B7D4DDB8146BD04D002DF6D4 /* ECFileBuffer.h */,
@@ -649,7 +637,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B71707851428D52F00DF7794 /* ECHashing.h in Headers */,
-				B71707871428D52F00DF7794 /* ECPatriciaTrie.h in Headers */,
 				B71707891428D52F00DF7794 /* NSURL+ECAdditions.h in Headers */,
 				CD8609F214C9F89200BF90CB /* NSDictionary+ECAdditions.h in Headers */,
 				B717078D1428D52F00DF7794 /* NSTimer+block.h in Headers */,
@@ -663,7 +650,6 @@
 				B726571714613FD100E4C9F1 /* ECWeakDictionary.h in Headers */,
 				B726573C146160F000E4C9F1 /* ECDiscardableMutableDictionary.h in Headers */,
 				B7D4DDBA146BD04D002DF6D4 /* ECFileBuffer.h in Headers */,
-				B7D25F51149156D8002CD5C9 /* ECFileCoordinator.h in Headers */,
 				B7F4867514C9768D005DF3AE /* ECWeakArray.h in Headers */,
 				B7F4867A14C977EA005DF3AE /* WeakObjectWrapper.h in Headers */,
 				B7FB794C14D470C10080A714 /* NSOperationQueue+ECAdditions.h in Headers */,
@@ -768,7 +754,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B71707861428D52F00DF7794 /* ECHashing.m in Sources */,
-				B71707881428D52F00DF7794 /* ECPatriciaTrie.m in Sources */,
 				B717078A1428D52F00DF7794 /* NSURL+ECAdditions.m in Sources */,
 				B717078B1428D52F00DF7794 /* MurmurHash3.c in Sources */,
 				B717078E1428D52F00DF7794 /* NSTimer+block.m in Sources */,
@@ -778,7 +763,6 @@
 				B726571814613FD100E4C9F1 /* ECWeakDictionary.m in Sources */,
 				B726573D146160F000E4C9F1 /* ECDiscardableMutableDictionary.m in Sources */,
 				B7D4DDBB146BD04D002DF6D4 /* ECFileBuffer.m in Sources */,
-				B7D25F52149156D8002CD5C9 /* ECFileCoordinator.m in Sources */,
 				B7F4867614C9768D005DF3AE /* ECWeakArray.m in Sources */,
 				B7F4867B14C977EA005DF3AE /* WeakObjectWrapper.m in Sources */,
 				CD8609F314C9F89200BF90CB /* NSDictionary+ECAdditions.m in Sources */,

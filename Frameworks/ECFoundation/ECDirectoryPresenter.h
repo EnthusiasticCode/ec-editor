@@ -6,21 +6,15 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-@class ECDirectoryPresenter;
+#import <Foundation/NSObject.h>
+#import <Foundation/NSEnumerator.h>
+#import <Foundation/NSFileManager.h>
+@class ECDirectoryPresenter, NSIndexSet, NSURL, NSOperationQueue;
 
 @protocol ECDirectoryPresenterDelegate <NSObject>
 
-@required
-/// This method can be called from any queue, at any time.
-/// All other delegate methods will be called on the returned queue.
-- (NSOperationQueue *)delegateOperationQueue;
-
-/// All the "will" methods are blocking, so return from them as soon as possible. There's also a high chance they will cause a deadlock if they're not implemented with care.
-/// All the "did" methods are asynchronous and aren't coalesced, so they may be called multiple times in succession, and not immediately after the change has gone through.
-
 @optional
-- (void)accommodateDirectoryDeletionForDirectoryPresenter:(ECDirectoryPresenter *)directoryPresenter;
+/// Because of how NSFileCoordinator works for now, this also gets called when the directory is deleted
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter directoryDidMoveToURL:(NSURL *)dstURL;
 
 - (void)directoryPresenter:(ECDirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes;
@@ -28,12 +22,15 @@
 @end
 
 /// Provides the contents of a directory, updating in response to file system events
-@interface ECDirectoryPresenter : NSObject <NSFilePresenter, NSFastEnumeration>
+@interface ECDirectoryPresenter : NSObject <NSFastEnumeration>
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options;
 
 - (id<ECDirectoryPresenterDelegate>)delegate;
 - (void)setDelegate:(id<ECDirectoryPresenterDelegate>)delegate;
+
+- (NSOperationQueue *)delegateOperationQueue;
+- (void)setDelegateOperationQueue:(NSOperationQueue *)delegateOperationQueue;
 
 /// Directory presented.
 - (NSURL *)directoryURL;

@@ -397,7 +397,7 @@ static void *currentProjectContext;
         if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
         {
             self.loading = YES;
-            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             NSFileManager *fileManager = [NSFileManager new];
             [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
                 [coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
@@ -418,7 +418,7 @@ static void *currentProjectContext;
         else if (buttonIndex == 1) // Duplicate
         {
             self.loading = YES;
-            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             NSFileManager *fileManager = [NSFileManager new];
             [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
                 NSUInteger count = 0;
@@ -444,7 +444,7 @@ static void *currentProjectContext;
         else if (buttonIndex == 1) // iTunes
         {
             self.loading = YES;
-            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             NSFileManager *fileManager = [NSFileManager new];
             NSURL *documentsURL = [NSURL applicationDocumentsDirectory];
             [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
@@ -466,7 +466,7 @@ static void *currentProjectContext;
             // Compressing projects to export
             self.loading = YES;
             
-            ECFileCoordinator *coordinator = [[ECFileCoordinator alloc] initWithFilePresenter:nil];
+            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
             [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
                 // Generate zip attachments
                 __block NSData *attachment = nil;
