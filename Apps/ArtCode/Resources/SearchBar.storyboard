@@ -8,7 +8,7 @@
         <scene sceneID="OZK-5M-ugJ">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MjW-0Q-Log" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="uMq-mf-wWL" customClass="ACCodeFileSearchBarController" sceneMemberID="viewController">
+                <viewController id="uMq-mf-wWL" customClass="CodeFileSearchBarController" sceneMemberID="viewController">
                     <view key="view" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Dv0-es-fXd" customClass="ACCodeFileSearchBarView">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="88"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -168,7 +168,7 @@
         <scene sceneID="H2b-9n-9jt">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SuA-w3-xDP" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="v4E-9V-adk" customClass="ACCodeFileSearchOptionsController" sceneMemberID="viewController">
+                <tableViewController id="v4E-9V-adk" customClass="CodeFileSearchOptionsController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ncf-qM-5aM">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="1020"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

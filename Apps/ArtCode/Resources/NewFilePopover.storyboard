@@ -8,7 +8,7 @@
         <scene sceneID="31M-dB-fRx">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sYw-7f-EvV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="IFY-Rz-gmx" customClass="ACNewFileController" sceneMemberID="viewController">
+                <tableViewController id="IFY-Rz-gmx" customClass="NewFileController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="gSZ-0l-Fue">
                         <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

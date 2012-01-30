@@ -1,5 +1,5 @@
 //
-//  ECCodeIndex.m
+//  CodeIndex.m
 //  edit
 //
 //  Created by Uri Baghin on 1/20/11.
@@ -9,15 +9,15 @@
 #import "TMIndex+Internal.h"
 #import "TMUnit+Internal.h"
 #import "TMSyntax.h"
-#import "ECCache.h"
-#import "ECFileBuffer.h"
+#import "Cache.h"
+#import "FileBuffer.h"
 
 static NSMutableDictionary *_extensionClasses;
 
 @interface TMIndex ()
 {
     NSMutableDictionary *_extensions;
-    ECCache *_codeUnitCache;
+    Cache *_codeUnitCache;
 }
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope;
 @end
@@ -43,11 +43,11 @@ static NSMutableDictionary *_extensionClasses;
             return;
         [_extensions setObject:extension forKey:key];
     }];
-    _codeUnitCache = [[ECCache alloc] init];
+    _codeUnitCache = [[Cache alloc] init];
     return self;
 }
 
-- (TMUnit *)codeUnitForFileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
+- (TMUnit *)codeUnitForFileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     if (!rootScopeIdentifier)
         rootScopeIdentifier = [[TMSyntax syntaxForFileBuffer:fileBuffer] scopeIdentifier];

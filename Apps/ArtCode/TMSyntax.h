@@ -1,20 +1,20 @@
 //
 //  TMSyntax.h
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 10/18/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-@class ECFileBuffer;
+@class FileBuffer;
 
 @interface TMSyntax : NSObject <NSDiscardableContent>
 
 /// A dictionary containing all syntaxes indexed by scopeIdentifier
 + (NSDictionary *)allSyntaxes;
 + (TMSyntax *)syntaxWithScope:(NSString *)scope;
-+ (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer;
++ (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
 

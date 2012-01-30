@@ -1,12 +1,12 @@
 //
 //  TMUnit.h
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 1/6/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ECFileBuffer.h"
+#import "FileBuffer.h"
 #import <clang-c/Index.h>
 @class TMIndex;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
@@ -25,13 +25,13 @@ typedef enum
 } TMUnitVisitResult;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface TMUnit : NSObject <ECFileBufferConsumer>
+@interface TMUnit : NSObject <FileBufferConsumer>
 
 /// The code index that generated the code unit.
 - (TMIndex *)index;
 
 /// The main source file the unit is interpreting.
-- (ECFileBuffer *)fileBuffer;
+- (FileBuffer *)fileBuffer;
 
 - (NSString *)rootScopeIdentifier;
 
@@ -88,7 +88,7 @@ typedef enum
 
 @end
 
-@protocol ECCodeDiagnostic <NSObject>
+@protocol CodeDiagnostic <NSObject>
 
 - (enum CXDiagnosticSeverity)severity;
 - (NSString *)spelling;

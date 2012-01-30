@@ -1,6 +1,6 @@
 //
-//  ECCodeScope.m
-//  ECCodeIndexing
+//  CodeScope.m
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 1/3/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.

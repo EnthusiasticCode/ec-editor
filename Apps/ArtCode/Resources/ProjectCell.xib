@@ -145,6 +145,7 @@
 				<int key="NSvFlags">274</int>
 				<string key="NSFrameSize">{319, 182}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSNextKeyView"/>
 				<string key="NSReuseIdentifierKey">_NS:569</string>
 				<reference key="IBUIBackgroundColor" ref="256558986"/>
 				<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -259,7 +260,7 @@
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
-				<string key="-1.CustomClassName">ACProjectCell</string>
+				<string key="-1.CustomClassName">ProjectCell</string>
 				<string key="-1.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="-2.CustomClassName">UIResponder</string>
 				<string key="-2.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>

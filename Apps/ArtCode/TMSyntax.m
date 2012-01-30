@@ -1,6 +1,6 @@
 //
 //  TMSyntax.m
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 10/18/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
@@ -10,8 +10,8 @@
 #import "TMBundle.h"
 #import "TMPattern.h"
 #import "OnigRegexp.h"
-#import "ECDiscardableMutableDictionary.h"
-#import "ECFileBuffer.h"
+#import "DiscardableMutableDictionary.h"
+#import "FileBuffer.h"
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
@@ -20,13 +20,13 @@ static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 static NSString * const _syntaxPatternsKey = @"patterns";
 static NSString * const _syntaxRepositoryKey = @"repository";
 
-static ECDiscardableMutableDictionary *_allSyntaxes;
+static DiscardableMutableDictionary *_allSyntaxes;
 
 @interface TMSyntax ()
 {
     NSInteger _contentAccessCount;
     NSURL *_fileURL;
-    ECFileBuffer *_fileBuffer;
+    FileBuffer *_fileBuffer;
     NSString *_name;
     NSString *_scopeIdentifier;
     NSArray *__fileTypes;
@@ -49,7 +49,7 @@ static ECDiscardableMutableDictionary *_allSyntaxes;
 {
     if (!_allSyntaxes)
     {
-        _allSyntaxes = [ECDiscardableMutableDictionary dictionary];
+        _allSyntaxes = [DiscardableMutableDictionary dictionary];
         for (TMBundle *bundle in [TMBundle allBundles])
             for (TMSyntax *syntax in [bundle syntaxes])
                 [_allSyntaxes setObject:syntax forKey:[syntax scopeIdentifier]];
@@ -64,7 +64,7 @@ static ECDiscardableMutableDictionary *_allSyntaxes;
     return [_allSyntaxes objectForKey:scope];
 }
 
-+ (TMSyntax *)syntaxForFileBuffer:(ECFileBuffer *)fileBuffer
++ (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {

@@ -1,6 +1,6 @@
 //
 //  WeakObjectWrapper.m
-//  ECFoundation
+//  Foundation
 //
 //  Created by Uri Baghin on 1/20/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.

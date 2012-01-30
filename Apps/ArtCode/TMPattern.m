@@ -1,6 +1,6 @@
 //
 //  TMPattern.m
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 11/5/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
@@ -9,7 +9,7 @@
 #import "TMPattern.h"
 #import "TMSyntax.h"
 #import "OnigRegexp.h"
-#import "ECWeakDictionary.h"
+#import "WeakDictionary.h"
 
 static NSString * const _patternScopeKey = @"name";
 static NSString * const _patternNameKey = @"name";
@@ -23,7 +23,7 @@ static NSString * const _patternCapturesKey = @"captures";
 static NSString * const _patternPatternsKey = @"patterns";
 static NSString * const _patternIncludeKey = @"include";
 
-static ECWeakDictionary *_allPatterns;
+static WeakDictionary *_allPatterns;
 
 @interface TMPattern ()
 {
@@ -44,7 +44,7 @@ static ECWeakDictionary *_allPatterns;
 
 + (void)initialize
 {
-    _allPatterns = [[ECWeakDictionary alloc] init];
+    _allPatterns = [[WeakDictionary alloc] init];
 }
 
 + (TMPattern *)patternWithDictionary:(NSDictionary *)dictionary inSyntax:(TMSyntax *)syntax

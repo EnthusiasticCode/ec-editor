@@ -1,6 +1,6 @@
 //
 //  TMUnit+Internal.h
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 1/6/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
@@ -13,7 +13,7 @@
 
 + (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key;
 
-- (id)initWithIndex:(TMIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier;
+- (id)initWithIndex:(TMIndex *)index fileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier;
 
 - (id)extensionForKey:(id)key;
 

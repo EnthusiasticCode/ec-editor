@@ -8,20 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACApplication;
-@class ECSplitViewController, ECTabController;
-@class ACToolPanelController;
+@class Application;
+@class SplitViewController, TabController;
+@class ToolPanelController;
 
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) ECTabController *tabController;
+@property (nonatomic, strong) TabController *tabController;
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-@property (nonatomic, strong, readonly) ACApplication *application;
+@property (nonatomic, strong, readonly) Application *application;
 
 - (void)saveContext;
 

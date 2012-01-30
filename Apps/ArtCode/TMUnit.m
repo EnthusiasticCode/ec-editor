@@ -1,6 +1,6 @@
 //
 //  TMUnit.m
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 11/3/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
@@ -8,7 +8,7 @@
 
 #import "TMUnit+Internal.h"
 #import "TMIndex+Internal.h"
-#import "ECFileBuffer.h"
+#import "FileBuffer.h"
 #import "TMScope.h"
 #import "TMBundle.h"
 #import "TMSyntax.h"
@@ -23,7 +23,7 @@ static NSString * const _patternCaptureName = @"name";
 {
     NSOperationQueue *_consumerOperationQueue;
     TMIndex *_index;
-    ECFileBuffer *_fileBuffer;
+    FileBuffer *_fileBuffer;
     NSString *_rootScopeIdentifier;
     NSMutableDictionary *_extensions;
     TMSyntax *__syntax;
@@ -60,7 +60,7 @@ static NSString * const _patternCaptureName = @"name";
     [extensionClassesForLanguage setObject:extensionClass forKey:key];
 }
 
-- (id)initWithIndex:(TMIndex *)index fileBuffer:(ECFileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
+- (id)initWithIndex:(TMIndex *)index fileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     ECASSERT(index && fileBuffer);
     self = [super init];
@@ -109,7 +109,7 @@ static NSString * const _patternCaptureName = @"name";
     return _index;
 }
 
-- (ECFileBuffer *)fileBuffer
+- (FileBuffer *)fileBuffer
 {
     return _fileBuffer;
 }
@@ -144,7 +144,7 @@ static NSString * const _patternCaptureName = @"name";
     return nil;
 }
 
-#pragma mark - ECFileBufferConsumer
+#pragma mark - FileBufferConsumer
 
 - (NSOperationQueue *)consumerOperationQueue
 {
