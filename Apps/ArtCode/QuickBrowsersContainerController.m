@@ -9,9 +9,12 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "ArtCodeTab.h"
+#import "ArtCodeProject.h"
 #import "QuickFileBrowserController.h"
 #import "QuickBookmarkBrowserController.h"
 #import "QuickProjectInfoController.h"
+#import "QuickFolderInfoController.h"
+#import "QuickFileInfoController.h"
 
 @implementation QuickBrowsersContainerController
 
@@ -25,11 +28,13 @@
     [[NSFileManager defaultManager] fileExistsAtPath:[tab.currentURL path] isDirectory:&isDirectory];
     if (isDirectory)
     {
-        [result setViewControllers:[NSArray arrayWithObjects: [QuickProjectInfoController new],[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        BOOL isProjectRoot = NO;
+        [ArtCodeProject projectNameFromURL:tab.currentURL isProjectRoot:&isProjectRoot];
+        [result setViewControllers:[NSArray arrayWithObjects: (isProjectRoot ? [QuickProjectInfoController new] : [QuickFolderInfoController new]), [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
     }
     else
     {
-        // TODO
+        [result setViewControllers:[NSArray arrayWithObjects: [QuickFileInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
     }
     return result;
 }
@@ -80,7 +85,11 @@
 
 - (QuickBrowsersContainerController *)quickBrowsersContainerController
 {
-    return (QuickBrowsersContainerController *)self.parentViewController;
+    UIViewController *parentController = self.parentViewController;
+    while (![parentController isKindOfClass:[QuickBrowsersContainerController class]]) {
+        parentController = parentController.parentViewController;
+    }
+    return (QuickBrowsersContainerController *)parentController;
 }
 
 @end

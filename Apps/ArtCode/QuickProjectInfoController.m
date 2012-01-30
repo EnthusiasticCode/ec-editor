@@ -34,7 +34,7 @@
 
 + (id)new
 {
-    return [[UIStoryboard storyboardWithName:@"QuickProjectInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
+    return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
 }
 
 #pragma mark - View lifecycle

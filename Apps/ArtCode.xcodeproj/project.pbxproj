@@ -128,7 +128,7 @@
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */; };
-		CD217EB214D412F1001AEA41 /* QuickProjectInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */; };
+		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
@@ -169,6 +169,8 @@
 		CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */; };
 		CD7D2B3413C0D4C700B889EE /* ProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */; };
 		CD7D2B4813C0D55700B889EE /* FileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* FileTableController.m */; };
+		CD7FAEF214D7504900E2EE6A /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */; };
+		CD7FAEF514D7562C00E2EE6A /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */; };
 		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
@@ -224,7 +226,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ArtCodeTab.h; sourceTree = "<group>"; };
+		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B702320A14345B5A006D23F7 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		B702320B14345B5A006D23F7 /* Application.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Application.m; sourceTree = "<group>"; };
@@ -395,7 +397,7 @@
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+AppStyle.h"; sourceTree = "<group>"; };
 		CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+AppStyle.m"; sourceTree = "<group>"; };
-		CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickProjectInfo.storyboard; sourceTree = "<group>"; };
+		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
@@ -461,6 +463,10 @@
 		CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectTableController.m; sourceTree = "<group>"; };
 		CD7D2B4613C0D55700B889EE /* FileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTableController.h; sourceTree = "<group>"; };
 		CD7D2B4713C0D55700B889EE /* FileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTableController.m; sourceTree = "<group>"; };
+		CD7FAEF014D7504900E2EE6A /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
+		CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
+		CD7FAEF314D7562C00E2EE6A /* QuickFileInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFileInfoController.h; sourceTree = "<group>"; };
+		CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
 		CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Delete.png; sourceTree = "<group>"; };
 		CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Duplicate.png; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
@@ -926,6 +932,10 @@
 				CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */,
 				CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */,
 				CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */,
+				CD7FAEF014D7504900E2EE6A /* QuickFolderInfoController.h */,
+				CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */,
+				CD7FAEF314D7562C00E2EE6A /* QuickFileInfoController.h */,
+				CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -1039,7 +1049,7 @@
 				B78077E014869701006C0C6B /* ProjectCell.xib */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
 				CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */,
-				CD217EB114D412F1001AEA41 /* QuickProjectInfo.storyboard */,
+				CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1442,7 +1452,7 @@
 				CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */,
 				CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */,
 				CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */,
-				CD217EB214D412F1001AEA41 /* QuickProjectInfo.storyboard in Resources */,
+				CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1545,6 +1555,8 @@
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
 				CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
+				CD7FAEF214D7504900E2EE6A /* QuickFolderInfoController.m in Sources */,
+				CD7FAEF514D7562C00E2EE6A /* QuickFileInfoController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
