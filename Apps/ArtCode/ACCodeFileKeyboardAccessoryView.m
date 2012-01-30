@@ -7,6 +7,7 @@
 //
 
 #import "ACCodeFileKeyboardAccessoryView.h"
+#import "ECInstantGestureRecognizer.h"
 #import <objc/message.h>
 
 // TODO see http://developer.apple.com/library/ios/#documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/InputViews/InputViews.html#//apple_ref/doc/uid/TP40009542-CH12-SW1 for input clicks
@@ -35,7 +36,6 @@ static const void *itemContext;
     if (!_itemPopoverViewDismissRecognizer)
     {
         _itemPopoverViewDismissRecognizer = [[ECInstantGestureRecognizer alloc] initWithTarget:self action:@selector(_handleDismissRecognizer:)];
-//        _itemPopoverViewDismissRecognizer.cancelsTouchesInView = NO;
         _itemPopoverViewDismissRecognizer.passTroughViews = [NSArray arrayWithObject:self.itemPopoverView.contentView];
     }
     return _itemPopoverViewDismissRecognizer;

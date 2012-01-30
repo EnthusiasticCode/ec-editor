@@ -355,29 +355,6 @@ static void init(ECCodeViewBase *self)
     return [[self.dataSource textRenderer:self.renderer attributedStringInRange:NSMakeRange(0, [self.dataSource stringLengthForTextRenderer:self.renderer])] string];
 }
 
-- (void)setText:(NSString *)string
-{
-    // TODO rethink this method
-    if (self.dataSource == nil)
-        self.dataSource = [ECCodeStringDataSource new];
-    
-    ECASSERT([self.dataSource isKindOfClass:[ECCodeStringDataSource class]]);
-    
-    if (!self.ownsRenderer)
-        return;
-    
-    [(ECCodeStringDataSource *)self.dataSource setString:string];
-    
-    [self.renderer updateAllText];
-    
-    // Update tiles
-    CGRect bounds = self.bounds;
-    self.renderer.renderWidth = bounds.size.width;
-    self.contentSize = CGSizeMake(bounds.size.width, self.renderer.renderHeight * self.contentScaleFactor);
-    
-    [_contentView setNeedsDisplay];
-}
-
 - (NSRange)visibleTextRange
 {
     __block NSRange result = NSMakeRange(NSUIntegerMax, 0);

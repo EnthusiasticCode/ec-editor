@@ -141,6 +141,7 @@
 		CD41529814752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529714752D61004C7157 /* ACCodeFileAccessoryItemsGridView.m */; };
 		CD41529B14753520004C7157 /* ACCodeFileAccessoryAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
+		CD49924E14D6C7480046CD19 /* ECInstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* ECInstantGestureRecognizer.m */; };
 		CD4E648614C1E984003AC39D /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4E648514C1E984003AC39D /* ACProject.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* ACCodeFileKeyboardAccessoryPopoverView.m */; };
@@ -416,6 +417,8 @@
 		CD41529914753520004C7157 /* ACCodeFileAccessoryAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACCodeFileAccessoryAction.h; sourceTree = "<group>"; };
 		CD41529A14753520004C7157 /* ACCodeFileAccessoryAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACCodeFileAccessoryAction.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
+		CD49924C14D6C7480046CD19 /* ECInstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECInstantGestureRecognizer.h; sourceTree = "<group>"; };
+		CD49924D14D6C7480046CD19 /* ECInstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ECInstantGestureRecognizer.m; sourceTree = "<group>"; };
 		CD4E648414C1E984003AC39D /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
 		CD4E648514C1E984003AC39D /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -725,6 +728,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CD49924C14D6C7480046CD19 /* ECInstantGestureRecognizer.h */,
+				CD49924D14D6C7480046CD19 /* ECInstantGestureRecognizer.m */,
 				B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */,
 				B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */,
 				B7FB7A2814D60EB50080A714 /* ECDiscardableMutableDictionary.h */,
@@ -1543,6 +1548,7 @@
 				B7FB7A2C14D60EB50080A714 /* ECDiscardableMutableDictionary.m in Sources */,
 				B7FB7A2D14D60EB50080A714 /* ECWeakDictionary.m in Sources */,
 				B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */,
+				CD49924E14D6C7480046CD19 /* ECInstantGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

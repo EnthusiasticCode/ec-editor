@@ -26,9 +26,8 @@ typedef void (^ECCodeViewBaseTileSetupBlock)(CGContextRef context, CGRect rect);
 
 #pragma mark Managing Text Content
 
-/// Set the text fot the control. This property is only used if textDataSource
-/// is the code view itself.
-@property (nonatomic, strong) NSString *text;
+/// Access the full text showed in the code view. This methods uses the datasource to retrieve the text.
+@property (nonatomic, strong, readonly) NSString *text;
 
 /// Text insets for the rendering.
 @property (nonatomic) UIEdgeInsets textInsets;
