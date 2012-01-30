@@ -8,9 +8,44 @@
 #warning "This project uses features only available in iOS SDK 5.0 and later."
 #endif
 
+#include <assert.h>
+
+#if DEBUG
+#define ECASSERT(a) assert(a)
+#else
+#define ECASSERT(a)
+#endif
+
+
+#define UNIMPLEMENTED_VOID() do { \
+fprintf(stderr, "Message %s sent to instance of class %s, which does not implement that method.\n", [NSStringFromSelector(_cmd) UTF8String], [[[self class] description] UTF8String]);\
+abort();\
+}\
+while (0)
+
+#define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
+
+#if DEBUG
+#define REQUIRE_NOT_NULL(a) do { \
+if ((a)==NULL) {\
+fprintf(stderr, "REQUIRE_NOT_NULL failed: NULL value for parameter " #a " on line %d in file %s\n", __LINE__, __FILE__);\
+abort();\
+}\
+} while (0)
+
+#define EXPECT_CLASS(e, c) do { \
+if (! [(e) isKindOfClass:[c class]]) {\
+fprintf(stderr, "EXPECT_CLASS failed: Expression " #e " is %s on line %d in file %s\n", (e) ? "(nil)" : [[e description] UTF8String], __LINE__, __FILE__);\
+abort();\
+}\
+} while (0)
+
+#else
+#define REQUIRE_NOT_NULL(a)
+#define EXPECT_CLASS(e, c)
+#endif
+
 #ifdef __OBJC__
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-#import "ECDebug.h"
-#import <ECFoundation/ECFileCoordinator.h> // import ECFileCoordinator everywhere since it's just a temporary work-around
+
+
 #endif

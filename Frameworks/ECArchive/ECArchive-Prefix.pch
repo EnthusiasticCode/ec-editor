@@ -1,9 +1,0 @@
-//
-// Prefix header for all source files of the 'ECArchive' target in the 'ECArchive' project
-//
-
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
-#import "ECDebug.h"
-#import "../ECFoundation/ECFileCoordinator.h" // import ECFileCoordinator everywhere since it's just a temporary work-around
-#endif

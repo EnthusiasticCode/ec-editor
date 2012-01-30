@@ -8,7 +8,7 @@
         <scene sceneID="ItT-eB-3Zx">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mub-CS-wlH" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="dJm-cZ-CBT" customClass="ACNewProjectController" sceneMemberID="viewController">
+                <viewController id="dJm-cZ-CBT" customClass="NewProjectController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LRL-2u-T1X">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -66,7 +66,7 @@
         <scene sceneID="il7-Dh-M60">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nfV-ec-TyI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController storyboardIdentifier="Templates" title="Templates" id="DR9-8m-f4z" customClass="ACNewProjectImportController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Templates" title="Templates" id="DR9-8m-f4z" customClass="NewProjectImportController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelectionDuringEditing="YES" allowsMultipleSelection="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="NQ9-Zo-Iz1">
                         <rect key="frame" x="0.0" y="64" width="768" height="960"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -150,7 +150,7 @@
         <scene sceneID="Jnm-u6-lRM">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4tW-0O-CS0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationController id="W2M-Sx-cly" customClass="ACNewProjectNavigationController" sceneMemberID="viewController">
+                <navigationController id="W2M-Sx-cly" customClass="NewProjectNavigationController" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="kDb-2Z-7vG">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

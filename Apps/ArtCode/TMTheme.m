@@ -1,6 +1,6 @@
 //
 //  TMTheme.m
-//  ECCodeIndexing
+//  CodeIndexing
 //
 //  Created by Uri Baghin on 10/16/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
@@ -9,7 +9,7 @@
 #import "TMTheme.h"
 #import <CoreText/CoreText.h>
 #import "UIColor+HexColor.h"
-#import <ECUIKit/ECTextRenderer.h>
+#import "TextRenderer.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
@@ -116,7 +116,7 @@ static NSDictionary *_defaultAttributes = nil;
                 [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
             }
             else if ([key isEqualToString:@"background"]) {
-                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:ECTextRendererRunBackgroundColorAttributeName];
+                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
             }
             else {
                 [setting setObject:value forKey:key];

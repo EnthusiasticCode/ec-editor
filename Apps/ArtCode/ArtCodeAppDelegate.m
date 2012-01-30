@@ -8,23 +8,23 @@
 
 #import "ArtCodeAppDelegate.h"
 
-#import <ECFoundation/NSURL+ECAdditions.h>
-#import <ECUIKit/ECCodeViewBase.h>
-#import <ECUIKit/UIControl+BlockAction.h>
+#import "NSURL+Utilities.h"
+#import "CodeViewBase.h"
+#import "UIControl+BlockAction.h"
 
 #import "AppStyle.h"
-#import <ECUIKit/ECTabController.h>
+#import "TabController.h"
 
-#import "ACSingleTabController.h"
+#import "SingleTabController.h"
 
-#import <ECUIKit/ECTabBar.h>
-#import "ACTopBarToolbar.h"
-#import "ACTopBarTitleControl.h"
-#import "ACCodeFileSearchBarController.h"
+#import "TabBar.h"
+#import "TopBarToolbar.h"
+#import "TopBarTitleControl.h"
+#import "CodeFileSearchBarController.h"
 
-#import "ACApplication.h"
-#import "ACTab.h"
-#import "ACProject.h"
+#import "Application.h"
+#import "ArtCodeTab.h"
+#import "ArtCodeProject.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -49,10 +49,10 @@
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
-    id popoverAppearance = [ACShapePopoverBackgroundView appearance];
+    id popoverAppearance = [ShapePopoverBackgroundView appearance];
 //    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
     [popoverAppearance setBackgroundColor:[UIColor colorWithRed:67.0/255.0 green:68.0/255.0 blue:72.0/255.0 alpha:1.0]];
-    [(ACShapePopoverBackgroundView *)popoverAppearance setStrokeColor:[UIColor colorWithWhite:0.34 alpha:1]];
+    [(ShapePopoverBackgroundView *)popoverAppearance setStrokeColor:[UIColor colorWithWhite:0.34 alpha:1]];
     [popoverAppearance setShadowOpacity:0.7];
     [popoverAppearance setShadowRadius:4];
     [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 1)];
@@ -71,41 +71,41 @@
 
     ////////////////////////////////////////////////////////////////////////////
     // Tab Bar    
-    id buttonInTabBarAppearance = [ECTabBarButton appearance];
+    id buttonInTabBarAppearance = [TabBarButton appearance];
     [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateNormal];
     [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateSelected];
     [buttonInTabBarAppearance setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
     [buttonInTabBarAppearance setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [buttonInTabBarAppearance setTitleShadowColor:[UIColor colorWithWhite:0.1 alpha:1] forState:UIControlStateNormal];
     
-    [[ECTabBarButtonCloseButton appearance] setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
+    [[TabBarButtonCloseButton appearance] setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Top bar
-    [[ACTopBarToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"]];
+    [[TopBarToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"]];
     
-    id ACTopBarTitleControlAppearance = [ACTopBarTitleControl appearance];
-    [ACTopBarTitleControlAppearance setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateNormal];
-    [ACTopBarTitleControlAppearance setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateSelected];
-    [ACTopBarTitleControlAppearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forState:UIControlStateDisabled];
-    [ACTopBarTitleControlAppearance setGapBetweenFragments:3];
-    [ACTopBarTitleControlAppearance setContentInsets:UIEdgeInsetsMake(3, 10, 3, 10)];
-    [ACTopBarTitleControlAppearance setSelectedTitleFragmentsTint:[UIColor whiteColor]];
-    [ACTopBarTitleControlAppearance setSecondaryTitleFragmentsTint:[UIColor colorWithWhite:0.7 alpha:1]];
-    [ACTopBarTitleControlAppearance setSelectedFragmentFont:[UIFont boldSystemFontOfSize:20]];
-    [ACTopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
+    id TopBarTitleControlAppearance = [TopBarTitleControl appearance];
+    [TopBarTitleControlAppearance setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateNormal];
+    [TopBarTitleControlAppearance setBackgroundImage:[[UIImage imageNamed:@"topBar_TitleButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 15, 0, 15)] forState:UIControlStateSelected];
+    [TopBarTitleControlAppearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forState:UIControlStateDisabled];
+    [TopBarTitleControlAppearance setGapBetweenFragments:3];
+    [TopBarTitleControlAppearance setContentInsets:UIEdgeInsetsMake(3, 10, 3, 10)];
+    [TopBarTitleControlAppearance setSelectedTitleFragmentsTint:[UIColor whiteColor]];
+    [TopBarTitleControlAppearance setSecondaryTitleFragmentsTint:[UIColor colorWithWhite:0.7 alpha:1]];
+    [TopBarTitleControlAppearance setSelectedFragmentFont:[UIFont boldSystemFontOfSize:20]];
+    [TopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
    
-    [[ACTopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal];
-    [[ACTopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateSelected];
-    [[ACTopBarToolButton appearanceWhenContainedIn:[ACCodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
+    [[TopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal];
+    [[TopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateSelected];
+    [[TopBarToolButton appearanceWhenContainedIn:[CodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements
-    [[ECCodeFlashView appearance] setBackgroundColor:[UIColor redColor]];
+    [[CodeFlashView appearance] setBackgroundColor:[UIColor redColor]];
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating main tab controllers
-    self.tabController = [[ECTabController alloc] init];
+    self.tabController = [[TabController alloc] init];
     self.tabController.tabBar.backgroundColor = [UIColor blackColor];
     self.tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(3, 3, 0, 3);
     self.tabController.definesPresentationContext = YES;
@@ -114,8 +114,8 @@
     [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
     [addTabButton setActionBlock:^(id sender) {
         // Duplicate current tab
-        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];
-        [self.application insertTabAtIndex:[self.application.tabs count] withInitialURL:[(ACSingleTabController *)self.tabController.selectedViewController tab].currentURL];
+        SingleTabController *singleTabController = [[SingleTabController alloc] init];
+        [self.application insertTabAtIndex:[self.application.tabs count] withInitialURL:[(SingleTabController *)self.tabController.selectedViewController tab].currentURL];
         singleTabController.tab = [self.application.tabs lastObject];
         [self.tabController addChildViewController:singleTabController animated:YES];
     } forControlEvent:UIControlEventTouchUpInside];
@@ -129,10 +129,10 @@
     ////////////////////////////////////////////////////////////////////////////
     // Resume tabs
     if (![self.application.tabs count])
-        [self.application insertTabAtIndex:0 withInitialURL:[ACProject projectsDirectory]];
-    for (ACTab *tab in self.application.tabs)
+        [self.application insertTabAtIndex:0 withInitialURL:[ArtCodeProject projectsDirectory]];
+    for (ArtCodeTab *tab in self.application.tabs)
     {
-        ACSingleTabController *singleTabController = [[ACSingleTabController alloc] init];
+        SingleTabController *singleTabController = [[SingleTabController alloc] init];
         singleTabController.tab = tab;
         [self.tabController addChildViewController:singleTabController];
     }
@@ -182,7 +182,7 @@
      */
 }
 
-- (ACApplication *)application
+- (Application *)application
 {
     if (_application)
         return _application;

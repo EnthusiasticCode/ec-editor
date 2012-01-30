@@ -8,7 +8,7 @@
         <scene sceneID="MnG-5k-n7G">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6uA-2M-g97" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController storyboardIdentifier="QuickProjectInfo" id="EPX-9c-3lG" customClass="ACQuickProjectInfoController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="QuickProjectInfo" id="EPX-9c-3lG" customClass="QuickProjectInfoController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="singleLineEtched" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="mFl-hU-oYJ">
                         <rect key="frame" x="0.0" y="20" width="540" height="551"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -58,7 +58,7 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <view contentMode="scaleToFill" id="VIA-HC-UBl" customClass="ACColorSelectionControl">
+                                                <view contentMode="scaleToFill" id="VIA-HC-UBl" customClass="ColorSelectionControl">
                                                     <rect key="frame" x="130" y="5" width="327" height="32"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -144,13 +144,13 @@
         </scene>
     </scenes>
     <classes>
-        <class className="ACColorSelectionControl" superclassName="UIControl">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACColorSelectionControl.h"/>
+        <class className="ColorSelectionControl" superclassName="UIControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ColorSelectionControl.h"/>
         </class>
-        <class className="ACQuickProjectInfoController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ACQuickProjectInfoController.h"/>
+        <class className="QuickProjectInfoController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickProjectInfoController.h"/>
             <relationships>
-                <relationship kind="outlet" name="labelColorSelectionControl" candidateClass="ACColorSelectionControl"/>
+                <relationship kind="outlet" name="labelColorSelectionControl" candidateClass="ColorSelectionControl"/>
                 <relationship kind="outlet" name="projectFileCountLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="projectSizeLabel" candidateClass="UILabel"/>
