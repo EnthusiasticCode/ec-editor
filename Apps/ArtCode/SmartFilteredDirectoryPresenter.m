@@ -41,6 +41,11 @@ static void * _directoryObservingContext;
     return [NSSet setWithObject:@"directoryPresenter.directoryURL"];
 }
 
+- (NSArray *)fileURLs
+{
+    return [_mutableFileURLs copy];
+}
+
 - (NSDirectoryEnumerationOptions)options
 {
     return self.directoryPresenter.options;
@@ -102,20 +107,29 @@ static void * _directoryObservingContext;
     }
     
     indexesOfInsertedFileURLs = [self _indexesOfInsertedFileURLs:fileURLsToInsert inArray:newFileURLs];
-        
+    
     indexesOfInsertedFileURLs = [indexesOfInsertedFileURLs copy];
     indexesOfRemovedFileURLs = [indexesOfRemovedFileURLs copy];
     indexesOfReplacedFileURLs = [indexesOfReplacedFileURLs copy];
     
     [self willChangeValueForKey:@"filterString"];
-    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
-    [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:indexesOfReplacedFileURLs forKey:@"fileURLs"];
-    [_mutableFileURLs removeObjectsAtIndexes:indexesOfRemovedFileURLs];
-    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
-    [self didChange:NSKeyValueChangeReplacement valuesAtIndexes:indexesOfReplacedFileURLs forKey:@"fileURLs"];
-    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
-    _mutableFileURLs = newFileURLs;
-    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
+    if ([indexesOfReplacedFileURLs count])
+    {
+        [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:indexesOfReplacedFileURLs forKey:@"fileURLs"];
+        [self didChange:NSKeyValueChangeReplacement valuesAtIndexes:indexesOfReplacedFileURLs forKey:@"fileURLs"];
+    }
+    if ([indexesOfRemovedFileURLs count])
+    {
+        [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
+        [_mutableFileURLs removeObjectsAtIndexes:indexesOfRemovedFileURLs];
+        [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
+    }
+    if ([indexesOfInsertedFileURLs count])
+    {
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
+        _mutableFileURLs = newFileURLs;
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
+    }
     _filterString = filterString;
     [self didChangeValueForKey:@"filterString"];
 }
@@ -148,7 +162,16 @@ static void * _directoryObservingContext;
     switch (kind) {
         case NSKeyValueChangeInsertion:
         {
-            NSMutableArray *fileURLsToInsert = [[[change objectForKey:NSKeyValueChangeNewKey] objectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey]] mutableCopy];
+            NSMutableArray *newFileURLs = [[[change objectForKey:NSKeyValueChangeNewKey] objectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey]] mutableCopy];
+            NSMutableArray *fileURLsToInsert = [[NSMutableArray alloc] init];
+            for (NSURL *fileURL in newFileURLs)
+            {
+                float score = [[fileURL lastPathComponent] scoreForAbbreviation:self.filterString hitMask:NULL];
+                if (!score)
+                    continue;
+                [self _setScore:score hitMask:nil forFileURL:fileURL];
+                [fileURLsToInsert addObject:fileURL];
+            }
             NSMutableIndexSet *indexes = [self _indexesOfInsertedFileURLs:fileURLsToInsert inArray:_mutableFileURLs];
             if ([indexes count])
                 [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexes forKey:@"fileURLs"];

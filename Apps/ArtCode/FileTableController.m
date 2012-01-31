@@ -114,8 +114,8 @@ static void *_openQuicklyObservingContext;
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
-    _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
     [self.tableView reloadData];
     [self didChangeValueForKey:@"directory"];
@@ -242,8 +242,10 @@ static void *_openQuicklyObservingContext;
     {
         [self.singleTabController updateDefaultToolbarTitle];
     }
-    else if (context == &_directoryObservingContext || context == &_openQuicklyPresenter)
+    else if (context == &_directoryObservingContext || context == &_openQuicklyObservingContext)
     {
+        if ((object == _directoryPresenter && _isShowingOpenQuickly) || (object == _openQuicklyPresenter && !_isShowingOpenQuickly))
+            return;
         NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
         NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
         [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -354,7 +356,7 @@ static void *_openQuicklyObservingContext;
     cell.textLabel.text = [fileURL lastPathComponent];
     
     if (_isShowingOpenQuickly)
-        cell.textLabelHighlightedCharacters = [_openQuicklyPresenter hitMaskForFileURL:fileURL];
+        cell.textLabelHighlightedCharacters = [self.openQuicklyPresenter hitMaskForFileURL:fileURL];
     else
         cell.textLabelHighlightedCharacters = nil;
     
@@ -415,7 +417,7 @@ static void *_openQuicklyObservingContext;
             _isShowingOpenQuickly = NO;
             [self.tableView reloadData];
         }
-        _openQuicklyPresenter.filterString = searchText;
+        self.openQuicklyPresenter.filterString = searchText;
     } repeats:NO];
 }
 

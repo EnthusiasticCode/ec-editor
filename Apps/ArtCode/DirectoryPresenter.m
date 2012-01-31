@@ -14,12 +14,13 @@
 
 @interface DirectoryPresenter () <NSFilePresenter>
 {
-    NSOperationQueue *_homeQueue;
+    NSThread *_homeThread;
     NSMutableArray *_mutableFileURLs;
     NSOperationQueue *_internalAccessQueue;
     __weak NSTimer *_updateCoalescingTimer;
 }
 @property (atomic, strong) NSURL *directoryURL;
+- (void)_enqueueUpdate;
 - (void)_updateFileURLs;
 @end
 
@@ -31,21 +32,7 @@
 
 - (NSArray *)fileURLs
 {
-    __block NSArray *fileURLs = nil;
-    if ([NSOperationQueue currentQueue] == _internalAccessQueue)
-    {
-        fileURLs = [_mutableFileURLs copy];
-    }
-    else
-    {
-        __weak DirectoryPresenter *weakSelf = self;
-        [_internalAccessQueue addOperationWithBlockWaitUntilFinished:^{
-            __strong DirectoryPresenter *safeWeakSelf = weakSelf;
-            if (safeWeakSelf)
-                fileURLs = [safeWeakSelf->_mutableFileURLs copy];
-        }];
-    }
-    return fileURLs;
+    return [_mutableFileURLs copy];
 }
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options
@@ -58,37 +45,34 @@
     _options = options;
     _internalAccessQueue = [[NSOperationQueue alloc] init];
     _internalAccessQueue.maxConcurrentOperationCount = 1;
-    _homeQueue = [NSOperationQueue currentQueue];
+    _homeThread = [NSThread currentThread];
     _mutableFileURLs = [[NSMutableArray alloc] init];
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [fileCoordinator coordinateReadingItemAtURL:_directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         [NSFileCoordinator addFilePresenter:self];
     }];
-    [_internalAccessQueue addOperationWithBlockWaitUntilFinished:^{
-        [[NSRunLoop currentRunLoop] run];
-    }];
-    __weak DirectoryPresenter *weakSelf = self;
-    [_internalAccessQueue addOperationWithBlock:^{
-        __strong DirectoryPresenter *safeWeakSelf = weakSelf;
-        if (safeWeakSelf)
-            safeWeakSelf->_updateCoalescingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-                [safeWeakSelf _updateFileURLs];
-            } repeats:NO];
-    }];
+    [self _enqueueUpdate];
     return self;
 }
 
 - (void)dealloc
 {
+    [_updateCoalescingTimer invalidate];
     [NSFileCoordinator removeFilePresenter:self];
 }
 
 #pragma mark - Private methods
 
+- (void)_enqueueUpdate
+{
+    [_updateCoalescingTimer invalidate];
+    _updateCoalescingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+        [self _updateFileURLs];
+    } repeats:NO];
+}
+
 - (void)_updateFileURLs
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
-    
     NSMutableIndexSet *indexesOfInsertedFileURLs = [[NSMutableIndexSet alloc] init];
     NSMutableIndexSet *indexesOfRemovedFileURLs = [[NSMutableIndexSet alloc] init];
     NSMutableArray *newFileURLs = [[NSMutableArray alloc] init];
@@ -100,8 +84,8 @@
                 [newFileURLs addObject:fileURL];
         }];
     
-    NSUInteger count = [_mutableFileURLs count], newCount = [newFileURLs count];
-    for (NSUInteger index = 0, newIndex = 0; index < count && newIndex < newCount;)
+    NSUInteger index = 0, newIndex = 0, count = [_mutableFileURLs count], newCount = [newFileURLs count];
+    while (index < count && newIndex < newCount)
     {
         NSComparisonResult result = [[_mutableFileURLs objectAtIndex:index] compare:[newFileURLs objectAtIndex:newIndex]];
         if (result == NSOrderedAscending)
@@ -120,21 +104,24 @@
             ++newIndex;
         }
     }
+    if (index < count)
+        [indexesOfRemovedFileURLs addIndexesInRange:NSMakeRange(index, count - index)];
+    if (newIndex < newCount)
+        [indexesOfInsertedFileURLs addIndexesInRange:NSMakeRange(newIndex, newCount - newIndex)];
     indexesOfInsertedFileURLs = [indexesOfInsertedFileURLs copy];
     indexesOfRemovedFileURLs = [indexesOfRemovedFileURLs copy];
-    __weak DirectoryPresenter *weakSelf = self;
-    [_homeQueue addOperationWithBlockWaitUntilFinished:^{
-        [weakSelf willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
-    }];
-    [_mutableFileURLs removeObjectsAtIndexes:indexesOfRemovedFileURLs];
-    [_homeQueue addOperationWithBlockWaitUntilFinished:^{
-        [weakSelf didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
-        [weakSelf willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
-    }];
-    _mutableFileURLs = newFileURLs;
-    [_homeQueue addOperationWithBlockWaitUntilFinished:^{
-        [weakSelf didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
-    }];
+    if ([indexesOfRemovedFileURLs count])
+    {
+        [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
+        [_mutableFileURLs removeObjectsAtIndexes:indexesOfRemovedFileURLs];
+        [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexesOfRemovedFileURLs forKey:@"fileURLs"];
+    }
+    if ([indexesOfInsertedFileURLs count])
+    {
+        [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
+        _mutableFileURLs = newFileURLs;
+        [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
+    }
 }
 
 #pragma mark - NSFilePresenter protocol
@@ -158,7 +145,7 @@
 {
     ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
     self.directoryURL = nil;
-    [self _updateFileURLs];
+    [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
     completionHandler(nil);
 }
 
@@ -171,32 +158,14 @@
 - (void)presentedItemDidChange
 {
     ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
-    if (_updateCoalescingTimer)
-        [_updateCoalescingTimer invalidate];
-    _updateCoalescingTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-        [self _updateFileURLs];
-    } repeats:NO];
+    [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
 }
 
 #pragma mark - NSFastEnumeration
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(__unsafe_unretained id [])buffer count:(NSUInteger)len
 {
-    __block NSUInteger count = 0;
-    if ([NSOperationQueue currentQueue] == _internalAccessQueue)
-    {
-        count = [_mutableFileURLs countByEnumeratingWithState:state objects:buffer count:len];
-    }
-    else
-    {
-        __weak DirectoryPresenter *weakSelf = self;
-        [_internalAccessQueue addOperationWithBlockWaitUntilFinished:^{
-            __strong DirectoryPresenter *safeWeakSelf = weakSelf;
-            if (safeWeakSelf)
-                count = [safeWeakSelf->_mutableFileURLs countByEnumeratingWithState:state objects:buffer count:len];
-        }];
-    }
-    return count;
+    return [_mutableFileURLs countByEnumeratingWithState:state objects:buffer count:len];
 }
 
 @end
