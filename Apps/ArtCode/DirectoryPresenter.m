@@ -51,7 +51,7 @@
     [fileCoordinator coordinateReadingItemAtURL:_directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
         [NSFileCoordinator addFilePresenter:self];
     }];
-    [self _enqueueUpdate];
+    [self _updateFileURLs];
     return self;
 }
 

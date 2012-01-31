@@ -151,6 +151,7 @@ static void *_directoryObservingContext;
             break;
         case NSKeyValueChangeRemoval:
             [self.gridView deleteCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
+            break;
         default:
             ECASSERT(NO && "unhandled KVO change");
             break;
