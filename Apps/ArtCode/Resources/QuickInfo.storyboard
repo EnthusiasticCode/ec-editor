@@ -129,7 +129,7 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Info" id="6qV-sK-vkf"/>
-                    <navigationItem key="navigationItem" title="Project Informations" id="WAa-aP-XLE"/>
+                    <navigationItem key="navigationItem" title="Project Information" id="WAa-aP-XLE"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
@@ -242,6 +242,7 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Info" id="RVZ-Xi-83j"/>
+                    <navigationItem key="navigationItem" title="Folder Information" id="5f4-5T-BgH"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
@@ -382,6 +383,7 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Info" id="Q6H-qD-eyp"/>
+                    <navigationItem key="navigationItem" title="File Information" id="d01-Uq-RSA"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>

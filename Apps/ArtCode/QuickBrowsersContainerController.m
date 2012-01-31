@@ -18,11 +18,14 @@
 
 @implementation QuickBrowsersContainerController
 
-+ (id)quickBrowsersContainerControllerForTab:(ArtCodeTab *)tab
++ (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab
 {
-    QuickBrowsersContainerController *result = [QuickBrowsersContainerController new];
-    result.tab = tab;
-    result.contentSizeForViewInPopover = CGSizeMake(500, 500);
+    static QuickBrowsersContainerController *_projectController = nil;
+    static QuickBrowsersContainerController *_folderController = nil;
+    static QuickBrowsersContainerController *_fileController = nil;
+    static NSArray *_commonControllers = nil;
+    if (!_commonControllers)
+        _commonControllers = [NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil];
     
     BOOL isDirectory = NO;
     [[NSFileManager defaultManager] fileExistsAtPath:[tab.currentURL path] isDirectory:&isDirectory];
@@ -30,13 +33,63 @@
     {
         BOOL isProjectRoot = NO;
         [ArtCodeProject projectNameFromURL:tab.currentURL isProjectRoot:&isProjectRoot];
-        [result setViewControllers:[NSArray arrayWithObjects: (isProjectRoot ? [QuickProjectInfoController new] : [QuickFolderInfoController new]), [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        if (isProjectRoot)
+        {
+            if (!_projectController)
+            {
+                _projectController = [[QuickBrowsersContainerController alloc] initWithTab:tab];
+                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickProjectInfoController new]];
+                [viewControllers addObjectsFromArray:_commonControllers];
+                [_projectController setViewControllers:viewControllers animated:NO];
+            }
+            else
+            {
+                _projectController.tab = tab;
+            }
+            return _projectController;
+        }
+        else
+        {
+            if (!_folderController)
+            {
+                _folderController = [[QuickBrowsersContainerController alloc] initWithTab:tab];
+                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickFolderInfoController new]];
+                [viewControllers addObjectsFromArray:_commonControllers];
+                [_folderController setViewControllers:viewControllers animated:NO];
+            }
+            else
+            {
+                _folderController.tab = tab;
+            }
+            return _folderController;
+        }
     }
     else
     {
-        [result setViewControllers:[NSArray arrayWithObjects: [QuickFileInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        if (!_fileController)
+        {
+            _fileController = [[QuickBrowsersContainerController alloc] initWithTab:tab];
+            NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickFileInfoController new]];
+            [viewControllers addObjectsFromArray:_commonControllers];
+            [_fileController setViewControllers:viewControllers animated:NO];
+        }
+        else
+        {
+            _fileController.tab = tab;
+        }
+        return _fileController;
     }
-    return result;
+    return nil;
+}
+
+- (id)initWithTab:(ArtCodeTab *)tab
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (!self)
+        return nil;
+    self.tab = tab;
+    self.contentSizeForViewInPopover = CGSizeMake(500, 500);
+    return self;
 }
 
 #pragma mark - Properties

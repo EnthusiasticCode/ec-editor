@@ -27,8 +27,6 @@
 #import "TopBarTitleControl.h"
 
 #import "QuickBrowsersContainerController.h"
-#import "QuickFileBrowserController.h"
-#import "QuickBookmarkBrowserController.h"
 
 static void *currentProjectContext;
 
@@ -185,6 +183,12 @@ static void *currentProjectContext;
 	return YES;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    [_quickBrowsersPopover dismissPopoverAnimated:YES];
+}
+
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [self willChangeValueForKey:@"editing"];
@@ -231,7 +235,7 @@ static void *currentProjectContext;
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
     // TODO the quick browser container controller gets created every time, is it ok?
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController quickBrowsersContainerControllerForTab:self.tab];
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.tab];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     if (!_quickBrowsersPopover)

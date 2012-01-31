@@ -33,6 +33,7 @@
 @interface CodeFileController () {
     UIActionSheet *_toolsActionSheet;
     CodeFileSearchBarController *_searchBarController;
+    UIPopoverController *_quickBrowsersPopover;
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
@@ -364,7 +365,19 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
-    // TODO
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.tab];
+    if (!_quickBrowsersPopover)
+    {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
+        [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+        
+        _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+        _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    }
+    quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    quickBrowserContainerController.openingButton = sender;
+    
+    [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - Toolbar Items Actions
@@ -466,6 +479,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    [_quickBrowsersPopover dismissPopoverAnimated:YES];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation

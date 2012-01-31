@@ -13,11 +13,13 @@
 
 @interface QuickBrowsersContainerController : UITabBarController
 
-+ (id)quickBrowsersContainerControllerForTab:(ArtCodeTab *)tab;
++ (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab;
 
 @property (nonatomic, strong) ArtCodeTab *tab;
 @property (nonatomic, weak) UIPopoverController *popoverController;
 @property (nonatomic, weak) UIButton *openingButton;
+
+- (id)initWithTab:(ArtCodeTab *)tab;
 
 @end
 
