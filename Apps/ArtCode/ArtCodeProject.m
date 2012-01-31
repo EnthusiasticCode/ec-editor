@@ -7,12 +7,12 @@
 //
 
 #import "ArtCodeProject.h"
+#import "ArtCodeURL.h"
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
 #import "Cache.h"
 #import "UIColor+HexColor.h"
 
-static NSString * const ProjectsDirectoryName = @"LocalProjects";
 static NSString * const ProjectPlistFileName = @".acproj";
 static NSString * const ProjectExtension = @".weakpkg";
 static Cache *openProjects = nil;
@@ -270,55 +270,13 @@ static Cache *openProjects = nil;
 
 #pragma mark Class methods
 
-+ (NSURL *)projectsDirectory
-{
-    static NSURL *_projectsDirecotry = nil;
-    if (!_projectsDirecotry)
-        _projectsDirecotry = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
-    return _projectsDirecotry;
-}
-
-+ (NSUInteger)_projectsDirectoryPathComponentsCount
-{
-    static NSUInteger __projectsDirectoryPathComponentsCount = 0;
-    if (!__projectsDirectoryPathComponentsCount)
-    {
-        __projectsDirectoryPathComponentsCount = [[[self projectsDirectory] pathComponents] count];
-    }
-    return __projectsDirectoryPathComponentsCount;
-}
-
-+ (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL
-{
-    if (![fileURL isFileURL])
-        return nil;
-    NSArray *pathComponents = [[fileURL URLByStandardizingPath] pathComponents];
-    if (![[pathComponents subarrayWithRange:NSMakeRange(0, self._projectsDirectoryPathComponentsCount)] isEqualToArray:[[self projectsDirectory] pathComponents]])
-        return nil;
-    pathComponents = [pathComponents subarrayWithRange:NSMakeRange(self._projectsDirectoryPathComponentsCount, [pathComponents count] - self._projectsDirectoryPathComponentsCount)];
-    return [NSString pathWithComponents:pathComponents];
-}
-
-+ (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
-{
-    NSString *projectsPath = [[self projectsDirectory] path];
-    NSString *path = [url path];
-    if (![path hasPrefix:projectsPath])
-        return nil;
-    path = [path substringFromIndex:[projectsPath length]];
-    NSArray *components = [path pathComponents];
-    if (isProjectRoot)
-        *isProjectRoot = ([components count] == 2);
-    return [components count] >= 2 ? [[components objectAtIndex:1] stringByDeletingPathExtension] : nil;
-}
-
 + (BOOL)projectWithNameExists:(NSString *)name
 {
     if (![name hasSuffix:ProjectExtension])
         name = [name stringByAppendingString:ProjectExtension];
     
     BOOL isDirectory = NO;
-    BOOL exists =[[NSFileManager new] fileExistsAtPath:[[[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES] path] isDirectory:&isDirectory];
+    BOOL exists =[[NSFileManager new] fileExistsAtPath:[[[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES] path] isDirectory:&isDirectory];
     return exists && isDirectory;
 }
 
@@ -327,7 +285,7 @@ static Cache *openProjects = nil;
     name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
     
     NSFileManager *new = [NSFileManager new];
-    NSString *projectsPath = [[self projectsDirectory] path];
+    NSString *projectsPath = [[ArtCodeURL projectsDirectory] path];
     
     NSUInteger count = 0;
     NSString *result = name;
@@ -343,7 +301,7 @@ static Cache *openProjects = nil;
     if (![name hasSuffix:ProjectExtension])
         name = [name stringByAppendingString:ProjectExtension];
     
-    return [[self projectsDirectory] URLByAppendingPathComponent:name];
+    return [[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name];
 }
 
 + (id)projectWithName:(NSString *)name
@@ -352,7 +310,7 @@ static Cache *openProjects = nil;
     if (![name hasSuffix:ProjectExtension])
         name = [name stringByAppendingString:ProjectExtension];
     
-    NSURL *projectUrl = [[self projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
+    NSURL *projectUrl = [[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
     
     if (!openProjects)
         openProjects = [Cache new];
@@ -379,7 +337,7 @@ static Cache *openProjects = nil;
 {
     ECASSERT(url != nil);
     
-    NSString *projectName = [self projectNameFromURL:url isProjectRoot:NULL];
+    NSString *projectName = [ArtCodeURL projectNameFromURL:url isProjectRoot:NULL];
     if (!projectName)
         return nil;
     

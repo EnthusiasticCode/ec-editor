@@ -8,6 +8,7 @@
 
 #import "QuickBrowsersContainerController.h"
 
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 #import "QuickFileBrowserController.h"
@@ -32,7 +33,7 @@
     if (isDirectory)
     {
         BOOL isProjectRoot = NO;
-        [ArtCodeProject projectNameFromURL:tab.currentURL isProjectRoot:&isProjectRoot];
+        [ArtCodeURL projectNameFromURL:tab.currentURL isProjectRoot:&isProjectRoot];
         if (isProjectRoot)
         {
             if (!_projectController)

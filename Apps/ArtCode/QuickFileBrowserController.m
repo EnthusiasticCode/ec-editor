@@ -11,6 +11,7 @@
 
 #import "NSTimer+BlockTimer.h"
 
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
@@ -46,7 +47,7 @@ static void *_directoryObservingContext;
 {
     if (!_directoryPresenter)
     {
-        NSURL *projectURL = self.quickBrowsersContainerController.tab.currentProject.URL;
+        NSURL *projectURL = self.quickBrowsersContainerController.tab.currentURL.project.URL;
         _directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
         [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
         _projectURLAbsoluteString = [projectURL absoluteString];
@@ -222,7 +223,7 @@ static void *_directoryObservingContext;
     
     cell.textLabel.text = [fileURL lastPathComponent];
     cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
-    cell.detailTextLabel.text = [[ArtCodeProject pathRelativeToProjectsDirectory:fileURL] prettyPath];
+    cell.detailTextLabel.text = [[ArtCodeURL pathRelativeToProjectsDirectory:fileURL] prettyPath];
     
     return cell;
 }
@@ -241,13 +242,13 @@ static void *_directoryObservingContext;
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[self.quickBrowsersContainerController.tab.currentProject URL]];
+    [self.quickBrowsersContainerController.tab pushURL:[self.quickBrowsersContainerController.tab.currentURL.project URL]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[ArtCodeProject projectsDirectory]];
+    [self.quickBrowsersContainerController.tab pushURL:[ArtCodeURL projectsDirectory]];
 }
 
 @end

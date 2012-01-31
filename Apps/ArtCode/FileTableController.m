@@ -21,6 +21,7 @@
 #import "NSURL+Utilities.h"
 #import "BezelAlert.h"
 
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 #import "TopBarToolbar.h"
@@ -112,10 +113,15 @@ static void *_openQuicklyObservingContext;
     if (directory == _directory)
         return;
     [self willChangeValueForKey:@"directory"];
+    [_selectedURLs removeAllObjects];
+    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
     _directory = directory;
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    
+    _currentObservedProject = self.tab.currentURL.project;
+    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
     [self.tableView reloadData];
     [self didChangeValueForKey:@"directory"];
 }
@@ -188,7 +194,7 @@ static void *_openQuicklyObservingContext;
     
     [_selectedURLs removeAllObjects];
     
-    _currentObservedProject = self.tab.currentProject;
+    _currentObservedProject = self.tab.currentURL.project;
     [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
 }
@@ -285,6 +291,8 @@ static void *_openQuicklyObservingContext;
     // this is so we stop observing
     self.directoryPresenter = nil;
     self.openQuicklyPresenter = nil;
+    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
 }
 
 #pragma mark - Single tab content controller protocol methods
@@ -317,14 +325,14 @@ static void *_openQuicklyObservingContext;
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
 {
     BOOL isRoot = NO;
-    NSString *projectName = [ArtCodeProject projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
+    NSString *projectName = [ArtCodeURL projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
     if (!isRoot)
     {
         return NO; // default behaviour
     }
     else
     {
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentProject.labelColor], projectName, nil] 
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentURL.project.labelColor], projectName, nil] 
                         selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;
@@ -592,7 +600,7 @@ static void *_openQuicklyObservingContext;
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = self.tab.currentProject.URL;
+    directoryBrowser.URL = self.tab.currentURL.project.URL;
     _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
     _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];

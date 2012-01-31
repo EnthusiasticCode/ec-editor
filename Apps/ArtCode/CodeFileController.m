@@ -25,6 +25,7 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "CodeFile.h"
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
@@ -152,7 +153,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Bookmark markers
         [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            if (!line.isTruncation && [[this.tab.currentProject bookmarksForFile:this.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
+            if (!line.isTruncation && [[this.tab.currentURL.project bookmarksForFile:this.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
             {
                 CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
                 CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
@@ -594,16 +595,16 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    NSArray *bookmarks = [self.tab.currentProject bookmarksForFile:self.tab.currentURL atLine:lineNumber];
+    NSArray *bookmarks = [self.tab.currentURL.project bookmarksForFile:self.tab.currentURL atLine:lineNumber];
     if ([bookmarks count] == 0)
     {
-        [self.tab.currentProject addBookmarkWithFileURL:self.tab.currentURL line:lineNumber note:nil];
+        [self.tab.currentURL.project addBookmarkWithFileURL:self.tab.currentURL line:lineNumber note:nil];
     }
     else
     {
         for (ProjectBookmark *bookmark in bookmarks)
         {
-            [self.tab.currentProject removeBookmark:bookmark];
+            [self.tab.currentURL.project removeBookmark:bookmark];
         }
     }
     [self.codeView setNeedsDisplay];

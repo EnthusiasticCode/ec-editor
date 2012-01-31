@@ -12,6 +12,7 @@
 #import "NSTimer+BlockTimer.h"
 #import "NSArray+ScoreForAbbreviation.h"
 
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
@@ -112,19 +113,19 @@
     
     if ([searchText length] == 0)
     {
-        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentURL.project.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [[obj1 description] compare:[obj2 description]];
         }];
         _sortedBookmarksHitMasks = nil;
         [self.tableView reloadData];
-        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.quickBrowsersContainerController.tab.currentProject.name];
+        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.quickBrowsersContainerController.tab.currentURL.project.name];
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         NSArray *hitMasks = nil;
-        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
+        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentURL.project.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
             return [bookmark description];
         }];
         _sortedBookmarksHitMasks = hitMasks;

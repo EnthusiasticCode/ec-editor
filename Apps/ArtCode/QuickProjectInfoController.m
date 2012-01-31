@@ -10,6 +10,7 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "AppStyle.h"
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
@@ -61,7 +62,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.projectNameTextField.text = [self.quickBrowsersContainerController.tab.currentProject name];
+    self.projectNameTextField.text = [self.quickBrowsersContainerController.tab.currentURL.project name];
     // TODO add project files and size
 }
 
@@ -79,14 +80,14 @@
     
     // TODO check that name is ok
 
-    [self.quickBrowsersContainerController.tab.currentProject setName:textField.text];
+    [self.quickBrowsersContainerController.tab.currentURL.project setName:textField.text];
 }
 
 #pragma mark - Private Methods
 
 - (void)_labelColorChangeAction:(id)sender
 {
-    [self.quickBrowsersContainerController.tab.currentProject setLabelColor:[sender selectedColor]];
+    [self.quickBrowsersContainerController.tab.currentURL.project setLabelColor:[sender selectedColor]];
 }
 
 @end

@@ -12,8 +12,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 
+#import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "Application.h"
 #import "ArtCodeProject.h"
 
 #import "ProjectTableController.h"
@@ -304,7 +304,7 @@ static const void *contentViewControllerContext;
     if (_tab)
     {
         [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
-        [_tab.application removeTabAtIndex:[_tab.application.tabs indexOfObject:_tab]];
+        [ArtCodeTab removeTab:_tab];
     }
     
     _tab = tab;
@@ -387,7 +387,7 @@ static const void *contentViewControllerContext;
         }
         else
         {
-            NSArray *pathComponents = [[ArtCodeProject pathRelativeToProjectsDirectory:self.tab.currentURL] pathComponents];
+            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.tab.currentURL] pathComponents];
             NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
             NSInteger lastIndex = [pathComponents count] - 1;
             [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
@@ -458,7 +458,7 @@ static const void *contentViewControllerContext;
     __block BOOL currentURLExists = NO;
     __block BOOL currentURLIsDirectory = NO;
     [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[ArtCodeProject projectsDirectory]];
+        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[ArtCodeURL projectsDirectory]];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
     }];

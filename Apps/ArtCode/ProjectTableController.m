@@ -13,9 +13,9 @@
 #import "ColorSelectionControl.h"
 
 #import "ArtCodeAppDelegate.h"
-#import "Application.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeURL.h"
 
 #import "SingleTabController.h"
 #import "NewProjectNavigationController.h"
@@ -362,7 +362,7 @@ static void *_directoryObservingContext;
                 NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 
                 // Generate mail subject
-                NSString *projectName = [ArtCodeProject projectNameFromURL:projectURL isProjectRoot:NULL];
+                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
                 if (projectName)
                     [subject appendFormat:@"%@, ", projectName];
                 

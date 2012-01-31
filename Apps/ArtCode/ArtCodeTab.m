@@ -7,31 +7,61 @@
 //
 
 #import "ArtCodeTab.h"
-#import "Application.h"
-#import "HistoryItem.h"
+#import "ArtCodeURL.h"
 #import "ArtCodeProject.h"
 #import <objc/runtime.h>
 
+static NSMutableArray *_mutableTabs;
+
+@interface ArtCodeTab ()
+{
+    NSMutableArray *_mutableHistoryURLs;
+}
+- (id)_initWithTab:(ArtCodeTab *)tab;
+@end
 
 @implementation ArtCodeTab
 
-@dynamic currentHistoryPosition, application, historyItems;
-@synthesize currentProject;
+#pragma mark - Class methods
+
++ (void)initialize
+{
+    _mutableTabs = [[NSMutableArray alloc] init];
+    [_mutableTabs addObject:[self blankTab]];
+}
+
++ (NSArray *)allTabs
+{
+    return [_mutableTabs copy];
+}
+
++ (ArtCodeTab *)blankTab
+{
+    return [[self alloc] init];
+}
+
++ (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
+{
+    return [[self alloc] _initWithTab:tab];
+}
+
++ (void)removeTab:(ArtCodeTab *)tab
+{
+    [_mutableTabs removeObject:tab];
+}
+
+#pragma mark - Properties
+
+@synthesize currentHistoryPosition = _currentHistoryPosition;
+
+- (NSArray *)historyURLs
+{
+    return [_mutableHistoryURLs copy];
+}
 
 - (NSURL *)currentURL
 {
-    return [[self.historyItems objectAtIndex:self.currentHistoryPosition] URL];
-}
-
-- (ArtCodeProject *)currentProject
-{
-    if (currentProject == nil)
-    {
-        NSString *projectName = [ArtCodeProject projectNameFromURL:self.currentURL isProjectRoot:NULL];
-        if ([ArtCodeProject projectWithNameExists:projectName])
-            currentProject = [ArtCodeProject projectWithName:projectName];
-    }
-    return currentProject;
+    return [self.historyURLs objectAtIndex:self.currentHistoryPosition];
 }
 
 + (NSSet *)keyPathsForValuesAffectingCurrentURL
@@ -51,39 +81,46 @@
 
 - (BOOL)canMoveForwardInHistory
 {
-    return self.currentHistoryPosition < [self.historyItems count] - 1;
+    return self.currentHistoryPosition < [self.historyURLs count] - 1;
 }
 
 + (NSSet *)keyPathsForValuesAffectingCanMoveForwardInHistory
 {
-    return [NSSet setWithObjects:@"currentHistoryPosition", @"historyItems", nil];
+    return [NSSet setWithObjects:@"currentHistoryPosition", @"historyURLs", nil];
+}
+
+- (id)_initWithTab:(ArtCodeTab *)tab
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _mutableHistoryURLs = [tab.historyURLs mutableCopy];
+    if (!_mutableHistoryURLs)
+        _mutableHistoryURLs = [[NSMutableArray alloc] init];
+    if (![_mutableHistoryURLs count])
+        [_mutableHistoryURLs addObject:[ArtCodeURL projectsDirectory]];
+    return self;
+}
+
+- (id)init
+{
+    return [self _initWithTab:nil];
 }
 
 - (void)pushURL:(NSURL *)url
 {
     ECASSERT(url);
-    if (![self.historyItems count])
+    if (![_mutableHistoryURLs count])
     {
-        HistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
-        historyItem.tab = self;
-        historyItem.URL = url;
+        [_mutableHistoryURLs addObject:url];
+        self.currentHistoryPosition = 0;
         return;
     }
-    NSUInteger lastPosition = [self.historyItems count] - 1;
+    NSUInteger lastPosition = [self.historyURLs count] - 1;
     if (self.currentHistoryPosition < lastPosition)
-    {
-        NSArray *historyItemsToDelete = [[self.historyItems array] subarrayWithRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
-        for (HistoryItem *historyItem in historyItemsToDelete)
-        {
-            historyItem.tab = nil;
-            [self.managedObjectContext deleteObject:historyItem];
-        }
-    }
-    HistoryItem *historyItem = [NSEntityDescription insertNewObjectForEntityForName:@"HistoryItem" inManagedObjectContext:self.managedObjectContext];
-    historyItem.tab = self;
-    historyItem.URL = url;
+        [_mutableHistoryURLs removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
+    [_mutableHistoryURLs addObject:url];
     self.currentHistoryPosition += 1;
-    currentProject = nil;
 }
 
 - (void)moveBackInHistory
