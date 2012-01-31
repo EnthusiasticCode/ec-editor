@@ -161,6 +161,9 @@
 		CD7BC79B14B70FBE00313CDB /* itemIcon_Minimap.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79714B70FBE00313CDB /* itemIcon_Minimap.png */; };
 		CD7BC79C14B70FBE00313CDB /* itemIcon_Options.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79814B70FBE00313CDB /* itemIcon_Options.png */; };
 		CD7BC79E14B70FE600313CDB /* itemIcon_Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */; };
+		CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9E914D817D40048A48A /* NewFileFolderController.m */; };
+		CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */; };
+		CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
@@ -453,6 +456,12 @@
 		CD7BC79714B70FBE00313CDB /* itemIcon_Minimap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Minimap.png; sourceTree = "<group>"; };
 		CD7BC79814B70FBE00313CDB /* itemIcon_Options.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Options.png; sourceTree = "<group>"; };
 		CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Tab.png; sourceTree = "<group>"; };
+		CD7BD9E814D817D40048A48A /* NewFileFolderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileFolderController.h; sourceTree = "<group>"; };
+		CD7BD9E914D817D40048A48A /* NewFileFolderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileFolderController.m; sourceTree = "<group>"; };
+		CD7BD9EA14D817D40048A48A /* NewFileTemplateSelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileTemplateSelectionController.h; sourceTree = "<group>"; };
+		CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileTemplateSelectionController.m; sourceTree = "<group>"; };
+		CD7BD9EF14D83C850048A48A /* UIViewController+PresentingPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIViewController+PresentingPopoverController.h"; sourceTree = "<group>"; };
+		CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+PresentingPopoverController.m"; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD7D2AE513C0CD2600B889EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -714,6 +723,8 @@
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
 				B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */,
 				B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */,
+				CD7BD9EF14D83C850048A48A /* UIViewController+PresentingPopoverController.h */,
+				CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 			);
 			name = Additions;
@@ -939,10 +950,6 @@
 		CD7B434E14CEC9E900090CAE /* Quick Browsers */ = {
 			isa = PBXGroup;
 			children = (
-				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
-				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
-				B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */,
-				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
 				CD7B434F14CECA5700090CAE /* QuickBrowsersContainerController.h */,
 				CD7B435014CECA5700090CAE /* QuickBrowsersContainerController.m */,
 				CD7B435214CECA9900090CAE /* QuickFileBrowserController.h */,
@@ -951,6 +958,10 @@
 				CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */,
 				CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */,
 				CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */,
+				B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */,
+				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
+				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
+				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -1221,8 +1232,12 @@
 		CDB5DB6214C6F532003DFD1F /* File Browser */ = {
 			isa = PBXGroup;
 			children = (
+				CD7BD9EA14D817D40048A48A /* NewFileTemplateSelectionController.h */,
+				CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */,
 				B71A1DE51435112700672F65 /* NewFileController.h */,
 				B71A1DE61435112700672F65 /* NewFileController.m */,
+				CD7BD9E814D817D40048A48A /* NewFileFolderController.h */,
+				CD7BD9E914D817D40048A48A /* NewFileFolderController.m */,
 				CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */,
 				CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
@@ -1575,6 +1590,9 @@
 				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
 				B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */,
 				B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */,
+				CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */,
+				CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */,
+				CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

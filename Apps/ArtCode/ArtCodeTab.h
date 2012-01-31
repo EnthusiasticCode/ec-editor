@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
 @class Application, HistoryItem, ArtCodeProject;
@@ -41,5 +41,14 @@
 /// Convinience method that moves the tab's history forward by one step.
 /// KVO attached to currentURL will be notified after this method is called.
 - (void)moveForwardInHistory;
+
+@end
+
+
+@interface UIViewController (ArtCodeTab)
+
+/// Retrieve the ArtCode Tab that the view controller is in.
+/// This methods try to retrieve the tab recursively on the receiver's parent view controller.
+@property (nonatomic, weak) ArtCodeTab *artCodeTab;
 
 @end

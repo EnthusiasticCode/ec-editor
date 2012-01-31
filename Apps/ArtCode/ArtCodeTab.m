@@ -10,6 +10,7 @@
 #import "Application.h"
 #import "HistoryItem.h"
 #import "ArtCodeProject.h"
+#import <objc/runtime.h>
 
 
 @implementation ArtCodeTab
@@ -95,6 +96,32 @@
 {
     if (self.canMoveForwardInHistory)
         self.currentHistoryPosition += 1;
+}
+
+@end
+
+
+@implementation UIViewController (ArtCodeTab)
+
+static void *artCodeTabKey;
+
+- (ArtCodeTab *)artCodeTab
+{
+    ArtCodeTab *tab = objc_getAssociatedObject(self, &artCodeTabKey);
+    if (tab)
+        return tab;
+    
+    UIViewController *controller = self;
+    do {
+        controller = controller.parentViewController;
+        tab = objc_getAssociatedObject(controller, &artCodeTabKey);
+    } while (tab == nil && controller != nil);
+    return tab;
+}
+
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
+{
+    objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_ASSIGN);
 }
 
 @end
