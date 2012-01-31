@@ -474,7 +474,7 @@ static const void *contentViewControllerContext;
     }
     else if (currentURLExists)
     {
-#warning TODO route bookmarks and remotes
+        // TODO route bookmarks and remotes
         if (currentURLIsDirectory)
         {
             if ([self.contentViewController isKindOfClass:[FileTableController class]])
@@ -485,7 +485,8 @@ static const void *contentViewControllerContext;
             FileTableController *fileTableController = (FileTableController *)result;
             fileTableController.tab = self.tab;
             [fileTableController setDirectory:url];
-//            [self _setupDefaultToolbarTitle];
+            if (result == self.contentViewController)
+                [self updateDefaultToolbarTitle];
         }
         else
         {

@@ -289,18 +289,21 @@ static void *_openQuicklyObservingContext;
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
+    // TODO the quick browser container controller gets created every time, is it ok?
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController quickBrowsersContainerControllerForTab:self.tab];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
+    [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     if (!_quickBrowsersPopover)
     {
-        QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController quickBrowsersContainerControllerForTab:self.tab];
-        
-        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
-        [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-        
         _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
         _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
-        quickBrowserContainerController.popoverController = _quickBrowsersPopover;
-        quickBrowserContainerController.openingButton = sender;
     }
+    else
+    {
+        [_quickBrowsersPopover setContentViewController:navigationController animated:NO];
+    }
+    quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    quickBrowserContainerController.openingButton = sender;
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 

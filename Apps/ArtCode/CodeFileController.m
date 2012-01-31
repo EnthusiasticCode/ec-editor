@@ -9,6 +9,7 @@
 #import "CodeFileController.h"
 #import "SingleTabController.h"
 #import "CodeFileSearchBarController.h"
+#import "QuickBrowsersContainerController.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import "FileBuffer.h"
@@ -351,12 +352,19 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [self didChangeValueForKey:@"minimapVisible"];
 }
 
-#pragma mark - Toolbar Items Actions
+#pragma mark - Single tab controller informal protocol
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
 {
     return YES;
 }
+
+- (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
+{
+    // TODO
+}
+
+#pragma mark - Toolbar Items Actions
 
 - (void)toolButtonAction:(id)sender
 {
