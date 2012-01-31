@@ -17,10 +17,13 @@
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
 
+#import "SmartFilteredDirectoryPresenter.h"
+
+static void *_directoryObservingContext;
 
 @interface QuickFileBrowserController ()
 
-@property (nonatomic, strong, readonly) SmartFilteredDirectoryPresenter *directoryPresenter;
+@property (nonatomic, strong) SmartFilteredDirectoryPresenter *directoryPresenter;
 
 - (void)_showBrowserInTabAction:(id)sender;
 - (void)_showProjectsInTabAction:(id)sender;
@@ -37,18 +40,29 @@
 
 #pragma mark - Properties
 
-@synthesize directoryPresenter, tableView;
+@synthesize directoryPresenter = _directoryPresenter, tableView;
 
 - (DirectoryPresenter *)directoryPresenter
 {
-    if (!directoryPresenter)
+    if (!_directoryPresenter)
     {
         NSURL *projectURL = self.quickBrowsersContainerController.tab.currentProject.URL;
-        directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
-        directoryPresenter.delegate = self;
+        _directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
+        [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
         _projectURLAbsoluteString = [projectURL absoluteString];
     }
-    return directoryPresenter;
+    return _directoryPresenter;
+}
+
+- (void)setDirectoryPresenter:(SmartFilteredDirectoryPresenter *)directoryPresenter
+{
+    if (directoryPresenter == _directoryPresenter)
+        return;
+    [self willChangeValueForKey:@"directoryPresenter"];
+    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
+    _directoryPresenter = directoryPresenter;
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
+    [self didChangeValueForKey:@"directoryPresenter"];
 }
 
 - (UITableView *)tableView
@@ -86,11 +100,49 @@
     return [self init];
 }
 
+- (void)dealloc
+{
+    self.directoryPresenter = nil; // this is so we stop observing
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     
-    directoryPresenter = nil;
+    self.directoryPresenter = nil;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &_directoryObservingContext)
+    {
+        NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+        [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+        }];
+        switch (kind) {
+            case NSKeyValueChangeInsertion:
+                [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case NSKeyValueChangeRemoval:
+                [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case NSKeyValueChangeReplacement:
+                [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+                break;
+            case NSKeyValueChangeSetting:
+                [self.tableView reloadData];
+                break;
+            default:
+                ECASSERT(NO && "unhandled KVO change");
+                break;
+        }
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 #pragma mark - View lifecycle
@@ -128,7 +180,7 @@
     _searchBar = nil;
     _infoLabel = nil;
     tableView = nil;
-    directoryPresenter = nil;
+    self.directoryPresenter = nil;
     
     [super viewDidUnload];
 }
@@ -142,34 +194,6 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
-}
-
-#pragma mark - Directory Presenter Delegate
-
-- (NSOperationQueue *)delegateOperationQueue
-{
-    return [NSOperationQueue mainQueue];
-}
-
-- (void)directoryPresenter:(DirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
-{
-    NSMutableArray *insertIndexPaths = [NSMutableArray arrayWithCapacity:[insertIndexes count]];
-    [insertIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [insertIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    NSMutableArray *removeIndexPaths = [NSMutableArray arrayWithCapacity:[removeIndexes count]];
-    [removeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [removeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    NSMutableArray *changeIndexPaths = [NSMutableArray arrayWithCapacity:[changeIndexes count]];
-    [changeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [changeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView deleteRowsAtIndexPaths:removeIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView reloadRowsAtIndexPaths:changeIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-    [self.tableView endUpdates];
 }
 
 #pragma mark - UISeachBar Delegate Methods

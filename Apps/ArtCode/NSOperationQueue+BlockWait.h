@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSOperationQueue (ECAdditions)
+@interface NSOperationQueue (BlockWait)
 
 - (void)addOperationWithBlockWaitUntilFinished:(void (^)(void))block;
 

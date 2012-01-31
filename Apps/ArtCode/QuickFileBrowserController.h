@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DirectoryPresenter.h"
 
 
-@interface QuickFileBrowserController : UIViewController <UISearchBarDelegate, DirectoryPresenterDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface QuickFileBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong, readonly) UITableView *tableView;
 

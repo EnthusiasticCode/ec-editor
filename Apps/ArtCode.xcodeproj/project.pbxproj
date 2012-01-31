@@ -78,6 +78,9 @@
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
+		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
+		B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */; };
+		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -224,7 +227,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ArtCodeTab.h; sourceTree = "<group>"; };
+		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B702320A14345B5A006D23F7 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Application.h; sourceTree = "<group>"; };
 		B702320B14345B5A006D23F7 /* Application.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Application.m; sourceTree = "<group>"; };
@@ -301,6 +304,12 @@
 		B7AC174214216D1C009E9205 /* NewProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
+		B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFilteredDirectoryPresenter.h; sourceTree = "<group>"; };
+		B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFilteredDirectoryPresenter.m; sourceTree = "<group>"; };
+		B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+BlockWait.h"; sourceTree = "<group>"; };
+		B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+BlockWait.m"; sourceTree = "<group>"; };
+		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
+		B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Compare.m"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -675,6 +684,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */,
+				B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
 				B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */,
 				B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */,
@@ -695,6 +706,8 @@
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
+				B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */,
+				B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 			);
 			name = Additions;
@@ -749,6 +762,8 @@
 			children = (
 				B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */,
 				B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */,
+				B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */,
+				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
 				B7FB79CD14D6056B0080A714 /* FileBuffer.h */,
 				B7FB79CE14D6056B0080A714 /* FileBuffer.m */,
 			);
@@ -1545,6 +1560,9 @@
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
 				CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
+				B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */,
+				B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */,
+				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

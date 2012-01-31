@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "NSOperationQueue+ECAdditions.h"
+#import "NSOperationQueue+BlockWait.h"
 
-@implementation NSOperationQueue (ECAdditions)
+@implementation NSOperationQueue (BlockWait)
 
 - (void)addOperationWithBlockWaitUntilFinished:(void (^)(void))block
 {
