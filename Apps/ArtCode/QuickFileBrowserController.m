@@ -116,28 +116,8 @@ static void *_directoryObservingContext;
 {
     if (context == &_directoryObservingContext)
     {
-        NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-        [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-        }];
-        switch (kind) {
-            case NSKeyValueChangeInsertion:
-                [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-                break;
-            case NSKeyValueChangeRemoval:
-                [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-                break;
-            case NSKeyValueChangeReplacement:
-                [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-                break;
-            case NSKeyValueChangeSetting:
-                [self.tableView reloadData];
-                break;
-            default:
-                ECASSERT(NO && "unhandled KVO change");
-                break;
-        }
+        // Do not try to be smart here and update the display of the table view, UITableView is too slow when updates affect a large number of rows
+        [self.tableView reloadData];
     }
     else
     {
