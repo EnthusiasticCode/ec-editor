@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class Group;
 
-@interface NewFileController : UITableViewController
+@interface NewFileController : UIViewController
 
-@property (nonatomic, strong) Group *group;
+@property (strong, nonatomic) IBOutlet UITextField *fileNameTextField;
+
+- (IBAction)createAction:(id)sender;
 
 @end

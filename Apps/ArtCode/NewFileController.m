@@ -7,57 +7,27 @@
 //
 
 #import "NewFileController.h"
-#import "NSURL+Utilities.h"
 
 
+@implementation NewFileController
 
-@implementation NewFileController {
-    NSArray *_fileURLs;
+@synthesize fileNameTextField;
+
+#pragma mark - View lifecycle
+
+- (void)viewDidUnload {
+    [self setFileNameTextField:nil];
+    [super viewDidUnload];
 }
-
-@synthesize group = _group;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    [fileCoordinator coordinateReadingItemAtURL:[NSURL applicationDocumentsDirectory] options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        _fileURLs = [fileManager contentsOfDirectoryAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
-    }];
-    [super viewWillAppear:animated];
-}
+#pragma mark - Public Methods
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    _fileURLs = nil;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [_fileURLs count];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString * const cellReuseIdentifier = @"Cell";
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellReuseIdentifier];
-    if (!cell)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellReuseIdentifier];
-    }
-    cell.textLabel.text = [[_fileURLs objectAtIndex:indexPath.row] lastPathComponent];
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
+- (IBAction)createAction:(id)sender {
 }
 
 @end

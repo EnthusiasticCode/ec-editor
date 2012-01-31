@@ -26,6 +26,7 @@
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 
+#import "UIViewController+PresentingPopoverController.h"
 #import "QuickBrowsersContainerController.h"
 
 #import "DirectoryPresenter.h"
@@ -543,10 +544,13 @@ static void *_openQuicklyObservingContext;
 {
     if (!_toolNormalAddPopover)
     {
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewFilePopover" bundle:[NSBundle mainBundle]];
-        NewFileController *popoverViewController = (NewFileController *)[storyboard instantiateInitialViewController];
-        //        popoverViewController.group = self.group;
+        UINavigationController *popoverViewController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"NewFilePopover" bundle:nil] instantiateInitialViewController];
+        popoverViewController.artCodeTab = self.tab;
+        [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+        
         _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
+        _toolNormalAddPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+        popoverViewController.presentingPopoverController = _toolNormalAddPopover;
     }
     [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
