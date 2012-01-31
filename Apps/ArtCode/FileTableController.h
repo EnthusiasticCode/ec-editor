@@ -8,12 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import "DirectoryPresenter.h"
 
 @class ToolFiltersView, Group, ArtCodeTab;
 
 
-@interface FileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DirectoryPresenterDelegate>
+@interface FileTableController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) ArtCodeTab *tab;
 @property (nonatomic, strong) NSURL *directory;

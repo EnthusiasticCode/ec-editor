@@ -365,7 +365,7 @@ static Cache *openProjects = nil;
     if (![[NSFileManager new] fileExistsAtPath:[projectUrl path]])
     {
         [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-            [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:NO attributes:nil error:NULL];
+            [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:YES attributes:nil error:NULL];
         }];
     }
     

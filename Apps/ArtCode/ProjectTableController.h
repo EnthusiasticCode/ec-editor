@@ -9,12 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 #import "GridView.h"
-#import "DirectoryPresenter.h"
 
 @class Application, ArtCodeTab, ProjectCell;
 
 
-@interface ProjectTableController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, DirectoryPresenterDelegate>
+@interface ProjectTableController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
 @property (nonatomic, strong) ArtCodeTab *tab;

@@ -28,7 +28,12 @@
 
 #import "QuickBrowsersContainerController.h"
 
-static void *currentProjectContext;
+#import "DirectoryPresenter.h"
+#import "SmartFilteredDirectoryPresenter.h"
+
+static void *_currentProjectContext;
+static void *_directoryObservingContext;
+static void *_openQuicklyObservingContext;
 
 
 @interface FileTableController () {
@@ -47,12 +52,13 @@ static void *currentProjectContext;
     
     NSMutableArray *_selectedURLs;
     
-    DirectoryPresenter *_directoryPresenter;
-    SmartFilteredDirectoryPresenter *_openQuicklyPresenter;
     BOOL _isShowingOpenQuickly;
     
     UIPopoverController *_quickBrowsersPopover;
 }
+
+@property (nonatomic, strong) DirectoryPresenter *directoryPresenter;
+@property (nonatomic, strong) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -76,6 +82,29 @@ static void *currentProjectContext;
 #pragma mark - Properties
 
 @synthesize directory = _directory, tab;
+@synthesize directoryPresenter = _directoryPresenter, openQuicklyPresenter = _openQuicklyPresenter;
+
+- (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
+{
+    if (directoryPresenter == _directoryPresenter)
+        return;
+    [self willChangeValueForKey:@"directoryPresenter"];
+    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
+    _directoryPresenter = directoryPresenter;
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
+    [self didChangeValueForKey:@"directoryPresenter"];
+}
+
+- (void)setOpenQuicklyPresenter:(SmartFilteredDirectoryPresenter *)openQuicklyPresenter
+{
+    if (openQuicklyPresenter == _openQuicklyPresenter)
+        return;
+    [self willChangeValueForKey:@"openQuicklyPresenter"];
+    [_openQuicklyPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_openQuicklyObservingContext];
+    _openQuicklyPresenter = openQuicklyPresenter;
+    [_openQuicklyPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_openQuicklyObservingContext];
+    [self didChangeValueForKey:@"openQuicklyPresenter"];
+}
 
 - (void)setDirectory:(NSURL *)directory
 {
@@ -83,9 +112,9 @@ static void *currentProjectContext;
         return;
     [self willChangeValueForKey:@"directory"];
     _directory = directory;
-    _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _directoryPresenter.delegate = self;
+    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    
     [self.tableView reloadData];
     [self didChangeValueForKey:@"directory"];
 }
@@ -152,29 +181,27 @@ static void *currentProjectContext;
 {
     [super viewWillAppear:animated];
     
-    _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _directoryPresenter.delegate = self;
+    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
-    _openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _openQuicklyPresenter.delegate = self;
+    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
     [_selectedURLs removeAllObjects];
     
     _currentObservedProject = self.tab.currentProject;
-    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
-    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&currentProjectContext];
+    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
     
-    _directoryPresenter = nil;
-    _openQuicklyPresenter = nil;
+    self.directoryPresenter = nil;
+    self.openQuicklyPresenter = nil;
     _selectedURLs = nil;
     
-    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
     _currentObservedProject = nil;
 }
 
@@ -215,14 +242,48 @@ static void *currentProjectContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (context == &currentProjectContext)
+    if (context == &_currentProjectContext)
     {
         [self.singleTabController updateDefaultToolbarTitle];
+    }
+    else if (context == &_directoryObservingContext || context == &_openQuicklyObservingContext)
+    {
+        if ((object == _directoryPresenter && _isShowingOpenQuickly) || (object == _openQuicklyPresenter && !_isShowingOpenQuickly))
+            return;
+        NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+        [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
+        }];
+        switch (kind) {
+            case NSKeyValueChangeInsertion:
+                [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case NSKeyValueChangeRemoval:
+                [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                break;
+            case NSKeyValueChangeReplacement:
+                [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
+                break;
+            case NSKeyValueChangeSetting:
+                [self.tableView reloadData];
+                break;
+            default:
+                ECASSERT(NO && "unhandled KVO change");
+                break;
+        }
     }
     else
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)dealloc
+{
+    // this is so we stop observing
+    self.directoryPresenter = nil;
+    self.openQuicklyPresenter = nil;
 }
 
 #pragma mark - Single tab content controller protocol methods
@@ -299,7 +360,7 @@ static void *currentProjectContext;
     cell.textLabel.text = [fileURL lastPathComponent];
     
     if (_isShowingOpenQuickly)
-        cell.textLabelHighlightedCharacters = [_openQuicklyPresenter hitMaskForFileURL:fileURL];
+        cell.textLabelHighlightedCharacters = [self.openQuicklyPresenter hitMaskForFileURL:fileURL];
     else
         cell.textLabelHighlightedCharacters = nil;
     
@@ -340,36 +401,6 @@ static void *currentProjectContext;
     }
 }
 
-#pragma mark - Directory Presenter Delegate
-
-- (NSOperationQueue *)delegateOperationQueue
-{
-    return [NSOperationQueue mainQueue];
-}
-
-- (void)directoryPresenter:(DirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
-{
-    if ((_isShowingOpenQuickly && directoryPresenter != _openQuicklyPresenter) || (!_isShowingOpenQuickly && directoryPresenter != _directoryPresenter))
-        return;
-    NSMutableArray *insertIndexPaths = [NSMutableArray arrayWithCapacity:[insertIndexes count]];
-    [insertIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [insertIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    NSMutableArray *removeIndexPaths = [NSMutableArray arrayWithCapacity:[removeIndexes count]];
-    [removeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [removeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    NSMutableArray *changeIndexPaths = [NSMutableArray arrayWithCapacity:[changeIndexes count]];
-    [changeIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        [changeIndexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-    }];
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView deleteRowsAtIndexPaths:removeIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView reloadRowsAtIndexPaths:changeIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-    [self.tableView endUpdates];
-}
-
 #pragma mark - UISeachBar Delegate Methods
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
@@ -390,7 +421,7 @@ static void *currentProjectContext;
             _isShowingOpenQuickly = NO;
             [self.tableView reloadData];
         }
-        _openQuicklyPresenter.filterString = searchText;
+        self.openQuicklyPresenter.filterString = searchText;
     } repeats:NO];
 }
 
@@ -618,7 +649,7 @@ static void *currentProjectContext;
 
 - (DirectoryPresenter *)_currentPresenter
 {
-    return _isShowingOpenQuickly ? _openQuicklyPresenter : _directoryPresenter;
+    return _isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter;
 }
 
 @end

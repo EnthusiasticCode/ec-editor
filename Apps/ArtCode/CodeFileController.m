@@ -12,7 +12,6 @@
 #import "QuickBrowsersContainerController.h"
 
 #import <QuartzCore/QuartzCore.h>
-#import "NSTimer+BlockTimer.h"
 #import "FileBuffer.h"
 #import "BezelAlert.h"
 #import "TabController.h"
@@ -37,8 +36,6 @@
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
-    
-    NSTimer *_syntaxColoringTimer;
     
     /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
     /// This button is supposed to have the same appearance of the underlying button and the same tag.

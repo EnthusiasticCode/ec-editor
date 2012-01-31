@@ -77,7 +77,12 @@
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
+		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
+		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
 		B7D3BE761431BA3A00BF43EB /* Application.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B7D3BE741431BA3A00BF43EB /* Application.xcdatamodeld */; };
+		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
+		B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */; };
+		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -169,8 +174,6 @@
 		CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */; };
 		CD7D2B3413C0D4C700B889EE /* ProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */; };
 		CD7D2B4813C0D55700B889EE /* FileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* FileTableController.m */; };
-		CD7FAEF214D7504900E2EE6A /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */; };
-		CD7FAEF514D7562C00E2EE6A /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */; };
 		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
@@ -302,7 +305,17 @@
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
 		B7AC174214216D1C009E9205 /* NewProjectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectController.m; sourceTree = "<group>"; };
 		B7AC175414216D91009E9205 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFileInfoController.h; sourceTree = "<group>"; };
+		B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
+		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
+		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
 		B7D3BE751431BA3A00BF43EB /* Application.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Application.xcdatamodel; sourceTree = "<group>"; };
+		B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFilteredDirectoryPresenter.h; sourceTree = "<group>"; };
+		B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFilteredDirectoryPresenter.m; sourceTree = "<group>"; };
+		B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+BlockWait.h"; sourceTree = "<group>"; };
+		B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+BlockWait.m"; sourceTree = "<group>"; };
+		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
+		B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Compare.m"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -463,10 +476,6 @@
 		CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectTableController.m; sourceTree = "<group>"; };
 		CD7D2B4613C0D55700B889EE /* FileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTableController.h; sourceTree = "<group>"; };
 		CD7D2B4713C0D55700B889EE /* FileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTableController.m; sourceTree = "<group>"; };
-		CD7FAEF014D7504900E2EE6A /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
-		CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
-		CD7FAEF314D7562C00E2EE6A /* QuickFileInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFileInfoController.h; sourceTree = "<group>"; };
-		CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
 		CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Delete.png; sourceTree = "<group>"; };
 		CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Duplicate.png; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
@@ -681,6 +690,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */,
+				B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
 				B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */,
 				B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */,
@@ -701,6 +712,8 @@
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
+				B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */,
+				B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 			);
 			name = Additions;
@@ -755,6 +768,8 @@
 			children = (
 				B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */,
 				B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */,
+				B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */,
+				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
 				B7FB79CD14D6056B0080A714 /* FileBuffer.h */,
 				B7FB79CE14D6056B0080A714 /* FileBuffer.m */,
 			);
@@ -924,6 +939,10 @@
 		CD7B434E14CEC9E900090CAE /* Quick Browsers */ = {
 			isa = PBXGroup;
 			children = (
+				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
+				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
+				B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */,
+				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
 				CD7B434F14CECA5700090CAE /* QuickBrowsersContainerController.h */,
 				CD7B435014CECA5700090CAE /* QuickBrowsersContainerController.m */,
 				CD7B435214CECA9900090CAE /* QuickFileBrowserController.h */,
@@ -932,10 +951,6 @@
 				CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */,
 				CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */,
 				CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */,
-				CD7FAEF014D7504900E2EE6A /* QuickFolderInfoController.h */,
-				CD7FAEF114D7504900E2EE6A /* QuickFolderInfoController.m */,
-				CD7FAEF314D7562C00E2EE6A /* QuickFileInfoController.h */,
-				CD7FAEF414D7562C00E2EE6A /* QuickFileInfoController.m */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -1555,8 +1570,11 @@
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
 				CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
-				CD7FAEF214D7504900E2EE6A /* QuickFolderInfoController.m in Sources */,
-				CD7FAEF514D7562C00E2EE6A /* QuickFileInfoController.m in Sources */,
+				B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */,
+				B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */,
+				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
+				B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */,
+				B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

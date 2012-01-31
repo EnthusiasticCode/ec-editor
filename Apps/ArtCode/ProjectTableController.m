@@ -25,6 +25,10 @@
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
 
+#import "DirectoryPresenter.h"
+
+static void *_directoryObservingContext;
+
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
 @interface ProjectTableController () {
@@ -81,6 +85,17 @@
     return _gridView;
 }
 
+- (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
+{
+    if (directoryPresenter == _directoryPresenter)
+        return;
+    [self willChangeValueForKey:@"directoryPresenter"];
+    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
+    _directoryPresenter = directoryPresenter;
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];    
+    [self didChangeValueForKey:@"directoryPresenter"];
+}
+
 - (void)setProjectsDirectory:(NSURL *)projectsDirectory
 {
     if (projectsDirectory == _projectsDirectory)
@@ -88,7 +103,6 @@
     [self willChangeValueForKey:@"projectsDirectory"];
     _projectsDirectory = projectsDirectory;
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    self.directoryPresenter.delegate = self;
     [self didChangeValueForKey:@"projectsDirectory"];
 }
 
@@ -120,6 +134,28 @@
 }
 
 #pragma mark - Controller Methods
+
+- (void)dealloc
+{
+    self.directoryPresenter = nil; // this is so we stop observing
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context != &_directoryObservingContext)
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+    switch (kind) {
+        case NSKeyValueChangeInsertion:
+            [self.gridView insertCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
+            break;
+        case NSKeyValueChangeRemoval:
+            [self.gridView deleteCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
+        default:
+            ECASSERT(NO && "unhandled KVO change");
+            break;
+    }
+}
 
 - (NSString *)title
 {
@@ -168,7 +204,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    self.directoryPresenter.delegate = self;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -389,22 +424,6 @@
     if (result == MFMailComposeResultSent)
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:nil displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
-}
-
-#pragma mark - Directory Presenter Delegate
-
-- (NSOperationQueue *)delegateOperationQueue
-{
-    // Just return the main queue, we have to run all UIKit code in it anyway
-    return [NSOperationQueue mainQueue];
-}
-
-- (void)directoryPresenter:(DirectoryPresenter *)directoryPresenter didInsertFileURLsAtIndexes:(NSIndexSet *)insertIndexes removeFileURLsAtIndexes:(NSIndexSet *)removeIndexes changeFileURLsAtIndexes:(NSIndexSet *)changeIndexes
-{
-    [self.gridView beginUpdates];
-    [self.gridView insertCellsAtIndexes:insertIndexes animated:YES];
-    [self.gridView deleteCellsAtIndexes:removeIndexes animated:YES];
-    [self.gridView endUpdates];
 }
 
 #pragma mark - Private Methods
