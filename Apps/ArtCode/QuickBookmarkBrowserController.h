@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BookmarkBrowserController.h"
 
-@interface QuickBookmarkBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong, readonly) UITableView *tableView;
+@interface QuickBookmarkBrowserController : BookmarkBrowserController
 
 @end

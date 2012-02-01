@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileTableController.h"
+#import "FileBrowserController.h"
 #import "SingleTabController.h"
 
 #import "AppStyle.h"
@@ -38,7 +38,7 @@ static void *_directoryObservingContext;
 static void *_openQuicklyObservingContext;
 
 
-@interface FileTableController () {
+@interface FileBrowserController () {
     ArtCodeProject *_currentObservedProject;
     
     NSArray *_toolNormalItems;
@@ -79,11 +79,11 @@ static void *_openQuicklyObservingContext;
 #pragma mark - Implementations
 #pragma mark -
 
-@implementation FileTableController
+@implementation FileBrowserController
 
 #pragma mark - Properties
 
-@synthesize directory = _directory, tab;
+@synthesize directory = _directory;
 @synthesize directoryPresenter = _directoryPresenter, openQuicklyPresenter = _openQuicklyPresenter;
 
 - (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
@@ -119,7 +119,7 @@ static void *_openQuicklyObservingContext;
     _directory = directory;
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _currentObservedProject = self.tab.currentURL.project;
+    _currentObservedProject = self.artCodeTab.currentURL.project;
     [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
     [self.tableView reloadData];
@@ -194,9 +194,12 @@ static void *_openQuicklyObservingContext;
     
     [_selectedURLs removeAllObjects];
     
-    _currentObservedProject = self.tab.currentURL.project;
-    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    if (!_currentObservedProject)
+    {
+        _currentObservedProject = self.artCodeTab.currentURL.project;
+        [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -297,7 +300,7 @@ static void *_openQuicklyObservingContext;
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
     // TODO the quick browser container controller gets created every time, is it ok?
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.tab];
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.artCodeTab];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     if (!_quickBrowsersPopover)
@@ -309,7 +312,7 @@ static void *_openQuicklyObservingContext;
     {
         [_quickBrowsersPopover setContentViewController:navigationController animated:NO];
     }
-    quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
     quickBrowserContainerController.openingButton = sender;
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
@@ -317,14 +320,14 @@ static void *_openQuicklyObservingContext;
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
 {
     BOOL isRoot = NO;
-    NSString *projectName = [ArtCodeURL projectNameFromURL:self.tab.currentURL isProjectRoot:&isRoot];
+    NSString *projectName = [ArtCodeURL projectNameFromURL:self.artCodeTab.currentURL isProjectRoot:&isRoot];
     if (!isRoot)
     {
         return NO; // default behaviour
     }
     else
     {
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.tab.currentURL.project.labelColor], projectName, nil] 
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentURL.project.labelColor], projectName, nil] 
                         selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
     }
     return YES;
@@ -385,7 +388,7 @@ static void *_openQuicklyObservingContext;
     }
     else
     {
-        [self.tab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
+        [self.artCodeTab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
     }
 }
 
@@ -545,7 +548,7 @@ static void *_openQuicklyObservingContext;
     if (!_toolNormalAddPopover)
     {
         UINavigationController *popoverViewController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"NewFilePopover" bundle:nil] instantiateInitialViewController];
-        popoverViewController.artCodeTab = self.tab;
+        popoverViewController.artCodeTab = self.artCodeTab;
         [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         
         _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
@@ -592,7 +595,7 @@ static void *_openQuicklyObservingContext;
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
     directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = self.tab.currentURL.project.URL;
+    directoryBrowser.URL = self.artCodeTab.currentURL.project.URL;
     _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
     _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];

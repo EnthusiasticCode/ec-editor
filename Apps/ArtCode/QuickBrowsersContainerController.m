@@ -21,6 +21,7 @@
 
 + (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab
 {
+    static QuickBrowsersContainerController *_commonController = nil;
     static QuickBrowsersContainerController *_projectController = nil;
     static QuickBrowsersContainerController *_folderController = nil;
     static QuickBrowsersContainerController *_fileController = nil;
@@ -36,6 +37,20 @@
         [ArtCodeURL projectNameFromURL:tab.currentURL isProjectRoot:&isProjectRoot];
         if (isProjectRoot)
         {
+            if ([tab.currentURL isBookmarksVariant])
+            {
+                if (!_commonController)
+                {
+                    _commonController = [[QuickBrowsersContainerController alloc] initWithTab:tab];
+                    [_commonController setViewControllers:_commonControllers animated:NO];
+                }
+                else
+                {
+                    _commonController.artCodeTab = tab;
+                }
+                return _commonController;
+            }
+            
             if (!_projectController)
             {
                 _projectController = [[QuickBrowsersContainerController alloc] initWithTab:tab];
@@ -45,7 +60,7 @@
             }
             else
             {
-                _projectController.tab = tab;
+                _projectController.artCodeTab = tab;
             }
             return _projectController;
         }
@@ -60,7 +75,7 @@
             }
             else
             {
-                _folderController.tab = tab;
+                _folderController.artCodeTab = tab;
             }
             return _folderController;
         }
@@ -76,7 +91,7 @@
         }
         else
         {
-            _fileController.tab = tab;
+            _fileController.artCodeTab = tab;
         }
         return _fileController;
     }
@@ -88,14 +103,14 @@
     self = [super initWithNibName:nil bundle:nil];
     if (!self)
         return nil;
-    self.tab = tab;
+    self.artCodeTab = tab;
     self.contentSizeForViewInPopover = CGSizeMake(500, 500);
     return self;
 }
 
 #pragma mark - Properties
 
-@synthesize tab, popoverController, openingButton;
+@synthesize openingButton;
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
 {

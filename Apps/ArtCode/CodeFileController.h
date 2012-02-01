@@ -22,9 +22,6 @@
 
 @property (nonatomic, strong, readonly) CodeFile *codeFile;
 
-/// The tab in which the controller is displayed.
-@property (nonatomic, strong) ArtCodeTab *tab;
-
 #pragma mark - Code viewing and editing
 
 /// The code view used to display code.

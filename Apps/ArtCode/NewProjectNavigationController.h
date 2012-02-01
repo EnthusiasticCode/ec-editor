@@ -7,12 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ProjectTableController.h"
+#import "ProjectBrowserController.h"
+#import "UIViewController+PresentingPopoverController.h"
 
 @interface NewProjectNavigationController : UINavigationController
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
-@property (nonatomic, weak) UIPopoverController *popoverController;
-@property (nonatomic, weak) ProjectTableController *parentController;
 
 @end

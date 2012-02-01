@@ -10,7 +10,7 @@
 #import "UIViewController+PresentingPopoverController.h"
 
 #import "ArtCodeTab.h"
-
+#import "BezelAlert.h"
 
 @implementation NewFileController
 
@@ -69,7 +69,14 @@
     [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForReplacing error:&err byAccessor:^(NSURL *newURL) {
         [fileManager createFileAtPath:[newURL path] contents:nil attributes:nil];
     }];
+    if (err)
+    {
+        self.infoLabel.text = [err localizedDescription];
+        [self.fileNameTextField becomeFirstResponder];
+        return;
+    }
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" image:nil displayImmediatly:NO];
 }
 
 @end

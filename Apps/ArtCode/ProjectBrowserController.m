@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "ProjectTableController.h"
+#import "ProjectBrowserController.h"
 #import "AppStyle.h"
 #import "ColorSelectionControl.h"
 
@@ -31,7 +31,7 @@ static void *_directoryObservingContext;
 
 #define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
 
-@interface ProjectTableController () {
+@interface ProjectBrowserController () {
     UIPopoverController *_toolItemPopover;
     
     NSArray *_toolItemsNormal;
@@ -59,11 +59,10 @@ static void *_directoryObservingContext;
 #pragma mark - Implementation
 #pragma mark -
 
-@implementation ProjectTableController
+@implementation ProjectBrowserController
 
 #pragma mark - Properties
 
-@synthesize tab = _tab;
 @synthesize gridView = _gridView;
 @synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
 
@@ -256,7 +255,7 @@ static void *_directoryObservingContext;
 {
     if (!self.isEditing)
     {
-        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+        [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
     }
 }
 
@@ -441,10 +440,10 @@ static void *_directoryObservingContext;
         NewProjectNavigationController *newProjectNavigationController = (NewProjectNavigationController *)[storyboard instantiateInitialViewController];
         [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         newProjectNavigationController.projectsDirectory = self.projectsDirectory;
-        newProjectNavigationController.parentController = self;
+        newProjectNavigationController.artCodeTab = self.artCodeTab;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
-        newProjectNavigationController.popoverController = _toolItemPopover;
+        newProjectNavigationController.presentingPopoverController = _toolItemPopover;
     }
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

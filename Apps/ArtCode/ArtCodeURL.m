@@ -39,15 +39,13 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 + (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
 {
-    NSString *projectsPath = [[self projectsDirectory] path];
-    NSString *path = [url path];
-    if (![path hasPrefix:projectsPath])
+    NSString *path = [self pathRelativeToProjectsDirectory:url];
+    if (!path)
         return nil;
-    path = [path substringFromIndex:[projectsPath length]];
     NSArray *components = [path pathComponents];
     if (isProjectRoot)
-        *isProjectRoot = ([components count] == 2);
-    return [components count] >= 2 ? [[components objectAtIndex:1] stringByDeletingPathExtension] : nil;
+        *isProjectRoot = ([components count] == 1);
+    return [components count] >= 1 ? [[components objectAtIndex:0] stringByDeletingPathExtension] : nil;
 }
 
 #pragma mark - Private methods
@@ -68,10 +66,27 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 - (ArtCodeProject *)project
 {
+    // TODO cache this value?
     NSString *projectName = [ArtCodeURL projectNameFromURL:self isProjectRoot:NULL];
     if ([ArtCodeProject projectWithNameExists:projectName])
         return [ArtCodeProject projectWithName:projectName];
     return nil;
+}
+
+- (BOOL)isBookmarksVariant
+{
+    return [[self fragmentDictionary] objectForKey:@"bookmarks"] != nil;
+}
+
+- (NSURL *)URLByAddingBookmarksVariant
+{
+    NSMutableDictionary *fragments = [[self fragmentDictionary] mutableCopy];
+    if ([fragments objectForKey:@"bookmarks"] != nil)
+        return [self copy];
+    if (fragments == nil)
+        fragments = [NSMutableDictionary new];
+    [fragments setObject:@"" forKey:@"bookmarks"];
+    return [self URLByAppendingFragmentDictionary:fragments];
 }
 
 - (NSString *)prettyPathRelativeToProjectDirectory

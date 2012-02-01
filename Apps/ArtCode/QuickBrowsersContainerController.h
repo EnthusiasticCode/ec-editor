@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UIViewController+PresentingPopoverController.h"
 
 @class ArtCodeTab;
 
@@ -15,8 +16,6 @@
 
 + (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab;
 
-@property (nonatomic, strong) ArtCodeTab *tab;
-@property (nonatomic, weak) UIPopoverController *popoverController;
 @property (nonatomic, weak) UIButton *openingButton;
 
 - (id)initWithTab:(ArtCodeTab *)tab;

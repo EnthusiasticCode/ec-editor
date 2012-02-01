@@ -223,7 +223,9 @@ static void *artCodeTabKey;
 
 - (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
 {
+    [self willChangeValueForKey:@"artCodeTab"];
     objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:@"artCodeTab"];
 }
 
 @end

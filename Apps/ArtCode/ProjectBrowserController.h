@@ -13,10 +13,9 @@
 @class Application, ArtCodeTab, ProjectCell;
 
 
-@interface ProjectTableController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface ProjectBrowserController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
-@property (nonatomic, strong) ArtCodeTab *tab;
 
 @end
 

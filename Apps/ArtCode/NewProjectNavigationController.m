@@ -11,8 +11,6 @@
 @implementation NewProjectNavigationController
 
 @synthesize projectsDirectory;
-@synthesize popoverController;
-@synthesize parentController;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {

@@ -16,8 +16,9 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
-#import "ProjectTableController.h"
-#import "FileTableController.h"
+#import "ProjectBrowserController.h"
+#import "FileBrowserController.h"
+#import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -50,7 +51,7 @@ static const void *contentViewControllerContext;
 
 @synthesize defaultToolbar = _defaultToolbar, toolbarViewController = _toolbarViewController, toolbarHeight = _toolbarHeight;
 @synthesize contentViewController = _contentViewController;
-@synthesize tab = _tab;
+
 
 - (TopBarToolbar *)defaultToolbar
 {
@@ -109,12 +110,17 @@ static const void *contentViewControllerContext;
     
     [self willChangeValueForKey:@"contentViewController"];
     
+    [_contentViewController willMoveToParentViewController:nil];
+    [_contentViewController removeFromParentViewController];
+    if (contentViewController)
+    {
+        [self addChildViewController:contentViewController];
+        [contentViewController didMoveToParentViewController:self];
+    }
+    
     // Animate view in position
     if (self._isViewVisible)
     {
-        [_contentViewController viewWillDisappear:animated];
-        [contentViewController viewWillAppear:animated];
-        
         if (_contentViewController != nil && animated)
         {
             UIViewController *oldViewController = _contentViewController;
@@ -135,16 +141,12 @@ static const void *contentViewControllerContext;
             contentViewController.view.frame = _contentViewController.view.frame;
             [self.view addSubview:contentViewController.view];
             [_contentViewController.view removeFromSuperview];
-            [_contentViewController viewDidDisappear:NO];
-            [contentViewController viewDidAppear:NO];
         }
     }
     
     // Remove old view controller
     if (_contentViewController)
     {
-        [_contentViewController willMoveToParentViewController:nil];
-        [_contentViewController removeFromParentViewController];
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
@@ -154,8 +156,6 @@ static const void *contentViewControllerContext;
     // Setup new controller
     if ((_contentViewController = contentViewController))
     {
-        [self addChildViewController:_contentViewController];
-        [_contentViewController didMoveToParentViewController:self];
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
@@ -295,30 +295,27 @@ static const void *contentViewControllerContext;
 
 #pragma mark Tab
 
-- (void)setTab:(ArtCodeTab *)tab
+- (void)setArtCodeTab:(ArtCodeTab *)tab
 {
-    if (tab == _tab)
+    if (tab == self.artCodeTab)
         return;
-    [self willChangeValueForKey:@"tab"];
     
-    if (_tab)
+    if (self.artCodeTab)
     {
-        [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
-        [ArtCodeTab removeTab:_tab];
+        [self.artCodeTab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+        [ArtCodeTab removeTab:self.artCodeTab];
     }
     
-    _tab = tab;
-    
-    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
-    
-    [self didChangeValueForKey:@"tab"];
+    [super setArtCodeTab:tab];
+
+    [self.artCodeTab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
 }
 
 #pragma mark - Controller methods
 
 - (void)dealloc
 {
-    self.tab = nil;
+    self.artCodeTab = nil;
     self.contentViewController = nil;
 }
 
@@ -331,9 +328,9 @@ static const void *contentViewControllerContext;
 {
     if (context == &tabCurrentURLObservingContext)
     {
-        self.defaultToolbar.backButton.enabled = self.tab.canMoveBackInHistory;
-        self.defaultToolbar.forwardButton.enabled = self.tab.canMoveForwardInHistory;
-        [self setContentViewController:[self _routeViewControllerWithURL:self.tab.currentURL] animated:YES];
+        self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
+        self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
+        [self setContentViewController:[self _routeViewControllerWithURL:self.artCodeTab.currentURL] animated:YES];
     }
     else if (context == &contentViewControllerContext)
     {
@@ -387,7 +384,7 @@ static const void *contentViewControllerContext;
         }
         else
         {
-            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.tab.currentURL] pathComponents];
+            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents];
             NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
             NSInteger lastIndex = [pathComponents count] - 1;
             [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
@@ -464,29 +461,37 @@ static const void *contentViewControllerContext;
     }];
     if (currentURLIsEqualToProjectsDirectory)
     {
-        if ([self.contentViewController isKindOfClass:[ProjectTableController class]])
+        if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
             result = self.contentViewController;
         else
-            result = [[ProjectTableController alloc] init];
-        ProjectTableController *projectTableController = (ProjectTableController *)result;
+            result = [[ProjectBrowserController alloc] init];
+        ProjectBrowserController *projectTableController = (ProjectBrowserController *)result;
         projectTableController.projectsDirectory = url;
-        projectTableController.tab = self.tab;
     }
     else if (currentURLExists)
     {
         // TODO route bookmarks and remotes
         if (currentURLIsDirectory)
         {
-            if ([self.contentViewController isKindOfClass:[FileTableController class]])
-                result = self.contentViewController;
+            if ([url isBookmarksVariant])
+            {
+                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+                    result = self.contentViewController;
+                else
+                    result = [BookmarkBrowserController new];
+            }
             else
-                result = [[FileTableController alloc] initWithStyle:UITableViewStyleGrouped];
-                
-            FileTableController *fileTableController = (FileTableController *)result;
-            fileTableController.tab = self.tab;
-            [fileTableController setDirectory:url];
-            if (result == self.contentViewController)
-                [self updateDefaultToolbarTitle];
+            {
+                if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
+                    result = self.contentViewController;
+                else
+                    result = [[FileBrowserController alloc] initWithStyle:UITableViewStyleGrouped];
+                    
+                FileBrowserController *fileTableController = (FileBrowserController *)result;
+                [fileTableController setDirectory:url];
+                if (result == self.contentViewController)
+                    [self updateDefaultToolbarTitle];
+            }
         }
         else
         {
@@ -496,7 +501,6 @@ static const void *contentViewControllerContext;
                 result = [[CodeFileController alloc] init];
             CodeFileController *codeFileController = (CodeFileController *)result;
             codeFileController.fileURL = url;
-            codeFileController.tab = self.tab;
         }
     }
     return result;
@@ -510,12 +514,12 @@ static const void *contentViewControllerContext;
 
 - (void)_historyBackAction:(id)sender
 {
-    [self.tab moveBackInHistory];
+    [self.artCodeTab moveBackInHistory];
 }
 
 - (void)_historyForwardAction:(id)sender
 {
-    [self.tab moveForwardInHistory];
+    [self.artCodeTab moveForwardInHistory];
 }
 
 @end

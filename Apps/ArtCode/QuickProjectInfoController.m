@@ -62,7 +62,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.projectNameTextField.text = [self.quickBrowsersContainerController.tab.currentURL.project name];
+    self.projectNameTextField.text = [self.artCodeTab.currentURL.project name];
     // TODO add project files and size
 }
 
@@ -80,14 +80,14 @@
     
     // TODO check that name is ok
 
-    [self.quickBrowsersContainerController.tab.currentURL.project setName:textField.text];
+    [self.artCodeTab.currentURL.project setName:textField.text];
 }
 
 #pragma mark - Private Methods
 
 - (void)_labelColorChangeAction:(id)sender
 {
-    [self.quickBrowsersContainerController.tab.currentURL.project setLabelColor:[sender selectedColor]];
+    [self.artCodeTab.currentURL.project setLabelColor:[sender selectedColor]];
 }
 
 @end
