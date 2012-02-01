@@ -190,7 +190,10 @@ static void * _directoryObservingContext;
             }
             ECASSERT(![indexes containsIndex:NSNotFound] && "if a fileURL has a non-zero score, and was removed, it should have been there");
             if ([indexes count])
+            {
+                [_mutableFileURLs removeObjectsAtIndexes:indexes];
                 [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:indexes forKey:@"fileURLs"];
+            }
             return;
         }
         default:
