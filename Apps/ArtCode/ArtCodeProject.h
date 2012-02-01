@@ -23,11 +23,14 @@
 /// Returns a project URL from a project name. This method does not check for existance of the project.
 + (NSURL *)projectURLFromName:(NSString *)name;
 
-/// Open or create a project with the given name in the projects directory.
+/// Open a project with the given name in the projects directory.
 + (id)projectWithName:(NSString *)name;
 
-/// Open or create a project that holds the given URL.
-+ (id)projectWithURL:(ArtCodeProject *)url;
+/// Open a project that holds the given URL.
++ (id)projectWithURL:(NSURL *)url;
+
+/// Creates a project with the given name in the projects directory if possible.
++ (id)createProjectWithName:(NSString *)name;
 
 #pragma mark Initializing and exporting projects
 

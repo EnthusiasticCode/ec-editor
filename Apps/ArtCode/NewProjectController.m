@@ -76,7 +76,7 @@
         return;
     }
     
-    ArtCodeProject *project = [ArtCodeProject projectWithName:projectName];
+    ArtCodeProject *project = [ArtCodeProject createProjectWithName:projectName];
     if (projectColor)
         project.labelColor = projectColor;
     [project flush];

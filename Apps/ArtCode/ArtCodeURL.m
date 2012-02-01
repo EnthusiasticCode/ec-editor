@@ -67,10 +67,9 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 - (ArtCodeProject *)project
 {
     // TODO cache this value?
-    NSString *projectName = [ArtCodeURL projectNameFromURL:self isProjectRoot:NULL];
-    if ([ArtCodeProject projectWithNameExists:projectName])
-        return [ArtCodeProject projectWithName:projectName];
-    return nil;
+    ArtCodeProject *project = [ArtCodeProject projectWithURL:self];
+    ECASSERT(project && "Asked project from a non project URL");
+    return project;
 }
 
 - (BOOL)isBookmarksVariant

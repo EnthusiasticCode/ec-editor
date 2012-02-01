@@ -321,9 +321,7 @@ static Cache *openProjects = nil;
     // Create project direcotry
     if (![[NSFileManager new] fileExistsAtPath:[projectUrl path]])
     {
-        [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
-            [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:YES attributes:nil error:NULL];
-        }];
+        return nil;
     }
     
     // Open project
@@ -341,6 +339,35 @@ static Cache *openProjects = nil;
         return nil;
     
     return [self projectWithName:projectName];
+}
+
++ (id)createProjectWithName:(NSString *)name
+{
+    name = [name stringByReplacingOccurrencesOfString:@"\\" withString:@"_"];
+    if (![name hasSuffix:ProjectExtension])
+        name = [name stringByAppendingString:ProjectExtension];
+    
+    NSURL *projectUrl = [[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
+    
+    if (!openProjects)
+        openProjects = [Cache new];
+    
+    id project = [openProjects objectForKey:projectUrl];
+    if (project)
+        return project;
+    
+    // Create project direcotry
+    if (![[NSFileManager new] fileExistsAtPath:[projectUrl path]])
+    {
+        [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:projectUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
+            [[NSFileManager new] createDirectoryAtURL:projectUrl withIntermediateDirectories:YES attributes:nil error:NULL];
+        }];
+    }
+    
+    // Open project
+    project = [[self alloc] initWithURL:projectUrl];
+    [openProjects setObject:project forKey:projectUrl];
+    return project;
 }
 
 @end
