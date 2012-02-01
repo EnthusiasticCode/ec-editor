@@ -1498,7 +1498,7 @@ static void init(CodeView *self)
         [inputDelegate selectionWillChange:self];
     
     // Modify selection to account for placeholders
-    if (_flags.dataSourceHasAttributeAtIndexLongestEffectiveRange)
+    if (_flags.dataSourceHasAttributeAtIndexLongestEffectiveRange && newSelection.location < [self.dataSource stringLengthForTextRenderer:self.renderer])
     {
         NSRange replaceSelection = newSelection;
         NSRange placeholderRangeAtLocation;

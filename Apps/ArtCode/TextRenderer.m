@@ -766,10 +766,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 // Already locked in _generateTextSegmentsAndEnumerateUsingBlock
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)requestSegment lineCount:(NSUInteger *)lines finalPart:(BOOL *)isFinalPart
 {
-    NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
-    if (inputStringLenght == 0)
-        return nil;
-    
     NSRange stringRange = NSMakeRange(0, 0);
     
     // Source text line offset for requested segment
@@ -783,6 +779,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     // If the segment already has it's string length, it means that this request
     // has been done to refresh it. See updateTextFromStringRange:toStringRange:
     // to understand how this stringLenght is properly adjusted.
+    NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
     stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
     NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];
     NSUInteger stringLength = [attributedString length];

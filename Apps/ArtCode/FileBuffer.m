@@ -246,6 +246,8 @@ static dispatch_queue_t _fileBuffersQueue;
 
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
 {
+    ECASSERT(location < [_contents length]);
+
     __block id attribute = nil;
     NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
     dispatch_sync(_fileAccessQueue, ^{
