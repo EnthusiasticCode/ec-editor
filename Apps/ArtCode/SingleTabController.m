@@ -16,8 +16,8 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
-#import "ProjectTableController.h"
-#import "FileTableController.h"
+#import "ProjectBrowserController.h"
+#import "FileBrowserController.h"
 #import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 
@@ -465,11 +465,11 @@ static const void *contentViewControllerContext;
     }];
     if (currentURLIsEqualToProjectsDirectory)
     {
-        if ([self.contentViewController isKindOfClass:[ProjectTableController class]])
+        if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
             result = self.contentViewController;
         else
-            result = [[ProjectTableController alloc] init];
-        ProjectTableController *projectTableController = (ProjectTableController *)result;
+            result = [[ProjectBrowserController alloc] init];
+        ProjectBrowserController *projectTableController = (ProjectBrowserController *)result;
         projectTableController.projectsDirectory = url;
         projectTableController.tab = self.tab;
     }
@@ -488,12 +488,12 @@ static const void *contentViewControllerContext;
             }
             else
             {
-                if ([self.contentViewController isKindOfClass:[FileTableController class]])
+                if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
                     result = self.contentViewController;
                 else
-                    result = [[FileTableController alloc] initWithStyle:UITableViewStyleGrouped];
+                    result = [[FileBrowserController alloc] initWithStyle:UITableViewStyleGrouped];
                     
-                FileTableController *fileTableController = (FileTableController *)result;
+                FileBrowserController *fileTableController = (FileBrowserController *)result;
                 fileTableController.tab = self.tab;
                 [fileTableController setDirectory:url];
                 if (result == self.contentViewController)

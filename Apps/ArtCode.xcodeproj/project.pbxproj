@@ -171,8 +171,8 @@
 		CD7D2B2013C0D47C00B889EE /* UIColor+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1B13C0D47C00B889EE /* UIColor+AppStyle.m */; };
 		CD7D2B2113C0D47C00B889EE /* UIFont+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */; };
 		CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */; };
-		CD7D2B3413C0D4C700B889EE /* ProjectTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */; };
-		CD7D2B4813C0D55700B889EE /* FileTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* FileTableController.m */; };
+		CD7D2B3413C0D4C700B889EE /* ProjectBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */; };
+		CD7D2B4813C0D55700B889EE /* FileBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7D2B4713C0D55700B889EE /* FileBrowserController.m */; };
 		CD7FDD5414BEFBA0002B1122 /* itemIcon_Delete.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */; };
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
@@ -472,10 +472,10 @@
 		CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIFont+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B1E13C0D47C00B889EE /* UIImage+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+AppStyle.h"; sourceTree = "<group>"; };
 		CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIImage+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		CD7D2B3113C0D4C700B889EE /* ProjectTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectTableController.h; sourceTree = "<group>"; };
-		CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectTableController.m; sourceTree = "<group>"; };
-		CD7D2B4613C0D55700B889EE /* FileTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileTableController.h; sourceTree = "<group>"; };
-		CD7D2B4713C0D55700B889EE /* FileTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileTableController.m; sourceTree = "<group>"; };
+		CD7D2B3113C0D4C700B889EE /* ProjectBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ProjectBrowserController.h; sourceTree = "<group>"; };
+		CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectBrowserController.m; sourceTree = "<group>"; };
+		CD7D2B4613C0D55700B889EE /* FileBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = FileBrowserController.h; sourceTree = "<group>"; };
+		CD7D2B4713C0D55700B889EE /* FileBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBrowserController.m; sourceTree = "<group>"; };
 		CD7FDD5214BEFBA0002B1122 /* itemIcon_Delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Delete.png; sourceTree = "<group>"; };
 		CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Duplicate.png; sourceTree = "<group>"; };
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
@@ -1077,10 +1077,10 @@
 		CD7D2B1413C0D38A00B889EE /* Browsers */ = {
 			isa = PBXGroup;
 			children = (
-				CD7D2B3113C0D4C700B889EE /* ProjectTableController.h */,
-				CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */,
-				CD7D2B4613C0D55700B889EE /* FileTableController.h */,
-				CD7D2B4713C0D55700B889EE /* FileTableController.m */,
+				CD7D2B3113C0D4C700B889EE /* ProjectBrowserController.h */,
+				CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */,
+				CD7D2B4613C0D55700B889EE /* FileBrowserController.h */,
+				CD7D2B4713C0D55700B889EE /* FileBrowserController.m */,
 				CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */,
 				CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */,
 				B7AC174F14216D25009E9205 /* Content Controllers */,
@@ -1478,8 +1478,8 @@
 				CD7D2B2013C0D47C00B889EE /* UIColor+AppStyle.m in Sources */,
 				CD7D2B2113C0D47C00B889EE /* UIFont+AppStyle.m in Sources */,
 				CD7D2B2213C0D47C00B889EE /* UIImage+AppStyle.m in Sources */,
-				CD7D2B3413C0D4C700B889EE /* ProjectTableController.m in Sources */,
-				CD7D2B4813C0D55700B889EE /* FileTableController.m in Sources */,
+				CD7D2B3413C0D4C700B889EE /* ProjectBrowserController.m in Sources */,
+				CD7D2B4813C0D55700B889EE /* FileBrowserController.m in Sources */,
 				CD9CD97013DC22AF007964D3 /* CodeFileController.m in Sources */,
 				CDD40B0313E1A046008AC36B /* PopoverHistoryToolController.m in Sources */,
 				CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */,
