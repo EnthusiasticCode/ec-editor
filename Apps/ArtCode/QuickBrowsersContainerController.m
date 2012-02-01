@@ -45,7 +45,7 @@
             }
             else
             {
-                _projectController.tab = tab;
+                _projectController.artCodeTab = tab;
             }
             return _projectController;
         }
@@ -60,7 +60,7 @@
             }
             else
             {
-                _folderController.tab = tab;
+                _folderController.artCodeTab = tab;
             }
             return _folderController;
         }
@@ -76,7 +76,7 @@
         }
         else
         {
-            _fileController.tab = tab;
+            _fileController.artCodeTab = tab;
         }
         return _fileController;
     }
@@ -88,14 +88,14 @@
     self = [super initWithNibName:nil bundle:nil];
     if (!self)
         return nil;
-    self.tab = tab;
+    self.artCodeTab = tab;
     self.contentSizeForViewInPopover = CGSizeMake(500, 500);
     return self;
 }
 
 #pragma mark - Properties
 
-@synthesize tab, popoverController, openingButton;
+@synthesize popoverController, openingButton;
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
 {

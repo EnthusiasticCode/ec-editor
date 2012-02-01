@@ -15,7 +15,6 @@
 
 + (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab;
 
-@property (nonatomic, strong) ArtCodeTab *tab;
 @property (nonatomic, weak) UIPopoverController *popoverController;
 @property (nonatomic, weak) UIButton *openingButton;
 

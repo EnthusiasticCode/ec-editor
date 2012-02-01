@@ -89,6 +89,8 @@
     _infoLabel.shadowColor = [UIColor whiteColor];
     _infoLabel.shadowOffset = CGSizeMake(0, 1);
     self.tableView.tableFooterView = _infoLabel;
+    if ([_sortedBookmarks count] == 0)
+        _infoLabel.text = @"The project has no bookmarks.";
 }
 
 
@@ -113,19 +115,19 @@
     
     if ([searchText length] == 0)
     {
-        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentURL.project.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        _sortedBookmarks = [self.artCodeTab.currentURL.project.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [[obj1 description] compare:[obj2 description]];
         }];
         _sortedBookmarksHitMasks = nil;
         [self.tableView reloadData];
-        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.quickBrowsersContainerController.tab.currentURL.project.name];
+        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.artCodeTab.currentURL.project.name];
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         NSArray *hitMasks = nil;
-        _sortedBookmarks = [self.quickBrowsersContainerController.tab.currentURL.project.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
+        _sortedBookmarks = [self.artCodeTab.currentURL.project.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
             return [bookmark description];
         }];
         _sortedBookmarksHitMasks = hitMasks;
@@ -167,7 +169,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[[_sortedBookmarks objectAtIndex:indexPath.row] URL]];
+    [self.artCodeTab pushURL:[[_sortedBookmarks objectAtIndex:indexPath.row] URL]];
 }
 
 @end

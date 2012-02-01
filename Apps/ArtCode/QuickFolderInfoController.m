@@ -34,7 +34,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.folderNameTextField.text = [self.quickBrowsersContainerController.tab.currentURL lastPathComponent];
+    self.folderNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

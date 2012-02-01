@@ -47,7 +47,7 @@ static void *_directoryObservingContext;
 {
     if (!_directoryPresenter)
     {
-        NSURL *projectURL = self.quickBrowsersContainerController.tab.currentURL.project.URL;
+        NSURL *projectURL = self.artCodeTab.currentURL.project.URL;
         _directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
         [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
         _projectURLAbsoluteString = [projectURL absoluteString];
@@ -234,7 +234,7 @@ static void *_directoryObservingContext;
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+    [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
 }
 
 #pragma mark - Private methods
@@ -242,13 +242,13 @@ static void *_directoryObservingContext;
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[self.quickBrowsersContainerController.tab.currentURL.project URL]];
+    [self.artCodeTab pushURL:[self.artCodeTab.currentURL.project URL]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
-    [self.quickBrowsersContainerController.tab pushURL:[ArtCodeURL projectsDirectory]];
+    [self.artCodeTab pushURL:[ArtCodeURL projectsDirectory]];
 }
 
 @end
