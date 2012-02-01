@@ -80,8 +80,6 @@ static Cache *openProjects = nil;
     [self willChangeValueForKey:@"labelColor"];
     labelColor = value;
     [self didChangeValueForKey:@"labelColor"];
-    // TODO remove this when a global autosaving method is created
-    [self flush];
 }
 
 #pragma mark Initializing and exporting projects
@@ -194,9 +192,6 @@ static Cache *openProjects = nil;
     {
         [_fileToBookmarksCache removeObjectForKey:[filePath substringFromIndex:[projectPath length]]];
     }
-    
-    // TODO remove flush here
-    [self flush];
 }
 
 - (void)removeBookmark:(ProjectBookmark *)bookmark
@@ -210,9 +205,6 @@ static Cache *openProjects = nil;
         NSString *str = [[bookmark.URL path] substringFromIndex:[[self.URL path] length] + 1];
         [_fileToBookmarksCache removeObjectForKey:str];
     }
-    
-    // TODO remove flush here
-    [self flush];
 }
 
 - (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber
@@ -272,7 +264,9 @@ static Cache *openProjects = nil;
 
 + (void)saveProjectsToDisk
 {
-#warning TODO NIK: save all the projects' plists here
+    [openProjects enumerateKeysAndObjectsUsingBlock:^(id key, ArtCodeProject *project, BOOL *stop) {
+        [project flush];
+    }];
 }
 
 + (BOOL)projectWithNameExists:(NSString *)name
