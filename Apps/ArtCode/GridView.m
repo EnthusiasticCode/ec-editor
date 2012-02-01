@@ -478,10 +478,9 @@
         // Reposition non-changed elements
         if (!hasChanged)
         {
-            if (NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
+            if (cellIndex < _cellCount && NSLocationInRange(cellIndex + offsetBeforeAnimation + offsetAfterAnimation, cellsLoadedAfterUpdate))
             {
                 [UIView animateWithDuration:(hasAnimations ? 0.2 : 0) animations:^{
-#warning TODO NIK: sometimes after updates cellIndex is out of bounds here
                     // A way to reproduce this is to deleted several projects at the end together
                     GridViewCell *cell = [_cells objectAtIndex:(cellIndex)];
                     [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation)];
