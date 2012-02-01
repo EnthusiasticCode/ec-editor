@@ -74,4 +74,9 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return nil;
 }
 
+- (NSString *)prettyPathRelativeToProjectDirectory
+{
+    return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
+}
+
 @end
