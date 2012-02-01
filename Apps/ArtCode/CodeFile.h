@@ -18,4 +18,6 @@
 
 - (id)initWithFileURL:(NSURL *)fileURL;
 
++ (void)saveFilesToDisk;
+
 @end

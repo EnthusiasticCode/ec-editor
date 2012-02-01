@@ -24,6 +24,7 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
+#import "CodeFile.h"
 
 @implementation ArtCodeAppDelegate
 
@@ -146,6 +147,7 @@
      Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
      If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
      */
+    [self saveApplicationStateToDisk];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
@@ -169,6 +171,13 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+}
+
+- (void)saveApplicationStateToDisk
+{
+    [ArtCodeTab saveTabsToDisk];
+    [ArtCodeProject saveProjectsToDisk];
+    [CodeFile saveFilesToDisk];
 }
 
 @end

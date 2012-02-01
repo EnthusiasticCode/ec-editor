@@ -44,6 +44,11 @@
     return self;
 }
 
++ (void)saveFilesToDisk
+{
+    [FileBuffer saveAllBuffers];
+}
+
 #pragma mark - FileBufferConsumer
 
 - (NSOperationQueue *)consumerOperationQueue

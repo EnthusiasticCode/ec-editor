@@ -9,15 +9,22 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeProject.h"
+#import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
+static NSString * const _plistFileName = @"Tabs.plist";
+static NSString * const _historyURLsKey = @"HistoryURLs";
+static NSString * const _currentHistoryPositionKey = @"currentHistoryPosition";
+
+static NSURL *_plistURL;
+static NSMutableArray *_mutableTabDictionaries;
 static NSMutableArray *_mutableTabs;
 
 @interface ArtCodeTab ()
 {
-    NSMutableArray *_mutableHistoryURLs;
+    NSMutableDictionary *_mutableDictionary;
 }
-- (id)_initWithTab:(ArtCodeTab *)tab;
+- (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 @end
 
 @implementation ArtCodeTab
@@ -26,8 +33,20 @@ static NSMutableArray *_mutableTabs;
 
 + (void)initialize
 {
+    if (self != [ArtCodeTab class])
+        return;
+    _plistURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_plistFileName];
+    NSData *plistData = [NSData dataWithContentsOfURL:_plistURL options:NSDataReadingUncached error:NULL];
+    if (plistData)
+        _mutableTabDictionaries = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListMutableContainersAndLeaves format:0 error:NULL];
+    if (!_mutableTabDictionaries)
+        _mutableTabDictionaries = [[NSMutableArray alloc] init];
     _mutableTabs = [[NSMutableArray alloc] init];
-    [_mutableTabs addObject:[self blankTab]];
+    if (![_mutableTabDictionaries count])
+        [self blankTab]; // no need to do anything with the return value, it will be automatically added to the class arrays
+    else
+        for (NSMutableDictionary *dictionary in _mutableTabDictionaries)
+            [_mutableTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
 }
 
 + (NSArray *)allTabs
@@ -37,26 +56,54 @@ static NSMutableArray *_mutableTabs;
 
 + (ArtCodeTab *)blankTab
 {
-    return [[self alloc] init];
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [_mutableTabDictionaries addObject:dictionary];
+    ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary]; 
+    [_mutableTabs addObject:newTab];
+    return newTab;
 }
 
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
 {
-    return [[self alloc] _initWithTab:tab];
+    NSMutableDictionary *dictionary = [tab->_mutableDictionary mutableCopy];
+    [_mutableTabDictionaries addObject:dictionary];
+    ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
+    [_mutableTabs addObject:newTab];
+    return newTab;
 }
 
 + (void)removeTab:(ArtCodeTab *)tab
 {
     [_mutableTabs removeObject:tab];
+    [_mutableTabDictionaries removeObject:tab->_mutableDictionary];
+}
+
++ (void)saveTabsToDisk
+{
+    NSData *plistData = [NSPropertyListSerialization dataWithPropertyList:_mutableTabDictionaries format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+    [plistData writeToURL:_plistURL atomically:YES];
 }
 
 #pragma mark - Properties
 
-@synthesize currentHistoryPosition = _currentHistoryPosition;
-
 - (NSArray *)historyURLs
 {
-    return [_mutableHistoryURLs copy];
+    NSMutableArray *historyURLs = [[NSMutableArray alloc] init];
+    for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
+        [historyURLs addObject:[NSURL URLWithString:string]];
+    return historyURLs;
+}
+
+- (NSUInteger)currentHistoryPosition
+{
+    return [[_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue];
+}
+
+- (void)setCurrentHistoryPosition:(NSUInteger)currentHistoryPosition
+{
+    [self willChangeValueForKey:@"currentHistoryPosition"];
+    [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
+    [self didChangeValueForKey:@"currentHistoryPosition"];
 }
 
 - (NSURL *)currentURL
@@ -89,37 +136,42 @@ static NSMutableArray *_mutableTabs;
     return [NSSet setWithObjects:@"currentHistoryPosition", @"historyURLs", nil];
 }
 
-- (id)_initWithTab:(ArtCodeTab *)tab
+- (id)_initWithDictionary:(NSMutableDictionary *)dictionary
 {
+    ECASSERT(dictionary);
     self = [super init];
     if (!self)
         return nil;
-    _mutableHistoryURLs = [tab.historyURLs mutableCopy];
-    if (!_mutableHistoryURLs)
-        _mutableHistoryURLs = [[NSMutableArray alloc] init];
-    if (![_mutableHistoryURLs count])
-        [_mutableHistoryURLs addObject:[ArtCodeURL projectsDirectory]];
+    _mutableDictionary = dictionary;
+    if (![_mutableDictionary objectForKey:_historyURLsKey])
+        [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
+    if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
+        [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[[ArtCodeURL projectsDirectory] absoluteString]];
+    if (![_mutableDictionary objectForKey:_currentHistoryPositionKey])
+        [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:0] forKey:_currentHistoryPositionKey];
+    ECASSERT(_mutableDictionary == dictionary);
+    ECASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
     return self;
 }
 
 - (id)init
 {
-    return [self _initWithTab:nil];
+    return [self _initWithDictionary:nil];
 }
 
 - (void)pushURL:(NSURL *)url
 {
     ECASSERT(url);
-    if (![_mutableHistoryURLs count])
+    if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
-        [_mutableHistoryURLs addObject:url];
+        [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
         self.currentHistoryPosition = 0;
         return;
     }
     NSUInteger lastPosition = [self.historyURLs count] - 1;
     if (self.currentHistoryPosition < lastPosition)
-        [_mutableHistoryURLs removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
-    [_mutableHistoryURLs addObject:url];
+        [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
+    [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
     self.currentHistoryPosition += 1;
 }
 

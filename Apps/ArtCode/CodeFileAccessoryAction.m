@@ -49,6 +49,8 @@ static NSArray *systemDefaultAccessoryActions = nil;
 
 + (void)initialize
 {
+    if (self != [CodeFileAccessoryAction class])
+        return;
     NSMutableDictionary *actionDictionary = [NSMutableDictionary new];
     CodeFileAccessoryAction *action = nil;
     

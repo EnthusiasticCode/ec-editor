@@ -12,6 +12,8 @@
 
 @interface ArtCodeProject : NSObject
 
++ (void)saveProjectsToDisk;
+
 /// Returns a value indicating if the project with the given name exists.
 + (BOOL)projectWithNameExists:(NSString *)name;
 

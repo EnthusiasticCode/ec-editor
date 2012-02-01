@@ -15,4 +15,6 @@
 @property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) TabController *tabController;
 
+- (void)saveApplicationStateToDisk;
+
 @end

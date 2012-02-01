@@ -65,13 +65,12 @@ static void * _directoryObservingContext;
 {
     if (filterString == _filterString || [filterString isEqualToString:_filterString])
         return;
-    NSMutableIndexSet *indexesOfInsertedFileURLs = [[NSMutableIndexSet alloc] init];
-    NSMutableIndexSet *indexesOfRemovedFileURLs = [[NSMutableIndexSet alloc] init];
-    NSMutableIndexSet *indexesOfReplacedFileURLs = [[NSMutableIndexSet alloc] init];
     NSMutableArray *newFileURLs = [_mutableFileURLs mutableCopy];
     
     NSInteger index = 0;
     NSURL *previousFileURL = nil;
+    NSMutableIndexSet *indexesOfRemovedFileURLs = [[NSMutableIndexSet alloc] init];
+    NSMutableIndexSet *indexesOfReplacedFileURLs = [[NSMutableIndexSet alloc] init];
     for (NSURL *fileURL in newFileURLs)
     {
         NSIndexSet *hitMask = nil;
@@ -106,7 +105,7 @@ static void * _directoryObservingContext;
             [fileURLsToInsert addObject:fileURL];
     }
     
-    indexesOfInsertedFileURLs = [self _indexesOfInsertedFileURLs:fileURLsToInsert inArray:newFileURLs];
+    NSMutableIndexSet *indexesOfInsertedFileURLs = [self _indexesOfInsertedFileURLs:fileURLsToInsert inArray:newFileURLs];
     
     indexesOfInsertedFileURLs = [indexesOfInsertedFileURLs copy];
     indexesOfRemovedFileURLs = [indexesOfRemovedFileURLs copy];

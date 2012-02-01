@@ -306,6 +306,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     }
     else
         [_consumerOperationQueue cancelAllOperations];
+    _codeView.dataSource = _codeFile;
     [_codeFile.fileBuffer addConsumer:self];
     
     [self _loadWebPreviewContentAndTitle];

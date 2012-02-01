@@ -44,6 +44,8 @@ static WeakDictionary *_allPatterns;
 
 + (void)initialize
 {
+    if (self != [TMPattern class])
+        return;
     _allPatterns = [[WeakDictionary alloc] init];
 }
 

@@ -31,6 +31,16 @@ static dispatch_queue_t _fileBuffersQueue;
     _fileBuffersQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 }
 
++ (void)saveAllBuffers
+{
+    __block WeakDictionary *fileBuffers = nil;
+    dispatch_sync(_fileBuffersQueue, ^{
+        fileBuffers = _fileBuffers;
+    });
+    for (FileBuffer *fileBuffer in [fileBuffers objectEnumerator])
+        [fileBuffer save];
+}
+
 - (id)initWithFileURL:(NSURL *)fileURL
 {
     ECASSERT(fileURL);
@@ -138,17 +148,6 @@ static dispatch_queue_t _fileBuffersQueue;
         return;
     dispatch_barrier_async(_fileAccessQueue, ^{
         NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string];
-        for (id<FileBufferConsumer> consumer in _consumers)
-        {
-            if ([consumer respondsToSelector:@selector(fileBuffer:willReplaceCharactersInRange:withString:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willReplaceCharactersInRange:range withString:string];
-                }]] waitUntilFinished:YES];
-            if ([consumer respondsToSelector:@selector(fileBuffer:willReplaceCharactersInRange:withAttributedString:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-                }]] waitUntilFinished:YES];
-        }
         if ([string length])
             [_contents replaceCharactersInRange:range withString:string];
         else
@@ -196,17 +195,6 @@ static dispatch_queue_t _fileBuffersQueue;
         return;
     dispatch_barrier_async(_fileAccessQueue, ^{
         NSString *string = [attributedString string];
-        for (id<FileBufferConsumer> consumer in _consumers)
-        {
-            if ([consumer respondsToSelector:@selector(fileBuffer:willReplaceCharactersInRange:withAttributedString:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-                }]] waitUntilFinished:YES];
-            if ([consumer respondsToSelector:@selector(fileBuffer:willReplaceCharactersInRange:withString:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willReplaceCharactersInRange:range withString:string];
-                }]] waitUntilFinished:YES];
-        }
         if ([attributedString length])
             [_contents replaceCharactersInRange:range withAttributedString:attributedString];
         else
@@ -231,11 +219,6 @@ static dispatch_queue_t _fileBuffersQueue;
     if (![attributes count] || !range.length)
         return;
     dispatch_barrier_async(_fileAccessQueue, ^{
-        for (id<FileBufferConsumer> consumer in _consumers)
-            if ([consumer respondsToSelector:@selector(fileBuffer:willAddAttributes:range:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willAddAttributes:attributes range:range];
-                }]] waitUntilFinished:YES];
         [_contents addAttributes:attributes range:range];
         for (id<FileBufferConsumer> consumer in _consumers)
             if ([consumer respondsToSelector:@selector(fileBuffer:didAddAttributes:range:)])
@@ -251,11 +234,6 @@ static dispatch_queue_t _fileBuffersQueue;
     if (![attributeNames count] || !range.length)
         return;
     dispatch_barrier_async(_fileAccessQueue, ^{
-        for (id<FileBufferConsumer> consumer in _consumers)
-            if ([consumer respondsToSelector:@selector(fileBuffer:willRemoveAttributes:range:)])
-                [[consumer consumerOperationQueue] addOperations:[NSArray arrayWithObject:[NSBlockOperation blockOperationWithBlock:^{
-                    [consumer fileBuffer:self willRemoveAttributes:attributeNames range:range];
-                }]] waitUntilFinished:YES];
         for (NSString *attributeName in attributeNames)
             [_contents removeAttribute:attributeName range:range];
         for (id<FileBufferConsumer> consumer in _consumers)
@@ -326,6 +304,13 @@ static dispatch_queue_t _fileBuffersQueue;
     replacementRange.length = replacementString.length;
     
     return replacementRange;
+}
+
+- (void)save
+{
+    dispatch_sync(_fileAccessQueue, ^{
+        [[_contents string] writeToURL:self.fileURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    });
 }
 
 @end

@@ -270,6 +270,11 @@ static Cache *openProjects = nil;
 
 #pragma mark Class methods
 
++ (void)saveProjectsToDisk
+{
+#warning TODO NIK: save all the projects' plists here
+}
+
 + (BOOL)projectWithNameExists:(NSString *)name
 {
     if (![name hasSuffix:ProjectExtension])

@@ -41,6 +41,12 @@
     return [_dictionary keyEnumerator];
 }
 
+- (NSEnumerator *)objectEnumerator
+{
+    ECASSERT(_dictionary && _cache);
+    return [_dictionary objectEnumerator];
+}
+
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(__unsafe_unretained id [])buffer count:(NSUInteger)len
 {
     ECASSERT(_dictionary && _cache);
