@@ -223,7 +223,7 @@ static void *_directoryObservingContext;
     
     cell.textLabel.text = [fileURL lastPathComponent];
     cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
-    cell.detailTextLabel.text = [[ArtCodeURL pathRelativeToProjectsDirectory:fileURL] prettyPath];
+    cell.detailTextLabel.text = [fileURL prettyPathRelativeToProjectDirectory];
     
     return cell;
 }

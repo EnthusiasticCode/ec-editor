@@ -129,7 +129,6 @@
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
-		CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
@@ -404,8 +403,6 @@
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
-		CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+AppStyle.h"; sourceTree = "<group>"; };
-		CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+AppStyle.m"; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
@@ -1031,16 +1028,16 @@
 		CD7D2B0813C0CE5E00B889EE /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B7FB79A514D602DB0080A714 /* Code Indexing */,
-				B7FB799214D5FE680080A714 /* Additions */,
 				CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */,
 				CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */,
+				B7FB799214D5FE680080A714 /* Additions */,
 				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
 				CD7D2B1413C0D38A00B889EE /* Browsers */,
 				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
+				B7FB79A514D602DB0080A714 /* Code Indexing */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1111,8 +1108,6 @@
 				CD7D2B1D13C0D47C00B889EE /* UIFont+AppStyle.m */,
 				CD7D2B1E13C0D47C00B889EE /* UIImage+AppStyle.h */,
 				CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */,
-				CD217EAA14D40A7E001AEA41 /* NSString+AppStyle.h */,
-				CD217EAB14D40A7E001AEA41 /* NSString+AppStyle.m */,
 				CDE8065E147F949300C94BFD /* ShapePopoverBackgroundView.h */,
 				CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */,
 			);
@@ -1511,7 +1506,6 @@
 				CD7B435114CECA5700090CAE /* QuickBrowsersContainerController.m in Sources */,
 				CD7B435414CECA9900090CAE /* QuickFileBrowserController.m in Sources */,
 				CD2BA05A14CFF65700031E78 /* QuickBookmarkBrowserController.m in Sources */,
-				CD217EAC14D40A7E001AEA41 /* NSString+AppStyle.m in Sources */,
 				CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */,
 				B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */,
 				B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */,

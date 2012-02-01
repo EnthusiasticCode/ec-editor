@@ -28,4 +28,7 @@
 
 @property (readonly) ArtCodeProject *project;
 
+/// Returns a string that has a pretty path format that removes '.weakpkg' extensions and adds ▸ instead of /
+- (NSString *)prettyPathRelativeToProjectDirectory;
+
 @end
