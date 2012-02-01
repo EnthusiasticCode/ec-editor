@@ -110,12 +110,17 @@ static const void *contentViewControllerContext;
     
     [self willChangeValueForKey:@"contentViewController"];
     
+    [_contentViewController willMoveToParentViewController:nil];
+    [_contentViewController removeFromParentViewController];
+    if (contentViewController)
+    {
+        [self addChildViewController:contentViewController];
+        [contentViewController didMoveToParentViewController:self];
+    }
+    
     // Animate view in position
     if (self._isViewVisible)
     {
-        [_contentViewController viewWillDisappear:animated];
-        [contentViewController viewWillAppear:animated];
-        
         if (_contentViewController != nil && animated)
         {
             UIViewController *oldViewController = _contentViewController;
@@ -136,16 +141,12 @@ static const void *contentViewControllerContext;
             contentViewController.view.frame = _contentViewController.view.frame;
             [self.view addSubview:contentViewController.view];
             [_contentViewController.view removeFromSuperview];
-            [_contentViewController viewDidDisappear:NO];
-            [contentViewController viewDidAppear:NO];
         }
     }
     
     // Remove old view controller
     if (_contentViewController)
     {
-        [_contentViewController willMoveToParentViewController:nil];
-        [_contentViewController removeFromParentViewController];
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
@@ -155,8 +156,6 @@ static const void *contentViewControllerContext;
     // Setup new controller
     if ((_contentViewController = contentViewController))
     {
-        [self addChildViewController:_contentViewController];
-        [_contentViewController didMoveToParentViewController:self];
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
