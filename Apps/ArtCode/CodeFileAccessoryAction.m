@@ -7,6 +7,7 @@
 //
 
 #import "CodeFileAccessoryAction.h"
+#import "CodeFileController.h"
 #import "CodeView.h"
 
 @implementation CodeFileAccessoryAction
@@ -54,15 +55,21 @@ static NSArray *systemDefaultAccessoryActions = nil;
     NSMutableDictionary *actionDictionary = [NSMutableDictionary new];
     CodeFileAccessoryAction *action = nil;
     
+    // Code completion action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"codeCompletion" title:@"comp" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:accessoryButtonIndex];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
     // Add a comma and return at the current location
-    action = [[CodeFileAccessoryAction alloc] initWithName:@"commaReturn" title:@";" imageNamed:nil actionBlock:^(CodeView *codeView) {
-        [codeView insertText:@";\n"];
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"commaReturn" title:@";" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@";\n"];
     }];
     [actionDictionary setObject:action forKey:action.name];
     
     // TODO test button
-    action = [[CodeFileAccessoryAction alloc] initWithName:@"addAsd" title:@"asd" imageNamed:nil actionBlock:^(CodeView *codeView) {
-        [codeView insertText:@"asd"];
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"addAsd" title:@"asd" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"asd"];
     }];
     [actionDictionary setObject:action forKey:action.name];
         

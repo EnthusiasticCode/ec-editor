@@ -44,7 +44,7 @@
     UIButton *_keyboardAccessoryItemPopoverButton;
     
     /// Tag of the keyboard accessory button that is being customized via long press.
-    NSUInteger _keyboardAccessoryItemCustomizingTag;
+    NSInteger _keyboardAccessoryItemCustomizingTag;
     
     /// Actions associated to items in the accessory view. Associations are made with tag (as array index) to CodeFileAccessoryAction.
     NSMutableArray *_keyboardAccessoryItemActions;
@@ -193,9 +193,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
             UIView *presentedView = nil;
             UIView *presentingView = sender.superview;
-            if (itemIndex == 10)
+            // If no item is showing, the only other action that can possibly show a popover is the completion
+            if (this->_keyboardAccessoryItemCustomizingTag < 0)
                 presentedView = this._keyboardAccessoryItemCompletionsController.view;
-            else if (itemIndex > 0)
+            else
                 presentedView = this._keyboardAccessoryItemCustomizeController.view;
             CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
             presentedView.frame = popoverContentFrame;
@@ -229,11 +230,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Items actions
         #warning TODO load from plist and change for current language
-        _keyboardAccessoryItemActions = [NSMutableArray arrayWithCapacity:9];
+        _keyboardAccessoryItemActions = [NSMutableArray arrayWithCapacity:11];
         // TODO method to set items based on language
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < 10; ++i) {
             [_keyboardAccessoryItemActions addObject:[CodeFileAccessoryAction accessoryActionWithName:@"commaReturn"]];
         }
+        [_keyboardAccessoryItemActions addObject:[CodeFileAccessoryAction accessoryActionWithName:@"codeCompletion"]];
         
         // Items setup
         [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
@@ -507,8 +509,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         self.webView = nil;
 }
 
-#pragma mark - Controller Editing Methods
-
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     UIView *oldContentView = [self _contentView];
@@ -720,6 +720,22 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
 }
 
+#pragma mark - Public Methods
+
+- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
+{
+    ECASSERT(self._keyboardAccessoryView.superview);
+    
+    self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
+    if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
+    {
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" image:nil displayImmediatly:YES];
+        return;
+    }
+    
+    [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
+}
+
 #pragma mark - Private Methods
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
@@ -838,14 +854,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (!_keyboardAccessoryItemCustomizeController)
     {
         CodeFileAccessoryItemsGridView *gridView = [CodeFileAccessoryItemsGridView new];
-        gridView.itemSize = CGSizeMake(50, 30);
+        gridView.itemSize = CGSizeMake(50, 40);
         gridView.itemInsents = UIEdgeInsetsMake(5, 5, 5, 5);
         gridView.didSelectActionItemBlock = ^(CodeFileAccessoryItemsGridView *view, CodeFileAccessoryAction *action) {
-            ECASSERT(_keyboardAccessoryItemCustomizingTag > 0 && _keyboardAccessoryItemCustomizingTag < 10);
+            ECASSERT(_keyboardAccessoryItemCustomizingTag > 0 && _keyboardAccessoryItemCustomizingTag <= 11);
             [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
             // Setup changed keyboard accessory item
-            [_keyboardAccessoryItemActions removeObjectAtIndex:_keyboardAccessoryItemCustomizingTag - 1];
-            [_keyboardAccessoryItemActions insertObject:action atIndex:_keyboardAccessoryItemCustomizingTag - 1];
+            [_keyboardAccessoryItemActions removeObjectAtIndex:_keyboardAccessoryItemCustomizingTag];
+            [_keyboardAccessoryItemActions insertObject:action atIndex:_keyboardAccessoryItemCustomizingTag];
             [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
         };
         
@@ -858,7 +874,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions
 {
-    ECASSERT([actions count] == 9);
+    ECASSERT([actions count] == 11);
     
     CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
     
@@ -875,25 +891,23 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             
             if (i == 0)
             {
-                item.title = @"tab";
                 [item setWidth:44 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating];
             }
             else if (i == 10)
             {
-                item.title = @"compl";
                 [item setWidth:63 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
                 [item setWidth:82 + 4 forAccessoryPosition:KeyboardAccessoryPositionLandscape];
                 [item setWidth:44 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating];
             }
             else 
             {
-                action = [actions objectAtIndex:i - 1];
-                item.title = action.title;
-                item.image = [UIImage imageNamed:action.imageName];
                 if (i % 2)
                     [item setWidth:60 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
             }
             
+            action = [actions objectAtIndex:i];
+            item.title = action.title;
+            item.image = [UIImage imageNamed:action.imageName];            
             item.tag = i;
             [items addObject:item];
         }
@@ -902,9 +916,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
         // Items long press action
         [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
-            if (itemIndex < 1 || itemIndex > 9)
-                return;
-            
             UILongPressGestureRecognizer *itemLongPressrecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardAccessoryItemLongPressHandler:)];
             itemLongPressrecognizer.minimumPressDuration = 1;
             [item.customView addGestureRecognizer:itemLongPressrecognizer];
@@ -914,10 +925,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     {
         NSArray *items = accessoryView.items;
         [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
-            if (itemIndex < 1 || itemIndex > 9)
-                return;
-            
-            CodeFileAccessoryAction *action = [actions objectAtIndex:itemIndex - 1];
+            CodeFileAccessoryAction *action = [actions objectAtIndex:itemIndex];
             item.title = action.title;
             item.image = [UIImage imageNamed:action.imageName];
         }];
@@ -927,28 +935,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
 {
-    if (item.tag == 0)
-    {
-    }
-    else if (item.tag == 10)
-    {
-        // Prepare completion controller
-        self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
-        if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
-        {
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" image:nil displayImmediatly:YES];
-            return;
-        }
-        
-        [self._keyboardAccessoryView presentPopoverForItemAtIndex:item.tag permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
-    }
-    else
-    {
-        ECASSERT([_keyboardAccessoryItemActions count] == 9);
-        ECASSERT([[_keyboardAccessoryItemActions objectAtIndex:item.tag - 1] actionBlock] != nil);
-        
-        [[_keyboardAccessoryItemActions objectAtIndex:item.tag - 1] actionBlock](self.codeView);
-    }
+    ECASSERT([[_keyboardAccessoryItemActions objectAtIndex:item.tag] actionBlock] != nil);
+    _keyboardAccessoryItemCustomizingTag = -1;
+    [[_keyboardAccessoryItemActions objectAtIndex:item.tag] actionBlock](self, item.tag);
 }
 
 - (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer

@@ -40,4 +40,11 @@
 /// Indicates the width of the minimap.
 @property (nonatomic) CGFloat minimapWidth;
 
+#pragma mark - Code completion
+
+/// Generate and shows a keyboard accessory popover at the specified item index 
+/// containing the completions for the cursor. If no completions are available
+/// a bezel alert will be shown instead.
+- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex;
+
 @end

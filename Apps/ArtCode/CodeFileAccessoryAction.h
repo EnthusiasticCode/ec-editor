@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@class CodeView;
+@class CodeFileController;
 
-typedef void(^CodeFileAccessoryActionBlock)(CodeView *codeView);
+typedef void(^CodeFileAccessoryActionBlock)(CodeFileController *controller, NSUInteger accessoryButtonIndex);
 
 @interface CodeFileAccessoryAction : NSObject
 
