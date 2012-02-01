@@ -255,29 +255,21 @@ static void *_openQuicklyObservingContext;
     }
     else if (context == &_directoryObservingContext || context == &_openQuicklyObservingContext)
     {
-        if ((object == _directoryPresenter && _isShowingOpenQuickly) || (object == _openQuicklyPresenter && !_isShowingOpenQuickly))
+        if (_isShowingOpenQuickly && object == _openQuicklyPresenter)
+        {
+            [self.tableView reloadData];
             return;
+        }
+        if (object == _directoryPresenter && _isShowingOpenQuickly)
+            return;
+        [self.tableView reloadData];
         NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-        [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            [indexPaths addObject:[NSIndexPath indexPathForRow:idx inSection:0]];
-        }];
-        switch (kind) {
-            case NSKeyValueChangeInsertion:
-                [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-                break;
-            case NSKeyValueChangeRemoval:
-                [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-                break;
-            case NSKeyValueChangeReplacement:
-                [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationNone];
-                break;
-            case NSKeyValueChangeSetting:
-                [self.tableView reloadData];
-                break;
-            default:
-                ECASSERT(NO && "unhandled KVO change");
-                break;
+        if (kind == NSKeyValueChangeInsertion)
+        {
+            [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+                *stop = YES;
+            }];
         }
     }
     else

@@ -11,8 +11,17 @@
 
 @interface NewFileController : UIViewController
 
+#pragma mark IB outlets
+
 @property (strong, nonatomic) IBOutlet UITextField *fileNameTextField;
+@property (strong, nonatomic) IBOutlet UILabel *infoLabel;
 
 - (IBAction)createAction:(id)sender;
+
+#pragma mark Customizable actions
+
+/// URL pointing to a directory containing an ArtCode template.
+/// TODO define ArtCode template.
+@property (strong, nonatomic) NSURL *templateDirectoryURL;
 
 @end
