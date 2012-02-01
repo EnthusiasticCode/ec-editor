@@ -161,7 +161,7 @@ static void * _directoryObservingContext;
     switch (kind) {
         case NSKeyValueChangeInsertion:
         {
-            NSMutableArray *newFileURLs = [[[change objectForKey:NSKeyValueChangeNewKey] objectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey]] mutableCopy];
+            NSMutableArray *newFileURLs = [[change objectForKey:NSKeyValueChangeNewKey] mutableCopy];
             NSMutableArray *fileURLsToInsert = [[NSMutableArray alloc] init];
             for (NSURL *fileURL in newFileURLs)
             {
@@ -178,7 +178,7 @@ static void * _directoryObservingContext;
         }
         case NSKeyValueChangeRemoval:
         {
-            NSArray *fileURLsToRemove = [[change objectForKey:NSKeyValueChangeOldKey] objectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey]];
+            NSArray *fileURLsToRemove = [change objectForKey:NSKeyValueChangeOldKey];
             NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
             for (NSURL *fileURL in fileURLsToRemove)
             {
