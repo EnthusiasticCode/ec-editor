@@ -116,6 +116,18 @@
         _infoLabel.text = @"The project has no bookmarks.";
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    if ([self isMemberOfClass:[BookmarkBrowserController class]])
+    {
+        [_searchBar removeFromSuperview];
+        self.tableView.frame = self.view.bounds;
+        self.tableView.tableHeaderView = _searchBar;
+        self.tableView.contentOffset = CGPointMake(0, 45);
+    }
+}
 
 - (void)viewDidUnload
 {
