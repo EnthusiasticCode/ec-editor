@@ -23,6 +23,7 @@ static NSMutableArray *_mutableTabs;
 @interface ArtCodeTab ()
 {
     NSMutableDictionary *_mutableDictionary;
+    NSMutableArray *_mutableHistoryURLs;
 }
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 @end
@@ -88,10 +89,7 @@ static NSMutableArray *_mutableTabs;
 
 - (NSArray *)historyURLs
 {
-    NSMutableArray *historyURLs = [[NSMutableArray alloc] init];
-    for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
-        [historyURLs addObject:[NSURL URLWithString:string]];
-    return historyURLs;
+    return [_mutableHistoryURLs copy];
 }
 
 - (NSUInteger)currentHistoryPosition
@@ -108,7 +106,7 @@ static NSMutableArray *_mutableTabs;
 
 - (NSURL *)currentURL
 {
-    return [self.historyURLs objectAtIndex:self.currentHistoryPosition];
+    return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
 
 + (NSSet *)keyPathsForValuesAffectingCurrentURL
@@ -143,10 +141,19 @@ static NSMutableArray *_mutableTabs;
     if (!self)
         return nil;
     _mutableDictionary = dictionary;
+    _mutableHistoryURLs = [[NSMutableArray alloc] init];
     if (![_mutableDictionary objectForKey:_historyURLsKey])
         [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
+    {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[[ArtCodeURL projectsDirectory] absoluteString]];
+        [_mutableHistoryURLs addObject:[ArtCodeURL projectsDirectory]];
+    }
+    else
+    {
+        for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
+            [_mutableHistoryURLs addObject:[NSURL URLWithString:string]];
+    }
     if (![_mutableDictionary objectForKey:_currentHistoryPositionKey])
         [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:0] forKey:_currentHistoryPositionKey];
     ECASSERT(_mutableDictionary == dictionary);
@@ -165,13 +172,19 @@ static NSMutableArray *_mutableTabs;
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
+        [_mutableHistoryURLs addObject:url];
         self.currentHistoryPosition = 0;
         return;
     }
     NSUInteger lastPosition = [self.historyURLs count] - 1;
     if (self.currentHistoryPosition < lastPosition)
-        [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsInRange:NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition)];
+    {
+        NSRange rangeToDelete = NSMakeRange(self.currentHistoryPosition + 1, lastPosition - self.currentHistoryPosition);
+        [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsInRange:rangeToDelete];
+        [_mutableHistoryURLs removeObjectsInRange:rangeToDelete];
+    }
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
+    [_mutableHistoryURLs addObject:url];
     self.currentHistoryPosition += 1;
 }
 

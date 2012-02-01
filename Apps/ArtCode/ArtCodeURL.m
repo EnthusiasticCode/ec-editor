@@ -20,10 +20,10 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 + (NSURL *)projectsDirectory
 {
-    static NSURL *_projectsDirecotry = nil;
-    if (!_projectsDirecotry)
-        _projectsDirecotry = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
-    return _projectsDirecotry;
+    static NSURL *_projectsDirectory = nil;
+    if (!_projectsDirectory)
+        _projectsDirectory = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
+    return _projectsDirectory;
 }
 
 + (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL

@@ -4,9 +4,9 @@
 [submodule "ThirdParty/cocoaoniguruma"]
 	path = ThirdParty/cocoaoniguruma
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/cocoaoniguruma.git
-[submodule "ThirdParty/ConnectionKit"]
-	path = ThirdParty/ConnectionKit
-	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
 [submodule "ThirdParty/libarchive"]
 	path = ThirdParty/libarchive
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/iOS-libarchive.git
+[submodule "ThirdParty/Connection"]
+	path = ThirdParty/Connection
+	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
