@@ -194,9 +194,12 @@ static void *_openQuicklyObservingContext;
     
     [_selectedURLs removeAllObjects];
     
-    _currentObservedProject = self.tab.currentURL.project;
-    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    if (!_currentObservedProject)
+    {
+        _currentObservedProject = self.tab.currentURL.project;
+        [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
