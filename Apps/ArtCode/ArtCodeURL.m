@@ -74,6 +74,22 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return nil;
 }
 
+- (BOOL)isBookmarksVariant
+{
+    return [[self fragmentDictionary] objectForKey:@"bookmarks"] != nil;
+}
+
+- (NSURL *)URLByAddingBookmarksVariant
+{
+    NSMutableDictionary *fragments = [[self fragmentDictionary] mutableCopy];
+    if ([fragments objectForKey:@"bookmarks"] != nil)
+        return [self copy];
+    if (fragments == nil)
+        fragments = [NSMutableDictionary new];
+    [fragments setObject:@"" forKey:@"bookmarks"];
+    return [self URLByAppendingFragmentDictionary:fragments];
+}
+
 - (NSString *)prettyPathRelativeToProjectDirectory
 {
     return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];

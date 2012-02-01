@@ -18,6 +18,7 @@
 
 #import "ProjectTableController.h"
 #import "FileTableController.h"
+#import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -477,16 +478,27 @@ static const void *contentViewControllerContext;
         // TODO route bookmarks and remotes
         if (currentURLIsDirectory)
         {
-            if ([self.contentViewController isKindOfClass:[FileTableController class]])
-                result = self.contentViewController;
+            if ([url isBookmarksVariant])
+            {
+                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+                    result = self.contentViewController;
+                else
+                    result = [BookmarkBrowserController new];
+                result.artCodeTab = self.tab;
+            }
             else
-                result = [[FileTableController alloc] initWithStyle:UITableViewStyleGrouped];
-                
-            FileTableController *fileTableController = (FileTableController *)result;
-            fileTableController.tab = self.tab;
-            [fileTableController setDirectory:url];
-            if (result == self.contentViewController)
-                [self updateDefaultToolbarTitle];
+            {
+                if ([self.contentViewController isKindOfClass:[FileTableController class]])
+                    result = self.contentViewController;
+                else
+                    result = [[FileTableController alloc] initWithStyle:UITableViewStyleGrouped];
+                    
+                FileTableController *fileTableController = (FileTableController *)result;
+                fileTableController.tab = self.tab;
+                [fileTableController setDirectory:url];
+                if (result == self.contentViewController)
+                    [self updateDefaultToolbarTitle];
+            }
         }
         else
         {

@@ -28,6 +28,10 @@
 
 @property (readonly) ArtCodeProject *project;
 
+/// Indicate if the URL has a bookmarks specifier.
+- (BOOL)isBookmarksVariant;
+- (NSURL *)URLByAddingBookmarksVariant;
+
 /// Returns a string that has a pretty path format that removes '.weakpkg' extensions and adds ▸ instead of /
 - (NSString *)prettyPathRelativeToProjectDirectory;
 

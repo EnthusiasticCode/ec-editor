@@ -198,6 +198,7 @@
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
+		CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */; };
 		CDC13330145FFE390028423F /* CodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* CodeFileSearchOptionsController.m */; };
 		CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333214602F5E0028423F /* searchBar_Background.png */; };
 		CDC1333714602F5E0028423F /* searchBar_Button_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */; };
@@ -506,6 +507,8 @@
 		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
 		CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighlightTableViewCell.h; sourceTree = "<group>"; };
 		CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HighlightTableViewCell.m; sourceTree = "<group>"; };
+		CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkBrowserController.h; sourceTree = "<group>"; };
+		CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkBrowserController.m; sourceTree = "<group>"; };
 		CDC1332E145FFE390028423F /* CodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchOptionsController.h; sourceTree = "<group>"; };
 		CDC1332F145FFE390028423F /* CodeFileSearchOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileSearchOptionsController.m; sourceTree = "<group>"; };
 		CDC1333214602F5E0028423F /* searchBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_Background.png; sourceTree = "<group>"; };
@@ -1078,6 +1081,8 @@
 				CD7D2B3213C0D4C700B889EE /* ProjectTableController.m */,
 				CD7D2B4613C0D55700B889EE /* FileTableController.h */,
 				CD7D2B4713C0D55700B889EE /* FileTableController.m */,
+				CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */,
+				CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */,
 				B7AC174F14216D25009E9205 /* Content Controllers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
@@ -1565,6 +1570,7 @@
 				CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */,
 				CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */,
 				B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */,
+				CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
