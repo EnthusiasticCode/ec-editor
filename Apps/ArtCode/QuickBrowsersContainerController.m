@@ -110,7 +110,7 @@
 
 #pragma mark - Properties
 
-@synthesize popoverController, openingButton;
+@synthesize openingButton;
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
 {

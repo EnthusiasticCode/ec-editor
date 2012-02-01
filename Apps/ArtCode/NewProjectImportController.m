@@ -13,6 +13,7 @@
 #import "NSURL+Utilities.h"
 #import "DirectoryPresenter.h"
 #import "BezelAlert.h"
+#import "NSString+PluralFormat.h"
 
 
 @implementation NewProjectImportController {
@@ -85,7 +86,7 @@
             }];
         }
     }];
-    [[(NewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:([indexPaths count] == 1 ? @"Project imported" : [NSString stringWithFormat:@"%u projects imported", [indexPaths count]]) image:nil displayImmediatly:YES];
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project imported" plural:@"%u projects imported" count:[indexPaths count]] image:nil displayImmediatly:YES];
 }
 @end

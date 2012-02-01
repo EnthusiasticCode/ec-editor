@@ -180,7 +180,7 @@
     {
         [_quickBrowsersPopover setContentViewController:navigationController animated:NO];
     }
-    quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
     quickBrowserContainerController.openingButton = sender;
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }

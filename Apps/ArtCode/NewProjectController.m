@@ -38,6 +38,7 @@
 {
     [super viewWillAppear:animated];
     [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
+    [self.projectNameTextField becomeFirstResponder];
 }
 
 - (void)_selectColorAction:(ColorSelectionControl *)sender
@@ -80,9 +81,9 @@
         project.labelColor = projectColor;
     [project flush];
     
-    [[(NewProjectNavigationController *)self.navigationController popoverController] dismissPopoverAnimated:YES];
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" image:nil displayImmediatly:YES];
-    [[(NewProjectNavigationController *)self.navigationController parentController].tab pushURL:project.URL];
+    [self.artCodeTab pushURL:project.URL];
 }
 
 @end

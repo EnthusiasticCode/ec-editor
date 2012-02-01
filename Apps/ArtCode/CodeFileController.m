@@ -10,6 +10,7 @@
 #import "SingleTabController.h"
 #import "CodeFileSearchBarController.h"
 #import "QuickBrowsersContainerController.h"
+#import "UIViewController+PresentingPopoverController.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import "FileBuffer.h"
@@ -373,7 +374,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
         _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
     }
-    quickBrowserContainerController.popoverController = _quickBrowsersPopover;
+    quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
     quickBrowserContainerController.openingButton = sender;
     
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

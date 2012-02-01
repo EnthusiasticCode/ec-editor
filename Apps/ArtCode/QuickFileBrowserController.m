@@ -233,7 +233,7 @@ static void *_directoryObservingContext;
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
 }
 
@@ -241,13 +241,13 @@ static void *_directoryObservingContext;
 
 - (void)_showBrowserInTabAction:(id)sender
 {
-    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [self.artCodeTab pushURL:[self.artCodeTab.currentURL.project URL]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
-    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [self.artCodeTab pushURL:[ArtCodeURL projectsDirectory]];
 }
 

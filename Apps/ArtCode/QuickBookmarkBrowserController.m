@@ -37,7 +37,7 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [super tableView:table didSelectRowAtIndexPath:indexPath];
 }
 
@@ -45,7 +45,7 @@
 
 - (void)_showBrowserInTabAction:(id)sender
 {
-    [self.quickBrowsersContainerController.popoverController dismissPopoverAnimated:YES];
+    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [self.artCodeTab pushURL:[[self.artCodeTab.currentURL.project URL] URLByAddingBookmarksVariant]];
 }
 

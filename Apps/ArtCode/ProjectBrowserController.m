@@ -441,10 +441,10 @@ static void *_directoryObservingContext;
         NewProjectNavigationController *newProjectNavigationController = (NewProjectNavigationController *)[storyboard instantiateInitialViewController];
         [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
         newProjectNavigationController.projectsDirectory = self.projectsDirectory;
-        newProjectNavigationController.parentController = self;
+        newProjectNavigationController.artCodeTab = self.artCodeTab;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
-        newProjectNavigationController.popoverController = _toolItemPopover;
+        newProjectNavigationController.presentingPopoverController = _toolItemPopover;
     }
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
