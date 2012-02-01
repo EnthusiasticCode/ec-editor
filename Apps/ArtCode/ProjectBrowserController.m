@@ -63,7 +63,6 @@ static void *_directoryObservingContext;
 
 #pragma mark - Properties
 
-@synthesize tab = _tab;
 @synthesize gridView = _gridView;
 @synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
 
@@ -256,7 +255,7 @@ static void *_directoryObservingContext;
 {
     if (!self.isEditing)
     {
-        [self.tab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+        [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
     }
 }
 

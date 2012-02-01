@@ -9,12 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@class ToolFiltersView, Group, ArtCodeTab;
+@class ToolFiltersView, Group;
 
 
 @interface FileBrowserController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
-@property (nonatomic, strong) ArtCodeTab *tab;
 @property (nonatomic, strong) NSURL *directory;
 
 @end

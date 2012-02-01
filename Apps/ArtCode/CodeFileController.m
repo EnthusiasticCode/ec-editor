@@ -112,7 +112,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize fileURL = _fileURL, tab = _tab, codeFile = _codeFile;
+@synthesize fileURL = _fileURL, codeFile = _codeFile;
 @synthesize _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
 
 - (CodeView *)codeView
@@ -154,7 +154,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Bookmark markers
         [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            if (!line.isTruncation && [[this.tab.currentURL.project bookmarksForFile:this.tab.currentURL atLine:(lineNumber + 1)] count] > 0)
+            if (!line.isTruncation && [[this.artCodeTab.currentURL.project bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
             {
                 CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
                 CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
@@ -365,7 +365,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.tab];
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.artCodeTab];
     if (!_quickBrowsersPopover)
     {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
@@ -597,16 +597,16 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    NSArray *bookmarks = [self.tab.currentURL.project bookmarksForFile:self.tab.currentURL atLine:lineNumber];
+    NSArray *bookmarks = [self.artCodeTab.currentURL.project bookmarksForFile:self.artCodeTab.currentURL atLine:lineNumber];
     if ([bookmarks count] == 0)
     {
-        [self.tab.currentURL.project addBookmarkWithFileURL:self.tab.currentURL line:lineNumber note:nil];
+        [self.artCodeTab.currentURL.project addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
     }
     else
     {
         for (ProjectBookmark *bookmark in bookmarks)
         {
-            [self.tab.currentURL.project removeBookmark:bookmark];
+            [self.artCodeTab.currentURL.project removeBookmark:bookmark];
         }
     }
     [self.codeView setNeedsDisplay];

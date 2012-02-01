@@ -51,7 +51,7 @@ static const void *contentViewControllerContext;
 
 @synthesize defaultToolbar = _defaultToolbar, toolbarViewController = _toolbarViewController, toolbarHeight = _toolbarHeight;
 @synthesize contentViewController = _contentViewController;
-@synthesize tab = _tab;
+
 
 - (TopBarToolbar *)defaultToolbar
 {
@@ -296,30 +296,27 @@ static const void *contentViewControllerContext;
 
 #pragma mark Tab
 
-- (void)setTab:(ArtCodeTab *)tab
+- (void)setArtCodeTab:(ArtCodeTab *)tab
 {
-    if (tab == _tab)
+    if (tab == self.artCodeTab)
         return;
-    [self willChangeValueForKey:@"tab"];
     
-    if (_tab)
+    if (self.artCodeTab)
     {
-        [_tab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
-        [ArtCodeTab removeTab:_tab];
+        [self.artCodeTab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+        [ArtCodeTab removeTab:self.artCodeTab];
     }
     
-    _tab = tab;
-    
-    [_tab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
-    
-    [self didChangeValueForKey:@"tab"];
+    [super setArtCodeTab:tab];
+
+    [self.artCodeTab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
 }
 
 #pragma mark - Controller methods
 
 - (void)dealloc
 {
-    self.tab = nil;
+    self.artCodeTab = nil;
     self.contentViewController = nil;
 }
 
@@ -332,9 +329,9 @@ static const void *contentViewControllerContext;
 {
     if (context == &tabCurrentURLObservingContext)
     {
-        self.defaultToolbar.backButton.enabled = self.tab.canMoveBackInHistory;
-        self.defaultToolbar.forwardButton.enabled = self.tab.canMoveForwardInHistory;
-        [self setContentViewController:[self _routeViewControllerWithURL:self.tab.currentURL] animated:YES];
+        self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
+        self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
+        [self setContentViewController:[self _routeViewControllerWithURL:self.artCodeTab.currentURL] animated:YES];
     }
     else if (context == &contentViewControllerContext)
     {
@@ -388,7 +385,7 @@ static const void *contentViewControllerContext;
         }
         else
         {
-            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.tab.currentURL] pathComponents];
+            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents];
             NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
             NSInteger lastIndex = [pathComponents count] - 1;
             [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
@@ -471,7 +468,6 @@ static const void *contentViewControllerContext;
             result = [[ProjectBrowserController alloc] init];
         ProjectBrowserController *projectTableController = (ProjectBrowserController *)result;
         projectTableController.projectsDirectory = url;
-        projectTableController.tab = self.tab;
     }
     else if (currentURLExists)
     {
@@ -484,7 +480,6 @@ static const void *contentViewControllerContext;
                     result = self.contentViewController;
                 else
                     result = [BookmarkBrowserController new];
-                result.artCodeTab = self.tab;
             }
             else
             {
@@ -494,7 +489,6 @@ static const void *contentViewControllerContext;
                     result = [[FileBrowserController alloc] initWithStyle:UITableViewStyleGrouped];
                     
                 FileBrowserController *fileTableController = (FileBrowserController *)result;
-                fileTableController.tab = self.tab;
                 [fileTableController setDirectory:url];
                 if (result == self.contentViewController)
                     [self updateDefaultToolbarTitle];
@@ -508,7 +502,6 @@ static const void *contentViewControllerContext;
                 result = [[CodeFileController alloc] init];
             CodeFileController *codeFileController = (CodeFileController *)result;
             codeFileController.fileURL = url;
-            codeFileController.tab = self.tab;
         }
     }
     return result;
@@ -522,12 +515,12 @@ static const void *contentViewControllerContext;
 
 - (void)_historyBackAction:(id)sender
 {
-    [self.tab moveBackInHistory];
+    [self.artCodeTab moveBackInHistory];
 }
 
 - (void)_historyForwardAction:(id)sender
 {
-    [self.tab moveForwardInHistory];
+    [self.artCodeTab moveForwardInHistory];
 }
 
 @end

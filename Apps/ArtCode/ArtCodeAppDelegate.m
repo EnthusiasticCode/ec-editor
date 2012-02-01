@@ -109,7 +109,7 @@
     [addTabButton setActionBlock:^(id sender) {
         // Duplicate current tab
         SingleTabController *singleTabController = [[SingleTabController alloc] init];
-        singleTabController.tab = [ArtCodeTab duplicateTab:[(SingleTabController *)self.tabController.selectedViewController tab]];
+        singleTabController.artCodeTab = [ArtCodeTab duplicateTab:self.tabController.selectedViewController.artCodeTab];
         [self.tabController addChildViewController:singleTabController animated:YES];
     } forControlEvent:UIControlEventTouchUpInside];
     self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
@@ -124,7 +124,7 @@
     for (ArtCodeTab *tab in [ArtCodeTab allTabs])
     {
         SingleTabController *singleTabController = [[SingleTabController alloc] init];
-        singleTabController.tab = tab;
+        singleTabController.artCodeTab = tab;
         [self.tabController addChildViewController:singleTabController];
     }
     [self.tabController setTabBarVisible:NO];

@@ -16,7 +16,6 @@
 @interface ProjectBrowserController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *projectsDirectory;
-@property (nonatomic, strong) ArtCodeTab *tab;
 
 @end
 

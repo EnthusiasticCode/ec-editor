@@ -9,13 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @class TopBarToolbar, TopBarTitleControl;
-@class ArtCodeTab;
 
 @interface SingleTabController : UIViewController
 
 #pragma mark Content selection
-
-@property (nonatomic, strong) ArtCodeTab *tab;
 
 @property (nonatomic, strong) IBOutlet UIViewController *contentViewController;
 - (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
