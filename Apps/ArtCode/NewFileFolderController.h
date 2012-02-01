@@ -10,7 +10,10 @@
 
 @interface NewFileFolderController : UIViewController
 
+#pragma mark IB outlets
+
 @property (strong, nonatomic) IBOutlet UITextField *folderNameTextField;
+@property (strong, nonatomic) IBOutlet UILabel *infoLabel;
 
 - (IBAction)createAction:(id)sender;
 
