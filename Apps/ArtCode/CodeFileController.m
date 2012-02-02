@@ -230,12 +230,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Items actions
         #warning TODO load from plist and change for current language
-        _keyboardAccessoryItemActions = [NSMutableArray arrayWithCapacity:11];
-        // TODO method to set items based on language
-        for (int i = 0; i < 10; ++i) {
-            [_keyboardAccessoryItemActions addObject:[CodeFileAccessoryAction accessoryActionWithName:@"commaReturn"]];
-        }
-        [_keyboardAccessoryItemActions addObject:[CodeFileAccessoryAction accessoryActionWithName:@"codeCompletion"]];
+        _keyboardAccessoryItemActions = [[CodeFileAccessoryAction defaultActionsForLanguageWithIdentifier:@"objc"] mutableCopy];
         
         // Items setup
         [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];

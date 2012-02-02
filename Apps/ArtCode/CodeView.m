@@ -50,12 +50,13 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         unsigned dataSourceHasCommitStringForTextInRange : 1;
         unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
         unsigned dataSourceHasAttributeAtIndexLongestEffectiveRange : 1;
+        unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
         unsigned delegateHasSelectedLineNumber : 1;
         unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-        unsigned reserved : 3;
+        unsigned reserved : 2;
     } _flags;
     
     // Recognizers
@@ -69,6 +70,9 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 }
 
 /// Method to be used before any text modification occurs.
+- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string selectionRange:(NSRange)selection;
+
+/// Shourtcut that will automatically set the selection after the inserted text.
 - (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string;
 
 /// Support method to set the selection and notify the input delefate.
@@ -674,6 +678,7 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 {
     [super setDelegate:delegate];
     
+    _flags.delegateHasReplaceInsertedTextSelectionAfterInsertion = [delegate respondsToSelector:@selector(codeView:replaceInsertedText:selectionAfterInsertion:)];
     _flags.delegateHasSelectedLineNumber = [delegate respondsToSelector:@selector(codeView:selectedLineNumber:)];
     _flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
     _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
@@ -924,8 +929,48 @@ static void init(CodeView *self)
 
 - (void)insertText:(NSString *)string
 {
-    NSRange insertRange = _selectionView.selection;
-    [self _editDataSourceInRange:insertRange withString:string];
+    NSString *insertString = nil;
+    NSRange selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + [string length], 0);
+    
+    if (_flags.delegateHasReplaceInsertedTextSelectionAfterInsertion)
+        insertString = [self.delegate codeView:self replaceInsertedText:string selectionAfterInsertion:&selectionAfterInsertion];
+    
+    if (insertString == nil)
+    {
+        insertString = string;
+        if ([string length] == 1)
+        {
+            unichar ch = [string characterAtIndex:0];
+            switch (ch) {
+//                case NSLeftArrowFunctionKey:
+//                    [self _moveInDirection:UITextLayoutDirectionLeft];
+//                    return;
+//                case NSRightArrowFunctionKey:
+//                    [self _moveInDirection:UITextLayoutDirectionRight];
+//                    return;
+//                case NSUpArrowFunctionKey:
+//                    [self _moveInDirection:UITextLayoutDirectionUp];
+//                    return;
+//                case NSDownArrowFunctionKey:
+//                    [self _moveInDirection:UITextLayoutDirectionDown];
+//                    return;
+                case 0x20: // Space
+                {
+                    break;
+                }
+                    
+                case L'{':
+                    insertString = [NSString stringWithFormat:@"{%@}", [self selectedText]];
+                    if ([insertString length] == 2)
+                        selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + 1, 0);
+                    else
+                        selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + [insertString length], 0);
+                    break;
+            }
+        }
+    }
+    
+    [self _editDataSourceInRange:_selectionView.selection withString:insertString selectionRange:selectionAfterInsertion];
     
     // Interrupting undo grouping on user return
     if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
@@ -1059,6 +1104,13 @@ static void init(CodeView *self)
 }
 
 #pragma mark Working with Marked and Selected Text
+
+- (NSString *)selectedText
+{
+    if (_selectionView.selection.length == 0)
+        return @"";
+    return [[self.dataSource textRenderer:self.renderer attributedStringInRange:_selectionView.selection] string];
+}
 
 - (UITextRange *)selectedTextRange
 {
@@ -1454,7 +1506,7 @@ static void init(CodeView *self)
 
 #pragma mark - Private methods
 
-- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string
+- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string selectionRange:(NSRange)selection
 {
     ECASSERT(string);
     
@@ -1474,7 +1526,7 @@ static void init(CodeView *self)
         [self.undoManager beginUndoGrouping];
         [self.undoManager setActionName:@"Typing"];
     }
-    [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : nil];
+    [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : @"" selectionRange:range];
     
     // Commit string
     [inputDelegate textWillChange:self];
@@ -1482,7 +1534,12 @@ static void init(CodeView *self)
     [inputDelegate textDidChange:self];
     
     // Update caret location
-    [self _setSelectedTextRange:self.undoManager.isUndoing ? NSMakeRange(range.location, stringLenght) : NSMakeRange(range.location + stringLenght, 0) notifyDelegate:NO];
+    [self _setSelectedTextRange:selection notifyDelegate:NO];
+}
+
+- (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string
+{
+    [self _editDataSourceInRange:range withString:string selectionRange:NSMakeRange(range.location + [string length], 0)];
 }
 
 - (void)_setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify

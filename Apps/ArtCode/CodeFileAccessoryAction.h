@@ -34,6 +34,7 @@ typedef void(^CodeFileAccessoryActionBlock)(CodeFileController *controller, NSUI
 
 + (CodeFileAccessoryAction *)accessoryActionWithName:(NSString *)actionName;
 + (NSArray *)accessoryActionsForLanguageWithIdentifier:(NSString *)languageIdentifier;
++ (NSArray *)defaultActionsForLanguageWithIdentifier:(NSString *)languageIdentifier;
 
 @end
 

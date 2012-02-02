@@ -9,6 +9,7 @@
 #import "CodeFileAccessoryAction.h"
 #import "CodeFileController.h"
 #import "CodeView.h"
+#import "NSURL+Utilities.h"
 
 @implementation CodeFileAccessoryAction
 
@@ -61,15 +62,63 @@ static NSArray *systemDefaultAccessoryActions = nil;
     }];
     [actionDictionary setObject:action forKey:action.name];
     
-    // Add a comma and return at the current location
-    action = [[CodeFileAccessoryAction alloc] initWithName:@"commaReturn" title:@";" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
-        [controller.codeView insertText:@";\n"];
+    // Undo action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"undo" title:@"undo" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView.undoManager undo];
     }];
     [actionDictionary setObject:action forKey:action.name];
     
-    // TODO test button
-    action = [[CodeFileAccessoryAction alloc] initWithName:@"addAsd" title:@"asd" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
-        [controller.codeView insertText:@"asd"];
+    // Redo action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"redo" title:@"redo" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView.undoManager redo];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Tab action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"tab" title:@"tab" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"\t"];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Curly bracket action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openCurlyBracket" title:@"{" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"{"];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Square bracket action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openSquareBracket" title:@"[" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"["];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Round bracket action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openRoundBracket" title:@"(" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"("];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Angle bracket action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openAngleBracket" title:@"<" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"<"];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Open double quote action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openDoubleQuote" title:@"\"" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"\""];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Open single quote action
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"openSingleQuote" title:@"'" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@"'"];
+    }];
+    [actionDictionary setObject:action forKey:action.name];
+    
+    // Add a esmicolon and return at the current location
+    action = [[CodeFileAccessoryAction alloc] initWithName:@"semicolonReturn" title:@";" imageNamed:nil actionBlock:^(CodeFileController *controller, NSUInteger accessoryButtonIndex) {
+        [controller.codeView insertText:@";\n"];
     }];
     [actionDictionary setObject:action forKey:action.name];
         
@@ -84,10 +133,16 @@ static NSArray *systemDefaultAccessoryActions = nil;
 
 + (NSArray *)accessoryActionsForLanguageWithIdentifier:(NSString *)languageIdentifier
 {
-#warning TODO NIK load plist
-    if (!systemDefaultAccessoryActions)
-        systemDefaultAccessoryActions = [NSArray arrayWithObjects:[systemAccessoryActions objectForKey:@"commaReturn"], [systemAccessoryActions objectForKey:@"addAsd"], nil];
-    return systemDefaultAccessoryActions;
+#warning TODO NIK load plist, possibly in tm bundle
+//    if (!systemDefaultAccessoryActions)
+//        systemDefaultAccessoryActions = [NSArray arrayWithObjects:[systemAccessoryActions objectForKey:@"semicolonReturn"], [systemAccessoryActions objectForKey:@"addAsd"], nil];
+    return [systemAccessoryActions allValues];
+}
+
++ (NSArray *)defaultActionsForLanguageWithIdentifier:(NSString *)languageIdentifier
+{
+    // TODO load from plist
+    return [[systemAccessoryActions allValues] subarrayWithRange:NSMakeRange(0, 11)];
 }
 
 @end

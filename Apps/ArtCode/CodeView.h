@@ -46,6 +46,11 @@ extern NSString * const CodeViewPlaceholderAttributeName;
 @protocol CodeViewDelegate <UIScrollViewDelegate>
 @optional
 
+/// This method allow the delegate to substitute the inserted text. 
+/// The selection range after the insertion can also be altered.
+/// Return nil to reproduce the default behaviours.
+- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion;
+
 /// Called when the user tap on a line number. Line numbers starts from 1, if 0 is returned, it has to be considered an invalid line.
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber;
 
@@ -104,5 +109,8 @@ extern NSString * const CodeViewPlaceholderAttributeName;
 
 /// Gets the selection rects of the current selection. If the selection is empty, this methods returns the caret rect. If no selection returns nil.
 @property (nonatomic, readonly, copy) RectSet *selectionRects;
+
+/// Returns the currently selected text.
+- (NSString *)selectedText;
 
 @end
