@@ -137,7 +137,6 @@
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD333CFC14C0340200E0EEE2 /* NewProjectNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
-		CD41529814752D61004C7157 /* CodeFileAccessoryItemsGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529714752D61004C7157 /* CodeFileAccessoryItemsGridView.m */; };
 		CD41529B14753520004C7157 /* CodeFileAccessoryAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD41529A14753520004C7157 /* CodeFileAccessoryAction.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */; };
@@ -178,6 +177,7 @@
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
+		CD8CD80314DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8CD80214DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.m */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
 		CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */; };
@@ -416,8 +416,6 @@
 		CD333CFA14C0340200E0EEE2 /* NewProjectNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectNavigationController.h; sourceTree = "<group>"; };
 		CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectNavigationController.m; sourceTree = "<group>"; };
 		CD3D69E014C45B9300325970 /* topBar_BackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton.png; sourceTree = "<group>"; };
-		CD41529614752D61004C7157 /* CodeFileAccessoryItemsGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileAccessoryItemsGridView.h; sourceTree = "<group>"; };
-		CD41529714752D61004C7157 /* CodeFileAccessoryItemsGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileAccessoryItemsGridView.m; sourceTree = "<group>"; };
 		CD41529914753520004C7157 /* CodeFileAccessoryAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileAccessoryAction.h; sourceTree = "<group>"; };
 		CD41529A14753520004C7157 /* CodeFileAccessoryAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileAccessoryAction.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
@@ -482,6 +480,8 @@
 		CD8108D413E31A28000E1941 /* ColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
+		CD8CD80114DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryActionsTableController.h; sourceTree = "<group>"; };
+		CD8CD80214DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryActionsTableController.m; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
 		CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Selected.png; sourceTree = "<group>"; };
@@ -903,8 +903,6 @@
 			children = (
 				CD41529914753520004C7157 /* CodeFileAccessoryAction.h */,
 				CD41529A14753520004C7157 /* CodeFileAccessoryAction.m */,
-				CD41529614752D61004C7157 /* CodeFileAccessoryItemsGridView.h */,
-				CD41529714752D61004C7157 /* CodeFileAccessoryItemsGridView.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1174,6 +1172,8 @@
 				CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */,
 				CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */,
 				CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */,
+				CD8CD80114DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.h */,
+				CD8CD80214DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.m */,
 				CD41529D1475565E004C7157 /* Actions */,
 				CD41529C1475564F004C7157 /* Completion */,
 			);
@@ -1494,7 +1494,6 @@
 				CD6E416C14614A0C00A9CE7F /* CodeFileMinimapView.m in Sources */,
 				CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */,
 				CD78E52014729A0E00801C3F /* CodeFileCompletionsController.m in Sources */,
-				CD41529814752D61004C7157 /* CodeFileAccessoryItemsGridView.m in Sources */,
 				CD41529B14753520004C7157 /* CodeFileAccessoryAction.m in Sources */,
 				CDC1A079147E6EC300E01B7A /* CodeFileCompletionCell.m in Sources */,
 				CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */,
@@ -1571,6 +1570,7 @@
 				CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */,
 				B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */,
 				CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */,
+				CD8CD80314DAF0AE00AC2318 /* CodeFileKeyboardAccessoryActionsTableController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

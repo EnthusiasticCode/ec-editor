@@ -20,6 +20,9 @@ typedef void(^CodeFileAccessoryActionBlock)(CodeFileController *controller, NSUI
 /// Title to use to represent this action. This property can be nil.
 @property (nonatomic, readonly, strong) NSString *title;
 
+/// A short description of the action. This property can be nil.
+@property (nonatomic, readonly, strong) NSString *description;
+
 /// Image name to represent this action. If not set, it will be generated from the action's name.
 @property (nonatomic, readonly, strong) NSString *imageName;
 
@@ -27,7 +30,7 @@ typedef void(^CodeFileAccessoryActionBlock)(CodeFileController *controller, NSUI
 @property (nonatomic, readonly, copy) CodeFileAccessoryActionBlock actionBlock;
 
 /// Initialize a new accessory action.
-- (id)initWithName:(NSString *)name title:(NSString *)title imageNamed:(NSString *)imageName actionBlock:(CodeFileAccessoryActionBlock)actionBlock;
+- (id)initWithName:(NSString *)name title:(NSString *)title description:(NSString *)description imageNamed:(NSString *)imageName actionBlock:(CodeFileAccessoryActionBlock)actionBlock;
 - (id)initWithName:(NSString *)name actionBlock:(CodeFileAccessoryActionBlock)actionBlock;
 
 #pragma mark Actions Grouping

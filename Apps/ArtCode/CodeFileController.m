@@ -19,9 +19,9 @@
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
+#import "CodeFileKeyboardAccessoryActionsTableController.h"
 #import "CodeFileCompletionsController.h"
 #import "CodeFileAccessoryAction.h"
-#import "CodeFileAccessoryItemsGridView.h"
 
 #import "ShapePopoverBackgroundView.h"
 
@@ -848,10 +848,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if (!_keyboardAccessoryItemCustomizeController)
     {
-        CodeFileAccessoryItemsGridView *gridView = [CodeFileAccessoryItemsGridView new];
-        gridView.itemSize = CGSizeMake(50, 40);
-        gridView.itemInsents = UIEdgeInsetsMake(5, 5, 5, 5);
-        gridView.didSelectActionItemBlock = ^(CodeFileAccessoryItemsGridView *view, CodeFileAccessoryAction *action) {
+        CodeFileKeyboardAccessoryActionsTableController *actionsTableController = [CodeFileKeyboardAccessoryActionsTableController new];
+        actionsTableController.buttonBackgroundImage = [(CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView itemBackgroundImage];
+        actionsTableController.didSelectActionItemBlock = ^(CodeFileKeyboardAccessoryActionsTableController *view, CodeFileAccessoryAction *action) {
             ECASSERT(_keyboardAccessoryItemCustomizingTag > 0 && _keyboardAccessoryItemCustomizingTag <= 11);
             [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
             // Setup changed keyboard accessory item
@@ -859,9 +858,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             [_keyboardAccessoryItemActions insertObject:action atIndex:_keyboardAccessoryItemCustomizingTag];
             [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
         };
-        
-        _keyboardAccessoryItemCustomizeController = [[UIViewController alloc] init];
-        _keyboardAccessoryItemCustomizeController.view = gridView;
+
+        _keyboardAccessoryItemCustomizeController = actionsTableController;
         _keyboardAccessoryItemCustomizeController.contentSizeForViewInPopover = CGSizeMake(300, 200);
     }
     return _keyboardAccessoryItemCustomizeController;
@@ -943,7 +941,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Setup customizing view
         _keyboardAccessoryItemCustomizingTag = itemView.tag;
-        [(CodeFileAccessoryItemsGridView *)self._keyboardAccessoryItemCustomizeController.view setAccessoryActions:[CodeFileAccessoryAction accessoryActionsForLanguageWithIdentifier:nil]];
+        [((CodeFileKeyboardAccessoryActionsTableController *)[self _keyboardAccessoryItemCustomizeController]) setLanguageIdentifier:@"objc"];
         
         // Show popover
         [self._keyboardAccessoryView presentPopoverForItemAtIndex:itemView.tag permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
