@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface NewFileController : UIViewController
+@interface NewFileController : UIViewController <UITextFieldDelegate>
 
 #pragma mark IB outlets
 

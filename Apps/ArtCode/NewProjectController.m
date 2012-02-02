@@ -48,6 +48,17 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+#pragma mark Text Field delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    [self createProjectAction:textField];
+    return NO;
+}
+
+#pragma mark Public methods
+
 - (IBAction)changeColorAction:(id)sender
 {
     if (!changeColorController)

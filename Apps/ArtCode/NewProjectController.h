@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NewProjectController : UIViewController
+@interface NewProjectController : UIViewController <UITextFieldDelegate>
 
 @property (strong, nonatomic) IBOutlet UIButton *projectColorButton;
 @property (strong, nonatomic) IBOutlet UITextField *projectNameTextField;

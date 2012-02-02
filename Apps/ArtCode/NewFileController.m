@@ -40,6 +40,15 @@
 	return YES;
 }
 
+#pragma mark Text Field delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    [self createAction:textField];
+    return NO;
+}
+
 #pragma mark - Public Methods
 
 - (IBAction)createAction:(id)sender
