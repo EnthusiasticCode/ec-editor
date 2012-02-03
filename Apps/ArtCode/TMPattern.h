@@ -20,7 +20,7 @@
 - (OnigRegexp *)match;
 - (NSDictionary *)captures;
 - (OnigRegexp *)begin;
-- (OnigRegexp *)end;
+- (OnigRegexp *)beginAndEnd;
 - (NSDictionary *)beginCaptures;
 - (NSDictionary *)endCaptures;
 - (NSArray *)patterns;

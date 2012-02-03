@@ -31,7 +31,7 @@ static WeakDictionary *_allPatterns;
     OnigRegexp *_match;
     NSDictionary *_captures;
     OnigRegexp *_begin;
-    OnigRegexp *_end;
+    OnigRegexp *_beginAndEnd;
     NSDictionary *_beginCaptures;
     NSDictionary *_endCaptures;
     NSArray *_patterns;
@@ -69,18 +69,25 @@ static WeakDictionary *_allPatterns;
     _syntaxScope = [syntax scopeIdentifier];
     ECASSERT(_syntaxScope);
     _dictionary = dictionary;
+    NSError *error = nil;
     NSString *matchRegex = [dictionary objectForKey:_patternMatchKey];
     if (matchRegex)
-        _match = [OnigRegexp compile:matchRegex options:OnigOptionNotbol | OnigOptionNoteol];
+        _match = [OnigRegexp compile:matchRegex options:0 error:&error];
+    if (error)
+        NSLog(@"%@", [error localizedDescription]);
     NSString *beginRegex = [dictionary objectForKey:_patternBeginKey];
     if (beginRegex)
-        _begin = [OnigRegexp compile:beginRegex options:OnigOptionNotbol | OnigOptionNoteol];
+        _begin = [OnigRegexp compile:beginRegex options:0 error:&error];
+    if (error)
+        NSLog(@"%@", [error localizedDescription]);
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
-        _end = [OnigRegexp compile:endRegex  options:OnigOptionNotbol | OnigOptionNoteol];
+        _beginAndEnd = [OnigRegexp compile:[NSString stringWithFormat:@"(%@).*?(%@)", beginRegex, endRegex] options:0 error:&error];
+    if (error)
+        NSLog(@"%@", [error localizedDescription]);
     ECASSERT(!_match || (![self patterns] && !_begin && ![self include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
-    ECASSERT(!_begin || _end && ![self include]);
-    ECASSERT(!_end || _begin);
+    ECASSERT(!_begin || _beginAndEnd && ![self include]);
+    ECASSERT(!_beginAndEnd || _begin);
     ECASSERT(![self contentName] || _begin);
     return self;
 }
@@ -132,9 +139,9 @@ static WeakDictionary *_allPatterns;
     return _begin;
 }
 
-- (OnigRegexp *)end
+- (OnigRegexp *)beginAndEnd
 {
-    return _end;
+    return _beginAndEnd;
 }
 
 - (NSDictionary *)beginCaptures
