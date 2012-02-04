@@ -82,7 +82,8 @@ static WeakDictionary *_allPatterns;
         NSLog(@"%@", [error localizedDescription]);
     NSString *endRegex = [dictionary objectForKey:_patternEndKey];
     if (endRegex)
-        _beginAndEnd = [OnigRegexp compile:[NSString stringWithFormat:@"(%@).*?(%@)", beginRegex, endRegex] options:0 error:&error];
+        // concatenate the begin and end regex, setting all the regex flags back to defaults and putting a non-greedy match all in the middle
+        _beginAndEnd = [OnigRegexp compile:[NSString stringWithFormat:@"%@(?-mix)(?:.|\n)*?(%@)", beginRegex, endRegex] options:0 error:&error];
     if (error)
         NSLog(@"%@", [error localizedDescription]);
     ECASSERT(!_match || (![self patterns] && !_begin && ![self include] && ![_captures objectForKey:[NSNumber numberWithUnsignedInteger:0]] && ![dictionary objectForKey:_patternBeginCapturesKey] && ![dictionary objectForKey:_patternEndCapturesKey]));
