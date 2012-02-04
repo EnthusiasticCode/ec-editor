@@ -71,6 +71,11 @@ static NSArray *_allBundles;
     return [[_bundleURL lastPathComponent] stringByDeletingPathExtension];
 }
 
+- (NSURL *)URL
+{
+    return _bundleURL;
+}
+
 - (NSArray *)syntaxes
 {
     if (!_syntaxes)

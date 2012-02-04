@@ -20,6 +20,9 @@
 /// The bundle's name
 - (NSString *)name;
 
+/// The URL of the bundle
+- (NSURL *)URL;
+
 /// An array containing all the bundle's syntaxes
 - (NSArray *)syntaxes;
 

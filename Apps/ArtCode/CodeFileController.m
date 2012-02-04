@@ -19,9 +19,7 @@
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
-#import "CodeFileKeyboardAccessoryActionsTableController.h"
 #import "CodeFileCompletionsController.h"
-#import "CodeFileAccessoryAction.h"
 
 #import "ShapePopoverBackgroundView.h"
 
@@ -43,11 +41,11 @@
     /// This button is supposed to have the same appearance of the underlying button and the same tag.
     UIButton *_keyboardAccessoryItemPopoverButton;
     
-    /// Tag of the keyboard accessory button that is being customized via long press.
-    NSInteger _keyboardAccessoryItemCustomizingTag;
+    /// Actions associated to items in the accessory view.
+    NSArray *_keyboardAccessoryItemActions;
     
-    /// Actions associated to items in the accessory view. Associations are made with tag (as array index) to CodeFileAccessoryAction.
-    NSMutableArray *_keyboardAccessoryItemActions;
+    /// The index of the accessory item action currently being performed.
+    NSInteger _keyboardAccessoryItemCurrentActionIndex;
     
     NSOperationQueue *_consumerOperationQueue;
 }
@@ -58,7 +56,6 @@
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
-@property (nonatomic, strong, readonly) UIViewController *_keyboardAccessoryItemCustomizeController;
 
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
@@ -113,7 +110,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
 @synthesize fileURL = _fileURL, codeFile = _codeFile;
-@synthesize _keyboardAccessoryItemCompletionsController, _keyboardAccessoryItemCustomizeController;
+@synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
 {
@@ -183,7 +180,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Accessory view popover setup
         accessoryView.itemPopoverView.contentSize = CGSizeMake(300, 300);
-        accessoryView.itemPopoverView.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        accessoryView.itemPopoverView.contentInsets = UIEdgeInsetsMake(12, 12, 12, 12);
         accessoryView.itemPopoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
         [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionMiddle];
         [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarRight];
@@ -193,11 +190,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
             UIView *presentedView = nil;
             UIView *presentingView = sender.superview;
-            // If no item is showing, the only other action that can possibly show a popover is the completion
-            if (this->_keyboardAccessoryItemCustomizingTag < 0)
-                presentedView = this._keyboardAccessoryItemCompletionsController.view;
-            else
-                presentedView = this._keyboardAccessoryItemCustomizeController.view;
+            presentedView = this._keyboardAccessoryItemCompletionsController.view;
             CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
             presentedView.frame = popoverContentFrame;
             [presentingView addSubview:presentedView];
@@ -209,14 +202,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
             [UIView animateWithDuration:animationDuration animations:^{
                 if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-                    this._keyboardAccessoryItemCompletionsController.view.alpha = 0;
-                if (this._keyboardAccessoryItemCustomizeController.isViewLoaded)
-                    this._keyboardAccessoryItemCustomizeController.view.alpha = 0;                
+                    this._keyboardAccessoryItemCompletionsController.view.alpha = 0;              
             } completion:^(BOOL finished) {
                 if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
                     [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
-                if (this._keyboardAccessoryItemCustomizeController.isViewLoaded)
-                    [this._keyboardAccessoryItemCustomizeController.view removeFromSuperview];
             }];
         };
         
@@ -224,13 +213,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
         accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
         
-        //        _keyboardAccessoryItemPopoverButton = [UIButton new];
-        //        [_keyboardAccessoryItemPopoverButton setBackgroundImage:[[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)] forState:UIControlStateNormal];
-        //        [_keyboardAccessoryPopoverView addSubview:_keyboardAccessoryItemPopoverButton];
-        
         // Items actions
-        #warning TODO load from plist and change for current language
-        _keyboardAccessoryItemActions = [[CodeFileAccessoryAction defaultActionsForLanguageWithIdentifier:@"objc"] mutableCopy];
+        #warning TODO set actions on code view selection changed
+        _keyboardAccessoryItemActions = [[TMKeyboardAction allKeyboardActions] allValues];
         
         // Items setup
         [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
@@ -843,28 +828,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return _keyboardAccessoryItemCompletionsController;
 }
 
-/// Controller shown on long press on non-fixed keyboard accessory items
-- (UIViewController *)_keyboardAccessoryItemCustomizeController
-{
-    if (!_keyboardAccessoryItemCustomizeController)
-    {
-        CodeFileKeyboardAccessoryActionsTableController *actionsTableController = [CodeFileKeyboardAccessoryActionsTableController new];
-        actionsTableController.buttonBackgroundImage = [(CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView itemBackgroundImage];
-        actionsTableController.didSelectActionItemBlock = ^(CodeFileKeyboardAccessoryActionsTableController *view, CodeFileAccessoryAction *action) {
-            ECASSERT(_keyboardAccessoryItemCustomizingTag > 0 && _keyboardAccessoryItemCustomizingTag <= 11);
-            [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
-            // Setup changed keyboard accessory item
-            [_keyboardAccessoryItemActions removeObjectAtIndex:_keyboardAccessoryItemCustomizingTag];
-            [_keyboardAccessoryItemActions insertObject:action atIndex:_keyboardAccessoryItemCustomizingTag];
-            [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
-        };
-
-        _keyboardAccessoryItemCustomizeController = actionsTableController;
-        _keyboardAccessoryItemCustomizeController.contentSizeForViewInPopover = CGSizeMake(300, 200);
-    }
-    return _keyboardAccessoryItemCustomizeController;
-}
-
 - (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions
 {
     ECASSERT([actions count] == 11);
@@ -876,7 +839,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     {
         NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
         CodeFileKeyboardAccessoryItem *item = nil;
-        CodeFileAccessoryAction *action = nil;
+        TMKeyboardAction *action = nil;
         
         for (NSInteger i = 0; i < 11; ++i)
         {
@@ -900,27 +863,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             
             action = [actions objectAtIndex:i];
             item.title = action.title;
-            item.image = [UIImage imageNamed:action.imageName];            
+            item.image = [action image];            
             item.tag = i;
             [items addObject:item];
         }
         
         accessoryView.items = items;
-
-        // Items long press action
-        [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
-            UILongPressGestureRecognizer *itemLongPressrecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_keyboardAccessoryItemLongPressHandler:)];
-            itemLongPressrecognizer.minimumPressDuration = 1;
-            [item.customView addGestureRecognizer:itemLongPressrecognizer];
-        }];
     }
     else
     {
         NSArray *items = accessoryView.items;
         [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
-            CodeFileAccessoryAction *action = [actions objectAtIndex:itemIndex];
+            TMKeyboardAction *action = [actions objectAtIndex:itemIndex];
             item.title = action.title;
-            item.image = [UIImage imageNamed:action.imageName];
+            item.image = [action image];
         }];
         accessoryView.items = items;
     }
@@ -928,24 +884,34 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
 {
-    ECASSERT([[_keyboardAccessoryItemActions objectAtIndex:item.tag] actionBlock] != nil);
-    _keyboardAccessoryItemCustomizingTag = -1;
-    [[_keyboardAccessoryItemActions objectAtIndex:item.tag] actionBlock](self, item.tag);
+    _keyboardAccessoryItemCurrentActionIndex = item.tag;
+    [[_keyboardAccessoryItemActions objectAtIndex:item.tag] executeActionOnTarget:self];
 }
 
-- (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer
+#pragma mark Keyboard Actions Target Methods
+
+- (BOOL)keyboardAction:(TMKeyboardAction *)keyboardAction canPerformSelector:(SEL)selector
 {
-    if (recognizer.state == UIGestureRecognizerStateBegan)
-    {
-        UIView *itemView = recognizer.view;
-        
-        // Setup customizing view
-        _keyboardAccessoryItemCustomizingTag = itemView.tag;
-        [((CodeFileKeyboardAccessoryActionsTableController *)[self _keyboardAccessoryItemCustomizeController]) setLanguageIdentifier:@"objc"];
-        
-        // Show popover
-        [self._keyboardAccessoryView presentPopoverForItemAtIndex:itemView.tag permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
-    }
+    if ([self forwardingTargetForSelector:selector] != nil)
+        return YES;
+    if (selector == @selector(showCompletionsAtCursor))
+        return YES;
+    ECASSERT(NO && "An action called a not supported selector");
+    return NO;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(insertText:) || aSelector == @selector(deleteBackward))
+        return self.codeView;
+    if (aSelector == @selector(undo) || aSelector == @selector(redo))
+        return self.codeView.undoManager;
+    return nil;
+}
+
+- (void)showCompletionsAtCursor
+{
+    [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
 }
 
 @end
