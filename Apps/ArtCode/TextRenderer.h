@@ -51,6 +51,11 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 /// the caller is expected to get all the remaining string.
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange;
 
+@optional
+
+/// Returns the default attributes that the datasource applies to the returned text.
+- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender;
+
 @end
 
 

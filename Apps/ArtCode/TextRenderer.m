@@ -783,8 +783,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
     NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];
     NSUInteger stringLength = [attributedString length];
-    if (!attributedString || stringLength == 0)
-        return nil;
     
     // Calculate the number of lines in lineCount 
     // and the end of useful string in lineRange.location
@@ -812,7 +810,10 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     else if (inputStringLenght == NSMaxRange(stringRange))
     {
         NSMutableAttributedString *newLineString = [attributedString mutableCopy];
-        [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL]]];
+        if ([dataSource respondsToSelector:@selector(defaultTextAttributedForTextRenderer:)])
+            [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[dataSource defaultTextAttributedForTextRenderer:self]]];
+        else
+            [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:stringLength ? [newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL] : nil]];
         attributedString = newLineString;
         
         if (isFinalPart)
@@ -1262,7 +1263,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 - (void)updateTextFromStringRange:(NSRange)fromRange toStringRange:(NSRange)toRange
 {
     // Handle special case in which requested update range is longer than the input string
-    if (fromRange.length >= [dataSource stringLengthForTextRenderer:self])
+    if (MAX(fromRange.length, toRange.length) >= [dataSource stringLengthForTextRenderer:self])
     {
         [self updateAllText];
         return;

@@ -83,6 +83,11 @@
     return attributedString;
 }
 
+- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
+{
+    return [TMTheme defaultAttributes];
+}
+
 - (void)codeView:(CodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     [self.fileBuffer replaceCharactersInRange:range withString:commitString];
