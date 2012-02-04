@@ -138,7 +138,8 @@ static const void *contentViewControllerContext;
         }
         else
         {
-            contentViewController.view.frame = _contentViewController.view.frame;
+            if (_contentViewController)
+                contentViewController.view.frame = _contentViewController.view.frame;
             [self.view addSubview:contentViewController.view];
             [_contentViewController.view removeFromSuperview];
         }
