@@ -8,172 +8,158 @@
 
 #import "TMSyntax.h"
 #import "TMBundle.h"
-#import "TMPattern.h"
 #import "OnigRegexp.h"
 #import "FileBuffer.h"
 
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
-static NSString * const _syntaxNameKey = @"name";
-static NSString * const _syntaxScopeKey = @"scopeName";
-static NSString * const _syntaxFileTypesKey = @"fileTypes";
-static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
-static NSString * const _syntaxPatternsKey = @"patterns";
-static NSString * const _syntaxRepositoryKey = @"repository";
+NSString * const TMSyntaxScopeIdentifierKey = @"scopeName";
+NSString * const TMSyntaxFileTypesKey = @"fileTypes";
+NSString * const TMSyntaxFirstLineMatchKey = @"firstLineMatch";
+NSString * const TMSyntaxFoldingStartMarker = @"foldingStartMarker";
+NSString * const TMSyntaxFoldingStopMarker = @"foldingStopMarker";
+NSString * const TMSyntaxMatchKey = @"match";
+NSString * const TMSyntaxBeginKey = @"begin";
+NSString * const TMSyntaxEndKey = @"end";
+NSString * const TMSyntaxNameKey = @"name";
+NSString * const TMSyntaxContentNameKey = @"contentName";
+NSString * const TMSyntaxCapturesKey = @"captures";
+NSString * const TMSyntaxBeginCapturesKey = @"beginCaptures";
+NSString * const TMSyntaxEndCapturesKey = @"endCaptures";
+NSString * const TMSyntaxPatternsKey = @"patterns";
+NSString * const TMSyntaxRepositoryKey = @"repository";
+NSString * const TMSyntaxIncludeKey = @"include";
 
 static NSMutableDictionary *_allSyntaxes;
 
 @interface TMSyntax ()
 {
-    NSURL *_fileURL;
-    FileBuffer *_fileBuffer;
-    NSString *_name;
-    NSString *_scopeIdentifier;
-    NSArray *__fileTypes;
-    OnigRegexp *__firstLineMatch;
-    NSDictionary *__plist;
-    NSArray *_patterns;
-    NSDictionary *_repository;
+    __weak TMSyntax *_rootSyntax;
+    NSDictionary *_attributes;
 }
-- (NSDictionary *)_plist;
-- (NSArray *)_fileTypes;
-- (OnigRegexp *)_firstLineMatch;
-+ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL(^)(TMSyntax *syntax))predicateBlock;
+- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntax *)syntax;
 @end
 
 @implementation TMSyntax
 
-#pragma mark - Public Class Methods
+#pragma mark - Class Methods
 
-+ (NSDictionary *)allSyntaxes
++ (void)initialize
 {
-    if (!_allSyntaxes)
-    {
-        _allSyntaxes = [NSMutableDictionary dictionary];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *bundleURL in [TMBundle bundleURLs])
-            for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL])
-            {
-                TMSyntax *syntax = [[self alloc] initWithFileURL:syntaxURL];
-                if (syntax)
-                    [_allSyntaxes setObject:syntax forKey:[syntax scopeIdentifier]];
-            }
-    }
-    return _allSyntaxes;
+    if (self != [TMSyntax class])
+        return;
+    _allSyntaxes = [[NSMutableDictionary alloc] init];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *bundleURL in [TMBundle bundleURLs])
+        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL])
+        {
+            NSData *plistData = [NSData dataWithContentsOfURL:syntaxURL options:NSDataReadingUncached error:NULL];
+            if (!plistData)
+                continue;
+            NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
+            if (!plist)
+                continue;
+            TMSyntax *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
+            if (!syntax)
+                continue;
+            [_allSyntaxes setObject:syntax forKey:[[syntax attributes] objectForKey:TMSyntaxScopeIdentifierKey]];
+        }
+    _allSyntaxes = [_allSyntaxes copy];
 }
 
-+ (TMSyntax *)syntaxWithScope:(NSString *)scope
++ (TMSyntax *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier
 {
-    if (!scope)
+    if (!scopeIdentifier)
         return nil;
-    return [_allSyntaxes objectForKey:scope];
+    return [_allSyntaxes objectForKey:scopeIdentifier];
 }
 
 + (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
-    TMSyntax *foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
-        for (NSString *fileType in [syntax _fileTypes])
+    static TMSyntax *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntax *)) = ^TMSyntax *(BOOL (^predicateBlock)(TMSyntax *)){
+        for (TMSyntax *syntax in [_allSyntaxes objectEnumerator])
+            if (predicateBlock(syntax))
+                return syntax;
+        return nil;
+    };
+    TMSyntax *foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntax *syntax) {
+        for (NSString *fileType in [[syntax attributes] objectForKey:TMSyntaxFileTypesKey])
             if ([fileType isEqualToString:[[fileBuffer fileURL] pathExtension]])
                 return YES;
         return NO;
-    }];
+    });
     if (!foundSyntax)
-        foundSyntax = [self _syntaxWithPredicateBlock:^BOOL(TMSyntax *syntax) {
+        foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntax *syntax) {
             NSString *fileContents = [fileBuffer stringInRange:NSMakeRange(0, [fileBuffer length])];
             NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
-            if ([[syntax _firstLineMatch] search:firstLine])
+            if ([[[syntax attributes] objectForKey:TMSyntaxFirstLineMatchKey]  search:firstLine])
                 return YES;
             return NO;
-        }];
+        });
     return foundSyntax;
-}
-
-#pragma mark - Private Class Methods
-
-+ (TMSyntax *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntax *))predicateBlock
-{
-    ECASSERT(predicateBlock);
-    for (TMSyntax *syntax in [[self allSyntaxes] objectEnumerator])
-        if (predicateBlock(syntax))
-            return syntax;
-    return nil;
 }
 
 #pragma mark - Public Methods
 
-- (NSString *)name
+- (TMSyntax *)rootSyntax
 {
-    return _name;
+    return _rootSyntax;
 }
 
-- (NSString *)scopeIdentifier
+- (NSDictionary *)attributes
 {
-    return _scopeIdentifier;
-}
-
-- (NSArray *)patterns
-{
-    if (!_patterns)
-    {
-        ECASSERT([[self _plist] objectForKey:_syntaxPatternsKey]);
-        NSMutableArray *patterns = [NSMutableArray array];
-        for (NSDictionary *dictionary in [[self _plist] objectForKey:_syntaxPatternsKey])
-            [patterns addObject:[TMPattern patternWithDictionary:dictionary inSyntax:self]];
-        _patterns = [patterns copy];
-    }
-    return _patterns;
-}
-
-#pragma mark - Internal Methods
-
-- (NSDictionary *)repository
-{
-    return [[self _plist] objectForKey:_syntaxRepositoryKey];
-}
-
-- (NSArray *)patternsDictionaries
-{
-    return [[self _plist] objectForKey:_syntaxPatternsKey];
+    return _attributes;
 }
 
 #pragma mark - Private Methods
 
-- (id)initWithFileURL:(NSURL *)fileURL
+- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntax *)syntax
 {
-    ECASSERT(fileURL);
+    ECASSERT(dictionary);
     self = [super init];
     if (!self)
         return nil;
-    _fileURL = fileURL;
-    __plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    _name = [__plist objectForKey:_syntaxNameKey];
-    if (!_name)
-        return nil;
-    _scopeIdentifier = [__plist objectForKey:_syntaxScopeKey];
-    __fileTypes = [__plist objectForKey:_syntaxFileTypesKey];
-    NSString *firstLineMatchRegex = [__plist objectForKey:_syntaxFirstLineMatchKey];
-    if (firstLineMatchRegex)
-        __firstLineMatch = [OnigRegexp compile:firstLineMatchRegex ignorecase:NO multiline:YES];
+    if (!syntax)
+        syntax = self;
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if ([key isEqualToString:TMSyntaxScopeIdentifierKey] ||
+            [key isEqualToString:TMSyntaxFileTypesKey] ||
+            [key isEqualToString:TMSyntaxEndKey] ||
+            [key isEqualToString:TMSyntaxNameKey] ||
+            [key isEqualToString:TMSyntaxContentNameKey] ||
+            [key isEqualToString:TMSyntaxCapturesKey] ||
+            [key isEqualToString:TMSyntaxBeginCapturesKey] ||
+            [key isEqualToString:TMSyntaxEndCapturesKey] ||
+            [key isEqualToString:TMSyntaxIncludeKey])
+            [attributes setObject:obj forKey:key];
+        else if ([key isEqualToString:TMSyntaxFirstLineMatchKey] ||
+                 [key isEqualToString:TMSyntaxFoldingStartMarker] ||
+                 [key isEqualToString:TMSyntaxFoldingStopMarker] ||
+                 [key isEqualToString:TMSyntaxMatchKey] ||
+                 [key isEqualToString:TMSyntaxBeginKey])
+            [attributes setObject:[OnigRegexp compile:obj options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol] forKey:key];
+        else if ([key isEqualToString:TMSyntaxPatternsKey])
+        {
+            NSMutableArray *patterns = [[NSMutableArray alloc] init];
+            for (NSDictionary *dictionary in obj)
+                [patterns addObject:[[[self class] alloc] _initWithDictionary:dictionary syntax:syntax]];
+            [attributes setObject:[patterns copy] forKey:key];
+        }
+        else if ([key isEqualToString:TMSyntaxRepositoryKey])
+        {
+            NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
+            [obj enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                [repository setObject:[[[self class] alloc] _initWithDictionary:obj syntax:syntax] forKey:key];
+            }];
+            [attributes setObject:[repository copy] forKey:key];
+        }
+    }];
+    _rootSyntax = syntax;
+    _attributes = [attributes copy];
     return self;
 }
 
-- (NSDictionary *)_plist
-{
-    if (!__plist)
-        __plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-    return __plist;
-}
-
-- (NSArray *)_fileTypes
-{
-    return __fileTypes;
-}
-
-- (OnigRegexp *)_firstLineMatch
-{
-    return __firstLineMatch;
-}
-
 @end
-
+            

@@ -87,7 +87,6 @@
 		B7FB79A314D602C60080A714 /* NSTimer+BlockTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */; };
 		B7FB79B414D602F10080A714 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7FB79B514D602F10080A714 /* TMIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A914D602F10080A714 /* TMIndex.m */; };
-		B7FB79B614D602F10080A714 /* TMPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AC14D602F10080A714 /* TMPattern.m */; };
 		B7FB79B714D602F10080A714 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7FB79B814D602F10080A714 /* TMSyntax.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B014D602F10080A714 /* TMSyntax.m */; };
 		B7FB79B914D602F10080A714 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
@@ -325,8 +324,6 @@
 		B7FB79A814D602F10080A714 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
 		B7FB79A914D602F10080A714 /* TMIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMIndex.m; sourceTree = "<group>"; };
 		B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMIndex+Internal.h"; sourceTree = "<group>"; };
-		B7FB79AB14D602F10080A714 /* TMPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPattern.h; sourceTree = "<group>"; };
-		B7FB79AC14D602F10080A714 /* TMPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPattern.m; sourceTree = "<group>"; };
 		B7FB79AD14D602F10080A714 /* TMScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMScope.h; sourceTree = "<group>"; };
 		B7FB79AE14D602F10080A714 /* TMScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMScope.m; sourceTree = "<group>"; };
 		B7FB79AF14D602F10080A714 /* TMSyntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntax.h; sourceTree = "<group>"; };
@@ -714,8 +711,6 @@
 				B7FB79A814D602F10080A714 /* TMIndex.h */,
 				B7FB79A914D602F10080A714 /* TMIndex.m */,
 				B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */,
-				B7FB79AB14D602F10080A714 /* TMPattern.h */,
-				B7FB79AC14D602F10080A714 /* TMPattern.m */,
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
 				B7FB79AF14D602F10080A714 /* TMSyntax.h */,
@@ -1499,7 +1494,6 @@
 				B7FB79A314D602C60080A714 /* NSTimer+BlockTimer.m in Sources */,
 				B7FB79B414D602F10080A714 /* TMBundle.m in Sources */,
 				B7FB79B514D602F10080A714 /* TMIndex.m in Sources */,
-				B7FB79B614D602F10080A714 /* TMPattern.m in Sources */,
 				B7FB79B714D602F10080A714 /* TMScope.m in Sources */,
 				B7FB79B814D602F10080A714 /* TMSyntax.m in Sources */,
 				B7FB79B914D602F10080A714 /* TMUnit.m in Sources */,

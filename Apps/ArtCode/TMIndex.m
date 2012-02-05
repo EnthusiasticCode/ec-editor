@@ -50,7 +50,7 @@ static NSMutableDictionary *_extensionClasses;
 - (TMUnit *)codeUnitForFileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     if (!rootScopeIdentifier)
-        rootScopeIdentifier = [[TMSyntax syntaxForFileBuffer:fileBuffer] scopeIdentifier];
+        rootScopeIdentifier = [[[TMSyntax syntaxForFileBuffer:fileBuffer] attributes] objectForKey:TMSyntaxScopeIdentifierKey];
     id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier];
     TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)

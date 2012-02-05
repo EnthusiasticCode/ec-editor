@@ -7,23 +7,32 @@
 //
 
 #import <Foundation/Foundation.h>
-@class FileBuffer;
+@class FileBuffer, OnigRegexp;
+
+extern NSString * const TMSyntaxScopeIdentifierKey;
+extern NSString * const TMSyntaxFileTypesKey;
+extern NSString * const TMSyntaxFirstLineMatchKey;
+extern NSString * const TMSyntaxFoldingStartMarker;
+extern NSString * const TMSyntaxFoldingStopMarker;
+extern NSString * const TMSyntaxMatchKey;
+extern NSString * const TMSyntaxBeginKey;
+extern NSString * const TMSyntaxEndKey;
+extern NSString * const TMSyntaxNameKey;
+extern NSString * const TMSyntaxContentNameKey;
+extern NSString * const TMSyntaxCapturesKey;
+extern NSString * const TMSyntaxBeginCapturesKey;
+extern NSString * const TMSyntaxEndCapturesKey;
+extern NSString * const TMSyntaxPatternsKey;
+extern NSString * const TMSyntaxRepositoryKey;
+extern NSString * const TMSyntaxIncludeKey;
 
 @interface TMSyntax : NSObject
 
-/// A dictionary containing all syntaxes indexed by scopeIdentifier
-+ (NSDictionary *)allSyntaxes;
-+ (TMSyntax *)syntaxWithScope:(NSString *)scope;
++ (TMSyntax *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
 + (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer;
 
-- (id)initWithFileURL:(NSURL *)fileURL;
-
-- (NSString *)name;
-- (NSString *)scopeIdentifier;
-
-/// Content:
-- (NSDictionary *)repository;
-- (NSArray *)patterns;
+- (TMSyntax *)rootSyntax;
+- (NSDictionary *)attributes;
 
 @end
 
