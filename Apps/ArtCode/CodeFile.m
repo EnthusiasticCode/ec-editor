@@ -66,13 +66,15 @@
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
+    // Add text coloring
     [attributedString addAttributes:[TMTheme defaultAttributes] range:NSMakeRange(0, [attributedString length])];
     [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range, NSMutableArray *scopeIdentifiersStack) {
-        NSDictionary *attributes = [self.theme attributesForScopeIdentifier:scopeIdentifier withStack:scopeIdentifiersStack];
+        NSDictionary *attributes = [self.theme attributesForScopeIdentifiersStack:scopeIdentifiersStack];
         if (attributes)
             [attributedString addAttributes:attributes range:range];
         return TMUnitVisitResultRecurse;
     }];
+    // Add placeholders styles
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];

@@ -17,9 +17,8 @@
 /// The name of the theme
 @property (nonatomic, strong, readonly) NSString *name;
 
-/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope.
-/// Optionally provide a scope stack to match nested scope rules
-- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier withStack:(NSArray *)scopeIdentifiersStack;
+/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope stack.
+- (NSDictionary *)attributesForScopeIdentifiersStack:(NSArray *)scopeIdentifiersStack;
 
 #pragma mark Default styles
 

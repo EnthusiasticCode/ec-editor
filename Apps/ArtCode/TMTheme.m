@@ -91,6 +91,7 @@ static NSDictionary *_defaultAttributes = nil;
     NSMutableDictionary *settings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
     for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
     {
+        // TODO manage default settings for background, caret
         NSString *settingScopes = [plistSetting objectForKey:_themeSettingsScopeKey];
         if (!settingScopes)
             continue;
@@ -122,7 +123,6 @@ static NSDictionary *_defaultAttributes = nil;
                 [setting setObject:value forKey:key];
             }
         }];
-        
         
         // Setting's scope can have multiple scopes separated by a comma
         for (NSString *settingScopeStack in [settingScopes componentsSeparatedByString:@","])
@@ -161,10 +161,10 @@ static NSDictionary *_defaultAttributes = nil;
     return self;
 }
 
-- (NSDictionary *)attributesForScopeIdentifier:(NSString *)scopeIdentifier withStack:(NSArray *)scopeIdentifiersStack
+- (NSDictionary *)attributesForScopeIdentifiersStack:(NSArray *)scopeIdentifiersStack
 {
     NSDictionary *nestedSettings = self.settings;
-    for (scopeIdentifier in [scopeIdentifiersStack reverseObjectEnumerator])
+    for (NSString *scopeIdentifier in [scopeIdentifiersStack reverseObjectEnumerator])
     {
         NSDictionary *nextNestedSettings = [nestedSettings objectForKey:scopeIdentifier];
         if (nextNestedSettings)
