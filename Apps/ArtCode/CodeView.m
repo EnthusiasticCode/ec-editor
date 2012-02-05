@@ -56,7 +56,8 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
         unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
         unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
         unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-        unsigned reserved : 2;
+        unsigned delegateHasSelectionWillChange : 1;
+        unsigned delegateHasSelectionDidChange : 1;
     } _flags;
     
     // Recognizers
@@ -684,6 +685,8 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
     _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
     _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
     _flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
+    _flags.delegateHasSelectionWillChange = [delegate respondsToSelector:@selector(selectionWillChangeForCodeView:)];
+    _flags.delegateHasSelectionDidChange = [delegate respondsToSelector:@selector(selectionDidChangeForCodeView:)];
 }
 
 - (void)setKeyboardAccessoryView:(KeyboardAccessoryView *)value
@@ -1552,7 +1555,11 @@ static void init(CodeView *self)
         [self.undoManager endUndoGrouping];
     
     if (shouldNotify)
+    {
         [inputDelegate selectionWillChange:self];
+        if (_flags.delegateHasSelectionWillChange)
+            [self.delegate selectionWillChangeForCodeView:self];
+    }
     
     // Modify selection to account for placeholders
     if (_flags.dataSourceHasAttributeAtIndexLongestEffectiveRange && newSelection.location < [self.dataSource stringLengthForTextRenderer:self.renderer])
@@ -1580,7 +1587,11 @@ static void init(CodeView *self)
     _selectionView.selection = newSelection;
     
     if (shouldNotify)
+    {
         [inputDelegate selectionDidChange:self];
+        if (_flags.delegateHasSelectionDidChange)
+            [self.delegate selectionDidChangeForCodeView:self];
+    }
     
     // Position selection view
     if ([self isFirstResponder])

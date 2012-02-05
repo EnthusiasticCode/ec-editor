@@ -686,6 +686,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return YES;
 }
 
+- (void)selectionDidChangeForCodeView:(CodeView *)codeView
+{
+    // TODO change title and keyboard accessories
+}
+
 #pragma mark - Webview delegate methods
 
 - (void)webViewDidStartLoad:(UIWebView *)webView

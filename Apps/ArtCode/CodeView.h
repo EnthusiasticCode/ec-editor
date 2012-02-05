@@ -67,6 +67,12 @@ extern NSString * const CodeViewPlaceholderAttributeName;
 /// Informs the delegate that the accessory view has been hidden.
 - (void)codeViewDidHideKeyboardAccessoryView:(CodeView *)codeView;
 
+/// Called when the code view is about to change its selection from user interaction.
+- (void)selectionWillChangeForCodeView:(CodeView *)codeView;
+
+/// Called when the code view changes its selection from user interaction.
+- (void)selectionDidChangeForCodeView:(CodeView *)codeView;
+
 @end
 
 
