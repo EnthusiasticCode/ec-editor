@@ -88,9 +88,9 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 {
     if (!systemKeyboardActions)
     {
-        for (TMBundle *tmBundle in [TMBundle allBundles])
+        for (NSURL *bundleURL in [TMBundle bundleURLs])
         {
-            for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[[tmBundle URL] URLByAppendingPathComponent:keyboardActionsDirectory isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+            for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardActionsDirectory isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
             {
                 [self _loadKeyboardActionsFromFileURL:keyboardActionURL];
             }

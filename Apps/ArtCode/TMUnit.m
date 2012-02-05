@@ -39,7 +39,7 @@ static NSString * const _patternCaptureName = @"name";
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMPattern *)pattern;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMPattern *)pattern;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withPatterns:(NSArray *)patterns;
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withRegexp:(OnigRegexp *)regexp name:(NSString *)name captures:(NSDictionary *)captures;
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope relativeToOffset:(NSUInteger)offset withResult:(OnigResult *)result name:(NSString *)name captures:(NSDictionary *)captures capturesOffset:(NSUInteger)capturesOffset;
 - (OnigResult *)_firstMatchInRange:(NSRange)range forRegexp:(OnigRegexp *)regexp;
 - (NSArray *)_patternsIncludedByPatterns:(NSArray *)patterns;
 - (NSArray *)_patternsIncludedByPattern:(TMPattern *)pattern;
@@ -81,7 +81,6 @@ static NSString * const _patternCaptureName = @"name";
         _rootScopeIdentifier = __syntax.scopeIdentifier;
     }
     ECASSERT(__syntax && _rootScopeIdentifier);
-    [__syntax beginContentAccess];
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
     _generation = 1;
     _extensions = [[NSMutableDictionary alloc] init];
@@ -100,7 +99,6 @@ static NSString * const _patternCaptureName = @"name";
 
 - (void)dealloc
 {
-    [__syntax endContentAccess];
     [_fileBuffer removeConsumer:self];
 }
 
@@ -223,7 +221,8 @@ static NSString * const _patternCaptureName = @"name";
 
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMPattern *)pattern
 {
-    return [self _addChildScopesToScope:scope inRange:range relativeToOffset:offset withRegexp:[pattern match] name:[pattern name] captures:[pattern captures]];
+    OnigResult *matchResult = [self _firstMatchInRange:range forRegexp:[pattern match]];
+    return [self _addChildScopesToScope:scope relativeToOffset:offset withResult:matchResult name:[pattern name] captures:[pattern captures] capturesOffset:0];
 }
 
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMPattern *)pattern
@@ -237,7 +236,8 @@ static NSString * const _patternCaptureName = @"name";
     OnigResult *beginAndEndResult = [self _firstMatchInRange:range forRegexp:[pattern beginAndEnd]];
     NSString *beginBodyCapture = [[[pattern beginCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName];
     NSString *endBodyCapture = [[[pattern endCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName];
-    NSUInteger offsetForEndCaptures = [beginResult count] + 1;
+    NSUInteger offsetForBeginCaptures = 0;
+    NSUInteger offsetForEndCaptures = [beginResult count] + offsetForBeginCaptures;
     if (beginAndEndResult)
     {
         spanRange = [beginAndEndResult bodyRange];
@@ -261,7 +261,7 @@ static NSString * const _patternCaptureName = @"name";
         spanScopeOffset = [beginResult bodyRange].location;
     }
     if ([pattern beginCaptures])
-        [self _addChildScopesToScope:currentScope inRange:range relativeToOffset:spanScopeOffset withRegexp:[pattern begin] name:[[[pattern beginCaptures] objectForKey:@"0"] objectForKey:_patternCaptureName] captures:[pattern beginCaptures]];
+        [self _addChildScopesToScope:currentScope relativeToOffset:spanScopeOffset withResult:beginResult name:beginBodyCapture captures:[pattern beginCaptures] capturesOffset:0];
     NSString *patternContentName = [pattern contentName];
     TMScope *spanContentScope = nil;
     NSUInteger spanContentScopeOffset = spanScopeOffset;
@@ -277,34 +277,8 @@ static NSString * const _patternCaptureName = @"name";
     [self _addChildScopesToScope:currentScope inRange:childPatternsRange relativeToOffset:spanContentScopeOffset withPatterns:[pattern patterns]];
     if (spanContentScope)
         currentScope = spanScope ? spanScope : scope;
-    if (beginAndEndResult)
-    {
-        NSUInteger endCaptureScopeOffset = spanScopeOffset;
-        if (endBodyCapture)
-        {
-            ECASSERT([endBodyCapture isKindOfClass:[NSString class]]);
-            TMScope *endCaptureScope = [currentScope newChildScopeWithIdentifier:endBodyCapture];
-            endCaptureScope.location = NSMaxRange(childPatternsRange) - spanScopeOffset;
-            endCaptureScope.length = NSMaxRange(spanRange) - NSMaxRange(childPatternsRange);
-            currentScope = endCaptureScope;
-            endCaptureScopeOffset = endCaptureScope.location;
-        }
-        NSUInteger numMatchRanges = [beginAndEndResult count] - offsetForEndCaptures;
-        for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
-        {
-            NSRange currentMatchRange = [beginAndEndResult rangeAt:currentMatchRangeIndex + offsetForEndCaptures];
-            if (!currentMatchRange.length)
-                continue;
-            NSString *currentCaptureName = [[[pattern endCaptures] objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
-            if (!currentCaptureName)
-                continue;
-            ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
-            TMScope *currentCaptureScope = [currentScope newChildScopeWithIdentifier:currentCaptureName];
-            ECASSERT(currentMatchRange.location >= [beginAndEndResult rangeAt:offsetForEndCaptures].location && NSMaxRange(currentMatchRange) <= NSMaxRange([beginAndEndResult rangeAt:offsetForEndCaptures]));
-            currentCaptureScope.location = currentMatchRange.location - offset;
-            currentCaptureScope.length = currentMatchRange.length;
-        }
-    }
+    if (beginAndEndResult && [pattern endCaptures])
+        [self _addChildScopesToScope:currentScope relativeToOffset:spanScopeOffset withResult:beginAndEndResult name:endBodyCapture captures:[pattern endCaptures] capturesOffset:offsetForEndCaptures];
     ECASSERT(NSMaxRange(spanRange) <= NSMaxRange(range));
     return NSMaxRange(spanRange);
 }
@@ -353,36 +327,35 @@ static NSString * const _patternCaptureName = @"name";
     return NSMaxRange(range);
 }
 
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withRegexp:(OnigRegexp *)regexp name:(NSString *)name captures:(NSDictionary *)captures
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope relativeToOffset:(NSUInteger)offset withResult:(OnigResult *)result name:(NSString *)name captures:(NSDictionary *)captures capturesOffset:(NSUInteger)capturesOffset
 {
-    TMScope *capturesScope = nil;
-    NSUInteger endOfLastScope = range.location;
-    OnigResult *result = [self _firstMatchInRange:range forRegexp:regexp];
-    if (!result)
-        return NSMaxRange(range);
+    ECASSERT(result);
+    ECASSERT(name || [captures count]);
+    TMScope *capturesScope = scope;
+    NSUInteger endOfLastScope = 0;
     if (name)
     {
         ECASSERT([name isKindOfClass:[NSString class]]);
         capturesScope = [scope newChildScopeWithIdentifier:name];
-        capturesScope.location = [result bodyRange].location - offset;
-        capturesScope.length = [result bodyRange].length;
-        offset = [result bodyRange].location;
-        endOfLastScope = NSMaxRange([result bodyRange]);
+        capturesScope.location = [result rangeAt:capturesOffset].location - offset;
+        capturesScope.length = [result rangeAt:capturesOffset].length;
+        offset = [result rangeAt:capturesOffset].location;
+        endOfLastScope = NSMaxRange([result rangeAt:capturesOffset]);
     }
     if (captures)
     {
-        NSUInteger numMatchRanges = [result count];
+        NSUInteger numMatchRanges = [result count] - capturesOffset;
         for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
         {
-            NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
+            NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex + capturesOffset];
             if (!currentMatchRange.length)
                 continue;
             NSString *currentCaptureName = [[captures objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_patternCaptureName];
             if (!currentCaptureName)
                 continue;
             ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
-            TMScope *currentCaptureScope = [capturesScope ? capturesScope : scope newChildScopeWithIdentifier:currentCaptureName];
-            ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
+            TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName];
+            ECASSERT(currentMatchRange.location >= [result rangeAt:capturesOffset].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result rangeAt:capturesOffset]));
             currentCaptureScope.location = currentMatchRange.location - offset;
             currentCaptureScope.length = currentMatchRange.length;
             endOfLastScope = MAX(endOfLastScope, NSMaxRange(currentMatchRange));
@@ -395,7 +368,6 @@ static NSString * const _patternCaptureName = @"name";
             return NSOrderedSame;
         }];
     }
-    ECASSERT(endOfLastScope <= NSMaxRange(range));
     return endOfLastScope;
 }
 
@@ -447,9 +419,7 @@ static NSString * const _patternCaptureName = @"name";
                 if (firstCharacter == '#')
                 {
                     TMSyntax *patternSyntax = [containerPattern syntax];
-                    [patternSyntax beginContentAccess];
                     [includedPatterns addObject:[TMPattern patternWithDictionary:[[patternSyntax repository] objectForKey:[[containerPattern include] substringFromIndex:1]] inSyntax:patternSyntax]];
-                    [patternSyntax endContentAccess];
                 }
                 else
                 {
@@ -461,10 +431,8 @@ static NSString * const _patternCaptureName = @"name";
                         includedSyntax = [containerPattern syntax];
                     else
                         includedSyntax = [TMSyntax syntaxWithScope:[containerPattern include]];
-                    [includedSyntax beginContentAccess];
                     for (TMPattern *pattern in [includedSyntax patterns])
                         [includedPatterns addObject:pattern];
-                    [includedSyntax endContentAccess];
                 }
             }
             else

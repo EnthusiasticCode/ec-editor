@@ -10,8 +10,9 @@
 #import "TMBundle.h"
 #import "TMPattern.h"
 #import "OnigRegexp.h"
-#import "DiscardableMutableDictionary.h"
 #import "FileBuffer.h"
+
+static NSString * const _syntaxDirectory = @"Syntaxes";
 
 static NSString * const _syntaxNameKey = @"name";
 static NSString * const _syntaxScopeKey = @"scopeName";
@@ -20,11 +21,10 @@ static NSString * const _syntaxFirstLineMatchKey = @"firstLineMatch";
 static NSString * const _syntaxPatternsKey = @"patterns";
 static NSString * const _syntaxRepositoryKey = @"repository";
 
-static DiscardableMutableDictionary *_allSyntaxes;
+static NSMutableDictionary *_allSyntaxes;
 
 @interface TMSyntax ()
 {
-    NSInteger _contentAccessCount;
     NSURL *_fileURL;
     FileBuffer *_fileBuffer;
     NSString *_name;
@@ -49,10 +49,15 @@ static DiscardableMutableDictionary *_allSyntaxes;
 {
     if (!_allSyntaxes)
     {
-        _allSyntaxes = [DiscardableMutableDictionary dictionary];
-        for (TMBundle *bundle in [TMBundle allBundles])
-            for (TMSyntax *syntax in [bundle syntaxes])
-                [_allSyntaxes setObject:syntax forKey:[syntax scopeIdentifier]];
+        _allSyntaxes = [NSMutableDictionary dictionary];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        for (NSURL *bundleURL in [TMBundle bundleURLs])
+            for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL])
+            {
+                TMSyntax *syntax = [[self alloc] initWithFileURL:syntaxURL];
+                if (syntax)
+                    [_allSyntaxes setObject:syntax forKey:[syntax scopeIdentifier]];
+            }
     }
     return _allSyntaxes;
 }
@@ -109,7 +114,6 @@ static DiscardableMutableDictionary *_allSyntaxes;
 
 - (NSArray *)patterns
 {
-    ECASSERT(_contentAccessCount > 0);
     if (!_patterns)
     {
         ECASSERT([[self _plist] objectForKey:_syntaxPatternsKey]);
@@ -125,13 +129,11 @@ static DiscardableMutableDictionary *_allSyntaxes;
 
 - (NSDictionary *)repository
 {
-    ECASSERT(_contentAccessCount > 0);
     return [[self _plist] objectForKey:_syntaxRepositoryKey];
 }
 
 - (NSArray *)patternsDictionaries
 {
-    ECASSERT(_contentAccessCount > 0);
     return [[self _plist] objectForKey:_syntaxPatternsKey];
 }
 
@@ -143,7 +145,6 @@ static DiscardableMutableDictionary *_allSyntaxes;
     self = [super init];
     if (!self)
         return nil;
-    _contentAccessCount = 1;
     _fileURL = fileURL;
     __plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
     _name = [__plist objectForKey:_syntaxNameKey];
@@ -159,7 +160,6 @@ static DiscardableMutableDictionary *_allSyntaxes;
 
 - (NSDictionary *)_plist
 {
-    ECASSERT(_contentAccessCount > 0);
     if (!__plist)
         __plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
     return __plist;
@@ -173,37 +173,6 @@ static DiscardableMutableDictionary *_allSyntaxes;
 - (OnigRegexp *)_firstLineMatch
 {
     return __firstLineMatch;
-}
-
-#pragma mark - NSDiscardableContent
-
-- (BOOL)beginContentAccess
-{
-    ECASSERT(_contentAccessCount >= 0);
-    ++_contentAccessCount;
-    return YES;
-}
-
-- (void)endContentAccess
-{
-    ECASSERT(_contentAccessCount > 0);
-    --_contentAccessCount;
-}
-
-- (void)discardContentIfPossible
-{
-    ECASSERT(_contentAccessCount >= 0);
-    if (_contentAccessCount > 0)
-        return;
-    _patterns = nil;
-    _repository = nil;
-    __plist = nil;
-}
-
-- (BOOL)isContentDiscarded
-{
-    ECASSERT(_contentAccessCount >= 0);
-    return !_patterns && !_repository && !__plist;
 }
 
 @end

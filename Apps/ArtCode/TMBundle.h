@@ -14,16 +14,7 @@
 + (NSURL *)bundleDirectory;
 + (void)setBundleDirectory:(NSURL *)bundleDirectory;
 
-/// An array containing all the bundles
-+ (NSArray *)allBundles;
-
-/// The bundle's name
-- (NSString *)name;
-
-/// The URL of the bundle
-- (NSURL *)URL;
-
-/// An array containing all the bundle's syntaxes
-- (NSArray *)syntaxes;
+/// An array containing URLs for all bundles in the set bundle directory
++ (NSArray *)bundleURLs;
 
 @end
