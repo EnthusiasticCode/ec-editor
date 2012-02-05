@@ -10,15 +10,21 @@
 
 @protocol TMKeyboardActionTarget;
 
+
+/// Represent keyboard actions and give access to keyboard actions configurations
+/// specified in the textmate bundles. 
+/// A plist may be formed by:
+/// keyboardActions: and array of keyboard action dictionaries
+///     <keyboard action>: uuid, title, description and imagePath are strings (relative to the plist file when needed),
+///                        commands is an array of dictionaries containing command and argument to execute a selector.
+/// keyboardActionsConfiguration: an ordered array of keyboard action's uuid or the string 'inherit' that specify a keyboard configuration.
+/// scope: a list of comma separated scopes in which the keyboard configuration is to be used
 @interface TMKeyboardAction : NSObject
 
 #pragma mark Accessing the action properties
 
-/// Name used as identifier for this action.
-@property (nonatomic, readonly, strong) NSString *name;
-
-/// Scope in which the action is valid.
-@property (nonatomic, readonly, strong) NSString *scope;
+/// UUID used as identifier for this action.
+@property (nonatomic, readonly, strong) NSString *uuid;
 
 /// Title to use to represent this action. This property can be nil.
 @property (nonatomic, readonly, strong) NSString *title;
@@ -35,13 +41,13 @@
 
 #pragma mark Create and execute the action
 
-- (id)initWithName:(NSString *)name scope:(NSString *)scope title:(NSString *)title description:(NSString *)description imagePath:(NSString *)imagePath commands:(NSArray *)commands;
+- (id)initWithUUID:(NSString *)uuid title:(NSString *)title description:(NSString *)description imagePath:(NSString *)imagePath commands:(NSArray *)commands;
 - (void)executeActionOnTarget:(id<TMKeyboardActionTarget>)target;
 
 #pragma mark Actions grouping
 
-+ (NSDictionary *)allKeyboardActions;
-+ (TMKeyboardAction *)keyboardActionForName:(NSString *)name;
++ (NSDictionary *)allKeyboardActionsConfigurations;
++ (NSArray *)keyboardActionsConfigurationForScopeIdentifiersStack:(NSArray *)scopeStack;
 
 @end
 

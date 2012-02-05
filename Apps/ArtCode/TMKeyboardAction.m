@@ -11,6 +11,7 @@
 #import <objc/message.h>
 
 static NSMutableDictionary *systemKeyboardActions;
+static NSMutableDictionary *systemKeyboardActionsConfigurations;
 static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 
 @implementation TMKeyboardAction {
@@ -20,12 +21,12 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 
 #pragma mark - Properties
 
-@synthesize name, scope, title, description, imagePath;
+@synthesize uuid, title, description, imagePath;
 
 - (NSString *)imagePath
 {
     if (imagePath == nil)
-        imagePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"keyboardAction_%@", self.name] ofType:nil];
+        imagePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"keyboardAction_%@", self.uuid] ofType:nil];
     return imagePath;
 }
 
@@ -40,13 +41,12 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 
 #pragma mark - Public methods
 
-- (id)initWithName:(NSString *)aName scope:(NSString *)aScope title:(NSString *)aTitle description:(NSString *)aDescription imagePath:(NSString *)anImagePath commands:(NSArray *)commands
+- (id)initWithUUID:(NSString *)anUUID title:(NSString *)aTitle description:(NSString *)aDescription imagePath:(NSString *)anImagePath commands:(NSArray *)commands
 {
     self = [super init];
     if (!self)
         return nil;
-    name = aName;
-    scope = aScope;
+    uuid = anUUID;
     title = aTitle;
     description = aDescription;
     if (anImagePath)
@@ -78,15 +78,35 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 {
     if (!systemKeyboardActions)
         systemKeyboardActions = [NSMutableDictionary new];
-    for (NSDictionary *action in [[NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL] objectForKey:@"keyboardActions"])
+    NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL];
+    ECASSERT(plist != nil);
+    // Load actions
+    for (NSDictionary *action in [plist objectForKey:@"keyboardActions"])
     {
-        [systemKeyboardActions setObject:[[TMKeyboardAction alloc] initWithName:[action objectForKey:@"name"] scope:[action objectForKey:@"scope"] title:[action objectForKey:@"title"] description:[action objectForKey:@"description"] imagePath:[action objectForKey:@"imagePath"] commands:[action objectForKey:@"commands"]] forKey:[action objectForKey:@"name"]];
+        [systemKeyboardActions setObject:[[TMKeyboardAction alloc] initWithUUID:[action objectForKey:@"uuid"] title:[action objectForKey:@"title"] description:[action objectForKey:@"description"] imagePath:[action objectForKey:@"imagePath"] commands:[action objectForKey:@"commands"]] forKey:[action objectForKey:@"uuid"]];
+    }
+    // Load configuration
+    NSMutableArray *configuration = [NSMutableArray new];
+    for (NSString *actionUUID in [plist objectForKey:@"keyboardActionsConfiguration"])
+    {
+        if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"])
+            [configuration addObject:[NSNull null]];
+        else
+            [configuration addObject:[systemKeyboardActions objectForKey:actionUUID]];
+    }
+    // Add configuration to system list
+    if (!systemKeyboardActionsConfigurations)
+        systemKeyboardActionsConfigurations = [NSMutableDictionary new];
+    for (NSString *scope in [[plist objectForKey:@"scope"] componentsSeparatedByString:@","])
+    {
+        // TODO separate with space
+        [systemKeyboardActionsConfigurations setObject:[configuration copy] forKey:scope];
     }
 }
 
-+ (NSDictionary *)allKeyboardActions
++ (NSDictionary *)allKeyboardActionsConfigurations
 {
-    if (!systemKeyboardActions)
+    if (!systemKeyboardActionsConfigurations)
     {
         for (NSURL *bundleURL in [TMBundle bundleURLs])
         {
@@ -96,12 +116,32 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
             }
         }
     }
-    return systemKeyboardActions;
+    return systemKeyboardActionsConfigurations;
 }
 
-+ (TMKeyboardAction *)keyboardActionForName:(NSString *)name
++ (NSArray *)keyboardActionsConfigurationForScopeIdentifiersStack:(NSArray *)scopeStack
 {
-    return [[self allKeyboardActions] objectForKey:name];
+    NSMutableArray *configuration = nil;
+    for (NSString *scopeIdentifier in [scopeStack reverseObjectEnumerator])
+    {
+        // TODO change algorithm
+        NSArray *currentConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:scopeIdentifier];
+        if (currentConfiguration)
+        {
+            if (!configuration)
+            {
+                configuration = [NSMutableArray arrayWithArray:currentConfiguration];
+                continue;
+            }
+            [currentConfiguration enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                if (obj == [NSNull null])
+                    return;
+                [configuration removeObjectAtIndex:idx];
+                [configuration insertObject:obj atIndex:idx];
+            }];
+        }
+    }
+    return [configuration copy];
 }
 
 @end

@@ -77,7 +77,6 @@
 
 - (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
-- (void)_keyboardAccessoryItemLongPressHandler:(UILongPressGestureRecognizer *)recognizer;
 
 @end
 
@@ -215,7 +214,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         
         // Items actions
         #warning TODO set actions on code view selection changed
-        _keyboardAccessoryItemActions = [[TMKeyboardAction allKeyboardActions] allValues];
+        _keyboardAccessoryItemActions = [TMKeyboardAction keyboardActionsConfigurationForScopeIdentifiersStack:[NSArray arrayWithObject:@"source.objc"]];
         
         // Items setup
         [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
