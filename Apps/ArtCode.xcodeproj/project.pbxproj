@@ -124,7 +124,6 @@
 		B7FB7A1E14D6099E0080A714 /* regversion.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A1014D6099E0080A714 /* regversion.c */; };
 		B7FB7A1F14D6099E0080A714 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A1114D6099E0080A714 /* st.c */; };
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
-		B7FB7A2C14D60EB50080A714 /* DiscardableMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2914D60EB50080A714 /* DiscardableMutableDictionary.m */; };
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
@@ -395,8 +394,6 @@
 		B7FB7A1214D6099E0080A714 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = st.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/st.h; sourceTree = "<group>"; };
 		B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
 		B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
-		B7FB7A2814D60EB50080A714 /* DiscardableMutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiscardableMutableDictionary.h; sourceTree = "<group>"; };
-		B7FB7A2914D60EB50080A714 /* DiscardableMutableDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiscardableMutableDictionary.m; sourceTree = "<group>"; };
 		B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakDictionary.h; sourceTree = "<group>"; };
 		B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakDictionary.m; sourceTree = "<group>"; };
 		B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
@@ -741,8 +738,6 @@
 				CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */,
 				B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */,
 				B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */,
-				B7FB7A2814D60EB50080A714 /* DiscardableMutableDictionary.h */,
-				B7FB7A2914D60EB50080A714 /* DiscardableMutableDictionary.m */,
 				B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */,
 				B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */,
 				B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */,
@@ -1540,7 +1535,6 @@
 				B7FB7A1E14D6099E0080A714 /* regversion.c in Sources */,
 				B7FB7A1F14D6099E0080A714 /* st.c in Sources */,
 				B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */,
-				B7FB7A2C14D60EB50080A714 /* DiscardableMutableDictionary.m in Sources */,
 				B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */,
 				B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */,
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,

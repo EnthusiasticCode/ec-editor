@@ -81,7 +81,6 @@ static NSString * const _patternCaptureName = @"name";
         _rootScopeIdentifier = __syntax.scopeIdentifier;
     }
     ECASSERT(__syntax && _rootScopeIdentifier);
-    [__syntax beginContentAccess];
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
     _generation = 1;
     _extensions = [[NSMutableDictionary alloc] init];
@@ -100,7 +99,6 @@ static NSString * const _patternCaptureName = @"name";
 
 - (void)dealloc
 {
-    [__syntax endContentAccess];
     [_fileBuffer removeConsumer:self];
 }
 
@@ -421,9 +419,7 @@ static NSString * const _patternCaptureName = @"name";
                 if (firstCharacter == '#')
                 {
                     TMSyntax *patternSyntax = [containerPattern syntax];
-                    [patternSyntax beginContentAccess];
                     [includedPatterns addObject:[TMPattern patternWithDictionary:[[patternSyntax repository] objectForKey:[[containerPattern include] substringFromIndex:1]] inSyntax:patternSyntax]];
-                    [patternSyntax endContentAccess];
                 }
                 else
                 {
@@ -435,10 +431,8 @@ static NSString * const _patternCaptureName = @"name";
                         includedSyntax = [containerPattern syntax];
                     else
                         includedSyntax = [TMSyntax syntaxWithScope:[containerPattern include]];
-                    [includedSyntax beginContentAccess];
                     for (TMPattern *pattern in [includedSyntax patterns])
                         [includedPatterns addObject:pattern];
-                    [includedSyntax endContentAccess];
                 }
             }
             else

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 @class FileBuffer;
 
-@interface TMSyntax : NSObject <NSDiscardableContent>
+@interface TMSyntax : NSObject
 
 /// A dictionary containing all syntaxes indexed by scopeIdentifier
 + (NSDictionary *)allSyntaxes;

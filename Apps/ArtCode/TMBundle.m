@@ -10,17 +10,14 @@
 #import "TMSyntax.h"
 
 static NSString * const _bundleExtension = @"tmbundle";
-static NSString * const _syntaxDirectory = @"Syntaxes";
 
 static NSURL *_bundleDirectory;
-static NSArray *_allBundles;
+static NSArray *_bundleURLs;
 
 @interface TMBundle ()
 {
     NSURL *_bundleURL;
-    NSArray *_syntaxes;
 }
-- (id)_initWithBundleURL:(NSURL *)bundleURL;
 @end
 
 @implementation TMBundle
@@ -39,60 +36,21 @@ static NSArray *_allBundles;
     _bundleDirectory = bundleDirectory;
 }
 
-+ (NSArray *)allBundles
++ (NSArray *)bundleURLs
 {
-    if (!_allBundles)
+    if (!_bundleURLs)
     {
-        NSMutableArray *allBundles = [NSMutableArray array];
+        NSMutableArray *bundleURLs = [NSMutableArray array];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
         {
             if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
                 continue;
-            [allBundles addObject:[[self alloc] _initWithBundleURL:bundleURL]];
+            [bundleURLs addObject:bundleURL];
         }
-        _allBundles = [allBundles copy];
+        _bundleURLs = [bundleURLs copy];
     }
-    return _allBundles;
-}
-
-- (id)_initWithBundleURL:(NSURL *)bundleURL
-{
-    ECASSERT(bundleURL);
-    self = [super init];
-    if (!self)
-        return nil;
-    _bundleURL = bundleURL;
-    return self;
-}
-
-- (NSString *)name
-{
-    return [[_bundleURL lastPathComponent] stringByDeletingPathExtension];
-}
-
-- (NSURL *)URL
-{
-    return _bundleURL;
-}
-
-- (NSArray *)syntaxes
-{
-    if (!_syntaxes)
-    {
-        NSMutableArray *syntaxes = [NSMutableArray array];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[_bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-        {
-            TMSyntax *syntax = [[TMSyntax alloc] initWithFileURL:syntaxURL];
-            if (!syntax)
-                continue;
-            [syntax endContentAccess];
-            [syntaxes addObject:syntax];
-        }
-        _syntaxes = [syntaxes copy];
-    }
-    return _syntaxes;
+    return _bundleURLs;
 }
 
 @end
