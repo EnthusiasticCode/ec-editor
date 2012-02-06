@@ -9,11 +9,14 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeProject.h"
 #import "NSURL+Utilities.h"
+#import <objc/runtime.h>
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 @interface ArtCodeURL ()
-+ (NSUInteger)_projectsDirectoryPathComponentsCount;
+
++ (NSUInteger)_standardizedProjectsDirectoryLength;
+
 @end
 
 @implementation ArtCodeURL
@@ -30,11 +33,10 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 {
     if (![fileURL isFileURL])
         return nil;
-    NSArray *pathComponents = [[fileURL URLByStandardizingPath] pathComponents];
-    if (![[pathComponents subarrayWithRange:NSMakeRange(0, self._projectsDirectoryPathComponentsCount)] isEqualToArray:[[self projectsDirectory] pathComponents]])
+    NSString *filePath = [[fileURL URLByStandardizingPath] absoluteString];
+    if ([filePath length] <= [self _standardizedProjectsDirectoryLength])
         return nil;
-    pathComponents = [pathComponents subarrayWithRange:NSMakeRange(self._projectsDirectoryPathComponentsCount, [pathComponents count] - self._projectsDirectoryPathComponentsCount)];
-    return [NSString pathWithComponents:pathComponents];
+    return [[filePath substringFromIndex:[self _standardizedProjectsDirectoryLength]] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
 }
 
 + (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
@@ -50,14 +52,12 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 #pragma mark - Private methods
 
-+ (NSUInteger)_projectsDirectoryPathComponentsCount
++ (NSUInteger)_standardizedProjectsDirectoryLength
 {
-    static NSUInteger __projectsDirectoryPathComponentsCount = 0;
-    if (!__projectsDirectoryPathComponentsCount)
-    {
-        __projectsDirectoryPathComponentsCount = [[[self projectsDirectory] pathComponents] count];
-    }
-    return __projectsDirectoryPathComponentsCount;
+    static NSUInteger __standardizedProjectsDirectoryLength = 0;
+    if (__standardizedProjectsDirectoryLength == 0)
+        __standardizedProjectsDirectoryLength = [[[[self projectsDirectory] URLByStandardizingPath] absoluteString] length];
+    return __standardizedProjectsDirectoryLength;
 }
 
 @end
@@ -66,8 +66,13 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 - (ArtCodeProject *)project
 {
-    // TODO cache this value?
-    ArtCodeProject *project = [ArtCodeProject projectWithURL:self];
+    static const void *urlProjectKey;
+    ArtCodeProject *project = objc_getAssociatedObject(self, &urlProjectKey);
+    if (!project)
+    {
+        project = [ArtCodeProject projectWithURL:self];
+        objc_setAssociatedObject(self, &urlProjectKey, project, OBJC_ASSOCIATION_ASSIGN);
+    }
     ECASSERT(project && "Asked project from a non project URL");
     return project;
 }

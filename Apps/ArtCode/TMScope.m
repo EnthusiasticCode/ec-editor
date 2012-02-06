@@ -37,6 +37,7 @@ NSMutableDictionary *systemScopesScoreCache;
 {
     systemScopesScoreCache = [NSMutableDictionary new];
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        NSLog(@"TMScope clearing caches after mem warning");
         [systemScopesScoreCache removeAllObjects];
     }];
 }
