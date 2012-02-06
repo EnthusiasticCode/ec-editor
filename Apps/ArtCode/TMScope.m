@@ -9,7 +9,7 @@
 #import "TMScope.h"
 
 /// Caches a scope identifier to a dictionary of scope selector references to scores.
-NSCache *systemScopesScoreCache;
+NSMutableDictionary *systemScopesScoreCache;
 
 @interface TMScope ()
 
@@ -31,12 +31,26 @@ NSCache *systemScopesScoreCache;
     NSMutableArray *_children;
 }
 
-@synthesize location, length, parent, children = _children, qualifiedIdentifier;
+#pragma mark - Class methods
+
++ (void)initialize
+{
+    systemScopesScoreCache = [NSMutableDictionary new];
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        [systemScopesScoreCache removeAllObjects];
+    }];
+}
+
+#pragma mark - Properties
+
+@synthesize location, length, parent, children = _children, qualifiedIdentifier, identifiersStack;
 
 - (NSString *)identifier
 {
     return [qualifiedIdentifier substringWithRange:_identifierRange];
 }
+
+#pragma mark - Initializers
 
 - (id)initWithParent:(TMScope *)aParentScope identifier:(NSString *)anIdentifier
 {
@@ -56,6 +70,8 @@ NSCache *systemScopesScoreCache;
         qualifiedIdentifier = anIdentifier;
     }
     _identifierRange.length = [anIdentifier length];
+    identifiersStack = parent ? [parent.identifiersStack arrayByAddingObject:anIdentifier] : [NSArray arrayWithObject:anIdentifier];
+
     return self;
 }
 
@@ -94,17 +110,16 @@ NSCache *systemScopesScoreCache;
 
 - (float)_scoreForSearchScope:(NSString *)search
 {
-    if (!systemScopesScoreCache)
-        systemScopesScoreCache = [NSCache new];
-    NSMutableDictionary *scopeReferenceToScore = [systemScopesScoreCache objectForKey:qualifiedIdentifier];
+    ECASSERT(systemScopesScoreCache != nil);
+    NSMutableDictionary *scopeReferenceToScore = [systemScopesScoreCache objectForKey:self.qualifiedIdentifier];
     NSNumber *score = [scopeReferenceToScore objectForKey:search];
     if (score)
         return [score floatValue];
-    score = [NSNumber numberWithFloat:[self _scoreQueryScopeArray:[qualifiedIdentifier componentsSeparatedByString:@" "] forSearchScopeArray:[search componentsSeparatedByString:@" "]]];
+    score = [NSNumber numberWithFloat:[self _scoreQueryScopeArray:self.identifiersStack forSearchScopeArray:[search componentsSeparatedByString:@" "]]];
     if (!scopeReferenceToScore)
     {
         scopeReferenceToScore = [NSMutableDictionary new];
-        [systemScopesScoreCache setObject:scopeReferenceToScore forKey:qualifiedIdentifier];
+        [systemScopesScoreCache setObject:scopeReferenceToScore forKey:self.qualifiedIdentifier];
     }
     [scopeReferenceToScore setObject:score forKey:search];
     return [score floatValue];
@@ -122,12 +137,12 @@ NSCache *systemScopesScoreCache;
     float multiplier = start_value;
     float result = 0;
     // The scopes will be enumerated from the most specific up.
-    NSEnumerator *queryEnumerator = [query reverseObjectEnumerator];
     NSEnumerator *searchEnumerator = [search reverseObjectEnumerator];
-    NSString *currentQuery = [queryEnumerator nextObject];
     NSString *currentSearch = [searchEnumerator nextObject];
-    while (currentSearch && currentQuery)
+    for (NSString *currentQuery in [query reverseObjectEnumerator])
     {
+        if (!currentSearch)
+            break;
         // In case the current query scope starts with the search scope a score can be computed
         if ([currentQuery hasPrefix:currentSearch])
         {
@@ -135,7 +150,6 @@ NSCache *systemScopesScoreCache;
             currentSearch = [searchEnumerator nextObject];
         }
         multiplier /= BASE;
-        currentQuery = [queryEnumerator nextObject];
     }
     // Return the result only if the whole search array has been evaluated
     ECASSERT(result < INFINITY);

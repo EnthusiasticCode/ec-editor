@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface TMScope : NSObject
 
@@ -17,6 +17,10 @@
 
 /// The full identifier of the scope class separated via spaces with parent scopes.
 @property (nonatomic, strong, readonly) NSString *qualifiedIdentifier;
+
+/// Returns an array representing the stack of single scopes from less to more specific.
+/// This array is equivalent to separate the components separated by spaces of qualifiedIdentifier.
+@property (nonatomic, strong, readonly) NSArray *identifiersStack;
 
 /// The location of the scope's start relative to the parent's start
 @property (nonatomic) NSUInteger location;
