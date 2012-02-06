@@ -154,7 +154,7 @@ NSMutableDictionary *systemScopesScoreCache;
     }
     // Return the result only if the whole search array has been evaluated
     ECASSERT(result < INFINITY);
-    return currentSearch ? 0 : result;
+    return [searchEnumerator nextObject] ? 0 : result;
 }
 
 @end

@@ -133,24 +133,24 @@ static NSDictionary *_defaultAttributes = nil;
 
 - (NSDictionary *)attributesForScope:(TMScope *)scope
 {
-    NSMutableDictionary *resultAttributes = nil;
+    __block NSDictionary *resultAttributes = nil;
     if ((resultAttributes = [_scopeAttribuesCache objectForKey:scope.qualifiedIdentifier]))
-        return resultAttributes;
+        return (NSNull *)resultAttributes == [NSNull null] ? nil : resultAttributes;
     
-    NSMutableDictionary *scoredAttributes = [NSMutableDictionary new];
+    __block float maxScore = 0;
     [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
         float score = [scope scoreForScopeSelector:settingScope];
-        if (score > 0)
-            [scoredAttributes setObject:attributes forKey:[NSNumber numberWithFloat:score]];
+        if (score > maxScore)
+        {
+            resultAttributes = attributes;
+            maxScore = score;
+        }
     }];
     
-    resultAttributes = [NSMutableDictionary dictionaryWithCapacity:[scoredAttributes count]];
-    for (NSNumber *score in [[scoredAttributes allKeys] sortedArrayUsingSelector:@selector(compare:)])
-    {
-        [resultAttributes addEntriesFromDictionary:[scoredAttributes objectForKey:score]];
-    }
-    
-    [_scopeAttribuesCache setObject:resultAttributes forKey:scope.qualifiedIdentifier];
+    if (resultAttributes)
+        [_scopeAttribuesCache setObject:resultAttributes forKey:scope.qualifiedIdentifier];
+    else
+        [_scopeAttribuesCache setObject:[NSNull null] forKey:scope.qualifiedIdentifier];
     return resultAttributes;
 }
 
