@@ -182,7 +182,7 @@ static OnigRegexp *_namedCapturesRegexp;
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
     [scopeIdentifiersStack addObject:scope.identifier];
     TMUnitVisitResult result = block(scope.identifier, scopeRange, scopeIdentifiersStack);
-    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
+//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
     if (result != TMUnitVisitResultRecurse)
         return result;
     for (TMScope *childScope in [scope children])
@@ -198,7 +198,7 @@ static OnigRegexp *_namedCapturesRegexp;
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
             [scopeIdentifiersStack addObject:childScope.identifier];
             result = block(childScope.identifier, scopeRange, scopeIdentifiersStack);
-            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
+//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
             [scopeIdentifiersStack removeLastObject];
             continue;
         }
