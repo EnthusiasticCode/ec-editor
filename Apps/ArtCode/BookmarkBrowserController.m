@@ -205,19 +205,19 @@
     
     if ([searchText length] == 0)
     {
-        _sortedBookmarks = [self.artCodeTab.currentURL.project.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
             return [[obj1 description] compare:[obj2 description]];
         }];
         _sortedBookmarksHitMasks = nil;
         [self.tableView reloadData];
-        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.artCodeTab.currentURL.project.name];
+        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.artCodeTab.currentProject.name];
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         NSArray *hitMasks = nil;
-        _sortedBookmarks = [self.artCodeTab.currentURL.project.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
+        _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
             return [bookmark description];
         }];
         _sortedBookmarksHitMasks = hitMasks;
@@ -297,7 +297,7 @@
             [self setEditing:NO animated:YES];
             for (NSIndexPath *indexPath in selectedRows)
             {
-                [self.artCodeTab.currentURL.project removeBookmark:[_sortedBookmarks objectAtIndex:indexPath.row]];
+                [self.artCodeTab.currentProject removeBookmark:[_sortedBookmarks objectAtIndex:indexPath.row]];
             }
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] image:nil displayImmediatly:YES];

@@ -62,7 +62,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.projectNameTextField.text = [self.artCodeTab.currentURL.project name];
+    self.projectNameTextField.text = [self.artCodeTab.currentProject name];
     // TODO add project files and size
 }
 
@@ -80,14 +80,14 @@
     
     // TODO check that name is ok
 
-    [self.artCodeTab.currentURL.project setName:textField.text];
+    [self.artCodeTab.currentProject setName:textField.text];
 }
 
 #pragma mark - Private Methods
 
 - (void)_labelColorChangeAction:(id)sender
 {
-    [self.artCodeTab.currentURL.project setLabelColor:[sender selectedColor]];
+    [self.artCodeTab.currentProject setLabelColor:[sender selectedColor]];
 }
 
 @end

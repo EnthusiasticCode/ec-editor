@@ -47,7 +47,7 @@ static void *_directoryObservingContext;
 {
     if (!_directoryPresenter)
     {
-        NSURL *projectURL = self.artCodeTab.currentURL.project.URL;
+        NSURL *projectURL = self.artCodeTab.currentProject.URL;
         _directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
         [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
         _projectURLAbsoluteString = [projectURL absoluteString];
@@ -242,7 +242,7 @@ static void *_directoryObservingContext;
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[self.artCodeTab.currentURL.project URL]];
+    [self.artCodeTab pushURL:[self.artCodeTab.currentProject URL]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender

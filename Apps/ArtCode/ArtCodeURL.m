@@ -9,7 +9,7 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeProject.h"
 #import "NSURL+Utilities.h"
-#import <objc/runtime.h>
+
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
@@ -63,19 +63,6 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 @end
 
 @implementation NSURL (ArtCodeURL)
-
-- (ArtCodeProject *)project
-{
-    static const void *urlProjectKey;
-    ArtCodeProject *project = objc_getAssociatedObject(self, &urlProjectKey);
-    if (!project)
-    {
-        project = [ArtCodeProject projectWithURL:self];
-        objc_setAssociatedObject(self, &urlProjectKey, project, OBJC_ASSOCIATION_ASSIGN);
-    }
-    ECASSERT(project && "Asked project from a non project URL");
-    return project;
-}
 
 - (BOOL)isBookmarksVariant
 {

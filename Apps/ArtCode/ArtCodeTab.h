@@ -26,6 +26,9 @@
 /// To change the current URL use one of the move methods or pushURL.
 @property (nonatomic, strong, readonly) NSURL *currentURL;
 
+/// The current project for the tab's URL.
+@property (nonatomic, strong, readonly) ArtCodeProject *currentProject;
+
 /// A value indicating if calling moveBackInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBackInHistory;
 

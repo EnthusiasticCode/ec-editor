@@ -26,8 +26,6 @@
 
 @interface NSURL (ArtCodeURL)
 
-@property (readonly) ArtCodeProject *project;
-
 /// Indicate if the URL has a bookmarks specifier.
 - (BOOL)isBookmarksVariant;
 - (NSURL *)URLByAddingBookmarksVariant;

@@ -127,7 +127,7 @@ NSMutableDictionary *systemScopesScoreCache;
 }
 
 #define POINT_DEPTH    4.0f
-#define NESTING_DEPTH  20.0f
+#define NESTING_DEPTH  30.0f
 #define BASE           16.0f
 
 - (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search

@@ -20,12 +20,14 @@ static NSURL *_plistURL;
 static NSMutableArray *_mutableTabDictionaries;
 static NSMutableArray *_mutableTabs;
 
-@interface ArtCodeTab ()
-{
+@interface ArtCodeTab () {
     NSMutableDictionary *_mutableDictionary;
     NSMutableArray *_mutableHistoryURLs;
+    ArtCodeProject *_currentProject;
 }
+
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
+
 @end
 
 @implementation ArtCodeTab
@@ -109,6 +111,13 @@ static NSMutableArray *_mutableTabs;
     return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
 
+- (ArtCodeProject *)currentProject
+{
+    if (!_currentProject)
+        _currentProject = [ArtCodeProject projectWithURL:self.currentURL];
+    return _currentProject;
+}
+
 + (NSSet *)keyPathsForValuesAffectingCurrentURL
 {
     return [NSSet setWithObject:@"currentHistoryPosition"];
@@ -169,6 +178,7 @@ static NSMutableArray *_mutableTabs;
 - (void)pushURL:(NSURL *)url
 {
     ECASSERT(url);
+    _currentProject = nil;
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
