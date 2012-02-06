@@ -10,6 +10,7 @@
 #import <CoreText/CoreText.h>
 #import "UIColor+HexColor.h"
 #import "TextRenderer.h"
+#import "TMScope.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
@@ -17,16 +18,12 @@ static NSString * const _themeSettingsKey = @"settings";
 static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
 
-static NSString * const _themeWildcard = @"*";
-
 static CTFontRef _defaultFont = NULL;
 static CTFontRef _defaultItalicFont = NULL;
 static CTFontRef _defaultBoldFont = NULL;
 static NSDictionary *_defaultAttributes = nil;
 
-@interface TMTheme () {
-    NSArray *_settingsOrderedScopes;
-}
+@interface TMTheme ()
 
 @property (nonatomic, strong) NSURL *fileURL;
 @property (nonatomic, strong) NSString *name;
@@ -34,7 +31,9 @@ static NSDictionary *_defaultAttributes = nil;
 
 @end
 
-@implementation TMTheme
+@implementation TMTheme {
+    NSCache *_scopeAttribuesCache;
+}
 
 #pragma mark - Class methods
 
@@ -88,7 +87,7 @@ static NSDictionary *_defaultAttributes = nil;
     _name = name;
     
     // Preprocess settings
-    NSMutableDictionary *settings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
+    NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
     for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
     {
         // TODO manage default settings for background, caret
@@ -96,7 +95,7 @@ static NSDictionary *_defaultAttributes = nil;
         if (!settingScopes)
             continue;
         
-        NSMutableDictionary *setting = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
+        NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
         
         // Pre-map settings with Core Text attributes
         [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
@@ -104,86 +103,55 @@ static NSDictionary *_defaultAttributes = nil;
             
             if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
                 if ([value isEqualToString:@"italic"] && _defaultItalicFont) {
-                    [setting setObject:(__bridge id)_defaultItalicFont forKey:(__bridge id)kCTFontAttributeName];
+                    [styleSettings setObject:(__bridge id)_defaultItalicFont forKey:(__bridge id)kCTFontAttributeName];
                 }
                 else if ([value isEqualToString:@"bold"] && _defaultBoldFont) {
-                    [setting setObject:(__bridge id)_defaultBoldFont forKey:(__bridge id)kCTFontAttributeName];
+                    [styleSettings setObject:(__bridge id)_defaultBoldFont forKey:(__bridge id)kCTFontAttributeName];
                 }
                 else if ([value isEqualToString:@"underline"]) {
-                    [setting setObject:[NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
+                    [styleSettings setObject:[NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
                 }
             }
             else if ([key isEqualToString:@"foreground"]) {
-                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
+                [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
             }
             else if ([key isEqualToString:@"background"]) {
-                [setting setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
+                [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
             }
             else {
-                [setting setObject:value forKey:key];
+                [styleSettings setObject:value forKey:key];
             }
         }];
         
-        // Setting's scope can have multiple scopes separated by a comma
-        for (NSString *settingScopeStack in [settingScopes componentsSeparatedByString:@","])
-        {
-            NSMutableDictionary *scopeSettings = settings;
-            for (NSString *settingScope in [[settingScopeStack componentsSeparatedByString:@" "] reverseObjectEnumerator])
-            {
-                NSString *trimmedSettingScope = [settingScope stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                if (trimmedSettingScope.length == 0)
-                    continue;
-                
-                NSMutableDictionary *nestedScopeSettings = [scopeSettings objectForKey:trimmedSettingScope];
-                if (!nestedScopeSettings)
-                {
-                    nestedScopeSettings = [NSMutableDictionary dictionary];
-                    [scopeSettings setObject:nestedScopeSettings forKey:trimmedSettingScope];
-                }
-                scopeSettings = nestedScopeSettings;
-            }
-            ECASSERT(scopeSettings != settings);
-            // the following assert is correct, but some themes have duplicated scopes
-            // ECASSERT([scopeSettings objectForKey:_themeWildcard] == nil && "Scope should be unique");
-            [scopeSettings setObject:setting forKey:_themeWildcard];
-        }
+        [themeSettings setObject:styleSettings forKey:settingScopes];
     }
-    _settings = settings;
-    _settingsOrderedScopes = [[_settings allKeys] sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        NSInteger diff = [[obj2 componentsSeparatedByString:@"."] count] - [[obj1 componentsSeparatedByString:@"."] count];
-        if (diff > 0)
-            return NSOrderedDescending;
-        else if (diff < 0)
-            return NSOrderedAscending;
-        return NSOrderedSame;
-    }];
-    
+    _settings = themeSettings;
+    _scopeAttribuesCache = [NSCache new];
+
     return self;
 }
 
-- (NSDictionary *)attributesForScopeIdentifiersStack:(NSArray *)scopeIdentifiersStack
+- (NSDictionary *)attributesForScope:(TMScope *)scope
 {
-    NSDictionary *nestedSettings = self.settings;
-    for (NSString *scopeIdentifier in [scopeIdentifiersStack reverseObjectEnumerator])
+    NSMutableDictionary *resultAttributes = nil;
+    if ((resultAttributes = [_scopeAttribuesCache objectForKey:scope.qualifiedIdentifier]))
+        return resultAttributes;
+    
+    NSMutableDictionary *scoredAttributes = [NSMutableDictionary new];
+    [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
+        float score = [scope scoreForScopeSelector:settingScope];
+        if (score > 0)
+            [scoredAttributes setObject:attributes forKey:[NSNumber numberWithFloat:score]];
+    }];
+    
+    resultAttributes = [NSMutableDictionary dictionaryWithCapacity:[scoredAttributes count]];
+    for (NSNumber *score in [[scoredAttributes allKeys] sortedArrayUsingSelector:@selector(compare:)])
     {
-        NSDictionary *nextNestedSettings = [nestedSettings objectForKey:scopeIdentifier];
-        if (nextNestedSettings)
-        {
-            nestedSettings = nextNestedSettings;
-            continue;
-        }
-        for (NSUInteger i = [scopeIdentifier length] - 1; i != 0; --i)
-        {
-            if ([scopeIdentifier characterAtIndex:i] != L'.')
-                continue;
-            nextNestedSettings = [nestedSettings objectForKey:[scopeIdentifier substringToIndex:i]];
-            if (!nextNestedSettings)
-                continue;
-            nestedSettings = nextNestedSettings;
-            break;
-        }
+        [resultAttributes addEntriesFromDictionary:[scoredAttributes objectForKey:score]];
     }
-    return [nestedSettings objectForKey:_themeWildcard];
+    
+    [_scopeAttribuesCache setObject:resultAttributes forKey:scope.qualifiedIdentifier];
+    return resultAttributes;
 }
 
 @end

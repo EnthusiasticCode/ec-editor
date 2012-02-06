@@ -35,7 +35,7 @@ static OnigRegexp *_namedCapturesRegexp;
     NSUInteger _generation;
 }
 - (TMSyntax *)_syntax;
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options scopeIdentifiersStack:(NSMutableArray *)scopeIdentifiersStack withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSMutableArray *))block;
+- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 - (TMScope *)_scope;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMSyntax *)pattern;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMSyntax *)pattern;
@@ -131,14 +131,14 @@ static OnigRegexp *_namedCapturesRegexp;
     return [_extensions objectForKey:key];
 }
 
-- (void)visitScopesWithBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
+- (void)visitScopesWithBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
     [self visitScopesInRange:NSMakeRange(0, [self _scope].length) options:TMUnitVisitOptionsAbsoluteRange withBlock:block];
 }
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
+- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
-    [self _visitDescendantScopesOfScope:[self _scope] withOffset:0 inRange:range options:options scopeIdentifiersStack:[NSMutableArray array] withBlock:block];
+    [self _visitDescendantScopesOfScope:[self _scope] withOffset:0 inRange:range options:options withBlock:block];
 }
 
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
@@ -165,7 +165,7 @@ static OnigRegexp *_namedCapturesRegexp;
     return __syntax;
 }
 
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options scopeIdentifiersStack:(NSMutableArray *)scopeIdentifiersStack withBlock:(TMUnitVisitResult (^)(NSString *, NSRange, NSMutableArray *))block
+- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
     static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange){
         NSRange intersectionRange = NSIntersectionRange(range, inRange);
@@ -180,8 +180,7 @@ static OnigRegexp *_namedCapturesRegexp;
         return TMUnitVisitResultContinue;
     if (options & TMUnitVisitOptionsRelativeRange)
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-    [scopeIdentifiersStack addObject:scope.identifier];
-    TMUnitVisitResult result = block(scope.identifier, scopeRange, scopeIdentifiersStack);
+    TMUnitVisitResult result = block(scope, scopeRange);
 //    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
     if (result != TMUnitVisitResultRecurse)
         return result;
@@ -196,20 +195,17 @@ static OnigRegexp *_namedCapturesRegexp;
                 continue;
             if (options & TMUnitVisitOptionsRelativeRange)
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-            [scopeIdentifiersStack addObject:childScope.identifier];
-            result = block(childScope.identifier, scopeRange, scopeIdentifiersStack);
+            result = block(childScope, scopeRange);
 //            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
-            [scopeIdentifiersStack removeLastObject];
             continue;
         }
         if (result == TMUnitVisitResultRecurse)
         {
-            if ([self _visitDescendantScopesOfScope:childScope withOffset:offset inRange:range options:options scopeIdentifiersStack:scopeIdentifiersStack withBlock:block] == TMUnitVisitResultContinue)
+            if ([self _visitDescendantScopesOfScope:childScope withOffset:offset inRange:range options:options withBlock:block] == TMUnitVisitResultContinue)
                 continue;
         }
         return TMUnitVisitResultBreak;
     }
-    [scopeIdentifiersStack removeLastObject];
     return TMUnitVisitResultContinue;
 }
 
@@ -219,8 +215,7 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         _firstMatches = [NSMutableDictionary dictionary];
         _contents = [self.fileBuffer string];
-        __scope = [[TMScope alloc] init];
-        __scope.identifier = [self rootScopeIdentifier];
+        __scope = [[TMScope alloc] initWithParent:nil identifier:[self rootScopeIdentifier]];
         __scope.length = [_contents length];
         [self _addChildScopesToScope:__scope inRange:NSMakeRange(0, [_contents length]) relativeToOffset:0 withPatterns:[[[self _syntax] attributes] objectForKey:TMSyntaxPatternsKey] stopOnRegexp:nil stopMatch:NULL];
         _firstMatches = nil;
@@ -402,13 +397,6 @@ static OnigRegexp *_namedCapturesRegexp;
             currentCaptureScope.length = currentMatchRange.length;
             endOfLastScope = MAX(endOfLastScope, NSMaxRange(currentMatchRange));
         }
-        [[(capturesScope ? capturesScope : scope) children] sortUsingComparator:^NSComparisonResult(TMScope *obj1, TMScope *obj2) {
-            if (obj1.location < obj2.location)
-                return NSOrderedAscending;
-            if (obj1.location > obj2.location)
-                return NSOrderedDescending;
-            return NSOrderedSame;
-        }];
     }
     ECASSERT(endOfLastScope <= NSMaxRange(range));
     return endOfLastScope;

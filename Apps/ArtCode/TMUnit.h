@@ -8,7 +8,7 @@
 
 #import "FileBuffer.h"
 #import <clang-c/Index.h>
-@class TMIndex;
+@class TMIndex, TMScope;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
 typedef enum
@@ -38,9 +38,9 @@ typedef enum
 /// Visit the scopes in the unit.
 /// All the parameters passed to the block are only valid until the block returns, and should not be modified
 
-- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSMutableArray *scopeIdentifiersStack))block;
+- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(NSString *scopeIdentifier, NSRange range, NSMutableArray *scopeIdentifiersStack))block;
+- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 

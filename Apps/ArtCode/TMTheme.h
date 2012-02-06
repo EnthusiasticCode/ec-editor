@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@class TMScope;
 
 @interface TMTheme : NSObject
 
@@ -17,8 +18,8 @@
 /// The name of the theme
 @property (nonatomic, strong, readonly) NSString *name;
 
-/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope stack.
-- (NSDictionary *)attributesForScopeIdentifiersStack:(NSArray *)scopeIdentifiersStack;
+/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope.
+- (NSDictionary *)attributesForScope:(TMScope *)scope;
 
 #pragma mark Default styles
 

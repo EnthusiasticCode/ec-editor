@@ -11,6 +11,7 @@
 #import "FileBuffer.h"
 #import "TMIndex.h"
 #import "TMUnit.h"
+#import "TMScope.h"
 
 @interface CodeFile ()
 {
@@ -68,9 +69,9 @@
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     // Add text coloring
     [attributedString addAttributes:[TMTheme defaultAttributes] range:NSMakeRange(0, [attributedString length])];
-    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(NSString *scopeIdentifier, NSRange range, NSMutableArray *scopeIdentifiersStack) {
-        NSDictionary *attributes = [self.theme attributesForScopeIdentifiersStack:scopeIdentifiersStack];
-        if (attributes)
+    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+        NSDictionary *attributes = [self.theme attributesForScope:scope];
+        if ([attributes count])
             [attributedString addAttributes:attributes range:range];
         return TMUnitVisitResultRecurse;
     }];
