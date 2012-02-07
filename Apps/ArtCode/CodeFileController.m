@@ -534,6 +534,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView 
            shouldRenderLine:(TextRendererLine *)line 
                      number:(NSUInteger)lineNumber 
+                      range:(NSRange)range
                   withColor:(UIColor *__autoreleasing *)lineColor 
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
@@ -541,20 +542,29 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (line.width < line.height)
         return NO;
     
-    if (lineNumber < 8)
-        *lineColor = [UIColor greenColor];
-    
-    if (lineNumber == 15)
-    {
-        *decoration = CodeFileMinimapLineDecorationDisc;
-        *decorationColor = [UIColor whiteColor];
+    switch ([self.codeFile kindOfTextInRange:range]) {
+        case CodeFileCommentTextKind:
+            *lineColor = [UIColor greenColor];
+            break;
+            
+        case CodeFilePreprocessorTextKind:
+            *lineColor = [UIColor orangeColor];
+            break;
+            
+        case CodeFileImportantTextKind:
+            *lineColor = [UIColor blueColor];
+            break;
+            
+        default:
+            break;
     }
     
-    if (lineNumber == 154)
-    {
-        *decoration = CodeFileMinimapLineDecorationSquare;
-        *decorationColor = [UIColor whiteColor];
-    }
+        
+//    if (lineNumber == 15)
+//    {
+//        *decoration = CodeFileMinimapLineDecorationDisc;
+//        *decorationColor = [UIColor whiteColor];
+//    }
     
     return YES;
 }

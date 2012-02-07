@@ -23,7 +23,7 @@ typedef NSInteger CodeFileMinimapLineDecoration;
 
 /// Returns if the given line should be rendered by the minimap with the given color, decoration and decoration color.
 /// All this last three parameters can be assigned to change the way the line is rendered.
-- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldRenderLine:(TextRendererLine *)line number:(NSUInteger)lineNumber withColor:(UIColor **)lineColor decoration:(CodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
+- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldRenderLine:(TextRendererLine *)line number:(NSUInteger)lineNumber range:(NSRange)range withColor:(UIColor **)lineColor decoration:(CodeFileMinimapLineDecoration *)decoration decorationColor:(UIColor **)decorationColor;
 
 /// Called when the user changes the selection rectangle from the minimap.
 - (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection;

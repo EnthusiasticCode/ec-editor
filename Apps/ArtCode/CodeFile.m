@@ -102,6 +102,34 @@
     return [self.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
+#pragma mark - Public methods
+
+- (CodeFileTextKind)kindOfTextInRange:(NSRange)range
+{
+    __block CodeFileTextKind result = CodeFileNormalTextKind;
+    [self.codeUnit visitScopesInRange:range options:0 withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
+        if (scopeRange.length <= 2)
+            return TMUnitVisitResultRecurse;
+        if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)
+        {
+            result = CodeFilePreprocessorTextKind;
+            return TMUnitVisitResultBreak;
+        }
+        if ([scope.qualifiedIdentifier rangeOfString:@"toc-list"].location != NSNotFound)
+        {
+            result = CodeFileImportantTextKind;
+            return TMUnitVisitResultBreak;
+        }
+        if ([scope.qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound)
+        {
+            result = CodeFileCommentTextKind;
+            return TMUnitVisitResultBreak;
+        }
+        return TMUnitVisitResultRecurse;
+    }];
+    return result;
+}
+
 #pragma mark - Private methods
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {

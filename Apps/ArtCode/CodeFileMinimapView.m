@@ -28,7 +28,7 @@ static const void *rendererContext;
     CGSize _renderSize;
     
     struct {
-        unsigned delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor : 1;
+        unsigned delegateHasShouldRendererLineNumberRangeWithColorDecorationDecorationColor : 1;
         unsigned delegateHasShouldChangeSelectionRectangle : 1;
         unsigned reserved : 2;
     } flags;
@@ -54,7 +54,7 @@ static const void *rendererContext;
         return;
     
     super.delegate = aDelegate;
-    flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:withColor:decoration:decorationColor:)];
+    flags.delegateHasShouldRendererLineNumberRangeWithColorDecorationDecorationColor = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldRenderLine:number:range:withColor:decoration:decorationColor:)];
     flags.delegateHasShouldChangeSelectionRectangle = [self.delegate respondsToSelector:@selector(codeFileMinimapView:shouldChangeSelectionRectangle:)];
 }
 
@@ -153,12 +153,12 @@ static const void *rendererContext;
             CodeFileMinimapLineDecoration customDecoration = 0;
             
             // Draw line block if color changes
-            if (this->flags.delegateHasShouldRendererLineNumberWithColorDecorationDecorationColor)
+            if (this->flags.delegateHasShouldRendererLineNumberRangeWithColorDecorationDecorationColor)
             {
                 // Retrieve delegate informations for line
                 __autoreleasing UIColor *customLineColor = this->lineDefaultColor;
                 __autoreleasing UIColor *customDecorationColor = this->lineDefaultColor;
-                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber withColor:&customLineColor decoration:&customDecoration decorationColor:&customDecorationColor])
+                if (![this.delegate codeFileMinimapView:this shouldRenderLine:line number:lineNumber range:stringRange withColor:&customLineColor decoration:&customDecoration decorationColor:&customDecorationColor])
                     return;
                 
                 // Render previous placed lines

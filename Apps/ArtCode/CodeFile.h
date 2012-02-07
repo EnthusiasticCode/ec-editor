@@ -9,7 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "CodeView.h"
 #import "FileBuffer.h"
+
+
 @class TMTheme;
+
+typedef enum {
+    CodeFileNormalTextKind,
+    CodeFileCommentTextKind,
+    CodeFilePreprocessorTextKind,
+    CodeFileImportantTextKind
+} CodeFileTextKind;
 
 @interface CodeFile : NSObject <CodeViewDataSource, FileBufferConsumer>
 
@@ -17,6 +26,10 @@
 @property (nonatomic, strong) TMTheme *theme;
 
 - (id)initWithFileURL:(NSURL *)fileURL;
+
+/// Returns a generic kind specification of the text in the given range.
+/// This method is used to color minimap lines.
+- (CodeFileTextKind)kindOfTextInRange:(NSRange)range;
 
 + (void)saveFilesToDisk;
 
