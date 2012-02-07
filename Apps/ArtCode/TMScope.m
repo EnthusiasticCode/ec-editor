@@ -33,13 +33,9 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Class methods
 
-+ (void)initialize
++ (void)prepareForBackground
 {
-    systemScopesScoreCache = [NSMutableDictionary new];
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
-        NSLog(@"TMScope clearing caches after mem warning");
-        [systemScopesScoreCache removeAllObjects];
-    }];
+    [systemScopesScoreCache removeAllObjects];
 }
 
 #pragma mark - Properties
@@ -113,7 +109,8 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (float)_scoreForSearchScope:(NSString *)search
 {
-    ECASSERT(systemScopesScoreCache != nil);
+    if(!systemScopesScoreCache)
+        systemScopesScoreCache = [NSMutableDictionary new];
     NSMutableDictionary *scopeReferenceToScore = [systemScopesScoreCache objectForKey:self.qualifiedIdentifier];
     NSNumber *score = [scopeReferenceToScore objectForKey:search];
     if (score)

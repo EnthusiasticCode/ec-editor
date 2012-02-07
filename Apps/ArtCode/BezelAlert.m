@@ -11,6 +11,7 @@
 
 #import "UIImage+BlockDrawing.h"
 
+
 @implementation BezelAlert {
     NSTimer *alertTimer;
     UIViewAutoresizing autoresizingMask;
@@ -99,6 +100,8 @@
 
 #pragma mark - Internal Allerting Methods
 
+extern CGRect UIKeyboardFrame;
+
 - (void)presentFirstChildViewController
 {
     ECASSERT([self.childViewControllers count] != 0);
@@ -119,7 +122,11 @@
         presentingViewController = [[[UIApplication sharedApplication].windows objectAtIndex:0] rootViewController];
     }
     CGRect presentingBounds = presentingViewController.view.bounds;
-    // TODO intersect with keyboard frame
+    if (!CGRectIsNull(UIKeyboardFrame))
+    {
+        CGRect keyboardFrame = [presentingViewController.view convertRect:UIKeyboardFrame fromView:nil];
+        presentingBounds.size.height = keyboardFrame.origin.y - presentingBounds.origin.y;
+    }
     
     // Calculate bezel frame
     CGRect bezelFrame = CGRectInset(contentFrame, -bezelCornerRadius, -bezelCornerRadius);

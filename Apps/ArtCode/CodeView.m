@@ -791,7 +791,7 @@ static void init(CodeView *self)
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self setKeyboardAccessoryView:nil];
 }
 
 - (void)layoutSubviews

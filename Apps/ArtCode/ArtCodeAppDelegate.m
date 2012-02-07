@@ -26,7 +26,15 @@
 #import "ArtCodeProject.h"
 #import "CodeFile.h"
 
-@implementation ArtCodeAppDelegate
+#import "TMScope.h"
+
+CGRect UIKeyboardFrame;
+
+
+@implementation ArtCodeAppDelegate {
+    id _keyboardDidShowObserver;
+    id _keyboardDidHideObserver;
+}
 
 @synthesize window = _window;
 @synthesize tabController = _tabController;
@@ -129,8 +137,22 @@
     }
     [self.tabController setTabBarVisible:NO];
     
+    UIKeyboardFrame = CGRectNull;
+    _keyboardDidShowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardDidShowNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        UIKeyboardFrame = [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    }];
+    _keyboardDidHideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardDidHideNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        UIKeyboardFrame = CGRectNull;
+    }];
+    
+    // Start the application
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+    [TMScope prepareForBackground];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -171,6 +193,8 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+    [[NSNotificationCenter defaultCenter] removeObserver:_keyboardDidHideObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:_keyboardDidShowObserver];
 }
 
 - (void)saveApplicationStateToDisk

@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+extern CGRect UIKeyboardFrame;
+
+
 @class TabController;
 
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>

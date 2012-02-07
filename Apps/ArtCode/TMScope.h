@@ -48,5 +48,10 @@
 /// For a complete specification see http://manual.macromates.com/en/scope_selectors
 - (float)scoreForScopeSelector:(NSString *)scopeSelector;
 
+#pragma mark Class methods
+
+/// Prepares the class to enter background
++ (void)prepareForBackground;
+
 @end
 
