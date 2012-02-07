@@ -539,7 +539,13 @@ static void drawStencilStar(void *info, CGContextRef myContext)
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-    if (line.width < line.height)
+    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
+    {
+        *decoration = CodeFileMinimapLineDecorationDisc;
+        *decorationColor = [UIColor whiteColor];
+    }
+    
+    if (*decoration == 0 && line.width < line.height)
         return NO;
     
     switch ([self.codeFile kindOfTextInRange:range]) {
@@ -558,13 +564,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         default:
             break;
     }
-    
-        
-//    if (lineNumber == 15)
-//    {
-//        *decoration = CodeFileMinimapLineDecorationDisc;
-//        *decorationColor = [UIColor whiteColor];
-//    }
     
     return YES;
 }

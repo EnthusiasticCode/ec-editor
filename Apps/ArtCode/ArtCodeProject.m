@@ -209,10 +209,9 @@ static Cache *openProjects = nil;
 
 - (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber
 {
-    NSString *filePath = [fileURL absoluteString];
+    NSString *filePath = [[fileURL URLByStandardizingPath] absoluteString];
     NSString *projectPath = [self.URL absoluteString];
-    if (![filePath hasPrefix:projectPath])
-        return nil;
+    ECASSERT([filePath hasPrefix:projectPath]);
     filePath = [filePath substringFromIndex:[projectPath length]];
     
     NSMutableArray *result = nil;
