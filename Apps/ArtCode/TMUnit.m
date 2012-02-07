@@ -181,7 +181,7 @@ static OnigRegexp *_namedCapturesRegexp;
     if (options & TMUnitVisitOptionsRelativeRange)
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
     TMUnitVisitResult result = block(scope, scopeRange);
-//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
+//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
     if (result != TMUnitVisitResultRecurse)
         return result;
     for (TMScope *childScope in [scope children])
@@ -196,7 +196,7 @@ static OnigRegexp *_namedCapturesRegexp;
             if (options & TMUnitVisitOptionsRelativeRange)
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
             result = block(childScope, scopeRange);
-//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), scopeIdentifiersStack);
+//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
             continue;
         }
         if (result == TMUnitVisitResultRecurse)

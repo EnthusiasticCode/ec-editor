@@ -80,6 +80,10 @@
 		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
 		B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */; };
 		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
+		B7DD436614E0973E0057DDB4 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436014E0971C0057DDB4 /* libConnection.a */; };
+		B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
+		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
+		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -225,6 +229,23 @@
 		CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B7DD435F14E0971C0057DDB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B75F65A114D96366008B88C5;
+			remoteInfo = Connection;
+		};
+		B7DD436414E0972B0057DDB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B75F65A014D96366008B88C5;
+			remoteInfo = Connection;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
@@ -309,6 +330,10 @@
 		B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+BlockWait.m"; sourceTree = "<group>"; };
 		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
 		B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Compare.m"; sourceTree = "<group>"; };
+		B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Connection.xcodeproj; path = ../ThirdParty/Connection/Connection.xcodeproj; sourceTree = "<group>"; };
+		B7DD436E14E098020057DDB4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		B7DD437214E098BE0057DDB4 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -544,6 +569,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
+				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
+				B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */,
+				B7DD436614E0973E0057DDB4 /* libConnection.a in Frameworks */,
 				B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */,
 				CD7D2B0213C0CD9D00B889EE /* CoreText.framework in Frameworks */,
 				CD7D2B0013C0CD9700B889EE /* QuartzCore.framework in Frameworks */,
@@ -652,10 +681,12 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7FB79F714D6087C0080A714 /* CocoaOniguruma */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
+				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
 			);
 			name = "Third Party";
 			sourceTree = "<group>";
@@ -667,6 +698,14 @@
 				CDB5DB6214C6F532003DFD1F /* File Browser */,
 			);
 			name = "Content Controllers";
+			sourceTree = "<group>";
+		};
+		B7DD435514E0971B0057DDB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B7DD436014E0971C0057DDB4 /* libConnection.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B7FB799214D5FE680080A714 /* Additions */ = {
@@ -983,12 +1022,14 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B7DD437214E098BE0057DDB4 /* CFNetwork.framework */,
 				CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */,
 				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
 				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
 				CD7D2AE313C0CD2600B889EE /* UIKit.framework */,
 				CD7D2AE513C0CD2600B889EE /* Foundation.framework */,
 				CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */,
+				B7DD436E14E098020057DDB4 /* Security.framework */,
 			);
 			name = "Apple Frameworks";
 			sourceTree = "<group>";
@@ -1293,6 +1334,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B7DD436514E0972B0057DDB4 /* PBXTargetDependency */,
 			);
 			name = ArtCode;
 			productName = ArtCode;
@@ -1317,12 +1359,28 @@
 			mainGroup = CD7D2AD413C0CD2600B889EE;
 			productRefGroup = CD7D2AE013C0CD2600B889EE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B7DD435514E0971B0057DDB4 /* Products */;
+					ProjectRef = B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B7DD436014E0971C0057DDB4 /* libConnection.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libConnection.a;
+			remoteRef = B7DD435F14E0971C0057DDB4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CD7D2ADD13C0CD2600B889EE /* Resources */ = {
@@ -1549,6 +1607,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B7DD436514E0972B0057DDB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Connection;
+			targetProxy = B7DD436414E0972B0057DDB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */ = {
