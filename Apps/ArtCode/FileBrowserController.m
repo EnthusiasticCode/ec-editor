@@ -446,7 +446,7 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -472,7 +472,7 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -494,7 +494,7 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:nil displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
         else if (buttonIndex == 2) // Mail
@@ -537,7 +537,7 @@ static void *_openQuicklyObservingContext;
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     if (result == MFMailComposeResultSent)
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
 }
 

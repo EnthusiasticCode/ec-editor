@@ -190,13 +190,13 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (_searchFilterMatchesLocation < 0)
     {
         // TODO use image isntead
-        [[BezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to bottom" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleDownIcon"] displayImmediatly:YES];
         _searchFilterMatchesLocation = [searchFilterMatches count] - 1;
     }
     else if (_searchFilterMatchesLocation >= [searchFilterMatches count])
     {
         // TODO use image isntead
-        [[BezelAlert centerBezelAlert] addAlertMessageWithText:@"Cycle to top" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleUpIcon"] displayImmediatly:YES];
         _searchFilterMatchesLocation = 0;
     }
     
@@ -221,7 +221,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     if ([self.searchFilterMatches count] == 0)
     {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:[UIImage imageNamed:@"bezelAlert_nothingIcon"] displayImmediatly:YES];
         return;
     }
     
@@ -248,7 +248,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     if ([self.searchFilterMatches count] == 0)
     {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:[UIImage imageNamed:@"bezelAlert_nothingIcon"] displayImmediatly:YES];
         return;
     }
     
@@ -275,7 +275,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
     
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", [matches count]] image:nil displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", [matches count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
     
     _isReplacing = NO;
     [self _applyFindFilterAndFlash:NO];

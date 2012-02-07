@@ -300,7 +300,7 @@
                 [self.artCodeTab.currentProject removeBookmark:[_sortedBookmarks objectAtIndex:indexPath.row]];
             }
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] image:nil displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
             [self searchBar:_searchBar textDidChange:_searchBar.text];
         }
     }

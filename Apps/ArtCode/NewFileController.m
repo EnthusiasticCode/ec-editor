@@ -85,7 +85,7 @@
         return;
     }
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" image:nil displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:NO];
 }
 
 @end

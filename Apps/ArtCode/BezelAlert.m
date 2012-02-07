@@ -260,19 +260,25 @@
     if (image)
     {
         imageView = [[UIImageView alloc] initWithImage:image];
-        viewFrame = CGRectUnion(viewFrame, imageView.frame);
+        viewFrame = CGRectUnion(viewFrame, imageView.bounds);
     }
     
     UILabel *label = nil;
     if (text)
     {
         label = [UILabel new];
+        label.font = [UIFont boldSystemFontOfSize:16];
         label.backgroundColor = [UIColor clearColor];
         label.textColor = [UIColor whiteColor];
         label.textAlignment = UITextAlignmentCenter;
         label.text = text;
+        label.numberOfLines = 0;
         [label sizeToFit];
-        viewFrame = CGRectUnion(viewFrame, label.frame);
+        if (label.bounds.size.width > 200)
+        {
+            label.frame = CGRectMake(0, 0, 200, label.bounds.size.height * (label.bounds.size.width / 200.0));
+        }
+        viewFrame = CGRectUnion(viewFrame, label.bounds);
     }
     
     CGRect imageViewFrame = CGRectNull;
@@ -280,6 +286,7 @@
     {
         imageView.center = CGPointMake(viewFrame.size.width / 2, imageView.bounds.size.height / 2);
         imageViewFrame = imageView.frame;
+        imageViewFrame.size.height += 10;
     }
     
     CGRect labelFrame = CGRectNull;
@@ -289,7 +296,8 @@
         labelFrame = label.frame;
     }
     
-    UIView *view = [[UIView alloc] initWithFrame:CGRectUnion(imageViewFrame, labelFrame)];
+    viewFrame = CGRectMake(0, 0, MAX(imageViewFrame.size.width, labelFrame.size.width), imageViewFrame.size.height + labelFrame.size.height);
+    UIView *view = [[UIView alloc] initWithFrame:viewFrame];
     [view addSubview:imageView];
     [view addSubview:label];
     

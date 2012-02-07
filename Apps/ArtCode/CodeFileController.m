@@ -729,7 +729,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
     if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
     {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" image:nil displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" image:[UIImage imageNamed:@"bezelAlert_nothingIcon"] displayImmediatly:YES];
         return;
     }
     

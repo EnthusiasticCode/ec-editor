@@ -87,6 +87,6 @@
         }
     }];
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project imported" plural:@"%u projects imported" count:[indexPaths count]] image:nil displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project imported" plural:@"%u projects imported" count:[indexPaths count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
 }
 @end
