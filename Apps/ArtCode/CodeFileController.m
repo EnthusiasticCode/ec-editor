@@ -17,6 +17,7 @@
 #import "BezelAlert.h"
 #import "TabController.h"
 #import "TMTheme.h"
+#import "UIColor+Contrast.h"
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
@@ -276,9 +277,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         UIColor *color = nil;
         color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
         self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
-        // TODO set line numbers color accordignly
-//        self.codeView.lineNumbersColor = [UIColor colorWithWhite:0.62 alpha:1];
-//        self.codeView.lineNumbersBackgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+        self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
+        self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
         color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
         self.codeView.caretColor = color ? color : [UIColor blackColor];
         color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
