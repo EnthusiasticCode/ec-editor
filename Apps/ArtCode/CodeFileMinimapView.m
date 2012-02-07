@@ -101,6 +101,7 @@ static const void *rendererContext;
             selectionRectangle.origin.y -= rendererTextInsets.top;
         }
         [self addSubview:self.selectionView];
+        [self scrollRectToVisible:self.selectionView.frame animated:YES];
     }
     
     [self didChangeValueForKey:@"selectionRectangle"];
