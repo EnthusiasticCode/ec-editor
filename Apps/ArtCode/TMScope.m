@@ -90,13 +90,15 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {
+    static NSCharacterSet *spaceCharacterSet = nil; if (!spaceCharacterSet) spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+    
     float score = 0;
     for (NSString *searchScope in [scopeSelector componentsSeparatedByString:@","])
     {
-        NSArray *searchScopeComponents = [scopeSelector componentsSeparatedByString:@" - "];
+        NSArray *searchScopeComponents = [[searchScope stringByTrimmingCharactersInSet:spaceCharacterSet] componentsSeparatedByString:@" - "];
         if ([searchScopeComponents count] == 1)
         {
-            score = MAX(score, [self _scoreForSearchScope:searchScope]);
+            score = MAX(score, [self _scoreForSearchScope:[searchScopeComponents objectAtIndex:0]]);
         }
         else
         {
@@ -154,7 +156,7 @@ NSMutableDictionary *systemScopesScoreCache;
     }
     // Return the result only if the whole search array has been evaluated
     ECASSERT(result < INFINITY);
-    return [searchEnumerator nextObject] ? 0 : result;
+    return currentSearch == nil ? result : 0;
 }
 
 @end

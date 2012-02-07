@@ -81,6 +81,7 @@
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
     {
+#warning TODO NIK fix this, the method modify the file buffer, not attributedString.
         [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
     }
     return attributedString;
