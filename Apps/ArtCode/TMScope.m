@@ -24,7 +24,7 @@ NSMutableDictionary *systemScopesScoreCache;
 
 @end
 
-
+// Reference implementation: https://github.com/cehoffman/textpow/blob/master/lib/textpow/score_manager.rb
 @implementation TMScope {
     /// The string range of the scope's identifier in it's qualified identifier.
     NSRange _identifierRange;

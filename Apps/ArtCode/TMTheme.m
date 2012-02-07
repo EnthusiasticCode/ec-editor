@@ -18,10 +18,17 @@ static NSString * const _themeSettingsKey = @"settings";
 static NSString * const _themeSettingsNameKey = @"name";
 static NSString * const _themeSettingsScopeKey = @"scope";
 
-static CTFontRef _defaultFont = NULL;
-static CTFontRef _defaultItalicFont = NULL;
-static CTFontRef _defaultBoldFont = NULL;
-static NSDictionary *_defaultAttributes = nil;
+NSString * const TMThemeBackgroundColorEnvironmentAttributeKey = @"background";
+NSString * const TMThemeCaretColorEnvironmentAttributeKey = @"caret";
+NSString * const TMThemeForegroundColorEnvironmentAttributeKey = @"foreground";
+NSString * const TMThemeLineHighlightColorEnvironmentAttributeKey = @"lineHighlight";
+NSString * const TMThemeSelectionColorEnvironmentAttributeKey = @"selection";
+
+static CTFontRef _sharedFont = NULL;
+static CTFontRef _sharedItalicFont = NULL;
+static CTFontRef _sharedBoldFont = NULL;
+static NSDictionary *_sharedAttributes = nil;
+
 
 @interface TMTheme ()
 
@@ -33,43 +40,39 @@ static NSDictionary *_defaultAttributes = nil;
 
 @implementation TMTheme {
     NSCache *_scopeAttribuesCache;
-}
-
-#pragma mark - Class methods
-
-+ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle
-{
-    if (bundle == nil)
-        bundle = [NSBundle mainBundle];
-    
-    return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
-}
-
-+ (NSDictionary *)defaultAttributes
-{
-    // TODO load from application preference plist
-    if (!_defaultFont) {
-        _defaultFont = CTFontCreateWithName((__bridge CFStringRef)@"Inconsolata-dz", 14, NULL);
-        _defaultItalicFont = CTFontCreateCopyWithSymbolicTraits(_defaultFont, 0, NULL, kCTFontItalicTrait, kCTFontItalicTrait);
-        _defaultBoldFont = CTFontCreateCopyWithSymbolicTraits(_defaultFont, 0, NULL, kCTFontBoldTrait, kCTFontBoldTrait);
-    }
-    if (!_defaultAttributes)
-    {
-        _defaultAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                              (__bridge id)_defaultFont, kCTFontAttributeName,
-                              [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
-    }
-    return _defaultAttributes;
+    NSDictionary *_environmentAttributes;
+    NSDictionary *_commonAttributes;
 }
 
 #pragma mark - Properties
 
 @synthesize fileURL = _fileURL, name = _name, settings = _settings;
 
+- (NSDictionary *)environmentAttributes
+{
+    return _environmentAttributes;
+}
+
+- (NSDictionary *)commonAttributes
+{
+    if ([_environmentAttributes objectForKey:TMThemeForegroundColorEnvironmentAttributeKey] == nil)
+        return [[self class] sharedAttributes];
+    // TODO may need not to cache if shared font is changed
+    if (!_commonAttributes)
+    {
+        NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary:[[self class] sharedAttributes]];
+        [common setObject:(__bridge id)[[_environmentAttributes objectForKey:TMThemeForegroundColorEnvironmentAttributeKey] CGColor] forKey:(__bridge id)kCTForegroundColorAttributeName];
+        _commonAttributes = common;
+    }
+    return _commonAttributes;
+}
+
+#pragma mark - Public methods
+
 - (id)initWithFileURL:(NSURL *)fileURL
 {
     // Initialize default attributes
-    [[self class] defaultAttributes];
+    [[self class] sharedAttributes];
     
     if (!(self = [super init]))
         return nil;
@@ -88,12 +91,24 @@ static NSDictionary *_defaultAttributes = nil;
     
     // Preprocess settings
     NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
+    NSMutableDictionary *environmentAttributes = [NSMutableDictionary new];
     for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
     {
         // TODO manage default settings for background, caret
         NSString *settingScopes = [plistSetting objectForKey:_themeSettingsScopeKey];
         if (!settingScopes)
+        {
+            // Load environment styles
+            [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+                UIColor *color = [UIColor colorWithHexString:value];
+                if (color)
+                    [environmentAttributes setObject:color forKey:key];
+                else
+                    [environmentAttributes setObject:value forKey:key];
+            }];
+            _environmentAttributes = [environmentAttributes copy];
             continue;
+        }
         
         NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
         
@@ -102,11 +117,11 @@ static NSDictionary *_defaultAttributes = nil;
             ECASSERT([value isKindOfClass:[NSString class]]);
             
             if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
-                if ([value isEqualToString:@"italic"] && _defaultItalicFont) {
-                    [styleSettings setObject:(__bridge id)_defaultItalicFont forKey:(__bridge id)kCTFontAttributeName];
+                if ([value isEqualToString:@"italic"] && _sharedItalicFont) {
+                    [styleSettings setObject:(__bridge id)_sharedItalicFont forKey:(__bridge id)kCTFontAttributeName];
                 }
-                else if ([value isEqualToString:@"bold"] && _defaultBoldFont) {
-                    [styleSettings setObject:(__bridge id)_defaultBoldFont forKey:(__bridge id)kCTFontAttributeName];
+                else if ([value isEqualToString:@"bold"] && _sharedBoldFont) {
+                    [styleSettings setObject:(__bridge id)_sharedBoldFont forKey:(__bridge id)kCTFontAttributeName];
                 }
                 else if ([value isEqualToString:@"underline"]) {
                     [styleSettings setObject:[NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
@@ -125,7 +140,7 @@ static NSDictionary *_defaultAttributes = nil;
         
         [themeSettings setObject:styleSettings forKey:settingScopes];
     }
-    _settings = themeSettings;
+    _settings = themeSettings;    
     _scopeAttribuesCache = [NSCache new];
 
     return self;
@@ -152,6 +167,38 @@ static NSDictionary *_defaultAttributes = nil;
     else
         [_scopeAttribuesCache setObject:[NSNull null] forKey:scope.qualifiedIdentifier];
     return resultAttributes;
+}
+
+#pragma mark - Class methods
+
++ (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle
+{
+    if (bundle == nil)
+        bundle = [NSBundle mainBundle];
+    
+    return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
+}
+
++ (NSDictionary *)sharedAttributes
+{
+    // TODO load from application preference plist
+    if (!_sharedFont)
+        [self setSharedFontName:@"Inconsolata-dz" size:14];
+
+    if (!_sharedAttributes)
+    {
+        _sharedAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                              (__bridge id)_sharedFont, kCTFontAttributeName,
+                              [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+    }
+    return _sharedAttributes;
+}
+
++ (void)setSharedFontName:(NSString *)fontName size:(CGFloat)pointSize
+{
+    _sharedFont = CTFontCreateWithName((__bridge CFStringRef)fontName, pointSize, NULL);
+    _sharedItalicFont = CTFontCreateCopyWithSymbolicTraits(_sharedFont, 0, NULL, kCTFontItalicTrait, kCTFontItalicTrait);
+    _sharedBoldFont = CTFontCreateCopyWithSymbolicTraits(_sharedFont, 0, NULL, kCTFontBoldTrait, kCTFontBoldTrait);
 }
 
 @end

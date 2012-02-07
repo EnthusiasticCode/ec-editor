@@ -68,7 +68,7 @@
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     // Add text coloring
-    [attributedString addAttributes:[TMTheme defaultAttributes] range:NSMakeRange(0, [attributedString length])];
+    [attributedString addAttributes:[self.theme commonAttributes] range:NSMakeRange(0, [attributedString length])];
     [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
         NSDictionary *attributes = [self.theme attributesForScope:scope];
         if ([attributes count])
@@ -89,7 +89,7 @@
 
 - (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
 {
-    return [TMTheme defaultAttributes];
+    return [self.theme commonAttributes];
 }
 
 - (void)codeView:(CodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
@@ -188,7 +188,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     // Opening and Closing style
     
     //
-    CGFontRef font = (__bridge CGFontRef)[[TMTheme defaultAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
+    CGFontRef font = (__bridge CGFontRef)[[TMTheme sharedAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
     ECASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     

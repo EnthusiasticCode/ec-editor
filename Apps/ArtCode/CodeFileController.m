@@ -16,6 +16,7 @@
 #import "FileBuffer.h"
 #import "BezelAlert.h"
 #import "TabController.h"
+#import "TMTheme.h"
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
@@ -123,7 +124,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
         
         _codeView.backgroundColor = [UIColor whiteColor];
-        _codeView.caretColor = [UIColor blackColor]; // TODO use TMTheme cursor color
+        _codeView.caretColor = [UIColor blackColor];
         _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
 
         _codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
@@ -268,6 +269,21 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         self.codeFile = [[CodeFile alloc] initWithFileURL:fileURL];
     else
         self.codeFile = nil;
+    
+    // Update CodeView environment settings
+    if (self.codeFile)
+    {
+        UIColor *color = nil;
+        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+        self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+        // TODO set line numbers color accordignly
+//        self.codeView.lineNumbersColor = [UIColor colorWithWhite:0.62 alpha:1];
+//        self.codeView.lineNumbersBackgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+        self.codeView.caretColor = color ? color : [UIColor blackColor];
+        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+        self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
+    }
     
     [self didChangeValueForKey:@"fileURL"];
 }
