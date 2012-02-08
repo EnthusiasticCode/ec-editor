@@ -86,6 +86,15 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {
+    // Check for cached value
+    if(!systemScopesScoreCache)
+        systemScopesScoreCache = [NSMutableDictionary new];
+    NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
+    NSNumber *cachedScore = [scopeToScore objectForKey:self.qualifiedIdentifier];
+    if (cachedScore)
+        return [cachedScore floatValue];
+    
+    // Compute value
     static NSCharacterSet *spaceCharacterSet = nil; if (!spaceCharacterSet) spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
     
     float score = 0;
@@ -98,31 +107,34 @@ NSMutableDictionary *systemScopesScoreCache;
         }
         else
         {
-            ECASSERT([searchScopeComponents count] == 2 && "Only one '-' is allowed in a scope selector");
-            if ([self _scoreForSearchScope:[searchScopeComponents objectAtIndex:1]] > 0)
+            __block BOOL exclude = NO;
+            [searchScopeComponents enumerateObjectsUsingBlock:^(NSString *excludeScope, NSUInteger idx, BOOL *stop) {
+                if (idx && [self _scoreForSearchScope:excludeScope] > 0)
+                {
+                    exclude = YES;
+                    *stop = YES;
+                }
+            }];
+            if (exclude)
                 continue;
             score = MAX(score, [self _scoreForSearchScope:[searchScopeComponents objectAtIndex:0]]);
         }
     }
+    
+    // Store in cache
+    if (!scopeToScore)
+    {
+        scopeToScore = [NSMutableDictionary new];
+        [systemScopesScoreCache setObject:scopeToScore forKey:scopeSelector];
+    }
+    [scopeToScore setObject:[NSNumber numberWithFloat:score] forKey:self.qualifiedIdentifier];
+    
     return score;
 }
 
 - (float)_scoreForSearchScope:(NSString *)search
 {
-    if(!systemScopesScoreCache)
-        systemScopesScoreCache = [NSMutableDictionary new];
-    NSMutableDictionary *scopeReferenceToScore = [systemScopesScoreCache objectForKey:self.qualifiedIdentifier];
-    NSNumber *score = [scopeReferenceToScore objectForKey:search];
-    if (score)
-        return [score floatValue];
-    score = [NSNumber numberWithFloat:[self _scoreQueryScopeArray:self.identifiersStack forSearchScopeArray:[search componentsSeparatedByString:@" "]]];
-    if (!scopeReferenceToScore)
-    {
-        scopeReferenceToScore = [NSMutableDictionary new];
-        [systemScopesScoreCache setObject:scopeReferenceToScore forKey:self.qualifiedIdentifier];
-    }
-    [scopeReferenceToScore setObject:score forKey:search];
-    return [score floatValue];
+    return [self _scoreQueryScopeArray:self.identifiersStack forSearchScopeArray:[search componentsSeparatedByString:@" "]];
 }
 
 #define POINT_DEPTH    4.0f

@@ -145,6 +145,7 @@
 		CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */; };
 		CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */; };
 		CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */; };
+		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD4E648614C1E984003AC39D /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4E648514C1E984003AC39D /* ArtCodeProject.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
@@ -451,6 +452,8 @@
 		CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLAdditions.m"; sourceTree = "<group>"; };
 		CD49925314D6F11E0046CD19 /* NSString+PluralFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+PluralFormat.h"; sourceTree = "<group>"; };
 		CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+PluralFormat.m"; sourceTree = "<group>"; };
+		CD49AA0D14E33D98006032F6 /* TMPreference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPreference.h; sourceTree = "<group>"; };
+		CD49AA0E14E33D98006032F6 /* TMPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPreference.m; sourceTree = "<group>"; };
 		CD4E648414C1E984003AC39D /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeProject.h; sourceTree = "<group>"; };
 		CD4E648514C1E984003AC39D /* ArtCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProject.m; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -757,13 +760,15 @@
 			name = Additions;
 			sourceTree = "<group>";
 		};
-		B7FB79A514D602DB0080A714 /* Code Indexing */ = {
+		B7FB79A514D602DB0080A714 /* TextMate */ = {
 			isa = PBXGroup;
 			children = (
 				B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */,
 				B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */,
 				B7FB79A614D602F10080A714 /* TMBundle.h */,
 				B7FB79A714D602F10080A714 /* TMBundle.m */,
+				CD49AA0D14E33D98006032F6 /* TMPreference.h */,
+				CD49AA0E14E33D98006032F6 /* TMPreference.m */,
 				B7FB79A814D602F10080A714 /* TMIndex.h */,
 				B7FB79A914D602F10080A714 /* TMIndex.m */,
 				B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */,
@@ -777,7 +782,7 @@
 				CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */,
 				CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */,
 			);
-			name = "Code Indexing";
+			name = TextMate;
 			sourceTree = "<group>";
 		};
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
@@ -1086,7 +1091,7 @@
 				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
-				B7FB79A514D602DB0080A714 /* Code Indexing */,
+				B7FB79A514D602DB0080A714 /* TextMate */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1637,6 +1642,7 @@
 				CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */,
 				CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */,
 				B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */,
+				CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

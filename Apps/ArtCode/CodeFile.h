@@ -17,7 +17,7 @@ typedef enum {
     CodeFileNormalTextKind,
     CodeFileCommentTextKind,
     CodeFilePreprocessorTextKind,
-    CodeFileImportantTextKind
+    CodeFileSymbolTextKind
 } CodeFileTextKind;
 
 @interface CodeFile : NSObject <CodeViewDataSource, FileBufferConsumer>

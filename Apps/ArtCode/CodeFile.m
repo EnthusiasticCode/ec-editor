@@ -12,6 +12,7 @@
 #import "TMIndex.h"
 #import "TMUnit.h"
 #import "TMScope.h"
+#import "TMPreference.h"
 
 @interface CodeFile ()
 {
@@ -115,9 +116,9 @@
             result = CodeFilePreprocessorTextKind;
             return TMUnitVisitResultBreak;
         }
-        if ([scope.qualifiedIdentifier rangeOfString:@"toc-list"].location != NSNotFound)
+        if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
         {
-            result = CodeFileImportantTextKind;
+            result = CodeFileSymbolTextKind;
             return TMUnitVisitResultBreak;
         }
         if ([scope.qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound)

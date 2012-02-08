@@ -557,7 +557,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             *lineColor = [UIColor orangeColor];
             break;
             
-        case CodeFileImportantTextKind:
+        case CodeFileSymbolTextKind:
             *lineColor = [UIColor blueColor];
             break;
             
