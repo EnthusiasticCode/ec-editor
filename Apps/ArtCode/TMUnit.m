@@ -11,7 +11,7 @@
 #import "FileBuffer.h"
 #import "TMScope.h"
 #import "TMBundle.h"
-#import "TMSyntax.h"
+#import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
 
 static NSMutableDictionary *_extensionClasses;
@@ -27,23 +27,23 @@ static OnigRegexp *_namedCapturesRegexp;
     FileBuffer *_fileBuffer;
     NSString *_rootScopeIdentifier;
     NSMutableDictionary *_extensions;
-    TMSyntax *__syntax;
+    TMSyntaxNode *__syntax;
     NSMutableDictionary *_firstMatches;
     NSString *_contents;
     TMScope *__scope;
     NSDictionary *_patternsIncludedByPattern;
     NSUInteger _generation;
 }
-- (TMSyntax *)_syntax;
+- (TMSyntaxNode *)_syntax;
 - (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope withOffset:(NSUInteger)offset inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 - (TMScope *)_scope;
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMSyntax *)pattern;
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMSyntax *)pattern;
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMSyntaxNode *)pattern;
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMSyntaxNode *)pattern;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withPatterns:(NSArray *)patterns stopOnRegexp:(OnigRegexp *)regexp stopMatch:(OnigResult **)stopMatch;
 - (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withRegexp:(OnigRegexp *)regexp name:(NSString *)name captures:(NSDictionary *)captures;
 - (OnigResult *)_firstMatchInRange:(NSRange)range forRegexp:(OnigRegexp *)regexp;
 - (NSArray *)_patternsIncludedByPatterns:(NSArray *)patterns;
-- (NSArray *)_patternsIncludedByPattern:(TMSyntax *)pattern;
+- (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
 @implementation TMUnit
@@ -82,11 +82,11 @@ static OnigRegexp *_namedCapturesRegexp;
     if (rootScopeIdentifier)
     {
         _rootScopeIdentifier = rootScopeIdentifier;
-        __syntax = [TMSyntax syntaxWithScopeIdentifier:rootScopeIdentifier];
+        __syntax = [TMSyntaxNode syntaxWithScopeIdentifier:rootScopeIdentifier];
     }
     else
     {
-        __syntax = [TMSyntax syntaxForFileBuffer:fileBuffer];
+        __syntax = [TMSyntaxNode syntaxForFileBuffer:fileBuffer];
         _rootScopeIdentifier = [[__syntax attributes] objectForKey:TMSyntaxScopeIdentifierKey];
     }
     ECASSERT(__syntax && _rootScopeIdentifier);
@@ -160,7 +160,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Private Methods
 
-- (TMSyntax *)_syntax
+- (TMSyntaxNode *)_syntax
 {
     return __syntax;
 }
@@ -223,12 +223,12 @@ static OnigRegexp *_namedCapturesRegexp;
     return __scope;
 }
 
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMSyntax *)pattern
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withMatchPattern:(TMSyntaxNode *)pattern
 {
     return [self _addChildScopesToScope:scope inRange:range relativeToOffset:offset withRegexp:[[pattern attributes] objectForKey:TMSyntaxMatchKey] name:[[pattern attributes] objectForKey:TMSyntaxNameKey] captures:[[pattern attributes] objectForKey:TMSyntaxCapturesKey]];
 }
 
-- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMSyntax *)pattern
+- (NSUInteger)_addChildScopesToScope:(TMScope *)scope inRange:(NSRange)range relativeToOffset:(NSUInteger)offset withSpanPattern:(TMSyntaxNode *)pattern
 {
     TMScope *currentScope = scope;
     OnigRegexp *beginRegexp = [[pattern attributes] objectForKey:TMSyntaxBeginKey];
@@ -321,8 +321,8 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         matchFound = NO;
         NSRange firstMatchRange = NSMakeRange(NSNotFound, 0);
-        TMSyntax *firstMatchPattern = nil;
-        for (TMSyntax *childPattern in patterns)
+        TMSyntaxNode *firstMatchPattern = nil;
+        for (TMSyntaxNode *childPattern in patterns)
         {
             ECASSERT([[childPattern attributes] objectForKey:TMSyntaxMatchKey] || [[childPattern attributes] objectForKey:TMSyntaxBeginKey]);
             OnigRegexp *patternRegexp = [[childPattern attributes] objectForKey:TMSyntaxMatchKey] ? [[childPattern attributes] objectForKey:TMSyntaxMatchKey] : [[childPattern attributes] objectForKey:TMSyntaxBeginKey];
@@ -420,12 +420,12 @@ static OnigRegexp *_namedCapturesRegexp;
 - (NSArray *)_patternsIncludedByPatterns:(NSArray *)patterns
 {
     NSMutableArray *includedPatterns = [NSMutableArray array];
-    for (TMSyntax *pattern in patterns)
+    for (TMSyntaxNode *pattern in patterns)
         [includedPatterns addObjectsFromArray:[self _patternsIncludedByPattern:pattern]];
     return includedPatterns;
 }
 
-- (NSArray *)_patternsIncludedByPattern:(TMSyntax *)pattern
+- (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
 {
     NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
     if (includedPatterns)
@@ -436,13 +436,13 @@ static OnigRegexp *_namedCapturesRegexp;
     do
     {
         [containerPatternIndexes removeAllIndexes];
-        [includedPatterns enumerateObjectsUsingBlock:^(TMSyntax *obj, NSUInteger idx, BOOL *stop) {
+        [includedPatterns enumerateObjectsUsingBlock:^(TMSyntaxNode *obj, NSUInteger idx, BOOL *stop) {
             if ([[obj attributes] objectForKey:TMSyntaxMatchKey] || [[obj attributes] objectForKey:TMSyntaxBeginKey])
                 return;
             [containerPatternIndexes addIndex:idx];
         }];
         [containerPatternIndexes enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-            TMSyntax *containerPattern = [includedPatterns objectAtIndex:idx];
+            TMSyntaxNode *containerPattern = [includedPatterns objectAtIndex:idx];
             [includedPatterns removeObjectAtIndex:idx];
             if ([dereferencedPatterns containsObject:containerPattern])
                 return;
@@ -453,20 +453,20 @@ static OnigRegexp *_namedCapturesRegexp;
                 unichar firstCharacter = [[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] characterAtIndex:0];
                 if (firstCharacter == '#')
                 {
-                    TMSyntax *patternSyntax = [containerPattern rootSyntax];
+                    TMSyntaxNode *patternSyntax = [containerPattern rootSyntax];
                     [includedPatterns addObject:[[[patternSyntax attributes] objectForKey:TMSyntaxRepositoryKey] objectForKey:[[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] substringFromIndex:1]]];
                 }
                 else
                 {
                     ECASSERT(firstCharacter != '$' || [[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] isEqualToString:@"$base"] || [[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] isEqualToString:@"$self"]);
-                    TMSyntax *includedSyntax = nil;
+                    TMSyntaxNode *includedSyntax = nil;
                     if ([[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] isEqualToString:@"$base"])
                         includedSyntax = [self _syntax];
                     else if ([[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey] isEqualToString:@"$self"])
                         includedSyntax = [containerPattern rootSyntax];
                     else
-                        includedSyntax = [TMSyntax syntaxWithScopeIdentifier:[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey]];
-                    for (TMSyntax *pattern in [[includedSyntax attributes] objectForKey:TMSyntaxPatternsKey])
+                        includedSyntax = [TMSyntaxNode syntaxWithScopeIdentifier:[[containerPattern attributes] objectForKey:TMSyntaxIncludeKey]];
+                    for (TMSyntaxNode *pattern in [[includedSyntax attributes] objectForKey:TMSyntaxPatternsKey])
                         [includedPatterns addObject:pattern];
                 }
             }

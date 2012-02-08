@@ -8,7 +8,7 @@
 
 #import "TMIndex+Internal.h"
 #import "TMUnit+Internal.h"
-#import "TMSyntax.h"
+#import "TMSyntaxNode.h"
 #import "Cache.h"
 #import "FileBuffer.h"
 
@@ -50,7 +50,7 @@ static NSMutableDictionary *_extensionClasses;
 - (TMUnit *)codeUnitForFileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     if (!rootScopeIdentifier)
-        rootScopeIdentifier = [[[TMSyntax syntaxForFileBuffer:fileBuffer] attributes] objectForKey:TMSyntaxScopeIdentifierKey];
+        rootScopeIdentifier = [[[TMSyntaxNode syntaxForFileBuffer:fileBuffer] attributes] objectForKey:TMSyntaxScopeIdentifierKey];
     id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier];
     TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)

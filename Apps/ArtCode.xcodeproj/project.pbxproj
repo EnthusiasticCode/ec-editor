@@ -84,6 +84,7 @@
 		B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
+		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -92,7 +93,6 @@
 		B7FB79B414D602F10080A714 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7FB79B514D602F10080A714 /* TMIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A914D602F10080A714 /* TMIndex.m */; };
 		B7FB79B714D602F10080A714 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
-		B7FB79B814D602F10080A714 /* TMSyntax.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B014D602F10080A714 /* TMSyntax.m */; };
 		B7FB79B914D602F10080A714 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BB14D6033D0080A714 /* UIControl+BlockAction.m */; };
 		B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */; };
@@ -340,6 +340,8 @@
 		B7DD436E14E098020057DDB4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		B7DD437214E098BE0057DDB4 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntaxNode.h; sourceTree = "<group>"; };
+		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -357,8 +359,6 @@
 		B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMIndex+Internal.h"; sourceTree = "<group>"; };
 		B7FB79AD14D602F10080A714 /* TMScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMScope.h; sourceTree = "<group>"; };
 		B7FB79AE14D602F10080A714 /* TMScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMScope.m; sourceTree = "<group>"; };
-		B7FB79AF14D602F10080A714 /* TMSyntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntax.h; sourceTree = "<group>"; };
-		B7FB79B014D602F10080A714 /* TMSyntax.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntax.m; sourceTree = "<group>"; };
 		B7FB79B114D602F10080A714 /* TMUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMUnit.h; sourceTree = "<group>"; };
 		B7FB79B214D602F10080A714 /* TMUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMUnit.m; sourceTree = "<group>"; };
 		B7FB79B314D602F10080A714 /* TMUnit+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMUnit+Internal.h"; sourceTree = "<group>"; };
@@ -760,6 +760,8 @@
 		B7FB79A514D602DB0080A714 /* Code Indexing */ = {
 			isa = PBXGroup;
 			children = (
+				B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */,
+				B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */,
 				B7FB79A614D602F10080A714 /* TMBundle.h */,
 				B7FB79A714D602F10080A714 /* TMBundle.m */,
 				B7FB79A814D602F10080A714 /* TMIndex.h */,
@@ -767,8 +769,6 @@
 				B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */,
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
-				B7FB79AF14D602F10080A714 /* TMSyntax.h */,
-				B7FB79B014D602F10080A714 /* TMSyntax.m */,
 				B7FB79B114D602F10080A714 /* TMUnit.h */,
 				B7FB79B214D602F10080A714 /* TMUnit.m */,
 				B7FB79B314D602F10080A714 /* TMUnit+Internal.h */,
@@ -1586,7 +1586,6 @@
 				B7FB79B414D602F10080A714 /* TMBundle.m in Sources */,
 				B7FB79B514D602F10080A714 /* TMIndex.m in Sources */,
 				B7FB79B714D602F10080A714 /* TMScope.m in Sources */,
-				B7FB79B814D602F10080A714 /* TMSyntax.m in Sources */,
 				B7FB79B914D602F10080A714 /* TMUnit.m in Sources */,
 				B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */,
 				B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */,
@@ -1637,6 +1636,7 @@
 				CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */,
 				CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */,
 				CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */,
+				B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

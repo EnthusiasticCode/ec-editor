@@ -7,7 +7,6 @@
 //
 
 #import "TMBundle.h"
-#import "TMSyntax.h"
 
 static NSString * const _bundleExtension = @"tmbundle";
 

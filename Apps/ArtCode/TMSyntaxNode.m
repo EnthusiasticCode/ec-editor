@@ -1,12 +1,12 @@
 //
-//  TMSyntax.m
+//  TMSyntaxNode.m
 //  CodeIndexing
 //
 //  Created by Uri Baghin on 10/18/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMSyntax.h"
+#import "TMSyntaxNode.h"
 #import "TMBundle.h"
 #import "OnigRegexp.h"
 #import "FileBuffer.h"
@@ -32,21 +32,21 @@ NSString * const TMSyntaxIncludeKey = @"include";
 
 static NSMutableDictionary *_allSyntaxes;
 
-@interface TMSyntax ()
+@interface TMSyntaxNode ()
 {
-    __weak TMSyntax *_rootSyntax;
+    __weak TMSyntaxNode *_rootSyntax;
     NSDictionary *_attributes;
 }
-- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntax *)syntax;
+- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax;
 @end
 
-@implementation TMSyntax
+@implementation TMSyntaxNode
 
 #pragma mark - Class Methods
 
 + (void)initialize
 {
-    if (self != [TMSyntax class])
+    if (self != [TMSyntaxNode class])
         return;
     _allSyntaxes = [[NSMutableDictionary alloc] init];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -59,7 +59,7 @@ static NSMutableDictionary *_allSyntaxes;
             NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
             if (!plist)
                 continue;
-            TMSyntax *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
+            TMSyntaxNode *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
             if (!syntax)
                 continue;
             [_allSyntaxes setObject:syntax forKey:[[syntax attributes] objectForKey:TMSyntaxScopeIdentifierKey]];
@@ -67,30 +67,30 @@ static NSMutableDictionary *_allSyntaxes;
     _allSyntaxes = [_allSyntaxes copy];
 }
 
-+ (TMSyntax *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier
++ (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier
 {
     if (!scopeIdentifier)
         return nil;
     return [_allSyntaxes objectForKey:scopeIdentifier];
 }
 
-+ (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
++ (TMSyntaxNode *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
-    static TMSyntax *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntax *)) = ^TMSyntax *(BOOL (^predicateBlock)(TMSyntax *)){
-        for (TMSyntax *syntax in [_allSyntaxes objectEnumerator])
+    static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)){
+        for (TMSyntaxNode *syntax in [_allSyntaxes objectEnumerator])
             if (predicateBlock(syntax))
                 return syntax;
         return nil;
     };
-    TMSyntax *foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntax *syntax) {
+    TMSyntaxNode *foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
         for (NSString *fileType in [[syntax attributes] objectForKey:TMSyntaxFileTypesKey])
             if ([fileType isEqualToString:[[fileBuffer fileURL] pathExtension]])
                 return YES;
         return NO;
     });
     if (!foundSyntax)
-        foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntax *syntax) {
+        foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
             NSString *fileContents = [fileBuffer stringInRange:NSMakeRange(0, [fileBuffer length])];
             NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
             if ([[[syntax attributes] objectForKey:TMSyntaxFirstLineMatchKey]  search:firstLine])
@@ -102,7 +102,7 @@ static NSMutableDictionary *_allSyntaxes;
 
 #pragma mark - Public Methods
 
-- (TMSyntax *)rootSyntax
+- (TMSyntaxNode *)rootSyntax
 {
     return _rootSyntax;
 }
@@ -114,7 +114,7 @@ static NSMutableDictionary *_allSyntaxes;
 
 #pragma mark - Private Methods
 
-- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntax *)syntax
+- (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax
 {
     ECASSERT(dictionary);
     self = [super init];

@@ -1,5 +1,5 @@
 //
-//  TMSyntax.h
+//  TMSyntaxNode.h
 //  CodeIndexing
 //
 //  Created by Uri Baghin on 10/18/11.
@@ -26,12 +26,12 @@ extern NSString * const TMSyntaxPatternsKey;
 extern NSString * const TMSyntaxRepositoryKey;
 extern NSString * const TMSyntaxIncludeKey;
 
-@interface TMSyntax : NSObject
+@interface TMSyntaxNode : NSObject
 
-+ (TMSyntax *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
-+ (TMSyntax *)syntaxForFileBuffer:(FileBuffer *)fileBuffer;
++ (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
++ (TMSyntaxNode *)syntaxForFileBuffer:(FileBuffer *)fileBuffer;
 
-- (TMSyntax *)rootSyntax;
+- (TMSyntaxNode *)rootSyntax;
 - (NSDictionary *)attributes;
 
 @end
