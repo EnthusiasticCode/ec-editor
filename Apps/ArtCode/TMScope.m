@@ -6,25 +6,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMScope.h"
+#import "TMScope+Internal.h"
 
 /// Caches a scope identifier to a dictionary of scope selector references to scores.
 NSMutableDictionary *systemScopesScoreCache;
 
-@interface TMScope ()
-
-/// Return a number indicating how much a scope selector array matches the search.
-/// A scope selector array is an array of strings defining a context of scopes where
-/// a scope must be child of the previous scope in the array.
-- (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search;
-
-/// Returns a number indicating how much the receiver matches the search scope selector.
-/// A scope selector reference is a string containing a single scope context (ie: scopes divided by spaces).
-- (float)_scoreForSearchScope:(NSString *)search;
-
-@end
-
-// Reference implementation: https://github.com/cehoffman/textpow/blob/master/lib/textpow/score_manager.rb
 @implementation TMScope {
     /// The string range of the scope's identifier in it's qualified identifier.
     NSRange _identifierRange;
@@ -40,42 +26,49 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Properties
 
-@synthesize location, length, parent, children = _children, qualifiedIdentifier, identifiersStack;
+@synthesize syntaxNode = _syntaxNode, location = _location, length = _length, parent = _parent, children = _children, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
 
 - (NSString *)identifier
 {
-    return [qualifiedIdentifier substringWithRange:_identifierRange];
+    if (!_identifierRange.length)
+        return nil;
+    return [_qualifiedIdentifier substringWithRange:_identifierRange];
+}
+
+- (void)setIdentifier:(NSString *)identifier
+{
+    [self willChangeValueForKey:@"identifier"];
+    NSString *parentQualifiedIdentifier = self.parent.qualifiedIdentifier;    
+    _identifierRange.location = [parentQualifiedIdentifier length];
+    if (_identifierRange.location > 0)
+    {
+        if ([identifier length])
+        {
+            _qualifiedIdentifier = [NSString stringWithFormat:@"%@ %@", parentQualifiedIdentifier, identifier];
+            _identifierRange.location++;
+            _identifiersStack = [self.parent.identifiersStack arrayByAddingObject:identifier];
+        }
+        else
+        {
+            _qualifiedIdentifier = parentQualifiedIdentifier;
+            _identifiersStack = self.parent.identifiersStack;
+        }
+    }
+    else
+    {
+        _qualifiedIdentifier = identifier;
+        _identifiersStack = identifier ? [NSArray arrayWithObject:identifier] : nil;
+    }
+    _identifierRange.length = [identifier length];
+    [self didChangeValueForKey:@"identifier"];
 }
 
 #pragma mark - Initializers
 
-- (id)initWithParent:(TMScope *)aParentScope identifier:(NSString *)anIdentifier
+- (TMScope *)newChildScope
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    parent = aParentScope;
-    NSString *parentQualifiedIdentifier = parent.qualifiedIdentifier;
-    _identifierRange.location = [parentQualifiedIdentifier length];
-    if (_identifierRange.location > 0)
-    {
-        qualifiedIdentifier = [NSString stringWithFormat:@"%@ %@", parentQualifiedIdentifier, anIdentifier];
-        _identifierRange.location++;
-    }
-    else
-    {
-        qualifiedIdentifier = anIdentifier;
-    }
-    _identifierRange.length = [anIdentifier length];
-    identifiersStack = parent ? [parent.identifiersStack arrayByAddingObject:anIdentifier] : [NSArray arrayWithObject:anIdentifier];
-
-    return self;
-}
-
-- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier
-{
-    ECASSERT(identifier);
-    TMScope *childScope = [[[self class] alloc] initWithParent:self identifier:identifier];
+    TMScope *childScope = [[[self class] alloc] init];
+    childScope.parent = self;
     if (!_children)
         _children = [NSMutableArray new];
     [_children addObject:childScope];
@@ -83,6 +76,7 @@ NSMutableDictionary *systemScopesScoreCache;
 }
 
 #pragma mark - Scoring
+// Reference implementation: https://github.com/cehoffman/textpow/blob/master/lib/textpow/score_manager.rb
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {

@@ -9,7 +9,7 @@
 #import "TMUnit+Internal.h"
 #import "TMIndex+Internal.h"
 #import "FileBuffer.h"
-#import "TMScope.h"
+#import "TMScope+Internal.h"
 #import "TMBundle.h"
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
@@ -215,7 +215,9 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         _firstMatches = [NSMutableDictionary dictionary];
         _contents = [self.fileBuffer string];
-        __scope = [[TMScope alloc] initWithParent:nil identifier:[self rootScopeIdentifier]];
+        __scope = [[TMScope alloc] init];
+        __scope.identifier = [self rootScopeIdentifier];
+        __scope.syntaxNode = [self _syntax];
         __scope.length = [_contents length];
         [self _addChildScopesToScope:__scope inRange:NSMakeRange(0, [_contents length]) relativeToOffset:0 withPatterns:[[[self _syntax] attributes] objectForKey:TMSyntaxPatternsKey] stopOnRegexp:nil stopMatch:NULL];
         _firstMatches = nil;
@@ -245,7 +247,9 @@ static OnigRegexp *_namedCapturesRegexp;
     if (patternName)
     {
         ECASSERT([patternName isKindOfClass:[NSString class]]);
-        spanScope = [currentScope newChildScopeWithIdentifier:patternName];
+        spanScope = [currentScope newChildScope];
+        spanScope.identifier = patternName;
+        spanScope.syntaxNode = pattern;
         spanScope.location = [beginResult bodyRange].location - offset;
         currentScope = spanScope;
         spanScopeOffset = [beginResult bodyRange].location;
@@ -259,7 +263,8 @@ static OnigRegexp *_namedCapturesRegexp;
     if (patternContentName)
     {
         ECASSERT([patternContentName isKindOfClass:[NSString class]]);
-        spanContentScope = [currentScope newChildScopeWithIdentifier:patternContentName];
+        spanContentScope = [currentScope newChildScope];
+        spanContentScope.identifier = patternContentName;
         spanContentScope.location = childPatternsRange.location - spanScopeOffset;
         currentScope = spanContentScope;
         spanContentScopeOffset = childPatternsRange.location;
@@ -373,7 +378,8 @@ static OnigRegexp *_namedCapturesRegexp;
     if (name)
     {
         ECASSERT([name isKindOfClass:[NSString class]]);
-        capturesScope = [scope newChildScopeWithIdentifier:name];
+        capturesScope = [scope newChildScope];
+        capturesScope.identifier = name;
         capturesScope.location = [result bodyRange].location - offset;
         capturesScope.length = [result bodyRange].length;
         offset = [result bodyRange].location;
@@ -391,7 +397,8 @@ static OnigRegexp *_namedCapturesRegexp;
             if (!currentCaptureName)
                 continue;
             ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
-            TMScope *currentCaptureScope = [capturesScope ? capturesScope : scope newChildScopeWithIdentifier:currentCaptureName];
+            TMScope *currentCaptureScope = [capturesScope ? capturesScope : scope newChildScope];
+            currentCaptureScope.identifier = currentCaptureName;
             ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
             currentCaptureScope.location = currentMatchRange.location - offset;
             currentCaptureScope.length = currentMatchRange.length;
