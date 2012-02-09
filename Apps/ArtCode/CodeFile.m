@@ -14,13 +14,23 @@
 #import "TMScope.h"
 #import "TMPreference.h"
 
-@interface CodeFile ()
-{
+@interface CodeFile () {
     NSOperationQueue *_consumerOperationQueue;
+    NSArray *_symbolList;
 }
+
 @property (nonatomic, strong) TMUnit *codeUnit;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
+
 @end
+
+@interface CodeFileSymbol ()
+
+- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon location:(NSUInteger)location;
+
+@end
+
+#pragma mark - Impementations
 
 @implementation CodeFile
 
@@ -96,6 +106,9 @@
 - (void)codeView:(CodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     [self.fileBuffer replaceCharactersInRange:range withString:commitString];
+    
+#warning TODO move in filebuffer observer?
+    _symbolList = nil;
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
@@ -129,6 +142,26 @@
         return TMUnitVisitResultRecurse;
     }];
     return result;
+}
+
+- (NSArray *)symbolList
+{
+    if (!_symbolList)
+    {
+        NSMutableArray *symbols = [NSMutableArray new];
+        [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
+            {
+                // TODO transform
+                // TODO add preference for icon
+                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:[self.fileBuffer stringInRange:range] icon:nil location:range.location]];
+                return TMUnitVisitResultContinue;
+            }
+            return TMUnitVisitResultRecurse;
+        }];
+        _symbolList = symbols;
+    }
+    return _symbolList;
 }
 
 #pragma mark - Private methods
@@ -228,6 +261,23 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     
     // Placeholder behaviour
     [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
+}
+
+@end
+
+@implementation CodeFileSymbol
+
+@synthesize title, icon, location;
+
+- (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon location:(NSUInteger)_location
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    title = _title;
+    icon = _icon;
+    location = _location;
+    return self;
 }
 
 @end

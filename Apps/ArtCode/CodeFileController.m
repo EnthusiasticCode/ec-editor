@@ -362,7 +362,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.artCodeTab];
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
     if (!_quickBrowsersPopover)
     {
         UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
