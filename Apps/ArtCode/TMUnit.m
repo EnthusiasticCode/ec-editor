@@ -133,7 +133,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
-    [self _generateScopesWithScope:[self _scope] inRange:range];
     [self _visitDescendantScopesOfScope:[self _scope] inRange:range options:options withBlock:block];
 }
 
@@ -176,7 +175,7 @@ static OnigRegexp *_namedCapturesRegexp;
     if (options & TMUnitVisitOptionsRelativeRange)
         scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
     TMUnitVisitResult result = block(scope, scopeRange);
-    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
+//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
     if (result != TMUnitVisitResultRecurse)
         return result;
     for (TMScope *childScope in [scope children])
@@ -191,7 +190,7 @@ static OnigRegexp *_namedCapturesRegexp;
             if (options & TMUnitVisitOptionsRelativeRange)
                 scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
             result = block(childScope, scopeRange);
-            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
+//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
             continue;
         }
         if (result == TMUnitVisitResultRecurse)
@@ -211,6 +210,10 @@ static OnigRegexp *_namedCapturesRegexp;
         __scope = [[TMScope alloc] init];
         __scope.identifier = [self rootScopeIdentifier];
         __scope.syntaxNode = [self _syntax];
+        NSUInteger fileLength = [self.fileBuffer length];
+        __scope.location = 0;
+        __scope.length = fileLength;
+        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, fileLength)];
     }
     return __scope;
 }
@@ -240,13 +243,13 @@ static OnigRegexp *_namedCapturesRegexp;
         NSString *line = [self.fileBuffer stringInRange:lineRange];
         NSUInteger position = 0;
         
-        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);
+//        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);
         for (;;)
         {
             scope = [scopeStack lastObject];
             TMSyntaxNode *syntaxNode = scope.syntaxNode;
             
-            NSLog(@"current syntaxNode: %@", [syntaxNode scopeName]);
+//            NSLog(@"current syntaxNode: %@", [syntaxNode scopeName]);
             
             // Create the end regexp
             OnigRegexp *endRegexp = nil;
@@ -308,9 +311,16 @@ static OnigRegexp *_namedCapturesRegexp;
             ECASSERT(!firstSyntaxNode || firstResult);
             
             // Handle the matches
-            if (endResult)
+            if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location ))
                 // Handle end result first
             {
+                if (syntaxNode.contentName)
+                {
+                    scope.length = [endResult bodyRange].location;
+                    scope.completelyParsed = YES;
+                    [scopeStack removeLastObject];
+                    scope = [scopeStack lastObject];
+                }
                 [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope];
                 scope.length = NSMaxRange([endResult bodyRange]) + lineRange.location - scope.location;
                 scope.completelyParsed = YES;
@@ -346,11 +356,23 @@ static OnigRegexp *_namedCapturesRegexp;
                 spanScope.location = [firstResult bodyRange].location + lineRange.location;
                 [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope];
                 [scopeStack addObject:spanScope];
+                if (firstSyntaxNode.contentName)
+                {
+                    TMScope *contentScope = [spanScope newChildScope];
+                    contentScope.identifier = firstSyntaxNode.contentName;
+                    contentScope.syntaxNode = firstSyntaxNode;
+                    contentScope.location = NSMaxRange([firstResult bodyRange]);
+                    [scopeStack addObject:contentScope];
+                }
                 // We don't need to make sure position advances since we changed the stack
                 // This could bite us if there's a begin and end regexp that match in the same position
                 position = NSMaxRange([firstResult bodyRange]);
             }
             else
+                break;
+            
+            // We need to break if we hit the end of the line, failing to do so not only runs another cycle that doesn't find anything 99% of the time, but also can cause problems with matches that include the newline which have to be the last match for the line in the remaining 1%
+            if (position >= lineRange.length)
                 break;
         }
         lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
@@ -420,7 +442,7 @@ static OnigRegexp *_namedCapturesRegexp;
                 if (firstCharacter == '#')
                 {
                     TMSyntaxNode *patternSyntax = [containerPattern rootSyntax];
-                    [includedPatterns addObject:[patternSyntax.repository objectForKey:[containerPattern.include substringFromIndex:1]]];
+                    [includedPatterns insertObject:[patternSyntax.repository objectForKey:[containerPattern.include substringFromIndex:1]] atIndex:idx];
                 }
                 else
                 {
@@ -433,11 +455,14 @@ static OnigRegexp *_namedCapturesRegexp;
                     else
                         includedSyntax = [TMSyntaxNode syntaxWithScopeIdentifier:containerPattern.include];
                     for (TMSyntaxNode *pattern in includedSyntax.patterns)
-                        [includedPatterns addObject:pattern];
+                        [includedPatterns insertObject:pattern atIndex:idx];
                 }
             }
             else
-                [includedPatterns addObjectsFromArray:containerPattern.patterns];
+            {
+                NSUInteger patternsCount = [containerPattern.patterns count];
+                [includedPatterns insertObjects:containerPattern.patterns atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(idx, patternsCount)]];
+            }
             [dereferencedPatterns addObject:containerPattern];
         }];
     }
