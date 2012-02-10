@@ -152,9 +152,11 @@
         [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
             if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
             {
-                // TODO transform
+                // Transform
+                NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
+                NSString *symbol = transformation ? transformation([self.fileBuffer stringInRange:range]) : [self.fileBuffer stringInRange:range];
                 // TODO add preference for icon
-                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:[self.fileBuffer stringInRange:range] icon:nil location:range.location]];
+                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:nil location:range.location]];
                 return TMUnitVisitResultContinue;
             }
             return TMUnitVisitResultRecurse;

@@ -9,6 +9,7 @@
 #import "TMPreference.h"
 #import "TMBundle.h"
 #import "TMScope.h"
+#import "OnigRegexp.h"
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
@@ -16,6 +17,13 @@ NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
 static NSMutableDictionary *scopeToPreferenceCache;
+
+@interface TMPreference ()
+
+- (NSString*(^)(NSString *))_createBlockForSymbolTransformation:(NSString *)transformation;
+
+@end
+
 
 @implementation TMPreference
 
@@ -45,7 +53,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
             if (![settingsDict objectForKey:TMPreferenceShowInSymbolListKey])
                 [preprocessedSettings setObject:[NSNumber numberWithBool:YES] forKey:TMPreferenceShowInSymbolListKey];
             // Prepare transformations regexps
-//            preprocessedSettings setObject:[] forKey:<#(id)#>
+            [preprocessedSettings setObject:[self _createBlockForSymbolTransformation:value] forKey:TMPreferenceSymbolTransformationKey];
         }
     }];
     settings = [preprocessedSettings copy];
@@ -101,6 +109,36 @@ static NSMutableDictionary *scopeToPreferenceCache;
     [cachedPreferences setObject:value ? value : [NSNull null] forKey:preferenceKey];
     
     return value;
+}
+
+#pragma mark - Private Methods
+
+- (NSString *(^)(NSString *))_createBlockForSymbolTransformation:(NSString *)transformation
+{
+    // Regular expression that find matches in other regular expressions formed as
+    static NSRegularExpression *transformationSplitter = nil;
+    if (!transformationSplitter)
+        transformationSplitter = [NSRegularExpression regularExpressionWithPattern:@"s/(.*?[^\\\\])/(.*?[^\\\\]?)/(g?)" options:0 error:NULL];
+
+    // Search transformations
+    NSMutableArray *transformationsRegExp = [NSMutableArray new];
+    NSMutableArray *transformationsTemaplate = [NSMutableArray new];
+    [transformationSplitter enumerateMatchesInString:transformation options:0 range:NSMakeRange(0, [transformation length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+        ECASSERT([result numberOfRanges] == 4);
+        [transformationsRegExp addObject:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]]]];
+        [transformationsTemaplate addObject:[transformation substringWithRange:[result rangeAtIndex:2]]];
+    }];
+    
+    // Create block
+    return [^NSString *(NSString *symbol) {
+        NSMutableString *result = [symbol mutableCopy];
+        [transformationsRegExp enumerateObjectsUsingBlock:^(OnigRegexp *regExp, NSUInteger idx, BOOL *stop) {
+            [regExp gsub:result block:^NSString *(OnigResult *res) {
+                return [res stringForReplacementTemplate:[transformationsTemaplate objectAtIndex:idx]];
+            }];
+        }];
+        return result;
+    } copy];
 }
 
 @end
