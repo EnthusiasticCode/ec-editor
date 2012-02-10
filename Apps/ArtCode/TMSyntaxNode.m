@@ -13,30 +13,27 @@
 
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
-NSString * const TMSyntaxScopeIdentifierKey = @"scopeName";
-NSString * const TMSyntaxFileTypesKey = @"fileTypes";
-NSString * const TMSyntaxFirstLineMatchKey = @"firstLineMatch";
-NSString * const TMSyntaxFoldingStartMarker = @"foldingStartMarker";
-NSString * const TMSyntaxFoldingStopMarker = @"foldingStopMarker";
-NSString * const TMSyntaxMatchKey = @"match";
-NSString * const TMSyntaxBeginKey = @"begin";
-NSString * const TMSyntaxEndKey = @"end";
-NSString * const TMSyntaxNameKey = @"name";
-NSString * const TMSyntaxContentNameKey = @"contentName";
-NSString * const TMSyntaxCapturesKey = @"captures";
-NSString * const TMSyntaxBeginCapturesKey = @"beginCaptures";
-NSString * const TMSyntaxEndCapturesKey = @"endCaptures";
-NSString * const TMSyntaxPatternsKey = @"patterns";
-NSString * const TMSyntaxRepositoryKey = @"repository";
-NSString * const TMSyntaxIncludeKey = @"include";
+static NSString * const _scopeIdentifierKey = @"scopeName";
+static NSString * const _fileTypesKey = @"fileTypes";
+static NSString * const _firstLineMatchKey = @"firstLineMatch";
+static NSString * const _foldingStartMarkerKey = @"foldingStartMarker";
+static NSString * const _foldingStopMarkerKey = @"foldingStopMarker";
+static NSString * const _matchKey = @"match";
+static NSString * const _beginKey = @"begin";
+static NSString * const _endKey = @"end";
+static NSString * const _nameKey = @"name";
+static NSString * const _contentNameKey = @"contentName";
+static NSString * const _capturesKey = @"captures";
+static NSString * const _beginCapturesKey = @"beginCaptures";
+static NSString * const _endCapturesKey = @"endCaptures";
+static NSString * const _patternsKey = @"patterns";
+static NSString * const _repositoryKey = @"repository";
+static NSString * const _includeKey = @"include";
 
-static NSMutableDictionary *_allSyntaxes;
+static NSMutableDictionary *_syntaxesWithIdentifier;
+static NSMutableArray *_syntaxesWithoutIdentifier;
 
 @interface TMSyntaxNode ()
-{
-    __weak TMSyntaxNode *_rootSyntax;
-    NSDictionary *_attributes;
-}
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax;
 @end
 
@@ -48,7 +45,8 @@ static NSMutableDictionary *_allSyntaxes;
 {
     if (self != [TMSyntaxNode class])
         return;
-    _allSyntaxes = [[NSMutableDictionary alloc] init];
+    _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
+    _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     for (NSURL *bundleURL in [TMBundle bundleURLs])
         for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL])
@@ -62,29 +60,35 @@ static NSMutableDictionary *_allSyntaxes;
             TMSyntaxNode *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
             if (!syntax)
                 continue;
-            [_allSyntaxes setObject:syntax forKey:[[syntax attributes] objectForKey:TMSyntaxScopeIdentifierKey]];
+            if (syntax.scopeName)
+                [_syntaxesWithIdentifier setObject:syntax forKey:syntax.scopeName];
+            else
+                [_syntaxesWithoutIdentifier addObject:syntax];
         }
-    _allSyntaxes = [_allSyntaxes copy];
+    _syntaxesWithIdentifier = [_syntaxesWithIdentifier copy];
 }
 
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier
 {
     if (!scopeIdentifier)
         return nil;
-    return [_allSyntaxes objectForKey:scopeIdentifier];
+    return [_syntaxesWithIdentifier objectForKey:scopeIdentifier];
 }
 
 + (TMSyntaxNode *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
 {
     ECASSERT(fileBuffer);
     static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)){
-        for (TMSyntaxNode *syntax in [_allSyntaxes objectEnumerator])
+        for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator])
+            if (predicateBlock(syntax))
+                return syntax;
+        for (TMSyntaxNode *syntax in _syntaxesWithoutIdentifier)
             if (predicateBlock(syntax))
                 return syntax;
         return nil;
     };
     TMSyntaxNode *foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
-        for (NSString *fileType in [[syntax attributes] objectForKey:TMSyntaxFileTypesKey])
+        for (NSString *fileType in syntax.fileTypes)
             if ([fileType isEqualToString:[[fileBuffer fileURL] pathExtension]])
                 return YES;
         return NO;
@@ -93,7 +97,7 @@ static NSMutableDictionary *_allSyntaxes;
         foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
             NSString *fileContents = [fileBuffer stringInRange:NSMakeRange(0, [fileBuffer length])];
             NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
-            if ([[[syntax attributes] objectForKey:TMSyntaxFirstLineMatchKey]  search:firstLine])
+            if ([syntax.firstLineMatch  search:firstLine])
                 return YES;
             return NO;
         });
@@ -102,15 +106,23 @@ static NSMutableDictionary *_allSyntaxes;
 
 #pragma mark - Public Methods
 
-- (TMSyntaxNode *)rootSyntax
-{
-    return _rootSyntax;
-}
-
-- (NSDictionary *)attributes
-{
-    return _attributes;
-}
+@synthesize rootSyntax = _rootSyntax;
+@synthesize scopeName = _scopeName;
+@synthesize fileTypes = _fileTypes;
+@synthesize firstLineMatch = _firstLineMatch;
+@synthesize foldingStartMarker = _foldingStartMarker;
+@synthesize foldingStopMarker = _foldingStopMarker;
+@synthesize match = _match;
+@synthesize begin = _begin;
+@synthesize end = _end;
+@synthesize name = _name;
+@synthesize contentName = _contentName;
+@synthesize captures = _captures;
+@synthesize beginCaptures = _beginCaptures;
+@synthesize endCaptures = _endCaptures;
+@synthesize patterns = _patterns;
+@synthesize repository = _repository;
+@synthesize include = _include;
 
 #pragma mark - Private Methods
 
@@ -122,44 +134,73 @@ static NSMutableDictionary *_allSyntaxes;
         return nil;
     if (!syntax)
         syntax = self;
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        if ([key isEqualToString:TMSyntaxScopeIdentifierKey] ||
-            [key isEqualToString:TMSyntaxFileTypesKey] ||
-            [key isEqualToString:TMSyntaxEndKey] ||
-            [key isEqualToString:TMSyntaxNameKey] ||
-            [key isEqualToString:TMSyntaxContentNameKey] ||
-            [key isEqualToString:TMSyntaxCapturesKey] ||
-            [key isEqualToString:TMSyntaxBeginCapturesKey] ||
-            [key isEqualToString:TMSyntaxEndCapturesKey] ||
-            [key isEqualToString:TMSyntaxIncludeKey])
-            [attributes setObject:obj forKey:key];
-        else if ([key isEqualToString:TMSyntaxFirstLineMatchKey] ||
-                 [key isEqualToString:TMSyntaxFoldingStartMarker] ||
-                 [key isEqualToString:TMSyntaxFoldingStopMarker] ||
-                 [key isEqualToString:TMSyntaxMatchKey] ||
-                 [key isEqualToString:TMSyntaxBeginKey])
-            [attributes setObject:[OnigRegexp compile:obj options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol] forKey:key];
-        else if ([key isEqualToString:TMSyntaxPatternsKey])
+        if ([key isEqualToString:_scopeIdentifierKey] ||
+            [key isEqualToString:_fileTypesKey] ||
+            [key isEqualToString:_endKey] ||
+            [key isEqualToString:_nameKey] ||
+            [key isEqualToString:_contentNameKey] ||
+            [key isEqualToString:_capturesKey] ||
+            [key isEqualToString:_beginCapturesKey] ||
+            [key isEqualToString:_endCapturesKey] ||
+            [key isEqualToString:_includeKey])
+        {
+            if (([obj respondsToSelector:@selector(length)] && [obj length]) || ([obj respondsToSelector:@selector(count)] && [obj count]))
+                [self setValue:obj forKey:key];
+        }
+        else if ([key isEqualToString:_firstLineMatchKey] ||
+                 [key isEqualToString:_foldingStartMarkerKey] ||
+                 [key isEqualToString:_foldingStopMarkerKey] ||
+                 [key isEqualToString:_matchKey] ||
+                 [key isEqualToString:_beginKey])
+        {
+            if ([obj length])
+                [self setValue:[OnigRegexp compile:obj options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol] forKey:key];
+        }
+        else if ([key isEqualToString:_patternsKey])
         {
             NSMutableArray *patterns = [[NSMutableArray alloc] init];
             for (NSDictionary *dictionary in obj)
                 [patterns addObject:[[[self class] alloc] _initWithDictionary:dictionary syntax:syntax]];
-            [attributes setObject:[patterns copy] forKey:key];
+            if ([patterns count])
+                [self setValue:[patterns copy] forKey:key];
         }
-        else if ([key isEqualToString:TMSyntaxRepositoryKey])
+        else if ([key isEqualToString:_repositoryKey])
         {
             NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
             [obj enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
                 [repository setObject:[[[self class] alloc] _initWithDictionary:obj syntax:syntax] forKey:key];
             }];
-            [attributes setObject:[repository copy] forKey:key];
+            if ([repository count])
+                [self setValue:[repository copy] forKey:key];
         }
     }];
+    if ([_name isEqualToString:@"comment.line.double-slash.c++"])
+        NSLog(@"stop");
     _rootSyntax = syntax;
-    _attributes = [attributes copy];
+    if (_captures && !_beginCaptures)
+        _beginCaptures = _captures;
+    if (_captures && !_endCaptures)
+        _endCaptures = _captures;
+    if (_name && !_scopeName && _rootSyntax)
+        _scopeName = _name;
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    if (_scopeName)
+        return [_scopeName hash];
+    else if (_include)
+        return [_include hash];
+    else
+        return [_patterns hash];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
     return self;
 }
 
 @end
-            
+

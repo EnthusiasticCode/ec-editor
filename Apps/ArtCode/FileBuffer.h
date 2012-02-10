@@ -72,6 +72,13 @@ typedef enum {
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
 
+/// Line ranges and offsets
+- (NSRange)lineRangeForRange:(NSRange)range;
+
+/// Substring enumeration
+/// At the moment this method implements a very small subset of all NSStringEnumerationOptions
+- (void)enumerateSubstringsInRange:(NSRange)range options:(NSStringEnumerationOptions)options usingBlock:(void (^)(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop))block;
+
 /// Find and replace functionality
 
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;

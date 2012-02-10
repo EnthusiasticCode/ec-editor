@@ -24,6 +24,9 @@
 /// The length of the scope
 @property (nonatomic) NSUInteger length;
 
+/// If the scope has been parsed completely
+@property (nonatomic) BOOL completelyParsed;
+
 /// The parent scope, if one exists
 @property (nonatomic, weak) TMScope *parent;
 

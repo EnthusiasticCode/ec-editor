@@ -247,7 +247,6 @@ static dispatch_queue_t _fileBuffersQueue;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
 {
     ECASSERT(location < [_contents length]);
-
     __block id attribute = nil;
     NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
     dispatch_sync(_fileAccessQueue, ^{
@@ -256,6 +255,57 @@ static dispatch_queue_t _fileBuffersQueue;
     if (range)
         *range = longestEffectiveRange;
     return attribute;
+}
+
+- (NSRange)lineRangeForRange:(NSRange)range
+{
+    __block NSRange lineRange;
+    dispatch_sync(_fileAccessQueue, ^{
+        lineRange = [[_contents string] lineRangeForRange:range];
+    });
+    return lineRange;
+}
+
+- (void)enumerateSubstringsInRange:(NSRange)range options:(NSStringEnumerationOptions)options usingBlock:(void (^)(NSString *, NSRange, NSRange, BOOL *))block
+{
+    ECASSERT(block);
+    ECASSERT(!(options & NSStringEnumerationByWords) && !(options & NSStringEnumerationBySentences) && !(options & NSStringEnumerationLocalized) && !(options & NSStringEnumerationByComposedCharacterSequences));
+    ECASSERT(!(options & NSStringEnumerationReverse));
+    NSRange substringRange = NSMakeRange(range.location, 0);
+    NSRange substringContentsRange;
+    __block NSUInteger substringStart;
+    __block NSUInteger substringEnd;
+    __block NSUInteger substringContentsEnd;
+    __block NSString *substring;
+    BOOL stop = NO;
+    for (;;)
+    {
+        if (substringRange.location >= NSMaxRange(range))
+            break;
+        if (options & NSStringEnumerationByLines)
+            dispatch_sync(_fileAccessQueue, ^{
+                [[_contents string] getLineStart:&substringStart end:&substringEnd contentsEnd:&substringContentsEnd forRange:substringRange];
+            });
+        else if (options & NSStringEnumerationByParagraphs)
+            dispatch_sync(_fileAccessQueue, ^{
+                [[_contents string] getParagraphStart:&substringStart end:&substringEnd contentsEnd:&substringContentsEnd forRange:substringRange];
+            });
+        else
+            break;
+        substringRange = NSMakeRange(substringStart, substringEnd - substringStart);
+        substringContentsRange = NSMakeRange(substringStart, substringContentsEnd - substringStart);
+        if (options & NSStringEnumerationSubstringNotRequired)
+            substring = nil;
+        else
+            dispatch_sync(_fileAccessQueue, ^{
+                substring = [[_contents string] substringWithRange:substringContentsRange];
+            });
+        
+        block(substring, substringContentsRange, substringRange, &stop);
+        if (stop)
+            break;
+        substringRange = NSMakeRange(NSMaxRange(substringRange), 0);
+    }
 }
 
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
