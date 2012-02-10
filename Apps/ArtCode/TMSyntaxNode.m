@@ -175,8 +175,6 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
                 [self setValue:[repository copy] forKey:key];
         }
     }];
-    if ([_name isEqualToString:@"comment.line.double-slash.c++"])
-        NSLog(@"stop");
     _rootSyntax = syntax;
     if (_captures && !_beginCaptures)
         _beginCaptures = _captures;
