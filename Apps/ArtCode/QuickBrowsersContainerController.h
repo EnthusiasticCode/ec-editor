@@ -14,11 +14,13 @@
 
 @interface QuickBrowsersContainerController : UITabBarController
 
-+ (id)defaultQuickBrowsersContainerControllerForTab:(ArtCodeTab *)tab;
++ (id)defaultQuickBrowsersContainerControllerForContentController:(UIViewController *)contentController;
 
+/// The controller that requested the presentation of this quick browser.
+@property (nonatomic, weak) UIViewController *contentController;
+
+/// The button from which the quick browser was presented.
 @property (nonatomic, weak) UIButton *openingButton;
-
-- (id)initWithTab:(ArtCodeTab *)tab;
 
 @end
 

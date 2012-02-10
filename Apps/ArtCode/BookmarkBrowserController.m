@@ -180,7 +180,7 @@
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
     // TODO the quick browser container controller gets created every time, is it ok?
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForTab:self.artCodeTab];
+    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     if (!_quickBrowsersPopover)

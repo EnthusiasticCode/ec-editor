@@ -259,29 +259,21 @@ static OnigRegexp *_namedCapturesRegexp;
                 NSRange beginLineRange = [self.fileBuffer lineRangeForRange:NSMakeRange(scope.location, 0)];
                 NSString *beginLine = [self.fileBuffer stringInRange:beginLineRange];
                 OnigResult *beginResult = [syntaxNode.begin match:beginLine start:scope.location - beginLineRange.location];
-                for (;;)
-                {
-                    OnigResult *result = [_numberedCapturesRegexp search:end];
-                    if (!result)
-                        break;
-                    int captureNumber = [[result body] intValue];
+                [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result) {
+                    int captureNumber = [[result stringAt:1] intValue];
                     if (captureNumber >= 0 && [beginResult count] > captureNumber)
-                        [end replaceCharactersInRange:[result bodyRange] withString:[beginResult stringAt:captureNumber]];
+                        return [beginResult stringAt:captureNumber];
                     else
-                        [end deleteCharactersInRange:[result bodyRange]];
-                }
-                for (;;)
-                {
-                    OnigResult *result = [_namedCapturesRegexp search:end];
-                    if (!result)
-                        break;
-                    NSString *captureName = [result body];
+                        return nil;
+                }];
+                [_namedCapturesRegexp gsub:end block:^NSString *(OnigResult *result) {
+                    NSString *captureName = [result stringAt:1];
                     int captureNumber = [beginResult indexForName:captureName];
                     if (captureNumber >= 0 && [beginResult count] > captureNumber)
-                        [end replaceCharactersInRange:[result bodyRange] withString:[beginResult stringAt:captureNumber]];
+                        return [beginResult stringAt:captureNumber];
                     else
-                        [end deleteCharactersInRange:[result bodyRange]];
-                }
+                        return nil;
+                }];
                 endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol];
             }
             
