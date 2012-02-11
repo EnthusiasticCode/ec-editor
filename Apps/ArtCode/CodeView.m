@@ -818,12 +818,6 @@ static void init(CodeView *self)
     // Interrupting undo grouping on user return
     if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
         [self.undoManager endUndoGrouping];
-    
-    // Center editing area if not visible
-    if (!CGRectIntersectsRect(_selectionView.frame, self.bounds))
-        [self scrollRectToVisible:CGRectInset(_selectionView.frame, 0, -100) animated:NO];
-    else
-        [self scrollRectToVisible:_selectionView.frame animated:NO];
 }
 
 - (void)deleteBackward
@@ -1431,14 +1425,9 @@ static void init(CodeView *self)
         [inputDelegate selectionDidChange:self];
         if (_flags.delegateHasSelectionDidChange)
             [self.delegate selectionDidChangeForCodeView:self];
-    }
-    
-    // Position selection view
-    if ([self isFirstResponder])
-    {
+        
+        // Center editing area if not visible
         _selectionView.hidden = NO;
-        if (shouldNotify)
-            [self scrollRectToVisible:_selectionView.frame animated:NO];
     }
 }
 
@@ -1906,9 +1895,12 @@ static void init(CodeView *self)
 - (void)setSelection:(NSRange)range
 {
     [parent willChangeValueForKey:@"selectionRange"];
-    // TODO also infrom for selectionTextRange?
+
     selection = range;
     [self update];
+    
+    [parent scrollRectToVisible:self.frame animated:self.isHidden];
+    
     [parent didChangeValueForKey:@"selectionRange"];
 }
 
@@ -1936,9 +1928,7 @@ static void init(CodeView *self)
 
 - (void)update
 {
-    if (self.isHidden)
-        return;
-    
+    // Stop blinking
     if (blinkDelayTimer)
     {
         [blinkDelayTimer invalidate];
@@ -1946,12 +1936,24 @@ static void init(CodeView *self)
     }
     self.blink = NO;
     
-    // Set new selection frame
-    CGRect frame;
+    // Layout
     if (selection.length == 0) 
     {
-        frame = [parent caretRectForPosition:self.selectionPosition];
-        self.frame = frame;
+        self.frame = [parent caretRectForPosition:self.selectionPosition];
+    }
+    else
+    {
+        selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
+        self.frame = selectionRects.bounds;
+    }
+    
+    // Stop if not visible
+    if (self.isHidden)
+        return;
+    
+    // Set new selection behaviour
+    if (selection.length == 0) 
+    {
         [leftKnob removeFromSuperview];
         leftKnobRecognizer.enabled = NO;
         [rightKnob removeFromSuperview];
@@ -1964,11 +1966,7 @@ static void init(CodeView *self)
         } repeats:NO];
     }
     else
-    {        
-        selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
-        frame = selectionRects.bounds;
-        self.frame = frame;
-        
+    {
         // Left knob
         if (!leftKnob) 
         {
@@ -1976,7 +1974,6 @@ static void init(CodeView *self)
             leftKnob.caretColor = caretColor;
             leftKnob.knobDirection = UITextLayoutDirectionLeft;
         }
-        // TODO!!! set knob 'caret'
         CGRect knobRect = [selectionRects topLeftRect];
         knobRect.size.width = CARET_WIDTH;
         leftKnob.caretRect = knobRect;

@@ -156,7 +156,6 @@
 {
     [table deselectRowAtIndexPath:indexPath animated:YES];
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    // TODO codeview sould select even if not first responder
     [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:NSMakeRange([[[self _symbolList] objectAtIndex:indexPath.row] location], 0)];
 }
 
