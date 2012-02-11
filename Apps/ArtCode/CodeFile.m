@@ -103,7 +103,7 @@
     return [self.theme commonAttributes];
 }
 
-- (void)codeView:(CodeViewBase *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
     [self.fileBuffer replaceCharactersInRange:range withString:commitString];
     

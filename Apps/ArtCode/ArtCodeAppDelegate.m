@@ -9,7 +9,7 @@
 #import "ArtCodeAppDelegate.h"
 
 #import "NSURL+Utilities.h"
-#import "CodeViewBase.h"
+#import "CodeView.h"
 #import "UIControl+BlockAction.h"
 
 #import "AppStyle.h"

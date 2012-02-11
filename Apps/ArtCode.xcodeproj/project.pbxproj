@@ -102,7 +102,6 @@
 		B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */; };
 		B7FB79D014D6056B0080A714 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CE14D6056B0080A714 /* FileBuffer.m */; };
 		B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D314D605FA0080A714 /* CodeView.m */; };
-		B7FB79DF14D605FA0080A714 /* CodeViewBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D514D605FA0080A714 /* CodeViewBase.m */; };
 		B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D714D605FA0080A714 /* KeyboardAccessoryView.m */; };
 		B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D914D605FA0080A714 /* TextPosition.m */; };
 		B7FB79E214D605FA0080A714 /* TextRange.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79DB14D605FA0080A714 /* TextRange.m */; };
@@ -381,8 +380,6 @@
 		B7FB79CE14D6056B0080A714 /* FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBuffer.m; sourceTree = "<group>"; };
 		B7FB79D214D605FA0080A714 /* CodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeView.h; sourceTree = "<group>"; };
 		B7FB79D314D605FA0080A714 /* CodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeView.m; sourceTree = "<group>"; };
-		B7FB79D414D605FA0080A714 /* CodeViewBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeViewBase.h; sourceTree = "<group>"; };
-		B7FB79D514D605FA0080A714 /* CodeViewBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeViewBase.m; sourceTree = "<group>"; };
 		B7FB79D614D605FA0080A714 /* KeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardAccessoryView.h; sourceTree = "<group>"; };
 		B7FB79D714D605FA0080A714 /* KeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardAccessoryView.m; sourceTree = "<group>"; };
 		B7FB79D814D605FA0080A714 /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPosition.h; sourceTree = "<group>"; };
@@ -827,8 +824,6 @@
 			children = (
 				B7FB79D214D605FA0080A714 /* CodeView.h */,
 				B7FB79D314D605FA0080A714 /* CodeView.m */,
-				B7FB79D414D605FA0080A714 /* CodeViewBase.h */,
-				B7FB79D514D605FA0080A714 /* CodeViewBase.m */,
 				B7FB79D614D605FA0080A714 /* KeyboardAccessoryView.h */,
 				B7FB79D714D605FA0080A714 /* KeyboardAccessoryView.m */,
 				B7FB79E414D606110080A714 /* Text */,
@@ -1607,7 +1602,6 @@
 				B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */,
 				B7FB79D014D6056B0080A714 /* FileBuffer.m in Sources */,
 				B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */,
-				B7FB79DF14D605FA0080A714 /* CodeViewBase.m in Sources */,
 				B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */,
 				B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */,
 				B7FB79E214D605FA0080A714 /* TextRange.m in Sources */,
