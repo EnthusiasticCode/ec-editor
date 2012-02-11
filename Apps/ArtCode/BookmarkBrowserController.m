@@ -96,7 +96,7 @@
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
     _searchBar.delegate = self;
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _searchBar.placeholder = @"Search for bookmark";
+    _searchBar.placeholder = @"Filter bookmarks";
     [self.view addSubview:_searchBar];
     [self searchBar:_searchBar textDidChange:nil];
     

@@ -1290,13 +1290,20 @@ static void init(CodeView *self)
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
-    if (action == @selector(copy:) || action == @selector(cut:) || action == @selector(delete:))
+    if (action == @selector(copy:))
     {
         return !_selectionView.isEmpty;
     }
     
+    if (action == @selector(cut:) || action == @selector(delete:))
+    {
+        return !_selectionView.isEmpty && editing;
+    }
+    
     if (action == @selector(paste:))
     {
+        if (!editing)
+            return NO;
         UIPasteboard *generalPasteboard = [UIPasteboard generalPasteboard];
         return [generalPasteboard containsPasteboardTypes:UIPasteboardTypeListString];
     }

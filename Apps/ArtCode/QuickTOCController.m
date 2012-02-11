@@ -77,7 +77,7 @@
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
     _searchBar.delegate = self;
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _searchBar.placeholder = @"Search for symbol";
+    _searchBar.placeholder = @"Filter symbols";
     [self.view addSubview:_searchBar];
     
     // Add table view
@@ -103,12 +103,6 @@
     _filterDebounceTimer = nil;
     
     [super viewDidUnload];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [_searchBar becomeFirstResponder];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -156,7 +150,7 @@
 {
     [table deselectRowAtIndexPath:indexPath animated:YES];
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:NSMakeRange([[[self _symbolList] objectAtIndex:indexPath.row] location], 0)];
+    [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:[[[self _symbolList] objectAtIndex:indexPath.row] range]];
 }
 
 @end

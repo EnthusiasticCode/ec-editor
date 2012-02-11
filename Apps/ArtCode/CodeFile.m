@@ -26,7 +26,7 @@
 
 @interface CodeFileSymbol ()
 
-- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon location:(NSUInteger)location;
+- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
 
 @end
 
@@ -156,7 +156,7 @@
                 NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
                 NSString *symbol = transformation ? transformation([self.fileBuffer stringInRange:range]) : [self.fileBuffer stringInRange:range];
                 // TODO add preference for icon
-                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:nil location:range.location]];
+                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:nil range:range]];
                 return TMUnitVisitResultContinue;
             }
             return TMUnitVisitResultRecurse;
@@ -269,16 +269,16 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 @implementation CodeFileSymbol
 
-@synthesize title, icon, location;
+@synthesize title, icon, range;
 
-- (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon location:(NSUInteger)_location
+- (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon range:(NSRange)_range
 {
     self = [super init];
     if (!self)
         return nil;
     title = _title;
     icon = _icon;
-    location = _location;
+    range = _range;
     return self;
 }
 
