@@ -13,6 +13,7 @@
 #import "TMBundle.h"
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
+#import "CStringCachingString.h"
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -231,7 +232,7 @@ static OnigRegexp *_namedCapturesRegexp;
         lineRange = [self.fileBuffer lineRangeForRange:lineRange];
         if (lineRange.location < range.location)
             lineRange = NSMakeRange(range.location, NSMaxRange(lineRange) - range.location);
-        NSString *line = [self.fileBuffer stringInRange:lineRange];
+        CStringCachingString *line = [CStringCachingString stringWithString:[self.fileBuffer stringInRange:lineRange]];
         NSUInteger position = 0;
         
 //        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);
