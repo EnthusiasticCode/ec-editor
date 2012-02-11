@@ -259,14 +259,14 @@ static OnigRegexp *_namedCapturesRegexp;
                 NSRange beginLineRange = [self.fileBuffer lineRangeForRange:NSMakeRange(scope.location, 0)];
                 NSString *beginLine = [self.fileBuffer stringInRange:beginLineRange];
                 OnigResult *beginResult = [syntaxNode.begin match:beginLine start:scope.location - beginLineRange.location];
-                [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result) {
+                [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
                     int captureNumber = [[result stringAt:1] intValue];
                     if (captureNumber >= 0 && [beginResult count] > captureNumber)
                         return [beginResult stringAt:captureNumber];
                     else
                         return nil;
                 }];
-                [_namedCapturesRegexp gsub:end block:^NSString *(OnigResult *result) {
+                [_namedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
                     NSString *captureName = [result stringAt:1];
                     int captureNumber = [beginResult indexForName:captureName];
                     if (captureNumber >= 0 && [beginResult count] > captureNumber)
@@ -353,7 +353,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     TMScope *contentScope = [spanScope newChildScope];
                     contentScope.identifier = firstSyntaxNode.contentName;
                     contentScope.syntaxNode = firstSyntaxNode;
-                    contentScope.location = NSMaxRange([firstResult bodyRange]);
+                    contentScope.location = NSMaxRange([firstResult bodyRange]) + lineRange.location;
                     [scopeStack addObject:contentScope];
                 }
                 // We don't need to make sure position advances since we changed the stack

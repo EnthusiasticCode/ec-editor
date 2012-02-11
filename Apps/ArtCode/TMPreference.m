@@ -133,9 +133,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
     return [^NSString *(NSString *symbol) {
         NSMutableString *result = [symbol mutableCopy];
         [transformationsRegExp enumerateObjectsUsingBlock:^(OnigRegexp *regExp, NSUInteger idx, BOOL *stop) {
-            [regExp gsub:result block:^NSString *(OnigResult *res) {
-                return [res stringForReplacementTemplate:[transformationsTemaplate objectAtIndex:idx]];
-            }];
+            [regExp gsub:result string:[transformationsTemaplate objectAtIndex:idx]];
         }];
         return result;
     } copy];
