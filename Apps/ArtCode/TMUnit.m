@@ -210,10 +210,7 @@ static OnigRegexp *_namedCapturesRegexp;
         __scope = [[TMScope alloc] init];
         __scope.identifier = [self rootScopeIdentifier];
         __scope.syntaxNode = [self _syntax];
-        NSUInteger fileLength = [self.fileBuffer length];
-        __scope.location = 0;
-        __scope.length = fileLength;
-        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, fileLength)];
+        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, [self.fileBuffer length])];
     }
     return __scope;
 }
@@ -308,7 +305,7 @@ static OnigRegexp *_namedCapturesRegexp;
             {
                 if (syntaxNode.contentName)
                 {
-                    scope.length = [endResult bodyRange].location;
+                    scope.length = [endResult bodyRange].location + lineRange.location - scope.location;
                     scope.completelyParsed = YES;
                     [scopeStack removeLastObject];
                     scope = [scopeStack lastObject];
@@ -369,6 +366,11 @@ static OnigRegexp *_namedCapturesRegexp;
         }
         lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
     }
+    
+    // Close off all remaining scopes
+    NSUInteger rangeEnd = NSMaxRange(range);
+    for (TMScope *scope in scopeStack)
+        scope.length = rangeEnd - scope.location;
 }
 
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope
