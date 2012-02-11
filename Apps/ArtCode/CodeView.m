@@ -174,6 +174,7 @@ static const void *rendererContext;
 #pragma mark Managin the Selection
 
 @property (nonatomic) NSRange selection;
+- (void)setSelection:(NSRange)selection scrollToVisible:(BOOL)scrollToVisible;
 @property (nonatomic, weak) TextRange *selectionRange;
 @property (nonatomic, readonly) TextPosition *selectionPosition;
 @property (nonatomic, readonly) RectSet *selectionRects;
@@ -1457,13 +1458,13 @@ static void init(CodeView *self)
     
     // Get scrolling speed and direction
     CGFloat scrollingOffset = 0;
-    if (point.y < 1) 
+    if (point.y < 10) 
     {
-        scrollingOffset = point.y - 1;
+        scrollingOffset = point.y - 10;
     }
-    else if (point.y > frame.size.height - 1)
+    else if (point.y > frame.size.height - 10)
     {
-        scrollingOffset = point.y - (frame.size.height - 1);
+        scrollingOffset = point.y - (frame.size.height - 10);
     }
     
     // Schedule new scrolling timer if needed
@@ -1601,7 +1602,7 @@ static void init(CodeView *self)
             }
             else
             {
-                _selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0);
+                [_selectionView setSelection:NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0) scrollToVisible:NO];
                 CGRect selectionFrame = _selectionView.frame;
                 [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x - 1, selectionFrame.origin.y, 2, selectionFrame.size.height) textPoint:CGPointMake(CGRectGetMidX(selectionFrame), CGRectGetMidY(selectionFrame)) ratio:2 animated:animatePopover];
             }
@@ -1609,15 +1610,14 @@ static void init(CodeView *self)
             // Scrolling
             tapPoint.y -= self.contentOffset.y;
             [self _autoScrollForTouchAtPoint:tapPoint eventBlock:^(BOOL isScrolling) {
-                CGPoint point = [recognizer locationOfTouch:0 inView:self];
-                if ([recognizer numberOfTouches] > 1) 
+                if ([recognizer numberOfTouches] == 1)
                 {
-                    [self _setSelectedTextFromPoint:point toPoint:[recognizer locationOfTouch:1 inView:self]];
-                }
-                else
-                {
-                    _selectionView.selection = NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0);
-                    [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x, self.contentOffset.y + tapPoint.y, 2, 2) textPoint:point ratio:2 animated:animatePopover];
+                    CGPoint point = [recognizer locationOfTouch:0 inView:self];
+                    [_selectionView setSelection:NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0) scrollToVisible:NO];
+                    if (isScrolling)
+                        _selectionView.magnify = NO;
+                    else
+                        [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x, self.contentOffset.y + tapPoint.y, 2, 2) textPoint:point ratio:2 animated:animatePopover];
                 }
             }];
         }
@@ -1889,16 +1889,22 @@ static void init(CodeView *self)
 @synthesize selectionColor, caretColor, blink;
 @synthesize magnificationPopover, magnificationView;
 
-- (void)setSelection:(NSRange)range
+- (void)setSelection:(NSRange)range scrollToVisible:(BOOL)scrollToVisible
 {
     [parent willChangeValueForKey:@"selectionRange"];
-
+    
     selection = range;
     [self update];
     
-    [parent scrollRectToVisible:self.frame animated:self.isHidden];
+    if (scrollToVisible)
+        [parent scrollRectToVisible:self.frame animated:self.isHidden];
     
     [parent didChangeValueForKey:@"selectionRange"];
+}
+
+- (void)setSelection:(NSRange)range
+{
+    [self setSelection:range scrollToVisible:YES];
 }
 
 - (TextRange *)selectionRange
@@ -2061,7 +2067,7 @@ static void init(CodeView *self)
 {
     magnify = doMagnify;
     
-    if (!magnify) 
+    if (!doMagnify) 
     {
         self.blink = selection.length == 0;
         [self.magnificationPopover dismissPopoverAnimated:animated];
@@ -2097,8 +2103,7 @@ static void init(CodeView *self)
         }];
         
         // Show popover
-        
-        [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
+        [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown | UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight animated:animated];
     }
 }
 
@@ -2142,14 +2147,14 @@ static void init(CodeView *self)
     {   
         if (pos > selection.location) 
         {
-            self.selection = NSMakeRange(selection.location, pos - selection.location);
+            [self setSelection:NSMakeRange(selection.location, pos - selection.location) scrollToVisible:NO];
         }
     }
     else // leftKnob
     {
         if (pos < NSMaxRange(selection)) 
         {
-            self.selection = NSMakeRange(pos, NSMaxRange(selection) - pos);
+            [self setSelection:NSMakeRange(pos, NSMaxRange(selection) - pos) scrollToVisible:NO];
         }
     }
     
@@ -2178,21 +2183,6 @@ static void init(CodeView *self)
                     self.magnify = NO;
                 else
                     [self setMagnify:YES fromRect:recognizer.view.frame ratio:2 animated:YES];
-                NSUInteger p = [parent.renderer closestStringLocationToPoint:[recognizer locationInView:parent] withinStringRange:(NSRange){0, 0}];
-                if (recognizer.view == rightKnob) 
-                {   
-                    if (p > selection.location) 
-                    {
-                        self.selection = NSMakeRange(selection.location, p - selection.location);
-                    }
-                }
-                else
-                {
-                    if (p < NSMaxRange(selection)) 
-                    {
-                        self.selection = NSMakeRange(pos, NSMaxRange(selection) - p);
-                    }
-                }
             }];
         }
     }
