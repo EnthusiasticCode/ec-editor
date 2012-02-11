@@ -514,6 +514,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     self.editButtonItem.title = @"";
     
     UIView *currentContentView = [self _contentView];
+    if ([currentContentView isKindOfClass:[CodeView class]])
+        [(CodeView *)currentContentView setEditing:editing];
+    
     if (oldContentView != currentContentView)
     {
         [self _loadWebPreviewContentAndTitle];

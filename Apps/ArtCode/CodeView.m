@@ -70,7 +70,6 @@ static const void *rendererContext;
     } _flags;
     
     // Recognizers
-    UITapGestureRecognizer *_focusRecognizer;
     UITapGestureRecognizer *_tapRecognizer;
     UITapGestureRecognizer *_tapTwoTouchesRecognizer;
     UITapGestureRecognizer *_doubleTapRecognizer;
@@ -110,10 +109,7 @@ static const void *rendererContext;
 - (void)_stopAutoScroll;
 
 // Gestures handlers
-- (void)_handleGestureFocus:(UITapGestureRecognizer *)recognizer;
 - (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer;
-- (void)_handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer;
-- (void)_handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer;
 - (void)_handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer;
 
 // Handle keyboard display
@@ -218,7 +214,7 @@ static const void *rendererContext;
 #pragma mark - Properties
 
 @dynamic dataSource, delegate;
-@synthesize renderer = _renderer;
+@synthesize renderer = _renderer, editing;
 @synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
 
 - (void)setDataSource:(id<CodeViewDataSource>)aDataSource
@@ -259,6 +255,19 @@ static const void *rendererContext;
 - (BOOL)ownsRenderer
 {
     return self.renderer.delegate == self;
+}
+
+- (void)setEditing:(BOOL)value
+{
+    if (value == editing)
+        return;
+    [self willChangeValueForKey:@"editing"];
+    editing = value;
+    if (value)
+        [self becomeFirstResponder];
+    else
+        [self resignFirstResponder];
+    [self didChangeValueForKey:@"editing"];
 }
 
 - (void)setFrame:(CGRect)frame
@@ -457,10 +466,24 @@ static void init(CodeView *self)
     [self addSubview:self->_selectionView];
     self->_keyboardFrame = CGRectNull;
     
-    // Adding focus recognizer
-    self->_focusRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureFocus:)];
-    [self->_focusRecognizer setNumberOfTapsRequired:1];
-    [self addGestureRecognizer:self->_focusRecognizer];
+    // Gesture recognizers
+    self->_tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTap:)];
+    [self addGestureRecognizer:self->_tapRecognizer];
+    
+    self->_tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTap:)];
+    self->_tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
+    [self addGestureRecognizer:self->_tapTwoTouchesRecognizer];
+    
+    self->_doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTap:)];
+    self->_doubleTapRecognizer.numberOfTapsRequired = 2;
+    [self addGestureRecognizer:self->_doubleTapRecognizer];
+    
+    self->_longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
+    [self addGestureRecognizer:self->_longPressRecognizer];
+    
+    self->_longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
+    self->_longDoublePressRecognizer.numberOfTouchesRequired = 2;
+    [self addGestureRecognizer:self->_longDoublePressRecognizer];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -585,13 +608,13 @@ static void init(CodeView *self)
 - (void)updateAllText
 {
     [self.renderer updateAllText];
-    [_selectionView update];
+    [self setNeedsLayout];
 }
 
 - (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
 {
     [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
-    [_selectionView update];
+    [self setNeedsLayout];
 }
 
 #pragma mark - Text Decoration Methods
@@ -685,47 +708,20 @@ static void init(CodeView *self)
 
 - (BOOL)canBecomeFirstResponder
 {
-    // TODO should return depending on edit enabled state
-    return _flags.dataSourceHasCommitStringForTextInRange;
+    return editing && _flags.dataSourceHasCommitStringForTextInRange;
 }
 
 - (BOOL)becomeFirstResponder
 {
     BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
     
-    // Lazy create recognizers
-    if (!_tapRecognizer && shouldBecomeFirstResponder)
-    {
-        _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTap:)];
-        [self addGestureRecognizer:_tapRecognizer];
-        
-        _tapTwoTouchesRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureTapTwoTouches:)];
-        _tapTwoTouchesRecognizer.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:_tapTwoTouchesRecognizer];
-        
-        _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureDoubleTap:)];
-        _doubleTapRecognizer.numberOfTapsRequired = 2;
-        [self addGestureRecognizer:_doubleTapRecognizer];
-        
-        _longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
-        [self addGestureRecognizer:_longPressRecognizer];
-        
-        _longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
-        _longDoublePressRecognizer.numberOfTouchesRequired = 2;
-        [self addGestureRecognizer:_longDoublePressRecognizer];
-        
-        // TODO initialize gesture recognizers
-    }
-    
     // Activate recognizers and keyboard accessory
     if (shouldBecomeFirstResponder)
     {
-        _focusRecognizer.enabled = NO;
-        _tapRecognizer.enabled = YES;
-        _tapTwoTouchesRecognizer.enabled = YES;
-        _doubleTapRecognizer.enabled = YES;
-        _longPressRecognizer.enabled = YES;
-        _longDoublePressRecognizer.enabled = YES;
+//        _tapTwoTouchesRecognizer.enabled = YES;
+//        _doubleTapRecognizer.enabled = YES;
+//        _longPressRecognizer.enabled = YES;
+//        _longDoublePressRecognizer.enabled = YES;
         
         if (!_keyboardWillShow)
             [self _setAccessoryViewVisible:YES animated:YES];
@@ -742,15 +738,10 @@ static void init(CodeView *self)
     
     if (![self isFirstResponder])
     {
-        _focusRecognizer.enabled = YES;
-        _tapRecognizer.enabled = NO;
-        _tapTwoTouchesRecognizer.enabled = NO;
-        _doubleTapRecognizer.enabled = NO;
-        _longPressRecognizer.enabled = NO;
-        _longDoublePressRecognizer.enabled = NO;
-        
-        // Remove selection
-        _selectionView.hidden = YES;
+//        _tapTwoTouchesRecognizer.enabled = NO;
+//        _doubleTapRecognizer.enabled = NO;
+//        _longPressRecognizer.enabled = NO;
+//        _longDoublePressRecognizer.enabled = NO;
         
         // Remove keyboard accessory
         [self _setAccessoryViewVisible:NO animated:YES];
@@ -1425,9 +1416,6 @@ static void init(CodeView *self)
         [inputDelegate selectionDidChange:self];
         if (_flags.delegateHasSelectionDidChange)
             [self.delegate selectionDidChangeForCodeView:self];
-        
-        // Center editing area if not visible
-        _selectionView.hidden = NO;
     }
 }
 
@@ -1512,14 +1500,43 @@ static void init(CodeView *self)
 
 #pragma mark - Gesture Recognizers and Interaction
 
-- (void)_handleGestureFocus:(UITapGestureRecognizer *)recognizer
-{
-    [self becomeFirstResponder];
-    [self _handleGestureTap:recognizer];
-}
-
 - (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
+    // Tap with two fingers to show context menu
+    if (recognizer.numberOfTouchesRequired == 2)
+    {
+        UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+        
+        // Adding custom menu
+        UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
+        sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
+        
+        // Show context menu
+        [sharedMenuController setTargetRect:_selectionView.frame inView:self];
+        [sharedMenuController setMenuVisible:YES animated:YES];
+        return;
+    }
+    
+    // Double tap to select word
+    if (recognizer.numberOfTapsRequired == 2)
+    {
+        CGPoint tapPoint = [recognizer locationInView:self];
+        UITextPosition *tapPosition = [self closestPositionToPoint:tapPoint];
+        TextRange *sel = (TextRange *)[self.tokenizer rangeEnclosingPosition:tapPosition withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionForward];
+        if (sel == nil)
+        {
+            UITextPosition *tapStart = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
+            UITextPosition *tapEnd = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward];
+            sel = [[TextRange alloc] initWithStart:(TextPosition *)tapStart end:(TextPosition *)tapEnd];
+        }
+        [self setSelectedTextRange:sel];
+        return;
+    }
+    
+    // Become first responder if in editing mode
+    if (self.isEditing && !self.isFirstResponder)
+        [self becomeFirstResponder];
+    
     [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
     
     CGPoint tapPoint = [recognizer locationInView:self];
@@ -1534,33 +1551,6 @@ static void init(CodeView *self)
         return;
     }
     [self _setSelectedTextFromPoint:tapPoint toPoint:tapPoint];
-}
-
-- (void)_handleGestureTapTwoTouches:(UITapGestureRecognizer *)recognizer
-{
-    UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
-    
-    // Adding custom menu
-    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
-    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
-    
-    // Show context menu
-    [sharedMenuController setTargetRect:_selectionView.frame inView:self];
-    [sharedMenuController setMenuVisible:YES animated:YES];
-}
-
-- (void)_handleGestureDoubleTap:(UITapGestureRecognizer *)recognizer
-{
-    CGPoint tapPoint = [recognizer locationInView:self];
-    UITextPosition *tapPosition = [self closestPositionToPoint:tapPoint];
-    TextRange *sel = (TextRange *)[self.tokenizer rangeEnclosingPosition:tapPosition withGranularity:UITextGranularityWord inDirection:UITextStorageDirectionForward];
-    if (sel == nil)
-    {
-        UITextPosition *tapStart = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionBackward];
-        UITextPosition *tapEnd = [self.tokenizer positionFromPosition:tapPosition toBoundary:UITextGranularityWord inDirection:UITextStorageDirectionForward];
-        sel = [[TextRange alloc] initWithStart:(TextPosition *)tapStart end:(TextPosition *)tapEnd];
-    }
-    [self setSelectedTextRange:sel];
 }
 
 - (void)_handleGestureLongPress:(UILongPressGestureRecognizer *)recognizer
@@ -1936,28 +1926,19 @@ static void init(CodeView *self)
     }
     self.blink = NO;
     
-    // Layout
-    if (selection.length == 0) 
-    {
-        self.frame = [parent caretRectForPosition:self.selectionPosition];
-    }
-    else
-    {
-        selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
-        self.frame = selectionRects.bounds;
-    }
-    
-    // Stop if not visible
-    if (self.isHidden)
-        return;
-    
     // Set new selection behaviour
     if (selection.length == 0) 
     {
+        self.frame = [parent caretRectForPosition:self.selectionPosition];
+        self.hidden = ![parent isFirstResponder];
+        
         [leftKnob removeFromSuperview];
         leftKnobRecognizer.enabled = NO;
         [rightKnob removeFromSuperview];
         rightKnobRecognizer.enabled = NO;
+        
+        if (self.isHidden)
+            return;
         
         // Start blinking after the selection change has stopped
         blinkDelayTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(NSTimer *timer) {
@@ -1967,6 +1948,10 @@ static void init(CodeView *self)
     }
     else
     {
+        selectionRects = [parent.renderer rectsForStringRange:selection limitToFirstLine:NO];
+        self.frame = selectionRects.bounds;
+        self.hidden = NO;
+
         // Left knob
         if (!leftKnob) 
         {

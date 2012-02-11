@@ -93,6 +93,9 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// Renderer used in the codeview.
 @property (nonatomic, readonly, strong) TextRenderer *renderer;
 
+/// Indicates if the codeview is in editing mode and it's content can be modified by the user.
+@property (nonatomic, getter = isEditing) BOOL editing;
+
 #pragma mark Managing Text Content
 
 /// Access the full text showed in the code view. This methods uses the datasource to retrieve the text.
