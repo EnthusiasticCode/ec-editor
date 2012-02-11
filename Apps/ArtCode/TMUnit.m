@@ -274,7 +274,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     else
                         return nil;
                 }];
-                endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol];
+                endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup];
             }
             
             // Find the first matching pattern

@@ -155,7 +155,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
                  [key isEqualToString:_beginKey])
         {
             if ([obj length])
-                [self setValue:[OnigRegexp compile:obj options:OnigOptionCaptureGroup | OnigOptionNotbol | OnigOptionNoteol] forKey:key];
+                [self setValue:[OnigRegexp compile:obj options:OnigOptionCaptureGroup] forKey:key];
         }
         else if ([key isEqualToString:_patternsKey])
         {

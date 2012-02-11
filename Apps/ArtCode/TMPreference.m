@@ -125,7 +125,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
     NSMutableArray *transformationsTemaplate = [NSMutableArray new];
     [transformationSplitter enumerateMatchesInString:transformation options:0 range:NSMakeRange(0, [transformation length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
         ECASSERT([result numberOfRanges] == 4);
-        [transformationsRegExp addObject:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]]]];
+        [transformationsRegExp addObject:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]] options:OnigOptionCaptureGroup]];
         [transformationsTemaplate addObject:[transformation substringWithRange:[result rangeAtIndex:2]]];
     }];
     
