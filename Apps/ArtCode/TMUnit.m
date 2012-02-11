@@ -34,7 +34,6 @@ static OnigRegexp *_namedCapturesRegexp;
     NSUInteger _generation;
 }
 - (TMSyntaxNode *)_syntax;
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 - (TMScope *)_scope;
 - (void)_generateScopesWithScope:(TMScope *)scope inRange:(NSRange)range;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope;
@@ -128,12 +127,50 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)visitScopesWithBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
-    [self visitScopesInRange:NSMakeRange(0, [self _scope].length) options:TMUnitVisitOptionsAbsoluteRange withBlock:block];
+    [self visitScopesInRange:NSMakeRange(0, [self _scope].length) withBlock:block];
 }
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
+- (void)visitScopesInRange:(NSRange)range withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
-    [self _visitDescendantScopesOfScope:[self _scope] inRange:range options:options withBlock:block];
+    static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange){
+        NSRange intersectionRange = NSIntersectionRange(range, inRange);
+        intersectionRange.location -= inRange.location;
+        return intersectionRange;
+    };
+    // Visit the root scope
+    TMScope *scope = [self _scope];
+    NSRange scopeRange = NSMakeRange(scope.location, scope.length);
+    ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
+    scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
+    TMUnitVisitResult result = block(scope, scopeRange);
+    if (result != TMUnitVisitResultRecurse)
+        return;
+    // Setup the scope enumerator stack
+    NSMutableArray *enumeratorStack = [[NSMutableArray alloc] init];
+    [enumeratorStack addObject:[scope.children objectEnumerator]];
+    while ([enumeratorStack count])
+    {
+        while ((scope = [[enumeratorStack lastObject] nextObject]))
+        {
+            NSRange scopeRange = NSMakeRange(scope.location, scope.length);
+            if (scopeRange.location > NSMaxRange(range))
+                return;
+            if (NSMaxRange(scopeRange) < range.location)
+                continue;
+            ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
+            scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
+            TMUnitVisitResult result = block(scope, scopeRange);
+            if (result == TMUnitVisitResultBreak)
+                return;
+            if (result == TMUnitVisitResultContinue)
+                continue;
+            if (result == TMUnitVisitResultBackOut)
+                break;
+            if ([scope children])
+                [enumeratorStack addObject:[[scope children] objectEnumerator]];
+        }
+        [enumeratorStack removeLastObject];
+    }
 }
 
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
@@ -158,49 +195,6 @@ static OnigRegexp *_namedCapturesRegexp;
 - (TMSyntaxNode *)_syntax
 {
     return __syntax;
-}
-
-- (TMUnitVisitResult)_visitDescendantScopesOfScope:(TMScope *)scope inRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
-{
-    static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange){
-        NSRange intersectionRange = NSIntersectionRange(range, inRange);
-        intersectionRange.location -= inRange.location;
-        return intersectionRange;
-    };
-    NSRange scopeRange = NSMakeRange(scope.location, scope.length);
-    if (scopeRange.location > NSMaxRange(range))
-        return TMUnitVisitResultBreak;
-    if (NSMaxRange(scopeRange) < range.location)
-        return TMUnitVisitResultContinue;
-    if (options & TMUnitVisitOptionsRelativeRange)
-        scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-    TMUnitVisitResult result = block(scope, scopeRange);
-//    NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
-    if (result != TMUnitVisitResultRecurse)
-        return result;
-    for (TMScope *childScope in [scope children])
-    {
-        if (result == TMUnitVisitResultContinue)
-        {
-            scopeRange = NSMakeRange(scope.location, scope.length);
-            if (scopeRange.location > NSMaxRange(range))
-                return TMUnitVisitResultBreak;
-            if (NSMaxRange(scopeRange) < range.location)
-                continue;
-            if (options & TMUnitVisitOptionsRelativeRange)
-                scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-            result = block(childScope, scopeRange);
-//            NSLog(@"%@ : %@", NSStringFromRange(scopeRange), [scope qualifiedIdentifier]);
-            continue;
-        }
-        if (result == TMUnitVisitResultRecurse)
-        {
-            if ([self _visitDescendantScopesOfScope:childScope inRange:range options:options withBlock:block] == TMUnitVisitResultContinue)
-                continue;
-        }
-        return TMUnitVisitResultBreak;
-    }
-    return TMUnitVisitResultContinue;
 }
 
 - (TMScope *)_scope

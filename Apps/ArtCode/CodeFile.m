@@ -80,7 +80,7 @@
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
     // Add text coloring
     [attributedString addAttributes:[self.theme commonAttributes] range:NSMakeRange(0, [attributedString length])];
-    [self.codeUnit visitScopesInRange:stringRange options:TMUnitVisitOptionsRelativeRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+    [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
         NSDictionary *attributes = [self.theme attributesForScope:scope];
         if ([attributes count])
             [attributedString addAttributes:attributes range:range];
@@ -121,7 +121,7 @@
 - (CodeFileTextKind)kindOfTextInRange:(NSRange)range
 {
     __block CodeFileTextKind result = CodeFileNormalTextKind;
-    [self.codeUnit visitScopesInRange:range options:0 withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
+    [self.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
         if (scopeRange.length <= 2)
             return TMUnitVisitResultRecurse;
         if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)

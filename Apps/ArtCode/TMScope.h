@@ -22,6 +22,12 @@
 /// This array is equivalent to separate the components separated by spaces of qualifiedIdentifier.
 @property (nonatomic, strong, readonly) NSArray *identifiersStack;
 
+/// The location of the scope
+@property (nonatomic, readonly) NSUInteger location;
+
+/// The length of the scope
+@property (nonatomic, readonly) NSUInteger length;
+
 /// The parent scope, if one exists
 @property (nonatomic, weak, readonly) TMScope *parent;
 

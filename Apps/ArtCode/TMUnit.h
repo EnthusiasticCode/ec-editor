@@ -22,6 +22,7 @@ typedef enum
     TMUnitVisitResultBreak,
     TMUnitVisitResultContinue,
     TMUnitVisitResultRecurse,
+    TMUnitVisitResultBackOut,
 } TMUnitVisitResult;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
@@ -36,11 +37,10 @@ typedef enum
 - (NSString *)rootScopeIdentifier;
 
 /// Visit the scopes in the unit.
-/// All the parameters passed to the block are only valid until the block returns, and should not be modified
 
 - (void)visitScopesWithBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 
-- (void)visitScopesInRange:(NSRange)range options:(TMUnitVisitOptions)options withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
+- (void)visitScopesInRange:(NSRange)range withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 

@@ -18,7 +18,7 @@
 /// The syntax node that created the scope
 @property (nonatomic, strong) TMSyntaxNode *syntaxNode;
 
-/// The location of the scope's start relative to the parent's start
+/// The location of the scope
 @property (nonatomic) NSUInteger location;
 
 /// The length of the scope
