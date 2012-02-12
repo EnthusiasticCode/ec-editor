@@ -8,7 +8,7 @@
 
 #import "TMScope.h"
 
-@class TMSyntaxNode;
+@class TMSyntaxNode, OnigRegexp;
 
 @interface TMScope ()
 
@@ -17,6 +17,9 @@
 
 /// The syntax node that created the scope
 @property (nonatomic, strong) TMSyntaxNode *syntaxNode;
+
+/// Cached end regexp for scopes with a span syntax node
+@property (nonatomic, strong) OnigRegexp *endRegexp;
 
 /// The location of the scope
 @property (nonatomic) NSUInteger location;

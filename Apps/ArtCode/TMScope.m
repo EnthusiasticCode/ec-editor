@@ -26,7 +26,7 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, location = _location, length = _length, completelyParsed = _completelyParsed, parent = _parent, children = _children, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
+@synthesize syntaxNode = _syntaxNode, endRegexp = _endRegexp, location = _location, length = _length, completelyParsed = _completelyParsed, parent = _parent, children = _children, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
 
 - (NSString *)identifier
 {
