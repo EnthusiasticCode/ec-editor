@@ -47,8 +47,9 @@ static OnigRegexp *_namedCapturesRegexp;
 {
     if (self != [TMUnit class])
         return;
-    _numberedCapturesRegexp = [OnigRegexp compile:@"\\([1-9])"];
-    _namedCapturesRegexp = [OnigRegexp compile:@"\\k<(.*?)>"];
+    _numberedCapturesRegexp = [OnigRegexp compile:@"\\\\([1-9])" options:OnigOptionCaptureGroup];
+    _namedCapturesRegexp = [OnigRegexp compile:@"\\\\k<(.*?)>" options:OnigOptionCaptureGroup];
+    ECASSERT(_numberedCapturesRegexp && _namedCapturesRegexp);
 }
 
 + (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key
@@ -246,26 +247,20 @@ static OnigRegexp *_namedCapturesRegexp;
             // Find the first matching pattern
             TMSyntaxNode *firstSyntaxNode = nil;
             OnigResult *firstResult = nil;
-            if (syntaxNode.patterns)
+            NSArray *patterns = [self _patternsIncludedByPattern:syntaxNode];
+            for (TMSyntaxNode *pattern in patterns)
             {
-                NSArray *patterns = [self _patternsIncludedByPattern:syntaxNode];
-                for (TMSyntaxNode *pattern in patterns)
-                {
-                    ECASSERT(pattern.match || pattern.begin);
-                    OnigRegexp *patternRegexp = pattern.match ? pattern.match : pattern.begin;
-                    OnigResult *result = [patternRegexp search:line start:position];
-                    if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location))
-                        continue;
-                    firstResult = result;
-                    firstSyntaxNode = pattern;
-                }
+                ECASSERT(pattern.match || pattern.begin);
+                OnigRegexp *patternRegexp = pattern.match ? pattern.match : pattern.begin;
+                OnigResult *result = [patternRegexp search:line start:position];
+                if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location))
+                    continue;
+                firstResult = result;
+                firstSyntaxNode = pattern;
             }
             
             // Find the end match
-            OnigRegexp *endRegexp = scope.endRegexp;
-            OnigResult *endResult = nil;
-            if (endRegexp)
-                endResult = [endRegexp search:line start:position];
+            OnigResult *endResult = [scope.endRegexp search:line start:position];
             
             ECASSERT(!firstSyntaxNode || firstResult);
             
@@ -293,16 +288,17 @@ static OnigRegexp *_namedCapturesRegexp;
             else if (firstSyntaxNode.match)
             {
                 // Handle a match pattern
+                NSRange resultRange = [firstResult bodyRange];
                 TMScope *matchScope = [scope newChildScope];
                 matchScope.identifier = firstSyntaxNode.scopeName;
                 matchScope.syntaxNode = firstSyntaxNode;
-                matchScope.location = [firstResult bodyRange].location + lineRange.location;
-                matchScope.length = [firstResult bodyRange].length;
+                matchScope.location = resultRange.location + lineRange.location;
+                matchScope.length = resultRange.length;
                 matchScope.completelyParsed = YES;
                 // Handle match pattern captures
                 [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope];
                 // We need to make sure position increases, or it would loop forever with a 0 width match
-                NSUInteger newPosition = NSMaxRange([firstResult bodyRange]);
+                NSUInteger newPosition = NSMaxRange(resultRange);
                 if (position == newPosition)
                     ++position;
                 else
@@ -354,7 +350,7 @@ static OnigRegexp *_namedCapturesRegexp;
             else
                 break;
             
-            // We need to break if we hit the end of the line, failing to do so not only runs another cycle that doesn't find anything 99% of the time, but also can cause problems with matches that include the newline which have to be the last match for the line in the remaining 1%
+            // We need to break if we hit the end of the line, failing to do so not only runs another cycle that doesn't find anything 99% of the time, but also can cause problems with matches that include the newline which have to be the last match for the line in the remaining 1% of the cases
             if (position >= lineRange.length)
                 break;
         }
@@ -407,6 +403,8 @@ static OnigRegexp *_namedCapturesRegexp;
     NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
     if (includedPatterns)
         return includedPatterns;
+    if (!pattern.patterns)
+        return nil;
     includedPatterns = [NSMutableArray arrayWithArray:pattern.patterns];
     NSMutableSet *dereferencedPatterns = [NSMutableSet set];
     NSMutableIndexSet *containerPatternIndexes = [NSMutableIndexSet indexSet];
