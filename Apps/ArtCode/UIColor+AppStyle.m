@@ -64,8 +64,20 @@
                         [UIColor colorWithRed:200.0/255.0 green:8.0/255.0 blue:21.0/255.0 alpha:1.0]);
 }
 
++ (UIColor *)styleMinimapCommentColor
+{
+    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+                        [UIColor colorWithRed:110.0/255.0 green:220.0/255.0 blue:70.0/255.0 alpha:1.0]);
+}
 
-+ (UIColor *)styleSymbolColorBlue
++ (UIColor *)styleMinimapPreprocessorColor
+{
+//    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+//                        [UIColor colorWithRed:114.0/255.0 green:53.0/255.0 blue:32.0/255.0 alpha:1.0]);
+    return [UIColor orangeColor];
+}
+
++ (UIColor *)styleMinimapSymbolColor
 {
     RETURN_CACHED_COLOR(styleSymbolColorBlue, 
                         [UIColor colorWithRed:75.0/255.0 green:92.0/255.0 blue:179.0/255.0 alpha:1.0]);

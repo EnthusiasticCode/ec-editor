@@ -18,6 +18,7 @@
 #import "TabController.h"
 #import "TMTheme.h"
 #import "UIColor+Contrast.h"
+#import "UIColor+AppStyle.h"
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
@@ -553,15 +554,15 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     
     switch ([self.codeFile kindOfTextInRange:range]) {
         case CodeFileCommentTextKind:
-            *lineColor = [UIColor greenColor];
+            *lineColor = [UIColor styleMinimapCommentColor];
             break;
             
         case CodeFilePreprocessorTextKind:
-            *lineColor = [UIColor orangeColor];
+            *lineColor = [UIColor styleMinimapPreprocessorColor];
             break;
             
         case CodeFileSymbolTextKind:
-            *lineColor = [UIColor blueColor];
+            *lineColor = [UIColor styleMinimapSymbolColor];
             break;
             
         default:
