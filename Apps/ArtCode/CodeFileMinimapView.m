@@ -101,7 +101,7 @@ static const void *rendererContext;
             selectionRectangle.origin.y -= rendererTextInsets.top;
         }
         [self addSubview:self.selectionView];
-        [self scrollRectToVisible:self.selectionView.frame animated:YES];
+        [self scrollRectToVisible:(CGRect) { self.selectionView.frame.origin, { 1, 1 }} animated:YES];
     }
     
     [self didChangeValueForKey:@"selectionRectangle"];
@@ -245,6 +245,12 @@ static const void *rendererContext;
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)setNeedsDisplay
+{
+    [super setNeedsDisplay];
+    [_contentView setNeedsDisplay];
 }
 
 - (void)layoutSubviews

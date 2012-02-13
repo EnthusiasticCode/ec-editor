@@ -618,6 +618,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         }
     }
     [self.codeView setNeedsDisplay];
+    if (_minimapVisible)
+        [_minimapView setNeedsDisplay];
 }
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
