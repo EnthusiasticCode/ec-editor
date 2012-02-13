@@ -293,12 +293,13 @@ extern CGRect UIKeyboardFrame;
     {
         imageView.center = CGPointMake(viewFrame.size.width / 2, imageView.bounds.size.height / 2);
         imageViewFrame = imageView.frame;
-        imageViewFrame.size.height += 10;
     }
     
     CGRect labelFrame = CGRectNull;
     if (label)
     {
+        if (imageView)
+            imageViewFrame.size.height += 10;
         label.center = CGPointMake(viewFrame.size.width / 2, imageViewFrame.size.height + label.bounds.size.height / 2);
         labelFrame = label.frame;
     }
