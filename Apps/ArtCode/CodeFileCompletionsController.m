@@ -9,7 +9,6 @@
 #import "CodeFileCompletionsController.h"
 #import "CodeFileCompletionCell.h"
 
-#import "FileBuffer.h"
 #import "TMIndex.h"
 #import "TMUnit.h"
 #import "TextRange.h"
@@ -73,13 +72,13 @@
     ECASSERT(self.targetCodeFileController != nil);
     
     if (!_codeUnit)
-        _codeUnit = [self._codeIndex codeUnitForFileBuffer:self.targetCodeFileController.codeFile.fileBuffer rootScopeIdentifier:nil];
+        _codeUnit = [self._codeIndex codeUnitForCodeFile:self.targetCodeFileController.codeFile rootScopeIdentifier:nil];
     return _codeUnit;
 }
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-    ECASSERT(self.targetCodeFileController.codeFile.fileBuffer.length > self.offsetInDocumentForCompletions);
+    ECASSERT(self.targetCodeFileController.codeFile.length > self.offsetInDocumentForCompletions);
     
     if (!_completionResults)
         _completionResults = [self._codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];

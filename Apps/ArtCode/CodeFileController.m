@@ -13,7 +13,6 @@
 #import "UIViewController+PresentingPopoverController.h"
 
 #import <QuartzCore/QuartzCore.h>
-#import "FileBuffer.h"
 #import "BezelAlert.h"
 #import "TabController.h"
 #import "TMTheme.h"
@@ -48,8 +47,6 @@
     
     /// The index of the accessory item action currently being performed.
     NSInteger _keyboardAccessoryItemCurrentActionIndex;
-    
-    NSOperationQueue *_consumerOperationQueue;
 }
 
 @property (nonatomic, strong) CodeView *codeView;
@@ -295,17 +292,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     
     [self willChangeValueForKey:@"codeFile"];
     
-    [_codeFile.fileBuffer removeConsumer:self];
+    [_codeFile removePresenter:self];
     _codeFile = codeFile;
-    if (!_consumerOperationQueue)
-    {
-        _consumerOperationQueue = [[NSOperationQueue alloc] init];
-        _consumerOperationQueue.maxConcurrentOperationCount = 1;
-    }
-    else
-        [_consumerOperationQueue cancelAllOperations];
     _codeView.dataSource = _codeFile;
-    [_codeFile.fileBuffer addConsumer:self];
+    [_codeFile addPresenter:self];
     
     [self _loadWebPreviewContentAndTitle];
     
@@ -577,19 +567,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return NO;
 }
 
-#pragma mark - FileBufferConsumer
+#pragma mark - CodeFilePresenter
 
-- (NSOperationQueue *)consumerOperationQueue
+- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
-    ECASSERT(_consumerOperationQueue);
-    return _consumerOperationQueue;
-}
-
-- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
-{
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
-    }];
+    [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -777,7 +759,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if ([self _isWebPreview] && self.codeFile)
     {
-        [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
+        [self.webView loadHTMLString:[self.codeFile string] baseURL:self.fileURL];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     }
     else

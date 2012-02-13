@@ -8,7 +8,6 @@
 
 #import "TMUnit+Internal.h"
 #import "TMIndex+Internal.h"
-#import "FileBuffer.h"
 #import "TMScope+Internal.h"
 #import "TMBundle.h"
 #import "TMSyntaxNode.h"
@@ -25,7 +24,7 @@ static OnigRegexp *_namedCapturesRegexp;
 {
     NSOperationQueue *_consumerOperationQueue;
     TMIndex *_index;
-    FileBuffer *_fileBuffer;
+    CodeFile *_codeFile;
     NSString *_rootScopeIdentifier;
     NSMutableDictionary *_extensions;
     TMSyntaxNode *__syntax;
@@ -65,16 +64,16 @@ static OnigRegexp *_namedCapturesRegexp;
     [extensionClassesForLanguage setObject:extensionClass forKey:key];
 }
 
-- (id)initWithIndex:(TMIndex *)index fileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
+- (id)initWithIndex:(TMIndex *)index codeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
-    ECASSERT(index && fileBuffer);
+    ECASSERT(index && codeFile);
     self = [super init];
     if (!self)
         return nil;
     _consumerOperationQueue = [NSOperationQueue currentQueue];
     _index = index;
-    _fileBuffer = fileBuffer;
-    [_fileBuffer addConsumer:self];
+    _codeFile = codeFile;
+    [_codeFile addPresenter:self];
     if (rootScopeIdentifier)
     {
         _rootScopeIdentifier = rootScopeIdentifier;
@@ -82,7 +81,7 @@ static OnigRegexp *_namedCapturesRegexp;
     }
     else
     {
-        __syntax = [TMSyntaxNode syntaxForFileBuffer:fileBuffer];
+        __syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
         _rootScopeIdentifier = __syntax.scopeName;
     }
     ECASSERT(__syntax && _rootScopeIdentifier);
@@ -104,7 +103,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)dealloc
 {
-    [_fileBuffer removeConsumer:self];
+    [_codeFile removePresenter:self];
 }
 
 - (TMIndex *)index
@@ -112,9 +111,9 @@ static OnigRegexp *_namedCapturesRegexp;
     return _index;
 }
 
-- (FileBuffer *)fileBuffer
+- (CodeFile *)codeFile
 {
-    return _fileBuffer;
+    return _codeFile;
 }
 
 - (NSString *)rootScopeIdentifier
@@ -185,13 +184,6 @@ static OnigRegexp *_namedCapturesRegexp;
     return nil;
 }
 
-#pragma mark - FileBufferConsumer
-
-- (NSOperationQueue *)consumerOperationQueue
-{
-    return _consumerOperationQueue;
-}
-
 #pragma mark - Private Methods
 
 - (TMSyntaxNode *)_syntax
@@ -206,7 +198,7 @@ static OnigRegexp *_namedCapturesRegexp;
         __scope = [[TMScope alloc] init];
         __scope.identifier = [self rootScopeIdentifier];
         __scope.syntaxNode = [self _syntax];
-        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, [self.fileBuffer length])];
+        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, [self.codeFile length])];
     }
     return __scope;
 }
@@ -230,10 +222,10 @@ static OnigRegexp *_namedCapturesRegexp;
         if (lineRange.location >= NSMaxRange(range))
             break;
         // Setup the line
-        lineRange = [self.fileBuffer lineRangeForRange:lineRange];
+        lineRange = [self.codeFile lineRangeForRange:lineRange];
         if (lineRange.location < range.location)
             lineRange = NSMakeRange(range.location, NSMaxRange(lineRange) - range.location);
-        CStringCachingString *line = [CStringCachingString stringWithString:[self.fileBuffer stringInRange:lineRange]];
+        CStringCachingString *line = [CStringCachingString stringWithString:[self.codeFile stringInRange:lineRange]];
         NSUInteger position = 0;
         
 //        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);

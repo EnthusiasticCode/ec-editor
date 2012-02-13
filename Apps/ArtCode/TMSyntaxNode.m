@@ -9,7 +9,7 @@
 #import "TMSyntaxNode.h"
 #import "TMBundle.h"
 #import "OnigRegexp.h"
-#import "FileBuffer.h"
+#import "CodeFile.h"
 
 static NSString * const _syntaxDirectory = @"Syntaxes";
 
@@ -75,9 +75,9 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     return [_syntaxesWithIdentifier objectForKey:scopeIdentifier];
 }
 
-+ (TMSyntaxNode *)syntaxForFileBuffer:(FileBuffer *)fileBuffer
++ (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile
 {
-    ECASSERT(fileBuffer);
+    ECASSERT(codeFile);
     static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)){
         for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator])
             if (predicateBlock(syntax))
@@ -89,13 +89,13 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     };
     TMSyntaxNode *foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
         for (NSString *fileType in syntax.fileTypes)
-            if ([fileType isEqualToString:[[fileBuffer fileURL] pathExtension]])
+            if ([fileType isEqualToString:[[codeFile fileURL] pathExtension]])
                 return YES;
         return NO;
     });
     if (!foundSyntax)
         foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
-            NSString *fileContents = [fileBuffer stringInRange:NSMakeRange(0, [fileBuffer length])];
+            NSString *fileContents = [codeFile stringInRange:NSMakeRange(0, [codeFile length])];
             NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
             if ([syntax.firstLineMatch  search:firstLine])
                 return YES;

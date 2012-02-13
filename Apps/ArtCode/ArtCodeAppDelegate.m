@@ -201,7 +201,6 @@ CGRect UIKeyboardFrame;
 {
     [ArtCodeTab saveTabsToDisk];
     [ArtCodeProject saveProjectsToDisk];
-    [CodeFile saveFilesToDisk];
 }
 
 @end

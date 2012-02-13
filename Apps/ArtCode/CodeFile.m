@@ -8,18 +8,17 @@
 
 #import "CodeFile.h"
 #import "TMTheme.h"
-#import "FileBuffer.h"
 #import "TMIndex.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
 
-@interface CodeFile () {
-    NSOperationQueue *_consumerOperationQueue;
+@interface CodeFile ()
+{
+    NSMutableAttributedString *_contents;
+    NSMutableArray *_presenters;
     NSArray *_symbolList;
 }
-
-@property (nonatomic, strong) TMUnit *codeUnit;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
 
 @end
@@ -34,8 +33,10 @@
 
 @implementation CodeFile
 
-@synthesize fileBuffer = _fileBuffer, codeUnit = _codeUnit;
+@synthesize codeUnit = _codeUnit;
 @synthesize theme = _theme;
+
+#pragma mark - Public Properties
 
 - (TMTheme *)theme
 {
@@ -44,40 +45,39 @@
     return _theme;
 }
 
-- (id)initWithFileURL:(NSURL *)fileURL
+#pragma mark - UIDocument Methods
+
+- (id)initWithFileURL:(NSURL *)url
 {
-    self = [super init];
+    self = [super initWithFileURL:url];
     if (!self)
         return nil;
-    _consumerOperationQueue = [[NSOperationQueue alloc] init];
-    _consumerOperationQueue.maxConcurrentOperationCount = 1;
-    _fileBuffer = [[FileBuffer alloc] initWithFileURL:fileURL];
-    _codeUnit = [[[TMIndex alloc] init] codeUnitForFileBuffer:_fileBuffer rootScopeIdentifier:nil];
+    _contents = [[NSMutableAttributedString alloc] init];
+    _presenters = [[NSMutableArray alloc] init];
     return self;
 }
 
-+ (void)saveFilesToDisk
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    [FileBuffer saveAllBuffers];
+    return [[_contents string] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-#pragma mark - FileBufferConsumer
-
-- (NSOperationQueue *)consumerOperationQueue
+- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    return _consumerOperationQueue;
+    _contents = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+    return YES;
 }
 
 #pragma mark - Code View DataSource Methods
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-    return [self.fileBuffer length];
+    return [self length];
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self.fileBuffer attributedStringInRange:stringRange]];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedStringInRange:stringRange]];
     // Add text coloring
     [attributedString addAttributes:[self.theme commonAttributes] range:NSMakeRange(0, [attributedString length])];
     [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
@@ -90,10 +90,10 @@
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    for (NSTextCheckingResult *placeholderMatch in [self.fileBuffer matchesOfRegexp:placeholderRegExp options:0])
+    for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
     {
 #warning TODO NIK fix this, the method modify the file buffer, not attributedString.
-        [self _markPlaceholderWithName:[self.fileBuffer stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+        [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
     }
     return attributedString;
 }
@@ -105,18 +105,199 @@
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-    [self.fileBuffer replaceCharactersInRange:range withString:commitString];
-    
-#warning TODO move in filebuffer observer?
-    _symbolList = nil;
+    [self replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-    return [self.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+    return [self attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Public methods
+
+- (void)addPresenter:(id<CodeFilePresenter>)presenter
+{
+    ECASSERT(![_presenters containsObject:presenter]);
+    [_presenters addObject:presenter];
+}
+
+- (void)removePresenter:(id<CodeFilePresenter>)presenter
+{
+    ECASSERT([_presenters containsObject:presenter]);
+    [_presenters removeObject:presenter];
+}
+
+- (NSArray *)presenters
+{
+    return [_presenters copy];
+}
+
+- (NSUInteger)length
+{
+    return [_contents length];
+}
+
+- (NSString *)stringInRange:(NSRange)range
+{
+    return [[_contents string] substringWithRange:range];
+}
+
+- (NSString *)string
+{
+    return [[_contents string] copy];
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![string length])
+        return;
+    // replacing a substring with an equal string, no change required
+    if ([string isEqualToString:[self stringInRange:range]])
+        return;
+
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string];
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+    if ([string length])
+        [_contents replaceCharactersInRange:range withString:string];
+    else
+        [_contents deleteCharactersInRange:range];
+    [self updateChangeCount:UIDocumentChangeDone];
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+}
+
+- (NSAttributedString *)attributedStringInRange:(NSRange)range
+{
+    return [_contents attributedSubstringFromRange:range];
+}
+
+- (NSAttributedString *)attributedString
+{
+    return [_contents copy];
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![attributedString length])
+        return;
+    // replacing a substring with an equal string, no change required
+    if ([attributedString isEqualToAttributedString:[self attributedStringInRange:range]])
+        return;
+    NSString *string = [attributedString string];
+    for (id<CodeFilePresenter> presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
+    }
+    if ([attributedString length])
+        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    else
+        [_contents deleteCharactersInRange:range];
+    [self updateChangeCount:UIDocumentChangeDone];
+    for (id<CodeFilePresenter> presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
+    }
+}
+
+- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    if (![attributes count] || !range.length)
+        return;
+    for (id<CodeFilePresenter> presenter in _presenters)
+        if ([presenter respondsToSelector:@selector(codeFile:willAddAttributes:range:)])
+            [presenter codeFile:self willAddAttributes:attributes range:range];
+    [_contents addAttributes:attributes range:range];
+    for (id<CodeFilePresenter> presenter in _presenters)
+        if ([presenter respondsToSelector:@selector(codeFile:didAddAttributes:range:)])
+            [presenter codeFile:self didAddAttributes:attributes range:range];
+}
+
+- (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    if (![attributeNames count] || !range.length)
+        return;
+    for (id<CodeFilePresenter> presenter in _presenters)
+        if ([presenter respondsToSelector:@selector(codeFile:willRemoveAttributes:range:)])
+            [presenter codeFile:self willRemoveAttributes:attributeNames range:range];
+    for (NSString *attributeName in attributeNames)
+        [_contents removeAttribute:attributeName range:range];
+    for (id<CodeFilePresenter> presenter in _presenters)
+        if ([presenter respondsToSelector:@selector(codeFile:didRemoveAttributes:range:)])
+            [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
+}
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
+{
+    ECASSERT(location < [_contents length]);
+    id attribute = nil;
+    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
+    attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [_contents length])];
+    if (range)
+        *range = longestEffectiveRange;
+    return attribute;
+}
+
+- (NSRange)lineRangeForRange:(NSRange)range
+{
+    return [[_contents string] lineRangeForRange:range];
+}
+
+-(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    return [regexp numberOfMatchesInString:[_contents string] options:options range:range];
+}
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
+{
+    return [regexp matchesInString:[_contents string] options:options range:range];
+}
+
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options
+{
+    return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
+}
+
+- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate
+{
+    return [result.regularExpression replacementStringForResult:result inString:[_contents string] offset:offset template:replacementTemplate];
+}
+
+- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
+{
+    ECASSERT(match && replacementTemplate);
+    
+    NSRange replacementRange = match.range;
+    NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
+    
+    replacementRange.location += offset;
+    [self replaceCharactersInRange:replacementRange withString:replacementString];
+    replacementRange.length = replacementString.length;
+    
+    return replacementRange;
+}
 
 - (CodeFileTextKind)kindOfTextInRange:(NSRange)range
 {
@@ -154,7 +335,7 @@
             {
                 // Transform
                 NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
-                NSString *symbol = transformation ? transformation([self.fileBuffer stringInRange:range]) : [self.fileBuffer stringInRange:range];
+                NSString *symbol = transformation ? transformation([self stringInRange:range]) : [self stringInRange:range];
                 // TODO add preference for icon
                 [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:nil range:range]];
                 return TMUnitVisitResultContinue;
@@ -247,7 +428,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     };
     
     // placeholder body style
-    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
+    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
     
     // Opening and Closing style
     
@@ -256,13 +437,13 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     ECASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     
-    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
-    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
     
     CFRelease(delegateRef);
     
     // Placeholder behaviour
-    [self.fileBuffer addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
+    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
 }
 
 @end

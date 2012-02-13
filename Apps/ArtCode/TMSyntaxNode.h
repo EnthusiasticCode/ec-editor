@@ -7,12 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-@class FileBuffer, OnigRegexp;
+@class CodeFile, OnigRegexp;
 
 @interface TMSyntaxNode : NSObject <NSCopying>
 
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
-+ (TMSyntaxNode *)syntaxForFileBuffer:(FileBuffer *)fileBuffer;
++ (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile;
 
 @property (atomic, weak, readonly) TMSyntaxNode *rootSyntax;
 

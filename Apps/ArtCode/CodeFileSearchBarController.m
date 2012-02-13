@@ -11,7 +11,6 @@
 
 #import "CodeFileController.h"
 #import "CodeFile.h"
-#import "FileBuffer.h"
 #import "NSTimer+BlockTimer.h"
 #import "CodeView.h"
 #import "TextRange.h"
@@ -33,8 +32,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (void)_addFindFilterCodeViewPass;
 - (void)_applyFindFilterAndFlash:(BOOL)shouldFlash;
-- (void)_fileBufferWillChangeNotification:(NSNotification *)notification;
-- (void)_fileBufferDidChangeNotification:(NSNotification *)notification;
 
 @end
 
@@ -123,14 +120,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     [self _addFindFilterCodeViewPass];
     [self _applyFindFilterAndFlash:YES];
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferWillChangeNotification:) name:FileBufferWillReplaceCharactersNotificationName object:self.targetCodeFileController.codeFile.fileBuffer];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_fileBufferDidChangeNotification:) name:FileBufferDidReplaceCharactersNotificationName object:self.targetCodeFileController.codeFile.fileBuffer];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
-{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+{    
     [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
     
     if ([searchFilterMatches count] > 0)
@@ -232,7 +225,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSString *replacementString = self.replaceTextField.text;
     if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
         replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
-    replacementString = [self.targetCodeFileController.codeFile.fileBuffer replacementStringForResult:match offset:0 template:replacementString];
+    replacementString = [self.targetCodeFileController.codeFile replacementStringForResult:match offset:0 template:replacementString];
     
     [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
     [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -267,9 +260,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSInteger offset = 0;
     for (NSTextCheckingResult *match in matches)
     {
-        originalString = [self.targetCodeFileController.codeFile.fileBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
-        replacementRange = [self.targetCodeFileController.codeFile.fileBuffer replaceMatch:match withTemplate:replacementString offset:offset];
-        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.codeFile.fileBuffer] replaceCharactersInRange:replacementRange withString:originalString];
+        originalString = [self.targetCodeFileController.codeFile stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
+        replacementRange = [self.targetCodeFileController.codeFile replaceMatch:match withTemplate:replacementString offset:offset];
+        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.codeFile] replaceCharactersInRange:replacementRange withString:originalString];
         offset += replacementRange.length - [originalString length];
     }
     
@@ -377,7 +370,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
         NSArray *matches = nil;
         if (filterRegExp != nil)
-            matches = [self.targetCodeFileController.codeFile.fileBuffer matchesOfRegexp:filterRegExp options:0];
+            matches = [self.targetCodeFileController.codeFile matchesOfRegexp:filterRegExp options:0];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;
@@ -410,17 +403,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
             findResultLabel.hidden = NO;
         });
     });
-}
-
-- (void)_fileBufferWillChangeNotification:(NSNotification *)notification
-{
-    self.searchFilterMatches = nil;
-}
-
-- (void)_fileBufferDidChangeNotification:(NSNotification *)notification
-{
-    if (!_isReplacing)
-        [self _applyFindFilterAndFlash:NO];
 }
 
 @end
