@@ -78,7 +78,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 + (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile
 {
     ECASSERT(codeFile);
-    static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)){
+    static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)) {
         for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator])
             if (predicateBlock(syntax))
                 return syntax;

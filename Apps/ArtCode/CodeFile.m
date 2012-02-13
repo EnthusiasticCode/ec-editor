@@ -12,15 +12,21 @@
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
+#import "WeakDictionary.h"
+
+static WeakDictionary *_codeFiles;
 
 @interface CodeFile ()
 {
     NSMutableAttributedString *_contents;
     NSMutableArray *_presenters;
+    NSOperationQueue *_parserQueue;
     NSArray *_symbolList;
 }
+@property (nonatomic, strong) TMUnit *codeUnit;
+- (id)_initWithFileURL:(NSURL *)url;
+- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
-
 @end
 
 @interface CodeFileSymbol ()
@@ -29,14 +35,43 @@
 
 @end
 
-#pragma mark - Impementations
+#pragma mark - Implementations
 
 @implementation CodeFile
 
 @synthesize codeUnit = _codeUnit;
 @synthesize theme = _theme;
 
-#pragma mark - Public Properties
++ (void)initialize
+{
+    if (self != [CodeFile class])
+        return;
+    _codeFiles = [[WeakDictionary alloc] init];
+}
+
++ (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *))completionHandler
+{
+    ECASSERT(fileURL);
+    CodeFile *codeFile = [_codeFiles objectForKey:fileURL];
+    if (codeFile)
+        return completionHandler(codeFile);
+    __block BOOL fileExists;
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
+        fileExists = [[[NSFileManager alloc] init] fileExistsAtPath:[newURL path]];
+    }];
+    codeFile = [[self alloc] _initWithFileURL:fileURL];
+    [codeFile openWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            [_codeFiles setObject:codeFile forKey:fileURL];
+            completionHandler(codeFile);
+        }
+        else
+        {
+            completionHandler(nil);
+        }
+    }];
+}
 
 - (TMTheme *)theme
 {
@@ -49,12 +84,48 @@
 
 - (id)initWithFileURL:(NSURL *)url
 {
+    UNIMPLEMENTED();
+}
+
+- (id)_initWithFileURL:(NSURL *)url
+{
     self = [super initWithFileURL:url];
     if (!self)
         return nil;
     _contents = [[NSMutableAttributedString alloc] init];
     _presenters = [[NSMutableArray alloc] init];
+    _parserQueue = [[NSOperationQueue alloc] init];
+    _parserQueue.maxConcurrentOperationCount = 1;
     return self;
+}
+
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    [super openWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            __weak CodeFile *this = self;
+            [_parserQueue addOperationWithBlock:^{
+                if (!this)
+                    return;
+                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:this rootScopeIdentifier:nil];
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    this.codeUnit = codeUnit;
+                }];
+            }];
+        }
+        completionHandler(success);
+    }];
+}
+
+- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
+{
+    [super closeWithCompletionHandler:^(BOOL success) {
+        ECASSERT(success);
+        [_parserQueue cancelAllOperations];
+        self.codeUnit = nil;
+        completionHandler(success);
+    }];
 }
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -149,34 +220,7 @@
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
-    ECASSERT(NSMaxRange(range) <= [_contents length]);
-    // replacing an empty range with an empty string, no change required
-    if (!range.length && ![string length])
-        return;
-    // replacing a substring with an equal string, no change required
-    if ([string isEqualToString:[self stringInRange:range]])
-        return;
-
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string];
-    for (id<CodeFilePresenter>presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
-    if ([string length])
-        [_contents replaceCharactersInRange:range withString:string];
-    else
-        [_contents deleteCharactersInRange:range];
-    [self updateChangeCount:UIDocumentChangeDone];
-    for (id<CodeFilePresenter>presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
+    [self _replaceCharactersInRange:range string:string attributedString:[[NSAttributedString alloc] initWithString:string]];
 }
 
 - (NSAttributedString *)attributedStringInRange:(NSRange)range
@@ -191,33 +235,7 @@
 
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
 {
-    ECASSERT(NSMaxRange(range) <= [_contents length]);
-    // replacing an empty range with an empty string, no change required
-    if (!range.length && ![attributedString length])
-        return;
-    // replacing a substring with an equal string, no change required
-    if ([attributedString isEqualToAttributedString:[self attributedStringInRange:range]])
-        return;
-    NSString *string = [attributedString string];
-    for (id<CodeFilePresenter> presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
-    }
-    if ([attributedString length])
-        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
-    else
-        [_contents deleteCharactersInRange:range];
-    [self updateChangeCount:UIDocumentChangeDone];
-    for (id<CodeFilePresenter> presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
-    }
+    [self _replaceCharactersInRange:range string:[attributedString string] attributedString:attributedString];
 }
 
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
@@ -348,6 +366,38 @@
 }
 
 #pragma mark - Private methods
+
+- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString
+{
+    ECASSERT(NSMaxRange(range) <= [_contents length]);
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![string length])
+        return;
+    // replacing a substring with an equal string, no change required
+    if ([string isEqualToString:[self stringInRange:range]])
+        return;
+    
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+    if ([string length])
+        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+    else
+        [_contents deleteCharactersInRange:range];
+    [self updateChangeCount:UIDocumentChangeDone];
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+
+}
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
     if (refcon)

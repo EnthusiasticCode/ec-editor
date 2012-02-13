@@ -22,12 +22,14 @@ typedef enum {
 
 @interface CodeFile : UIDocument <CodeViewDataSource>
 
++ (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *codeFile))completionHandler;
+
 - (void)addPresenter:(id<CodeFilePresenter>)presenter;
 - (void)removePresenter:(id<CodeFilePresenter>)presenter;
 - (NSArray *)presenters;
 
 @property (nonatomic, strong) TMTheme *theme;
-@property (nonatomic, strong) TMUnit *codeUnit;
+@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 /// Length of the file
 - (NSUInteger)length;

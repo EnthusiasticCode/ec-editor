@@ -133,7 +133,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)visitScopesInRange:(NSRange)range withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
 {
-    static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange){
+    static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange) {
         NSRange intersectionRange = NSIntersectionRange(range, inRange);
         intersectionRange.location -= inRange.location;
         return intersectionRange;
