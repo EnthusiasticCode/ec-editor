@@ -68,6 +68,11 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     _syntaxesWithIdentifier = [_syntaxesWithIdentifier copy];
 }
 
++ (void)preload
+{
+    // nothing done here, the actual preloading is done in initialize, this method is just so a caller has something to call to trigger it without any side effects
+}
+
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier
 {
     if (!scopeIdentifier)

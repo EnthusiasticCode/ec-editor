@@ -72,28 +72,36 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 #pragma mark - Class methods
 
++ (void)initialize
+{
+    if (self != [TMPreference class])
+        return;
+    NSMutableDictionary *preferences = [NSMutableDictionary new];
+    for (NSURL *bundleURL in [TMBundle bundleURLs])
+    {
+        for (NSURL *preferenceURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+        {
+            NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:preferenceURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
+            ECASSERT(plist != nil && "Couldn't load plist");
+            NSString *scopeSelector = [plist objectForKey:@"scope"];
+            if (!scopeSelector)
+                continue;
+            TMPreference *pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:[plist objectForKey:@"settings"]];
+            if ([pref.settings count] == 0)
+                continue;
+            [preferences setObject:pref forKey:scopeSelector];
+        }
+    }
+    systemTMPreferencesDictionary = [preferences copy];
+}
+
++ (void)preload
+{
+    // nothing done here, the actual preloading is done in initialize, this method is just so a caller has something to call to trigger it without any side effects
+}
+
 + (NSDictionary *)allPreferences
 {
-    if (!systemTMPreferencesDictionary)
-    {
-        NSMutableDictionary *preferences = [NSMutableDictionary new];
-        for (NSURL *bundleURL in [TMBundle bundleURLs])
-        {
-            for (NSURL *preferenceURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-            {
-                NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:preferenceURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-                ECASSERT(plist != nil && "Couldn't load plist");
-                NSString *scopeSelector = [plist objectForKey:@"scope"];
-                if (!scopeSelector)
-                    continue;
-                TMPreference *pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:[plist objectForKey:@"settings"]];
-                if ([pref.settings count] == 0)
-                    continue;
-                [preferences setObject:pref forKey:scopeSelector];
-            }
-        }
-        systemTMPreferencesDictionary = [preferences copy];
-    }
     return systemTMPreferencesDictionary;
 }
 

@@ -44,7 +44,7 @@
         _string = [NSString alloc];
     const char *selectorName = sel_getName(aSelector);
     if (strncmp(selectorName, "init", 4) == 0)
-        return self;
+        return nil;
     return _string;
 }
 
