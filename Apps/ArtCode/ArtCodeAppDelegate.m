@@ -103,7 +103,7 @@ CGRect UIKeyboardFrame;
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements
-    [[CodeFlashView appearance] setBackgroundColor:[UIColor redColor]];
+    [[CodeFlashView appearance] setBackgroundColor:[UIColor yellowColor]];
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating main tab controllers

@@ -679,7 +679,7 @@ static void init(CodeView *self)
         [self scrollRectToVisible:CGRectInset(rects.bounds, -100, -100) animated:NO];
     } completion:^(BOOL finished) {
         [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
-            [[CodeFlashView new] flashInRect:rect view:self withDuration:0.15];
+            [[CodeFlashView new] flashInRect:rect view:self withDuration:0.25];
         }];
     }];
 }
@@ -2224,14 +2224,31 @@ static void init(CodeView *self)
 
 #pragma mark - CodeFlashView
 
-@implementation CodeFlashView
+@implementation CodeFlashView {
+    UIImageView *_backgroundImageView;
+}
 
-@synthesize cornerRadius, backgroundImage;
+@synthesize cornerRadius;
 
-- (void)drawRect:(CGRect)rect
-{    
-    if (backgroundImage)
-        [backgroundImage drawInRect:rect];
+- (UIImage *)backgroundImage
+{
+    return _backgroundImageView.image;
+}
+
+- (void)setBackgroundImage:(UIImage *)value
+{
+    if (value == _backgroundImageView.image)
+        return;
+    [self willChangeValueForKey:@"backgroundImage"];
+    if (!_backgroundImageView)
+    {
+        _backgroundImageView = [UIImageView new];
+        _backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _backgroundImageView.frame = self.bounds;
+        [self addSubview:_backgroundImageView];
+    }
+    _backgroundImageView.image = value;
+    [self didChangeValueForKey:@"backgroundImage"];
 }
 
 - (void)flashInRect:(CGRect)rect view:(UIView *)view withDuration:(NSTimeInterval)duration
@@ -2247,7 +2264,7 @@ static void init(CodeView *self)
         self.alpha = 1;
         self.transform = CGAffineTransformMakeScale(1.7, 1.7);
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:duration / 2 delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^{
+        [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^{
             self.alpha = 0;
             self.transform = CGAffineTransformIdentity;
         } completion:^(BOOL finished) {
