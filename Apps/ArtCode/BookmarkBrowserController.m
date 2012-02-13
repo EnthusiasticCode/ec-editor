@@ -26,6 +26,8 @@
 
 @interface BookmarkBrowserController (/*Private methods*/)
 
+@property (nonatomic, strong) NSArray *sortedBookmarks;
+
 - (void)_toolEditDeleteAction:(id)sender;
 
 @end
@@ -79,6 +81,35 @@
     return tableView;
 }
 
+- (NSArray *)sortedBookmarks
+{
+    if (!_sortedBookmarks)
+    {
+        if ([_searchBar.text length])
+        {
+            NSArray *hitMasks = nil;
+            _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:_searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
+                return [bookmark description];
+            }];
+            _sortedBookmarksHitMasks = hitMasks;
+        }
+        else
+        {
+            _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                return [[obj1 description] compare:[obj2 description]];
+            }];
+            _sortedBookmarksHitMasks = nil;
+        }
+    }
+    return _sortedBookmarks;
+}
+
+- (void)setSortedBookmarks:(NSArray *)value
+{
+    _sortedBookmarks = nil;
+    _sortedBookmarksHitMasks = nil;
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -112,7 +143,7 @@
     _infoLabel.shadowColor = [UIColor whiteColor];
     _infoLabel.shadowOffset = CGSizeMake(0, 1);
     self.tableView.tableFooterView = _infoLabel;
-    if ([_sortedBookmarks count] == 0)
+    if ([self.sortedBookmarks count] == 0)
         _infoLabel.text = @"The project has no bookmarks.";
 }
 
@@ -139,7 +170,16 @@
     
     _quickBrowsersPopover = nil;
     
+    self.sortedBookmarks = nil;
+    
     [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.sortedBookmarks = nil;
+    [self.tableView reloadData];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -205,24 +245,17 @@
     
     if ([searchText length] == 0)
     {
-        _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-            return [[obj1 description] compare:[obj2 description]];
-        }];
-        _sortedBookmarksHitMasks = nil;
+        self.sortedBookmarks = nil;
         [self.tableView reloadData];
-        _infoLabel.text = [_sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.artCodeTab.currentProject.name];
+        _infoLabel.text = [self.sortedBookmarks count] ? nil : [NSString stringWithFormat:@"%@ has no bookmarks.", self.artCodeTab.currentProject.name];
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        NSArray *hitMasks = nil;
-        _sortedBookmarks = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:searchText resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
-            return [bookmark description];
-        }];
-        _sortedBookmarksHitMasks = hitMasks;
+        self.sortedBookmarks = nil;
         [self.tableView reloadData];
-        _infoLabel.text = [_sortedBookmarks count] ? nil : @"No results matching the search string.";
+        _infoLabel.text = [self.sortedBookmarks count] ? nil : @"No results matching the search string.";
     } repeats:NO];
 }
 
@@ -230,7 +263,7 @@
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
 {
-    return [_sortedBookmarks count];
+    return [self.sortedBookmarks count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -243,7 +276,7 @@
         cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
-    ProjectBookmark *bookmark = [_sortedBookmarks objectAtIndex:indexPath.row];
+    ProjectBookmark *bookmark = [self.sortedBookmarks objectAtIndex:indexPath.row];
     
     cell.textLabel.text = [bookmark description];
     cell.textLabelHighlightedCharacters = _sortedBookmarksHitMasks ? [_sortedBookmarksHitMasks objectAtIndex:indexPath.row] : nil;
@@ -260,7 +293,7 @@
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[[_sortedBookmarks objectAtIndex:indexPath.row] URL]];
+        [self.artCodeTab pushURL:[[self.sortedBookmarks objectAtIndex:indexPath.row] URL]];
     }
     else
     {
@@ -297,7 +330,7 @@
             [self setEditing:NO animated:YES];
             for (NSIndexPath *indexPath in selectedRows)
             {
-                [self.artCodeTab.currentProject removeBookmark:[_sortedBookmarks objectAtIndex:indexPath.row]];
+                [self.artCodeTab.currentProject removeBookmark:[self.sortedBookmarks objectAtIndex:indexPath.row]];
             }
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
