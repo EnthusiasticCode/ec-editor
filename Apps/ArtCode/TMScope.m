@@ -128,7 +128,13 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (float)_scoreForSearchScope:(NSString *)search
 {
-    return [self _scoreQueryScopeArray:self.identifiersStack forSearchScopeArray:[search componentsSeparatedByString:@" "]];
+    static NSCharacterSet *trimCharacterSet = nil; if (!trimCharacterSet) trimCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" ()"];
+    float score = 0;
+    for (NSString *singleSearch in [search componentsSeparatedByString:@"|"])
+    {
+        score = MAX(score, [self _scoreQueryScopeArray:self.identifiersStack forSearchScopeArray:[[singleSearch stringByTrimmingCharactersInSet:trimCharacterSet] componentsSeparatedByString:@" "]]);
+    }
+    return score;
 }
 
 #define POINT_DEPTH    4.0f
