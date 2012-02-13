@@ -24,6 +24,16 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 @end
 
+@interface TMPreferenceSymbolTransformation : NSObject {
+@public
+    OnigRegexp *regExp;
+    NSString *templateString;
+    BOOL isGlobal;
+}
+
+- (id)initWithRegExp:(OnigRegexp *)exp template:(NSString *)temp isGlobal:(BOOL)glob;
+
+@end
 
 @implementation TMPreference
 
@@ -121,22 +131,38 @@ static NSMutableDictionary *scopeToPreferenceCache;
         transformationSplitter = [NSRegularExpression regularExpressionWithPattern:@"s/(.*?[^\\\\])/(.*?[^\\\\]?)/(g?)" options:0 error:NULL];
 
     // Search transformations
-    NSMutableArray *transformationsRegExp = [NSMutableArray new];
-    NSMutableArray *transformationsTemaplate = [NSMutableArray new];
+    NSMutableArray *transformations = [NSMutableArray new];
     [transformationSplitter enumerateMatchesInString:transformation options:0 range:NSMakeRange(0, [transformation length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
         ECASSERT([result numberOfRanges] == 4);
-        [transformationsRegExp addObject:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]] options:OnigOptionCaptureGroup]];
-        [transformationsTemaplate addObject:[transformation substringWithRange:[result rangeAtIndex:2]]];
+        [transformations addObject:[[TMPreferenceSymbolTransformation alloc] initWithRegExp:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]] options:OnigOptionCaptureGroup] template:[transformation substringWithRange:[result rangeAtIndex:2]] isGlobal:[[transformation substringWithRange:[result rangeAtIndex:3]] length]]];
     }];
     
     // Create block
     return [^NSString *(NSString *symbol) {
         NSMutableString *result = [symbol mutableCopy];
-        [transformationsRegExp enumerateObjectsUsingBlock:^(OnigRegexp *regExp, NSUInteger idx, BOOL *stop) {
-            [regExp gsub:result string:[transformationsTemaplate objectAtIndex:idx]];
-        }];
+        for (TMPreferenceSymbolTransformation *t in transformations) {
+            if (t->isGlobal)
+                [t->regExp gsub:result string:t->templateString];
+            else
+                [t->regExp sub:result string:t->templateString];
+        }
         return result;
     } copy];
+}
+
+@end
+
+@implementation TMPreferenceSymbolTransformation
+
+- (id)initWithRegExp:(OnigRegexp *)exp template:(NSString *)temp isGlobal:(BOOL)glob
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    regExp = exp;
+    templateString = temp;
+    isGlobal = glob;
+    return self;
 }
 
 @end
