@@ -63,6 +63,11 @@ NSMutableDictionary *systemScopesScoreCache;
     [self didChangeValueForKey:@"identifier"];
 }
 
+- (NSString *)description
+{
+    return self.qualifiedIdentifier;
+}
+
 #pragma mark - Initializers
 
 - (TMScope *)newChildScope

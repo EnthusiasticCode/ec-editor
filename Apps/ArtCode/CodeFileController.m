@@ -11,6 +11,7 @@
 #import "CodeFileSearchBarController.h"
 #import "QuickBrowsersContainerController.h"
 #import "UIViewController+PresentingPopoverController.h"
+#import "TopBarTitleControl.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import "BezelAlert.h"
@@ -18,6 +19,7 @@
 #import "TMTheme.h"
 #import "UIColor+Contrast.h"
 #import "UIColor+AppStyle.h"
+#import "NSTimer+BlockTimer.h"
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
@@ -38,6 +40,9 @@
     UIActionSheet *_toolsActionSheet;
     CodeFileSearchBarController *_searchBarController;
     UIPopoverController *_quickBrowsersPopover;
+    
+    NSTimer *_selectionChangeDebounceTimer;
+    NSString *_currentSymbol;
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
@@ -376,6 +381,26 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
+- (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
+{
+#warning TODO insead of doing this, just put a symbol=.. in the URL?
+    if (_currentSymbol)
+    {
+        NSMutableArray *components = [[[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents] mutableCopy];
+        NSString *file = [components objectAtIndex:0];
+        [components removeObjectAtIndex:0];
+        if ([components count] > 0)
+        {
+            [components insertObject:[file stringByDeletingPathExtension] atIndex:0];
+            file = [components lastObject];
+            [components removeLastObject];
+        }
+        [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark - Toolbar Items Actions
 
 - (void)toolButtonAction:(id)sender
@@ -468,6 +493,15 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     [super viewWillAppear:animated];
     [self _layoutChildViews];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Stop the timer started in selectionDidChangeForCodeview:
+    [_selectionChangeDebounceTimer invalidate];
+    _selectionChangeDebounceTimer = nil;
 }
 
 #pragma mark - Controller Methods
@@ -719,7 +753,33 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)selectionDidChangeForCodeView:(CodeView *)codeView
 {
-    // TODO change title and keyboard accessories
+    // Apply debounce to selection change
+    [_selectionChangeDebounceTimer invalidate];
+    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+        // Retrieve the current scope
+        __block TMScope *currentScope = nil;
+        [self.codeFile.codeUnit visitScopesInRange:codeView.selectionRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            // Save the current, deepest scope
+            currentScope = scope;
+            return TMUnitVisitResultRecurse;
+        }];
+        // Set current symbol in title
+        NSString *currentSymbol = nil;
+        for (CodeFileSymbol *symbol in [self.codeFile symbolList])
+        {
+            if (symbol.range.location > currentScope.location)
+                break;
+            currentSymbol = symbol.title;
+        }
+        currentSymbol = [currentSymbol stringByReplacingOccurrencesOfString:@" " withString:@""];
+        if (![currentSymbol isEqualToString:_currentSymbol])
+        {
+            _currentSymbol = currentSymbol;
+            [self.singleTabController updateDefaultToolbarTitle];
+        }
+        // Change accessory keyboard
+        // TODO
+    } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods

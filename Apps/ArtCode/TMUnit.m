@@ -140,6 +140,7 @@ static OnigRegexp *_namedCapturesRegexp;
     TMScope *scope = [self _scope];
     NSRange scopeRange = NSMakeRange(scope.location, scope.length);
     ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
+#warning FIX this scopeRange is 0 if range has length 0
     scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
     TMUnitVisitResult result = block(scope, scopeRange);
     if (result != TMUnitVisitResultRecurse)
