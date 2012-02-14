@@ -26,6 +26,9 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "CodeFile.h"
+#import "TMUnit.h"
+#import "TMScope.h"
+#import "TMPreference.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
@@ -547,22 +550,28 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (*decoration == 0 && line.width < line.height)
         return NO;
     
-    switch ([self.codeFile kindOfTextInRange:range]) {
-        case CodeFileCommentTextKind:
-            *lineColor = [UIColor styleMinimapCommentColor];
-            break;
-            
-        case CodeFilePreprocessorTextKind:
-            *lineColor = [UIColor styleMinimapPreprocessorColor];
-            break;
-            
-        case CodeFileSymbolTextKind:
-            *lineColor = [UIColor styleMinimapSymbolColor];
-            break;
-            
-        default:
-            break;
-    }
+    __block UIColor *color = *lineColor;
+    [self.codeFile.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
+        if (scopeRange.length <= 2)
+            return TMUnitVisitResultRecurse;
+        if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)
+        {
+            color = [UIColor styleMinimapPreprocessorColor];
+            return TMUnitVisitResultBreak;
+        }
+        if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
+        {
+            color = [UIColor styleMinimapSymbolColor];
+            return TMUnitVisitResultBreak;
+        }
+        if ([scope.qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound)
+        {
+            color = [UIColor styleMinimapCommentColor];
+            return TMUnitVisitResultBreak;
+        }
+        return TMUnitVisitResultRecurse;
+    }];
+    *lineColor = color;
     
     return YES;
 }

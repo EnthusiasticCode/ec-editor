@@ -13,13 +13,6 @@
 
 @class TMTheme, CodeFileSymbol, TMUnit;
 
-typedef enum {
-    CodeFileNormalTextKind,
-    CodeFileCommentTextKind,
-    CodeFilePreprocessorTextKind,
-    CodeFileSymbolTextKind
-} CodeFileTextKind;
-
 @interface CodeFile : UIDocument <CodeViewDataSource>
 
 + (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *codeFile))completionHandler;
@@ -70,10 +63,6 @@ typedef enum {
 /// After the replacement occurs, the file file could be changed in a way that invalidates matches found before the replacement took place. For this reason, the offset paramenter can be used to specify that the match location should be offsetted by the given amount.
 /// Returns the range of the replaced text after the replacement.
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset;
-
-/// Returns a generic kind specification of the text in the given range.
-/// This method is used to color minimap lines.
-- (CodeFileTextKind)kindOfTextInRange:(NSRange)range;
 
 /// Returns an array of CodeFileSymbol objects representing all the symbols in the file.
 - (NSArray *)symbolList;

@@ -346,32 +346,6 @@ static WeakDictionary *_codeFiles;
     return replacementRange;
 }
 
-- (CodeFileTextKind)kindOfTextInRange:(NSRange)range
-{
-    __block CodeFileTextKind result = CodeFileNormalTextKind;
-    [self.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
-        if (scopeRange.length <= 2)
-            return TMUnitVisitResultRecurse;
-        if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)
-        {
-            result = CodeFilePreprocessorTextKind;
-            return TMUnitVisitResultBreak;
-        }
-        if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
-        {
-            result = CodeFileSymbolTextKind;
-            return TMUnitVisitResultBreak;
-        }
-        if ([scope.qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound)
-        {
-            result = CodeFileCommentTextKind;
-            return TMUnitVisitResultBreak;
-        }
-        return TMUnitVisitResultRecurse;
-    }];
-    return result;
-}
-
 - (NSArray *)symbolList
 {
     if (!_symbolList)
