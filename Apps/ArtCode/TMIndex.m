@@ -10,7 +10,6 @@
 #import "TMUnit+Internal.h"
 #import "TMSyntaxNode.h"
 #import "Cache.h"
-#import "FileBuffer.h"
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -47,16 +46,16 @@ static NSMutableDictionary *_extensionClasses;
     return self;
 }
 
-- (TMUnit *)codeUnitForFileBuffer:(FileBuffer *)fileBuffer rootScopeIdentifier:(NSString *)rootScopeIdentifier
+- (TMUnit *)codeUnitForCodeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     if (!rootScopeIdentifier)
-        rootScopeIdentifier = [TMSyntaxNode syntaxForFileBuffer:fileBuffer].scopeName;
-    id cacheKey = [self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier];
+        rootScopeIdentifier = [TMSyntaxNode syntaxForCodeFile:codeFile].scopeName;
+    id cacheKey = [self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier];
     TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)
     {
-        codeUnit = [[TMUnit alloc] initWithIndex:self fileBuffer:fileBuffer rootScopeIdentifier:rootScopeIdentifier];
-        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[fileBuffer fileURL] scope:rootScopeIdentifier]];
+        codeUnit = [[TMUnit alloc] initWithIndex:self codeFile:codeFile rootScopeIdentifier:rootScopeIdentifier];
+        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier]];
     }
     return codeUnit;
 }

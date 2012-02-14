@@ -10,9 +10,7 @@
 
 @interface TMBundle : NSObject
 
-/// The directory where language bundles are saved, defaults to the application's main bundle directory
-+ (NSURL *)bundleDirectory;
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory;
++ (void)preload;
 
 /// An array containing URLs for all bundles in the set bundle directory
 + (NSArray *)bundleURLs;

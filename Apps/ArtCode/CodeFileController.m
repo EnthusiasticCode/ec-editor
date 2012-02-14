@@ -13,7 +13,6 @@
 #import "UIViewController+PresentingPopoverController.h"
 
 #import <QuartzCore/QuartzCore.h>
-#import "FileBuffer.h"
 #import "BezelAlert.h"
 #import "TabController.h"
 #import "TMTheme.h"
@@ -49,8 +48,6 @@
     
     /// The index of the accessory item action currently being performed.
     NSInteger _keyboardAccessoryItemCurrentActionIndex;
-    
-    NSOperationQueue *_consumerOperationQueue;
 }
 
 @property (nonatomic, strong) CodeView *codeView;
@@ -264,28 +261,32 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (fileURL == _fileURL)
         return;
     
+    self.loading = YES;
     [self willChangeValueForKey:@"fileURL"];
     
     _fileURL = fileURL;
     if (fileURL)
-        self.codeFile = [[CodeFile alloc] initWithFileURL:fileURL];
+        [CodeFile codeFileWithFileURL:fileURL completionHandler:^(CodeFile *codeFile) {
+            self.codeFile = codeFile;
+
+            // Update CodeView environment settings
+            if (self.codeFile)
+            {
+                UIColor *color = nil;
+                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+                self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+                self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
+                self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
+                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+                self.codeView.caretColor = color ? color : [UIColor blackColor];
+                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+                self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
+            }
+            self.loading = NO;
+        }];
     else
         self.codeFile = nil;
-    
-    // Update CodeView environment settings
-    if (self.codeFile)
-    {
-        UIColor *color = nil;
-        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
-        self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
-        self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
-        self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
-        self.codeView.caretColor = color ? color : [UIColor blackColor];
-        color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
-        self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
-    }
-    
+        
     [self didChangeValueForKey:@"fileURL"];
 }
 
@@ -296,17 +297,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     
     [self willChangeValueForKey:@"codeFile"];
     
-    [_codeFile.fileBuffer removeConsumer:self];
+    [_codeFile removePresenter:self];
     _codeFile = codeFile;
-    if (!_consumerOperationQueue)
-    {
-        _consumerOperationQueue = [[NSOperationQueue alloc] init];
-        _consumerOperationQueue.maxConcurrentOperationCount = 1;
-    }
-    else
-        [_consumerOperationQueue cancelAllOperations];
     _codeView.dataSource = _codeFile;
-    [_codeFile.fileBuffer addConsumer:self];
+    [_codeView updateAllText];
+    [_codeFile addPresenter:self];
     
     [self _loadWebPreviewContentAndTitle];
     
@@ -578,19 +573,16 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return NO;
 }
 
-#pragma mark - FileBufferConsumer
+#pragma mark - CodeFilePresenter
 
-- (NSOperationQueue *)consumerOperationQueue
+- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
-    ECASSERT(_consumerOperationQueue);
-    return _consumerOperationQueue;
+    [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
-- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
+- (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
-    }];
+    [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -780,7 +772,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if ([self _isWebPreview] && self.codeFile)
     {
-        [self.webView loadHTMLString:[self.codeFile.fileBuffer string] baseURL:self.fileURL];
+        [self.webView loadHTMLString:[self.codeFile string] baseURL:self.fileURL];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     }
     else

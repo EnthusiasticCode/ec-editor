@@ -7,7 +7,7 @@
 //
 
 #import "TMIndex.h"
-@class FileBuffer;
+@class CodeFile;
 
 @interface TMIndex (Internal)
 

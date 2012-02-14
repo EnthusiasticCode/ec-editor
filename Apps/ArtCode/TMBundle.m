@@ -10,45 +10,32 @@
 
 static NSString * const _bundleExtension = @"tmbundle";
 
-static NSURL *_bundleDirectory;
 static NSArray *_bundleURLs;
-
-@interface TMBundle ()
-{
-    NSURL *_bundleURL;
-}
-@end
 
 @implementation TMBundle
 
-#pragma mark - Properties
-
-+ (NSURL *)bundleDirectory
++ (void)initialize
 {
-    if (!_bundleDirectory)
-        _bundleDirectory = [[NSBundle mainBundle] bundleURL];
-    return _bundleDirectory;
+    if (self != [TMBundle class])
+        return;
+    NSMutableArray *bundleURLs = [NSMutableArray array];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[[NSBundle mainBundle] bundleURL] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    {
+        if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
+            continue;
+        [bundleURLs addObject:bundleURL];
+    }
+    _bundleURLs = [bundleURLs copy];    
 }
 
-+ (void)setBundleDirectory:(NSURL *)bundleDirectory
++ (void)preload
 {
-    _bundleDirectory = bundleDirectory;
+    // nothing done here, the actual preloading is done in initialize, this method is just so a caller has something to call to trigger it without any side effects
 }
 
 + (NSArray *)bundleURLs
 {
-    if (!_bundleURLs)
-    {
-        NSMutableArray *bundleURLs = [NSMutableArray array];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[self bundleDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-        {
-            if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
-                continue;
-            [bundleURLs addObject:bundleURL];
-        }
-        _bundleURLs = [bundleURLs copy];
-    }
     return _bundleURLs;
 }
 

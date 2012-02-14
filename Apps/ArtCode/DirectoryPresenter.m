@@ -7,7 +7,6 @@
 //
 
 #import "DirectoryPresenter.h"
-#import "NSOperationQueue+BlockWait.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSURL+Compare.h"
 #import <objc/runtime.h>

@@ -79,7 +79,6 @@
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
 		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
-		B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */; };
 		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
 		B7DD436614E0973E0057DDB4 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436014E0971C0057DDB4 /* libConnection.a */; };
 		B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
@@ -101,7 +100,6 @@
 		B7FB79C814D604FA0080A714 /* Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C414D604FA0080A714 /* Cache.m */; };
 		B7FB79C914D604FA0080A714 /* RectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C614D604FA0080A714 /* RectSet.m */; };
 		B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */; };
-		B7FB79D014D6056B0080A714 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CE14D6056B0080A714 /* FileBuffer.m */; };
 		B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D314D605FA0080A714 /* CodeView.m */; };
 		B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D714D605FA0080A714 /* KeyboardAccessoryView.m */; };
 		B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D914D605FA0080A714 /* TextPosition.m */; };
@@ -339,8 +337,6 @@
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
 		B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFilteredDirectoryPresenter.h; sourceTree = "<group>"; };
 		B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFilteredDirectoryPresenter.m; sourceTree = "<group>"; };
-		B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+BlockWait.h"; sourceTree = "<group>"; };
-		B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+BlockWait.m"; sourceTree = "<group>"; };
 		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
 		B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Compare.m"; sourceTree = "<group>"; };
 		B7DD435414E0971B0057DDB4 /* Connection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Connection.xcodeproj; path = ../ThirdParty/Connection/Connection.xcodeproj; sourceTree = "<group>"; };
@@ -381,8 +377,6 @@
 		B7FB79C614D604FA0080A714 /* RectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RectSet.m; sourceTree = "<group>"; };
 		B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryPresenter.h; sourceTree = "<group>"; };
 		B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryPresenter.m; sourceTree = "<group>"; };
-		B7FB79CD14D6056B0080A714 /* FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileBuffer.h; sourceTree = "<group>"; };
-		B7FB79CE14D6056B0080A714 /* FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBuffer.m; sourceTree = "<group>"; };
 		B7FB79D214D605FA0080A714 /* CodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeView.h; sourceTree = "<group>"; };
 		B7FB79D314D605FA0080A714 /* CodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeView.m; sourceTree = "<group>"; };
 		B7FB79D614D605FA0080A714 /* KeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardAccessoryView.h; sourceTree = "<group>"; };
@@ -735,8 +729,6 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B7D9C79514D7181F0092AA04 /* NSOperationQueue+BlockWait.h */,
-				B7D9C79614D7181F0092AA04 /* NSOperationQueue+BlockWait.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
 				B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */,
 				B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */,
@@ -822,8 +814,6 @@
 				B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */,
 				B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */,
 				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
-				B7FB79CD14D6056B0080A714 /* FileBuffer.h */,
-				B7FB79CE14D6056B0080A714 /* FileBuffer.m */,
 			);
 			name = Filesystem;
 			sourceTree = "<group>";
@@ -1613,7 +1603,6 @@
 				B7FB79C814D604FA0080A714 /* Cache.m in Sources */,
 				B7FB79C914D604FA0080A714 /* RectSet.m in Sources */,
 				B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */,
-				B7FB79D014D6056B0080A714 /* FileBuffer.m in Sources */,
 				B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */,
 				B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */,
 				B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */,
@@ -1644,7 +1633,6 @@
 				CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
 				B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */,
-				B7D9C79714D7181F0092AA04 /* NSOperationQueue+BlockWait.m in Sources */,
 				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
 				B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */,
 				B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */,

@@ -6,8 +6,9 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileBuffer.h"
+#import <Foundation/Foundation.h>
 #import <clang-c/Index.h>
+#import "CodeFile.h"
 @class TMIndex, TMScope;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
@@ -26,13 +27,13 @@ typedef enum
 } TMUnitVisitResult;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface TMUnit : NSObject <FileBufferConsumer>
+@interface TMUnit : NSObject <CodeFilePresenter>
 
 /// The code index that generated the code unit.
 - (TMIndex *)index;
 
 /// The main source file the unit is interpreting.
-- (FileBuffer *)fileBuffer;
+- (CodeFile *)codeFile;
 
 - (NSString *)rootScopeIdentifier;
 
