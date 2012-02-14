@@ -22,7 +22,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface TMUnit ()
 {
-    NSOperationQueue *_consumerOperationQueue;
     TMIndex *_index;
     CodeFile *_codeFile;
     NSString *_rootScopeIdentifier;
@@ -70,7 +69,6 @@ static OnigRegexp *_namedCapturesRegexp;
     self = [super init];
     if (!self)
         return nil;
-    _consumerOperationQueue = [NSOperationQueue currentQueue];
     _index = index;
     _codeFile = codeFile;
     [_codeFile addPresenter:self];

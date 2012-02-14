@@ -49,6 +49,7 @@ typedef enum {
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
 
 /// Line ranges and offsets
 - (NSRange)lineRangeForRange:(NSRange)range;

@@ -13,12 +13,18 @@
 #import "TMScope.h"
 #import "TMPreference.h"
 #import "WeakDictionary.h"
+#import <libkern/OSAtomic.h>
 
 static WeakDictionary *_codeFiles;
 
 @interface CodeFile ()
 {
     NSMutableAttributedString *_contents;
+    // counter for the contents generation, incremented atomically every time the contents string is changed, but not when the attributes are
+    // it's not really necessary to increment it atomically at the moment, because it's only done within the spinlock
+    int32_t _contentsGenerationCounter;
+    // spin lock to access the contents. always call contents within this lock
+    OSSpinLock _contentsLock;
     NSMutableArray *_presenters;
     NSOperationQueue *_parserQueue;
     NSArray *_symbolList;
@@ -26,6 +32,7 @@ static WeakDictionary *_codeFiles;
 @property (nonatomic, strong) TMUnit *codeUnit;
 - (id)_initWithFileURL:(NSURL *)url;
 - (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString;
+- (void)_reparseFile;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
 @end
 
@@ -93,6 +100,7 @@ static WeakDictionary *_codeFiles;
     if (!self)
         return nil;
     _contents = [[NSMutableAttributedString alloc] init];
+    _contentsLock = OS_SPINLOCK_INIT;
     _presenters = [[NSMutableArray alloc] init];
     _parserQueue = [[NSOperationQueue alloc] init];
     _parserQueue.maxConcurrentOperationCount = 1;
@@ -111,6 +119,7 @@ static WeakDictionary *_codeFiles;
                 TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:this rootScopeIdentifier:nil];
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                     this.codeUnit = codeUnit;
+                    [this _reparseFile];
                 }];
             }];
         }
@@ -130,12 +139,19 @@ static WeakDictionary *_codeFiles;
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    return [[_contents string] dataUsingEncoding:NSUTF8StringEncoding];
+    OSSpinLockLock(&_contentsLock);
+    NSData *contentsData = [[_contents string] dataUsingEncoding:NSUTF8StringEncoding];
+    OSSpinLockUnlock(&_contentsLock);
+    return contentsData;
 }
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    _contents = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+    NSMutableAttributedString *contentsString = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+    OSSpinLockLock(&_contentsLock);
+    _contents = contentsString;
+    OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
+    OSSpinLockUnlock(&_contentsLock);
     return YES;
 }
 
@@ -148,25 +164,7 @@ static WeakDictionary *_codeFiles;
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedStringInRange:stringRange]];
-    // Add text coloring
-    [attributedString addAttributes:[self.theme commonAttributes] range:NSMakeRange(0, [attributedString length])];
-    [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-        NSDictionary *attributes = [self.theme attributesForScope:scope];
-        if ([attributes count])
-            [attributedString addAttributes:attributes range:range];
-        return TMUnitVisitResultRecurse;
-    }];
-    // Add placeholders styles
-    static NSRegularExpression *placeholderRegExp = nil;
-    if (!placeholderRegExp)
-        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
-    {
-#warning TODO NIK fix this, the method modify the file buffer, not attributedString.
-        [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
-    }
-    return attributedString;
+    return [self attributedStringInRange:stringRange];
 }
 
 - (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
@@ -205,17 +203,26 @@ static WeakDictionary *_codeFiles;
 
 - (NSUInteger)length
 {
-    return [_contents length];
+    OSSpinLockLock(&_contentsLock);
+    NSUInteger length = [_contents length];
+    OSSpinLockUnlock(&_contentsLock);
+    return length;
 }
 
 - (NSString *)stringInRange:(NSRange)range
 {
-    return [[_contents string] substringWithRange:range];
+    OSSpinLockLock(&_contentsLock);
+    NSString *string = [[_contents string] substringWithRange:range];
+    OSSpinLockUnlock(&_contentsLock);
+    return string;
 }
 
 - (NSString *)string
 {
-    return [[_contents string] copy];
+    OSSpinLockLock(&_contentsLock);
+    NSString *string = [[_contents string] copy];
+    OSSpinLockUnlock(&_contentsLock);
+    return string;
 }
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
@@ -225,12 +232,18 @@ static WeakDictionary *_codeFiles;
 
 - (NSAttributedString *)attributedStringInRange:(NSRange)range
 {
-    return [_contents attributedSubstringFromRange:range];
+    OSSpinLockLock(&_contentsLock);
+    NSAttributedString *attributedString = [_contents attributedSubstringFromRange:range];
+    OSSpinLockUnlock(&_contentsLock);
+    return attributedString;
 }
 
 - (NSAttributedString *)attributedString
 {
-    return [_contents copy];
+    OSSpinLockLock(&_contentsLock);
+    NSAttributedString *attributedString = [_contents copy];
+    OSSpinLockUnlock(&_contentsLock);
+    return attributedString;
 }
 
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
@@ -240,13 +253,14 @@ static WeakDictionary *_codeFiles;
 
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
-    ECASSERT(NSMaxRange(range) <= [_contents length]);
     if (![attributes count] || !range.length)
         return;
     for (id<CodeFilePresenter> presenter in _presenters)
         if ([presenter respondsToSelector:@selector(codeFile:willAddAttributes:range:)])
             [presenter codeFile:self willAddAttributes:attributes range:range];
+    OSSpinLockLock(&_contentsLock);
     [_contents addAttributes:attributes range:range];
+    OSSpinLockUnlock(&_contentsLock);
     for (id<CodeFilePresenter> presenter in _presenters)
         if ([presenter respondsToSelector:@selector(codeFile:didAddAttributes:range:)])
             [presenter codeFile:self didAddAttributes:attributes range:range];
@@ -254,14 +268,15 @@ static WeakDictionary *_codeFiles;
 
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range
 {
-    ECASSERT(NSMaxRange(range) <= [_contents length]);
     if (![attributeNames count] || !range.length)
         return;
     for (id<CodeFilePresenter> presenter in _presenters)
         if ([presenter respondsToSelector:@selector(codeFile:willRemoveAttributes:range:)])
             [presenter codeFile:self willRemoveAttributes:attributeNames range:range];
+    OSSpinLockLock(&_contentsLock);
     for (NSString *attributeName in attributeNames)
         [_contents removeAttribute:attributeName range:range];
+    OSSpinLockUnlock(&_contentsLock);
     for (id<CodeFilePresenter> presenter in _presenters)
         if ([presenter respondsToSelector:@selector(codeFile:didRemoveAttributes:range:)])
             [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
@@ -269,10 +284,21 @@ static WeakDictionary *_codeFiles;
 
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
 {
-    ECASSERT(location < [_contents length]);
     id attribute = nil;
     NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
-    attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [_contents length])];
+    attribute = [self attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [self length])];
+    if (range)
+        *range = longestEffectiveRange;
+    return attribute;
+}
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit
+{
+    id attribute = nil;
+    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
+    OSSpinLockLock(&_contentsLock);
+    attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:rangeLimit];
+    OSSpinLockUnlock(&_contentsLock);
     if (range)
         *range = longestEffectiveRange;
     return attribute;
@@ -280,17 +306,20 @@ static WeakDictionary *_codeFiles;
 
 - (NSRange)lineRangeForRange:(NSRange)range
 {
-    return [[_contents string] lineRangeForRange:range];
+    OSSpinLockLock(&_contentsLock);
+    NSRange lineRange = [[_contents string] lineRangeForRange:range];
+    OSSpinLockUnlock(&_contentsLock);
+    return lineRange;
 }
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
-    return [regexp numberOfMatchesInString:[_contents string] options:options range:range];
+    return [regexp numberOfMatchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
-    return [regexp matchesInString:[_contents string] options:options range:range];
+    return [regexp matchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options
@@ -300,7 +329,7 @@ static WeakDictionary *_codeFiles;
 
 - (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate
 {
-    return [result.regularExpression replacementStringForResult:result inString:[_contents string] offset:offset template:replacementTemplate];
+    return [result.regularExpression replacementStringForResult:result inString:[self string] offset:offset template:replacementTemplate];
 }
 
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
@@ -369,7 +398,6 @@ static WeakDictionary *_codeFiles;
 
 - (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString
 {
-    ECASSERT(NSMaxRange(range) <= [_contents length]);
     // replacing an empty range with an empty string, no change required
     if (!range.length && ![string length])
         return;
@@ -385,9 +413,19 @@ static WeakDictionary *_codeFiles;
             [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
     }
     if ([string length])
+    {
+        OSSpinLockLock(&_contentsLock);
         [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
+        OSSpinLockUnlock(&_contentsLock);
+    }
     else
+    {
+        OSSpinLockLock(&_contentsLock);
         [_contents deleteCharactersInRange:range];
+        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
+        OSSpinLockUnlock(&_contentsLock);
+    }
     [self updateChangeCount:UIDocumentChangeDone];
     for (id<CodeFilePresenter>presenter in _presenters)
     {
@@ -396,7 +434,52 @@ static WeakDictionary *_codeFiles;
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
             [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
     }
+    [self _reparseFile];
+}
 
+- (void)_reparseFile
+{
+    int32_t currentGeneration = _contentsGenerationCounter;
+#warning TODO this code is a mess, reading and writing the contents without checking generation or locking, it's also using a strong self which could lead to retain cycles, even though short, a better solution would be to pass in a weak self, pass it to a strong variable again, and check variable for null before dereferencing like we did in that other file, I'm leaving it as it is for now since it's only temporary code
+    [_parserQueue addOperationWithBlock:^{
+        if (self->_contentsGenerationCounter != currentGeneration)
+            return;
+        [self addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [self length])];
+        // Add text coloring
+        [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            NSDictionary *attributes = [self.theme attributesForScope:scope];
+            if ([attributes count])
+            {
+                if (self->_contentsGenerationCounter != currentGeneration)
+                    return TMUnitVisitResultBreak;
+                [self addAttributes:attributes range:range];
+                if (self->_contentsGenerationCounter != currentGeneration)
+                    return TMUnitVisitResultBreak;
+            }
+            return TMUnitVisitResultRecurse;
+        }];
+        if (self->_contentsGenerationCounter != currentGeneration)
+            return;
+        // Add placeholders styles
+        static NSRegularExpression *placeholderRegExp = nil;
+        if (!placeholderRegExp)
+            placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+        if (self->_contentsGenerationCounter != currentGeneration)
+            return;
+        for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
+        {
+            if (self->_contentsGenerationCounter != currentGeneration)
+                return;
+            [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+            if (self->_contentsGenerationCounter != currentGeneration)
+                return;
+        }
+        [[NSOperationQueue currentQueue] addOperationWithBlock:^{
+            for (id<CodeFilePresenter>presenter in self.presenters)
+                if ([presenter respondsToSelector:@selector(codeFile:willAddAttributes:range:)])
+                    [presenter codeFile:self willAddAttributes:nil range:NSMakeRange(0, [self length])];
+        }];
+    }];
 }
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
