@@ -24,30 +24,27 @@
 @property (nonatomic, strong) TMTheme *theme;
 @property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
-/// Length of the file
+#pragma mark - String content reading methods
 - (NSUInteger)length;
-/// Retrieves string made by a subrange of the file's character. The given range must be fully contained in the file's character range.
-- (NSString *)stringInRange:(NSRange)range;
 - (NSString *)string;
+- (NSString *)stringInRange:(NSRange)range;
+- (NSRange)lineRangeForRange:(NSRange)range;
 
-/// Replace the characters in a given range with a given string.
-/// Pass a range of length 0 to insert characters, pass a string of length 0 to delete characters.
-- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
-
-/// Attributed methods
-- (NSAttributedString *)attributedStringInRange:(NSRange)range;
+#pragma mark - Attributed string content reading methods
 - (NSAttributedString *)attributedString;
-- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString;
-
-- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
+- (NSAttributedString *)attributedStringInRange:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
 
-/// Line ranges and offsets
-- (NSRange)lineRangeForRange:(NSRange)range;
+#pragma mark - String content writing methods
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 
-/// Find and replace functionality
+#pragma mark - Attributed string content writing methods
+- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString;
+- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
+- (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
+
+#pragma mark - Find and replace functionality
 #warning TODO replace all these with methods based on OnigRegexp
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
 

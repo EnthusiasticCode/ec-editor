@@ -31,9 +31,10 @@ static WeakDictionary *_codeFiles;
 }
 @property (nonatomic, strong) TMUnit *codeUnit;
 - (id)_initWithFileURL:(NSURL *)url;
-- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString;
 - (void)_reparseFile;
 - (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
+// Private content methods
+- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString;
 @end
 
 @interface CodeFileSymbol ()
@@ -208,20 +209,14 @@ static WeakDictionary *_codeFiles;
     return [_presenters copy];
 }
 
+#pragma mark - String content reading methods
+
 - (NSUInteger)length
 {
     OSSpinLockLock(&_contentsLock);
     NSUInteger length = [_contents length];
     OSSpinLockUnlock(&_contentsLock);
     return length;
-}
-
-- (NSString *)stringInRange:(NSRange)range
-{
-    OSSpinLockLock(&_contentsLock);
-    NSString *string = [[_contents string] substringWithRange:range];
-    OSSpinLockUnlock(&_contentsLock);
-    return string;
 }
 
 - (NSString *)string
@@ -232,10 +227,30 @@ static WeakDictionary *_codeFiles;
     return string;
 }
 
-- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
+- (NSString *)stringInRange:(NSRange)range
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [self _replaceCharactersInRange:range string:string attributedString:[[NSAttributedString alloc] initWithString:string]];
+    OSSpinLockLock(&_contentsLock);
+    NSString *string = [[_contents string] substringWithRange:range];
+    OSSpinLockUnlock(&_contentsLock);
+    return string;
+}
+
+- (NSRange)lineRangeForRange:(NSRange)range
+{
+    OSSpinLockLock(&_contentsLock);
+    NSRange lineRange = [[_contents string] lineRangeForRange:range];
+    OSSpinLockUnlock(&_contentsLock);
+    return lineRange;
+}
+
+#pragma mark - Attributed string content reading methods
+
+- (NSAttributedString *)attributedString
+{
+    OSSpinLockLock(&_contentsLock);
+    NSAttributedString *attributedString = [_contents copy];
+    OSSpinLockUnlock(&_contentsLock);
+    return attributedString;
 }
 
 - (NSAttributedString *)attributedStringInRange:(NSRange)range
@@ -246,13 +261,37 @@ static WeakDictionary *_codeFiles;
     return attributedString;
 }
 
-- (NSAttributedString *)attributedString
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
 {
-    OSSpinLockLock(&_contentsLock);
-    NSAttributedString *attributedString = [_contents copy];
-    OSSpinLockUnlock(&_contentsLock);
-    return attributedString;
+    id attribute = nil;
+    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
+    attribute = [self attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [self length])];
+    if (range)
+        *range = longestEffectiveRange;
+    return attribute;
 }
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit
+{
+    id attribute = nil;
+    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
+    OSSpinLockLock(&_contentsLock);
+    attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:rangeLimit];
+    OSSpinLockUnlock(&_contentsLock);
+    if (range)
+        *range = longestEffectiveRange;
+    return attribute;
+}
+
+#pragma mark - String content writing methods
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
+{
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    [self _replaceCharactersInRange:range string:string attributedString:[[NSAttributedString alloc] initWithString:string]];
+}
+
+#pragma mark - Attributed string content writing methods
 
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
 {
@@ -293,35 +332,51 @@ static WeakDictionary *_codeFiles;
             [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
 }
 
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range
+#pragma mark - Private content methods
+
+- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString
 {
-    id attribute = nil;
-    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
-    attribute = [self attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:NSMakeRange(0, [self length])];
-    if (range)
-        *range = longestEffectiveRange;
-    return attribute;
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![string length])
+        return;
+    // replacing a substring with an equal string, no change required
+    if ([string isEqualToString:[self stringInRange:range]])
+        return;
+    
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+    if ([string length])
+    {
+        OSSpinLockLock(&_contentsLock);
+        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
+        OSSpinLockUnlock(&_contentsLock);
+    }
+    else
+    {
+        OSSpinLockLock(&_contentsLock);
+        [_contents deleteCharactersInRange:range];
+        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
+        OSSpinLockUnlock(&_contentsLock);
+    }
+    [self updateChangeCount:UIDocumentChangeDone];
+    for (id<CodeFilePresenter>presenter in _presenters)
+    {
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
+        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
+            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+    [self _reparseFile];
 }
 
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit
-{
-    id attribute = nil;
-    NSRange longestEffectiveRange = NSMakeRange(NSNotFound, 0);
-    OSSpinLockLock(&_contentsLock);
-    attribute = [_contents attribute:attrName atIndex:location longestEffectiveRange:(NSRangePointer)&longestEffectiveRange inRange:rangeLimit];
-    OSSpinLockUnlock(&_contentsLock);
-    if (range)
-        *range = longestEffectiveRange;
-    return attribute;
-}
-
-- (NSRange)lineRangeForRange:(NSRange)range
-{
-    OSSpinLockLock(&_contentsLock);
-    NSRange lineRange = [[_contents string] lineRangeForRange:range];
-    OSSpinLockUnlock(&_contentsLock);
-    return lineRange;
-}
+#pragma mark - Find and replace functionality
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
@@ -385,48 +440,6 @@ static WeakDictionary *_codeFiles;
 }
 
 #pragma mark - Private methods
-
-- (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    // replacing an empty range with an empty string, no change required
-    if (!range.length && ![string length])
-        return;
-    // replacing a substring with an equal string, no change required
-    if ([string isEqualToString:[self stringInRange:range]])
-        return;
-    
-    for (id<CodeFilePresenter>presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
-        if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
-    if ([string length])
-    {
-        OSSpinLockLock(&_contentsLock);
-        [_contents replaceCharactersInRange:range withAttributedString:attributedString];
-        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
-        OSSpinLockUnlock(&_contentsLock);
-    }
-    else
-    {
-        OSSpinLockLock(&_contentsLock);
-        [_contents deleteCharactersInRange:range];
-        OSAtomicIncrement32Barrier(&_contentsGenerationCounter);
-        OSSpinLockUnlock(&_contentsLock);
-    }
-    [self updateChangeCount:UIDocumentChangeDone];
-    for (id<CodeFilePresenter>presenter in _presenters)
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
-    [self _reparseFile];
-}
 
 - (void)_reparseFile
 {
