@@ -20,8 +20,6 @@ extern NSString * const TMPreferenceSymbolTransformationKey;
 /// Preferences are stored in a per scope selector base.
 @interface TMPreference : NSObject
 
-+ (void)preload;
-
 #pragma mark Accessing preference definition
 
 /// The scope selector that indicates which scopes are affected by this preference.

@@ -11,8 +11,6 @@
 
 @interface TMSyntaxNode : NSObject <NSCopying>
 
-+ (void)preload;
-
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
 + (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile;
 

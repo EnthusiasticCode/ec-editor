@@ -71,7 +71,6 @@ static OnigRegexp *_namedCapturesRegexp;
         return nil;
     _index = index;
     _codeFile = codeFile;
-    [_codeFile addPresenter:self];
     if (rootScopeIdentifier)
     {
         _rootScopeIdentifier = rootScopeIdentifier;
@@ -97,11 +96,6 @@ static OnigRegexp *_namedCapturesRegexp;
         }];
     }];
     return self;
-}
-
-- (void)dealloc
-{
-    [_codeFile removePresenter:self];
 }
 
 - (TMIndex *)index

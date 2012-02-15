@@ -27,7 +27,7 @@ typedef enum
 } TMUnitVisitResult;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface TMUnit : NSObject <CodeFilePresenter>
+@interface TMUnit : NSObject
 
 /// The code index that generated the code unit.
 - (TMIndex *)index;

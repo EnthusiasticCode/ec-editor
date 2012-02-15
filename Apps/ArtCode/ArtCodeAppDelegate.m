@@ -26,9 +26,6 @@
 #import "ArtCodeProject.h"
 #import "CodeFile.h"
 
-#import "TMBundle.h"
-#import "TMSyntaxNode.h"
-#import "TMPreference.h"
 #import "TMScope.h"
 
 CGRect UIKeyboardFrame;
@@ -44,12 +41,6 @@ CGRect UIKeyboardFrame;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Preload data in background
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-        [TMBundle preload];
-        [TMSyntaxNode preload];
-        [TMPreference preload];
-    });
     UIFont *defaultFont = [UIFont styleFontWithSize:14];
 
     ////////////////////////////////////////////////////////////////////////////

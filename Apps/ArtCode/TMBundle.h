@@ -10,8 +10,6 @@
 
 @interface TMBundle : NSObject
 
-+ (void)preload;
-
 /// An array containing URLs for all bundles in the set bundle directory
 + (NSArray *)bundleURLs;
 

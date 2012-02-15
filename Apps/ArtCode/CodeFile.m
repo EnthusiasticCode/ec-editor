@@ -58,6 +58,7 @@ static WeakDictionary *_codeFiles;
 
 + (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *))completionHandler
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(fileURL);
     CodeFile *codeFile = [_codeFiles objectForKey:fileURL];
     if (codeFile)
@@ -96,6 +97,7 @@ static WeakDictionary *_codeFiles;
 
 - (id)_initWithFileURL:(NSURL *)url
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     self = [super initWithFileURL:url];
     if (!self)
         return nil;
@@ -109,6 +111,7 @@ static WeakDictionary *_codeFiles;
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [super openWithCompletionHandler:^(BOOL success) {
         if (success)
         {
@@ -129,6 +132,7 @@ static WeakDictionary *_codeFiles;
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [super closeWithCompletionHandler:^(BOOL success) {
         ECASSERT(success);
         [_parserQueue cancelAllOperations];
@@ -186,18 +190,21 @@ static WeakDictionary *_codeFiles;
 
 - (void)addPresenter:(id<CodeFilePresenter>)presenter
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(![_presenters containsObject:presenter]);
     [_presenters addObject:presenter];
 }
 
 - (void)removePresenter:(id<CodeFilePresenter>)presenter
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT([_presenters containsObject:presenter]);
     [_presenters removeObject:presenter];
 }
 
 - (NSArray *)presenters
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [_presenters copy];
 }
 
@@ -227,6 +234,7 @@ static WeakDictionary *_codeFiles;
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [self _replaceCharactersInRange:range string:string attributedString:[[NSAttributedString alloc] initWithString:string]];
 }
 
@@ -248,11 +256,13 @@ static WeakDictionary *_codeFiles;
 
 - (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [self _replaceCharactersInRange:range string:[attributedString string] attributedString:attributedString];
 }
 
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     if (![attributes count] || !range.length)
         return;
     for (id<CodeFilePresenter> presenter in _presenters)
@@ -268,6 +278,7 @@ static WeakDictionary *_codeFiles;
 
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     if (![attributeNames count] || !range.length)
         return;
     for (id<CodeFilePresenter> presenter in _presenters)
@@ -314,26 +325,31 @@ static WeakDictionary *_codeFiles;
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [regexp numberOfMatchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [regexp matchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
 }
 
 - (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [result.regularExpression replacementStringForResult:result inString:[self string] offset:offset template:replacementTemplate];
 }
 
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(match && replacementTemplate);
     
     NSRange replacementRange = match.range;
@@ -372,6 +388,7 @@ static WeakDictionary *_codeFiles;
 
 - (void)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     // replacing an empty range with an empty string, no change required
     if (!range.length && ![string length])
         return;
@@ -413,12 +430,15 @@ static WeakDictionary *_codeFiles;
 
 - (void)_reparseFile
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     int32_t currentGeneration = _contentsGenerationCounter;
 #warning TODO this code is a mess, reading and writing the contents without checking generation or locking, it's also using a strong self which could lead to retain cycles, even though short, a better solution would be to pass in a weak self, pass it to a strong variable again, and check variable for null before dereferencing like we did in that other file, I'm leaving it as it is for now since it's only temporary code
     [_parserQueue addOperationWithBlock:^{
         if (self->_contentsGenerationCounter != currentGeneration)
             return;
-        [self addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [self length])];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [self addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [self length])];
+        }];
         // Add text coloring
         [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
             NSDictionary *attributes = [self.theme attributesForScope:scope];
@@ -426,7 +446,9 @@ static WeakDictionary *_codeFiles;
             {
                 if (self->_contentsGenerationCounter != currentGeneration)
                     return TMUnitVisitResultBreak;
-                [self addAttributes:attributes range:range];
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [self addAttributes:attributes range:range];
+                }];
                 if (self->_contentsGenerationCounter != currentGeneration)
                     return TMUnitVisitResultBreak;
             }
@@ -434,24 +456,21 @@ static WeakDictionary *_codeFiles;
         }];
         if (self->_contentsGenerationCounter != currentGeneration)
             return;
-        // Add placeholders styles
         static NSRegularExpression *placeholderRegExp = nil;
         if (!placeholderRegExp)
             placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-        if (self->_contentsGenerationCounter != currentGeneration)
-            return;
-        for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
-        {
-            if (self->_contentsGenerationCounter != currentGeneration)
-                return;
-            [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
-            if (self->_contentsGenerationCounter != currentGeneration)
-                return;
-        }
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            for (id<CodeFilePresenter>presenter in self.presenters)
-                if ([presenter respondsToSelector:@selector(codeFile:willAddAttributes:range:)])
-                    [presenter codeFile:self willAddAttributes:nil range:NSMakeRange(0, [self length])];
+            // Add placeholders styles
+            if (self->_contentsGenerationCounter != currentGeneration)
+                return;
+            for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
+            {
+                if (self->_contentsGenerationCounter != currentGeneration)
+                    return;
+                [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
+                if (self->_contentsGenerationCounter != currentGeneration)
+                    return;
+            }
         }];
     }];
 }

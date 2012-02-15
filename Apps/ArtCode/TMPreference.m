@@ -95,11 +95,6 @@ static NSMutableDictionary *scopeToPreferenceCache;
     systemTMPreferencesDictionary = [preferences copy];
 }
 
-+ (void)preload
-{
-    // nothing done here, the actual preloading is done in initialize, this method is just so a caller has something to call to trigger it without any side effects
-}
-
 + (NSDictionary *)allPreferences
 {
     return systemTMPreferencesDictionary;

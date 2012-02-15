@@ -29,11 +29,6 @@ static NSArray *_bundleURLs;
     _bundleURLs = [bundleURLs copy];    
 }
 
-+ (void)preload
-{
-    // nothing done here, the actual preloading is done in initialize, this method is just so a caller has something to call to trigger it without any side effects
-}
-
 + (NSArray *)bundleURLs
 {
     return _bundleURLs;
