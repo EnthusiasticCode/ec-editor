@@ -26,13 +26,13 @@ static WeakDictionary *_codeFiles;
     // spin lock to access the contents. always call contents within this lock
     OSSpinLock _contentsLock;
     NSMutableArray *_presenters;
+    OSSpinLock _presentersLock;
     NSOperationQueue *_parserQueue;
     NSArray *_symbolList;
 }
 @property (nonatomic, strong) TMUnit *codeUnit;
 - (id)_initWithFileURL:(NSURL *)url;
-- (void)_reparseFile;
-- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range;
+- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
 // Private content methods
 - (BOOL)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
 @end
@@ -105,6 +105,7 @@ static WeakDictionary *_codeFiles;
     _contents = [[NSMutableAttributedString alloc] init];
     _contentsLock = OS_SPINLOCK_INIT;
     _presenters = [[NSMutableArray alloc] init];
+    _presentersLock = OS_SPINLOCK_INIT;
     _parserQueue = [[NSOperationQueue alloc] init];
     _parserQueue.maxConcurrentOperationCount = 1;
     return self;
@@ -116,14 +117,18 @@ static WeakDictionary *_codeFiles;
     [super openWithCompletionHandler:^(BOOL success) {
         if (success)
         {
-            __weak CodeFile *this = self;
+            __weak CodeFile *weakSelf = self;
             [_parserQueue addOperationWithBlock:^{
-                if (!this)
+                // capture self strongly again in this block to make sure it doesn't go nil while creating the code unit
+                __strong CodeFile *strongWeakSelf = weakSelf;
+                if (!strongWeakSelf)
                     return;
-                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:this rootScopeIdentifier:nil];
+                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:strongWeakSelf rootScopeIdentifier:nil];
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    this.codeUnit = codeUnit;
-                    [this _reparseFile];
+                    // use the weak self again so we don't capture self
+                    weakSelf.codeUnit = codeUnit;
+                    // fake operation to force updating the codeview, just a temporary hack
+                    [weakSelf removeAttributes:[NSArray arrayWithObject:@"FakeAttributeName"] range:NSMakeRange(0, [weakSelf length])];
                 }];
             }];
         }
@@ -169,7 +174,26 @@ static WeakDictionary *_codeFiles;
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-    return [self attributedStringInRange:stringRange];
+    NSMutableAttributedString *attributedString = [[self attributedStringInRange:stringRange] mutableCopy];
+    [attributedString addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [attributedString length])];
+    if (self.codeUnit)
+    {
+        // Add text coloring
+        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            NSDictionary *attributes = [self.theme attributesForScope:scope];
+            if ([attributes count])
+                [attributedString addAttributes:attributes range:range];
+            return TMUnitVisitResultRecurse;
+        }];
+    }
+    static NSRegularExpression *placeholderRegExp = nil;
+    if (!placeholderRegExp)
+        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+    // Add placeholders styles
+    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+        [self _markPlaceholderWithName:[self stringInRange:[result rangeAtIndex:1]] inAttributedString:attributedString range:result.range];
+    }];
+    return attributedString;
 }
 
 - (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
@@ -191,22 +215,27 @@ static WeakDictionary *_codeFiles;
 
 - (void)addPresenter:(id<CodeFilePresenter>)presenter
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(![_presenters containsObject:presenter]);
+    OSSpinLockLock(&_presentersLock);
     [_presenters addObject:presenter];
+    OSSpinLockUnlock(&_presentersLock);
 }
 
 - (void)removePresenter:(id<CodeFilePresenter>)presenter
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT([_presenters containsObject:presenter]);
+    OSSpinLockLock(&_presentersLock);
     [_presenters removeObject:presenter];
+    OSSpinLockUnlock(&_presentersLock);
 }
 
 - (NSArray *)presenters
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    return [_presenters copy];
+    NSArray *presenters;
+    OSSpinLockLock(&_presentersLock);
+    presenters = [_presenters copy];
+    OSSpinLockUnlock(&_presentersLock);
+    return presenters;
 }
 
 #pragma mark - String content reading methods
@@ -398,7 +427,7 @@ return YES;
         return NO;
     if (![attributes count] || !range.length)
         return NO;
-    for (id<CodeFilePresenter> presenter in _presenters)
+    for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:willAddAttributes:range:)])
             [presenter codeFile:self willAddAttributes:attributes range:range];
     OSSpinLockLock(&_contentsLock);
@@ -406,7 +435,7 @@ return YES;
     if (generation)
         *generation = _contentsGenerationCounter;
     OSSpinLockUnlock(&_contentsLock);
-    for (id<CodeFilePresenter> presenter in _presenters)
+    for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:didAddAttributes:range:)])
             [presenter codeFile:self didAddAttributes:attributes range:range];
     return YES;
@@ -425,7 +454,7 @@ return YES;
         return NO;
     if (![attributeNames count] || !range.length)
         return NO;
-    for (id<CodeFilePresenter> presenter in _presenters)
+    for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:willRemoveAttributes:range:)])
             [presenter codeFile:self willRemoveAttributes:attributeNames range:range];
     OSSpinLockLock(&_contentsLock);
@@ -434,7 +463,7 @@ return YES;
     if (generation)
         *generation = _contentsGenerationCounter;
     OSSpinLockUnlock(&_contentsLock);
-    for (id<CodeFilePresenter> presenter in _presenters)
+    for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:didRemoveAttributes:range:)])
             [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
     return YES;
@@ -454,7 +483,7 @@ return YES;
     if ([string isEqualToString:[self stringInRange:range]])
         return NO;
     
-    for (id<CodeFilePresenter>presenter in _presenters)
+    for (id<CodeFilePresenter>presenter in [self presenters])
     {
         if ([presenter respondsToSelector:@selector(codeFile:willReplaceCharactersInRange:withString:)])
             [presenter codeFile:self willReplaceCharactersInRange:range withString:string];
@@ -480,14 +509,13 @@ return YES;
         OSSpinLockUnlock(&_contentsLock);
     }
     [self updateChangeCount:UIDocumentChangeDone];
-    for (id<CodeFilePresenter>presenter in _presenters)
+    for (id<CodeFilePresenter>presenter in [self presenters])
     {
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
             [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
             [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
     }
-    [self _reparseFile];
     return YES;
 }
 
@@ -556,53 +584,6 @@ return YES;
 
 #pragma mark - Private methods
 
-- (void)_reparseFile
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    CodeFileGeneration currentGeneration = _contentsGenerationCounter;
-#warning TODO this code is a mess, reading and writing the contents without checking generation or locking, it's also using a strong self which could lead to retain cycles, even though short, a better solution would be to pass in a weak self, pass it to a strong variable again, and check variable for null before dereferencing like we did in that other file, I'm leaving it as it is for now since it's only temporary code
-    [_parserQueue addOperationWithBlock:^{
-        if (self->_contentsGenerationCounter != currentGeneration)
-            return;
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [self addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [self length])];
-        }];
-        // Add text coloring
-        [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            NSDictionary *attributes = [self.theme attributesForScope:scope];
-            if ([attributes count])
-            {
-                if (self->_contentsGenerationCounter != currentGeneration)
-                    return TMUnitVisitResultBreak;
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    [self addAttributes:attributes range:range];
-                }];
-                if (self->_contentsGenerationCounter != currentGeneration)
-                    return TMUnitVisitResultBreak;
-            }
-            return TMUnitVisitResultRecurse;
-        }];
-        if (self->_contentsGenerationCounter != currentGeneration)
-            return;
-        static NSRegularExpression *placeholderRegExp = nil;
-        if (!placeholderRegExp)
-            placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            // Add placeholders styles
-            if (self->_contentsGenerationCounter != currentGeneration)
-                return;
-            for (NSTextCheckingResult *placeholderMatch in [self matchesOfRegexp:placeholderRegExp options:0])
-            {
-                if (self->_contentsGenerationCounter != currentGeneration)
-                    return;
-                [self _markPlaceholderWithName:[self stringInRange:[placeholderMatch rangeAtIndex:1]] range:placeholderMatch.range];
-                if (self->_contentsGenerationCounter != currentGeneration)
-                    return;
-            }
-        }];
-    }];
-}
-
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
     if (refcon)
     {
@@ -620,7 +601,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     &placeholderEndingsWidthCallback
 };
 
-- (void)_markPlaceholderWithName:(NSString *)name range:(NSRange)range
+- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
 {
     ECASSERT(range.length > 4);
     
@@ -682,7 +663,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     };
     
     // placeholder body style
-    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
     
     // Opening and Closing style
     
@@ -691,13 +672,13 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     ECASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     
-    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
-    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
     
     CFRelease(delegateRef);
     
     // Placeholder behaviour
-    [self addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
 }
 
 @end

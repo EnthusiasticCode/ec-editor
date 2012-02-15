@@ -125,7 +125,6 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
     for (NSString *scopeIdentifier in [scopeStack reverseObjectEnumerator])
     {
         // TODO change algorithm
-        NSLog(@"first call to TMBundle.");
         NSArray *currentConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:scopeIdentifier];
         if (currentConfiguration)
         {

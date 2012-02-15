@@ -628,6 +628,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
+- (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range
+{
+    [self.codeView updateTextFromStringRange:range toStringRange:range];
+}
+
 #pragma mark - Code View Delegate Methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
