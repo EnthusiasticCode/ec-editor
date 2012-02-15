@@ -13,6 +13,7 @@
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
 #import "CStringCachingString.h"
+#import "CodeFile+Generation.h"
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -34,7 +35,7 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 - (TMSyntaxNode *)_syntax;
 - (TMScope *)_scope;
-- (void)_generateScopesWithScope:(TMScope *)scope inRange:(NSRange)range;
+- (void)_generateScopes;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
@@ -134,7 +135,6 @@ static OnigRegexp *_namedCapturesRegexp;
     TMScope *scope = [self _scope];
     NSRange scopeRange = NSMakeRange(scope.location, scope.length);
     ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
-#warning FIX this scopeRange is 0 if range has length 0
     scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
     TMUnitVisitResult result = block(scope, scopeRange);
     if (result != TMUnitVisitResultRecurse)
@@ -191,14 +191,14 @@ static OnigRegexp *_namedCapturesRegexp;
         __scope = [[TMScope alloc] init];
         __scope.identifier = [self rootScopeIdentifier];
         __scope.syntaxNode = [self _syntax];
-        [self _generateScopesWithScope:__scope inRange:NSMakeRange(0, [self.codeFile length])];
+        [self _generateScopes];
     }
     return __scope;
 }
 
-- (void)_generateScopesWithScope:(TMScope *)scope inRange:(NSRange)range
+- (void)_generateScopes
 {
-    ECASSERT(scope);
+    TMScope *scope = __scope;
     
     // Setup the scope stack
     NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:scope];
@@ -208,6 +208,10 @@ static OnigRegexp *_namedCapturesRegexp;
         [scopeStack insertObject:scope atIndex:0];
     }
     
+    // Save the current generation
+    CodeFileGeneration startingGeneration;
+    NSRange range = NSMakeRange(0, [self.codeFile lengthWithGeneration:&startingGeneration]);
+    
     // Parse the range
     NSRange lineRange = NSMakeRange(range.location, 0);
     for (;;)
@@ -215,9 +219,13 @@ static OnigRegexp *_namedCapturesRegexp;
         if (lineRange.location >= NSMaxRange(range))
             break;
         // Setup the line
-        lineRange = [self.codeFile lineRangeForRange:lineRange];
+        if (![self.codeFile lineRange:&lineRange forRange:lineRange withGeneration:&startingGeneration expectedGeneration:&startingGeneration])
+            return;
         if (lineRange.location < range.location)
             lineRange = NSMakeRange(range.location, NSMaxRange(lineRange) - range.location);
+        NSString *uncachedString;
+        if (![self.codeFile string:&uncachedString inRange:lineRange withGeneration:&startingGeneration expectedGeneration:&startingGeneration])
+            return;
         CStringCachingString *line = [CStringCachingString stringWithString:[self.codeFile stringInRange:lineRange]];
         NSUInteger position = 0;
         
@@ -339,14 +347,13 @@ static OnigRegexp *_namedCapturesRegexp;
             if (position >= lineRange.length)
                 break;
         }
+        // Stretch all remaining scopes to cover the current line
+        NSUInteger lineEnd = NSMaxRange(lineRange);
+        for (TMScope *scope in scopeStack)
+            scope.length = lineEnd - scope.location;
         // proceed to next line
         lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
     }
-    
-    // Close off all remaining scopes
-    NSUInteger rangeEnd = NSMaxRange(range);
-    for (TMScope *scope in scopeStack)
-        scope.length = rangeEnd - scope.location;
 }
 
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope

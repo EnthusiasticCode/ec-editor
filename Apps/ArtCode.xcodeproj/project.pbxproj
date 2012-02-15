@@ -10,6 +10,7 @@
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */ = {isa = PBXBuildFile; fileRef = B728597314E714C100E3DE65 /* CStringCachingString.m */; };
+		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
@@ -262,6 +263,7 @@
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
 		B728597214E714C100E3DE65 /* CStringCachingString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CStringCachingString.h; sourceTree = "<group>"; };
 		B728597314E714C100E3DE65 /* CStringCachingString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CStringCachingString.m; sourceTree = "<group>"; };
+		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
 		B75B575C14B0B62D00053783 /* CodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFile.m; sourceTree = "<group>"; };
@@ -616,6 +618,7 @@
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
 				B75B575B14B0B62D00053783 /* CodeFile.h */,
+				B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */,
 				B75B575C14B0B62D00053783 /* CodeFile.m */,
 				CD4E648414C1E984003AC39D /* ArtCodeProject.h */,
 				CD4E648514C1E984003AC39D /* ArtCodeProject.m */,
@@ -1541,6 +1544,7 @@
 				CD78C1C814E15CFB00EBBBFF /* bezelAlert_okIcon.png in Resources */,
 				CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */,
 				CD27416A14E9C4120045ADFD /* itemIcon_Replace.png in Resources */,
+				B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

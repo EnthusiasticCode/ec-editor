@@ -10,6 +10,7 @@
 #import "TMUnit+Internal.h"
 #import "TMSyntaxNode.h"
 #import "Cache.h"
+#import "CodeFile.h"
 
 static NSMutableDictionary *_extensionClasses;
 
