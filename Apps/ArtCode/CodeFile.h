@@ -87,5 +87,6 @@
 @property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) UIImage *icon;
 @property (nonatomic, readonly) NSRange range;
+@property (nonatomic, readonly) NSUInteger indentation;
 
 @end

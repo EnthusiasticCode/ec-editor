@@ -141,11 +141,13 @@
     UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell.indentationWidth = 16;
     }
     
     CodeFileSymbol *symbol = [[self _symbolList] objectAtIndex:indexPath.row];
     cell.textLabel.text = symbol.title;
     cell.imageView.image = symbol.icon;
+    cell.indentationLevel = symbol.indentation;
     
     return cell;
 }

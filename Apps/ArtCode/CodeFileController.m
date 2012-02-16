@@ -776,7 +776,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
                 break;
             currentSymbol = symbol.title;
         }
-        currentSymbol = [currentSymbol stringByReplacingOccurrencesOfString:@" " withString:@""];
         if (![currentSymbol isEqualToString:_currentSymbol])
         {
             _currentSymbol = currentSymbol;

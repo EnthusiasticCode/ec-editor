@@ -685,14 +685,21 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 @implementation CodeFileSymbol
 
-@synthesize title, icon, range;
+@synthesize title, icon, range, indentation;
 
 - (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon range:(NSRange)_range
 {
     self = [super init];
     if (!self)
         return nil;
-    title = _title;
+    // Get indentation level and modify title
+    NSUInteger titleLength = [_title length];
+    for (; indentation < titleLength; ++indentation)
+    {
+        if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[_title characterAtIndex:indentation]])
+            break;
+    }
+    title = indentation ? [_title substringFromIndex:indentation] : _title;
     icon = _icon;
     range = _range;
     return self;

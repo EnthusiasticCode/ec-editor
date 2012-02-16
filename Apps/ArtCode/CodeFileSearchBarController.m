@@ -344,7 +344,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         return;
     }
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    self.loading = YES;
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSRegularExpressionOptions options = self.regExpOptions;
         
         if (self.hitMustOption != CodeFileSearchHitMustContain)
@@ -372,7 +373,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         if (filterRegExp != nil)
             matches = [self.targetCodeFileController.codeFile matchesOfRegexp:filterRegExp options:0];
         
-        dispatch_async(dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;
             [targetCodeFileController.codeView updateAllText];
             // Set first match to flash
@@ -401,8 +402,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
                 findResultLabel.text = @"Not found";
             }
             findResultLabel.hidden = NO;
-        });
-    });
+            self.loading = NO;
+//        });
+//    });
 }
 
 @end
