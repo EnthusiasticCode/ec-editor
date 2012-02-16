@@ -8,7 +8,7 @@
 
 #import "CodeFile.h"
 
-typedef int32_t CodeFileGeneration;
+typedef NSUInteger CodeFileGeneration;
 
 @interface CodeFile (Generation)
 

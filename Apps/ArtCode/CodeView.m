@@ -1140,6 +1140,7 @@ static void init(CodeView *self)
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
     NSUInteger pos = ((TextPosition *)position).index;
+#warning TODO NIK: this method is called on main thread, and calls the renderer which eventually starts rendering text, triggering all of the text rendering on main thread
     CGRect carretRect = [self.renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
     
     carretRect.origin.x -= 1.0;
