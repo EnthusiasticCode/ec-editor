@@ -6,14 +6,16 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class TMScope;
 
 /// Indicates if the scope should be shown in the symbol list. This value returns an NSValue with a bool. The bool is true even if this key is not found but TMPreferenceSymbolTransformationKey is set for the same selector.
 extern NSString * const TMPreferenceShowInSymbolListKey;
-/// Returns an NSRegularExpression
+/// Returns a block that gets a string as a parameter and returns a transformed string.
 extern NSString * const TMPreferenceSymbolTransformationKey;
+/// Returns a UIImage.
+extern NSString * const TMPreferenceSymbolIconKey;
 
 
 /// Load and present all the preferences of a textmate bundle. 
@@ -25,8 +27,11 @@ extern NSString * const TMPreferenceSymbolTransformationKey;
 /// The scope selector that indicates which scopes are affected by this preference.
 @property (nonatomic, strong, readonly) NSString *scopeSelector;
 
-/// A dictionary of preference key to values. See TMPreferenceKeys.
-@property (nonatomic, strong, readonly) NSDictionary *settings;
+/// Get the preference value fot the given key.
+- (id)preferenceValueForKey:(NSString *)key;
+
+/// The count of preference values.
+- (NSUInteger)count;
 
 #pragma mark Creating a new preference
 

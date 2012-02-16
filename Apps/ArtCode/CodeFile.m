@@ -724,7 +724,7 @@ return YES;
                 NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
                 NSString *symbol = transformation ? transformation([self stringInRange:range]) : [self stringInRange:range];
                 // TODO add preference for icon
-                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:nil range:range]];
+                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:[TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey scope:scope] range:range]];
                 return TMUnitVisitResultContinue;
             }
             return TMUnitVisitResultRecurse;

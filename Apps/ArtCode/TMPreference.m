@@ -13,6 +13,7 @@
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
+NSString * const TMPreferenceSymbolIconKey = @"symbolIcon";
 
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
@@ -20,6 +21,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 @interface TMPreference ()
 
+- (void)_addSettingsDictionary:(NSDictionary *)settingsDictionary;
 - (NSString*(^)(NSString *))_createBlockForSymbolTransformation:(NSString *)transformation;
 
 @end
@@ -35,11 +37,13 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 @end
 
-@implementation TMPreference
+@implementation TMPreference {
+    NSMutableDictionary *_settings;
+}
 
 #pragma mark - Properties
 
-@synthesize scopeSelector, settings;
+@synthesize scopeSelector;
 
 #pragma mark - Initialization
 
@@ -51,23 +55,27 @@ static NSMutableDictionary *scopeToPreferenceCache;
         return nil;
     scopeSelector = scope;
     // Preprocessing setting dictionary
-    NSMutableDictionary *preprocessedSettings = [NSMutableDictionary new];
-    [settingsDict enumerateKeysAndObjectsUsingBlock:^(NSString *settingName, id value, BOOL *stop) {
-        if ([settingName isEqualToString:TMPreferenceShowInSymbolListKey])
-        {
-            [preprocessedSettings setObject:value forKey:TMPreferenceShowInSymbolListKey];
-        }
-        else if ([settingName isEqualToString:TMPreferenceSymbolTransformationKey])
-        {
-            // Set showInSymbolList if not set
-            if (![settingsDict objectForKey:TMPreferenceShowInSymbolListKey])
-                [preprocessedSettings setObject:[NSNumber numberWithBool:YES] forKey:TMPreferenceShowInSymbolListKey];
-            // Prepare transformations regexps
-            [preprocessedSettings setObject:[self _createBlockForSymbolTransformation:value] forKey:TMPreferenceSymbolTransformationKey];
-        }
-    }];
-    settings = [preprocessedSettings copy];
+    [self _addSettingsDictionary:settingsDict];
     return self;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(count))
+        return _settings;
+    return nil;
+}
+
+- (id)preferenceValueForKey:(NSString *)key
+{
+    id value = [_settings objectForKey:key];
+    if (key == TMPreferenceSymbolIconKey && [value isKindOfClass:[NSString class]])
+    {
+        // Convert symbol image from path to image when needed
+        value = [UIImage imageWithContentsOfFile:(NSString *)value];
+        [_settings setObject:value forKey:key];
+    }
+    return value;
 }
 
 #pragma mark - Class methods
@@ -86,8 +94,12 @@ static NSMutableDictionary *scopeToPreferenceCache;
             NSString *scopeSelector = [plist objectForKey:@"scope"];
             if (!scopeSelector)
                 continue;
-            TMPreference *pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:[plist objectForKey:@"settings"]];
-            if ([pref.settings count] == 0)
+            TMPreference *pref = [preferences objectForKey:scopeSelector];
+            if (!pref)
+                pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:[plist objectForKey:@"settings"]];
+            else
+                [pref _addSettingsDictionary:[plist objectForKey:@"settings"]];
+            if ([pref count] == 0)
                 continue;
             [preferences setObject:pref forKey:scopeSelector];
         }
@@ -102,6 +114,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 + (id)preferenceValueForKey:(NSString *)preferenceKey scope:(TMScope *)scope
 {
+    // Check per scope cache
     if (!scopeToPreferenceCache)
         scopeToPreferenceCache = [NSMutableDictionary new];
     NSMutableDictionary *cachedPreferences = [scopeToPreferenceCache objectForKey:scope.qualifiedIdentifier];
@@ -109,11 +122,13 @@ static NSMutableDictionary *scopeToPreferenceCache;
     if (value)
         return value == [NSNull null] ? nil : value;
     
+    // Get required preference value
     [[self allPreferences] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, TMPreference *preference, BOOL *stop) {
-        if ([scope scoreForScopeSelector:scopeSelector] > 0 && (value = [preference.settings objectForKey:preferenceKey]))
+        if ([scope scoreForScopeSelector:scopeSelector] > 0 && (value = [preference preferenceValueForKey:preferenceKey]))
             *stop = YES;
     }];
     
+    // Cache resulting coalesed preferences per scope
     if (!cachedPreferences)
     {
         cachedPreferences = [NSMutableDictionary new];
@@ -125,6 +140,32 @@ static NSMutableDictionary *scopeToPreferenceCache;
 }
 
 #pragma mark - Private Methods
+
+- (void)_addSettingsDictionary:(NSDictionary *)settingsDict
+{
+    if (!_settings)
+        _settings = [NSMutableDictionary new];
+    [settingsDict enumerateKeysAndObjectsUsingBlock:^(NSString *settingName, id value, BOOL *stop) {
+        if ([settingName isEqualToString:TMPreferenceShowInSymbolListKey])
+        {
+            [_settings setObject:value forKey:TMPreferenceShowInSymbolListKey];
+        }
+        else if ([settingName isEqualToString:TMPreferenceSymbolTransformationKey])
+        {
+            // Set showInSymbolList if not set
+            if (![settingsDict objectForKey:TMPreferenceShowInSymbolListKey])
+                [_settings setObject:[NSNumber numberWithBool:YES] forKey:TMPreferenceShowInSymbolListKey];
+            // Prepare transformations regexps
+            [_settings setObject:[self _createBlockForSymbolTransformation:value] forKey:TMPreferenceSymbolTransformationKey];
+        }
+        else if ([settingName isEqualToString:TMPreferenceSymbolIconKey])
+        {
+            value = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"symbolIcon_%@", value] ofType:@"png"];
+            [_settings setObject:value forKey:TMPreferenceSymbolIconKey];
+            // TODO also use symbolImagePath, symbolImageColor & Title
+        }
+    }];
+}
 
 - (NSString *(^)(NSString *))_createBlockForSymbolTransformation:(NSString *)transformation
 {
