@@ -47,6 +47,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 - (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
 // Private content methods
 - (BOOL)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
+// All the following methods have to be called within a pending changes lock.
 - (void)_setHasPendingChanges;
 - (void)_processPendingChanges;
 - (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
@@ -449,7 +450,11 @@ return YES;
         return YES;
     if ([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
     {
-        return [self _applyAttributeAddChangeWithRange:range attributes:attributes generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockLock(&_pendingChangesLock);
+        [self _processPendingChanges];
+        BOOL success = [self _applyAttributeAddChangeWithRange:range attributes:attributes generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockUnlock(&_pendingChangesLock);
+        return success;
     }
     else
     {
@@ -462,7 +467,6 @@ return YES;
             OSSpinLockUnlock(&_pendingChangesLock);
             return NO;
         }
-        ++_pendingGenerationOffset;
         if (generation)
             *generation = _contentsGeneration + _pendingGenerationOffset;
         OSSpinLockUnlock(&_contentsLock);
@@ -485,7 +489,11 @@ return YES;
         return YES;
     if ([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
     {
-        return [self _applyAttributeRemoveChangeWithRange:range attributeNames:attributeNames generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockLock(&_pendingChangesLock);
+        [self _processPendingChanges];
+        BOOL success = [self _applyAttributeRemoveChangeWithRange:range attributeNames:attributeNames generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockUnlock(&_pendingChangesLock);
+        return success;
     }
     else
     {
@@ -498,7 +506,6 @@ return YES;
             OSSpinLockUnlock(&_pendingChangesLock);
             return NO;
         }
-        ++_pendingGenerationOffset;
         if (generation)
             *generation = _contentsGeneration + _pendingGenerationOffset;
         OSSpinLockUnlock(&_contentsLock);
@@ -521,7 +528,11 @@ return YES;
         return YES;
     if ([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
     {
-        return [self _applyReplaceChangeWithRange:range string:string attributedString:attributedString generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockLock(&_pendingChangesLock);
+        [self _processPendingChanges];
+        BOOL success = [self _applyReplaceChangeWithRange:range string:string attributedString:attributedString generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockUnlock(&_pendingChangesLock);
+        return success;
     }
     else
     {
@@ -559,20 +570,15 @@ return YES;
 - (void)_processPendingChanges
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    OSSpinLockLock(&_pendingChangesLock);
+    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (!_hasPendingChanges)
-    {
-        OSSpinLockUnlock(&_pendingChangesLock);
         return;
-    }
 #warning TODO this spins forever if another thread is adding changes faster than we process them, maybe put a timeout and leave the remaining changes for the next batch?
     for (;;)
     {
-        OSSpinLockLock(&_pendingChangesLock);
         if (![_pendingChanges count])
         {
             _hasPendingChanges = NO;
-            OSSpinLockUnlock(&_pendingChangesLock);
             return;
         }
         NSDictionary *nextChange = [_pendingChanges objectAtIndex:0];
@@ -586,19 +592,14 @@ return YES;
             [self _applyAttributeAddChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributes:[nextChange objectForKey:_changeAttributesKey] generation:NULL expectedGeneration:NULL];
         else if (changeType == _changeTypeAttributeRemove)
             [self _applyAttributeRemoveChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributeNames:[nextChange objectForKey:_changeAttributeNamesKey] generation:NULL expectedGeneration:NULL];
+        OSSpinLockLock(&_pendingChangesLock);
     }
 }
 
 - (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    for (id<CodeFilePresenter>presenter in [self presenters])
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:mightReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self mightReplaceCharactersInRange:range withString:string];
-        if ([presenter respondsToSelector:@selector(codeFile:mightReplaceCharactersInRange:withAttributedString:)])
-            [presenter codeFile:self mightReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
+    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     OSSpinLockLock(&_contentsLock);
     if (expectedGeneration && *expectedGeneration != _contentsGeneration)
     {
@@ -613,6 +614,7 @@ return YES;
     if (generation)
         *generation = _contentsGeneration;
     OSSpinLockUnlock(&_contentsLock);
+    OSSpinLockUnlock(&_pendingChangesLock);
     [self updateChangeCount:UIDocumentChangeDone];
     for (id<CodeFilePresenter>presenter in [self presenters])
     {
@@ -621,15 +623,14 @@ return YES;
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
             [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
     }
+    OSSpinLockLock(&_pendingChangesLock);
     return YES;
 }
 
 - (BOOL)_applyAttributeAddChangeWithRange:(NSRange)range attributes:(NSDictionary *)attributes generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    for (id<CodeFilePresenter> presenter in [self presenters])
-        if ([presenter respondsToSelector:@selector(codeFile:mightAddAttributes:range:)])
-            [presenter codeFile:self mightAddAttributes:attributes range:range];
+    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     OSSpinLockLock(&_contentsLock);
     if (expectedGeneration && *expectedGeneration != _contentsGeneration)
     {
@@ -640,18 +641,18 @@ return YES;
     if (generation)
         *generation = _contentsGeneration;
     OSSpinLockUnlock(&_contentsLock);
+    OSSpinLockUnlock(&_pendingChangesLock);
     for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:didAddAttributes:range:)])
             [presenter codeFile:self didAddAttributes:attributes range:range];
+    OSSpinLockLock(&_pendingChangesLock);
     return YES;
 }
 
 - (BOOL)_applyAttributeRemoveChangeWithRange:(NSRange)range attributeNames:(NSArray *)attributeNames generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    for (id<CodeFilePresenter> presenter in [self presenters])
-        if ([presenter respondsToSelector:@selector(codeFile:mightRemoveAttributes:range:)])
-            [presenter codeFile:self mightRemoveAttributes:attributeNames range:range];
+    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     OSSpinLockLock(&_contentsLock);
     if (expectedGeneration && *expectedGeneration != _contentsGeneration)
     {
@@ -663,9 +664,11 @@ return YES;
     if (generation)
         *generation = _contentsGeneration;
     OSSpinLockUnlock(&_contentsLock);
+    OSSpinLockUnlock(&_pendingChangesLock);
     for (id<CodeFilePresenter> presenter in [self presenters])
         if ([presenter respondsToSelector:@selector(codeFile:didRemoveAttributes:range:)])
             [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
+    OSSpinLockLock(&_pendingChangesLock);
     return YES;
 }
 

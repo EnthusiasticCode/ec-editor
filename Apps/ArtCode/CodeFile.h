@@ -69,14 +69,10 @@
 @protocol CodeFilePresenter <NSObject>
 @optional
 /// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
-- (void)codeFile:(CodeFile *)codeFile mightReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
-- (void)codeFile:(CodeFile *)codeFile mightReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
 
-- (void)codeFile:(CodeFile *)codeFile mightAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)codeFile:(CodeFile *)codeFile mightRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
 - (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
 @end
 
