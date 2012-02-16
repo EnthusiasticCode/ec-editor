@@ -434,8 +434,7 @@ static OnigRegexp *_namedCapturesRegexp;
                         includedSyntax = [containerPattern rootSyntax];
                     else
                         includedSyntax = [TMSyntaxNode syntaxWithScopeIdentifier:containerPattern.include];
-                    for (TMSyntaxNode *pattern in includedSyntax.patterns)
-                        [includedPatterns insertObject:pattern atIndex:idx + offset];
+                    [includedPatterns addObject:includedSyntax];
                 }
             }
             else
