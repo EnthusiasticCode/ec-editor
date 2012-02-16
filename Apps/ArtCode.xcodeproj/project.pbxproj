@@ -79,6 +79,101 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
+		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
+		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
+		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
+		B7CEF85A14ED924D00E71CFF /* ASP_vb_NET.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FB14ED924D00E71CFF /* ASP_vb_NET.tmbundle */; };
+		B7CEF85B14ED924D00E71CFF /* ASP.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FC14ED924D00E71CFF /* ASP.tmbundle */; };
+		B7CEF85C14ED924D00E71CFF /* Bison.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FD14ED924D00E71CFF /* Bison.tmbundle */; };
+		B7CEF85D14ED924D00E71CFF /* Bulletin Board.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FE14ED924D00E71CFF /* Bulletin Board.tmbundle */; };
+		B7CEF85E14ED924D00E71CFF /* CMake.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FF14ED924D00E71CFF /* CMake.tmbundle */; };
+		B7CEF85F14ED924D00E71CFF /* ColdFusion.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80014ED924D00E71CFF /* ColdFusion.tmbundle */; };
+		B7CEF86014ED924D00E71CFF /* Context Free.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80114ED924D00E71CFF /* Context Free.tmbundle */; };
+		B7CEF86114ED924D00E71CFF /* CTags.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80214ED924D00E71CFF /* CTags.tmbundle */; };
+		B7CEF86214ED924D00E71CFF /* D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80314ED924D00E71CFF /* D.tmbundle */; };
+		B7CEF86314ED924D00E71CFF /* Darcs.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80414ED924D00E71CFF /* Darcs.tmbundle */; };
+		B7CEF86414ED924D00E71CFF /* DokuWiki.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80514ED924D00E71CFF /* DokuWiki.tmbundle */; };
+		B7CEF86514ED924D00E71CFF /* Doxygen.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80614ED924D00E71CFF /* Doxygen.tmbundle */; };
+		B7CEF86614ED924D00E71CFF /* Eiffel.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80714ED924D00E71CFF /* Eiffel.tmbundle */; };
+		B7CEF86714ED924D00E71CFF /* Erlang.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80814ED924D00E71CFF /* Erlang.tmbundle */; };
+		B7CEF86814ED924D00E71CFF /* Experimental Wiki.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80914ED924D00E71CFF /* Experimental Wiki.tmbundle */; };
+		B7CEF86914ED924D00E71CFF /* Experimental.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80A14ED924D00E71CFF /* Experimental.tmbundle */; };
+		B7CEF86A14ED924D00E71CFF /* F-Script.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80B14ED924D00E71CFF /* F-Script.tmbundle */; };
+		B7CEF86B14ED924D00E71CFF /* FileMerge.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80C14ED924D00E71CFF /* FileMerge.tmbundle */; };
+		B7CEF86C14ED924D00E71CFF /* FXScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80D14ED924D00E71CFF /* FXScript.tmbundle */; };
+		B7CEF86D14ED924D00E71CFF /* Gettext.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80E14ED924D00E71CFF /* Gettext.tmbundle */; };
+		B7CEF86E14ED924D00E71CFF /* Graphviz.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF80F14ED924D00E71CFF /* Graphviz.tmbundle */; };
+		B7CEF86F14ED924D00E71CFF /* Greasemonkey.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81014ED924D00E71CFF /* Greasemonkey.tmbundle */; };
+		B7CEF87014ED924D00E71CFF /* Gri.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81114ED924D00E71CFF /* Gri.tmbundle */; };
+		B7CEF87114ED924D00E71CFF /* GTD2.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81214ED924D00E71CFF /* GTD2.tmbundle */; };
+		B7CEF87214ED924D00E71CFF /* GTDAlt.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81314ED924D00E71CFF /* GTDAlt.tmbundle */; };
+		B7CEF87314ED924D00E71CFF /* Hotkey.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81414ED924D00E71CFF /* Hotkey.tmbundle */; };
+		B7CEF87414ED924D00E71CFF /* iCalendar.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81514ED924D00E71CFF /* iCalendar.tmbundle */; };
+		B7CEF87514ED924D00E71CFF /* ImageBrowser.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81614ED924D00E71CFF /* ImageBrowser.tmbundle */; };
+		B7CEF87614ED924D00E71CFF /* Inform.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81714ED924D00E71CFF /* Inform.tmbundle */; };
+		B7CEF87714ED924D00E71CFF /* Ini.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81814ED924D00E71CFF /* Ini.tmbundle */; };
+		B7CEF87814ED924D00E71CFF /* Installer.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81914ED924D00E71CFF /* Installer.tmbundle */; };
+		B7CEF87914ED924D00E71CFF /* Io.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81A14ED924D00E71CFF /* Io.tmbundle */; };
+		B7CEF87A14ED924D00E71CFF /* iTerm.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81B14ED924D00E71CFF /* iTerm.tmbundle */; };
+		B7CEF87B14ED924D00E71CFF /* JavaScript jQuery.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81C14ED924D00E71CFF /* JavaScript jQuery.tmbundle */; };
+		B7CEF87C14ED924D00E71CFF /* JavaScript Objective-J.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81D14ED924D00E71CFF /* JavaScript Objective-J.tmbundle */; };
+		B7CEF87D14ED924D00E71CFF /* JavaScript Prototype & Script_aculo_us.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81E14ED924D00E71CFF /* JavaScript Prototype & Script_aculo_us.tmbundle */; };
+		B7CEF87E14ED924D00E71CFF /* JavaScript YUI.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF81F14ED924D00E71CFF /* JavaScript YUI.tmbundle */; };
+		B7CEF87F14ED924D00E71CFF /* Lex-Flex.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82014ED924D00E71CFF /* Lex-Flex.tmbundle */; };
+		B7CEF88014ED924D00E71CFF /* Lighttpd.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82114ED924D00E71CFF /* Lighttpd.tmbundle */; };
+		B7CEF88114ED924D00E71CFF /* Lisp.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82214ED924D00E71CFF /* Lisp.tmbundle */; };
+		B7CEF88214ED924D00E71CFF /* Logo.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82314ED924D00E71CFF /* Logo.tmbundle */; };
+		B7CEF88314ED924D00E71CFF /* Logtalk.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82414ED924D00E71CFF /* Logtalk.tmbundle */; };
+		B7CEF88414ED924D00E71CFF /* MacPorts.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82514ED924D00E71CFF /* MacPorts.tmbundle */; };
+		B7CEF88514ED924D00E71CFF /* Man Pages.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82614ED924D00E71CFF /* Man Pages.tmbundle */; };
+		B7CEF88614ED924D00E71CFF /* Matlab.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82714ED924D00E71CFF /* Matlab.tmbundle */; };
+		B7CEF88714ED924D00E71CFF /* Mediawiki.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82814ED924D00E71CFF /* Mediawiki.tmbundle */; };
+		B7CEF88814ED924D00E71CFF /* MEL.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82914ED924D00E71CFF /* MEL.tmbundle */; };
+		B7CEF88914ED924D00E71CFF /* Mercurial.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82A14ED924D00E71CFF /* Mercurial.tmbundle */; };
+		B7CEF88A14ED924D00E71CFF /* Modula.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82B14ED924D00E71CFF /* Modula.tmbundle */; };
+		B7CEF88B14ED924D00E71CFF /* MoinMoin.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82C14ED924D00E71CFF /* MoinMoin.tmbundle */; };
+		B7CEF88C14ED924D00E71CFF /* Navigation.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82D14ED924D00E71CFF /* Navigation.tmbundle */; };
+		B7CEF88D14ED924D00E71CFF /* OCaml Experimental Completions.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82E14ED924D00E71CFF /* OCaml Experimental Completions.tmbundle */; };
+		B7CEF88E14ED924D00E71CFF /* OCaml.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF82F14ED924D00E71CFF /* OCaml.tmbundle */; };
+		B7CEF88F14ED924D00E71CFF /* OCamlCodeCompletion Misc.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83014ED924D00E71CFF /* OCamlCodeCompletion Misc.tmbundle */; };
+		B7CEF89014ED924D00E71CFF /* OCamlCodeCompletion Unix.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83114ED924D00E71CFF /* OCamlCodeCompletion Unix.tmbundle */; };
+		B7CEF89114ED924D00E71CFF /* OCamlCodeCompletion.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83214ED924D00E71CFF /* OCamlCodeCompletion.tmbundle */; };
+		B7CEF89214ED924D00E71CFF /* ODCompletion.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83314ED924D00E71CFF /* ODCompletion.tmbundle */; };
+		B7CEF89314ED924D00E71CFF /* Outlines.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83414ED924D00E71CFF /* Outlines.tmbundle */; };
+		B7CEF89414ED924D00E71CFF /* Pascal.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83514ED924D00E71CFF /* Pascal.tmbundle */; };
+		B7CEF89514ED924D00E71CFF /* Perforce.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83614ED924D00E71CFF /* Perforce.tmbundle */; };
+		B7CEF89614ED924D00E71CFF /* Perl Mason.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83714ED924D00E71CFF /* Perl Mason.tmbundle */; };
+		B7CEF89714ED924D00E71CFF /* PHP Smarty.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83814ED924D00E71CFF /* PHP Smarty.tmbundle */; };
+		B7CEF89814ED924D00E71CFF /* PmWiki.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83914ED924D00E71CFF /* PmWiki.tmbundle */; };
+		B7CEF89914ED924D00E71CFF /* Postscript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83A14ED924D00E71CFF /* Postscript.tmbundle */; };
+		B7CEF89A14ED924D00E71CFF /* Prolog.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83B14ED924D00E71CFF /* Prolog.tmbundle */; };
+		B7CEF89B14ED924D00E71CFF /* Propel.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83C14ED924D00E71CFF /* Propel.tmbundle */; };
+		B7CEF89C14ED924D00E71CFF /* Python Django.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83D14ED924D00E71CFF /* Python Django.tmbundle */; };
+		B7CEF89D14ED924D00E71CFF /* Quake.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83E14ED924D00E71CFF /* Quake.tmbundle */; };
+		B7CEF89E14ED924D00E71CFF /* R Console (R_app).tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF83F14ED924D00E71CFF /* R Console (R_app).tmbundle */; };
+		B7CEF89F14ED924D00E71CFF /* R Console (Rdaemon).tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84014ED924D00E71CFF /* R Console (Rdaemon).tmbundle */; };
+		B7CEF8A014ED924D00E71CFF /* R.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84114ED924D00E71CFF /* R.tmbundle */; };
+		B7CEF8A114ED924D00E71CFF /* Ragel.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84214ED924D00E71CFF /* Ragel.tmbundle */; };
+		B7CEF8A214ED924D00E71CFF /* RegularExpressions.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84314ED924D00E71CFF /* RegularExpressions.tmbundle */; };
+		B7CEF8A314ED924D00E71CFF /* Remind.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84414ED924D00E71CFF /* Remind.tmbundle */; };
+		B7CEF8A414ED924D00E71CFF /* Rez.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84514ED924D00E71CFF /* Rez.tmbundle */; };
+		B7CEF8A514ED924D00E71CFF /* Ruby Haml.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84614ED924D00E71CFF /* Ruby Haml.tmbundle */; };
+		B7CEF8A614ED924D00E71CFF /* Scilab.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84714ED924D00E71CFF /* Scilab.tmbundle */; };
+		B7CEF8A714ED924D00E71CFF /* SCons.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84814ED924D00E71CFF /* SCons.tmbundle */; };
+		B7CEF8A814ED924D00E71CFF /* Setext.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84914ED924D00E71CFF /* Setext.tmbundle */; };
+		B7CEF8A914ED924D00E71CFF /* Slate.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84A14ED924D00E71CFF /* Slate.tmbundle */; };
+		B7CEF8AA14ED924D00E71CFF /* SSH-Config.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84B14ED924D00E71CFF /* SSH-Config.tmbundle */; };
+		B7CEF8AB14ED924D00E71CFF /* Standard ML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84C14ED924D00E71CFF /* Standard ML.tmbundle */; };
+		B7CEF8AC14ED924D00E71CFF /* SVK.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84D14ED924D00E71CFF /* SVK.tmbundle */; };
+		B7CEF8AD14ED924D00E71CFF /* SWeave.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84E14ED924D00E71CFF /* SWeave.tmbundle */; };
+		B7CEF8AE14ED924D00E71CFF /* SWIG.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF84F14ED924D00E71CFF /* SWIG.tmbundle */; };
+		B7CEF8AF14ED924D00E71CFF /* Tabular.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85014ED924D00E71CFF /* Tabular.tmbundle */; };
+		B7CEF8B014ED924D00E71CFF /* Tcl.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85114ED924D00E71CFF /* Tcl.tmbundle */; };
+		B7CEF8B114ED924D00E71CFF /* Thrift.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85214ED924D00E71CFF /* Thrift.tmbundle */; };
+		B7CEF8B214ED924D00E71CFF /* Twiki.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85314ED924D00E71CFF /* Twiki.tmbundle */; };
+		B7CEF8B314ED924D00E71CFF /* Txt2tags.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85414ED924D00E71CFF /* Txt2tags.tmbundle */; };
+		B7CEF8B414ED924D00E71CFF /* Vectorscript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85514ED924D00E71CFF /* Vectorscript.tmbundle */; };
+		B7CEF8B514ED924D00E71CFF /* Widget Creator.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85614ED924D00E71CFF /* Widget Creator.tmbundle */; };
 		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
 		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
 		B7DD436614E0973E0057DDB4 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436014E0971C0057DDB4 /* libConnection.a */; };
@@ -337,6 +432,101 @@
 		B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
+		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
+		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
+		B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ANTLR.tmbundle; sourceTree = "<group>"; };
+		B7CEF7FB14ED924D00E71CFF /* ASP_vb_NET.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ASP_vb_NET.tmbundle; sourceTree = "<group>"; };
+		B7CEF7FC14ED924D00E71CFF /* ASP.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ASP.tmbundle; sourceTree = "<group>"; };
+		B7CEF7FD14ED924D00E71CFF /* Bison.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Bison.tmbundle; sourceTree = "<group>"; };
+		B7CEF7FE14ED924D00E71CFF /* Bulletin Board.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Bulletin Board.tmbundle"; sourceTree = "<group>"; };
+		B7CEF7FF14ED924D00E71CFF /* CMake.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake.tmbundle; sourceTree = "<group>"; };
+		B7CEF80014ED924D00E71CFF /* ColdFusion.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ColdFusion.tmbundle; sourceTree = "<group>"; };
+		B7CEF80114ED924D00E71CFF /* Context Free.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Context Free.tmbundle"; sourceTree = "<group>"; };
+		B7CEF80214ED924D00E71CFF /* CTags.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CTags.tmbundle; sourceTree = "<group>"; };
+		B7CEF80314ED924D00E71CFF /* D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = D.tmbundle; sourceTree = "<group>"; };
+		B7CEF80414ED924D00E71CFF /* Darcs.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Darcs.tmbundle; sourceTree = "<group>"; };
+		B7CEF80514ED924D00E71CFF /* DokuWiki.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DokuWiki.tmbundle; sourceTree = "<group>"; };
+		B7CEF80614ED924D00E71CFF /* Doxygen.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Doxygen.tmbundle; sourceTree = "<group>"; };
+		B7CEF80714ED924D00E71CFF /* Eiffel.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Eiffel.tmbundle; sourceTree = "<group>"; };
+		B7CEF80814ED924D00E71CFF /* Erlang.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Erlang.tmbundle; sourceTree = "<group>"; };
+		B7CEF80914ED924D00E71CFF /* Experimental Wiki.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Experimental Wiki.tmbundle"; sourceTree = "<group>"; };
+		B7CEF80A14ED924D00E71CFF /* Experimental.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Experimental.tmbundle; sourceTree = "<group>"; };
+		B7CEF80B14ED924D00E71CFF /* F-Script.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "F-Script.tmbundle"; sourceTree = "<group>"; };
+		B7CEF80C14ED924D00E71CFF /* FileMerge.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FileMerge.tmbundle; sourceTree = "<group>"; };
+		B7CEF80D14ED924D00E71CFF /* FXScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = FXScript.tmbundle; sourceTree = "<group>"; };
+		B7CEF80E14ED924D00E71CFF /* Gettext.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Gettext.tmbundle; sourceTree = "<group>"; };
+		B7CEF80F14ED924D00E71CFF /* Graphviz.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Graphviz.tmbundle; sourceTree = "<group>"; };
+		B7CEF81014ED924D00E71CFF /* Greasemonkey.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Greasemonkey.tmbundle; sourceTree = "<group>"; };
+		B7CEF81114ED924D00E71CFF /* Gri.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Gri.tmbundle; sourceTree = "<group>"; };
+		B7CEF81214ED924D00E71CFF /* GTD2.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GTD2.tmbundle; sourceTree = "<group>"; };
+		B7CEF81314ED924D00E71CFF /* GTDAlt.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GTDAlt.tmbundle; sourceTree = "<group>"; };
+		B7CEF81414ED924D00E71CFF /* Hotkey.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Hotkey.tmbundle; sourceTree = "<group>"; };
+		B7CEF81514ED924D00E71CFF /* iCalendar.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iCalendar.tmbundle; sourceTree = "<group>"; };
+		B7CEF81614ED924D00E71CFF /* ImageBrowser.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ImageBrowser.tmbundle; sourceTree = "<group>"; };
+		B7CEF81714ED924D00E71CFF /* Inform.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Inform.tmbundle; sourceTree = "<group>"; };
+		B7CEF81814ED924D00E71CFF /* Ini.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ini.tmbundle; sourceTree = "<group>"; };
+		B7CEF81914ED924D00E71CFF /* Installer.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Installer.tmbundle; sourceTree = "<group>"; };
+		B7CEF81A14ED924D00E71CFF /* Io.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Io.tmbundle; sourceTree = "<group>"; };
+		B7CEF81B14ED924D00E71CFF /* iTerm.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = iTerm.tmbundle; sourceTree = "<group>"; };
+		B7CEF81C14ED924D00E71CFF /* JavaScript jQuery.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JavaScript jQuery.tmbundle"; sourceTree = "<group>"; };
+		B7CEF81D14ED924D00E71CFF /* JavaScript Objective-J.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JavaScript Objective-J.tmbundle"; sourceTree = "<group>"; };
+		B7CEF81E14ED924D00E71CFF /* JavaScript Prototype & Script_aculo_us.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JavaScript Prototype & Script_aculo_us.tmbundle"; sourceTree = "<group>"; };
+		B7CEF81F14ED924D00E71CFF /* JavaScript YUI.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JavaScript YUI.tmbundle"; sourceTree = "<group>"; };
+		B7CEF82014ED924D00E71CFF /* Lex-Flex.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Lex-Flex.tmbundle"; sourceTree = "<group>"; };
+		B7CEF82114ED924D00E71CFF /* Lighttpd.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Lighttpd.tmbundle; sourceTree = "<group>"; };
+		B7CEF82214ED924D00E71CFF /* Lisp.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Lisp.tmbundle; sourceTree = "<group>"; };
+		B7CEF82314ED924D00E71CFF /* Logo.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Logo.tmbundle; sourceTree = "<group>"; };
+		B7CEF82414ED924D00E71CFF /* Logtalk.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Logtalk.tmbundle; sourceTree = "<group>"; };
+		B7CEF82514ED924D00E71CFF /* MacPorts.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MacPorts.tmbundle; sourceTree = "<group>"; };
+		B7CEF82614ED924D00E71CFF /* Man Pages.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Man Pages.tmbundle"; sourceTree = "<group>"; };
+		B7CEF82714ED924D00E71CFF /* Matlab.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Matlab.tmbundle; sourceTree = "<group>"; };
+		B7CEF82814ED924D00E71CFF /* Mediawiki.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mediawiki.tmbundle; sourceTree = "<group>"; };
+		B7CEF82914ED924D00E71CFF /* MEL.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MEL.tmbundle; sourceTree = "<group>"; };
+		B7CEF82A14ED924D00E71CFF /* Mercurial.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mercurial.tmbundle; sourceTree = "<group>"; };
+		B7CEF82B14ED924D00E71CFF /* Modula.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Modula.tmbundle; sourceTree = "<group>"; };
+		B7CEF82C14ED924D00E71CFF /* MoinMoin.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = MoinMoin.tmbundle; sourceTree = "<group>"; };
+		B7CEF82D14ED924D00E71CFF /* Navigation.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Navigation.tmbundle; sourceTree = "<group>"; };
+		B7CEF82E14ED924D00E71CFF /* OCaml Experimental Completions.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "OCaml Experimental Completions.tmbundle"; sourceTree = "<group>"; };
+		B7CEF82F14ED924D00E71CFF /* OCaml.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = OCaml.tmbundle; sourceTree = "<group>"; };
+		B7CEF83014ED924D00E71CFF /* OCamlCodeCompletion Misc.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "OCamlCodeCompletion Misc.tmbundle"; sourceTree = "<group>"; };
+		B7CEF83114ED924D00E71CFF /* OCamlCodeCompletion Unix.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "OCamlCodeCompletion Unix.tmbundle"; sourceTree = "<group>"; };
+		B7CEF83214ED924D00E71CFF /* OCamlCodeCompletion.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = OCamlCodeCompletion.tmbundle; sourceTree = "<group>"; };
+		B7CEF83314ED924D00E71CFF /* ODCompletion.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ODCompletion.tmbundle; sourceTree = "<group>"; };
+		B7CEF83414ED924D00E71CFF /* Outlines.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Outlines.tmbundle; sourceTree = "<group>"; };
+		B7CEF83514ED924D00E71CFF /* Pascal.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pascal.tmbundle; sourceTree = "<group>"; };
+		B7CEF83614ED924D00E71CFF /* Perforce.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Perforce.tmbundle; sourceTree = "<group>"; };
+		B7CEF83714ED924D00E71CFF /* Perl Mason.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Perl Mason.tmbundle"; sourceTree = "<group>"; };
+		B7CEF83814ED924D00E71CFF /* PHP Smarty.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "PHP Smarty.tmbundle"; sourceTree = "<group>"; };
+		B7CEF83914ED924D00E71CFF /* PmWiki.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PmWiki.tmbundle; sourceTree = "<group>"; };
+		B7CEF83A14ED924D00E71CFF /* Postscript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Postscript.tmbundle; sourceTree = "<group>"; };
+		B7CEF83B14ED924D00E71CFF /* Prolog.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Prolog.tmbundle; sourceTree = "<group>"; };
+		B7CEF83C14ED924D00E71CFF /* Propel.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Propel.tmbundle; sourceTree = "<group>"; };
+		B7CEF83D14ED924D00E71CFF /* Python Django.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Python Django.tmbundle"; sourceTree = "<group>"; };
+		B7CEF83E14ED924D00E71CFF /* Quake.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Quake.tmbundle; sourceTree = "<group>"; };
+		B7CEF83F14ED924D00E71CFF /* R Console (R_app).tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "R Console (R_app).tmbundle"; sourceTree = "<group>"; };
+		B7CEF84014ED924D00E71CFF /* R Console (Rdaemon).tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "R Console (Rdaemon).tmbundle"; sourceTree = "<group>"; };
+		B7CEF84114ED924D00E71CFF /* R.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = R.tmbundle; sourceTree = "<group>"; };
+		B7CEF84214ED924D00E71CFF /* Ragel.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ragel.tmbundle; sourceTree = "<group>"; };
+		B7CEF84314ED924D00E71CFF /* RegularExpressions.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RegularExpressions.tmbundle; sourceTree = "<group>"; };
+		B7CEF84414ED924D00E71CFF /* Remind.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Remind.tmbundle; sourceTree = "<group>"; };
+		B7CEF84514ED924D00E71CFF /* Rez.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Rez.tmbundle; sourceTree = "<group>"; };
+		B7CEF84614ED924D00E71CFF /* Ruby Haml.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Ruby Haml.tmbundle"; sourceTree = "<group>"; };
+		B7CEF84714ED924D00E71CFF /* Scilab.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scilab.tmbundle; sourceTree = "<group>"; };
+		B7CEF84814ED924D00E71CFF /* SCons.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SCons.tmbundle; sourceTree = "<group>"; };
+		B7CEF84914ED924D00E71CFF /* Setext.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Setext.tmbundle; sourceTree = "<group>"; };
+		B7CEF84A14ED924D00E71CFF /* Slate.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Slate.tmbundle; sourceTree = "<group>"; };
+		B7CEF84B14ED924D00E71CFF /* SSH-Config.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "SSH-Config.tmbundle"; sourceTree = "<group>"; };
+		B7CEF84C14ED924D00E71CFF /* Standard ML.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Standard ML.tmbundle"; sourceTree = "<group>"; };
+		B7CEF84D14ED924D00E71CFF /* SVK.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SVK.tmbundle; sourceTree = "<group>"; };
+		B7CEF84E14ED924D00E71CFF /* SWeave.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SWeave.tmbundle; sourceTree = "<group>"; };
+		B7CEF84F14ED924D00E71CFF /* SWIG.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SWIG.tmbundle; sourceTree = "<group>"; };
+		B7CEF85014ED924D00E71CFF /* Tabular.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tabular.tmbundle; sourceTree = "<group>"; };
+		B7CEF85114ED924D00E71CFF /* Tcl.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tcl.tmbundle; sourceTree = "<group>"; };
+		B7CEF85214ED924D00E71CFF /* Thrift.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Thrift.tmbundle; sourceTree = "<group>"; };
+		B7CEF85314ED924D00E71CFF /* Twiki.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Twiki.tmbundle; sourceTree = "<group>"; };
+		B7CEF85414ED924D00E71CFF /* Txt2tags.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Txt2tags.tmbundle; sourceTree = "<group>"; };
+		B7CEF85514ED924D00E71CFF /* Vectorscript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Vectorscript.tmbundle; sourceTree = "<group>"; };
+		B7CEF85614ED924D00E71CFF /* Widget Creator.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Widget Creator.tmbundle"; sourceTree = "<group>"; };
 		B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFilteredDirectoryPresenter.h; sourceTree = "<group>"; };
 		B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFilteredDirectoryPresenter.m; sourceTree = "<group>"; };
 		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
@@ -655,6 +845,101 @@
 		B7656C18144B53500084B050 /* Language Bundles */ = {
 			isa = PBXGroup;
 			children = (
+				B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */,
+				B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */,
+				B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */,
+				B7CEF7FB14ED924D00E71CFF /* ASP_vb_NET.tmbundle */,
+				B7CEF7FC14ED924D00E71CFF /* ASP.tmbundle */,
+				B7CEF7FD14ED924D00E71CFF /* Bison.tmbundle */,
+				B7CEF7FE14ED924D00E71CFF /* Bulletin Board.tmbundle */,
+				B7CEF7FF14ED924D00E71CFF /* CMake.tmbundle */,
+				B7CEF80014ED924D00E71CFF /* ColdFusion.tmbundle */,
+				B7CEF80114ED924D00E71CFF /* Context Free.tmbundle */,
+				B7CEF80214ED924D00E71CFF /* CTags.tmbundle */,
+				B7CEF80314ED924D00E71CFF /* D.tmbundle */,
+				B7CEF80414ED924D00E71CFF /* Darcs.tmbundle */,
+				B7CEF80514ED924D00E71CFF /* DokuWiki.tmbundle */,
+				B7CEF80614ED924D00E71CFF /* Doxygen.tmbundle */,
+				B7CEF80714ED924D00E71CFF /* Eiffel.tmbundle */,
+				B7CEF80814ED924D00E71CFF /* Erlang.tmbundle */,
+				B7CEF80914ED924D00E71CFF /* Experimental Wiki.tmbundle */,
+				B7CEF80A14ED924D00E71CFF /* Experimental.tmbundle */,
+				B7CEF80B14ED924D00E71CFF /* F-Script.tmbundle */,
+				B7CEF80C14ED924D00E71CFF /* FileMerge.tmbundle */,
+				B7CEF80D14ED924D00E71CFF /* FXScript.tmbundle */,
+				B7CEF80E14ED924D00E71CFF /* Gettext.tmbundle */,
+				B7CEF80F14ED924D00E71CFF /* Graphviz.tmbundle */,
+				B7CEF81014ED924D00E71CFF /* Greasemonkey.tmbundle */,
+				B7CEF81114ED924D00E71CFF /* Gri.tmbundle */,
+				B7CEF81214ED924D00E71CFF /* GTD2.tmbundle */,
+				B7CEF81314ED924D00E71CFF /* GTDAlt.tmbundle */,
+				B7CEF81414ED924D00E71CFF /* Hotkey.tmbundle */,
+				B7CEF81514ED924D00E71CFF /* iCalendar.tmbundle */,
+				B7CEF81614ED924D00E71CFF /* ImageBrowser.tmbundle */,
+				B7CEF81714ED924D00E71CFF /* Inform.tmbundle */,
+				B7CEF81814ED924D00E71CFF /* Ini.tmbundle */,
+				B7CEF81914ED924D00E71CFF /* Installer.tmbundle */,
+				B7CEF81A14ED924D00E71CFF /* Io.tmbundle */,
+				B7CEF81B14ED924D00E71CFF /* iTerm.tmbundle */,
+				B7CEF81C14ED924D00E71CFF /* JavaScript jQuery.tmbundle */,
+				B7CEF81D14ED924D00E71CFF /* JavaScript Objective-J.tmbundle */,
+				B7CEF81E14ED924D00E71CFF /* JavaScript Prototype & Script_aculo_us.tmbundle */,
+				B7CEF81F14ED924D00E71CFF /* JavaScript YUI.tmbundle */,
+				B7CEF82014ED924D00E71CFF /* Lex-Flex.tmbundle */,
+				B7CEF82114ED924D00E71CFF /* Lighttpd.tmbundle */,
+				B7CEF82214ED924D00E71CFF /* Lisp.tmbundle */,
+				B7CEF82314ED924D00E71CFF /* Logo.tmbundle */,
+				B7CEF82414ED924D00E71CFF /* Logtalk.tmbundle */,
+				B7CEF82514ED924D00E71CFF /* MacPorts.tmbundle */,
+				B7CEF82614ED924D00E71CFF /* Man Pages.tmbundle */,
+				B7CEF82714ED924D00E71CFF /* Matlab.tmbundle */,
+				B7CEF82814ED924D00E71CFF /* Mediawiki.tmbundle */,
+				B7CEF82914ED924D00E71CFF /* MEL.tmbundle */,
+				B7CEF82A14ED924D00E71CFF /* Mercurial.tmbundle */,
+				B7CEF82B14ED924D00E71CFF /* Modula.tmbundle */,
+				B7CEF82C14ED924D00E71CFF /* MoinMoin.tmbundle */,
+				B7CEF82D14ED924D00E71CFF /* Navigation.tmbundle */,
+				B7CEF82E14ED924D00E71CFF /* OCaml Experimental Completions.tmbundle */,
+				B7CEF82F14ED924D00E71CFF /* OCaml.tmbundle */,
+				B7CEF83014ED924D00E71CFF /* OCamlCodeCompletion Misc.tmbundle */,
+				B7CEF83114ED924D00E71CFF /* OCamlCodeCompletion Unix.tmbundle */,
+				B7CEF83214ED924D00E71CFF /* OCamlCodeCompletion.tmbundle */,
+				B7CEF83314ED924D00E71CFF /* ODCompletion.tmbundle */,
+				B7CEF83414ED924D00E71CFF /* Outlines.tmbundle */,
+				B7CEF83514ED924D00E71CFF /* Pascal.tmbundle */,
+				B7CEF83614ED924D00E71CFF /* Perforce.tmbundle */,
+				B7CEF83714ED924D00E71CFF /* Perl Mason.tmbundle */,
+				B7CEF83814ED924D00E71CFF /* PHP Smarty.tmbundle */,
+				B7CEF83914ED924D00E71CFF /* PmWiki.tmbundle */,
+				B7CEF83A14ED924D00E71CFF /* Postscript.tmbundle */,
+				B7CEF83B14ED924D00E71CFF /* Prolog.tmbundle */,
+				B7CEF83C14ED924D00E71CFF /* Propel.tmbundle */,
+				B7CEF83D14ED924D00E71CFF /* Python Django.tmbundle */,
+				B7CEF83E14ED924D00E71CFF /* Quake.tmbundle */,
+				B7CEF83F14ED924D00E71CFF /* R Console (R_app).tmbundle */,
+				B7CEF84014ED924D00E71CFF /* R Console (Rdaemon).tmbundle */,
+				B7CEF84114ED924D00E71CFF /* R.tmbundle */,
+				B7CEF84214ED924D00E71CFF /* Ragel.tmbundle */,
+				B7CEF84314ED924D00E71CFF /* RegularExpressions.tmbundle */,
+				B7CEF84414ED924D00E71CFF /* Remind.tmbundle */,
+				B7CEF84514ED924D00E71CFF /* Rez.tmbundle */,
+				B7CEF84614ED924D00E71CFF /* Ruby Haml.tmbundle */,
+				B7CEF84714ED924D00E71CFF /* Scilab.tmbundle */,
+				B7CEF84814ED924D00E71CFF /* SCons.tmbundle */,
+				B7CEF84914ED924D00E71CFF /* Setext.tmbundle */,
+				B7CEF84A14ED924D00E71CFF /* Slate.tmbundle */,
+				B7CEF84B14ED924D00E71CFF /* SSH-Config.tmbundle */,
+				B7CEF84C14ED924D00E71CFF /* Standard ML.tmbundle */,
+				B7CEF84D14ED924D00E71CFF /* SVK.tmbundle */,
+				B7CEF84E14ED924D00E71CFF /* SWeave.tmbundle */,
+				B7CEF84F14ED924D00E71CFF /* SWIG.tmbundle */,
+				B7CEF85014ED924D00E71CFF /* Tabular.tmbundle */,
+				B7CEF85114ED924D00E71CFF /* Tcl.tmbundle */,
+				B7CEF85214ED924D00E71CFF /* Thrift.tmbundle */,
+				B7CEF85314ED924D00E71CFF /* Twiki.tmbundle */,
+				B7CEF85414ED924D00E71CFF /* Txt2tags.tmbundle */,
+				B7CEF85514ED924D00E71CFF /* Vectorscript.tmbundle */,
+				B7CEF85614ED924D00E71CFF /* Widget Creator.tmbundle */,
 				B7656C19144B53FE0084B050 /* ActionScript.tmbundle */,
 				B7656C1A144B53FE0084B050 /* Apache.tmbundle */,
 				B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */,
@@ -1545,6 +1830,101 @@
 				CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */,
 				CD27416A14E9C4120045ADFD /* itemIcon_Replace.png in Resources */,
 				B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */,
+				B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */,
+				B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */,
+				B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */,
+				B7CEF85A14ED924D00E71CFF /* ASP_vb_NET.tmbundle in Resources */,
+				B7CEF85B14ED924D00E71CFF /* ASP.tmbundle in Resources */,
+				B7CEF85C14ED924D00E71CFF /* Bison.tmbundle in Resources */,
+				B7CEF85D14ED924D00E71CFF /* Bulletin Board.tmbundle in Resources */,
+				B7CEF85E14ED924D00E71CFF /* CMake.tmbundle in Resources */,
+				B7CEF85F14ED924D00E71CFF /* ColdFusion.tmbundle in Resources */,
+				B7CEF86014ED924D00E71CFF /* Context Free.tmbundle in Resources */,
+				B7CEF86114ED924D00E71CFF /* CTags.tmbundle in Resources */,
+				B7CEF86214ED924D00E71CFF /* D.tmbundle in Resources */,
+				B7CEF86314ED924D00E71CFF /* Darcs.tmbundle in Resources */,
+				B7CEF86414ED924D00E71CFF /* DokuWiki.tmbundle in Resources */,
+				B7CEF86514ED924D00E71CFF /* Doxygen.tmbundle in Resources */,
+				B7CEF86614ED924D00E71CFF /* Eiffel.tmbundle in Resources */,
+				B7CEF86714ED924D00E71CFF /* Erlang.tmbundle in Resources */,
+				B7CEF86814ED924D00E71CFF /* Experimental Wiki.tmbundle in Resources */,
+				B7CEF86914ED924D00E71CFF /* Experimental.tmbundle in Resources */,
+				B7CEF86A14ED924D00E71CFF /* F-Script.tmbundle in Resources */,
+				B7CEF86B14ED924D00E71CFF /* FileMerge.tmbundle in Resources */,
+				B7CEF86C14ED924D00E71CFF /* FXScript.tmbundle in Resources */,
+				B7CEF86D14ED924D00E71CFF /* Gettext.tmbundle in Resources */,
+				B7CEF86E14ED924D00E71CFF /* Graphviz.tmbundle in Resources */,
+				B7CEF86F14ED924D00E71CFF /* Greasemonkey.tmbundle in Resources */,
+				B7CEF87014ED924D00E71CFF /* Gri.tmbundle in Resources */,
+				B7CEF87114ED924D00E71CFF /* GTD2.tmbundle in Resources */,
+				B7CEF87214ED924D00E71CFF /* GTDAlt.tmbundle in Resources */,
+				B7CEF87314ED924D00E71CFF /* Hotkey.tmbundle in Resources */,
+				B7CEF87414ED924D00E71CFF /* iCalendar.tmbundle in Resources */,
+				B7CEF87514ED924D00E71CFF /* ImageBrowser.tmbundle in Resources */,
+				B7CEF87614ED924D00E71CFF /* Inform.tmbundle in Resources */,
+				B7CEF87714ED924D00E71CFF /* Ini.tmbundle in Resources */,
+				B7CEF87814ED924D00E71CFF /* Installer.tmbundle in Resources */,
+				B7CEF87914ED924D00E71CFF /* Io.tmbundle in Resources */,
+				B7CEF87A14ED924D00E71CFF /* iTerm.tmbundle in Resources */,
+				B7CEF87B14ED924D00E71CFF /* JavaScript jQuery.tmbundle in Resources */,
+				B7CEF87C14ED924D00E71CFF /* JavaScript Objective-J.tmbundle in Resources */,
+				B7CEF87D14ED924D00E71CFF /* JavaScript Prototype & Script_aculo_us.tmbundle in Resources */,
+				B7CEF87E14ED924D00E71CFF /* JavaScript YUI.tmbundle in Resources */,
+				B7CEF87F14ED924D00E71CFF /* Lex-Flex.tmbundle in Resources */,
+				B7CEF88014ED924D00E71CFF /* Lighttpd.tmbundle in Resources */,
+				B7CEF88114ED924D00E71CFF /* Lisp.tmbundle in Resources */,
+				B7CEF88214ED924D00E71CFF /* Logo.tmbundle in Resources */,
+				B7CEF88314ED924D00E71CFF /* Logtalk.tmbundle in Resources */,
+				B7CEF88414ED924D00E71CFF /* MacPorts.tmbundle in Resources */,
+				B7CEF88514ED924D00E71CFF /* Man Pages.tmbundle in Resources */,
+				B7CEF88614ED924D00E71CFF /* Matlab.tmbundle in Resources */,
+				B7CEF88714ED924D00E71CFF /* Mediawiki.tmbundle in Resources */,
+				B7CEF88814ED924D00E71CFF /* MEL.tmbundle in Resources */,
+				B7CEF88914ED924D00E71CFF /* Mercurial.tmbundle in Resources */,
+				B7CEF88A14ED924D00E71CFF /* Modula.tmbundle in Resources */,
+				B7CEF88B14ED924D00E71CFF /* MoinMoin.tmbundle in Resources */,
+				B7CEF88C14ED924D00E71CFF /* Navigation.tmbundle in Resources */,
+				B7CEF88D14ED924D00E71CFF /* OCaml Experimental Completions.tmbundle in Resources */,
+				B7CEF88E14ED924D00E71CFF /* OCaml.tmbundle in Resources */,
+				B7CEF88F14ED924D00E71CFF /* OCamlCodeCompletion Misc.tmbundle in Resources */,
+				B7CEF89014ED924D00E71CFF /* OCamlCodeCompletion Unix.tmbundle in Resources */,
+				B7CEF89114ED924D00E71CFF /* OCamlCodeCompletion.tmbundle in Resources */,
+				B7CEF89214ED924D00E71CFF /* ODCompletion.tmbundle in Resources */,
+				B7CEF89314ED924D00E71CFF /* Outlines.tmbundle in Resources */,
+				B7CEF89414ED924D00E71CFF /* Pascal.tmbundle in Resources */,
+				B7CEF89514ED924D00E71CFF /* Perforce.tmbundle in Resources */,
+				B7CEF89614ED924D00E71CFF /* Perl Mason.tmbundle in Resources */,
+				B7CEF89714ED924D00E71CFF /* PHP Smarty.tmbundle in Resources */,
+				B7CEF89814ED924D00E71CFF /* PmWiki.tmbundle in Resources */,
+				B7CEF89914ED924D00E71CFF /* Postscript.tmbundle in Resources */,
+				B7CEF89A14ED924D00E71CFF /* Prolog.tmbundle in Resources */,
+				B7CEF89B14ED924D00E71CFF /* Propel.tmbundle in Resources */,
+				B7CEF89C14ED924D00E71CFF /* Python Django.tmbundle in Resources */,
+				B7CEF89D14ED924D00E71CFF /* Quake.tmbundle in Resources */,
+				B7CEF89E14ED924D00E71CFF /* R Console (R_app).tmbundle in Resources */,
+				B7CEF89F14ED924D00E71CFF /* R Console (Rdaemon).tmbundle in Resources */,
+				B7CEF8A014ED924D00E71CFF /* R.tmbundle in Resources */,
+				B7CEF8A114ED924D00E71CFF /* Ragel.tmbundle in Resources */,
+				B7CEF8A214ED924D00E71CFF /* RegularExpressions.tmbundle in Resources */,
+				B7CEF8A314ED924D00E71CFF /* Remind.tmbundle in Resources */,
+				B7CEF8A414ED924D00E71CFF /* Rez.tmbundle in Resources */,
+				B7CEF8A514ED924D00E71CFF /* Ruby Haml.tmbundle in Resources */,
+				B7CEF8A614ED924D00E71CFF /* Scilab.tmbundle in Resources */,
+				B7CEF8A714ED924D00E71CFF /* SCons.tmbundle in Resources */,
+				B7CEF8A814ED924D00E71CFF /* Setext.tmbundle in Resources */,
+				B7CEF8A914ED924D00E71CFF /* Slate.tmbundle in Resources */,
+				B7CEF8AA14ED924D00E71CFF /* SSH-Config.tmbundle in Resources */,
+				B7CEF8AB14ED924D00E71CFF /* Standard ML.tmbundle in Resources */,
+				B7CEF8AC14ED924D00E71CFF /* SVK.tmbundle in Resources */,
+				B7CEF8AD14ED924D00E71CFF /* SWeave.tmbundle in Resources */,
+				B7CEF8AE14ED924D00E71CFF /* SWIG.tmbundle in Resources */,
+				B7CEF8AF14ED924D00E71CFF /* Tabular.tmbundle in Resources */,
+				B7CEF8B014ED924D00E71CFF /* Tcl.tmbundle in Resources */,
+				B7CEF8B114ED924D00E71CFF /* Thrift.tmbundle in Resources */,
+				B7CEF8B214ED924D00E71CFF /* Twiki.tmbundle in Resources */,
+				B7CEF8B314ED924D00E71CFF /* Txt2tags.tmbundle in Resources */,
+				B7CEF8B414ED924D00E71CFF /* Vectorscript.tmbundle in Resources */,
+				B7CEF8B514ED924D00E71CFF /* Widget Creator.tmbundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

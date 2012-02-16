@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 
 # Copyright:
 #   (c) 2006 syncPEOPLE, LLC.
@@ -19,17 +20,16 @@ end
 
 # If text is selected, create a partial out of it
 if TextMate.selected_text
-  ext = ".html.#{current_file.extension}"
   partial_name = TextMate::UI.request_string(
     :title => "Create a partial from the selected text", 
     :default => "partial",
-    :prompt => "Name of the new partial: (omit the _ and #{ext})",
+    :prompt => "Name of the new partial: (omit the _ and .html.erb)",
     :button1 => 'Create'
   )
 
   if partial_name
     path = current_file.dirname
-    partial = File.join(path, "_#{partial_name}#{ext}")
+    partial = File.join(path, "_#{partial_name}.html.erb")
 
     # Create the partial file
     if File.exist?(partial)
@@ -42,21 +42,12 @@ if TextMate.selected_text
         TextMate.exit_discard
       end
     end
-    
-    # determine and strip identing of the partial
-    selected_text = TextMate.selected_text + "" # somehow .clone did not work
-    identing = selected_text.split("\n").first.to_s.match(/^(\s+)/) ? $1 : ""
-    selected_text.gsub!(/^#{identing}/, "")
-    
-    file = File.open(partial, "w") { |f| f.write(selected_text) }
+
+    file = File.open(partial, "w") { |f| f.write(TextMate.selected_text) }
     TextMate.rescan_project
 
     # Return the new render :partial line
-    if current_file.extension == "haml"
-      print "#{identing}= render :partial => '#{partial_name}'\n"
-    else
-      print "#{identing}<%= render :partial => '#{partial_name}' %>\n"
-    end
+    print "<%= render :partial => '#{partial_name}' %>\n"
   else
     TextMate.exit_discard
   end

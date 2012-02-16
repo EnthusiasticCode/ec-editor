@@ -24,14 +24,6 @@ mncc$0',
     { :up   => 'rename_table :${1:old_table_name}, :${2:new_table_name}
 mntc$0',
       :down => 'rename_table :$2, :$1' },
-  
-  'change_column' =>
-    { :up   => 'change_column :${1:table_name}, :${2:column_name}, :${4:string}$5',
-      :down => 'change_column :$1, :$2, :${6:string}$7' },
-  
-  'change_column_default' =>
-    { :up   => 'change_column_default :${1:table_name}, :${2:column_name}, ${4:"${5:new default}"}',
-      :down => 'change_column_default :$1, :$2, ${6:"${7:old default}"}' },
 
   'add_remove_column' =>
     { :up   => 'add_column :${1:table_name}, :${2:column_name}, :${3:string}$0',
@@ -41,14 +33,6 @@ mntc$0',
     { :up   => 'add_column :${1:table_name}, :${2:column_name}, :${3:string}
 marcc$0',
       :down => 'remove_column :$1, :$2' },
-
-  'add_remove_timestamps' =>
-    { :up   => 'add_timestamps :${1:table_name}$0',
-      :down => 'remove_timestamps :$1' },
-
-  'remove_add_timestamps' =>
-    { :up   => 'remove_timestamps :${1:table_name}$0',
-      :down => 'add_timestamps :$1' },
 
   'create_drop_table' =>
     { :up   => 'create_table :${1:table_name}, :force => true do |t|
@@ -78,13 +62,14 @@ end' },
 }
 
 def indent(code)
-  lines = code.split("\n")
-  lines.collect! { |s| "\t\t" + s }
-  lines.join("\n")
+  spaces = ' ' * (2 * ENV['TM_TAB_SIZE'].to_i)
+  lines = code.to_a.collect { |s| spaces + s }
+  lines.to_s + "\n"
 end
 
 def insert_migration(snippet, text)
-  lines = text.split("\n")
+  lines = text.to_a
+
   up_code = indent(snippet[:up])
   down_code = indent(snippet[:down])
 
@@ -99,7 +84,7 @@ def insert_migration(snippet, text)
       break
     end
   end
-  lines.join("\n")
+  lines.to_s
 end
 
 snippet = ARGV.shift

@@ -25,7 +25,12 @@ end
 
 rails_root = RailsPath.new.rails_root
 migration_dir = File.join(rails_root, "db", "migrate")
-number = Time.now.utc.strftime("%Y%m%d%H%M%S")
+files = Dir.glob(File.join(migration_dir, "[0-9][0-9][0-9]_*"))
+if files.empty?
+  number = "001"
+else
+  number = File.basename(files[-1])[0..2].succ
+end
 
 if selection =~ /^[a-z]/ or selection.include?("_")
   # The selected text is an underscored word

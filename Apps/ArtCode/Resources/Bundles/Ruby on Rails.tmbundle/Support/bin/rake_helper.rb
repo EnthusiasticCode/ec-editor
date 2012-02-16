@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# encoding: utf-8
 
 # Copyright:
 #   (c) 2006 InquiryLabs, Inc.
@@ -12,7 +13,7 @@ require 'rails_bundle_tools'
 require "#{ENV["TM_SUPPORT_PATH"]}/lib/escape"
 require "#{ENV["TM_SUPPORT_PATH"]}/lib/web_preview"
 
-$RAKEMATE_VERSION = "$Revision$"
+$RAKEMATE_VERSION = "$Revision: 11072 $"
 
 Dir.chdir TextMate.project_directory
 
@@ -64,7 +65,7 @@ reports = {
   "db:migrate" => "Migration Report"
 }
 
-puts html_head(:window_title => "#{task} - RakeMate", :page_title => 'RakeMate', :sub_title => 'Rake')
+puts html_head(:window_title => "#{task} — RakeMate", :page_title => 'RakeMate', :sub_title => 'Rake')
 puts <<-HTML
     <div id="report_title">#{reports[task] || "Rake Report"}</div>
     <div id="rake_command">#{command}</div>
@@ -77,7 +78,7 @@ HTML
 $stdout.flush
 
 output = `#{command}`
-lines = output.split("\n")
+lines = output.to_a
 # Remove the test output from rake output
 lines.pop if lines[-1] =~ /0 tests, 0 assertions, 0 failures, 0 errors/
 
