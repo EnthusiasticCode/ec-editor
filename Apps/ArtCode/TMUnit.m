@@ -243,8 +243,10 @@ static OnigRegexp *_namedCapturesRegexp;
             NSArray *patterns = [self _patternsIncludedByPattern:syntaxNode];
             for (TMSyntaxNode *pattern in patterns)
             {
-                ECASSERT(pattern.match || pattern.begin);
-                OnigRegexp *patternRegexp = pattern.match ? pattern.match : pattern.begin;
+                OnigRegexp *patternRegexp = pattern.match;
+                if (!patternRegexp)
+                    patternRegexp = pattern.begin;
+                ECASSERT(patternRegexp);
                 OnigResult *result = [patternRegexp search:line start:position];
                 if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location))
                     continue;
