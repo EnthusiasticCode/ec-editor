@@ -451,15 +451,16 @@ static const void *contentViewControllerContext;
 - (UIViewController *)_routeViewControllerWithURL:(NSURL *)url
 {
     UIViewController *result = nil;
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     __block BOOL currentURLIsEqualToProjectsDirectory = NO;
     __block BOOL currentURLExists = NO;
     __block BOOL currentURLIsDirectory = NO;
-    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        currentURLIsEqualToProjectsDirectory = [newURL isEqual:[ArtCodeURL projectsDirectory]];
+#warning calling file coordinator from main thread deadlocks uidocument
+//    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
+        currentURLIsEqualToProjectsDirectory = [url isEqual:[ArtCodeURL projectsDirectory]];
         NSFileManager *fileManager = [[NSFileManager alloc] init];
-        currentURLExists = [fileManager fileExistsAtPath:[newURL path] isDirectory:&currentURLIsDirectory];
-    }];
+        currentURLExists = [fileManager fileExistsAtPath:[url path] isDirectory:&currentURLIsDirectory];
+//    }];
     if (currentURLIsEqualToProjectsDirectory)
     {
         if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])

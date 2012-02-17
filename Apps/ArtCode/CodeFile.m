@@ -194,16 +194,16 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[self attributedStringInRange:stringRange] mutableCopy];
-//    if (self.codeUnit)
-//    {
-//        // Add text coloring
-//        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-//            NSDictionary *attributes = [self.theme attributesForScope:scope];
-//            if ([attributes count])
-//                [attributedString addAttributes:attributes range:range];
-//            return TMUnitVisitResultRecurse;
-//        }];
-//    }
+    if (self.codeUnit)
+    {
+        // Add text coloring
+        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            NSDictionary *attributes = [self.theme attributesForScope:scope];
+            if ([attributes count])
+                [attributedString addAttributes:attributes range:range];
+            return TMUnitVisitResultRecurse;
+        }];
+    }
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
