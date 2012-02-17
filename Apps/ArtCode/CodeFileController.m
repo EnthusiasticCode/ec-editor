@@ -83,7 +83,7 @@
 - (void)_keyboardWillHide:(NSNotification *)notification;
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
-- (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions;
+- (void)_keyboardAccessoryItemSetupWithScope:(TMScope *)scope;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 
 @end
@@ -219,13 +219,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         UIView *accessoryPopoverContentView = [UIView new];
         accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
         accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
-        
-        // Items actions
-        #warning TODO set actions on code view selection changed
-        _keyboardAccessoryItemActions = [TMKeyboardAction keyboardActionsConfigurationForScopeIdentifiersStack:[NSArray arrayWithObject:@"source.objc"]];
-        
-        // Items setup
-        [self _keyboardAccessoryItemSetupWithActions:_keyboardAccessoryItemActions];
     }
     return _codeView;
 }
@@ -796,7 +789,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             [self.singleTabController updateDefaultToolbarTitle];
         }
         // Change accessory keyboard
-        // TODO
+        [self _keyboardAccessoryItemSetupWithScope:currentScope];
     } repeats:NO];
 }
 
@@ -942,9 +935,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return _keyboardAccessoryItemCompletionsController;
 }
 
-- (void)_keyboardAccessoryItemSetupWithActions:(NSArray *)actions
+- (void)_keyboardAccessoryItemSetupWithScope:(TMScope *)scope
 {
-    ECASSERT([actions count] == 11);
+    NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForScope:scope];
+    if (_keyboardAccessoryItemActions == configuration)
+        return;
+    
+    _keyboardAccessoryItemActions = configuration;
+    ECASSERT([_keyboardAccessoryItemActions count] == 11);
     
     CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
     
@@ -975,7 +973,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
                     [item setWidth:60 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
             }
             
-            action = [actions objectAtIndex:i];
+            action = [_keyboardAccessoryItemActions objectAtIndex:i];
             item.title = action.title;
             item.image = [action image];            
             item.tag = i;
@@ -988,7 +986,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     {
         NSArray *items = accessoryView.items;
         [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
-            TMKeyboardAction *action = [actions objectAtIndex:itemIndex];
+            TMKeyboardAction *action = [_keyboardAccessoryItemActions objectAtIndex:itemIndex];
             item.title = action.title;
             item.image = [action image];
         }];

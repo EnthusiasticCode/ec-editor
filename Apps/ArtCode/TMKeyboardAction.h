@@ -9,16 +9,17 @@
 #import <UIKit/UIKit.h>
 
 @protocol TMKeyboardActionTarget;
+@class TMScope;
 
 
 /// Represent keyboard actions and give access to keyboard actions configurations
 /// specified in the textmate bundles. 
 /// A plist may be formed by:
+/// scope: the scope selector that indicates which scopes should use this keyboard.
 /// keyboardActions: and array of keyboard action dictionaries
 ///     <keyboard action>: uuid, title, description and imagePath are strings (relative to the plist file when needed),
 ///                        commands is an array of dictionaries containing command and argument to execute a selector.
 /// keyboardActionsConfiguration: an ordered array of keyboard action's uuid or the string 'inherit' that specify a keyboard configuration.
-/// scope: a list of comma separated scopes in which the keyboard configuration is to be used
 @interface TMKeyboardAction : NSObject
 
 #pragma mark Accessing the action properties
@@ -47,7 +48,7 @@
 #pragma mark Actions grouping
 
 + (NSDictionary *)allKeyboardActionsConfigurations;
-+ (NSArray *)keyboardActionsConfigurationForScopeIdentifiersStack:(NSArray *)scopeStack;
++ (NSArray *)keyboardActionsConfigurationForScope:(TMScope *)scope;
 
 @end
 

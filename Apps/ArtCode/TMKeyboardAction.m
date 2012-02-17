@@ -8,6 +8,7 @@
 
 #import "TMKeyboardAction.h"
 #import "TMBundle.h"
+#import "TMScope.h"
 #import <objc/message.h>
 
 static NSMutableDictionary *systemKeyboardActions;
@@ -99,7 +100,6 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
         systemKeyboardActionsConfigurations = [NSMutableDictionary new];
     for (NSString *scope in [[plist objectForKey:@"scope"] componentsSeparatedByString:@","])
     {
-        // TODO separate with space
         [systemKeyboardActionsConfigurations setObject:[configuration copy] forKey:scope];
     }
 }
@@ -119,29 +119,18 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
     return systemKeyboardActionsConfigurations;
 }
 
-+ (NSArray *)keyboardActionsConfigurationForScopeIdentifiersStack:(NSArray *)scopeStack
++ (NSArray *)keyboardActionsConfigurationForScope:(TMScope *)scope
 {
-    NSMutableArray *configuration = nil;
-    for (NSString *scopeIdentifier in [scopeStack reverseObjectEnumerator])
-    {
-        // TODO change algorithm
-        NSArray *currentConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:scopeIdentifier];
-        if (currentConfiguration)
+    // TODO handle "inherit" actions?
+    __block NSArray *configuration = nil;
+    [[self allKeyboardActionsConfigurations] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, NSArray *conf, BOOL *stop) {
+        if ([scope scoreForScopeSelector:scopeSelector] > 0)
         {
-            if (!configuration)
-            {
-                configuration = [NSMutableArray arrayWithArray:currentConfiguration];
-                continue;
-            }
-            [currentConfiguration enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if (obj == [NSNull null])
-                    return;
-                [configuration removeObjectAtIndex:idx];
-                [configuration insertObject:obj atIndex:idx];
-            }];
+            configuration = conf;
+            *stop = YES;
         }
-    }
-    return [configuration copy];
+    }];
+    return configuration;
 }
 
 @end
