@@ -154,6 +154,9 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// Gets the receiver's accessory view.
 @property (nonatomic, strong) KeyboardAccessoryView *keyboardAccessoryView;
 
+/// Set keyboard visibility.
+- (void)setKeyboardAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated;
+
 #pragma mark UITextInput Properties
 
 /// An input delegate that is notified when text changes or when the selection changes.

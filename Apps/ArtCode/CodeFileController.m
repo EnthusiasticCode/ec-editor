@@ -673,6 +673,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     ECASSERT(view && frame);
     
+    if ([_keyboardAccessoryItemActions count] != 11)
+        return NO;
+    
     /// Set keyboard position specific accessory popover properties
     if (codeView.keyboardAccessoryView.isSplit)
     {
@@ -992,6 +995,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         }];
         accessoryView.items = items;
     }
+    [_codeView setKeyboardAccessoryViewVisible:([_keyboardAccessoryItemActions count] == 11) animated:YES];
 }
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item

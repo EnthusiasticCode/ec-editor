@@ -115,7 +115,6 @@ static const void *rendererContext;
 // Handle keyboard display
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
-- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated;
 
 @end
 
@@ -721,7 +720,7 @@ static void init(CodeView *self)
 //        _longDoublePressRecognizer.enabled = YES;
         
         if (!_keyboardWillShow)
-            [self _setAccessoryViewVisible:YES animated:YES];
+            [self setKeyboardAccessoryViewVisible:YES animated:YES];
     }
     
     [self setNeedsLayout];
@@ -741,7 +740,7 @@ static void init(CodeView *self)
 //        _longDoublePressRecognizer.enabled = NO;
         
         // Remove keyboard accessory
-        [self _setAccessoryViewVisible:NO animated:YES];
+        [self setKeyboardAccessoryViewVisible:NO animated:YES];
     }
     
     [self setNeedsLayout];
@@ -1625,7 +1624,7 @@ static void init(CodeView *self)
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification
 {
     _keyboardFrame = CGRectNull;
-    [self _setAccessoryViewVisible:NO animated:NO];
+    [self setKeyboardAccessoryViewVisible:NO animated:NO];
     _keyboardWillShow = YES;
 }
 
@@ -1634,10 +1633,10 @@ static void init(CodeView *self)
     _keyboardWillShow = NO;
     _keyboardFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     if (self.isFirstResponder)
-        [self _setAccessoryViewVisible:YES animated:YES];
+        [self setKeyboardAccessoryViewVisible:YES animated:YES];
 }
 
-- (void)_setAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
+- (void)setKeyboardAccessoryViewVisible:(BOOL)visible animated:(BOOL)animated
 {
     if (_keyboardWillShow || !self.keyboardAccessoryView || (self.keyboardAccessoryView.superview != nil) == visible)
         return;
