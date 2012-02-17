@@ -42,7 +42,7 @@
     UIPopoverController *_quickBrowsersPopover;
     
     NSTimer *_selectionChangeDebounceTimer;
-    NSString *_currentSymbol;
+    CodeFileSymbol *_currentSymbol;
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
@@ -383,7 +383,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
 {
-#warning TODO insead of doing this, just put a symbol=.. in the URL?
     if (_currentSymbol)
     {
         NSMutableArray *components = [[[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents] mutableCopy];
@@ -395,7 +394,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             file = [components lastObject];
             [components removeLastObject];
         }
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+        if (_currentSymbol.icon)
+        {
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+        }
+        else
+        {
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+        }
         return YES;
     }
     return NO;
@@ -769,14 +775,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
             return TMUnitVisitResultRecurse;
         }];
         // Set current symbol in title
-        NSString *currentSymbol = nil;
+        CodeFileSymbol *currentSymbol = nil;
         for (CodeFileSymbol *symbol in [self.codeFile symbolList])
         {
             if (symbol.range.location > currentScope.location)
                 break;
-            currentSymbol = symbol.title;
+            currentSymbol = symbol;
         }
-        if (![currentSymbol isEqualToString:_currentSymbol])
+        if (currentSymbol != _currentSymbol)
         {
             _currentSymbol = currentSymbol;
             [self.singleTabController updateDefaultToolbarTitle];
