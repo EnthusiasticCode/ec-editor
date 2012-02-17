@@ -286,6 +286,8 @@ static const void *rendererContext;
     self.contentSize = CGSizeMake(frame.size.width, contentHeight);
     
     [super setFrame:frame];
+    
+    [_selectionView update];
 }
 
 - (void)setContentSize:(CGSize)contentSize
@@ -568,12 +570,6 @@ static void init(CodeView *self)
 {
     [super setNeedsDisplay];
     [_contentView setNeedsDisplay];
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    [_selectionView update];
 }
 
 - (void)drawRect:(CGRect)rect
@@ -1445,7 +1441,6 @@ static void init(CodeView *self)
     TextRange *range = [[TextRange alloc] initWithStart:(TextPosition *)startPosition end:(TextPosition *)endPosition];
     
     [self setSelectedTextRange:range];
-    
 }
 
 - (void)_autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block
