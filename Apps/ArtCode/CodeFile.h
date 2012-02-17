@@ -40,7 +40,6 @@
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 
 #pragma mark - Attributed string content writing methods
-- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString;
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 
@@ -69,7 +68,6 @@
 @protocol CodeFilePresenter <NSObject>
 @optional
 /// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
 
 - (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range;

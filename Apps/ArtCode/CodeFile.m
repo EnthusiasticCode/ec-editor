@@ -23,7 +23,6 @@ static NSString * const _changeTypeAttributeAdd = @"CodeFileChangeTypeAttributeA
 static NSString * const _changeTypeAttributeRemove = @"CodeFileChangeTypeAttributeRemove";
 static NSString * const _changeRangeKey = @"CodeFileChangeRangeKey";
 static NSString * const _changeStringKey = @"CodeFileChangeStringKey";
-static NSString * const _changeAttributedStringKey = @"CodeFileChangeAttributedStringKey";
 static NSString * const _changeAttributesKey= @"CodeFileChangeAttributesKey";
 static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeNamesKey";
 
@@ -45,12 +44,10 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 @property (nonatomic, strong) TMUnit *codeUnit;
 - (id)_initWithFileURL:(NSURL *)url;
 - (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
-// Private content methods
-- (BOOL)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
-// All the following methods have to be called within a pending changes lock.
+// Private content methods. All the following methods have to be called within a pending changes lock.
 - (void)_setHasPendingChanges;
 - (void)_processPendingChanges;
-- (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
+- (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
 - (BOOL)_applyAttributeAddChangeWithRange:(NSRange)range attributes:(NSDictionary *)attributes generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
 - (BOOL)_applyAttributeRemoveChangeWithRange:(NSRange)range attributeNames:(NSArray *)attributeNames generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration;
 @end
@@ -179,6 +176,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     NSMutableAttributedString *contentsString = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
+    [contentsString addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [contentsString length])];
     OSSpinLockLock(&_contentsLock);
     _contents = contentsString;
     ++_contentsGeneration;
@@ -196,17 +194,16 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
     NSMutableAttributedString *attributedString = [[self attributedStringInRange:stringRange] mutableCopy];
-    [attributedString addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [attributedString length])];
-    if (self.codeUnit)
-    {
-        // Add text coloring
-        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            NSDictionary *attributes = [self.theme attributesForScope:scope];
-            if ([attributes count])
-                [attributedString addAttributes:attributes range:range];
-            return TMUnitVisitResultRecurse;
-        }];
-    }
+//    if (self.codeUnit)
+//    {
+//        // Add text coloring
+//        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+//            NSDictionary *attributes = [self.theme attributesForScope:scope];
+//            if ([attributes count])
+//                [attributedString addAttributes:attributes range:range];
+//            return TMUnitVisitResultRecurse;
+//        }];
+//    }
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
@@ -417,27 +414,48 @@ return YES;
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [self replaceCharactersInRange:range withString:string withGeneration:NULL expectedGeneration:NULL];
 }
 
 - (BOOL)replaceCharactersInRange:(NSRange)range withString:(NSString *)string withGeneration:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
 {
-    return [self _replaceCharactersInRange:range string:string attributedString:[[NSAttributedString alloc] initWithString:string] generation:generation expectedGeneration:expectedGeneration];
+    // replacing an empty range with an empty string, no change required
+    if (!range.length && ![string length])
+        return YES;
+    // replacing a substring with an equal string, no change required
+    if ([string isEqualToString:[self stringInRange:range]])
+        return YES;
+    if ([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
+    {
+        OSSpinLockLock(&_pendingChangesLock);
+        [self _processPendingChanges];
+        BOOL success = [self _applyReplaceChangeWithRange:range string:string generation:generation expectedGeneration:expectedGeneration];
+        OSSpinLockUnlock(&_pendingChangesLock);
+        return success;
+    }
+    else
+    {
+        NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, string, _changeStringKey, _changeTypeReplacement, _changeTypeKey, nil];
+        OSSpinLockLock(&_pendingChangesLock);
+        OSSpinLockLock(&_contentsLock);
+        if (expectedGeneration && *expectedGeneration != _contentsGeneration + _pendingGenerationOffset)
+        {
+            OSSpinLockUnlock(&_contentsLock);
+            OSSpinLockUnlock(&_pendingChangesLock);
+            return NO;
+        }
+        ++_pendingGenerationOffset;
+        if (generation)
+            *generation = _contentsGeneration + _pendingGenerationOffset;
+        OSSpinLockUnlock(&_contentsLock);
+        [_pendingChanges addObject:change];
+        [self _setHasPendingChanges];
+        OSSpinLockUnlock(&_pendingChangesLock);
+    }
+    return YES;
 }
 
 #pragma mark - Attributed string content writing methods
-
-- (void)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [self replaceCharactersInRange:range withAttributedString:attributedString withGeneration:NULL expectedGeneration:NULL];
-}
-
-- (BOOL)replaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)attributedString withGeneration:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
-{
-    return [self _replaceCharactersInRange:range string:[attributedString string] attributedString:attributedString generation:generation expectedGeneration:expectedGeneration];
-}
 
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
@@ -518,44 +536,6 @@ return YES;
 
 #pragma mark - Private content methods
 
-- (BOOL)_replaceCharactersInRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
-{
-    // replacing an empty range with an empty string, no change required
-    if (!range.length && ![string length])
-        return YES;
-    // replacing a substring with an equal string, no change required
-    if ([string isEqualToString:[self stringInRange:range]])
-        return YES;
-    if ([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
-    {
-        OSSpinLockLock(&_pendingChangesLock);
-        [self _processPendingChanges];
-        BOOL success = [self _applyReplaceChangeWithRange:range string:string attributedString:attributedString generation:generation expectedGeneration:expectedGeneration];
-        OSSpinLockUnlock(&_pendingChangesLock);
-        return success;
-    }
-    else
-    {
-        NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, string, _changeStringKey, attributedString, _changeAttributedStringKey, _changeTypeReplacement, _changeTypeKey, nil];
-        OSSpinLockLock(&_pendingChangesLock);
-        OSSpinLockLock(&_contentsLock);
-        if (expectedGeneration && *expectedGeneration != _contentsGeneration + _pendingGenerationOffset)
-        {
-            OSSpinLockUnlock(&_contentsLock);
-            OSSpinLockUnlock(&_pendingChangesLock);
-            return NO;
-        }
-        ++_pendingGenerationOffset;
-        if (generation)
-            *generation = _contentsGeneration + _pendingGenerationOffset;
-        OSSpinLockUnlock(&_contentsLock);
-        [_pendingChanges addObject:change];
-        [self _setHasPendingChanges];
-        OSSpinLockUnlock(&_pendingChangesLock);
-    }
-    return YES;
-}
-
 - (void)_setHasPendingChanges
 {
     ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
@@ -587,7 +567,7 @@ return YES;
         id changeType = [nextChange objectForKey:_changeTypeKey];
         ECASSERT(changeType && (changeType == _changeTypeReplacement || changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove));
         if (changeType == _changeTypeReplacement)
-            [self _applyReplaceChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] string:[nextChange objectForKey:_changeStringKey] attributedString:[nextChange objectForKey:_changeAttributedStringKey] generation:NULL expectedGeneration:NULL];
+            [self _applyReplaceChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] string:[nextChange objectForKey:_changeStringKey] generation:NULL expectedGeneration:NULL];
         else if (changeType == _changeTypeAttributeAdd)
             [self _applyAttributeAddChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributes:[nextChange objectForKey:_changeAttributesKey] generation:NULL expectedGeneration:NULL];
         else if (changeType == _changeTypeAttributeRemove)
@@ -596,10 +576,11 @@ return YES;
     }
 }
 
-- (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string attributedString:(NSAttributedString *)attributedString generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
+- (BOOL)_applyReplaceChangeWithRange:(NSRange)range string:(NSString *)string generation:(CodeFileGeneration *)generation expectedGeneration:(CodeFileGeneration *)expectedGeneration
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:self.theme.commonAttributes];
     OSSpinLockLock(&_contentsLock);
     if (expectedGeneration && *expectedGeneration != _contentsGeneration)
     {
@@ -617,12 +598,8 @@ return YES;
     OSSpinLockUnlock(&_pendingChangesLock);
     [self updateChangeCount:UIDocumentChangeDone];
     for (id<CodeFilePresenter>presenter in [self presenters])
-    {
-        if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withString:)])
-            [presenter codeFile:self didReplaceCharactersInRange:range withString:string];
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)])
             [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
     OSSpinLockLock(&_pendingChangesLock);
     return YES;
 }

@@ -209,8 +209,8 @@ static OnigRegexp *_namedCapturesRegexp;
     }
     
     // Save the current generation
-    CodeFileGeneration startingGeneration;
-    NSRange range = NSMakeRange(0, [self.codeFile lengthWithGeneration:&startingGeneration]);
+    CodeFileGeneration currentGeneration;
+    NSRange range = NSMakeRange(0, [self.codeFile lengthWithGeneration:&currentGeneration]);
     
     // Parse the range
     NSRange lineRange = NSMakeRange(range.location, 0);
@@ -219,12 +219,12 @@ static OnigRegexp *_namedCapturesRegexp;
         if (lineRange.location >= NSMaxRange(range))
             break;
         // Setup the line
-        if (![self.codeFile lineRange:&lineRange forRange:lineRange withGeneration:&startingGeneration expectedGeneration:&startingGeneration])
+        if (![self.codeFile lineRange:&lineRange forRange:lineRange withGeneration:&currentGeneration expectedGeneration:&currentGeneration])
             return;
         if (lineRange.location < range.location)
             lineRange = NSMakeRange(range.location, NSMaxRange(lineRange) - range.location);
         NSString *uncachedString;
-        if (![self.codeFile string:&uncachedString inRange:lineRange withGeneration:&startingGeneration expectedGeneration:&startingGeneration])
+        if (![self.codeFile string:&uncachedString inRange:lineRange withGeneration:&currentGeneration expectedGeneration:&currentGeneration])
             return;
         CStringCachingString *line = [CStringCachingString stringWithString:[self.codeFile stringInRange:lineRange]];
         NSUInteger position = 0;

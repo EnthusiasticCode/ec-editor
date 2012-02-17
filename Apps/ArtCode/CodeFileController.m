@@ -618,7 +618,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - CodeFilePresenter
 
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withString:(NSString *)string
+- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
     [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
