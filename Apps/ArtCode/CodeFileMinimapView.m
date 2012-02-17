@@ -101,7 +101,7 @@ static const void *rendererContext;
             selectionRectangle.origin.y -= rendererTextInsets.top;
         }
         [self addSubview:self.selectionView];
-        [self scrollRectToVisible:(CGRect) { self.selectionView.frame.origin, { 1, 1 }} animated:YES];
+//        [self scrollRectToVisible:(CGRect) { self.selectionView.frame.origin, { 1, 1 }} animated:YES];
     }
     
     [self didChangeValueForKey:@"selectionRectangle"];
@@ -267,6 +267,13 @@ static const void *rendererContext;
     
     if (backgroundView)
         backgroundView.frame = (CGRect){ self.contentOffset, self.frame.size };
+}
+
+- (void)scrollToSelection
+{
+    CGRect selectionViewFrame = CGRectApplyAffineTransform(selectionRectangle, _toMinimapTransform);
+    selectionViewFrame.size.width = 1;
+    [self scrollRectToVisible:selectionViewFrame animated:YES];
 }
 
 #pragma mark - Private Methods

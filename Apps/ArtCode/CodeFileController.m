@@ -649,6 +649,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     }
 }
 
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (_minimapVisible && scrollView == _codeView)
+    {
+        [_minimapView scrollToSelection];
+    }
+}
+
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
     NSArray *bookmarks = [self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:lineNumber];

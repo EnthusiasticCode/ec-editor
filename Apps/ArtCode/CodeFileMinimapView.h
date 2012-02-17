@@ -49,6 +49,9 @@ typedef NSInteger CodeFileMinimapLineDecoration;
 /// A view used to mark the selection if any.
 @property (strong, nonatomic) UIView *selectionView;
 
+/// Scrolls so that the selection view is visible.
+- (void)scrollToSelection;
+
 #pragma mark - Managing Minimap Style
 
 /// A view positioned as the background.
