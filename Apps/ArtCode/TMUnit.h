@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <clang-c/Index.h>
+#import "Index.h"
 @class TMIndex, TMScope, CodeFile;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
