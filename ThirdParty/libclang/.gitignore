@@ -1,0 +1,9 @@
+BuildTools/
+build-iPhoneOS/
+build-iPhoneSimulator/
+build.log
+include/
+install-iPhoneOS/
+install-iPhoneSimulator/
+lib/
+llvm/
