@@ -60,7 +60,7 @@
 
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, strong) CodeFile *codeFile;
+@property (nonatomic, strong, readwrite) CodeFile *codeFile;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
@@ -269,20 +269,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (fileURL)
         [CodeFile codeFileWithFileURL:fileURL completionHandler:^(CodeFile *codeFile) {
             self.codeFile = codeFile;
-
-            // Update CodeView environment settings
-            if (self.codeFile)
-            {
-                UIColor *color = nil;
-                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
-                self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
-                self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
-                self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
-                self.codeView.caretColor = color ? color : [UIColor blackColor];
-                color = [self.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
-                self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
-            }
             self.loading = NO;
         }];
     else
@@ -303,6 +289,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     _codeView.dataSource = _codeFile;
     [_codeView updateAllText];
     [_codeFile addPresenter:self];
+    
+    // Update CodeView environment settings
+    if (_codeFile)
+    {
+        UIColor *color = nil;
+        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+        self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+        self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
+        self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
+        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+        self.codeView.caretColor = color ? color : [UIColor blackColor];
+        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+        self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
+    }
     
     [self _loadWebPreviewContentAndTitle];
     
@@ -548,6 +548,15 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     UIView *currentContentView = [self _contentView];
     if ([currentContentView isKindOfClass:[CodeView class]])
         [(CodeView *)currentContentView setEditing:editing];
+    
+    if (editing)
+    {
+        // Set keyboard for main scope
+        [_codeFile.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
+            [self _keyboardAccessoryItemSetupWithScope:scope];
+            return TMUnitVisitResultBreak;
+        }];
+    }
     
     if (oldContentView != currentContentView)
     {
