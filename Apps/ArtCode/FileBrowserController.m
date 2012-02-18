@@ -348,7 +348,6 @@ static void *_openQuicklyObservingContext;
     if (cell == nil)
     {
         cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:FileCellIdentifier];
-        cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
     // Configure the cell

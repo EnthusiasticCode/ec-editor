@@ -13,6 +13,7 @@
 #import "CodeView.h"
 
 #import "NSTimer+BlockTimer.h"
+#import "NSArray+ScoreForAbbreviation.h"
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -25,6 +26,8 @@
     UISearchBar *_searchBar;
     UILabel *_infoLabel;
     NSTimer *_filterDebounceTimer;
+    NSArray *_filteredSymbolList;
+    NSArray *_filteredSymbolListHitMask;
 }
 
 #pragma mark - Properties
@@ -45,7 +48,23 @@
 
 - (NSArray *)_symbolList
 {
-    return [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList];
+    if (!_filteredSymbolList)
+    {
+        if ([_searchBar.text length])
+        {
+            NSArray *hitMask = nil;
+            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList] sortedArrayUsingScoreForAbbreviation:_searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(CodeFileSymbol *element) {
+                return element.title;
+            }];
+            _filteredSymbolListHitMask = hitMask;
+        }
+        else
+        {
+            _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList];
+            _filteredSymbolListHitMask = nil;
+        }
+    }
+    return _filteredSymbolList;
 }
 
 #pragma mark - Controller lifecycle
@@ -101,6 +120,9 @@
     tableView = nil;
     [_filterDebounceTimer invalidate];
     _filterDebounceTimer = nil;
+    // Removing cached list so it will be recalculated on the next appear
+    _filteredSymbolList = nil;
+    _filteredSymbolListHitMask = nil;
     
     [super viewDidUnload];
 }
@@ -123,7 +145,8 @@
     // Apply filter to filterController with .3 second debounce
     [_filterDebounceTimer invalidate];
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        // TODO
+        _filteredSymbolList = nil;
+        [self.tableView reloadData];
     } repeats:NO];
 }
 
@@ -138,9 +161,9 @@
 {
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
+    HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.indentationWidth = 16;
     }
     
@@ -148,6 +171,7 @@
     cell.textLabel.text = symbol.title;
     cell.imageView.image = symbol.icon;
     cell.indentationLevel = symbol.indentation;
+    cell.textLabelHighlightedCharacters = _filteredSymbolListHitMask ? [_filteredSymbolListHitMask objectAtIndex:indexPath.row] : nil;
     
     return cell;
 }

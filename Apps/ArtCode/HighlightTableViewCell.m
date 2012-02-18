@@ -78,6 +78,15 @@
     return result;
 }
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (!self)
+        return nil;
+    self.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
+    return self;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];

@@ -210,7 +210,6 @@ static void *_directoryObservingContext;
     HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        cell.textLabelHighlightedCharactersBackgroundColor = [UIColor colorWithRed:225.0/255.0 green:220.0/255.0 blue:92.0/255.0 alpha:1];
     }
     
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
