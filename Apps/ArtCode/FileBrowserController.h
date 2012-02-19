@@ -8,12 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
+#import "BrowserController.h"
 
-@class ToolFiltersView, Group;
+@class DirectoryPresenter, SmartFilteredDirectoryPresenter;
 
 
-@interface FileBrowserController : UITableViewController <UISearchBarDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface FileBrowserController : BrowserController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
+@property (nonatomic, strong, readonly) DirectoryPresenter *directoryPresenter;
+@property (nonatomic, strong, readonly) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
 
 @end

@@ -12,7 +12,6 @@
 #import "CodeFile.h"
 #import "CodeView.h"
 
-#import "NSTimer+BlockTimer.h"
 #import "NSArray+ScoreForAbbreviation.h"
 
 #import "ArtCodeURL.h"
@@ -23,37 +22,20 @@
 #import "HighlightTableViewCell.h"
 
 @implementation QuickTOCController {
-    UISearchBar *_searchBar;
-    UILabel *_infoLabel;
-    NSTimer *_filterDebounceTimer;
     NSArray *_filteredSymbolList;
     NSArray *_filteredSymbolListHitMask;
 }
 
 #pragma mark - Properties
 
-@synthesize tableView;
-
-- (UITableView *)tableView
-{
-    if (!tableView)
-    {
-        tableView = [UITableView new];
-        tableView.delegate = self;
-        tableView.dataSource = self;
-        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    }
-    return tableView;
-}
-
-- (NSArray *)_symbolList
+- (NSArray *)filteredItems
 {
     if (!_filteredSymbolList)
     {
-        if ([_searchBar.text length])
+        if ([self.searchBar.text length])
         {
             NSArray *hitMask = nil;
-            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList] sortedArrayUsingScoreForAbbreviation:_searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(CodeFileSymbol *element) {
+            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(CodeFileSymbol *element) {
                 return element.title;
             }];
             _filteredSymbolListHitMask = hitMask;
@@ -67,11 +49,18 @@
     return _filteredSymbolList;
 }
 
+- (void)invalidateFilteredItems
+{
+    _filteredSymbolList = nil;
+    _filteredSymbolListHitMask = nil;
+    [super invalidateFilteredItems];
+}
+
 #pragma mark - Controller lifecycle
 
 - (id)init
 {
-    self = [super initWithNibName:nil bundle:nil];
+    self = [super initWithTitle:@"Symbol list" searchBarStaticOnTop:YES];
     if (!self)
         return nil;
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:nil tag:0];
@@ -79,95 +68,21 @@
     return self;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    return [self init];
-}
-
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
-    
-    CGRect bounds = self.view.bounds;
-    
-    // Add search bar
-    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
-    _searchBar.delegate = self;
-    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _searchBar.placeholder = @"Filter symbols";
-    [self.view addSubview:_searchBar];
-    
-    // Add table view
-    [self.view addSubview:self.tableView];
-    self.tableView.frame = CGRectMake(0, 44, bounds.size.width, bounds.size.height - 44);
-    
-    // Add table view footer view
-    _infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
-    _infoLabel.textAlignment = UITextAlignmentCenter;
-    _infoLabel.backgroundColor = [UIColor clearColor];
-    _infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
-    _infoLabel.shadowColor = [UIColor whiteColor];
-    _infoLabel.shadowOffset = CGSizeMake(0, 1);
-    self.tableView.tableFooterView = _infoLabel;
-}
-
-- (void)viewDidUnload
-{
-    _searchBar = nil;
-    _infoLabel = nil;
-    tableView = nil;
-    [_filterDebounceTimer invalidate];
-    _filterDebounceTimer = nil;
-    // Removing cached list so it will be recalculated on the next appear
-    _filteredSymbolList = nil;
-    _filteredSymbolListHitMask = nil;
-    
-    [super viewDidUnload];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self.tableView reloadData];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-#pragma mark - UISeachBar Delegate Methods
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
-    // Apply filter to filterController with .3 second debounce
-    [_filterDebounceTimer invalidate];
-    _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        _filteredSymbolList = nil;
-        [self.tableView reloadData];
-    } repeats:NO];
+    [super viewDidLoad];
+    self.searchBar.placeholder = @"Filter symbols";
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
-{
-    return [[self _symbolList] count];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
-    HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.indentationWidth = 16;
-    }
-    
-    CodeFileSymbol *symbol = [[self _symbolList] objectAtIndex:indexPath.row];
+    CodeFileSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
     cell.textLabel.text = symbol.title;
     cell.imageView.image = symbol.icon;
     cell.indentationLevel = symbol.indentation;
@@ -182,7 +97,7 @@
 {
     [table deselectRowAtIndexPath:indexPath animated:YES];
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:[[[self _symbolList] objectAtIndex:indexPath.row] range]];
+    [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:[[[self filteredItems] objectAtIndex:indexPath.row] range]];
 }
 
 @end

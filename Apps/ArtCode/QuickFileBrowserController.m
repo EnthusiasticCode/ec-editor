@@ -33,15 +33,12 @@ static void *_directoryObservingContext;
 
 
 @implementation QuickFileBrowserController {
-    UISearchBar *_searchBar;
-    UILabel *_infoLabel;
-    NSTimer *_filterDebounceTimer;
     NSString *_projectURLAbsoluteString;
 }
 
 #pragma mark - Properties
 
-@synthesize directoryPresenter = _directoryPresenter, tableView;
+@synthesize directoryPresenter = _directoryPresenter;
 
 - (DirectoryPresenter *)directoryPresenter
 {
@@ -66,25 +63,28 @@ static void *_directoryObservingContext;
     [self didChangeValueForKey:@"directoryPresenter"];
 }
 
-- (UITableView *)tableView
+- (NSArray *)filteredItems
 {
-    if (!tableView)
-    {
-        tableView = [UITableView new];
-        tableView.delegate = self;
-        tableView.dataSource = self;
-        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
-        tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
-    }
-    return tableView;
+    return self.directoryPresenter.fileURLs;
+}
+
+- (void)invalidateFilteredItems
+{
+    self.directoryPresenter.filterString = self.searchBar.text;
+    if ([self.searchBar.text length] == 0)
+        self.infoLabel.text = @"Type a file name to open.";
+    else if ([self.filteredItems count] == 0)
+        self.infoLabel.text = @"Nothing found";
+    else
+        self.infoLabel.text = @"";
+    [super invalidateFilteredItems];
 }
 
 #pragma mark - Controller lifecycle
 
 - (id)init
 {
-    self = [super initWithNibName:nil bundle:nil];
+    self = [super initWithTitle:@"Open quickly" searchBarStaticOnTop:YES];
     if (!self)
         return nil;
     self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
@@ -109,7 +109,6 @@ static void *_directoryObservingContext;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    
     self.directoryPresenter = nil;
 }
 
@@ -128,39 +127,15 @@ static void *_directoryObservingContext;
 
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
-    
-    CGRect bounds = self.view.bounds;
-    
-    // Add search bar
-    _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, 44)];
-    _searchBar.delegate = self;
-    _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _searchBar.placeholder = @"Search for file";
-    [self.view addSubview:_searchBar];
-    
-    // Add table view
-    [self.view addSubview:self.tableView];
-    self.tableView.frame = CGRectMake(0, 44, bounds.size.width, bounds.size.height - 44);
-    
-    // Add table view footer view
-    _infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
-    _infoLabel.textAlignment = UITextAlignmentCenter;
-    _infoLabel.backgroundColor = [UIColor clearColor];
-    _infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
-    _infoLabel.shadowColor = [UIColor whiteColor];
-    _infoLabel.shadowOffset = CGSizeMake(0, 1);
-    _infoLabel.text = @"Type a file name to open.";
-    self.tableView.tableFooterView = _infoLabel;
+    [super viewDidLoad];
+    self.searchBar.placeholder = @"Search for file";
+    self.infoLabel.text = @"Type a file name to open.";
 }
 
 - (void)viewDidUnload
 {
-    _searchBar = nil;
-    _infoLabel = nil;
-    tableView = nil;
     self.directoryPresenter = nil;
     
     [super viewDidUnload];
@@ -169,48 +144,14 @@ static void *_directoryObservingContext;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [_searchBar becomeFirstResponder];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-#pragma mark - UISeachBar Delegate Methods
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
-    // Apply filter to filterController with .3 second debounce
-    [_filterDebounceTimer invalidate];
-    _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        self.directoryPresenter.filterString = searchText;
-        if ([self.directoryPresenter.fileURLs count] == 0)
-        {
-            _infoLabel.text = [searchText length] ? @"No file found for the search term." : @"Type a file name to open.";
-        }
-        else
-        {
-            _infoLabel.text = nil;
-        }
-    } repeats:NO];
+    [self.searchBar becomeFirstResponder];
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section
-{
-    return [self.directoryPresenter.fileURLs count];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    
-    HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-    }
+    HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
     BOOL isDirecotry = NO;

@@ -223,6 +223,7 @@
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
+		CD12A97414F00DD80005F603 /* BrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* BrowserController.m */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
@@ -629,6 +630,8 @@
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 		CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMKeyboardAction.h; sourceTree = "<group>"; };
 		CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMKeyboardAction.m; sourceTree = "<group>"; };
+		CD12A97214F00DD80005F603 /* BrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserController.h; sourceTree = "<group>"; };
+		CD12A97314F00DD80005F603 /* BrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserController.m; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
@@ -1257,6 +1260,19 @@
 			path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/enc;
 			sourceTree = "<group>";
 		};
+		CD12A97514F0714E0005F603 /* Quick Info */ = {
+			isa = PBXGroup;
+			children = (
+				CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */,
+				CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */,
+				B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */,
+				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
+				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
+				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
+			);
+			name = "Quick Info";
+			sourceTree = "<group>";
+		};
 		CD1973EB14B1D2A600CACF5E /* Items */ = {
 			isa = PBXGroup;
 			children = (
@@ -1364,14 +1380,9 @@
 				CD7B435314CECA9900090CAE /* QuickFileBrowserController.m */,
 				CD2BA05814CFF65700031E78 /* QuickBookmarkBrowserController.h */,
 				CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */,
-				CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */,
-				CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */,
-				B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */,
-				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
-				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
-				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
 				CD49AA1014E33E95006032F6 /* QuickTOCController.h */,
 				CD49AA1114E33E95006032F6 /* QuickTOCController.m */,
+				CD12A97514F0714E0005F603 /* Quick Info */,
 			);
 			name = "Quick Browsers";
 			sourceTree = "<group>";
@@ -1509,6 +1520,8 @@
 		CD7D2B1413C0D38A00B889EE /* Browsers */ = {
 			isa = PBXGroup;
 			children = (
+				CD12A97214F00DD80005F603 /* BrowserController.h */,
+				CD12A97314F00DD80005F603 /* BrowserController.m */,
 				CD7D2B3113C0D4C700B889EE /* ProjectBrowserController.h */,
 				CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */,
 				CD7D2B4613C0D55700B889EE /* FileBrowserController.h */,
@@ -2119,6 +2132,7 @@
 				CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */,
 				CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */,
 				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
+				CD12A97414F00DD80005F603 /* BrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

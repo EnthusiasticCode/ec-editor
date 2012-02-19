@@ -150,7 +150,24 @@
     CFRelease(framesetter);
     
     [super drawRect:rect];
+}
 
+- (void)setAttributedText:(NSAttributedString *)value
+{
+    attributedText = value;
+    [self setNeedsDisplay];
+}
+
+- (void)setHighlightedCharacters:(NSIndexSet *)value
+{
+    highlightedCharacters = value;
+    [self setNeedsDisplay];
+}
+
+- (void)setHighlightedBackgroundColor:(UIColor *)value
+{
+    highlightedBackgroundColor = value;
+    [self setNeedsDisplay];
 }
 
 @end

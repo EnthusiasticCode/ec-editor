@@ -16,7 +16,6 @@
 #import "DirectoryBrowserController.h"
 #import "MoveConflictController.h"
 
-#import "NSTimer+BlockTimer.h"
 #import "NSString+PluralFormat.h"
 #import "NSURL+Utilities.h"
 #import "BezelAlert.h"
@@ -28,7 +27,6 @@
 #import "TopBarTitleControl.h"
 
 #import "UIViewController+PresentingPopoverController.h"
-#import "QuickBrowsersContainerController.h"
 
 #import "DirectoryPresenter.h"
 #import "SmartFilteredDirectoryPresenter.h"
@@ -41,22 +39,15 @@ static void *_openQuicklyObservingContext;
 @interface FileBrowserController () {
     ArtCodeProject *_currentObservedProject;
     
-    NSArray *_toolNormalItems;
-    NSArray *_toolEditItems;
-    
     UIPopoverController *_toolNormalAddPopover;
     UIActionSheet *_toolEditItemDeleteActionSheet;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
     UINavigationController *_directoryBrowserNavigationController;
     
-    NSTimer *_filterDebounceTimer;
-    
     NSMutableArray *_selectedURLs;
     
     BOOL _isShowingOpenQuickly;
-    
-    UIPopoverController *_quickBrowsersPopover;
 }
 
 @property (nonatomic, strong) DirectoryPresenter *directoryPresenter;
@@ -72,14 +63,20 @@ static void *_openQuicklyObservingContext;
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
 
-- (DirectoryPresenter *)_currentPresenter;
-
 @end
 
 #pragma mark - Implementations
 #pragma mark -
 
 @implementation FileBrowserController
+
+- (id)init
+{
+    self = [super initWithTitle:nil searchBarStaticOnTop:NO];
+    if (!self)
+        return nil;
+    return self;
+}
 
 #pragma mark - Properties
 
@@ -113,17 +110,36 @@ static void *_openQuicklyObservingContext;
     if (directory == _directory)
         return;
     [self willChangeValueForKey:@"directory"];
-    [_selectedURLs removeAllObjects];
-    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+    if (self.isViewLoaded && self.view.superview != nil)
+    {
+        [_selectedURLs removeAllObjects];
+        [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
+        [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+    }
     _directory = directory;
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    _currentObservedProject = self.artCodeTab.currentProject;
-    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
-    [self.tableView reloadData];
+    if (self.isViewLoaded && self.view.superview != nil)
+    {
+        self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+        self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+        _currentObservedProject = self.artCodeTab.currentProject;
+        [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
+        [self.tableView reloadData];
+    }
     [self didChangeValueForKey:@"directory"];
+}
+
+- (NSArray *)filteredItems
+{
+    return [(_isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter) fileURLs];
+}
+
+- (void)invalidateFilteredItems
+{
+    _isShowingOpenQuickly = [self.searchBar.text length] != 0;
+    if (_isShowingOpenQuickly)
+        self.openQuicklyPresenter.filterString = self.searchBar.text;
+    [super invalidateFilteredItems];
 }
 
 #pragma mark - View lifecycle
@@ -132,40 +148,13 @@ static void *_openQuicklyObservingContext;
 {
     [super loadView];
     
-    // Add search bar
-    if (!self.tableView.tableHeaderView)
-    {
-        UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
-        searchBar.delegate = self;
-        searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        searchBar.placeholder = @"Filter files";
-        self.tableView.tableHeaderView = searchBar;
-    }
-    
-    // TODO Write hints in this view
-    if (!self.tableView.tableFooterView)
-    {
-        UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 0)];
-        self.tableView.tableFooterView = footerView;
-    }
-    
-    // Prepare edit button
-    self.editButtonItem.title = @"";
-    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+    // Customize subviews
+    self.searchBar.placeholder = @"Filter files";
     
     // Preparing tool items array changed in set editing
-    _toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
     
-    _toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    self.tableView.allowsMultipleSelectionDuringEditing = YES;
-    self.tableView.contentOffset = CGPointMake(0, 45);
-    self.toolbarItems = _toolNormalItems;
+    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
 }
 
 - (void)viewDidUnload
@@ -176,18 +165,11 @@ static void *_openQuicklyObservingContext;
     _toolEditItemExportActionSheet = nil;
     _toolEditItemDuplicateActionSheet = nil;
     
-    _toolEditItems = nil;
-    _toolNormalItems = nil;
-    
-    _quickBrowsersPopover = nil;
-    
     [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
     self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
@@ -200,6 +182,8 @@ static void *_openQuicklyObservingContext;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
         [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     }
+    
+    [super viewWillAppear:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -215,39 +199,10 @@ static void *_openQuicklyObservingContext;
     _currentObservedProject = nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [_quickBrowsersPopover dismissPopoverAnimated:YES];
-}
-
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    [self willChangeValueForKey:@"editing"];
-    
     [super setEditing:editing animated:animated];
-    
     [_selectedURLs removeAllObjects];
-    
-    if (editing)
-    {
-        self.toolbarItems = _toolEditItems;
-        for (UIBarButtonItem *item in _toolEditItems)
-        {
-            [(UIButton *)item.customView setEnabled:NO];
-        }
-    }
-    else
-    {  
-        self.toolbarItems = _toolNormalItems;
-    }
-    
-    [self didChangeValueForKey:@"editing"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -292,31 +247,6 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - Single tab content controller protocol methods
 
-- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
-{
-    return YES;
-}
-
-- (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
-{
-    // TODO the quick browser container controller gets created every time, is it ok?
-    QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
-    [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    if (!_quickBrowsersPopover)
-    {
-        _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-        _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
-    }
-    else
-    {
-        [_quickBrowsersPopover setContentViewController:navigationController animated:NO];
-    }
-    quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
-    quickBrowserContainerController.openingButton = sender;
-    [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-}
-
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
 {
     BOOL isRoot = NO;
@@ -335,23 +265,12 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - Table view data source
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [[self _currentPresenter].fileURLs count];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *FileCellIdentifier = @"FileCell";
-    
-    HighlightTableViewCell *cell = [tView dequeueReusableCellWithIdentifier:FileCellIdentifier];
-    if (cell == nil)
-    {
-        cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:FileCellIdentifier];
-    }
+    HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
     
     // Configure the cell
-    NSURL *fileURL = [[self _currentPresenter].fileURLs objectAtIndex:indexPath.row];
+    NSURL *fileURL = [self.filteredItems objectAtIndex:indexPath.row];
     
     BOOL isDirecotry = NO;
     [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
@@ -362,7 +281,7 @@ static void *_openQuicklyObservingContext;
     
     cell.textLabel.text = [fileURL lastPathComponent];
     
-    if (_isShowingOpenQuickly)
+    if ([self.searchBar.text length])
         cell.textLabelHighlightedCharacters = [self.openQuicklyPresenter hitMaskForFileURL:fileURL];
     else
         cell.textLabelHighlightedCharacters = nil;
@@ -374,58 +293,26 @@ static void *_openQuicklyObservingContext;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
     if (self.isEditing)
     {
         if (!_selectedURLs)
             _selectedURLs = [NSMutableArray new];
-        [_selectedURLs addObject:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
-        BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
-        for (UIBarButtonItem *item in _toolEditItems)
-        {
-            [(UIButton *)item.customView setEnabled:anySelected];
-        }
+        [_selectedURLs addObject:[self.filteredItems objectAtIndex:indexPath.row]];
     }
     else
     {
-        [self.artCodeTab pushURL:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
+        [self.artCodeTab pushURL:[self.filteredItems objectAtIndex:indexPath.row]];
     }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
     if (self.isEditing)
     {
-        [_selectedURLs removeObject:[[self _currentPresenter].fileURLs objectAtIndex:indexPath.row]];
-        BOOL anySelected = [tableView indexPathForSelectedRow] == nil ? NO : YES;
-        for (UIBarButtonItem *item in _toolEditItems)
-        {
-            [(UIButton *)item.customView setEnabled:anySelected];
-        }
+        [_selectedURLs removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
     }
-}
-
-#pragma mark - UISeachBar Delegate Methods
-
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
-    // Apply filter to filterController with .3 second debounce
-    [_filterDebounceTimer invalidate];
-    _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-        if (_isShowingOpenQuickly)
-            [_selectedURLs removeAllObjects];
-        if ([searchText length] && !_isShowingOpenQuickly)
-        {
-            [_selectedURLs removeAllObjects];
-            _isShowingOpenQuickly = YES;
-            [self.tableView reloadData];
-        }
-        else if (![searchText length] && _isShowingOpenQuickly)
-        {
-            _isShowingOpenQuickly = NO;
-            [self.tableView reloadData];
-        }
-        self.openQuicklyPresenter.filterString = searchText;
-    } repeats:NO];
 }
 
 #pragma mark - Action Sheet Delegate
@@ -651,11 +538,6 @@ static void *_openQuicklyObservingContext;
         [self setEditing:NO animated:YES];
         [self _directoryBrowserDismissAction:sender];
     }];
-}
-
-- (DirectoryPresenter *)_currentPresenter
-{
-    return _isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter;
 }
 
 @end

@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BrowserController.h"
 
-@interface BookmarkBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate>
-
-@property (nonatomic, strong, readonly) UITableView *tableView;
+@interface BookmarkBrowserController : BrowserController <UIActionSheetDelegate>
 
 @end

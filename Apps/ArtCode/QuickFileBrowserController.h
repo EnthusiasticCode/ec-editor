@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BrowserController.h"
 
-
-@interface QuickFileBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, strong, readonly) UITableView *tableView;
+@interface QuickFileBrowserController : BrowserController
 
 @end

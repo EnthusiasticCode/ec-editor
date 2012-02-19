@@ -487,7 +487,7 @@ static const void *contentViewControllerContext;
                 if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
                     result = self.contentViewController;
                 else
-                    result = [[FileBrowserController alloc] initWithStyle:UITableViewStyleGrouped];
+                    result = [[FileBrowserController alloc] init];
                     
                 FileBrowserController *fileTableController = (FileBrowserController *)result;
                 [fileTableController setDirectory:url];
