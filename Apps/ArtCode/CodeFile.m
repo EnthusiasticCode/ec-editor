@@ -30,7 +30,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 {
     NSMutableAttributedString *_contents;
     CodeFileGeneration _contentsGeneration;
-    // spin lock to access the contents. always call contents within this lock
     OSSpinLock _contentsLock;
     NSMutableArray *_presenters;
     OSSpinLock _presentersLock;
@@ -145,8 +144,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                     // use the weak self again so we don't capture self
                     weakSelf.codeUnit = codeUnit;
-                    // fake operation to force updating the codeview, just a temporary hack
-                    [weakSelf removeAttributes:[NSArray arrayWithObject:@"FakeAttributeName"] range:NSMakeRange(0, [weakSelf length])];
                 }];
             }];
         }

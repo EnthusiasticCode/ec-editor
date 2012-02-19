@@ -275,19 +275,23 @@ if ([attributes count])\
             // Handle the matches
             if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location ))
             {
-                NSRange resultRange = [endResult bodyRange];
-                // Apply attributes to previous token
-                previousTokenEnd = resultRange.location + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
-                previousTokenStart = previousTokenEnd;
                 // Handle end result first
+                NSRange resultRange = [endResult bodyRange];
+                // Handle content name nested scope
                 if (syntaxNode.contentName)
                 {
+                    previousTokenEnd = resultRange.location + lineRange.location;
+                    ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                    previousTokenStart = previousTokenEnd;
                     scope.length = resultRange.location + lineRange.location - scope.location;
                     scope.completelyParsed = YES;
                     [scopeStack removeLastObject];
                     scope = [scopeStack lastObject];
                 }
+                previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                previousTokenStart = previousTokenEnd;
+                // Handle end captures
                 [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope];
                 scope.length = NSMaxRange(resultRange) + lineRange.location - scope.location;
                 scope.completelyParsed = YES;
@@ -300,12 +304,11 @@ if ([attributes count])\
             }
             else if (firstSyntaxNode.match)
             {
+                // Handle a match pattern
                 NSRange resultRange = [firstResult bodyRange];
-                // Apply attributes to previous token
                 previousTokenEnd = resultRange.location + lineRange.location;
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
-                // Handle a match pattern
                 TMScope *matchScope = [scope newChildScope];
                 matchScope.identifier = firstSyntaxNode.scopeName;
                 matchScope.syntaxNode = firstSyntaxNode;
@@ -326,12 +329,11 @@ if ([attributes count])\
             }
             else if (firstSyntaxNode.begin)
             {
+                // Handle a new span pattern
                 NSRange resultRange = [firstResult bodyRange];
-                // Apply attributes to previous token
                 previousTokenEnd = resultRange.location + lineRange.location;
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
-                // Handle a new span pattern
                 TMScope *spanScope = [scope newChildScope];
                 spanScope.identifier = firstSyntaxNode.scopeName;
                 spanScope.syntaxNode = firstSyntaxNode;
@@ -355,7 +357,10 @@ if ([attributes count])\
                 }];
                 spanScope.endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup];
                 ECASSERT(spanScope.endRegexp);
-                // Handle span pattern captures
+                // Handle begin captures
+                previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                previousTokenStart = previousTokenEnd;
                 [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope];
                 [scopeStack addObject:spanScope];
                 // Handle content name nested scope
@@ -403,6 +408,9 @@ if ([attributes count])\
         capturesScope.location = [result bodyRange].location + offset;
         capturesScope.length = [result bodyRange].length;
         capturesScope.completelyParsed = YES;
+        NSDictionary *attributes = [self.codeFile.theme attributesForScope:capturesScope];
+        if ([attributes count])
+            [self.codeFile addAttributes:attributes range:NSMakeRange(capturesScope.location, capturesScope.length)];
     }
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
@@ -419,6 +427,9 @@ if ([attributes count])\
         ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
         currentCaptureScope.location = currentMatchRange.location + offset;
         currentCaptureScope.length = currentMatchRange.length;
+        NSDictionary *attributes = [self.codeFile.theme attributesForScope:currentCaptureScope];
+        if ([attributes count])
+            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length)];
     }
 }
 
