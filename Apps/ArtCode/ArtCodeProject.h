@@ -32,13 +32,13 @@
 /// Creates a project with the given name in the projects directory if possible.
 + (id)createProjectWithName:(NSString *)name;
 
+/// Creates a new project by decompressing the provided archive file.
++ (id)createProjectWithName:(NSString *)name fromArchiveURL:(NSURL *)achiveURL;
+
 #pragma mark Initializing and exporting projects
 
 /// Initialize a new project residing in the given URL.
 - (id)initWithURL:(NSURL *)url;
-
-/// Initialize a new project by decompressing the given file to the specified location.
-- (id)initByDecompressingFileAtURL:(NSURL *)compressedFileUrl toURL:(NSURL *)url;
 
 /// Saves the project to disk.
 - (void)flush;

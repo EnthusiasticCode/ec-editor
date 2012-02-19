@@ -117,19 +117,6 @@ static Cache *openProjects = nil;
     return self;
 }
 
-- (id)initByDecompressingFileAtURL:(NSURL *)compressedFileUrl toURL:(NSURL *)url
-{
-    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:compressedFileUrl options:0 writingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        [[NSFileManager new] createDirectoryAtURL:newWritingURL withIntermediateDirectories:YES attributes:nil error:NULL];
-        [ArchiveUtilities extractArchiveAtURL:newReadingURL toDirectory:newWritingURL];
-    }];
-    
-    self = [self initWithURL:url];
-    if (!self)
-        return nil;
-    return self;
-}
-
 - (void)flush
 {
     if (!_dirty)
@@ -367,6 +354,17 @@ static Cache *openProjects = nil;
     project = [[self alloc] initWithURL:projectUrl];
     [openProjects setObject:project forKey:projectUrl];
     return project;
+}
+
++ (id)createProjectWithName:(NSString *)name fromArchiveURL:(NSURL *)archiveURL
+{
+    name = [self validNameForNewProjectName:name];                                 
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:archiveURL options:0 writingItemAtURL:[self projectURLFromName:name] options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+        [[NSFileManager new] createDirectoryAtURL:newWritingURL withIntermediateDirectories:YES attributes:nil error:NULL];
+        [ArchiveUtilities extractArchiveAtURL:newReadingURL toDirectory:newWritingURL];
+    }];
+    
+    return [self createProjectWithName:name];
 }
 
 @end

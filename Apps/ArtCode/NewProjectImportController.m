@@ -15,6 +15,7 @@
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
 
+static void *_directoryObservingContext;
 
 @implementation NewProjectImportController {
     DirectoryPresenter *_documentsDirectoryPresenter;
@@ -27,21 +28,35 @@
 	return YES;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self.tableView setEditing:YES animated:NO];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     _documentsDirectoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[NSURL applicationDocumentsDirectory] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    [_documentsDirectoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
+    if ([_documentsDirectoryPresenter.fileURLs count] != 0)
+        [(UILabel *)self.tableView.tableFooterView setText:@"Swipe right on an item to delete it."];
     [self.tableView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [_documentsDirectoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
     _documentsDirectoryPresenter = nil;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == &_directoryObservingContext)
+    {
+        if ([_documentsDirectoryPresenter.fileURLs count] != 0)
+            [(UILabel *)self.tableView.tableFooterView setText:@"Swipe right on an item to delete it."];
+        else
+            [(UILabel *)self.tableView.tableFooterView setText:@"Add files from iTunes to populate this list."];
+        [self.tableView reloadData];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 #pragma mark - Table view data source
@@ -58,7 +73,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Default";
+    static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
@@ -69,24 +84,29 @@
     return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+            [[NSFileManager new] removeItemAtURL:newURL error:NULL];
+        }];
+    }
+}
+
 #pragma mark - Table view delegate
 
-- (IBAction)importAction:(id)sender
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
-    [indexPaths enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSIndexPath *indexPath, NSUInteger idx, BOOL *stop) {
-        NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
-        ArtCodeProject *project = [[ArtCodeProject alloc] initByDecompressingFileAtURL:zipURL toURL:[ArtCodeProject projectURLFromName:[ArtCodeProject validNameForNewProjectName:[[zipURL lastPathComponent] stringByDeletingPathExtension]]]];
-        if (project)
-        {
-            [coordinator coordinateWritingItemAtURL:zipURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                [fileManager removeItemAtURL:newURL error:NULL];
-            }];
-        }
-    }];
+    NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
+    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project imported" plural:@"%u projects imported" count:[indexPaths count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
 }
+
 @end

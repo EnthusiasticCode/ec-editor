@@ -10,6 +10,4 @@
 
 @interface NewProjectImportController : UITableViewController
 
-- (IBAction)importAction:(id)sender;
-
 @end
