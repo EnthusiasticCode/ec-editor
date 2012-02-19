@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import "BrowserController.h"
+#import "SearchableTableBrowserController.h"
 
 @class DirectoryPresenter, SmartFilteredDirectoryPresenter;
 
 
-@interface FileBrowserController : BrowserController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface FileBrowserController : SearchableTableBrowserController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
 @property (nonatomic, strong, readonly) DirectoryPresenter *directoryPresenter;

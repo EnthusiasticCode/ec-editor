@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BrowserController.h"
+#import "SearchableTableBrowserController.h"
 
-@interface BookmarkBrowserController : BrowserController <UIActionSheetDelegate>
+@interface BookmarkBrowserController : SearchableTableBrowserController <UIActionSheetDelegate>
 
 @end
