@@ -37,7 +37,7 @@ static OnigRegexp *_namedCapturesRegexp;
 - (TMSyntaxNode *)_syntax;
 - (TMScope *)_scope;
 - (void)_generateScopes;
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope;
+- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration *)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
@@ -204,7 +204,8 @@ if (previousTokenEnd != previousTokenStart)\
 ECASSERT(previousTokenEnd > previousTokenStart);\
 attributes = [self.codeFile.theme attributesForScope:SCOPE];\
 if ([attributes count])\
-[self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart)];\
+if (![self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withGeneration:&currentGeneration expectedGeneration:&currentGeneration])\
+return;\
 }
 
 - (void)_generateScopes
@@ -240,7 +241,7 @@ if ([attributes count])\
         NSString *uncachedString;
         if (![self.codeFile string:&uncachedString inRange:lineRange withGeneration:&currentGeneration expectedGeneration:&currentGeneration])
             return;
-        CStringCachingString *line = [CStringCachingString stringWithString:[self.codeFile stringInRange:lineRange]];
+        CStringCachingString *line = [CStringCachingString stringWithString:uncachedString];
         NSUInteger position = 0;
 //        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);
         for (;;)
@@ -292,7 +293,7 @@ if ([attributes count])\
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
                 // Handle end captures
-                [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope];
+                [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope generation:&currentGeneration];
                 scope.length = NSMaxRange(resultRange) + lineRange.location - scope.location;
                 scope.completelyParsed = YES;
                 if ([scopeStack count] == 1)
@@ -319,7 +320,7 @@ if ([attributes count])\
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(matchScope);
                 previousTokenStart = previousTokenEnd;
                 // Handle match pattern captures
-                [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope];
+                [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope generation:&currentGeneration];
                 // We need to make sure position increases, or it would loop forever with a 0 width match
                 NSUInteger newPosition = NSMaxRange(resultRange);
                 if (position == newPosition)
@@ -361,7 +362,7 @@ if ([attributes count])\
                 previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
-                [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope];
+                [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:&currentGeneration];
                 [scopeStack addObject:spanScope];
                 // Handle content name nested scope
                 if (firstSyntaxNode.contentName)
@@ -393,7 +394,7 @@ if ([attributes count])\
     }
 }
 
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope
+- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration *)generation
 {
     ECASSERT(scope);
     if (!dictionary || !result)
@@ -410,7 +411,7 @@ if ([attributes count])\
         capturesScope.completelyParsed = YES;
         NSDictionary *attributes = [self.codeFile.theme attributesForScope:capturesScope];
         if ([attributes count])
-            [self.codeFile addAttributes:attributes range:NSMakeRange(capturesScope.location, capturesScope.length)];
+            [self.codeFile addAttributes:attributes range:NSMakeRange(capturesScope.location, capturesScope.length) withGeneration:generation expectedGeneration:generation];
     }
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
@@ -429,7 +430,7 @@ if ([attributes count])\
         currentCaptureScope.length = currentMatchRange.length;
         NSDictionary *attributes = [self.codeFile.theme attributesForScope:currentCaptureScope];
         if ([attributes count])
-            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length)];
+            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withGeneration:generation expectedGeneration:generation];
     }
 }
 
