@@ -193,17 +193,8 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
+#warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
     NSMutableAttributedString *attributedString = [[self attributedStringInRange:stringRange] mutableCopy];
-    if (self.codeUnit)
-    {
-        // Add text coloring
-        [self.codeUnit visitScopesInRange:stringRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            NSDictionary *attributes = [self.theme attributesForScope:scope];
-            if ([attributes count])
-                [attributedString addAttributes:attributes range:range];
-            return TMUnitVisitResultRecurse;
-        }];
-    }
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
         placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
@@ -259,6 +250,8 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 #pragma mark - String content reading methods
 
 #define CONTENT_GETTER_WRAPPER(parameter, value) \
+do\
+{\
 ECASSERT(parameter);\
 OSSpinLockLock(&_contentsLock);\
 if (expectedGeneration && *expectedGeneration != _contentsGeneration)\
@@ -270,7 +263,9 @@ return NO;\
 if (generation)\
 *generation = _contentsGeneration;\
 OSSpinLockUnlock(&_contentsLock);\
-return YES;
+return YES;\
+}\
+while (0)
 
 - (NSUInteger)length
 {
@@ -543,7 +538,9 @@ return YES;
         return;
     _hasPendingChanges = YES;
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        OSSpinLockLock(&_pendingChangesLock);
         [self _processPendingChanges];
+        OSSpinLockUnlock(&_pendingChangesLock);
     }];
 }
 
@@ -553,7 +550,7 @@ return YES;
     ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (!_hasPendingChanges)
         return;
-#warning TODO this spins forever if another thread is adding changes faster than we process them, maybe put a timeout and leave the remaining changes for the next batch?
+#warning TODO this loops forever if another thread is adding changes faster than we process them, maybe put a timeout and leave the remaining changes for the next batch?
     for (;;)
     {
         if (![_pendingChanges count])
@@ -563,7 +560,6 @@ return YES;
         }
         NSDictionary *nextChange = [_pendingChanges objectAtIndex:0];
         [_pendingChanges removeObjectAtIndex:0];
-        OSSpinLockUnlock(&_pendingChangesLock);
         id changeType = [nextChange objectForKey:_changeTypeKey];
         ECASSERT(changeType && (changeType == _changeTypeReplacement || changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove));
         if (changeType == _changeTypeReplacement)
@@ -572,7 +568,6 @@ return YES;
             [self _applyAttributeAddChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributes:[nextChange objectForKey:_changeAttributesKey] generation:NULL expectedGeneration:NULL];
         else if (changeType == _changeTypeAttributeRemove)
             [self _applyAttributeRemoveChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributeNames:[nextChange objectForKey:_changeAttributeNamesKey] generation:NULL expectedGeneration:NULL];
-        OSSpinLockLock(&_pendingChangesLock);
     }
 }
 

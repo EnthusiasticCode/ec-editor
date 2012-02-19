@@ -9,6 +9,7 @@
 #import "TMUnit+Internal.h"
 #import "TMIndex+Internal.h"
 #import "TMScope+Internal.h"
+#import "TMTheme.h"
 #import "TMBundle.h"
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
@@ -96,6 +97,7 @@ static OnigRegexp *_namedCapturesRegexp;
             [_extensions setObject:extension forKey:key];
         }];
     }];
+    [self _scope];
     return self;
 }
 
@@ -196,9 +198,18 @@ static OnigRegexp *_namedCapturesRegexp;
     return __scope;
 }
 
+#define ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(SCOPE) \
+if (previousTokenEnd != previousTokenStart)\
+{\
+ECASSERT(previousTokenEnd > previousTokenStart);\
+attributes = [self.codeFile.theme attributesForScope:SCOPE];\
+if ([attributes count])\
+[self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart)];\
+}
+
 - (void)_generateScopes
 {
-    TMScope *scope = __scope;
+    TMScope *scope = [self _scope];
     
     // Setup the scope stack
     NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:scope];
@@ -213,6 +224,9 @@ static OnigRegexp *_namedCapturesRegexp;
     NSRange range = NSMakeRange(0, [self.codeFile lengthWithGeneration:&currentGeneration]);
     
     // Parse the range
+    NSUInteger previousTokenStart = 0;
+    NSUInteger previousTokenEnd = 0;
+    NSDictionary *attributes = nil;
     NSRange lineRange = NSMakeRange(range.location, 0);
     for (;;)
     {
@@ -228,7 +242,6 @@ static OnigRegexp *_namedCapturesRegexp;
             return;
         CStringCachingString *line = [CStringCachingString stringWithString:[self.codeFile stringInRange:lineRange]];
         NSUInteger position = 0;
-        
 //        NSLog(@"parsing %@: %@", NSStringFromRange(lineRange), line);
         for (;;)
         {
@@ -262,34 +275,46 @@ static OnigRegexp *_namedCapturesRegexp;
             // Handle the matches
             if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location ))
             {
+                NSRange resultRange = [endResult bodyRange];
+                // Apply attributes to previous token
+                previousTokenEnd = resultRange.location + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                previousTokenStart = previousTokenEnd;
                 // Handle end result first
                 if (syntaxNode.contentName)
                 {
-                    scope.length = [endResult bodyRange].location + lineRange.location - scope.location;
+                    scope.length = resultRange.location + lineRange.location - scope.location;
                     scope.completelyParsed = YES;
                     [scopeStack removeLastObject];
                     scope = [scopeStack lastObject];
                 }
                 [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope];
-                scope.length = NSMaxRange([endResult bodyRange]) + lineRange.location - scope.location;
+                scope.length = NSMaxRange(resultRange) + lineRange.location - scope.location;
                 scope.completelyParsed = YES;
                 if ([scopeStack count] == 1)
                     return;
                 [scopeStack removeLastObject];
                 // We don't need to make sure position advances since we changed the stack
                 // This could bite us if there's a begin and end regexp that match in the same position
-                position = NSMaxRange([endResult bodyRange]);
+                position = NSMaxRange(resultRange);
             }
             else if (firstSyntaxNode.match)
             {
-                // Handle a match pattern
                 NSRange resultRange = [firstResult bodyRange];
+                // Apply attributes to previous token
+                previousTokenEnd = resultRange.location + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                previousTokenStart = previousTokenEnd;
+                // Handle a match pattern
                 TMScope *matchScope = [scope newChildScope];
                 matchScope.identifier = firstSyntaxNode.scopeName;
                 matchScope.syntaxNode = firstSyntaxNode;
                 matchScope.location = resultRange.location + lineRange.location;
                 matchScope.length = resultRange.length;
                 matchScope.completelyParsed = YES;
+                previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(matchScope);
+                previousTokenStart = previousTokenEnd;
                 // Handle match pattern captures
                 [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope];
                 // We need to make sure position increases, or it would loop forever with a 0 width match
@@ -301,11 +326,16 @@ static OnigRegexp *_namedCapturesRegexp;
             }
             else if (firstSyntaxNode.begin)
             {
+                NSRange resultRange = [firstResult bodyRange];
+                // Apply attributes to previous token
+                previousTokenEnd = resultRange.location + lineRange.location;
+                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                previousTokenStart = previousTokenEnd;
                 // Handle a new span pattern
                 TMScope *spanScope = [scope newChildScope];
                 spanScope.identifier = firstSyntaxNode.scopeName;
                 spanScope.syntaxNode = firstSyntaxNode;
-                spanScope.location = [firstResult bodyRange].location + lineRange.location;
+                spanScope.location = resultRange.location + lineRange.location;
                 // Create the end regexp
                 NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
                 [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
@@ -334,13 +364,13 @@ static OnigRegexp *_namedCapturesRegexp;
                     TMScope *contentScope = [spanScope newChildScope];
                     contentScope.identifier = firstSyntaxNode.contentName;
                     contentScope.syntaxNode = firstSyntaxNode;
-                    contentScope.location = NSMaxRange([firstResult bodyRange]) + lineRange.location;
+                    contentScope.location = NSMaxRange(resultRange) + lineRange.location;
                     contentScope.endRegexp = spanScope.endRegexp;
                     [scopeStack addObject:contentScope];
                 }
                 // We don't need to make sure position advances since we changed the stack
                 // This could bite us if there's a begin and end regexp that match in the same position
-                position = NSMaxRange([firstResult bodyRange]);
+                position = NSMaxRange(resultRange);
             }
             else
                 break;
