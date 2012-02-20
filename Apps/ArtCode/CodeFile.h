@@ -44,7 +44,6 @@
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 
 #pragma mark - Find and replace functionality
-#warning TODO replace all these with methods based on OnigRegexp
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;

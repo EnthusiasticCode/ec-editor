@@ -73,6 +73,7 @@
 		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
+		B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B78CAEA614F24A61006BD660 /* WeakArray.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -435,6 +436,8 @@
 		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
+		B78CAEA514F24A61006BD660 /* WeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakArray.h; sourceTree = "<group>"; };
+		B78CAEA614F24A61006BD660 /* WeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakArray.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -630,7 +633,7 @@
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 		CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMKeyboardAction.h; sourceTree = "<group>"; };
 		CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMKeyboardAction.m; sourceTree = "<group>"; };
-		CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SearchableTableBrowserController.h; sourceTree = "<group>"; };
+		CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchableTableBrowserController.h; sourceTree = "<group>"; };
 		CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchableTableBrowserController.m; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
@@ -1143,6 +1146,8 @@
 				B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */,
 				B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */,
 				B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */,
+				B78CAEA514F24A61006BD660 /* WeakArray.h */,
+				B78CAEA614F24A61006BD660 /* WeakArray.m */,
 				B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */,
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C314D604FA0080A714 /* Cache.h */,
@@ -2133,6 +2138,7 @@
 				CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */,
 				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
 				CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */,
+				B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

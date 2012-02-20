@@ -13,6 +13,7 @@
 #import "TMScope.h"
 #import "TMPreference.h"
 #import "WeakDictionary.h"
+#import "WeakArray.h"
 #import <libkern/OSAtomic.h>
 
 static WeakDictionary *_codeFiles;
@@ -31,7 +32,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
     NSMutableAttributedString *_contents;
     CodeFileGeneration _contentsGeneration;
     OSSpinLock _contentsLock;
-    NSMutableArray *_presenters;
+    WeakArray *_presenters;
     OSSpinLock _presentersLock;
     NSOperationQueue *_parserQueue;
     NSMutableArray *_pendingChanges;
@@ -118,7 +119,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
         return nil;
     _contents = [[NSMutableAttributedString alloc] init];
     _contentsLock = OS_SPINLOCK_INIT;
-    _presenters = [[NSMutableArray alloc] init];
+    _presenters = [[WeakArray alloc] init];
     _presentersLock = OS_SPINLOCK_INIT;
     _parserQueue = [[NSOperationQueue alloc] init];
     _parserQueue.maxConcurrentOperationCount = 1;
@@ -136,13 +137,8 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
         {
             __weak CodeFile *weakSelf = self;
             [_parserQueue addOperationWithBlock:^{
-                // capture self strongly again in this block to make sure it doesn't go nil while creating the code unit
-                __strong CodeFile *strongWeakSelf = weakSelf;
-                if (!strongWeakSelf)
-                    return;
-                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:strongWeakSelf rootScopeIdentifier:nil];
+                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:weakSelf rootScopeIdentifier:nil];
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    // use the weak self again so we don't capture self
                     weakSelf.codeUnit = codeUnit;
                 }];
             }];
@@ -642,8 +638,9 @@ while (0)
 }
 
 #pragma mark - Find and replace functionality
-
+#warning TODO replace all these with methods based on OnigRegexp
 #warning TODO these need support for generation and be better integrated with the multithreaded content management system, but they're going to be replaced by onigregexp anyway
+
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);

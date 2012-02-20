@@ -77,7 +77,8 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 
 + (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile
 {
-    ECASSERT(codeFile);
+    if (!codeFile)
+        return nil;
     static TMSyntaxNode *(^syntaxWithPredicateBlock)(BOOL (^)(TMSyntaxNode *)) = ^TMSyntaxNode *(BOOL (^predicateBlock)(TMSyntaxNode *)) {
         for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator])
             if (predicateBlock(syntax))
@@ -95,9 +96,9 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     });
     if (!foundSyntax)
         foundSyntax = syntaxWithPredicateBlock(^BOOL(TMSyntaxNode *syntax) {
-            NSString *fileContents = [codeFile stringInRange:NSMakeRange(0, [codeFile length])];
-            NSString *firstLine = [fileContents substringWithRange:[fileContents lineRangeForRange:NSMakeRange(0, 1)]];
-            if ([syntax.firstLineMatch  search:firstLine])
+            NSRange firstLineRange = [codeFile lineRangeForRange:NSMakeRange(0, 0)];
+            NSString *firstLine = [codeFile stringInRange:firstLineRange];
+            if (firstLine && [syntax.firstLineMatch search:firstLine])
                 return YES;
             return NO;
         });

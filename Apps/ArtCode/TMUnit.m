@@ -25,7 +25,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @interface TMUnit ()
 {
     TMIndex *_index;
-    CodeFile *_codeFile;
+    __weak CodeFile *_codeFile;
     NSString *_rootScopeIdentifier;
     NSMutableDictionary *_extensions;
     TMSyntaxNode *__syntax;
@@ -67,7 +67,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (id)initWithIndex:(TMIndex *)index codeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
-    ECASSERT(index && codeFile);
+    ECASSERT(index);
     self = [super init];
     if (!self)
         return nil;
