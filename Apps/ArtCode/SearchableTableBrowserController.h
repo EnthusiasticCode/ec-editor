@@ -17,8 +17,7 @@
 /// Override this property getter to provide filtered items.
 @property (nonatomic, readonly, strong) NSArray *filteredItems;
 
-/// Called when the filtered items should be invalidated. Subclasses should call
-/// the superclass implementation after invalidating the internal cache.
+/// Called when the filtered items should be invalidated.
 - (void)invalidateFilteredItems;
 
 #pragma mark Layout objects

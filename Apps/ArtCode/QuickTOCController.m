@@ -53,7 +53,6 @@
 {
     _filteredSymbolList = nil;
     _filteredSymbolListHitMask = nil;
-    [super invalidateFilteredItems];
 }
 
 #pragma mark - Controller lifecycle
@@ -87,8 +86,26 @@
     cell.imageView.image = symbol.icon;
     cell.indentationLevel = symbol.indentation;
     cell.textLabelHighlightedCharacters = _filteredSymbolListHitMask ? [_filteredSymbolListHitMask objectAtIndex:indexPath.row] : nil;
+    if (symbol.isSeparator)
+    {
+        if (!cell.backgroundView)
+            cell.backgroundView = [UIView new];
+        cell.backgroundView.backgroundColor = [UIColor lightGrayColor];
+    }
+    else
+    {
+        cell.backgroundView = nil;
+    }
     
     return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CodeFileSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+    if (symbol.isSeparator)
+        return 22;
+    return UITableViewAutomaticDimension;
 }
 
 #pragma mark - Table view delegate

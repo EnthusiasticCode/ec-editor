@@ -77,8 +77,6 @@
 
 - (void)invalidateFilteredItems
 {
-    if (self.isViewLoaded && self.view.superview)
-        [self.tableView reloadData];
 }
 
 #pragma mark - Controller lifecycle
@@ -211,12 +209,14 @@
     {
         _filterDebounceTimer = nil;
         [self invalidateFilteredItems];
+        [self.tableView reloadData];
         return;
     }
     
     // Apply filter to filterController with .3 second debounce
     _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
         [self invalidateFilteredItems];
+        [self.tableView reloadData];
     } repeats:NO];
 }
 
@@ -234,6 +234,7 @@
     HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.textLabel.backgroundColor = [UIColor clearColor];
     }
     
     // Override to configure cell

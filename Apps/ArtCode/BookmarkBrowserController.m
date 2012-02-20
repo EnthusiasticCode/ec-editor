@@ -81,7 +81,6 @@
 {
     _filteredItemsHitMask = nil;
     _filteredItems = nil;
-    [super invalidateFilteredItems];
 }
 
 #pragma mark - View lifecycle
@@ -142,6 +141,7 @@
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
             [self invalidateFilteredItems];
+            [self.tableView reloadData];
         }
     }
 }

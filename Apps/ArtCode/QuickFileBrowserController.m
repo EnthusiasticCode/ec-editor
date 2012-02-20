@@ -77,7 +77,6 @@ static void *_directoryObservingContext;
         self.infoLabel.text = @"Nothing found";
     else
         self.infoLabel.text = @"";
-    [super invalidateFilteredItems];
 }
 
 #pragma mark - Controller lifecycle

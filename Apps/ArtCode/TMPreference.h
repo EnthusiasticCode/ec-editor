@@ -16,6 +16,8 @@ extern NSString * const TMPreferenceShowInSymbolListKey;
 extern NSString * const TMPreferenceSymbolTransformationKey;
 /// Returns a UIImage.
 extern NSString * const TMPreferenceSymbolIconKey;
+/// Returns an NSNumber with a boolean value indicating if the symbols should be rendered as a separator.
+extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 
 
 /// Load and present all the preferences of a textmate bundle. 
