@@ -53,6 +53,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 @interface CodeFileSymbol ()
 
+@property (nonatomic, readwrite) BOOL separator;
 - (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
 
 @end
@@ -686,6 +687,7 @@ while (0)
 
 - (NSArray *)symbolList
 {
+#warning TODO on long files if symbol list is opened before full parsing, the list is empty. add wait message
     if (!_symbolList)
     {
         NSMutableArray *symbols = [NSMutableArray new];
@@ -695,8 +697,10 @@ while (0)
                 // Transform
                 NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
                 NSString *symbol = transformation ? transformation([self stringInRange:range]) : [self stringInRange:range];
-                // TODO add preference for icon
-                [symbols addObject:[[CodeFileSymbol alloc] initWithTitle:symbol icon:[TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey scope:scope] range:range]];
+                // Generate
+                CodeFileSymbol *s = [[CodeFileSymbol alloc] initWithTitle:symbol icon:[TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey scope:scope] range:range];
+                s.separator = [[TMPreference preferenceValueForKey:TMPreferenceSymbolIsSeparatorKey scope:scope] boolValue];
+                [symbols addObject:s];
                 return TMUnitVisitResultContinue;
             }
             return TMUnitVisitResultRecurse;
@@ -809,7 +813,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 @implementation CodeFileSymbol
 
-@synthesize title, icon, range, indentation;
+@synthesize title, icon, range, indentation, separator;
 
 - (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon range:(NSRange)_range
 {

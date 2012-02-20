@@ -139,7 +139,6 @@ static void *_openQuicklyObservingContext;
     _isShowingOpenQuickly = [self.searchBar.text length] != 0;
     if (_isShowingOpenQuickly)
         self.openQuicklyPresenter.filterString = self.searchBar.text;
-    [super invalidateFilteredItems];
 }
 
 #pragma mark - View lifecycle
