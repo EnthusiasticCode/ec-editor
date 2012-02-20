@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class ProjectBookmark, UIColor;
+@class ProjectBookmark, ProjectRemote, UIColor;
 
 @interface ArtCodeProject : NSObject
 
@@ -66,6 +66,12 @@
 - (void)removeBookmark:(ProjectBookmark *)bookmark;
 - (NSArray *)bookmarksForFile:(NSURL *)fileURL atLine:(NSUInteger)lineNumber;
 
+/// Access the remotes stored for the project.
+@property (nonatomic, copy, readonly) NSArray *remotes;
+
+- (void)addRemote:(ProjectRemote *)remote;
+- (void)removeRemote:(ProjectRemote *)remote;
+
 @end
 
 
@@ -87,5 +93,18 @@
 
 /// Returns the line in the file URL 
 - (NSUInteger)line;
+
+@end
+
+
+@interface ProjectRemote : NSObject
+
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic) NSInteger type;
+@property (nonatomic, strong) NSString *host;
+@property (nonatomic) NSInteger port;
+// TODO store identity in keychain
+@property (nonatomic, strong) NSString *user;
+@property (nonatomic, strong) NSString *password;
 
 @end

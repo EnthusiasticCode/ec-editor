@@ -224,8 +224,11 @@
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
+		CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A98314F14F0F0005F603 /* RemotesListController.m */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
+		CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
+		CD19920D14F262E20059D1E8 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19920C14F262E20059D1E8 /* libConnection.a */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
@@ -244,6 +247,8 @@
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
 		CD4E648614C1E984003AC39D /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4E648514C1E984003AC39D /* ArtCodeProject.m */; };
+		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
+		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
 		CD6E416C14614A0C00A9CE7F /* CodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* CodeFileMinimapView.m */; };
@@ -630,10 +635,15 @@
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 		CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMKeyboardAction.h; sourceTree = "<group>"; };
 		CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMKeyboardAction.m; sourceTree = "<group>"; };
-		CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = SearchableTableBrowserController.h; sourceTree = "<group>"; };
+		CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchableTableBrowserController.h; sourceTree = "<group>"; };
 		CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchableTableBrowserController.m; sourceTree = "<group>"; };
+		CD12A98214F14F0F0005F603 /* RemotesListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemotesListController.h; sourceTree = "<group>"; };
+		CD12A98314F14F0F0005F603 /* RemotesListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemotesListController.m; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
+		CD19920914F25F390059D1E8 /* RemoteBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBrowserController.h; sourceTree = "<group>"; };
+		CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteBrowserController.m; sourceTree = "<group>"; };
+		CD19920C14F262E20059D1E8 /* libConnection.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libConnection.a; path = "../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos/libConnection.a"; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
@@ -663,6 +673,10 @@
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4E648414C1E984003AC39D /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeProject.h; sourceTree = "<group>"; };
 		CD4E648514C1E984003AC39D /* ArtCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProject.m; sourceTree = "<group>"; };
+		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
+		CD69C90214F1642000FCC987 /* NewRemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewRemoteViewController.m; sourceTree = "<group>"; };
+		CD69C90414F1649600FCC987 /* RemoteOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteOptionsViewController.h; sourceTree = "<group>"; };
+		CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteOptionsViewController.m; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
@@ -822,6 +836,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD19920D14F262E20059D1E8 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
 				B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */,
@@ -1063,15 +1078,6 @@
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
 			);
 			name = "Third Party";
-			sourceTree = "<group>";
-		};
-		B7AC174F14216D25009E9205 /* Content Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				CD333CF914C033BD00E0EEE2 /* New Project */,
-				CDB5DB6214C6F532003DFD1F /* File Browser */,
-			);
-			name = "Content Controllers";
 			sourceTree = "<group>";
 		};
 		B7FB799214D5FE680080A714 /* Additions */ = {
@@ -1317,6 +1323,61 @@
 			name = "Find & Replace Controllers";
 			sourceTree = "<group>";
 		};
+		CD69C8FB14F1634D00FCC987 /* Projects Browser */ = {
+			isa = PBXGroup;
+			children = (
+				CD7D2B3113C0D4C700B889EE /* ProjectBrowserController.h */,
+				CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */,
+				CD333CF914C033BD00E0EEE2 /* New Project */,
+			);
+			name = "Projects Browser";
+			sourceTree = "<group>";
+		};
+		CD69C8FD14F1636600FCC987 /* File Browser */ = {
+			isa = PBXGroup;
+			children = (
+				CD7D2B4613C0D55700B889EE /* FileBrowserController.h */,
+				CD7D2B4713C0D55700B889EE /* FileBrowserController.m */,
+				CDB5DB6214C6F532003DFD1F /* New file */,
+				CD69C8FE14F1638900FCC987 /* Move sheet */,
+			);
+			name = "File Browser";
+			sourceTree = "<group>";
+		};
+		CD69C8FE14F1638900FCC987 /* Move sheet */ = {
+			isa = PBXGroup;
+			children = (
+				CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */,
+				CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */,
+				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
+				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
+			);
+			name = "Move sheet";
+			sourceTree = "<group>";
+		};
+		CD69C8FF14F163C100FCC987 /* Remotes Browsers */ = {
+			isa = PBXGroup;
+			children = (
+				CD12A98214F14F0F0005F603 /* RemotesListController.h */,
+				CD12A98314F14F0F0005F603 /* RemotesListController.m */,
+				CD19920914F25F390059D1E8 /* RemoteBrowserController.h */,
+				CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */,
+				CD69C90014F163EA00FCC987 /* New remote */,
+			);
+			name = "Remotes Browsers";
+			sourceTree = "<group>";
+		};
+		CD69C90014F163EA00FCC987 /* New remote */ = {
+			isa = PBXGroup;
+			children = (
+				CD69C90414F1649600FCC987 /* RemoteOptionsViewController.h */,
+				CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */,
+				CD69C90114F1642000FCC987 /* NewRemoteViewController.h */,
+				CD69C90214F1642000FCC987 /* NewRemoteViewController.m */,
+			);
+			name = "New remote";
+			sourceTree = "<group>";
+		};
 		CD6E416D14614A2A00A9CE7F /* Minimap View */ = {
 			isa = PBXGroup;
 			children = (
@@ -1397,6 +1458,7 @@
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
+				CD19920C14F262E20059D1E8 /* libConnection.a */,
 				CD7D2AE913C0CD2600B889EE /* ArtCode */,
 				CD7D2AE213C0CD2600B889EE /* Frameworks */,
 				CD7D2AE013C0CD2600B889EE /* Products */,
@@ -1478,7 +1540,6 @@
 				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
 				CD7D2B1413C0D38A00B889EE /* Browsers */,
-				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
 				B7FB79A514D602DB0080A714 /* TextMate */,
@@ -1522,13 +1583,12 @@
 			children = (
 				CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */,
 				CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */,
-				CD7D2B3113C0D4C700B889EE /* ProjectBrowserController.h */,
-				CD7D2B3213C0D4C700B889EE /* ProjectBrowserController.m */,
-				CD7D2B4613C0D55700B889EE /* FileBrowserController.h */,
-				CD7D2B4713C0D55700B889EE /* FileBrowserController.m */,
+				CD69C8FB14F1634D00FCC987 /* Projects Browser */,
+				CD69C8FD14F1636600FCC987 /* File Browser */,
+				CD69C8FF14F163C100FCC987 /* Remotes Browsers */,
 				CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */,
 				CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */,
-				B7AC174F14216D25009E9205 /* Content Controllers */,
+				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
 				CD8108D613E334F7000E1941 /* Views and Controls */,
 			);
 			name = Browsers;
@@ -1663,7 +1723,7 @@
 			name = "Symbol Icons";
 			sourceTree = "<group>";
 		};
-		CDB5DB6214C6F532003DFD1F /* File Browser */ = {
+		CDB5DB6214C6F532003DFD1F /* New file */ = {
 			isa = PBXGroup;
 			children = (
 				CD7BD9EA14D817D40048A48A /* NewFileTemplateSelectionController.h */,
@@ -1672,12 +1732,8 @@
 				B71A1DE61435112700672F65 /* NewFileController.m */,
 				CD7BD9E814D817D40048A48A /* NewFileFolderController.h */,
 				CD7BD9E914D817D40048A48A /* NewFileFolderController.m */,
-				CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */,
-				CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */,
-				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
-				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
 			);
-			name = "File Browser";
+			name = "New file";
 			sourceTree = "<group>";
 		};
 		CDC1333114602F430028423F /* Search Bar */ = {
@@ -2133,6 +2189,10 @@
 				CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */,
 				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
 				CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */,
+				CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */,
+				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
+				CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */,
+				CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2210,6 +2270,7 @@
 					"${BUILD_DIR}/",
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2231,6 +2292,7 @@
 					"${BUILD_DIR}/",
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

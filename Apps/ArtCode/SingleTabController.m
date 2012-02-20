@@ -20,6 +20,7 @@
 #import "FileBrowserController.h"
 #import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
+#import "RemotesListController.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
 static const void *tabCurrentURLObservingContext;
@@ -477,10 +478,14 @@ static const void *contentViewControllerContext;
         {
             if ([url isBookmarksVariant])
             {
-                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+//                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+//                    result = self.contentViewController;
+//                else
+//                    result = [BookmarkBrowserController new];
+                if ([self.contentViewController isKindOfClass:[RemotesListController class]])
                     result = self.contentViewController;
                 else
-                    result = [BookmarkBrowserController new];
+                    result = [RemotesListController new];
             }
             else
             {

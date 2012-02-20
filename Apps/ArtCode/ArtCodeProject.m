@@ -29,11 +29,20 @@ static Cache *openProjects = nil;
 @end
 
 
+@interface ProjectRemote ()
+
+- (id)initWithPropertyDictionary:(NSDictionary *)dict;
+- (NSDictionary *)propertyDictionary;
+
+@end
+
+
 @implementation ArtCodeProject {
     BOOL _dirty;
     NSURL *_plistUrl;
     
     NSMutableArray *bookmarks;
+    NSMutableArray *remotes;
     
     /// Dictionary to map file paths to array of related bookamrks. This dictionary
     /// is used to quickly retrieve subsequent call from the same file without cycling 
@@ -43,7 +52,7 @@ static Cache *openProjects = nil;
 
 #pragma mark Properties
 
-@synthesize URL, labelColor, bookmarks;
+@synthesize URL, labelColor, bookmarks, remotes;
 
 - (NSString *)name
 {
@@ -112,6 +121,15 @@ static Cache *openProjects = nil;
                 [bookmarks addObject:[[ProjectBookmark alloc] initWithProject:self propertyDictionary:b]];
             }
         }
+        NSArray *plistRemotes = [plist objectForKey:@"remotes"];
+        if ([plistRemotes count])
+        {
+            remotes = [NSMutableArray new];
+            for (NSDictionary *r in plistRemotes)
+            {
+                [remotes addObject:[[ProjectRemote alloc] initWithPropertyDictionary:r]];
+            }
+        }
     }
     
     return self;
@@ -127,12 +145,21 @@ static Cache *openProjects = nil;
         [plist setObject:[labelColor hexString] forKey:@"labelColor"];
     if ([bookmarks count])
     {
-        NSMutableArray *plistBookmarks = [[NSMutableArray alloc] initWithCapacity:[bookmarks count]];
+        NSMutableArray *plistBookmarks = [NSMutableArray arrayWithCapacity:[bookmarks count]];
         for (ProjectBookmark *b in bookmarks)
         {
             [plistBookmarks addObject:[b propertyDictionary]];
         }
         [plist setObject:plistBookmarks forKey:@"bookmarks"];
+    }
+    if ([remotes count])
+    {
+        NSMutableArray *plistRemotes = [NSMutableArray arrayWithCapacity:[remotes count]];
+        for (ProjectRemote *remote in remotes)
+        {
+            [plistRemotes addObject:[remote propertyDictionary]];
+        }
+        [plist setObject:plistRemotes forKey:@"remotes"];
     }
     
     [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:_plistUrl options:0 error:NULL byAccessor:^(NSURL *newURL) {
@@ -244,6 +271,31 @@ static Cache *openProjects = nil;
     }
     
     return result;
+}
+
+#pragma mark Remotes methods
+
+- (void)addRemote:(ProjectRemote *)remote
+{
+    NSIndexSet *addSet = [NSIndexSet indexSetWithIndex:[remotes count]];
+    [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:addSet forKey:@"remotes"];
+    if (!remotes)
+        remotes = [NSMutableArray new];
+    [remotes addObject:remote];
+    _dirty = YES;
+    [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:addSet forKey:@"remotes"];
+}
+
+- (void)removeRemote:(ProjectRemote *)remote
+{
+    NSUInteger removeIndex = [remotes indexOfObject:remote];
+    if (removeIndex == NSNotFound)
+        return;
+    NSIndexSet *removeSet = [NSIndexSet indexSetWithIndex:removeIndex];
+    [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:removeSet forKey:@"remotes"];
+    [remotes removeObject:remote];
+    _dirty = YES;
+    [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:removeSet forKey:@"remotes"];
 }
 
 #pragma mark Class methods
@@ -444,6 +496,31 @@ static Cache *openProjects = nil;
     {
         return self.bookmarkPath;
     }
+}
+
+@end
+
+@implementation ProjectRemote
+
+@synthesize name, type, host, port, user, password;
+
+- (id)initWithPropertyDictionary:(NSDictionary *)dict
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    name = [dict objectForKey:@"name"];
+    type = [[dict objectForKey:@"type"] integerValue];
+    host = [dict objectForKey:@"host"];
+    port = [[dict objectForKey:@"port"] integerValue];
+    user = [dict objectForKey:@"user"];
+    password = [dict objectForKey:@"password"];
+    return self;
+}
+
+- (NSDictionary *)propertyDictionary
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:name, @"name", [NSString stringWithFormat:@"%d", type], @"type", host, @"host", [NSString stringWithFormat:@"%d", port], @"port", user, @"user", password, @"password", nil];
 }
 
 @end
