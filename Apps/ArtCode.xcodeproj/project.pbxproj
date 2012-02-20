@@ -228,7 +228,7 @@
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
-		CD19920D14F262E20059D1E8 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD19920C14F262E20059D1E8 /* libConnection.a */; };
+		CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D6B1914F2B3B9007AC652 /* libConnection.a */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
@@ -366,6 +366,23 @@
 		CDF4C015144F2C8A00475F6B /* SingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* SingleTabController.m */; };
 		CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B75F65A114D96366008B88C5;
+			remoteInfo = Connection;
+		};
+		CD1D6B1A14F2B3C0007AC652 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B75F65A014D96366008B88C5;
+			remoteInfo = Connection;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -643,7 +660,7 @@
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD19920914F25F390059D1E8 /* RemoteBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBrowserController.h; sourceTree = "<group>"; };
 		CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteBrowserController.m; sourceTree = "<group>"; };
-		CD19920C14F262E20059D1E8 /* libConnection.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libConnection.a; path = "../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos/libConnection.a"; sourceTree = "<group>"; };
+		CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Connection.xcodeproj; path = ../ThirdParty/Connection/Connection.xcodeproj; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
@@ -836,7 +853,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD19920D14F262E20059D1E8 /* libConnection.a in Frameworks */,
+				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
 				B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */,
@@ -1070,7 +1087,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				CD19920C14F262E20059D1E8 /* libConnection.a */,
+				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7FB79F714D6087C0080A714 /* CocoaOniguruma */,
@@ -1287,6 +1304,14 @@
 				CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */,
 			);
 			name = Items;
+			sourceTree = "<group>";
+		};
+		CD1D6B1514F2B3B9007AC652 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD1D6B1914F2B3B9007AC652 /* libConnection.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		CD333CF914C033BD00E0EEE2 /* New Project */ = {
@@ -1828,6 +1853,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */,
 			);
 			name = ArtCode;
 			productName = ArtCode;
@@ -1852,12 +1878,28 @@
 			mainGroup = CD7D2AD413C0CD2600B889EE;
 			productRefGroup = CD7D2AE013C0CD2600B889EE /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = CD1D6B1514F2B3B9007AC652 /* Products */;
+					ProjectRef = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		CD1D6B1914F2B3B9007AC652 /* libConnection.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libConnection.a;
+			remoteRef = CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CD7D2ADD13C0CD2600B889EE /* Resources */ = {
@@ -2197,6 +2239,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Connection;
+			targetProxy = CD1D6B1A14F2B3C0007AC652 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */ = {
