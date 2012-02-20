@@ -81,5 +81,6 @@
 @property (nonatomic, strong, readonly) UIImage *icon;
 @property (nonatomic, readonly) NSRange range;
 @property (nonatomic, readonly) NSUInteger indentation;
+@property (nonatomic, readonly, getter = isSeparator) BOOL separator;
 
 @end

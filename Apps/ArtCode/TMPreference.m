@@ -14,6 +14,7 @@
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
 NSString * const TMPreferenceSymbolIconKey = @"symbolIcon";
+NSString * const TMPreferenceSymbolIsSeparatorKey = @"symbolIsSeparator";
 
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
@@ -163,6 +164,10 @@ static NSMutableDictionary *scopeToPreferenceCache;
             value = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"symbolIcon_%@", value] ofType:@"png"];
             [_settings setObject:value forKey:TMPreferenceSymbolIconKey];
             // TODO also use symbolImagePath, symbolImageColor & Title
+        }
+        else if ([settingName isEqualToString:TMPreferenceSymbolIsSeparatorKey])
+        {
+            [_settings setObject:value forKey:TMPreferenceSymbolIsSeparatorKey];
         }
     }];
 }
