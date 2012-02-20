@@ -1070,6 +1070,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				CD19920C14F262E20059D1E8 /* libConnection.a */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7FB79F714D6087C0080A714 /* CocoaOniguruma */,
@@ -1458,7 +1459,6 @@
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
-				CD19920C14F262E20059D1E8 /* libConnection.a */,
 				CD7D2AE913C0CD2600B889EE /* ArtCode */,
 				CD7D2AE213C0CD2600B889EE /* Frameworks */,
 				CD7D2AE013C0CD2600B889EE /* Products */,
