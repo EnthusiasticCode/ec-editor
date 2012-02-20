@@ -63,4 +63,9 @@
     NSLog(@"%@ --> %@", dirPath, contents);
 }
 
+- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
+{
+    NSLog(@"%@", string);
+}
+
 @end
