@@ -9,6 +9,7 @@
 #import "RemoteBrowserController.h"
 #import "HighlightTableViewCell.h"
 #import <Connection/CKConnectionRegistry.h>
+#import "NSTimer+BlockTimer.h"
 
 @interface RemoteBrowserController ()
 
@@ -22,10 +23,17 @@
 {
     [super viewWillAppear:animated];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"ssh://nikso@coneko.no-ip.org"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"ftp://ftp.nikso.net"]];
     _connection = [[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
     [_connection setDelegate:self];
     [_connection connect];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [_connection disconnect];
+    _connection = nil;
 }
 
 #pragma mark - Table view datasource
@@ -40,8 +48,7 @@
 
 - (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso" password:@"1PlayUou!" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
-    NSLog(@"wants authentication");
+    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso.net" password:@"aenasahg" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
 }
 
 - (NSString *)connection:(id <CKConnection>)con passphraseForHost:(NSString *)host username:(NSString *)username publicKeyPath:(NSString *)publicKeyPath
@@ -51,7 +58,7 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didConnectToHost:(NSString *)host error:(NSError *)error
 {
-    [_connection directoryContents];
+    NSLog(@"Connected (but not authenticated)");
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error
@@ -64,9 +71,17 @@
     NSLog(@"%@ --> %@", dirPath, contents);
 }
 
+- (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
+{
+    NSLog(@"changed to directory: %@", dirPath);
+//    [NSTimer scheduledTimerWithTimeInterval:3 usingBlock:^(NSTimer *timer) {
+        [_connection directoryContents];
+//    } repeats:NO];
+}
+
 - (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
 {
-    NSLog(@"%@", string);
+    NSLog(@"transcript: %@", string);
 }
 
 @end
