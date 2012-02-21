@@ -40,6 +40,7 @@
 
 - (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso" password:@"1PlayUou!" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
     NSLog(@"wants authentication");
 }
 
