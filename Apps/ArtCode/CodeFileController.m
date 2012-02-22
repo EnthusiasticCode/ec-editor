@@ -263,7 +263,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return;
     
     self.loading = YES;
-    [self willChangeValueForKey:@"fileURL"];
     
     _fileURL = fileURL;
     if (fileURL)
@@ -273,16 +272,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         }];
     else
         self.codeFile = nil;
-        
-    [self didChangeValueForKey:@"fileURL"];
 }
 
 - (void)setCodeFile:(CodeFile *)codeFile
 {
     if (codeFile == _codeFile)
         return;
-    
-    [self willChangeValueForKey:@"codeFile"];
     
     [_codeFile removePresenter:self];
     _codeFile = codeFile;
@@ -305,8 +300,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     }
     
     [self _loadWebPreviewContentAndTitle];
-    
-    [self didChangeValueForKey:@"codeFile"];
 }
 
 - (CGFloat)minimapWidth
@@ -348,6 +341,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         [self _layoutChildViews];
     }
     [self didChangeValueForKey:@"minimapVisible"];
+}
+
++ (BOOL)automaticallyNotifiesObserversOfMinimapVisible
+{
+    return NO;
 }
 
 #pragma mark - Single tab controller informal protocol
@@ -571,6 +569,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     {
         [self didChangeValueForKey:@"editing"];
     }
+}
+
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
 }
 
 #pragma mark - Minimap Delegate Methods

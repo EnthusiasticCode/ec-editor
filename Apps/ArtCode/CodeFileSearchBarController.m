@@ -49,8 +49,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     if (controller == targetCodeFileController)
         return;
     
-    [self willChangeValueForKey:@"targetCodeFileController"];
-    
     if (targetCodeFileController)
         [targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
     
@@ -60,28 +58,22 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         [self _addFindFilterCodeViewPass];
         [self _applyFindFilterAndFlash:YES];
     }
-    
-    [self didChangeValueForKey:@"targetCodeFileController"];
 }
 
 - (void)setRegExpOptions:(NSRegularExpressionOptions)value
 {
     if (value == regExpOptions)
         return;
-    [self willChangeValueForKey:@"regExpOptions"];
     regExpOptions = value;
     [self _applyFindFilterAndFlash:YES];
-    [self didChangeValueForKey:@"regExpOptions"];
 }
 
 - (void)setHitMustOption:(CodeFileSearchHitMustOption)value
 {
     if (value == hitMustOption)
         return;
-    [self willChangeValueForKey:@"hitMustOption"];
     hitMustOption = value;
     [self _applyFindFilterAndFlash:YES];
-    [self didChangeValueForKey:@"hitMustOption"];
 }
 
 #pragma mark - Controller Lifecycle

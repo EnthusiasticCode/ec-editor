@@ -69,8 +69,6 @@ static const void *editItemContext;
     if (item == editItem)
         return;
     
-    [self willChangeValueForKey:@"editItem"];
-    
     if (editItem)
     {
         [editItem.customView removeFromSuperview];
@@ -87,16 +85,12 @@ static const void *editItemContext;
     }
     
     [self layoutSubviews];
-    
-    [self didChangeValueForKey:@"editItem"];
 }
 
 - (void)setToolItems:(NSArray *)items animated:(BOOL)animated
 {
     if (items == toolItems)
         return;
-    
-    [self willChangeValueForKey:@"toolItems"];
     
     NSArray *oldItems = [toolItems copy];
     toolItems = [items copy];
@@ -137,8 +131,6 @@ static const void *editItemContext;
         }
         [self setNeedsLayout];
     }
-    
-    [self didChangeValueForKey:@"toolItems"];
 }
 
 #pragma mark - Observing edit item

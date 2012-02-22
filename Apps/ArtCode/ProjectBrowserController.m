@@ -88,21 +88,17 @@ static void *_directoryObservingContext;
 {
     if (directoryPresenter == _directoryPresenter)
         return;
-    [self willChangeValueForKey:@"directoryPresenter"];
     [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
     _directoryPresenter = directoryPresenter;
     [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];    
-    [self didChangeValueForKey:@"directoryPresenter"];
 }
 
 - (void)setProjectsDirectory:(NSURL *)projectsDirectory
 {
     if (projectsDirectory == _projectsDirectory)
         return;
-    [self willChangeValueForKey:@"projectsDirectory"];
     _projectsDirectory = projectsDirectory;
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    [self didChangeValueForKey:@"projectsDirectory"];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -130,6 +126,11 @@ static void *_directoryObservingContext;
     [self.gridView setEditing:editing animated:animated];
     
     [self didChangeValueForKey:@"editing"];
+}
+
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
 }
 
 #pragma mark - Controller Methods

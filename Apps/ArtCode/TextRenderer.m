@@ -372,14 +372,12 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (typesetter == _typesetter)
         return;
     
-    [self willChangeValueForKey:@"typesetter"];
     if (_typesetter)
         CFRelease(_typesetter);
     if (typesetter)
         _typesetter = CFRetain(typesetter);
     else
         _typesetter = NULL;
-    [self didChangeValueForKey:@"typesetter"];
 }
 
 - (NSArray *)renderedLines
@@ -653,12 +651,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (aDelegate == delegate)
         return;
     
-    [self willChangeValueForKey:@"delegate"];
-    
     delegate = aDelegate;
     delegateHasDidInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:didInvalidateRenderInRect:)];
-    
-    [self didChangeValueForKey:@"delegate"];
 }
 
 - (void)setRenderWidth:(CGFloat)width
@@ -666,16 +660,12 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (width == renderWidth)
         return;
     
-    [self willChangeValueForKey:@"renderWidth"];
-    
     // Order here mater because the update will inform the delegate that the old rendering rect changed. Than we update that rect size itself.
     [self _updateRenderWidth:width];
     renderWidth = width;
     
     if (delegateHasDidInvalidateRenderInRect)
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
-    
-    [self didChangeValueForKey:@"renderWidth"];
 }
 
 - (void)setRenderTextHeight:(CGFloat)height
@@ -683,9 +673,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (height == renderTextHeight)
         return;
     
-    [self willChangeValueForKey:@"renderTextHeight"];
     renderTextHeight = height;
-    [self didChangeValueForKey:@"renderTextHeight"];
     self.renderHeight = height + textInsets.top + textInsets.bottom;
 }
 
@@ -699,16 +687,12 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
         return;
     
-    [self willChangeValueForKey:@"textInsets"];
-    
     // Order matter, update will use textInsets to evalue wrap with for segments
     textInsets = insets;
     [self _updateRenderWidth:self.renderWidth];
     
     if (delegateHasDidInvalidateRenderInRect)
         [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
-    
-    [self didChangeValueForKey:@"textInsets"];
 }
 
 #pragma mark NSObject Methods

@@ -32,13 +32,9 @@ static void const * parentSearchBarControllerContext;
     if (controller == parentSearchBarController)
         return;
     
-    [self willChangeValueForKey:@"parentSearchBarController"];
-    
     [parentSearchBarController removeObserver:self forKeyPath:@"searchFilterMatches" context:&parentSearchBarControllerContext];
     parentSearchBarController = controller;
     [parentSearchBarController addObserver:self forKeyPath:@"searchFilterMatches" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&parentSearchBarControllerContext];
-    
-    [self didChangeValueForKey:@"parentSearchBarController"];
 }
 
 #pragma mark - Controller Methods

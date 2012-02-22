@@ -261,13 +261,11 @@ static const void *rendererContext;
 {
     if (value == editing)
         return;
-    [self willChangeValueForKey:@"editing"];
     editing = value;
     if (value)
         [self becomeFirstResponder];
     else
         [self resignFirstResponder];
-    [self didChangeValueForKey:@"editing"];
 }
 
 - (void)setFrame:(CGRect)frame
@@ -308,8 +306,6 @@ static const void *rendererContext;
     if (lineNumbersEnabled == enabled)
         return;
     
-    [self willChangeValueForKey:@"lineNumbersEnabled"];
-    
     lineNumbersEnabled = enabled;
     
     static NSString *lineNumberPassKey = @"LineNumbersUnderlayPass";
@@ -342,8 +338,6 @@ static const void *rendererContext;
         [self removePassLayerForKey:lineNumberPassKey];
     }
     [self _forwardTextInsetsToRenderer];
-    
-    [self didChangeValueForKey:@"lineNumbersEnabled"];
 }
 
 - (void)setTextInsets:(UIEdgeInsets)insets
@@ -351,10 +345,8 @@ static const void *rendererContext;
     if (UIEdgeInsetsEqualToEdgeInsets(insets, textInsets))
         return;
     
-    [self willChangeValueForKey:@"textInsets"];
     textInsets = insets;
     [self _forwardTextInsetsToRenderer];
-    [self didChangeValueForKey:@"textInsets"];
 }
 
 - (void)setLineNumbersWidth:(CGFloat)width
@@ -362,10 +354,8 @@ static const void *rendererContext;
     if (width == lineNumbersWidth)
         return;
     
-    [self willChangeValueForKey:@"lineNumbersWidth"];
     lineNumbersWidth = width;
     [self _forwardTextInsetsToRenderer];
-    [self didChangeValueForKey:@"lineNumbersWidth"];
 }
 
 - (void)_forwardTextInsetsToRenderer
@@ -384,7 +374,6 @@ static const void *rendererContext;
 {
     if (value == keyboardAccessoryView)
         return;
-    [self willChangeValueForKey:@"keyboardAccessoryView"];
     if (!keyboardAccessoryView && self.superview != nil)
     {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
@@ -396,7 +385,6 @@ static const void *rendererContext;
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
     }
-    [self didChangeValueForKey:@"keyboardAccessoryView"];
 }
 
 - (void)setCaretColor:(UIColor *)caretColor
@@ -2234,7 +2222,6 @@ static void init(CodeView *self)
 {
     if (value == _backgroundImageView.image)
         return;
-    [self willChangeValueForKey:@"backgroundImage"];
     if (!_backgroundImageView)
     {
         _backgroundImageView = [UIImageView new];
@@ -2243,7 +2230,6 @@ static void init(CodeView *self)
         [self addSubview:_backgroundImageView];
     }
     _backgroundImageView.image = value;
-    [self didChangeValueForKey:@"backgroundImage"];
 }
 
 - (void)flashInRect:(CGRect)rect view:(UIView *)view withDuration:(NSTimeInterval)duration

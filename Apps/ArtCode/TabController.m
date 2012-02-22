@@ -79,7 +79,6 @@ static void *childViewControllerTitleContext;
     if (value == _tabBarVisible)
         return;
     
-    [self willChangeValueForKey:@"showTabBar"];
     _tabBarVisible = value;
     
     if (self.isViewLoaded)
@@ -102,8 +101,6 @@ static void *childViewControllerTitleContext;
                 [self.tabBar removeFromSuperview];
         }
     }
-    
-    [self didChangeValueForKey:@"showTabBar"];
 }
 
 - (UIView *)contentScrollView
@@ -156,14 +153,10 @@ static void *childViewControllerTitleContext;
 
 - (void)setTabPageMargin:(CGFloat)margin
 {
-    [self willChangeValueForKey:@"tabPageMargin"];
-    
     tabPageMargin = margin;
     
     [self layoutChildViews];
     [self.contentScrollView setNeedsLayout];
-    
-    [self didChangeValueForKey:@"tabPageMargin"];
 }
 
 - (NSArray *)childViewControllers

@@ -56,11 +56,9 @@ static void *_directoryObservingContext;
 {
     if (directoryPresenter == _directoryPresenter)
         return;
-    [self willChangeValueForKey:@"directoryPresenter"];
     [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
     _directoryPresenter = directoryPresenter;
     [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-    [self didChangeValueForKey:@"directoryPresenter"];
 }
 
 - (NSArray *)filteredItems

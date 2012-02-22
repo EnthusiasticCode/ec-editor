@@ -87,29 +87,24 @@ static void *_openQuicklyObservingContext;
 {
     if (directoryPresenter == _directoryPresenter)
         return;
-    [self willChangeValueForKey:@"directoryPresenter"];
     [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
     _directoryPresenter = directoryPresenter;
     [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-    [self didChangeValueForKey:@"directoryPresenter"];
 }
 
 - (void)setOpenQuicklyPresenter:(SmartFilteredDirectoryPresenter *)openQuicklyPresenter
 {
     if (openQuicklyPresenter == _openQuicklyPresenter)
         return;
-    [self willChangeValueForKey:@"openQuicklyPresenter"];
     [_openQuicklyPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_openQuicklyObservingContext];
     _openQuicklyPresenter = openQuicklyPresenter;
     [_openQuicklyPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_openQuicklyObservingContext];
-    [self didChangeValueForKey:@"openQuicklyPresenter"];
 }
 
 - (void)setDirectory:(NSURL *)directory
 {
     if (directory == _directory)
         return;
-    [self willChangeValueForKey:@"directory"];
     if (self.isViewLoaded && self.view.superview != nil)
     {
         [_selectedURLs removeAllObjects];
@@ -126,7 +121,6 @@ static void *_openQuicklyObservingContext;
         [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
         [self.tableView reloadData];
     }
-    [self didChangeValueForKey:@"directory"];
 }
 
 - (NSArray *)filteredItems

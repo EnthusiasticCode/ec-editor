@@ -34,7 +34,6 @@
 {
     if (value == _highlightView.highlightedCharacters)
         return;
-    [self willChangeValueForKey:@"textLabelHighlightedCharacters"];
     if ([value count] == 0)
     {
         [_highlightView removeFromSuperview];
@@ -51,18 +50,15 @@
         self.textLabel.backgroundColor = [UIColor clearColor];
     }
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"textLabelHighlightedCharacters"];
 }
 
 - (void)setTextLabelHighlightedCharactersBackgroundColor:(UIColor *)value
 {
     if (value == textLabelHighlightedCharactersBackgroundColor)
         return;
-    [self willChangeValueForKey:@"textLabelHighlightedCharactersBackgroundColor"];
     textLabelHighlightedCharactersBackgroundColor = value;
     _highlightView.highlightedBackgroundColor = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"textLabelHighlightedCharactersBackgroundColor"];
 }
 
 - (NSAttributedString *)_attributedTitleText

@@ -79,10 +79,8 @@
     if (tint == secondaryTitleFragmentsTint)
         return;
     
-    [self willChangeValueForKey:@"secondaryTitleFragmentsTint"];
     secondaryTitleFragmentsTint = tint;
     [self _setupTitle];
-    [self didChangeValueForKey:@"secondaryTitleFragmentsTint"];
 }
 
 - (UIFont *)selectedFragmentFont
@@ -97,10 +95,8 @@
     if (font == selectedFragmentFont)
         return;
     
-    [self willChangeValueForKey:@"selectedFragmentFont"];
     selectedFragmentFont = font;
     [self _setupTitle];
-    [self didChangeValueForKey:@"selectedFragmentFont"];
 }
 
 - (UIFont *)secondaryFragmentFont
@@ -115,18 +111,14 @@
     if (font == secondaryFragmentFont)
         return;
     
-    [self willChangeValueForKey:@"secondaryFragmentFont"];
     secondaryFragmentFont = font;
     [self _setupTitle];
-    [self didChangeValueForKey:@"secondaryFragmentFont"];
 }
 
 - (void)setLoadingMode:(BOOL)mode
 {
     if (mode == loadingMode)
         return;
-    
-    [self willChangeValueForKey:@"loadingMode"];
     
     loadingMode = mode;
     
@@ -145,18 +137,14 @@
         [_activityIndicatorView stopAnimating];
         [_activityIndicatorView removeFromSuperview];
     }
-    
-    [self didChangeValueForKey:@"loadingMode"];
 }
 
 - (void)setContentInsets:(UIEdgeInsets)value
 {
     if (UIEdgeInsetsEqualToEdgeInsets(value, contentInsets))
         return;
-    [self willChangeValueForKey:@"contentInsets"];
     contentInsets = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"contentInsets"];
 }
 
 #pragma mark - View Methods

@@ -42,22 +42,18 @@
 {
     if (value == targetCodeFileController)
         return;
-    [self willChangeValueForKey:@"targetCodeFileController"];
     targetCodeFileController = value;
     self._codeUnit = nil;
-    [self didChangeValueForKey:@"targetCodeFileController"];
 }
 
 - (void)setOffsetInDocumentForCompletions:(NSUInteger)value
 {
     if (value == offsetInDocumentForCompletions)
         return;
-    [self willChangeValueForKey:@"offsetInDocumentForCompletions"];
     offsetInDocumentForCompletions = value;
     self._completionResults = nil;
     _minimumTypeLabelSize = 0;
     [self.tableView reloadData];
-    [self didChangeValueForKey:@"offsetInDocumentForCompletions"];
 }
 
 - (TMIndex *)_codeIndex

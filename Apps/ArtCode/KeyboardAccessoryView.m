@@ -23,7 +23,6 @@
 {
     if (value == dockedBackgroundView)
         return;
-    [self willChangeValueForKey:@"dockedBackgroundView"];
     if (!self.isSplit)
     {
         [dockedBackgroundView removeFromSuperview];
@@ -31,7 +30,6 @@
             [self insertSubview:value atIndex:0];
     }
     dockedBackgroundView = value;
-    [self didChangeValueForKey:@"dockedBackgroundView"];
 }
 
 - (void)setSplit:(BOOL)value
@@ -39,7 +37,6 @@
     if (value == split)
         return;
     
-    [self willChangeValueForKey:@"split"];
     split = value;
     if (split)
     {
@@ -53,7 +50,6 @@
         [splitRightBackgroundView removeFromSuperview];
         [self insertSubview:self.dockedBackgroundView atIndex:0];
     }
-    [self didChangeValueForKey:@"split"];
 }
 
 #pragma mark - View Methods

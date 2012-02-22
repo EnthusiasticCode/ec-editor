@@ -120,10 +120,8 @@
 {
     if (value == contentController)
         return;
-    [self willChangeValueForKey:@"contentController"];
     contentController = value;
     self.artCodeTab = contentController.artCodeTab;
-    [self didChangeValueForKey:@"contentController"];
 }
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController

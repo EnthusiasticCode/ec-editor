@@ -23,7 +23,6 @@
     if ((typeLabel.superview != nil) ^ (value == 0) 
         || value == typeLabel.frame.size.width)
         return;
-    [self willChangeValueForKey:@"typeLabelSize"];
     if (value == 0)
     {
         definitionLabel.frame = CGRectUnion(definitionLabel.frame, typeLabel.frame);
@@ -39,8 +38,6 @@
         frame.size.width = definitionLabel.frame.size.width - value - 11;
         definitionLabel.frame = frame;
     }
-    [self didChangeValueForKey:@"typeLabelSize"];
-
 }
 
 @end
