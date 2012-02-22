@@ -374,7 +374,8 @@ static const void *contentViewControllerContext;
         }
         else
         {
-            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents];
+            NSURL *url = self.artCodeTab.currentURL;
+            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:url] pathComponents];
             if ([pathComponents count])
             {
                 NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
@@ -386,10 +387,9 @@ static const void *contentViewControllerContext;
                 }];
                 [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
             }
-            else if (self.artCodeTab.currentURL.host)
+            else if (url.host)
             {
-                // TODO add scheme and path
-                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:self.artCodeTab.currentURL.host, nil] selectedIndexes:nil];
+                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:url.scheme, url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
             }
             // TODO parse URL query to determine images etc...
             //            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
@@ -488,8 +488,6 @@ static const void *contentViewControllerContext;
                     
                 FileBrowserController *fileTableController = (FileBrowserController *)result;
                 [fileTableController setDirectory:url];
-                if (result == self.contentViewController)
-                    [self updateDefaultToolbarTitle];
             }
         }
         else
@@ -510,6 +508,9 @@ static const void *contentViewControllerContext;
             result = [RemoteBrowserController new];
         [(RemoteBrowserController *)result setURL:url];
     }
+    // Update title if controller didn't change
+    if (result == self.contentViewController)
+        [self updateDefaultToolbarTitle];
     return result;
 }
 
