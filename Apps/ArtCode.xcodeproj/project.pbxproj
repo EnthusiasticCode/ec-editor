@@ -247,6 +247,7 @@
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
 		CD4E648614C1E984003AC39D /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4E648514C1E984003AC39D /* ArtCodeProject.m */; };
+		CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
@@ -690,6 +691,8 @@
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4E648414C1E984003AC39D /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeProject.h; sourceTree = "<group>"; };
 		CD4E648514C1E984003AC39D /* ArtCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProject.m; sourceTree = "<group>"; };
+		CD623AA714F50BAC00FEF5E9 /* WeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakArray.h; sourceTree = "<group>"; };
+		CD623AA814F50BAC00FEF5E9 /* WeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakArray.m; sourceTree = "<group>"; };
 		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
 		CD69C90214F1642000FCC987 /* NewRemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewRemoteViewController.m; sourceTree = "<group>"; };
 		CD69C90414F1649600FCC987 /* RemoteOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteOptionsViewController.h; sourceTree = "<group>"; };
@@ -1161,6 +1164,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CD623AA714F50BAC00FEF5E9 /* WeakArray.h */,
+				CD623AA814F50BAC00FEF5E9 /* WeakArray.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
 				CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */,
 				B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */,
@@ -2235,6 +2240,7 @@
 				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
 				CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */,
 				CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */,
+				CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
