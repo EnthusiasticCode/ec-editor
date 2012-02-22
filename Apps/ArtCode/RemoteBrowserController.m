@@ -9,6 +9,10 @@
 #import "RemoteBrowserController.h"
 #import "SingleTabController.h"
 #import "HighlightTableViewCell.h"
+#import "NSArray+ScoreForAbbreviation.h"
+#import "UIImage+AppStyle.h"
+#import "ArtCodeTab.h"
+
 #import <Connection/CKConnectionRegistry.h>
 
 @interface RemoteBrowserController ()
@@ -45,6 +49,7 @@
     else if (value != nil)
     {
         [self _connectToURL:value];
+        [self _changeToDirectory:value.path];
     }
     else
     {
@@ -57,7 +62,20 @@
 - (NSArray *)filteredItems
 {
     // TODO filter
-    return _directoryItems;
+    if ([self.searchBar.text length] != 0)
+    {
+        NSArray *hitsMask = nil;
+        _filteredItems = [_directoryItems sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitsMask extrapolateTargetStringBlock:^NSString *(NSDictionary *element) {
+            return [element objectForKey:cxFilenameKey];
+        }];
+        _filteredItemsHitMasks = hitsMask;
+    }
+    else
+    {
+        _filteredItems = _directoryItems;
+        _filteredItemsHitMasks = nil;
+    }
+    return _filteredItems;
 }
 
 - (void)invalidateFilteredItems
@@ -75,7 +93,7 @@
     [super viewDidDisappear:animated];
 }
 
-#pragma mark - Table view datasource
+#pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -83,9 +101,31 @@
     
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     cell.textLabel.text = [directoryItem objectForKey:cxFilenameKey];
-    // TODO also use NSFileSize, NSFileType and parse file extension
+    cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
+    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
+    {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    }
+    else
+    {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
+    }
+    // TODO also use NSFileSize
     
     return cell;
+}
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
+    {
+        [self.artCodeTab pushURL:[self.URL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+    }
 }
 
 #pragma mark - Connection delegate
@@ -146,13 +186,12 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    NSLog(@"changed to directory: %@", dirPath);
-    [_connection directoryContents];
+    [con directoryContents];
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    // TODO understand why it is called 3 times at start
+    self.loading = NO;
     _directoryItems = [contents mutableCopy];
     [self invalidateFilteredItems];
     [self.tableView reloadData];
@@ -163,6 +202,7 @@
     [_directoryItems addObjectsFromArray:contents];
     if (!flag)
     {
+        self.loading = NO;
         [self invalidateFilteredItems];
         [self.tableView reloadData];
     }

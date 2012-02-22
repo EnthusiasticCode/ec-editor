@@ -112,7 +112,14 @@ static NSMutableArray *_mutableTabs;
 - (ArtCodeProject *)currentProject
 {
     if (!_currentProject)
-        _currentProject = [ArtCodeProject projectWithURL:self.currentURL];
+    {
+        for (NSURL *historyURL in _mutableHistoryURLs)
+        {
+            _currentProject = [ArtCodeProject projectWithURL:historyURL];
+            if (_currentProject)
+                break;
+        }
+    }
     return _currentProject;
 }
 

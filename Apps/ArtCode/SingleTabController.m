@@ -375,14 +375,22 @@ static const void *contentViewControllerContext;
         else
         {
             NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents];
-            NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
-            NSInteger lastIndex = [pathComponents count] - 1;
-            [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
-                if (idx == 0 || idx == lastIndex)
-                    return;
-                [path appendFormat:@"/%@", component];
-            }];
-            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
+            if ([pathComponents count])
+            {
+                NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
+                NSInteger lastIndex = [pathComponents count] - 1;
+                [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
+                    if (idx == 0 || idx == lastIndex)
+                        return;
+                    [path appendFormat:@"/%@", component];
+                }];
+                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
+            }
+            else if (self.artCodeTab.currentURL.host)
+            {
+                // TODO add scheme and path
+                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:self.artCodeTab.currentURL.host, nil] selectedIndexes:nil];
+            }
             // TODO parse URL query to determine images etc...
             //            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
             //                                                               [currentURL.path stringByDeletingLastPathComponent],
@@ -466,15 +474,10 @@ static const void *contentViewControllerContext;
         {
             if ([url isBookmarksVariant])
             {
-//                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
-//                    result = self.contentViewController;
-//                else
-//                    result = [BookmarkBrowserController new];
-                if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
+                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
                     result = self.contentViewController;
                 else
-                    result = [RemoteBrowserController new];
-                [(RemoteBrowserController *)result setURL:[NSURL URLWithString:@"ftp://ftp.nikso.net"]];
+                    result = [BookmarkBrowserController new];
             }
             else
             {
@@ -498,6 +501,14 @@ static const void *contentViewControllerContext;
             CodeFileController *codeFileController = (CodeFileController *)result;
             codeFileController.fileURL = url;
         }
+    }
+    else if ([url.scheme isEqualToString:@"ftp"])
+    {
+        if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
+            result = self.contentViewController;
+        else
+            result = [RemoteBrowserController new];
+        [(RemoteBrowserController *)result setURL:url];
     }
     return result;
 }
