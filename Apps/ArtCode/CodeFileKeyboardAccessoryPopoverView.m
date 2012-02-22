@@ -78,12 +78,10 @@
     if (contentView == value)
         return;
     
-    [self willChangeValueForKey:@"contentView"];
     [contentView removeFromSuperview];
     contentView = value;
     [self addSubview:contentView];
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"contentView"];
 }
 
 - (CGSize)contentSize
@@ -93,41 +91,33 @@
 
 - (void)setContentSize:(CGSize)contentSize
 {
-    [self willChangeValueForKey:@"contentSize"];
     contentSize.width += self.contentInsets.left + self.contentInsets.right;
     contentSize.height += self.contentInsets.top + self.contentInsets.bottom;
     self.bounds = (CGRect){ CGPointZero, contentSize };
-    [self didChangeValueForKey:@"contentSize"];
 }
 
 - (void)setArrowDirection:(UIPopoverArrowDirection)value
 {
     if (value == arrowDirection)
         return;
-    [self willChangeValueForKey:@"arrowDirection"];
     arrowDirection = value;
     [self _setNeedsImageAndTransformForArrowView];
-    [self didChangeValueForKey:@"arrowDirection"];
 }
 
 - (void)setArrowPosition:(CGFloat)value
 {
     if (value == arrowPosition)
         return;
-    [self willChangeValueForKey:@"arrowPosition"];
     arrowPosition = value;
     [self _setNeedsImageAndTransformForArrowView];
-    [self didChangeValueForKey:@"arrowPosition"];
 }
 
 - (void)setArrowInsets:(UIEdgeInsets)value
 {
     if (UIEdgeInsetsEqualToEdgeInsets(value, self.arrowInsets))
         return;
-    [self willChangeValueForKey:@"arrowInsets"];
     arrowInsets = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"arrowInsets"];
 }
 
 - (UIImageView *)arrowView

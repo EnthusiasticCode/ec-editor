@@ -49,13 +49,11 @@ static const void *itemContext;
 {
     if (value == itemBackgroundImage)
         return;
-    [self willChangeValueForKey:@"itemBackgroundImage"];
     itemBackgroundImage = value;
     for (UIBarButtonItem *item in self.items)
     {
         [(UIButton *)item.customView setBackgroundImage:itemBackgroundImage forState:UIControlStateNormal];
     }
-    [self didChangeValueForKey:@"itemBackgroundImage"];
 }
 
 - (CodeFileKeyboardAccessoryPopoverView *)itemPopoverView
@@ -195,7 +193,6 @@ static const void *itemContext;
 {
     if (items == value)
         return;
-    [self willChangeValueForKey:@"items"];
     for (UIBarButtonItem *item in items)
     {
         [item.customView removeFromSuperview];
@@ -217,7 +214,6 @@ static const void *itemContext;
         [item addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&itemContext];
         [item addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&itemContext];
     }];
-    [self didChangeValueForKey:@"items"];
 }
 
 - (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position

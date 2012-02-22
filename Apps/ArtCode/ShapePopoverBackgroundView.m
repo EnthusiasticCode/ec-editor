@@ -39,20 +39,16 @@ static void updatePath(ShapePopoverBackgroundView *self);
     if (value == arrowOffset)
         return;
     
-    [self willChangeValueForKey:@"arrowOffset"];
     arrowOffset = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"arrowOffset"];
 }
 
 - (void)setArrowDirection:(UIPopoverArrowDirection)value
 {
     if (value == arrowDirection)
         return;
-    [self willChangeValueForKey:@"arrowDirection"];
     arrowDirection = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"arrowDirection"];
 }
 
 - (UIColor *)backgroundColor

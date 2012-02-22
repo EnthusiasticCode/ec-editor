@@ -37,7 +37,6 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (void)setIdentifier:(NSString *)identifier
 {
-    [self willChangeValueForKey:@"identifier"];
     NSString *parentQualifiedIdentifier = self.parent.qualifiedIdentifier;    
     _identifierRange.location = [parentQualifiedIdentifier length];
     if (_identifierRange.location > 0)
@@ -60,7 +59,11 @@ NSMutableDictionary *systemScopesScoreCache;
         _identifiersStack = identifier ? [NSArray arrayWithObject:identifier] : nil;
     }
     _identifierRange.length = [identifier length];
-    [self didChangeValueForKey:@"identifier"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingQualifiedIdentifier
+{
+    return [NSSet setWithObject:@"identifier"];
 }
 
 - (NSString *)description

@@ -69,8 +69,6 @@ static const void *contentViewControllerContext;
     if (defaultToolbar == _defaultToolbar)
         return;
     
-    [self willChangeValueForKey:@"defaultToolbar"];
-    
     if (self._isViewVisible)
     {
         [_defaultToolbar removeFromSuperview];
@@ -86,8 +84,6 @@ static const void *contentViewControllerContext;
     [_defaultToolbar.titleControl.backgroundButton addTarget:self action:@selector(_defaultToolbarTitleButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     [_defaultToolbar.backButton addTarget:self action:@selector(_historyBackAction:) forControlEvents:UIControlEventTouchUpInside];
     [_defaultToolbar.forwardButton addTarget:self action:@selector(_historyForwardAction:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self didChangeValueForKey:@"defaultToolbar"];
 }
 
 - (BOOL)isShowingLoadingAnimation
@@ -109,8 +105,6 @@ static const void *contentViewControllerContext;
 {
     if (contentViewController == _contentViewController)
         return;
-    
-    [self willChangeValueForKey:@"contentViewController"];
     
     [_contentViewController willMoveToParentViewController:nil];
     [_contentViewController removeFromParentViewController];
@@ -166,8 +160,6 @@ static const void *contentViewControllerContext;
     }
     
     [self _setupDefaultToolbarItemsAnimated:animated];
-    
-    [self didChangeValueForKey:@"contentViewController"];
 }
 
 - (UIView *)currentToolbarView
@@ -186,8 +178,6 @@ static const void *contentViewControllerContext;
 {
     if (toolbarViewController == _toolbarViewController)
         return;
-    
-    [self willChangeValueForKey:@"toolbarViewController"];
     
     UIViewController *oldToolbarViewController = _toolbarViewController;
     
@@ -223,8 +213,6 @@ static const void *contentViewControllerContext;
             
             [_toolbarViewController didMoveToParentViewController:self];
             [oldToolbarViewController removeFromParentViewController];
-            
-            [self didChangeValueForKey:@"toolbarViewController"];
         }];
     }
     else
@@ -238,7 +226,6 @@ static const void *contentViewControllerContext;
             [self.view addSubview:toolbarView];
             [self _layoutChildViewsAnimated:NO];
         }
-        [self didChangeValueForKey:@"toolbarViewController"];
     }
 }
 
@@ -562,9 +549,7 @@ static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
     if (loading == self.isLoading)
         return;
     
-    [self willChangeValueForKey:@"loading"];
     objc_setAssociatedObject(self, UIViewControllerLoadingKey, [NSNumber numberWithBool:loading], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [self didChangeValueForKey:@"loading"];
 }
 
 @end

@@ -41,7 +41,6 @@
 {
     if (value == URL)
         return;
-    [self willChangeValueForKey:@"URL"];
     URL = value;
     self.navigationItem.title = [[value lastPathComponent] stringByDeletingPathExtension];
     if (!_directoryItemsList)
@@ -52,7 +51,6 @@
         [_directoryItemsList addObject:[[DirectoryListItem alloc] initWithURL:url]];
     }];
     [self.tableView reloadData];
-    [self didChangeValueForKey:@"URL"];
 }
 
 - (NSURL *)selectedURL

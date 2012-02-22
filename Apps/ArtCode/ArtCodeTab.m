@@ -101,9 +101,7 @@ static NSMutableArray *_mutableTabs;
 
 - (void)setCurrentHistoryPosition:(NSUInteger)currentHistoryPosition
 {
-    [self willChangeValueForKey:@"currentHistoryPosition"];
     [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
-    [self didChangeValueForKey:@"currentHistoryPosition"];
 }
 
 - (NSURL *)currentURL
@@ -233,9 +231,7 @@ static void *artCodeTabKey;
 
 - (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
 {
-    [self willChangeValueForKey:@"artCodeTab"];
     objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_ASSIGN);
-    [self didChangeValueForKey:@"artCodeTab"];
 }
 
 @end

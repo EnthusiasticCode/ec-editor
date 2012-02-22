@@ -67,7 +67,6 @@ static Cache *openProjects = nil;
     if ([name isEqualToString:[self.URL lastPathComponent]])
         return;
     ECASSERT(![[self class] projectWithNameExists:name]);
-    [self willChangeValueForKey:@"name"];
     NSURL *newURL = [[self.URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:name];
     NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     [coordinator coordinateWritingItemAtURL:self.URL options:NSFileCoordinatorWritingForMoving writingItemAtURL:newURL options:0 error:NULL byAccessor:^(NSURL *newURL1, NSURL *newURL2) {
@@ -77,7 +76,6 @@ static Cache *openProjects = nil;
     [openProjects removeObjectForKey:URL];
     URL = newURL;
     [openProjects setObject:self forKey:URL];
-    [self didChangeValueForKey:@"name"];
 }
 
 - (void)setLabelColor:(UIColor *)value
@@ -86,9 +84,7 @@ static Cache *openProjects = nil;
         return;
     
     _dirty = YES;
-    [self willChangeValueForKey:@"labelColor"];
     labelColor = value;
-    [self didChangeValueForKey:@"labelColor"];
 }
 
 #pragma mark Initializing and exporting projects

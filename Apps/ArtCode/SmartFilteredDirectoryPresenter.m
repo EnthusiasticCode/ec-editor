@@ -111,7 +111,6 @@ static void * _directoryObservingContext;
     indexesOfRemovedFileURLs = [indexesOfRemovedFileURLs copy];
     indexesOfReplacedFileURLs = [indexesOfReplacedFileURLs copy];
     
-    [self willChangeValueForKey:@"filterString"];
     if ([indexesOfReplacedFileURLs count])
     {
         [self willChange:NSKeyValueChangeReplacement valuesAtIndexes:indexesOfReplacedFileURLs forKey:@"fileURLs"];
@@ -130,7 +129,6 @@ static void * _directoryObservingContext;
         [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:indexesOfInsertedFileURLs forKey:@"fileURLs"];
     }
     _filterString = filterString;
-    [self didChangeValueForKey:@"filterString"];
 }
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options

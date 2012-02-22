@@ -63,13 +63,11 @@ static const void *rendererContext;
     if (aRenderer == renderer)
         return;
     
-    [self willChangeValueForKey:@"renderer"];
     [renderer removeObserver:self forKeyPath:@"renderWidth" context:&rendererContext];
     [renderer removeObserver:self forKeyPath:@"renderHeight" context:&rendererContext];
     renderer = aRenderer;
     [renderer addObserver:self forKeyPath:@"renderWidth" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
     [renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&rendererContext];
-    [self didChangeValueForKey:@"renderer"];
 }
 
 - (UIView *)selectionView
@@ -86,7 +84,6 @@ static const void *rendererContext;
 
 - (void)setSelectionRectangle:(CGRect)_selectionRectangle
 {
-    [self willChangeValueForKey:@"selectionRectangle"];
     selectionRectangle = _selectionRectangle;
     if (CGRectEqualToRect(selectionRectangle, CGRectNull))
     {
@@ -104,7 +101,6 @@ static const void *rendererContext;
 //        [self scrollRectToVisible:(CGRect) { self.selectionView.frame.origin, { 1, 1 }} animated:YES];
     }
     
-    [self didChangeValueForKey:@"selectionRectangle"];
 }
 
 - (void)setBackgroundView:(UIView *)_backgroundView
@@ -112,11 +108,9 @@ static const void *rendererContext;
     if (backgroundView == _backgroundView)
         return;
     
-    [self willChangeValueForKey:@"backgroundView"];
     [backgroundView removeFromSuperview];
     backgroundView = _backgroundView;
     [self insertSubview:backgroundView belowSubview:_contentView];
-    [self didChangeValueForKey:@"backgroundView"];
 }
 
 - (CGFloat)lineThickness

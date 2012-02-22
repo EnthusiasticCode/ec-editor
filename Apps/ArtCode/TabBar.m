@@ -105,12 +105,8 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     if (UIEdgeInsetsEqualToEdgeInsets(insets, tabControlInsets))
         return;
     
-    [self willChangeValueForKey:@"tabControlInsets"];
-    
     tabControlInsets = insets;
     [tabControlsContainerView setNeedsLayout];
-    
-    [self didChangeValueForKey:@"tabControlInsets"];
 }
 
 - (void)setAdditionalControls:(NSArray *)array

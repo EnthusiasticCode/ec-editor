@@ -173,6 +173,11 @@
     [self didChangeValueForKey:@"editing"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
+}
+
 #pragma mark - Single tab content controller protocol methods
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar

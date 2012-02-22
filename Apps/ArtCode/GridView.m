@@ -66,10 +66,8 @@
 {
     if (value == dataSource)
         return;
-    [self willChangeValueForKey:@"dataSource"];
     dataSource = value;
     [self reloadData];
-    [self didChangeValueForKey:@"dataSource"];
 }
 
 #pragma mark Configuring a Grid View
@@ -83,10 +81,8 @@
     
     if (value == rowHeight)
         return;
-    [self willChangeValueForKey:@"rowHeight"];
     rowHeight = value;
     [self _updateContentSize];
-    [self didChangeValueForKey:@"rowHeight"];
 }
 
 - (NSUInteger)columnNumber
@@ -100,32 +96,26 @@
     
     if (value == columnNumber)
         return;
-    [self willChangeValueForKey:@"columnNumber"];
     columnNumber = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"columnNumber"];
 }
 
 - (void)setBackgroundView:(UIView *)value
 {
     if (value == backgroundView)
         return;
-    [self willChangeValueForKey:@"backgroundView"];
     [backgroundView removeFromSuperview];
     backgroundView = value;
     if (backgroundView)
         [self insertSubview:backgroundView atIndex:0];
-    [self didChangeValueForKey:@"backgroundView"];
 }
 
 - (void)setCellInsets:(UIEdgeInsets)value
 {
     if (UIEdgeInsetsEqualToEdgeInsets(value, cellInsets))
         return;
-    [self willChangeValueForKey:@"cellInsets"];
     cellInsets = value;
     [self setNeedsLayout];
-    [self didChangeValueForKey:@"cellInsets"];
 }
 
 - (id)dequeueReusableCellWithIdentifier:(NSString *)identifier
@@ -172,7 +162,6 @@
 {
     if (value == allowSelection)
         return;
-    [self willChangeValueForKey:@"allowSelection"];
     allowSelection = value;
     if (!_selectionGestureRecognizer)
     {
@@ -181,25 +170,21 @@
     }
     if (!self.isEditing)
         _selectionGestureRecognizer.enabled = value;
-    [self didChangeValueForKey:@"allowSelection"];
 }
 
 - (void)setAllowMultipleSelection:(BOOL)value
 {
     if (value == allowMultipleSelection)
         return;
-    [self willChangeValueForKey:@"allowMultipleSelection"];
     allowMultipleSelection = value;
     if (allowMultipleSelection && !self.allowSelection)
         self.allowSelection = YES;
-    [self didChangeValueForKey:@"allowMultipleSelection"];
 }
 
 - (void)setAllowSelectionDuringEditing:(BOOL)value
 {
     if (value == allowSelectionDuringEditing)
         return;
-    [self willChangeValueForKey:@"allowSelectionDuringEditing"];
     allowSelectionDuringEditing = value;
     if (!_selectionGestureRecognizer)
     {
@@ -208,18 +193,15 @@
     }
     if (self.isEditing)
         _selectionGestureRecognizer.enabled = value;
-    [self didChangeValueForKey:@"allowSelectionDuringEditing"];
 }
 
 - (void)setAllowMultipleSelectionDuringEditing:(BOOL)value
 {
     if (value == allowMultipleSelectionDuringEditing)
         return;
-    [self willChangeValueForKey:@"allowMultipleSelectionDuringEditing"];
     allowMultipleSelectionDuringEditing = value;
     if (allowMultipleSelectionDuringEditing && !self.allowSelectionDuringEditing)
         self.allowSelectionDuringEditing = YES;
-    [self didChangeValueForKey:@"allowMultipleSelectionDuringEditing"];
 }
 
 - (NSInteger)indexForSelectedCell
@@ -590,6 +572,11 @@
     [self didChangeValueForKey:@"editing"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
+}
+
 #pragma mark Reloading the Grid View
 
 - (void)reloadData
@@ -820,40 +807,34 @@ static void _init(GridView *self)
 {
     if (value == contentView)
         return;
-    [self willChangeValueForKey:@"contentView"];
     [contentView removeFromSuperview];
     contentView = value;
     contentView.frame = UIEdgeInsetsInsetRect([self bounds], self.contentInsets);
     [self insertSubview:contentView atIndex:100];
-    [self didChangeValueForKey:@"contentView"];
 }
 
 - (void)setBackgroundView:(UIView *)value
 {
     if (value == backgroundView)
         return;
-    [self willChangeValueForKey:@"backgroundView"];
     [backgroundView removeFromSuperview];
     backgroundView = value;
     backgroundView.frame = [self bounds];
     backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     if (backgroundView && !self.isSelected)
         [self insertSubview:backgroundView belowSubview:self.contentView];
-    [self didChangeValueForKey:@"backgroundView"];
 }
 
 - (void)setSelectedBackgroundView:(UIView *)value
 {
     if (value == selectedBackgroundView)
         return;
-    [self willChangeValueForKey:@"selectedBackgroundView"];
     [selectedBackgroundView removeFromSuperview];
     selectedBackgroundView = value;
     selectedBackgroundView.frame = [self bounds];
     selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     if (selectedBackgroundView && self.isSelected)
         [self insertSubview:selectedBackgroundView belowSubview:self.contentView];
-    [self didChangeValueForKey:@"selectedBackgroundView"];
 }
 
 #pragma mark Managing Cell Selection and Highlighting
@@ -899,6 +880,11 @@ static void _init(GridView *self)
     [self didChangeValueForKey:@"selected"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfSelected
+{
+    return NO;
+}
+
 - (void)setHighlighted:(BOOL)value
 {
     [self setHighlighted:value animated:NO];
@@ -922,6 +908,11 @@ static void _init(GridView *self)
     [self didChangeValueForKey:@"highlighted"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfHighlighted
+{
+    return NO;
+}
+
 - (void)setEditing:(BOOL)value
 {
     [self setEditing:value animated:NO];
@@ -937,6 +928,11 @@ static void _init(GridView *self)
     [self didChangeValueForKey:@"editing"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
+}
+
 #pragma mark Styling the Cell
 
 @synthesize contentInsets;
@@ -945,10 +941,8 @@ static void _init(GridView *self)
 {
     if (UIEdgeInsetsEqualToEdgeInsets(value, contentInsets))
         return;
-    [self willChangeValueForKey:@"contentInsets"];
     contentInsets = value;
     self.contentView.frame = UIEdgeInsetsInsetRect([self bounds], contentInsets);
-    [self didChangeValueForKey:@"contentInsets"];
 }
 
 #pragma mark View Methods
