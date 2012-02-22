@@ -487,6 +487,7 @@ static const void *contentViewControllerContext;
                     result = self.contentViewController;
                 else
                     result = [RemoteBrowserController new];
+                [(RemoteBrowserController *)result setURL:[NSURL URLWithString:@"ftp://ftp.nikso.net"]];
             }
             else
             {

@@ -10,4 +10,7 @@
 
 @interface RemoteBrowserController : SearchableTableBrowserController
 
+/// Set the URL to open. This methos will activelly connect to the URL.
+@property (nonatomic, strong) NSURL *URL;
+
 @end
