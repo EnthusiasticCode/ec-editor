@@ -30,7 +30,13 @@
     NSMutableArray *_directoryItems;
     NSArray *_filteredItems;
     NSArray *_filteredItemsHitMasks;
+    
+    NSURLCredential *_loginCredential;
 }
+@synthesize loginLabel = _loginLabel;
+@synthesize loginUser = _loginUser;
+@synthesize loginPassword = _loginPassword;
+@synthesize loginSavePassword = _loginSavePassword;
 
 #pragma mark - Properties
 
@@ -90,6 +96,7 @@
 {
     self.URL = nil;
     _directoryItems = nil;
+    _loginCredential = nil;
     [super viewDidDisappear:animated];
 }
 
@@ -151,7 +158,34 @@
 
 - (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso.net" password:@"aenasahg" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
+    self.loading = NO;
+    // TODO check for keychain password first
+    
+    // Login with credentials created in login view
+    if (_loginCredential)
+    {
+        [[challenge sender] useCredential:_loginCredential forAuthenticationChallenge:challenge];
+        _loginCredential = nil;
+        self.tableView.tableHeaderView = nil;
+        return;
+    }
+    
+    // Cancel authentication and show login view
+    self.tableView.tableHeaderView = [[[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil] objectAtIndex:0];
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+    if (self.URL.user)
+    {
+        self.loginUser.text = self.URL.user;
+        [self.loginPassword becomeFirstResponder];
+    }
+    else
+    {
+        [self.loginUser becomeFirstResponder];
+    }
+    [[challenge sender] cancelAuthenticationChallenge:challenge];
+    
+    
+//    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso.net" password:@"aenasahg" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
 }
 
 - (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -279,6 +313,15 @@
     NSLog(@"transcript: %@", string);
 }
 
+#pragma mark - Login Screen
+
+- (IBAction)loginAction:(id)sender
+{
+    _loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
+    [self _connectToURL:self.URL];
+    [self _changeToDirectory:self.URL.path];
+}
+
 #pragma mark - Private methods
 
 - (void)_connectToURL:(NSURL *)url
@@ -305,6 +348,14 @@
 {
     [_connection setDelegate:nil];
     [_connection disconnect];
+}
+
+- (void)viewDidUnload {
+    [self setLoginLabel:nil];
+    [self setLoginUser:nil];
+    [self setLoginPassword:nil];
+    [self setLoginSavePassword:nil];
+    [super viewDidUnload];
 }
 
 @end

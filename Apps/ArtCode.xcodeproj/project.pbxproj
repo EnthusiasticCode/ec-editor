@@ -333,6 +333,7 @@
 		CDA23CB914EDC6920031B019 /* symbolIcon_Class.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB614EDC6920031B019 /* symbolIcon_Class.png */; };
 		CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */; };
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
+		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDB5DB6514C6F56A003DFD1F /* DirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
@@ -801,6 +802,7 @@
 		CDA23CB614EDC6920031B019 /* symbolIcon_Class.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Class.png; sourceTree = "<group>"; };
 		CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Function.png; sourceTree = "<group>"; };
 		CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Method.png; sourceTree = "<group>"; };
+		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* CodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryBrowserController.h; sourceTree = "<group>"; };
@@ -1588,6 +1590,7 @@
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
 				CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */,
 				CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */,
+				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -2129,6 +2132,7 @@
 				CDA23CB914EDC6920031B019 /* symbolIcon_Class.png in Resources */,
 				CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */,
 				CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */,
+				CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
