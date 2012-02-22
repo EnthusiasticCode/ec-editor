@@ -34,7 +34,7 @@
 - (NSAttributedString *)attributedString;
 - (NSAttributedString *)attributedStringInRange:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange inRange:(NSRange)rangeLimit;
 
 #pragma mark - String content writing methods
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;

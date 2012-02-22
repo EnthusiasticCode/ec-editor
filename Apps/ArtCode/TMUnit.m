@@ -37,7 +37,7 @@ static OnigRegexp *_namedCapturesRegexp;
 - (TMSyntaxNode *)_syntax;
 - (TMScope *)_scope;
 - (void)_generateScopes;
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration *)generation;
+- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
@@ -204,7 +204,7 @@ if (previousTokenEnd != previousTokenStart)\
 ECASSERT(previousTokenEnd > previousTokenStart);\
 attributes = [self.codeFile.theme attributesForScope:SCOPE];\
 if ([attributes count])\
-if (![self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withGeneration:&currentGeneration expectedGeneration:&currentGeneration])\
+if (![self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) expectedGeneration:currentGeneration])\
 return;\
 }
 
@@ -234,12 +234,12 @@ return;\
         if (lineRange.location >= NSMaxRange(range))
             break;
         // Setup the line
-        if (![self.codeFile lineRange:&lineRange forRange:lineRange withGeneration:&currentGeneration expectedGeneration:&currentGeneration])
+        if (![self.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:currentGeneration])
             return;
         if (lineRange.location < range.location)
             lineRange = NSMakeRange(range.location, NSMaxRange(lineRange) - range.location);
         NSString *uncachedString;
-        if (![self.codeFile string:&uncachedString inRange:lineRange withGeneration:&currentGeneration expectedGeneration:&currentGeneration])
+        if (![self.codeFile string:&uncachedString inRange:lineRange expectedGeneration:currentGeneration])
             return;
         CStringCachingString *line = [CStringCachingString stringWithString:uncachedString];
         NSUInteger position = 0;
@@ -293,7 +293,7 @@ return;\
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
                 // Handle end captures
-                [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope generation:&currentGeneration];
+                [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope generation:currentGeneration];
                 scope.length = NSMaxRange(resultRange) + lineRange.location - scope.location;
                 scope.completelyParsed = YES;
                 if ([scopeStack count] == 1)
@@ -320,7 +320,7 @@ return;\
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(matchScope);
                 previousTokenStart = previousTokenEnd;
                 // Handle match pattern captures
-                [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope generation:&currentGeneration];
+                [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope generation:currentGeneration];
                 // We need to make sure position increases, or it would loop forever with a 0 width match
                 NSUInteger newPosition = NSMaxRange(resultRange);
                 if (position == newPosition)
@@ -394,7 +394,7 @@ return;\
     }
 }
 
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration *)generation
+- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
     ECASSERT(scope);
     if (!dictionary || !result)
@@ -411,7 +411,7 @@ return;\
         capturesScope.completelyParsed = YES;
         NSDictionary *attributes = [self.codeFile.theme attributesForScope:capturesScope];
         if ([attributes count])
-            [self.codeFile addAttributes:attributes range:NSMakeRange(capturesScope.location, capturesScope.length) withGeneration:generation expectedGeneration:generation];
+            [self.codeFile addAttributes:attributes range:NSMakeRange(capturesScope.location, capturesScope.length) expectedGeneration:generation];
     }
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
@@ -430,7 +430,7 @@ return;\
         currentCaptureScope.length = currentMatchRange.length;
         NSDictionary *attributes = [self.codeFile.theme attributesForScope:currentCaptureScope];
         if ([attributes count])
-            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withGeneration:generation expectedGeneration:generation];
+            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) expectedGeneration:generation];
     }
 }
 
