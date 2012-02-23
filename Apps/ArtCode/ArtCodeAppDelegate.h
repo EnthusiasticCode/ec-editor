@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+/// The keyboard frame updated by the application delegate
 extern CGRect UIKeyboardFrame;
-
 
 @class TabController;
 

@@ -42,7 +42,6 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 20}, {456, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1059135646"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -79,7 +78,6 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 59}, {456, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="730834264"/>
 						<string key="NSReuseIdentifierKey">_NS:289</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -118,7 +116,6 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 96}, {371, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="976771825"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -155,7 +152,6 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 179}, {456, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="609795928"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -184,7 +180,7 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 218}, {456, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -192,7 +188,7 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<string key="IBUIText"/>
 						<int key="IBUIBorderStyle">3</int>
-						<string key="IBUIPlaceholder">Password</string>
+						<string key="IBUIPlaceholder">Password (leave empty to ask every time)</string>
 						<object class="NSColor" key="IBUITextColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MAA</bytes>
@@ -213,7 +209,6 @@
 						<int key="NSvFlags">289</int>
 						<string key="NSFrame">{{399, 96}, {77, 31}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="886196619"/>
 						<string key="NSReuseIdentifierKey">_NS:320</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -244,7 +239,6 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 150}, {101, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="902764741"/>
 						<string key="NSReuseIdentifierKey">_NS:345</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -270,7 +264,6 @@
 				</array>
 				<string key="NSFrameSize">{496, 269}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="854235324"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">2</int>
@@ -429,57 +422,7 @@
 			<nil key="sourceID"/>
 			<int key="maxID">22</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes">
-			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
-				<object class="IBPartialClassDescription">
-					<string key="className">RemoteOptionsViewController</string>
-					<string key="superclassName">UIViewController</string>
-					<dictionary class="NSMutableDictionary" key="outlets">
-						<string key="name">UITextField</string>
-						<string key="remoteHost">UITextField</string>
-						<string key="remoteName">UITextField</string>
-						<string key="remotePassword">UITextField</string>
-						<string key="remotePort">UITextField</string>
-						<string key="remoteType">UISegmentedControl</string>
-						<string key="remoteUser">UITextField</string>
-					</dictionary>
-					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
-						<object class="IBToOneOutletInfo" key="name">
-							<string key="name">name</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remoteHost">
-							<string key="name">remoteHost</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remoteName">
-							<string key="name">remoteName</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remotePassword">
-							<string key="name">remotePassword</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remotePort">
-							<string key="name">remotePort</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remoteType">
-							<string key="name">remoteType</string>
-							<string key="candidateClassName">UISegmentedControl</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="remoteUser">
-							<string key="name">remoteUser</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-					</dictionary>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/RemoteOptionsViewController.h</string>
-					</object>
-				</object>
-			</array>
-		</object>
+		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>

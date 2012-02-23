@@ -12,6 +12,7 @@
 #import "NSArray+ScoreForAbbreviation.h"
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
+#import "Keychain.h"
 
 #import <Connection/CKConnectionRegistry.h>
 
@@ -32,11 +33,13 @@
     NSArray *_filteredItemsHitMasks;
     
     NSURLCredential *_loginCredential;
+    /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
+    BOOL _keychainUsed;
 }
 @synthesize loginLabel = _loginLabel;
 @synthesize loginUser = _loginUser;
 @synthesize loginPassword = _loginPassword;
-@synthesize loginSavePassword = _loginSavePassword;
+@synthesize loginAlwaysAskPassword = _loginAlwaysAskPassword;
 
 #pragma mark - Properties
 
@@ -159,7 +162,16 @@
 - (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     self.loading = NO;
-    // TODO check for keychain password first
+    // Check for keychain password
+    if (!_loginCredential && !_keychainUsed && self.URL.user)
+    {
+        NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:self.URL.host account:self.URL.user];
+        if (password)
+        {
+            _loginCredential = [NSURLCredential credentialWithUser:self.URL.user password:password persistence:NSURLCredentialPersistenceForSession];
+            _keychainUsed = YES;
+        }
+    }
     
     // Login with credentials created in login view
     if (_loginCredential)
@@ -170,7 +182,7 @@
         return;
     }
     
-    // Cancel authentication and show login view
+    // Cancel authentication (and show login view)
     self.tableView.tableHeaderView = [[[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil] objectAtIndex:0];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     if (self.URL.user)
@@ -182,15 +194,14 @@
     {
         [self.loginUser becomeFirstResponder];
     }
+    _directoryItems = nil;
+    [self invalidateFilteredItems];
+    [self.tableView reloadData];
     [[challenge sender] cancelAuthenticationChallenge:challenge];
-    
-    
-//    [[challenge sender] useCredential:[NSURLCredential credentialWithUser:@"nikso.net" password:@"aenasahg" persistence:NSURLCredentialPersistenceForSession] forAuthenticationChallenge:challenge];
 }
 
 - (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    
 }
 
 - (NSString *)connection:(id <CKConnection>)con passphraseForHost:(NSString *)host username:(NSString *)username publicKeyPath:(NSString *)publicKeyPath
@@ -317,6 +328,11 @@
 
 - (IBAction)loginAction:(id)sender
 {
+    if (!self.loginAlwaysAskPassword.isOn)
+    {
+        [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:self.URL.host account:self.loginUser.text];
+    }
+    // Create a temporary login credential and try to connect again
     _loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
     [self _connectToURL:self.URL];
     [self _changeToDirectory:self.URL.path];
@@ -327,6 +343,7 @@
 - (void)_connectToURL:(NSURL *)url
 {
     self.loading = YES;
+    _keychainUsed = NO;
     [self _closeConnection];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     _connection = [[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
@@ -354,8 +371,46 @@
     [self setLoginLabel:nil];
     [self setLoginUser:nil];
     [self setLoginPassword:nil];
-    [self setLoginSavePassword:nil];
+    [self setLoginAlwaysAskPassword:nil];
     [super viewDidUnload];
 }
+//
+//- (NSString *)_getKeychainPasswordForService:(NSString *)serviceID account:(NSString *)accountID
+//{
+//    // TODO check if the ksecattrgeneric value with constructed data is ok
+//    CFTypeRef outDictionaryRef = NULL;
+//    OSStatus error = SecItemCopyMatching((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass, [[NSString stringWithFormat:@"%@@%@", accountID, serviceID] data], (__bridge id)kSecAttrGeneric, (__bridge id)kSecMatchLimitOne, (__bridge id)kSecMatchLimit, (__bridge id)kCFBooleanTrue, (__bridge id)kSecReturnAttributes, nil], &outDictionaryRef);
+//    if (error == noErr)
+//    {
+//        // Convert returned data to a dictionary
+//        NSMutableDictionary *resultDictionary = [(__bridge NSDictionary *)outDictionaryRef mutableCopy];
+//        [resultDictionary setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+//        [resultDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+//        CFTypeRef outData = NULL;
+//        error = SecItemCopyMatching((__bridge CFDictionaryRef)resultDictionary, &outData);
+//        if (error == noErr)
+//        {
+//            NSData *passwordData = (__bridge NSData *)outData;
+//            NSString *password = [[NSString alloc] initWithBytes:[passwordData bytes] length:[passwordData length] encoding:NSUTF8StringEncoding];
+//            CFRelease(outData);
+//            return password;
+//        }
+//        CFRelease(outData);
+//    }
+//    CFRelease(outDictionaryRef);
+//    return nil;
+//}
+//
+//- (NSString *)_setKeychainPassword:(NSString *)password forService:(NSString *)serviceID account:(NSString *)accountID
+//{
+//    // If the item is already present, modify it
+//    CFTypeRef outDictionaryRef = NULL;
+//    if (SecItemCopyMatching((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass, [[NSString stringWithFormat:@"%@@%@", accountID, serviceID] data], (__bridge id)kSecAttrGeneric, (__bridge id)kSecMatchLimitOne, (__bridge id)kSecMatchLimit, (__bridge id)kCFBooleanTrue, (__bridge id)kSecReturnAttributes, nil], &outDictionaryRef) == noErr)
+//    {
+//        NSMutableDictionary *updateItem = [(__bridge NSDictionary *)outDictionaryRef mutableCopy];
+//        [updateItem setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+//        SecItemUpdate((__bridge CFDictionaryRef)updateItem, <#CFDictionaryRef attributesToUpdate#>)
+//    }
+//}
 
 @end

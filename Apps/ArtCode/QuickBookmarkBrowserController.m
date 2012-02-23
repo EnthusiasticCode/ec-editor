@@ -46,7 +46,7 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[NSURL URLWithString:@"ftp://ftp.nikso.net"]];
+    [self.artCodeTab pushURL:[NSURL URLWithString:@"ftp://nikso.net@ftp.nikso.net"]];
 #warning TODO NIK restore correct behaviour
 //    [self.artCodeTab pushURL:[[self.artCodeTab.currentProject URL] URLByAddingBookmarksVariant]];
 }

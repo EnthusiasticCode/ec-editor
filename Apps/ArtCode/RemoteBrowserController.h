@@ -18,7 +18,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *loginLabel;
 @property (strong, nonatomic) IBOutlet UITextField *loginUser;
 @property (strong, nonatomic) IBOutlet UITextField *loginPassword;
-@property (strong, nonatomic) IBOutlet UISwitch *loginSavePassword;
+@property (strong, nonatomic) IBOutlet UISwitch *loginAlwaysAskPassword;
 - (IBAction)loginAction:(id)sender;
 
 @end
