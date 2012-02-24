@@ -9,18 +9,7 @@
 #import "Keychain.h"
 
 
-@implementation Keychain {
-    NSString *_keychainItemIdentifier;
-}
-
-- (id)initWithKeychainItemIdentifier:(NSString *)keychainIdentifier
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _keychainItemIdentifier = keychainIdentifier;
-    return self;
-}
+@implementation Keychain 
 
 #pragma mark Accessing the keychain
 
@@ -30,8 +19,8 @@
     if (SecItemCopyMatching((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
                                                        (__bridge id)kCFBooleanTrue, (__bridge id)kSecReturnData,
                                                        (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass, 
-                                                       _keychainItemIdentifier, (__bridge id)kSecAttrService,
-                                                       [NSString stringWithFormat:@"%@@%@", accountIdentifier, serviceIdentifier], (__bridge id)kSecAttrAccount, 
+                                                       serviceIdentifier, (__bridge id)kSecAttrService,
+                                                       accountIdentifier, (__bridge id)kSecAttrAccount, 
                                                        nil], &outDataRef) != noErr)
         return nil;
     
@@ -49,8 +38,8 @@
     
     NSDictionary *spec = [NSDictionary dictionaryWithObjectsAndKeys:
                           (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass,
-                          _keychainItemIdentifier, (__bridge id)kSecAttrService,
-                          [NSString stringWithFormat:@"%@@%@", accountIdentifier, serviceIdentifier], (__bridge id)kSecAttrAccount, nil];
+                          serviceIdentifier, (__bridge id)kSecAttrService,
+                          accountIdentifier, (__bridge id)kSecAttrAccount, nil];
     
  
     if([self passwordForServiceWithIdentifier:serviceIdentifier account:accountIdentifier] != nil)
@@ -69,8 +58,8 @@
 { 
     return !SecItemDelete((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
                                                      (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass,
-                                                     _keychainItemIdentifier, (__bridge id)kSecAttrService,
-                                                     [NSString stringWithFormat:@"%@@%@", accountIdentifier, serviceIdentifier], (__bridge id)kSecAttrAccount, nil]);
+                                                     serviceIdentifier, (__bridge id)kSecAttrService,
+                                                     accountIdentifier, (__bridge id)kSecAttrAccount, nil]);
 }
 
 #pragma mark Class methods
@@ -79,10 +68,8 @@
 {
     static Keychain *_sharedKeychain = nil;
     if (!_sharedKeychain)
-        _sharedKeychain = [[Keychain alloc] initWithKeychainItemIdentifier:[[NSBundle mainBundle] bundleIdentifier]];
+        _sharedKeychain = [[Keychain alloc] init];
     return _sharedKeychain;
 }
-
-
 
 @end

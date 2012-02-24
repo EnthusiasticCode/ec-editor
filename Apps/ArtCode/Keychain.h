@@ -12,8 +12,6 @@
 
 + (id)sharedKeychain;
 
-- (id)initWithKeychainItemIdentifier:(NSString *)keychainIdentifier;
-
 - (NSString *)passwordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier;
 - (BOOL)setPassword:(NSString *)password forServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier;
 - (BOOL)removePasswordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier;
