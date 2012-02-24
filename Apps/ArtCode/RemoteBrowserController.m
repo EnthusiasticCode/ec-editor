@@ -22,6 +22,10 @@
 - (void)_changeToDirectory:(NSString *)directory;
 - (void)_closeConnection;
 
+- (void)_toolNormalAddAction:(id)sender;
+- (void)_toolEditExportAction:(id)sender;
+- (void)_toolEditDeleteAction:(id)sender;
+
 @end
 
 @implementation RemoteBrowserController {
@@ -95,6 +99,24 @@
 
 #pragma mark - View lifecycle
 
+- (void)loadView
+{
+    [super loadView];
+    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+    
+    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+}
+
+- (void)viewDidUnload
+{
+    _directoryItems = nil;
+    [self setLoginLabel:nil];
+    [self setLoginUser:nil];
+    [self setLoginPassword:nil];
+    [self setLoginAlwaysAskPassword:nil];
+    [super viewDidUnload];
+}
+
 - (void)viewDidDisappear:(BOOL)animated
 {
     self.URL = nil;
@@ -136,6 +158,10 @@
     {
         [self.artCodeTab pushURL:[self.URL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
     }
+    else
+    {
+        [self _toolEditExportAction:nil];
+    }
 }
 
 #pragma mark - Connection delegate
@@ -155,6 +181,7 @@
     
     // Show login form to let the user log back in
     self.tableView.tableHeaderView = [[[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil] objectAtIndex:0];
+    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", self.URL.host];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     if (_keychainUsed)
     {
@@ -185,6 +212,7 @@
 - (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     self.loading = YES;
+    
     // Check for keychain password
     if (!_loginCredential && !_keychainUsed && self.URL.user)
     {
@@ -202,10 +230,20 @@
         [[challenge sender] useCredential:_loginCredential forAuthenticationChallenge:challenge];
         _loginCredential = nil;
         self.tableView.tableHeaderView = nil;
+        [self setLoginLabel:nil];
+        [self setLoginUser:nil];
+        [self setLoginPassword:nil];
+        [self setLoginAlwaysAskPassword:nil];
         return;
     }
     
-    // Cancel authentication (and show login view)
+    // Disable non-editing buttons, they will be re-enabled when receiving directory content
+    for (UIBarButtonItem *barItem in self.toolNormalItems)
+    {
+        [(UIButton *)barItem.customView setEnabled:NO];
+    }
+    
+    // Cancel authentication (and show login view uppon disconnection)
     [[challenge sender] cancelAuthenticationChallenge:challenge];
 }
 
@@ -249,6 +287,11 @@
     _directoryItems = [contents mutableCopy];
     [self invalidateFilteredItems];
     [self.tableView reloadData];
+    // Enable non-editing buttons
+    for (UIBarButtonItem *barItem in self.toolNormalItems)
+    {
+        [(UIButton *)barItem.customView setEnabled:YES];
+    }
 }
 
 - (void)connection:(id <CKConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath moreComing:(BOOL)flag
@@ -375,14 +418,6 @@
 {
     [_connection setDelegate:nil];
     [_connection disconnect];
-}
-
-- (void)viewDidUnload {
-    [self setLoginLabel:nil];
-    [self setLoginUser:nil];
-    [self setLoginPassword:nil];
-    [self setLoginAlwaysAskPassword:nil];
-    [super viewDidUnload];
 }
 
 @end
