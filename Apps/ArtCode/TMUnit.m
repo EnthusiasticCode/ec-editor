@@ -48,7 +48,6 @@ static OnigRegexp *_namedCapturesRegexp;
 {
     TMSyntaxNode *_syntax;
     NSMutableString *_contents;
-    OSSpinLock _scopesLock;
     CodeFileGeneration _scopesGeneration;
     TMScope *_rootScope;
     NSOperationQueue *_internalQueue;
@@ -168,14 +167,26 @@ static OnigRegexp *_namedCapturesRegexp;
     return _codeFile;
 }
 
-- (TMScope *)rootScope
+- (void)rootScopeWithCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    return [_rootScope copy];
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    if ([_codeFile currentGeneration] == _scopesGeneration)
+        completionHandler([_rootScope copy]);
+    else
+        [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
+            [self rootScopeWithCompletionHandler:completionHandler];
+        } afterDelay:0.3];
 }
 
-- (TMScope *)scopeAtOffset:(NSUInteger)offset
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    return [[[self _scopeStackAtOffset:offset] lastObject] copy];
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    if ([_codeFile currentGeneration] == _scopesGeneration)
+        completionHandler([[[self _scopeStackAtOffset:offset] lastObject] copy]);
+    else
+        [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
+            [self scopeAtOffset:offset withCompletionHandler:completionHandler];
+        } afterDelay:0.3];
 }
 
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
@@ -266,6 +277,7 @@ return;\
 
 - (void)_generateScopes
 {
+    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
     TMScope *scope = _rootScope;
     
     // Setup the scope stack
@@ -452,6 +464,7 @@ return;\
 
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
+    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
     ECASSERT(scope);
     if (!dictionary || !result)
         return;
@@ -493,11 +506,13 @@ return;\
 
 - (void)_colorBlankRanges
 {
+    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
     UNIMPLEMENTED_VOID();
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
 {
+    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
     NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
     if (includedPatterns)
         return includedPatterns;

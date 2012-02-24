@@ -34,8 +34,6 @@ typedef enum
 /// The main source file the unit is interpreting.
 @property (nonatomic, strong, readonly) CodeFile *codeFile;
 
-@property (nonatomic, strong, readonly) TMScope *rootScope;
-
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
 /// Returns an array of TMSymbol objects representing all the symbols in the file.
@@ -43,7 +41,9 @@ typedef enum
 
 /// Visit the scopes in the unit.
 
-- (TMScope *)scopeAtOffset:(NSUInteger)offset;
+- (void)rootScopeWithCompletionHandler:(void(^)(TMScope *rootScope))completionHandler;
+
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 

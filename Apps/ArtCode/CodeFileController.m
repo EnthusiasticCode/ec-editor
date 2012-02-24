@@ -554,7 +554,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (editing)
     {
         // Set keyboard for main scope
-        [self _keyboardAccessoryItemSetupWithScope:self.codeUnit.rootScope];
+        [self.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
+            [self _keyboardAccessoryItemSetupWithScope:rootScope];
+        }];
     }
     
     if (oldContentView != currentContentView)
@@ -788,22 +790,24 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [_selectionChangeDebounceTimer invalidate];
     _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
         // Retrieve the current scope
-        TMScope *currentScope = [self.codeUnit scopeAtOffset:codeView.selectionRange.location];
-        // Set current symbol in title
-        TMSymbol *currentSymbol = nil;
-        for (TMSymbol *symbol in [self.codeUnit symbolList])
-        {
-            if (symbol.range.location > currentScope.location)
-                break;
-            currentSymbol = symbol;
-        }
-        if (currentSymbol != _currentSymbol)
-        {
-            _currentSymbol = currentSymbol;
-            [self.singleTabController updateDefaultToolbarTitle];
-        }
-        // Change accessory keyboard
-        [self _keyboardAccessoryItemSetupWithScope:currentScope];
+        [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
+            // Set current symbol in title
+            TMSymbol *currentSymbol = nil;
+            for (TMSymbol *symbol in [self.codeUnit symbolList])
+            {
+                if (symbol.range.location > scope.location)
+                    break;
+                currentSymbol = symbol;
+            }
+            if (currentSymbol != _currentSymbol)
+            {
+                _currentSymbol = currentSymbol;
+                [self.singleTabController updateDefaultToolbarTitle];
+            }
+            // Change accessory keyboard
+            [self _keyboardAccessoryItemSetupWithScope:scope];
+
+        }];
     } repeats:NO];
 }
 
