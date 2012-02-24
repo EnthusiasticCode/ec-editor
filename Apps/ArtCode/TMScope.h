@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TMScope : NSObject
+@interface TMScope : NSObject <NSCopying>
 
 #pragma mark Scope properties
 
@@ -27,12 +27,6 @@
 
 /// The length of the scope
 @property (nonatomic, readonly) NSUInteger length;
-
-/// The parent scope, if one exists
-@property (nonatomic, weak, readonly) TMScope *parent;
-
-/// The children scopes, if any exist
-@property (nonatomic, strong, readonly) NSArray *children;
 
 #pragma mark Scoring a scope
 

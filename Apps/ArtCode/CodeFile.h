@@ -11,7 +11,7 @@
 
 @protocol CodeFilePresenter;
 
-@class TMTheme, CodeFileSymbol, TMUnit;
+@class TMTheme;
 
 @interface CodeFile : UIDocument <CodeViewDataSource>
 
@@ -22,7 +22,6 @@
 - (NSArray *)presenters;
 
 @property (nonatomic, strong) TMTheme *theme;
-@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 #pragma mark - String content reading methods
 - (NSUInteger)length;
@@ -59,9 +58,6 @@
 /// Returns the range of the replaced text after the replacement.
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset;
 
-/// Returns an array of CodeFileSymbol objects representing all the symbols in the file.
-- (NSArray *)symbolList;
-
 @end
 
 @protocol CodeFilePresenter <NSObject>
@@ -71,16 +67,4 @@
 
 - (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
-@end
-
-
-/// Represent a symbol returned by the symbolList method in CodeFile.
-@interface CodeFileSymbol : NSObject
-
-@property (nonatomic, strong, readonly) NSString *title;
-@property (nonatomic, strong, readonly) UIImage *icon;
-@property (nonatomic, readonly) NSRange range;
-@property (nonatomic, readonly) NSUInteger indentation;
-@property (nonatomic, readonly, getter = isSeparator) BOOL separator;
-
 @end

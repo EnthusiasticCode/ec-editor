@@ -12,7 +12,7 @@
 #import "CodeFileMinimapView.h"
 #import "TMKeyboardAction.h"
 
-@class ArtCodeTab;
+@class ArtCodeTab, TMUnit;
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDelegate, CodeFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
@@ -22,6 +22,8 @@
 @property (nonatomic, strong) NSURL *fileURL;
 
 @property (nonatomic, strong, readonly) CodeFile *codeFile;
+
+@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 #pragma mark - Code viewing and editing
 

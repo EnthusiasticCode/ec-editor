@@ -32,14 +32,12 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
     OSSpinLock _contentsLock;
     WeakArray *_presenters;
     OSSpinLock _presentersLock;
-    NSOperationQueue *_parserQueue;
     NSMutableArray *_pendingChanges;
     OSSpinLock _pendingChangesLock;
     BOOL _hasPendingChanges;
     NSUInteger _pendingGenerationOffset;
     NSArray *_symbolList;
 }
-@property (nonatomic, strong) TMUnit *codeUnit;
 - (id)_initWithFileURL:(NSURL *)url;
 - (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
 // Private content methods. All the following methods have to be called within a pending changes lock.
@@ -49,18 +47,10 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 - (void)_applyAttributeRemoveChangeWithRange:(NSRange)range attributeNames:(NSArray *)attributeNames;
 @end
 
-@interface CodeFileSymbol ()
-
-@property (nonatomic, readwrite) BOOL separator;
-- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
-
-@end
-
 #pragma mark - Implementations
 
 @implementation CodeFile
 
-@synthesize codeUnit = _codeUnit;
 @synthesize theme = _theme;
 
 + (void)initialize
@@ -119,41 +109,10 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
     _contentsLock = OS_SPINLOCK_INIT;
     _presenters = [[WeakArray alloc] init];
     _presentersLock = OS_SPINLOCK_INIT;
-    _parserQueue = [[NSOperationQueue alloc] init];
-    _parserQueue.maxConcurrentOperationCount = 1;
     _pendingChanges = [[NSMutableArray alloc] init];
     _pendingChangesLock = OS_SPINLOCK_INIT;
     _hasPendingChanges = NO;
     return self;
-}
-
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [super openWithCompletionHandler:^(BOOL success) {
-        if (success)
-        {
-            __weak CodeFile *weakSelf = self;
-            [_parserQueue addOperationWithBlock:^{
-                TMUnit *codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:weakSelf rootScopeIdentifier:nil];
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    weakSelf.codeUnit = codeUnit;
-                }];
-            }];
-        }
-        completionHandler(success);
-    }];
-}
-
-- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [super closeWithCompletionHandler:^(BOOL success) {
-        ECASSERT(success);
-        [_parserQueue cancelAllOperations];
-        self.codeUnit = nil;
-        completionHandler(success);
-    }];
 }
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -166,12 +125,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    NSMutableAttributedString *contentsString = [[NSMutableAttributedString alloc] initWithString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
-    [contentsString addAttributes:self.theme.commonAttributes range:NSMakeRange(0, [contentsString length])];
-    OSSpinLockLock(&_contentsLock);
-    _contents = contentsString;
-    ++_contentsGeneration;
-    OSSpinLockUnlock(&_contentsLock);
+    [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
     return YES;
 }
 
@@ -239,6 +193,12 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 #pragma mark - String content reading methods
+
+- (CodeFileGeneration)currentGeneration
+{
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    return _contentsGeneration;
+}
 
 #define CONTENT_GETTER(type, value) \
 do\
@@ -611,31 +571,6 @@ while (0)
     return replacementRange;
 }
 
-- (NSArray *)symbolList
-{
-#warning TODO on long files if symbol list is opened before full parsing, the list is empty. add wait message
-    if (!_symbolList)
-    {
-        NSMutableArray *symbols = [NSMutableArray new];
-        [self.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
-            {
-                // Transform
-                NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey scope:scope]);
-                NSString *symbol = transformation ? transformation([self stringInRange:range]) : [self stringInRange:range];
-                // Generate
-                CodeFileSymbol *s = [[CodeFileSymbol alloc] initWithTitle:symbol icon:[TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey scope:scope] range:range];
-                s.separator = [[TMPreference preferenceValueForKey:TMPreferenceSymbolIsSeparatorKey scope:scope] boolValue];
-                [symbols addObject:s];
-                return TMUnitVisitResultContinue;
-            }
-            return TMUnitVisitResultRecurse;
-        }];
-        _symbolList = symbols;
-    }
-    return _symbolList;
-}
-
 #pragma mark - Private methods
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
@@ -733,30 +668,6 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     
     // Placeholder behaviour
     [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
-}
-
-@end
-
-@implementation CodeFileSymbol
-
-@synthesize title, icon, range, indentation, separator;
-
-- (id)initWithTitle:(NSString *)_title icon:(UIImage *)_icon range:(NSRange)_range
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    // Get indentation level and modify title
-    NSUInteger titleLength = [_title length];
-    for (; indentation < titleLength; ++indentation)
-    {
-        if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[_title characterAtIndex:indentation]])
-            break;
-    }
-    title = indentation ? [_title substringFromIndex:indentation] : _title;
-    icon = _icon;
-    range = _range;
-    return self;
 }
 
 @end

@@ -11,10 +11,13 @@
 #import "TMScope+Internal.h"
 #import "TMTheme.h"
 #import "TMBundle.h"
+#import "TMPreference.h"
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
 #import "CStringCachingString.h"
+#import "RangeSet.h"
 #import "CodeFile+Generation.h"
+#import <libkern/OSAtomic.h>
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -22,26 +25,39 @@ static NSString * const _captureName = @"name";
 static OnigRegexp *_numberedCapturesRegexp;
 static OnigRegexp *_namedCapturesRegexp;
 
-@interface TMUnit ()
+@interface TMSymbol ()
+
+@property (nonatomic, readwrite) BOOL separator;
+- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
+
+@end
+
+@interface TMUnit () <CodeFilePresenter>
 {
-    TMIndex *_index;
-    __weak CodeFile *_codeFile;
-    NSString *_rootScopeIdentifier;
     NSMutableDictionary *_extensions;
-    TMSyntaxNode *__syntax;
+    TMSyntaxNode *_syntax;
     NSString *_contents;
-    TMScope *__scope;
+    OSSpinLock _scopesLock;
+    TMScope *_rootScope;
     NSMutableDictionary *_patternsIncludedByPattern;
-    NSUInteger _generation;
+    NSOperationQueue *_internalQueue;
+    OSSpinLock _pendingLock;
+    MutableRangeSet *_pendingRanges;
+    CodeFileGeneration _pendingGeneration;
+    BOOL _pendingGenerateScopes;
 }
-- (TMSyntaxNode *)_syntax;
-- (TMScope *)_scope;
+- (void)_setNeedsGenerateScopes;
+- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset;
 - (void)_generateScopes;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
 @implementation TMUnit
+
+@synthesize index = _index, codeFile = _codeFile, loading = _isLoading, symbolList = _symbolList;
+
+#pragma mark - Internal Methods
 
 + (void)initialize
 {
@@ -73,19 +89,12 @@ static OnigRegexp *_namedCapturesRegexp;
         return nil;
     _index = index;
     _codeFile = codeFile;
+    [_codeFile addPresenter:self];
     if (rootScopeIdentifier)
-    {
-        _rootScopeIdentifier = rootScopeIdentifier;
-        __syntax = [TMSyntaxNode syntaxWithScopeIdentifier:rootScopeIdentifier];
-    }
+        _syntax = [TMSyntaxNode syntaxWithScopeIdentifier:rootScopeIdentifier];
     else
-    {
-        __syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
-        _rootScopeIdentifier = __syntax.scopeName;
-    }
-    ECASSERT(__syntax && _rootScopeIdentifier);
+        _syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
-    _generation = 1;
     _extensions = [[NSMutableDictionary alloc] init];
     [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         if (![rootScopeIdentifier isEqualToString:key])
@@ -97,9 +106,33 @@ static OnigRegexp *_namedCapturesRegexp;
             [_extensions setObject:extension forKey:key];
         }];
     }];
-    [self _scope];
+    NSRange codeFileRange = NSMakeRange(0, [_codeFile length]);
+    _rootScope = [[TMScope alloc] init];
+    _rootScope.identifier = _syntax.scopeName;
+    _rootScope.syntaxNode = _syntax;
+    _rootScope.location = codeFileRange.location;
+    _rootScope.length = codeFileRange.length;
+    _internalQueue = [[NSOperationQueue alloc] init];
+    _internalQueue.maxConcurrentOperationCount = 1;
+    OSSpinLockLock(&_pendingLock);
+    _pendingRanges = [[MutableRangeSet alloc] init];
+    [_pendingRanges replaceRange:NSMakeRange(0, 0) withRange:codeFileRange];
+    [self _setNeedsGenerateScopes];
+    OSSpinLockUnlock(&_pendingLock);
     return self;
 }
+
+- (void)dealloc
+{
+    [_codeFile removePresenter:self];
+}
+
+- (id)extensionForKey:(id)key
+{
+    return [_extensions objectForKey:key];
+}
+
+#pragma mark - Public Methods
 
 - (TMIndex *)index
 {
@@ -111,62 +144,14 @@ static OnigRegexp *_namedCapturesRegexp;
     return _codeFile;
 }
 
-- (NSString *)rootScopeIdentifier
+- (TMScope *)rootScope
 {
-    return _rootScopeIdentifier;
+    return [_rootScope copy];
 }
 
-- (id)extensionForKey:(id)key
+- (TMScope *)scopeAtOffset:(NSUInteger)offset
 {
-    return [_extensions objectForKey:key];
-}
-
-- (void)visitScopesWithBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
-{
-    [self visitScopesInRange:NSMakeRange(0, [self _scope].length) withBlock:block];
-}
-
-- (void)visitScopesInRange:(NSRange)range withBlock:(TMUnitVisitResult (^)(TMScope *, NSRange))block
-{
-    static NSRange (^intersectionOfRangeRelativeToRange)(NSRange range, NSRange inRange) = ^(NSRange range, NSRange inRange) {
-        NSRange intersectionRange = NSIntersectionRange(range, inRange);
-        intersectionRange.location -= inRange.location;
-        return intersectionRange;
-    };
-    // Visit the root scope
-    TMScope *scope = [self _scope];
-    NSRange scopeRange = NSMakeRange(scope.location, scope.length);
-    ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
-    scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-    TMUnitVisitResult result = block(scope, scopeRange);
-    if (result != TMUnitVisitResultRecurse)
-        return;
-    // Setup the scope enumerator stack
-    NSMutableArray *enumeratorStack = [[NSMutableArray alloc] init];
-    [enumeratorStack addObject:[scope.children objectEnumerator]];
-    while ([enumeratorStack count])
-    {
-        while ((scope = [[enumeratorStack lastObject] nextObject]))
-        {
-            NSRange scopeRange = NSMakeRange(scope.location, scope.length);
-            if (scopeRange.location > NSMaxRange(range))
-                return;
-            if (NSMaxRange(scopeRange) < range.location)
-                continue;
-            ECASSERT(range.location <= NSMaxRange(scopeRange) && NSMaxRange(range) >= scopeRange.location);
-            scopeRange = intersectionOfRangeRelativeToRange(scopeRange, range);
-            TMUnitVisitResult result = block(scope, scopeRange);
-            if (result == TMUnitVisitResultBreak)
-                return;
-            if (result == TMUnitVisitResultContinue)
-                continue;
-            if (result == TMUnitVisitResultBackOut)
-                break;
-            if ([scope children])
-                [enumeratorStack addObject:[[scope children] objectEnumerator]];
-        }
-        [enumeratorStack removeLastObject];
-    }
+    return [[[self _scopeStackAtOffset:offset] lastObject] copy];
 }
 
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
@@ -179,23 +164,46 @@ static OnigRegexp *_namedCapturesRegexp;
     return nil;
 }
 
-#pragma mark - Private Methods
+#pragma mark - CodeFilePresenter
 
-- (TMSyntaxNode *)_syntax
+- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
-    return __syntax;
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    OSSpinLockLock(&_pendingLock);
+    [_pendingRanges replaceRange:range withRange:NSMakeRange(0, [string length])];
+    [self _setNeedsGenerateScopes];
+    OSSpinLockUnlock(&_pendingLock);
 }
 
-- (TMScope *)_scope
+#pragma mark - Private Methods
+
+- (void)_setNeedsGenerateScopes
 {
-    if (!__scope)
-    {
-        __scope = [[TMScope alloc] init];
-        __scope.identifier = [self rootScopeIdentifier];
-        __scope.syntaxNode = [self _syntax];
-        [self _generateScopes];
-    }
-    return __scope;
+    ECASSERT(!OSSpinLockTry(&_pendingLock));
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    _pendingGeneration = [self.codeFile currentGeneration];
+    if (_pendingGenerateScopes)
+        return;
+    _pendingGenerateScopes = YES;
+    _isLoading = YES;
+    __weak TMUnit *weakSelf = self;
+    [_internalQueue addOperationWithBlock:^{
+        [weakSelf _generateScopes];
+    }];
+}
+
+- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset
+{
+    NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:_rootScope];
+    BOOL recurse = NO;
+    while (recurse)
+        for (TMScope *childScope in [[scopeStack lastObject] children])
+            if (childScope.location <= offset && childScope.location + childScope.length > offset)
+            {
+                recurse = YES;
+                break;
+            }
+    return scopeStack;
 }
 
 #define ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(SCOPE) \
@@ -210,7 +218,7 @@ return;\
 
 - (void)_generateScopes
 {
-    TMScope *scope = [self _scope];
+    TMScope *scope = _rootScope;
     
     // Setup the scope stack
     NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:scope];
@@ -362,7 +370,7 @@ return;\
                 previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
                 ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
                 previousTokenStart = previousTokenEnd;
-                [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:&currentGeneration];
+                [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:currentGeneration];
                 [scopeStack addObject:spanScope];
                 // Handle content name nested scope
                 if (firstSyntaxNode.contentName)
@@ -428,6 +436,7 @@ return;\
         ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
         currentCaptureScope.location = currentMatchRange.location + offset;
         currentCaptureScope.length = currentMatchRange.length;
+        currentCaptureScope.completelyParsed = YES;
         NSDictionary *attributes = [self.codeFile.theme attributesForScope:currentCaptureScope];
         if ([attributes count])
             [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) expectedGeneration:generation];
@@ -473,7 +482,7 @@ return;\
                     ECASSERT(firstCharacter != '$' || [containerPattern.include isEqualToString:@"$base"] || [containerPattern.include isEqualToString:@"$self"]);
                     TMSyntaxNode *includedSyntax = nil;
                     if ([containerPattern.include isEqualToString:@"$base"])
-                        includedSyntax = [self _syntax];
+                        includedSyntax = _syntax;
                     else if ([containerPattern.include isEqualToString:@"$self"])
                         includedSyntax = [containerPattern rootSyntax];
                     else
@@ -494,6 +503,30 @@ return;\
     while ([containerPatternIndexes count]);
     [_patternsIncludedByPattern setObject:includedPatterns forKey:pattern];
     return includedPatterns;
+}
+
+@end
+
+@implementation TMSymbol
+
+@synthesize title = _title, icon = _icon, range = _range, indentation = _indentation, separator = _separator;
+
+- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    // Get indentation level and modify title
+    NSUInteger titleLength = [_title length];
+    for (; _indentation < titleLength; ++_indentation)
+    {
+        if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[title characterAtIndex:_indentation]])
+            break;
+    }
+    _title = _indentation ? [title substringFromIndex:_indentation] : title;
+    _icon = icon;
+    _range = range;
+    return self;
 }
 
 @end

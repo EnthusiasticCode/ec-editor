@@ -74,6 +74,7 @@
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B78CAEA614F24A61006BD660 /* WeakArray.m */; };
+		B78CAF2914F5B853006BD660 /* RangeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B78CAF2814F5B852006BD660 /* RangeSet.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -438,6 +439,8 @@
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
 		B78CAEA514F24A61006BD660 /* WeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakArray.h; sourceTree = "<group>"; };
 		B78CAEA614F24A61006BD660 /* WeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakArray.m; sourceTree = "<group>"; };
+		B78CAF2714F5B852006BD660 /* RangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeSet.h; sourceTree = "<group>"; };
+		B78CAF2814F5B852006BD660 /* RangeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RangeSet.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1154,6 +1157,8 @@
 				B7FB79C414D604FA0080A714 /* Cache.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
+				B78CAF2714F5B852006BD660 /* RangeSet.h */,
+				B78CAF2814F5B852006BD660 /* RangeSet.m */,
 				B728597214E714C100E3DE65 /* CStringCachingString.h */,
 				B728597314E714C100E3DE65 /* CStringCachingString.m */,
 			);
@@ -2139,6 +2144,7 @@
 				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
 				CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */,
 				B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */,
+				B78CAF2914F5B853006BD660 /* RangeSet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

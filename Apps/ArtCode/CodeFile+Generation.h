@@ -10,10 +10,16 @@
 
 typedef NSUInteger CodeFileGeneration;
 
+@interface CodeFile (Generation)
+
+/// Get the current generation
+/// Because of the inherent race conditions of this method, it can only be called from main queue
+- (CodeFileGeneration)currentGeneration;
+
+/// These methods are meant to be called from non-main queues, although they work exactly the same from the main queue, however since the codefile can only be modified from main queue, and the generation will only change in main queue, there is no need to use them from the main queue
 /// These getters and setters come in two variants: the generation and the expected generation
 /// Methods with generation will return the codefile's generation by reference
 /// Methods with expected generation will compare the generation you pass in with the codefile's generation before executing, and fail if the generations don't match
-@interface CodeFile (Generation)
 
 /// String content reading methods
 - (NSUInteger)lengthWithGeneration:(CodeFileGeneration *)generation;

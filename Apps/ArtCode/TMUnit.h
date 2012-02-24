@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Index.h"
-@class TMIndex, TMScope, CodeFile;
+@class TMIndex, TMScope, CodeFile, UIImage;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
 typedef enum
@@ -29,18 +29,21 @@ typedef enum
 @interface TMUnit : NSObject
 
 /// The code index that generated the code unit.
-- (TMIndex *)index;
+@property (nonatomic, strong, readonly) TMIndex *index;
 
 /// The main source file the unit is interpreting.
-- (CodeFile *)codeFile;
+@property (nonatomic, strong, readonly) CodeFile *codeFile;
 
-- (NSString *)rootScopeIdentifier;
+@property (nonatomic, strong, readonly) TMScope *rootScope;
+
+@property (nonatomic, readonly, getter = isLoading) BOOL loading;
+
+/// Returns an array of TMSymbol objects representing all the symbols in the file.
+@property (nonatomic, strong, readonly) NSArray *symbolList;
 
 /// Visit the scopes in the unit.
 
-- (void)visitScopesWithBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
-
-- (void)visitScopesInRange:(NSRange)range withBlock:(TMUnitVisitResult(^)(TMScope *scope, NSRange range))block;
+- (TMScope *)scopeAtOffset:(NSUInteger)offset;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 
@@ -49,6 +52,17 @@ typedef enum
 
 /// Returns warnings and errors in the unit.
 - (NSArray *)diagnostics;
+
+@end
+
+/// Represent a symbol returned by the symbolList method in TMUnit.
+@interface TMSymbol : NSObject
+
+@property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) UIImage *icon;
+@property (nonatomic, readonly) NSRange range;
+@property (nonatomic, readonly) NSUInteger indentation;
+@property (nonatomic, readonly, getter = isSeparator) BOOL separator;
 
 @end
 
@@ -94,9 +108,5 @@ typedef enum
 - (NSString *)spelling;
 - (NSUInteger)line;
 - (NSRange)range;
-
-@end
-
-@protocol TMCursor <NSObject>
 
 @end

@@ -10,6 +10,7 @@
 #import "QuickBrowsersContainerController.h"
 #import "CodeFileController.h"
 #import "CodeFile.h"
+#import "TMUnit.h"
 #import "CodeView.h"
 
 #import "NSArray+ScoreForAbbreviation.h"
@@ -35,14 +36,14 @@
         if ([self.searchBar.text length])
         {
             NSArray *hitMask = nil;
-            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(CodeFileSymbol *element) {
+            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMSymbol *element) {
                 return element.title;
             }];
             _filteredSymbolListHitMask = hitMask;
         }
         else
         {
-            _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeFile] symbolList];
+            _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList];
             _filteredSymbolListHitMask = nil;
         }
     }
@@ -81,7 +82,7 @@
 {
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
-    CodeFileSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+    TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
     cell.textLabel.text = symbol.title;
     cell.imageView.image = symbol.icon;
     cell.indentationLevel = symbol.indentation;
@@ -102,7 +103,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CodeFileSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+    TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
     if (symbol.isSeparator)
         return 22;
     return UITableViewAutomaticDimension;
