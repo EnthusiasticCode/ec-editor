@@ -32,24 +32,43 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @end
 
+@interface Change : NSObject
+{
+    @package
+    CodeFileGeneration generation;
+    NSRange range;
+    NSString *replacementString;
+}
+@end
+
+@implementation Change
+@end
+
 @interface TMUnit () <CodeFilePresenter>
 {
-    NSMutableDictionary *_extensions;
     TMSyntaxNode *_syntax;
-    NSString *_contents;
+    NSMutableString *_contents;
     OSSpinLock _scopesLock;
+    CodeFileGeneration _scopesGeneration;
     TMScope *_rootScope;
-    NSMutableDictionary *_patternsIncludedByPattern;
     NSOperationQueue *_internalQueue;
-    OSSpinLock _pendingLock;
-    MutableRangeSet *_pendingRanges;
-    CodeFileGeneration _pendingGeneration;
-    BOOL _pendingGenerateScopes;
+    OSSpinLock _pendingChangesLock;
+    NSMutableArray *_pendingChanges;
+    OSSpinLock _needsGenerateScopesLock;
+    BOOL _needsGenerateScopes;
+    OSSpinLock _blankRangesLock;
+    MutableRangeSet *_blankRanges;
+    OSSpinLock _needsColoringLock;
+    BOOL _needsColoring;
+    NSMutableDictionary *_patternsIncludedByPattern;
+    NSMutableDictionary *_extensions;
 }
-- (void)_setNeedsGenerateScopes;
 - (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset;
+- (void)_setNeedsGenerateScopes;
+- (void)_setNeedsColoring;
 - (void)_generateScopes;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
+- (void)_colorBlankRanges;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
@@ -83,6 +102,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (id)initWithIndex:(TMIndex *)index codeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     ECASSERT(index);
     self = [super init];
     if (!self)
@@ -90,10 +110,27 @@ static OnigRegexp *_namedCapturesRegexp;
     _index = index;
     _codeFile = codeFile;
     [_codeFile addPresenter:self];
+    _contents = [[NSMutableString alloc] init];
     if (rootScopeIdentifier)
         _syntax = [TMSyntaxNode syntaxWithScopeIdentifier:rootScopeIdentifier];
     else
         _syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
+    _rootScope = [[TMScope alloc] init];
+    _rootScope.identifier = _syntax.scopeName;
+    _rootScope.syntaxNode = _syntax;
+    _internalQueue = [[NSOperationQueue alloc] init];
+    _internalQueue.maxConcurrentOperationCount = 1;
+    _pendingChangesLock = OS_SPINLOCK_INIT;
+    Change *firstChange = [[Change alloc] init];
+    firstChange->generation = [_codeFile currentGeneration];
+    firstChange->range = NSMakeRange(0, 0);
+    firstChange->replacementString = [_codeFile string];
+    _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
+    _needsGenerateScopesLock = OS_SPINLOCK_INIT;
+    [self _setNeedsGenerateScopes];
+    _blankRangesLock = OS_SPINLOCK_INIT;
+    _blankRanges = [[MutableRangeSet alloc] init];
+    _needsColoringLock = OS_SPINLOCK_INIT;
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
     _extensions = [[NSMutableDictionary alloc] init];
     [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -106,19 +143,6 @@ static OnigRegexp *_namedCapturesRegexp;
             [_extensions setObject:extension forKey:key];
         }];
     }];
-    NSRange codeFileRange = NSMakeRange(0, [_codeFile length]);
-    _rootScope = [[TMScope alloc] init];
-    _rootScope.identifier = _syntax.scopeName;
-    _rootScope.syntaxNode = _syntax;
-    _rootScope.location = codeFileRange.location;
-    _rootScope.length = codeFileRange.length;
-    _internalQueue = [[NSOperationQueue alloc] init];
-    _internalQueue.maxConcurrentOperationCount = 1;
-    OSSpinLockLock(&_pendingLock);
-    _pendingRanges = [[MutableRangeSet alloc] init];
-    [_pendingRanges replaceRange:NSMakeRange(0, 0) withRange:codeFileRange];
-    [self _setNeedsGenerateScopes];
-    OSSpinLockUnlock(&_pendingLock);
     return self;
 }
 
@@ -169,28 +193,17 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    OSSpinLockLock(&_pendingLock);
-    [_pendingRanges replaceRange:range withRange:NSMakeRange(0, [string length])];
-    [self _setNeedsGenerateScopes];
-    OSSpinLockUnlock(&_pendingLock);
+    Change *change = [[Change alloc] init];
+    change->generation = [codeFile currentGeneration];
+    change->range = range;
+    change->replacementString = [string string];
+    OSSpinLockLock(&_pendingChangesLock);
+    [_pendingChanges addObject:change];
+    OSSpinLockUnlock(&_pendingChangesLock);
+    [self _setNeedsGenerateScopes];    
 }
 
 #pragma mark - Private Methods
-
-- (void)_setNeedsGenerateScopes
-{
-    ECASSERT(!OSSpinLockTry(&_pendingLock));
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    _pendingGeneration = [self.codeFile currentGeneration];
-    if (_pendingGenerateScopes)
-        return;
-    _pendingGenerateScopes = YES;
-    _isLoading = YES;
-    __weak TMUnit *weakSelf = self;
-    [_internalQueue addOperationWithBlock:^{
-        [weakSelf _generateScopes];
-    }];
-}
 
 - (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset
 {
@@ -204,6 +217,41 @@ static OnigRegexp *_namedCapturesRegexp;
                 break;
             }
     return scopeStack;
+}
+
+- (void)_setNeedsGenerateScopes
+{
+    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    OSSpinLockLock(&_needsGenerateScopesLock);
+    if (_needsGenerateScopes)
+    {
+        OSSpinLockUnlock(&_needsGenerateScopesLock);
+        return;
+    }
+    _needsGenerateScopes = YES;
+    _isLoading = YES;
+    __weak TMUnit *weakSelf = self;
+    [_internalQueue addOperationWithBlock:^{
+        [weakSelf _generateScopes];
+    }];
+    OSSpinLockUnlock(&_needsGenerateScopesLock);
+}
+
+- (void)_setNeedsColoring
+{
+    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    OSSpinLockLock(&_needsColoringLock);
+    if (_needsColoring)
+    {
+        OSSpinLockUnlock(&_needsColoringLock);
+        return;
+    }
+    _needsColoring = YES;
+    __weak TMUnit *weakSelf = self;
+    [_internalQueue addOperationWithBlock:^{
+        [weakSelf _colorBlankRanges];
+    }];
+    OSSpinLockUnlock(&_needsColoringLock);
 }
 
 #define ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(SCOPE) \
@@ -441,6 +489,11 @@ return;\
         if ([attributes count])
             [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) expectedGeneration:generation];
     }
+}
+
+- (void)_colorBlankRanges
+{
+    UNIMPLEMENTED_VOID();
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
