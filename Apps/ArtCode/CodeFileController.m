@@ -640,12 +640,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
-- (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range
-{
-    [self.codeView updateTextFromStringRange:range toStringRange:range];
-}
-
-- (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range
+- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range
 {
     [self.codeView updateTextFromStringRange:range toStringRange:range];
 }

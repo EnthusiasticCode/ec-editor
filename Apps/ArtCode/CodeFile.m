@@ -21,6 +21,7 @@ static WeakDictionary *_codeFiles;
 static NSString * const _changeTypeKey = @"CodeFileChangeTypeKey";
 static NSString * const _changeTypeAttributeAdd = @"CodeFileChangeTypeAttributeAdd";
 static NSString * const _changeTypeAttributeRemove = @"CodeFileChangeTypeAttributeRemove";
+static NSString * const _changeTypeAttributeRemoveAll = @"CodeFileChangeTypeAttributeRemoveAll";
 static NSString * const _changeRangeKey = @"CodeFileChangeRangeKey";
 static NSString * const _changeAttributesKey= @"CodeFileChangeAttributesKey";
 static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeNamesKey";
@@ -43,8 +44,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 // Private content methods. All the following methods have to be called within a pending changes lock.
 - (void)_setHasPendingChanges;
 - (void)_processPendingChanges;
-- (void)_applyAttributeAddChangeWithRange:(NSRange)range attributes:(NSDictionary *)attributes;
-- (void)_applyAttributeRemoveChangeWithRange:(NSRange)range attributeNames:(NSArray *)attributeNames;
 @end
 
 #pragma mark - Implementations
@@ -393,69 +392,71 @@ while (0)
 
 #pragma mark - Attributed string content writing methods
 
+#define CONTENT_MODIFIER(...) \
+do\
+{\
+ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+if (!range.length)\
+return;\
+ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+OSSpinLockLock(&_pendingChangesLock);\
+[_pendingChanges addObject:__VA_ARGS__];\
+[self _processPendingChanges];\
+OSSpinLockUnlock(&_pendingChangesLock);\
+}\
+while (0)
+
+#define CONTENT_MODIFIER_EXPECTED_GENERATION(...) \
+do\
+{\
+ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);\
+if (!range.length)\
+return YES;\
+NSDictionary *change = __VA_ARGS__;\
+OSSpinLockLock(&_pendingChangesLock);\
+OSSpinLockLock(&_contentsLock);\
+if (expectedGeneration != _contentsGeneration + _pendingGenerationOffset)\
+{\
+    OSSpinLockUnlock(&_contentsLock);\
+    OSSpinLockUnlock(&_pendingChangesLock);\
+    return NO;\
+}\
+OSSpinLockUnlock(&_contentsLock);\
+[_pendingChanges addObject:change];\
+[self _setHasPendingChanges];\
+OSSpinLockUnlock(&_pendingChangesLock);\
+return YES;\
+}\
+while (0)
+
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    if (![attributes count] || !range.length)
-        return;
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    OSSpinLockLock(&_pendingChangesLock);
-    [self _processPendingChanges];
-    [self _applyAttributeAddChangeWithRange:range attributes:attributes];
-    OSSpinLockUnlock(&_pendingChangesLock);
+    CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:attributes, _changeAttributesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeAdd, _changeTypeKey, nil]);
 }
 
 - (BOOL)addAttributes:(NSDictionary *)attributes range:(NSRange)range expectedGeneration:(CodeFileGeneration)expectedGeneration
 {
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
-    if (![attributes count] || !range.length)
-        return YES;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:attributes, _changeAttributesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeAdd, _changeTypeKey, nil];
-    OSSpinLockLock(&_pendingChangesLock);
-    OSSpinLockLock(&_contentsLock);
-    if (expectedGeneration != _contentsGeneration + _pendingGenerationOffset)
-    {
-        OSSpinLockUnlock(&_contentsLock);
-        OSSpinLockUnlock(&_pendingChangesLock);
-        return NO;
-    }
-    OSSpinLockUnlock(&_contentsLock);
-    [_pendingChanges addObject:change];
-    [self _setHasPendingChanges];
-    OSSpinLockUnlock(&_pendingChangesLock);
-    return YES;
+    CONTENT_MODIFIER_EXPECTED_GENERATION([NSDictionary dictionaryWithObjectsAndKeys:attributes, _changeAttributesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeAdd, _changeTypeKey, nil]);
 }
 
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    if (![attributeNames count] || !range.length)
-        return;
-    OSSpinLockLock(&_pendingChangesLock);
-    [self _processPendingChanges];
-    [self _applyAttributeRemoveChangeWithRange:range attributeNames:attributeNames];
-    OSSpinLockUnlock(&_pendingChangesLock);
+    CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:attributeNames, _changeAttributeNamesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemove, _changeTypeKey, nil]);
 }
 
 - (BOOL)removeAttributes:(NSArray *)attributeNames range:(NSRange)range expectedGeneration:(CodeFileGeneration)expectedGeneration
 {
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
-    if (![attributeNames count] || !range.length)
-        return YES;
-    NSDictionary *change = [NSDictionary dictionaryWithObjectsAndKeys:attributeNames, _changeAttributeNamesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemove, _changeTypeKey, nil];
-    OSSpinLockLock(&_pendingChangesLock);
-    OSSpinLockLock(&_contentsLock);
-    if (expectedGeneration != _contentsGeneration + _pendingGenerationOffset)
-    {
-        OSSpinLockUnlock(&_contentsLock);
-        OSSpinLockUnlock(&_pendingChangesLock);
-        return NO;
-    }
-    OSSpinLockUnlock(&_contentsLock);
-    [_pendingChanges addObject:change];
-    [self _setHasPendingChanges];
-    OSSpinLockUnlock(&_pendingChangesLock);
-    return YES;
+    CONTENT_MODIFIER_EXPECTED_GENERATION([NSDictionary dictionaryWithObjectsAndKeys:attributeNames, _changeAttributeNamesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemove, _changeTypeKey, nil]);
+}
+
+- (void)removeAllAttributesInRange:(NSRange)range
+{
+    CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemoveAll, _changeTypeKey, nil]);
+}
+
+- (BOOL)removeAllAttributesInRange:(NSRange)range expectedGeneration:(CodeFileGeneration)expectedGeneration
+{
+    CONTENT_MODIFIER_EXPECTED_GENERATION([NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemoveAll, _changeTypeKey, nil]);
 }
 
 #pragma mark - Private content methods
@@ -490,41 +491,22 @@ while (0)
         NSDictionary *nextChange = [_pendingChanges objectAtIndex:0];
         [_pendingChanges removeObjectAtIndex:0];
         id changeType = [nextChange objectForKey:_changeTypeKey];
-        ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove));
+        ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeRemoveAll));
+        OSSpinLockLock(&_contentsLock);
         if (changeType == _changeTypeAttributeAdd)
-            [self _applyAttributeAddChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributes:[nextChange objectForKey:_changeAttributesKey]];
+            [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
         else if (changeType == _changeTypeAttributeRemove)
-            [self _applyAttributeRemoveChangeWithRange:[[nextChange objectForKey:_changeRangeKey] rangeValue] attributeNames:[nextChange objectForKey:_changeAttributeNamesKey]];
+            for (NSString *attributeName in [nextChange objectForKey:_changeAttributeNamesKey])
+                [_contents removeAttribute:attributeName range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+        else if (changeType == _changeTypeAttributeRemoveAll)
+            [_contents setAttributes:self.theme.commonAttributes range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+        OSSpinLockUnlock(&_contentsLock);
+        OSSpinLockUnlock(&_pendingChangesLock);
+        for (id<CodeFilePresenter> presenter in [self presenters])
+            if ([presenter respondsToSelector:@selector(codeFile:didChangeAttributesInRange:)])
+                [presenter codeFile:self didChangeAttributesInRange:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+        OSSpinLockLock(&_pendingChangesLock);
     }
-}
-
-- (void)_applyAttributeAddChangeWithRange:(NSRange)range attributes:(NSDictionary *)attributes
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
-    OSSpinLockLock(&_contentsLock);
-    [_contents addAttributes:attributes range:range];
-    OSSpinLockUnlock(&_contentsLock);
-    OSSpinLockUnlock(&_pendingChangesLock);
-    for (id<CodeFilePresenter> presenter in [self presenters])
-        if ([presenter respondsToSelector:@selector(codeFile:didAddAttributes:range:)])
-            [presenter codeFile:self didAddAttributes:attributes range:range];
-    OSSpinLockLock(&_pendingChangesLock);
-}
-
-- (void)_applyAttributeRemoveChangeWithRange:(NSRange)range attributeNames:(NSArray *)attributeNames
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
-    OSSpinLockLock(&_contentsLock);
-    for (NSString *attributeName in attributeNames)
-        [_contents removeAttribute:attributeName range:range];
-    OSSpinLockUnlock(&_contentsLock);
-    OSSpinLockUnlock(&_pendingChangesLock);
-    for (id<CodeFilePresenter> presenter in [self presenters])
-        if ([presenter respondsToSelector:@selector(codeFile:didRemoveAttributes:range:)])
-            [presenter codeFile:self didRemoveAttributes:attributeNames range:range];
-    OSSpinLockLock(&_pendingChangesLock);
 }
 
 #pragma mark - Find and replace functionality
@@ -567,7 +549,6 @@ while (0)
     replacementRange.location += offset;
     [self replaceCharactersInRange:replacementRange withString:replacementString];
     replacementRange.length = replacementString.length;
-    
     return replacementRange;
 }
 

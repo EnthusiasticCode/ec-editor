@@ -41,6 +41,7 @@
 #pragma mark - Attributed string content writing methods
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
+- (void)removeAllAttributesInRange:(NSRange)range;
 
 #pragma mark - Find and replace functionality
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
@@ -64,7 +65,5 @@
 @optional
 /// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
-
-- (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range;
+- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range;
 @end

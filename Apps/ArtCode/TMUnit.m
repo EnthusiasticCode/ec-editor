@@ -55,25 +55,24 @@ static OnigRegexp *_namedCapturesRegexp;
     NSMutableArray *_pendingChanges;
     OSSpinLock _needsGenerateScopesLock;
     BOOL _needsGenerateScopes;
-    OSSpinLock _blankRangesLock;
+    MutableRangeSet *_unparsedRanges;
     MutableRangeSet *_blankRanges;
-    OSSpinLock _needsColoringLock;
-    BOOL _needsColoring;
     NSMutableDictionary *_patternsIncludedByPattern;
     NSMutableDictionary *_extensions;
 }
 - (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset;
 - (void)_setNeedsGenerateScopes;
-- (void)_setNeedsColoring;
 - (void)_generateScopes;
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
-- (void)_colorBlankRanges;
+- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
+- (BOOL)_addedScope:(TMScope *)scope withGeneration:(CodeFileGeneration)generation;
+- (BOOL)_removedScope:(TMScope *)scope withGeneration:(CodeFileGeneration)generation;
+- (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
 
 @implementation TMUnit
 
-@synthesize index = _index, codeFile = _codeFile, loading = _isLoading, symbolList = _symbolList;
+@synthesize index = _index, codeFile = _codeFile, loading = _isLoading;
 
 #pragma mark - Internal Methods
 
@@ -127,9 +126,8 @@ static OnigRegexp *_namedCapturesRegexp;
     _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
     _needsGenerateScopesLock = OS_SPINLOCK_INIT;
     [self _setNeedsGenerateScopes];
-    _blankRangesLock = OS_SPINLOCK_INIT;
+    _unparsedRanges = [[MutableRangeSet alloc] init];
     _blankRanges = [[MutableRangeSet alloc] init];
-    _needsColoringLock = OS_SPINLOCK_INIT;
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
     _extensions = [[NSMutableDictionary alloc] init];
     [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -248,33 +246,6 @@ static OnigRegexp *_namedCapturesRegexp;
     OSSpinLockUnlock(&_needsGenerateScopesLock);
 }
 
-- (void)_setNeedsColoring
-{
-    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
-    OSSpinLockLock(&_needsColoringLock);
-    if (_needsColoring)
-    {
-        OSSpinLockUnlock(&_needsColoringLock);
-        return;
-    }
-    _needsColoring = YES;
-    __weak TMUnit *weakSelf = self;
-    [_internalQueue addOperationWithBlock:^{
-        [weakSelf _colorBlankRanges];
-    }];
-    OSSpinLockUnlock(&_needsColoringLock);
-}
-
-#define ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(SCOPE) \
-if (previousTokenEnd != previousTokenStart)\
-{\
-ECASSERT(previousTokenEnd > previousTokenStart);\
-attributes = [self.codeFile.theme attributesForScope:SCOPE];\
-if ([attributes count])\
-if (![self.codeFile addAttributes:attributes range:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) expectedGeneration:currentGeneration])\
-return;\
-}
-
 - (void)_generateScopes
 {
     ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
@@ -295,7 +266,6 @@ return;\
     // Parse the range
     NSUInteger previousTokenStart = 0;
     NSUInteger previousTokenEnd = 0;
-    NSDictionary *attributes = nil;
     NSRange lineRange = NSMakeRange(range.location, 0);
     for (;;)
     {
@@ -350,7 +320,8 @@ return;\
                 if (syntaxNode.contentName)
                 {
                     previousTokenEnd = resultRange.location + lineRange.location;
-                    ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                    if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:scope generation:currentGeneration])
+                        return;
                     previousTokenStart = previousTokenEnd;
                     scope.length = resultRange.location + lineRange.location - scope.location;
                     scope.completelyParsed = YES;
@@ -358,7 +329,8 @@ return;\
                     scope = [scopeStack lastObject];
                 }
                 previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:scope generation:currentGeneration])
+                    return;
                 previousTokenStart = previousTokenEnd;
                 // Handle end captures
                 [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope generation:currentGeneration];
@@ -376,7 +348,8 @@ return;\
                 // Handle a match pattern
                 NSRange resultRange = [firstResult bodyRange];
                 previousTokenEnd = resultRange.location + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:scope generation:currentGeneration])
+                    return;
                 previousTokenStart = previousTokenEnd;
                 TMScope *matchScope = [scope newChildScope];
                 matchScope.identifier = firstSyntaxNode.scopeName;
@@ -385,7 +358,8 @@ return;\
                 matchScope.length = resultRange.length;
                 matchScope.completelyParsed = YES;
                 previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(matchScope);
+                if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:matchScope generation:currentGeneration])
+                    return;
                 previousTokenStart = previousTokenEnd;
                 // Handle match pattern captures
                 [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope generation:currentGeneration];
@@ -401,7 +375,8 @@ return;\
                 // Handle a new span pattern
                 NSRange resultRange = [firstResult bodyRange];
                 previousTokenEnd = resultRange.location + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:scope generation:currentGeneration])
+                    return;
                 previousTokenStart = previousTokenEnd;
                 TMScope *spanScope = [scope newChildScope];
                 spanScope.identifier = firstSyntaxNode.scopeName;
@@ -428,9 +403,11 @@ return;\
                 ECASSERT(spanScope.endRegexp);
                 // Handle begin captures
                 previousTokenEnd = NSMaxRange(resultRange) + lineRange.location;
-                ADD_ATTRIBUTES_TO_CURRENT_TOKEN_FOR_SCOPE(scope);
+                if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, previousTokenEnd - previousTokenStart) withScope:scope generation:currentGeneration])
+                    return;
                 previousTokenStart = previousTokenEnd;
-                [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:currentGeneration];
+                if (![self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:currentGeneration])
+                    return;
                 [scopeStack addObject:spanScope];
                 // Handle content name nested scope
                 if (firstSyntaxNode.contentName)
@@ -462,12 +439,12 @@ return;\
     }
 }
 
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation
+- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
     ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
     ECASSERT(scope);
     if (!dictionary || !result)
-        return;
+        return YES;
     TMScope *capturesScope = scope;
     NSString *name = [[dictionary objectForKey:@"0"] objectForKey:_captureName];
     if (name)
@@ -498,16 +475,35 @@ return;\
         currentCaptureScope.location = currentMatchRange.location + offset;
         currentCaptureScope.length = currentMatchRange.length;
         currentCaptureScope.completelyParsed = YES;
-        NSDictionary *attributes = [self.codeFile.theme attributesForScope:currentCaptureScope];
-        if ([attributes count])
-            [self.codeFile addAttributes:attributes range:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) expectedGeneration:generation];
+        if (![self _parsedTokenInRange:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withScope:currentCaptureScope generation:generation])
+            return NO;
     }
+    return YES;
 }
 
-- (void)_colorBlankRanges
+- (BOOL)_addedScope:(TMScope *)scope withGeneration:(CodeFileGeneration)generation
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
-    UNIMPLEMENTED_VOID();
+    return YES;
+}
+
+- (BOOL)_removedScope:(TMScope *)scope withGeneration:(CodeFileGeneration)generation
+{
+    return YES;
+}
+
+- (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation
+{
+    if (scope)
+    {
+        NSDictionary *attributes = [self.codeFile.theme attributesForScope:scope];
+        if ([attributes count])
+            return [self.codeFile addAttributes:attributes range:tokenRange expectedGeneration:generation];
+        return YES;
+    }
+    else
+    {
+        return [self.codeFile removeAllAttributesInRange:tokenRange expectedGeneration:generation];
+    }
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern

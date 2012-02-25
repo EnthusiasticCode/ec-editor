@@ -37,7 +37,7 @@ typedef enum
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
 /// Returns an array of TMSymbol objects representing all the symbols in the file.
-@property (nonatomic, strong, readonly) NSArray *symbolList;
+- (void)symbolListWithCompletionHandler:(void(^)(NSArray *symbolList))completionHandler;
 
 /// Visit the scopes in the unit.
 
