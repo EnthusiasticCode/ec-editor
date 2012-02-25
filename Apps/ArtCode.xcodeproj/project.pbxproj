@@ -222,6 +222,7 @@
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
+		CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
 		CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A98314F14F0F0005F603 /* RemotesListController.m */; };
@@ -653,6 +654,8 @@
 		B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakDictionary.m; sourceTree = "<group>"; };
 		B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
+		CD05149814F7FB3A003CED2F /* RemoteTransferController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteTransferController.h; sourceTree = "<group>"; };
+		CD05149914F7FB3A003CED2F /* RemoteTransferController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteTransferController.m; sourceTree = "<group>"; };
 		CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMKeyboardAction.h; sourceTree = "<group>"; };
 		CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMKeyboardAction.m; sourceTree = "<group>"; };
 		CD12A97214F00DD80005F603 /* SearchableTableBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchableTableBrowserController.h; sourceTree = "<group>"; };
@@ -1296,6 +1299,15 @@
 			path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/enc;
 			sourceTree = "<group>";
 		};
+		CD05149714F7FAEE003CED2F /* Transfer */ = {
+			isa = PBXGroup;
+			children = (
+				CD05149814F7FB3A003CED2F /* RemoteTransferController.h */,
+				CD05149914F7FB3A003CED2F /* RemoteTransferController.m */,
+			);
+			name = Transfer;
+			sourceTree = "<group>";
+		};
 		CD12A97514F0714E0005F603 /* Quick Info */ = {
 			isa = PBXGroup;
 			children = (
@@ -1401,6 +1413,7 @@
 				CD19920914F25F390059D1E8 /* RemoteBrowserController.h */,
 				CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */,
 				CD69C90014F163EA00FCC987 /* New remote */,
+				CD05149714F7FAEE003CED2F /* Transfer */,
 			);
 			name = "Remotes Browsers";
 			sourceTree = "<group>";
@@ -2251,6 +2264,7 @@
 				CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */,
 				CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */,
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
+				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,8 +10,10 @@
 
 @interface MoveConflictController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
+@property (strong, nonatomic, readonly) NSMutableArray *conflictURLs;
+
 @property (strong, nonatomic) IBOutlet UIProgressView *progressView;
-@property (nonatomic, strong) IBOutlet UITableView *conflictTableView;
+@property (strong, nonatomic) IBOutlet UITableView *conflictTableView;
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
 
 - (void)processItemURLs:(NSArray *)itemURLs toURL:(NSURL *)destinationURL usignProcessingBlock:(void (^)(NSURL *itemURL, NSURL *destinationURL))processingBlock completion:(void(^)(void))completionBlock;

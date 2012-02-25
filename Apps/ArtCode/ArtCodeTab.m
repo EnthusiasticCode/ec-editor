@@ -111,6 +111,7 @@ static NSMutableArray *_mutableTabs;
 
 - (ArtCodeProject *)currentProject
 {
+#warning TODO NIK set this when project is selected and don't recalculate every time
     if (!_currentProject)
     {
         for (NSURL *historyURL in _mutableHistoryURLs)

@@ -12,11 +12,17 @@
 #import "NSArray+ScoreForAbbreviation.h"
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeProject.h"
 #import "Keychain.h"
+#import "DirectoryBrowserController.h"
+#import "RemoteTransferController.h"
 
 #import <Connection/CKConnectionRegistry.h>
 
 @interface RemoteBrowserController ()
+
+/// URLs selected in the table view
+@property (nonatomic, strong, readonly) NSMutableArray *_selectedItems;
 
 - (void)_connectToURL:(NSURL *)url;
 - (void)_changeToDirectory:(NSString *)directory;
@@ -39,13 +45,25 @@
     NSURLCredential *_loginCredential;
     /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
     BOOL _keychainUsed;
+    
+    UINavigationController *_modalNavigationController;
 }
+
 @synthesize loginLabel = _loginLabel;
 @synthesize loginUser = _loginUser;
 @synthesize loginPassword = _loginPassword;
 @synthesize loginAlwaysAskPassword = _loginAlwaysAskPassword;
 
 #pragma mark - Properties
+
+@synthesize _selectedItems;
+
+- (NSMutableArray *)_selectedItems
+{
+    if (!_selectedItems)
+        _selectedItems = [NSMutableArray new];
+    return _selectedItems;
+}
 
 @synthesize URL;
 
@@ -114,6 +132,8 @@
     [self setLoginUser:nil];
     [self setLoginPassword:nil];
     [self setLoginAlwaysAskPassword:nil];
+    _modalNavigationController = nil;
+    _selectedItems = nil;
     [super viewDidUnload];
 }
 
@@ -123,6 +143,12 @@
     _directoryItems = nil;
     _loginCredential = nil;
     [super viewDidDisappear:animated];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [super setEditing:editing animated:animated];
+    [_selectedItems removeAllObjects];
 }
 
 #pragma mark - Table view data source
@@ -145,6 +171,9 @@
         cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
     }
     // TODO also use NSFileSize
+    // Select item if neede
+    if ([_selectedItems containsObject:directoryItem])
+        [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     
     return cell;
 }
@@ -153,15 +182,29 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
-    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
+    if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[self.URL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+        NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+        if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
+        {
+            [self.artCodeTab pushURL:[self.URL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+        }
+        else
+        {
+            [self _toolEditExportAction:nil];
+        }
     }
     else
     {
-        [self _toolEditExportAction:nil];
+        [self._selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
     }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self._selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Connection delegate
@@ -418,6 +461,52 @@
 {
     [_connection setDelegate:nil];
     [_connection disconnect];
+}
+
+#pragma mark Tool actions
+
+- (void)_toolEditExportAction:(id)sender
+{
+    // Show directory browser presenter to select where to download
+    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
+    directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_directoryBrowserDownloadAction:)];
+    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
+    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:_modalNavigationController animated:YES completion:nil];
+}
+
+- (void)_directoryBrowserDismissAction:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        _modalNavigationController = nil;
+    }];
+}
+
+- (void)_directoryBrowserDownloadAction:(id)sender
+{
+    // Retrieve URL to move to
+    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
+    NSURL *moveURL = directoryBrowser.selectedURL;
+    if (moveURL == nil)
+        moveURL = directoryBrowser.URL;
+    
+    // Show conflit resolution controller
+    RemoteTransferController *transferController = [RemoteTransferController new];
+    // TODO cancel item should also call cancel for the transferController. could be done checking if the nav controller child controller is the remotetransfer and isfinished
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    transferController.navigationItem.leftBarButtonItem = cancelItem;
+    [_modalNavigationController pushViewController:transferController animated:YES];
+    // Resolve conflicts and start downloading
+    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection) {
+//        [connection setDelegate:self];
+        [self setEditing:NO animated:YES];
+        [self _directoryBrowserDismissAction:sender];
+    }];
 }
 
 @end

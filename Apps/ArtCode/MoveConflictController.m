@@ -15,7 +15,6 @@
 
 @implementation MoveConflictController {
 @private
-    NSMutableArray *_conflictURLs;
     NSURL *_destinationURL;
     void (^_processingBlock)(NSURL *sourceURL, NSURL *destinationURL);
     void (^_completionBlock)(void);
@@ -24,6 +23,14 @@
 @synthesize toolbar;
 
 @synthesize conflictTableView, progressView;
+@synthesize conflictURLs;
+
+- (NSMutableArray *)conflictURLs
+{
+    if (!conflictURLs)
+        conflictURLs = [NSMutableArray new];
+    return conflictURLs;
+}
 
 #pragma mark - Controller lifecycle
 
@@ -62,6 +69,10 @@
     [self setConflictTableView:nil];
     [self setProgressView:nil];
     [self setToolbar:nil];
+    conflictURLs = nil;
+    _destinationURL = nil;
+    _processingBlock = nil;
+    _completionBlock = nil;
     [super viewDidUnload];
 }
 
@@ -74,7 +85,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_conflictURLs count];
+    return [self.conflictURLs count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -87,7 +98,7 @@
     }
     
     // TODO set icon
-    cell.textLabel.text = [[_conflictURLs objectAtIndex:[indexPath indexAtPosition:1]] lastPathComponent];
+    cell.textLabel.text = [[self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]] lastPathComponent];
     
     return cell;
 }
@@ -97,7 +108,7 @@
 - (void)processItemURLs:(NSArray *)itemURLs toURL:(NSURL *)destinationURL usignProcessingBlock:(void (^)(NSURL *, NSURL *))processingBlock completion:(void (^)(void))completionBlock
 {
     self.progressView.progress = 0;
-    _conflictURLs = [NSMutableArray new];
+    [self.conflictURLs removeAllObjects];
     
     NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     NSFileManager *fileManager = [NSFileManager new];
@@ -107,7 +118,7 @@
             newWritingURL = [newWritingURL URLByAppendingPathComponent:[newReadingURL lastPathComponent]];
             if ([fileManager fileExistsAtPath:[newWritingURL path]])
             {
-                [_conflictURLs addObject:newReadingURL];
+                [self.conflictURLs addObject:newReadingURL];
             }
             else
             {
@@ -117,7 +128,7 @@
         self.progressView.progress = (CGFloat)idx / itemCount;
     }];
     
-    if ([_conflictURLs count] == 0)
+    if ([self.conflictURLs count] == 0)
     {
         completionBlock();
         return;
@@ -138,7 +149,7 @@
 - (void)doneAction:(id)sender
 {
     [self replaceAction:self];
-    if ([_conflictURLs count] == 0)
+    if ([self.conflictURLs count] == 0)
         return;
     [self selectAllAction:self];
     [self keepOriginalAction:self];
@@ -146,7 +157,7 @@
 
 - (IBAction)selectAllAction:(id)sender
 {
-    NSInteger count = [_conflictURLs count];
+    NSInteger count = [self.conflictURLs count];
     for (NSInteger i = 0; i < count; ++i)
     {
         [self.conflictTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
@@ -155,7 +166,7 @@
 
 - (IBAction)selectNoneAction:(id)sender
 {
-    NSInteger count = [_conflictURLs count];
+    NSInteger count = [self.conflictURLs count];
     for (NSInteger i = 0; i < count; ++i)
     {
         [self.conflictTableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES];
@@ -168,7 +179,7 @@
     NSFileManager *fileManager = [NSFileManager new];
     for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
     {
-        NSURL *sourceURL = [_conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
+        NSURL *sourceURL = [self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
         NSURL *destinationURL = [_destinationURL URLByAppendingPathComponent:[sourceURL lastPathComponent]];
         // Get non conflicting destination URL
         NSURL *newDestinationURL = nil;
@@ -189,7 +200,7 @@
     NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
     for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
     {
-        NSURL *sourceURL = [_conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
+        NSURL *sourceURL = [self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
         NSURL *destinationURL = [_destinationURL URLByAppendingPathComponent:[sourceURL lastPathComponent]];
         // Call processing
         [coordinator coordinateReadingItemAtURL:sourceURL options:0 writingItemAtURL:_destinationURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
@@ -204,10 +215,10 @@
     NSArray *selectedRows = [self.conflictTableView indexPathsForSelectedRows];
     for (NSIndexPath *indexPath in [selectedRows reverseObjectEnumerator])
     {
-        [_conflictURLs removeObjectAtIndex:[indexPath indexAtPosition:1]];
+        [self.conflictURLs removeObjectAtIndex:[indexPath indexAtPosition:1]];
     }
     [self.conflictTableView deleteRowsAtIndexPaths:selectedRows withRowAnimation:UITableViewRowAnimationAutomatic];
-    if ([_conflictURLs count] == 0)
+    if ([self.conflictURLs count] == 0 && _completionBlock)
         _completionBlock();
 }
 
