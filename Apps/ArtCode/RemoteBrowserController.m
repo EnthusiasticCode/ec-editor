@@ -31,6 +31,10 @@
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
+- (void)_modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController;
+- (void)_modalNavigationControllerDismissAction:(id)sender;
+- (void)_modalNavigationControllerDownloadAction:(id)sender;
+
 @end
 
 @implementation RemoteBrowserController {
@@ -46,7 +50,6 @@
     BOOL _keychainUsed;
     
     UINavigationController *_modalNavigationController;
-    UIActionSheet *_toolEditDeleteActionSheet;
 }
 
 @synthesize loginLabel = _loginLabel;
@@ -308,15 +311,15 @@
     
 }
 
-- (void)connection:(id <CKConnection>)con didDeleteDirectory:(NSString *)dirPath error:(NSError *)error
-{
-    
-}
-
-- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error
-{
-    
-}
+//- (void)connection:(id <CKConnection>)con didDeleteDirectory:(NSString *)dirPath error:(NSError *)error
+//{
+//    
+//}
+//
+//- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error
+//{
+//    
+//}
 
 #pragma mark Connection Editing Content
 
@@ -442,9 +445,19 @@
     // Delete
     if (actionSheet == _toolEditDeleteActionSheet)
     {
-        if (!buttonIndex != actionSheet.destructiveButtonIndex)
+        if (buttonIndex != actionSheet.destructiveButtonIndex)
             return;
-        // TODO
+        RemoteTransferController *transferController = [RemoteTransferController new];
+        transferController.navigationItem.rightBarButtonItem = nil;
+        [self _modalNavigationControllerPresentWithRootViewController:transferController];
+        [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection) {
+            self.loading = YES;
+            [self setEditing:NO animated:YES];
+            [_connection directoryContents];
+            [self dismissViewControllerAnimated:YES completion:^{
+                _modalNavigationController = nil;
+            }];
+        }];
     }
 }
 
@@ -483,17 +496,36 @@
 {
     // Show directory browser presenter to select where to download
     DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
-    directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_directoryBrowserDownloadAction:)];
+    directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
     directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
-    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:_modalNavigationController animated:YES completion:nil];
+    [self _modalNavigationControllerPresentWithRootViewController:directoryBrowser];
 }
 
-- (void)_directoryBrowserDismissAction:(id)sender
+#pragma mark Modal Navigation Controller for Progress
+
+- (void)_modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
+{
+    // Prepare left cancel button item
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_modalNavigationControllerDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    viewController.navigationItem.leftBarButtonItem = cancelItem;
+
+    // Prepare new modal navigation controller and present it
+    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:_modalNavigationController animated:YES completion:^{
+        // In case the transfer finishes before the presentation animation, dismiss immediatly
+        if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] 
+            && [(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
+        {
+            [self dismissViewControllerAnimated:YES completion:^{
+                _modalNavigationController = nil;
+            }];
+        }
+    }];
+}
+
+- (void)_modalNavigationControllerDismissAction:(id)sender
 {
     if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
     {
@@ -509,7 +541,7 @@
     }
 }
 
-- (void)_directoryBrowserDownloadAction:(id)sender
+- (void)_modalNavigationControllerDownloadAction:(id)sender
 {
     // Retrieve URL to move to
     DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;

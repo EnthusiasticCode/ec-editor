@@ -39,6 +39,7 @@
     self = [super initWithNibName:@"MoveConflictController" bundle:nil];
     if (!self)
         return nil;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneAction:)];
     return self;
 }
 
@@ -48,13 +49,6 @@
 }
 
 #pragma mark - View lifecycle
-
-- (void)loadView
-{
-    [super loadView];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneAction:)];
-}
 
 - (void)viewDidLoad
 {

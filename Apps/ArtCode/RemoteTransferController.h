@@ -17,6 +17,9 @@
 /// Items are an array of dictionaries as returned by the CKConnection.
 - (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(void(^)(id<CKConnection> connection))completionHandler;
 
+/// This method will start the process of deleting the given items. Folders will be deleted recursevly.
+- (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(void(^)(id<CKConnection> connection))completionHandler;
+
 /// Returns a value that indicates if the started transfer has finished.
 - (BOOL)isTransferFinished;
 

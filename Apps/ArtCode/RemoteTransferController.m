@@ -60,7 +60,7 @@
 }
 
 
-#pragma mark Connection Downloads
+#pragma mark - Connection Downloads
 
 - (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
 {
@@ -97,12 +97,45 @@
     }
 }
 
+#pragma mark - Connection Cancel Transfer
+
 - (void)connection:(id <CKConnection>)con didCancelTransfer:(NSString *)remotePath
 {
     [self connection:con downloadDidFinish:remotePath error:NULL];
 }
 
+#pragma mark - Connection Delete Items
+
+- (void)connection:(id <CKConnection>)con didDeleteDirectory:(NSString *)dirPath error:(NSError *)error
+{
+    [self connection:con didDeleteFile:dirPath error:error];
+}
+
+- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error
+{
+    _transfersCompleted++;
+    [_transfersProgress removeObjectForKey:path];
+    // TODO check with directories
+    [self.progressView setProgress:(float)_transfersCompleted / (float)_transfersStarted animated:YES];
+    if ([self isTransferFinished])
+    {
+        [self _callCompletionHandler];
+    }
+}
+
 #pragma mark - Public methods
+
+- (BOOL)isTransferFinished
+{
+    return _transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0;
+}
+
+- (void)cancelCurrentTransfer
+{
+    [_connection cancelAll];
+    if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
+        [self _callCompletionHandler];
+}
 
 - (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(void (^)(id<CKConnection>))completionHandler
 {
@@ -119,6 +152,11 @@
 
     // First pass to download items that are not conflicting with local files
     _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[items count]];
+    _items = items;
+    _connection = connection;
+    _remoteURL = remoteURL;
+    _localURL = localURL;
+    _completionHandler = [completionHandler copy];
     for (NSDictionary *item in items)
     {
         NSString *destinationPath = [localURL.path stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
@@ -130,11 +168,11 @@
         
         if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
         {
-            [connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[localURL path] overwrite:YES];
+            [connection recursivelyDownload:[[remoteURL path] stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]] to:[localURL path] overwrite:YES];
         }
         else
         {
-            [connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[localURL path] overwrite:YES delegate:nil];
+            [connection downloadFile:[[remoteURL path] stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]] toDirectory:[localURL path] overwrite:YES delegate:nil];
         }
     }
     
@@ -158,31 +196,59 @@
     }
     
     // Terminate or prepare to handle transfers
-    if ([_items count] == 0 && [self.conflictURLs count] == 0)
+    if ([items count] == 0 && [self.conflictURLs count] == 0)
     {
         [connection setDelegate:_originalDelegate];
-        completionHandler(connection);
+        if (completionHandler)
+            completionHandler(connection);
     }
-    else
+}
+
+- (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(void (^)(id<CKConnection>))completionHandler
+{
+    ECASSERT(connection != nil);
+    
+    // Terminate immediatly if no items needs to be removed
+    if ([items count] == 0)
     {
-        _items = items;
-        _connection = connection;
-        _remoteURL = remoteURL;
-        _localURL = localURL;
-        _completionHandler = [completionHandler copy];
+        if (completionHandler)
+            completionHandler(connection);
+        return;
     }
-}
-
-- (BOOL)isTransferFinished
-{
-    return _transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0;
-}
-
-- (void)cancelCurrentTransfer
-{
-    [_connection cancelAll];
-    if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
-        [self _callCompletionHandler];
+    
+    // Reset progress
+    self.progressView.progress = 0;
+    _transfersStarted = 0;
+    _transfersCompleted = 0;
+    
+    // Change the connection's delegate
+    _originalDelegate = [connection delegate];
+    [connection setDelegate:self];
+    
+    _connection = connection;
+    _remoteURL = remoteURL;
+    _completionHandler = [completionHandler copy];
+    _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[items count]];
+    for (NSDictionary *item in items)
+    {
+        _transfersStarted++;
+        NSString *remoteItemPath = [[remoteURL path] stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
+        if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+        {
+            [connection recursivelyDeleteDirectory:remoteItemPath];
+        }
+        else
+        {
+            [connection deleteFile:remoteItemPath];
+        }
+        [_transfersProgress setObject:[NSNull null] forKey:remoteItemPath];
+    }
+    
+    // Prepare UI
+    self.conflictTableView.hidden = YES;
+    self.toolbar.hidden = YES;
+    self.progressView.hidden = NO;
+    self.navigationItem.title = @"Deleting";
 }
 
 #pragma mark - Actions
