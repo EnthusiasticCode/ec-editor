@@ -40,7 +40,6 @@ static void *_openQuicklyObservingContext;
     ArtCodeProject *_currentObservedProject;
     
     UIPopoverController *_toolNormalAddPopover;
-    UIActionSheet *_toolEditItemDeleteActionSheet;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
     UINavigationController *_directoryBrowserNavigationController;
@@ -54,7 +53,6 @@ static void *_openQuicklyObservingContext;
 @property (nonatomic, strong) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
 
 - (void)_toolNormalAddAction:(id)sender;
-- (void)_toolEditDeleteAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
@@ -145,7 +143,7 @@ static void *_openQuicklyObservingContext;
     self.searchBar.placeholder = @"Filter files";
     
     // Preparing tool items array changed in set editing
-    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
     
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
 }
@@ -154,7 +152,6 @@ static void *_openQuicklyObservingContext;
 {
     _toolNormalAddPopover = nil;
     
-    _toolEditItemDeleteActionSheet = nil;
     _toolEditItemExportActionSheet = nil;
     _toolEditItemDuplicateActionSheet = nil;
     
@@ -312,7 +309,7 @@ static void *_openQuicklyObservingContext;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet == _toolEditItemDeleteActionSheet)
+    if (actionSheet == _toolEditDeleteActionSheet)
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
         {
@@ -435,16 +432,6 @@ static void *_openQuicklyObservingContext;
         popoverViewController.presentingPopoverController = _toolNormalAddPopover;
     }
     [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-}
-
-- (void)_toolEditDeleteAction:(id)sender
-{
-    if (!_toolEditItemDeleteActionSheet)
-    {
-        _toolEditItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
-        _toolEditItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-    }
-    [_toolEditItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 - (void)_toolEditExportAction:(id)sender

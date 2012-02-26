@@ -13,7 +13,7 @@
 @class DirectoryPresenter, SmartFilteredDirectoryPresenter;
 
 
-@interface FileBrowserController : SearchableTableBrowserController <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface FileBrowserController : SearchableTableBrowserController <MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *directory;
 @property (nonatomic, strong, readonly) DirectoryPresenter *directoryPresenter;

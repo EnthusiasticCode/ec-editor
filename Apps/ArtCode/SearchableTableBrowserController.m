@@ -124,6 +124,9 @@
     toolEditItems = nil;
     toolNormalItems = nil;
     _quickBrowsersPopover = nil;
+    
+    _toolEditDeleteActionSheet = nil;
+    
     [super viewDidUnload];
 }
 
@@ -271,6 +274,18 @@
             [(UIButton *)item.customView setEnabled:anySelected];
         }
     }
+}
+
+#pragma mark - Common actions
+
+- (void)toolEditDeleteAction:(id)sender
+{
+    if (!_toolEditDeleteActionSheet)
+    {
+        _toolEditDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+        _toolEditDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    }
+    [_toolEditDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 @end

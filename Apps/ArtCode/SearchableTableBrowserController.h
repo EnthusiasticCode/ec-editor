@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate> {
+@protected
+    UIActionSheet *_toolEditDeleteActionSheet;
+}
 
 - (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop;
 
@@ -38,5 +41,11 @@
 /// If not nil, this items will be set when the controller is in edit mode.
 /// This property should be set in loadView.
 @property (nonatomic, strong) NSArray *toolEditItems;
+
+#pragma mark Common actions
+
+/// Shows a confirmation button to confirm the deletion.
+/// Subclasses should override the action sheed delegate to modify the behaviour of the confirmation button.
+- (IBAction)toolEditDeleteAction:(id)sender;
 
 @end

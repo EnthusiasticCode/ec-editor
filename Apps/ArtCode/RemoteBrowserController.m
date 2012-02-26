@@ -30,7 +30,6 @@
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
-- (void)_toolEditDeleteAction:(id)sender;
 
 @end
 
@@ -47,6 +46,7 @@
     BOOL _keychainUsed;
     
     UINavigationController *_modalNavigationController;
+    UIActionSheet *_toolEditDeleteActionSheet;
 }
 
 @synthesize loginLabel = _loginLabel;
@@ -122,7 +122,7 @@
     [super loadView];
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
     
-    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
 }
 
 - (void)viewDidUnload
@@ -134,6 +134,7 @@
     [self setLoginAlwaysAskPassword:nil];
     _modalNavigationController = nil;
     _selectedItems = nil;
+    _toolEditDeleteActionSheet = nil;
     [super viewDidUnload];
 }
 
@@ -434,6 +435,19 @@
     [self _changeToDirectory:self.URL.path];
 }
 
+#pragma mark - Action Sheed Delegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // Delete
+    if (actionSheet == _toolEditDeleteActionSheet)
+    {
+        if (!buttonIndex != actionSheet.destructiveButtonIndex)
+            return;
+        // TODO
+    }
+}
+
 #pragma mark - Private methods
 
 - (void)_connectToURL:(NSURL *)url
@@ -463,7 +477,7 @@
     [_connection disconnect];
 }
 
-#pragma mark Tool actions
+#pragma mark - Tool actions
 
 - (void)_toolEditExportAction:(id)sender
 {
