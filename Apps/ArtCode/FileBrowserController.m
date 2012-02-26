@@ -279,6 +279,10 @@ static void *_openQuicklyObservingContext;
     else
         cell.textLabelHighlightedCharacters = nil;
     
+    // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
+    if ([_selectedURLs containsObject:fileURL])
+        [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    
     return cell;
 }
 
