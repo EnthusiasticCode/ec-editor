@@ -360,25 +360,25 @@
 
 #pragma mark Connection Downloads
 
-- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
-{
-    
-}
+//- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
+//{
+//    
+//}
+//
+//- (void)connection:(id <CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length
+//{
+//    
+//}
+//
+//- (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
+//{
+//    
+//}
+//
+//- (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
+//{
+//    
+//}
 
 #pragma mark Connection Uploads
 
@@ -481,9 +481,18 @@
 
 - (void)_directoryBrowserDismissAction:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:^{
-        _modalNavigationController = nil;
-    }];
+    if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
+    {
+        [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
+    }
+    else
+    {
+        if (self.tableView.indexPathForSelectedRow)
+            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+        [self dismissViewControllerAnimated:YES completion:^{
+            _modalNavigationController = nil;
+        }];
+    }
 }
 
 - (void)_directoryBrowserDownloadAction:(id)sender
@@ -503,9 +512,12 @@
     [_modalNavigationController pushViewController:transferController animated:YES];
     // Resolve conflicts and start downloading
     [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection) {
-//        [connection setDelegate:self];
         [self setEditing:NO animated:YES];
-        [self _directoryBrowserDismissAction:sender];
+        if (self.tableView.indexPathForSelectedRow)
+            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+        [self dismissViewControllerAnimated:YES completion:^{
+            _modalNavigationController = nil;
+        }];
     }];
 }
 

@@ -9,9 +9,10 @@
 #import "RemoteTransferController.h"
 #import "UIImage+AppStyle.h"
 #import <Connection/CKConnectionRegistry.h>
-#import <objc/runtime.h>
 
 @interface RemoteTransferController ()
+
+- (void)_callCompletionHandler;
 
 @end
 
@@ -21,8 +22,10 @@
     NSURL *_remoteURL;
     NSURL *_localURL;
     void (^_completionHandler)(id<CKConnection>);
+    __weak NSObject *_originalDelegate;
     
-    NSMutableArray *_transfers;
+    NSMutableDictionary *_transfersProgress;
+    NSUInteger _transfersStarted;
     NSInteger _transfersCompleted;
 }
 
@@ -35,7 +38,7 @@
     _remoteURL = nil;
     _localURL = nil;
     _completionHandler = nil;
-    _transfers = nil;
+    _transfersProgress = nil;
     [super viewDidUnload];
 }
 
@@ -56,77 +59,48 @@
     return cell;
 }
 
-#pragma mark - Transfer Delegate
-
-//- (void)transferDidBegin:(CKTransferRecord *)transfer
-//{
-//}
-
-//- (void)transfer:(CKTransferRecord *)transfer transferredDataOfLength:(unsigned long long)length
-//{
-//    
-//}
-
-- (void)transfer:(CKTransferRecord *)transfer progressedTo:(NSNumber *)percent
-{
-    if (!self.progressView.isHidden)
-    {
-        static void *_transferProgressNumber;
-        float totalProgress = 0;
-        for (CKTransferRecord *record in _transfers)
-        {
-            if (record == transfer)
-            {
-                totalProgress += [percent floatValue];
-                objc_setAssociatedObject(transfer, &_transferProgressNumber, percent, OBJC_ASSOCIATION_COPY_NONATOMIC);
-            }
-            else
-            {
-                NSNumber *number = objc_getAssociatedObject(record, &_transferProgressNumber);
-                if (number)
-                    totalProgress += [number floatValue];
-            }
-        }
-        [self.progressView setProgress:(totalProgress + _transfersCompleted * 100.0) / (([_transfers count] + _transfersCompleted) * 100.0) animated:YES];
-    }
-}
-
-- (void)transfer:(CKTransferRecord *)transfer receivedError:(NSError *)error
-{
-    [_transfers removeObject:transfer];
-    if (_completionHandler && [_transfers count] == 0 && [self.conflictURLs count] == 0)
-        _completionHandler(_connection);
-}
-
-- (void)transferDidFinish:(CKTransferRecord *)transfer error:(NSError *)error
-{
-    _transfersCompleted++;
-    [_transfers removeObject:transfer];
-    if (_completionHandler && [_transfers count] == 0 && [self.conflictURLs count] == 0)
-        _completionHandler(_connection);
-}
 
 #pragma mark Connection Downloads
 
-//- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
-//{
-//    
-//}
-//
+- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
+{
+    [_transfersProgress setObject:percent forKey:path];
+    if (!self.progressView.isHidden)
+    {
+        __block float totalProgress = 0;
+        [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
+            totalProgress += [progress floatValue];
+        }];
+        [self.progressView setProgress:(totalProgress + _transfersCompleted * 100.0) / (([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
+    }
+}
+
 //- (void)connection:(id <CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length
 //{
 //    
 //}
-//
-//- (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
-//{
-//    
-//}
-//
-//- (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
-//{
-//    
-//}
+
+- (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
+{
+    _transfersStarted++;
+    [_transfersProgress setObject:[NSNumber numberWithFloat:0] forKey:remotePath];
+}
+
+- (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
+{
+    // TODO manage error
+    _transfersCompleted++;
+    [_transfersProgress removeObjectForKey:remotePath];
+    if ([self isTransferFinished])
+    {
+        [self _callCompletionHandler];
+    }
+}
+
+- (void)connection:(id <CKConnection>)con didCancelTransfer:(NSString *)remotePath
+{
+    [self connection:con downloadDidFinish:remotePath error:NULL];
+}
 
 #pragma mark - Public methods
 
@@ -136,10 +110,15 @@
     
     // Reset progress
     self.progressView.progress = 0;
+    _transfersStarted = 0;
     _transfersCompleted = 0;
+    
+    // Change the connection's delegate
+    _originalDelegate = [connection delegate];
+    [connection setDelegate:self];
 
     // First pass to download items that are not conflicting with local files
-    _transfers = [NSMutableArray arrayWithCapacity:[items count]];
+    _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[items count]];
     for (NSDictionary *item in items)
     {
         NSString *destinationPath = [localURL.path stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
@@ -151,12 +130,11 @@
         
         if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
         {
-            // TODO make api more similar to single file one with delegate for transfer
-            [_transfers addObject:[connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[localURL path] overwrite:YES]];
+            [connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[localURL path] overwrite:YES];
         }
         else
         {
-            [_transfers addObject:[connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[localURL path] overwrite:YES delegate:self]];
+            [connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[localURL path] overwrite:YES delegate:nil];
         }
     }
     
@@ -180,18 +158,31 @@
     }
     
     // Terminate or prepare to handle transfers
-    if ([_transfers count] == 0 && [self.conflictURLs count] == 0)
+    if ([_items count] == 0 && [self.conflictURLs count] == 0)
     {
+        [connection setDelegate:_originalDelegate];
         completionHandler(connection);
     }
     else
     {
-        _connection = connection;
         _items = items;
+        _connection = connection;
         _remoteURL = remoteURL;
         _localURL = localURL;
         _completionHandler = [completionHandler copy];
     }
+}
+
+- (BOOL)isTransferFinished
+{
+    return _transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0;
+}
+
+- (void)cancelCurrentTransfer
+{
+    [_connection cancelAll];
+    if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
+        [self _callCompletionHandler];
 }
 
 #pragma mark - Actions
@@ -203,12 +194,11 @@
         NSDictionary *item = [self.conflictURLs objectAtIndex:indexPath.row];
         if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
         {
-            // TODO make api more similar to single file one with delegate for transfer
-            [_transfers addObject:[_connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[_localURL path] overwrite:YES]];
+            [_connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[_localURL path] overwrite:YES];
         }
         else
         {
-            [_transfers addObject:[_connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[_localURL path] overwrite:YES delegate:self]];
+            [_connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[_localURL path] overwrite:YES delegate:nil];
         }
     }
     [self keepOriginalAction:sender];
@@ -217,9 +207,9 @@
 - (void)keepOriginalAction:(id)sender
 {
     [super keepOriginalAction:sender];
-    if (_completionHandler && [_transfers count] == 0)
+    if ([self isTransferFinished])
     {
-        _completionHandler(_connection);
+        [self _callCompletionHandler];
     }
     else
     {
@@ -229,6 +219,15 @@
         self.progressView.hidden = NO;
         self.navigationItem.title = @"Downloading";
     }
+}
+
+#pragma mark - Private methods
+
+- (void)_callCompletionHandler
+{
+    [_connection setDelegate:_originalDelegate];
+    if (_completionHandler)
+        _completionHandler(_connection);
 }
 
 @end
