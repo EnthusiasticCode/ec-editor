@@ -205,6 +205,10 @@
         
         lastViewFrame = CGRectIntegral(viewFrame);
         view.frame = lastViewFrame;
+        
+        maxSegmentWidth -= lastViewFrame.size.width + gapBetweenFragments;
+        if (maxSegmentWidth <= 0)
+            break;
     }
 }
 
