@@ -137,7 +137,7 @@ static void *_openQuicklyObservingContext;
     [super loadView];
     
     // Customize subviews
-    self.searchBar.placeholder = @"Filter files";
+    self.searchBar.placeholder = @"Filter files in this folder";
     
     // Preparing tool items array changed in set editing
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];

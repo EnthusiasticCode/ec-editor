@@ -295,7 +295,8 @@ static void init(TabController *self)
     
     // Add tab button
     [self.tabBar addTabWithTitle:childController.title animated:animated];
-    [childController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&childViewControllerTitleContext];
+    // TODO this makes the observer leak because the title is forwarder to the inner controller in singletabcontroller
+//    [childController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&childViewControllerTitleContext];
     
     // Set selection
     if (selectedViewControllerIndex == NSNotFound)
@@ -360,7 +361,8 @@ static void init(TabController *self)
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
 { 
     UIViewController *controller = [orderedChildViewControllers objectAtIndex:tabIndex];
-    [controller removeObserver:self forKeyPath:@"title"];
+    // TODO move this somewhere more consisten
+//    [controller removeObserver:self forKeyPath:@"title"];
     [controller willMoveToParentViewController:nil];
     
     // Remove from tab controller

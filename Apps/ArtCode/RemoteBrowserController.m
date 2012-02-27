@@ -119,6 +119,9 @@
 - (void)loadView
 {
     [super loadView];
+    
+    self.searchBar.placeholder = @"Filter files in this remote folder";
+    
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
     
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
@@ -169,7 +172,7 @@
         cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
     }
     // TODO also use NSFileSize
-    // Select item if neede
+    // Select item to maintain selection on filtering
     if ([_selectedItems containsObject:directoryItem])
         [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     
@@ -305,20 +308,11 @@
     
 }
 
-//- (void)connection:(id <CKConnection>)con didDeleteDirectory:(NSString *)dirPath error:(NSError *)error
-//{
-//    
-//}
-//
-//- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error
-//{
-//    
-//}
-
 #pragma mark Connection Editing Content
 
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
+    // TODO check cache first
     [con directoryContents];
 }
 
@@ -355,28 +349,6 @@
 {
 
 }
-
-#pragma mark Connection Downloads
-
-//- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
-//{
-//    
-//}
-//
-//- (void)connection:(id <CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length
-//{
-//    
-//}
-//
-//- (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
-//{
-//    
-//}
-//
-//- (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
-//{
-//    
-//}
 
 #pragma mark Connection Uploads
 
