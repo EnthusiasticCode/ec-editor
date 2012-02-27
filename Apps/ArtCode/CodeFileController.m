@@ -642,8 +642,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range
 {
-#warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit piles up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
-//    [self.codeView updateTextFromStringRange:range toStringRange:range];
+#warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit could pile up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
+    [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
 #pragma mark - Code View Delegate Methods

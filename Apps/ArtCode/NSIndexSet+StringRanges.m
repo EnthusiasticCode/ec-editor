@@ -12,7 +12,7 @@
 
 - (NSRange)firstRange
 {
-    __block NSRange firstRange;
+    __block NSRange firstRange = NSMakeRange(NSNotFound, 0);
     [self enumerateRangesUsingBlock:^(NSRange range, BOOL *stop) {
         firstRange = range;
         *stop = YES;
