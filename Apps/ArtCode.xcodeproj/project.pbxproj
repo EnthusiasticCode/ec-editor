@@ -316,6 +316,7 @@
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
 		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
+		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
@@ -788,8 +789,10 @@
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
-		CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = RemoteDirectoryBrowserController.h; sourceTree = "<group>"; };
+		CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteDirectoryBrowserController.h; sourceTree = "<group>"; };
 		CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteDirectoryBrowserController.m; sourceTree = "<group>"; };
+		CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
+		CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
@@ -1117,6 +1120,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
+				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
 				B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */,
 				B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */,
@@ -2271,6 +2276,7 @@
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
 				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
+				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

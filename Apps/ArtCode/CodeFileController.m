@@ -28,6 +28,7 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "CodeFile.h"
+#import "TMIndex.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
@@ -42,7 +43,7 @@
     UIPopoverController *_quickBrowsersPopover;
     
     NSTimer *_selectionChangeDebounceTimer;
-    CodeFileSymbol *_currentSymbol;
+    TMSymbol *_currentSymbol;
 
     CGRect _keyboardFrame;
     CGRect _keyboardRotationFrame;
@@ -61,6 +62,7 @@
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong, readwrite) CodeFile *codeFile;
+@property (nonatomic, strong) TMUnit *codeUnit;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
@@ -116,7 +118,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize fileURL = _fileURL, codeFile = _codeFile;
+@synthesize fileURL = _fileURL, codeFile = _codeFile, codeUnit = _codeUnit;
 @synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
@@ -280,8 +282,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return;
     
     [_codeFile removePresenter:self];
+    _codeUnit = nil;
     _codeFile = codeFile;
     _codeView.dataSource = _codeFile;
+    _codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:_codeFile rootScopeIdentifier:nil];
     [_codeView updateAllText];
     [_codeFile addPresenter:self];
     
@@ -550,9 +554,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (editing)
     {
         // Set keyboard for main scope
-        [_codeFile.codeUnit visitScopesWithBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            [self _keyboardAccessoryItemSetupWithScope:scope];
-            return TMUnitVisitResultBreak;
+        [self.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
+            [self _keyboardAccessoryItemSetupWithScope:rootScope];
         }];
     }
     
@@ -586,7 +589,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
+#warning TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
+/*    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
     {
         *decoration = CodeFileMinimapLineDecorationDisc;
         *decorationColor = [UIColor whiteColor];
@@ -596,7 +600,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return NO;
     
     __block UIColor *color = *lineColor;
-    [self.codeFile.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
+    [self.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
         if (scopeRange.length <= 2)
             return TMUnitVisitResultRecurse;
         if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)
@@ -619,6 +623,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     *lineColor = color;
     
     return YES;
+ */
+    return NO;
 }
 
 - (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection
@@ -634,13 +640,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
-- (void)codeFile:(CodeFile *)codeFile didAddAttributes:(NSDictionary *)attributes range:(NSRange)range
+- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range
 {
-    [self.codeView updateTextFromStringRange:range toStringRange:range];
-}
-
-- (void)codeFile:(CodeFile *)codeFile didRemoveAttributes:(NSArray *)attributes range:(NSRange)range
-{
+#warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit could pile up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
     [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
@@ -782,30 +784,27 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     // Apply debounce to selection change
     [_selectionChangeDebounceTimer invalidate];
-    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-        // Retrieve the current scope
-        __block TMScope *currentScope = nil;
-        [self.codeFile.codeUnit visitScopesInRange:codeView.selectionRange withBlock:^TMUnitVisitResult(TMScope *scope, NSRange range) {
-            // Save the current, deepest scope
-            currentScope = scope;
-            return TMUnitVisitResultRecurse;
-        }];
-        // Set current symbol in title
-        CodeFileSymbol *currentSymbol = nil;
-        for (CodeFileSymbol *symbol in [self.codeFile symbolList])
-        {
-            if (symbol.range.location > currentScope.location)
-                break;
-            currentSymbol = symbol;
-        }
-        if (currentSymbol != _currentSymbol)
-        {
-            _currentSymbol = currentSymbol;
-            [self.singleTabController updateDefaultToolbarTitle];
-        }
-        // Change accessory keyboard
-        [self _keyboardAccessoryItemSetupWithScope:currentScope];
-    } repeats:NO];
+//    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+//        // Retrieve the current scope
+//        [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
+//            // Set current symbol in title
+//            TMSymbol *currentSymbol = nil;
+//            for (TMSymbol *symbol in [self.codeUnit symbolList])
+//            {
+//                if (symbol.range.location > scope.location)
+//                    break;
+//                currentSymbol = symbol;
+//            }
+//            if (currentSymbol != _currentSymbol)
+//            {
+//                _currentSymbol = currentSymbol;
+//                [self.singleTabController updateDefaultToolbarTitle];
+//            }
+//            // Change accessory keyboard
+//            [self _keyboardAccessoryItemSetupWithScope:scope];
+//
+//        }];
+//    } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods

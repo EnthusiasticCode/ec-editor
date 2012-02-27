@@ -85,6 +85,8 @@ static NSMutableDictionary *scopeToPreferenceCache;
 {
     if (self != [TMPreference class])
         return;
+    // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
+    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     NSMutableDictionary *preferences = [NSMutableDictionary new];
     for (NSURL *bundleURL in [TMBundle bundleURLs])
     {

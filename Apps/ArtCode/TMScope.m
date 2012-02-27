@@ -66,6 +66,17 @@ NSMutableDictionary *systemScopesScoreCache;
     return [NSSet setWithObject:@"identifier"];
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    TMScope *copy = [[TMScope alloc] init];
+    copy->_qualifiedIdentifier = _qualifiedIdentifier;
+    copy->_identifierRange = _identifierRange;
+    copy->_identifiersStack = _identifiersStack;
+    copy->_location = _location;
+    copy->_length = _length;
+    return copy;
+}
+
 - (NSString *)description
 {
     return self.qualifiedIdentifier;

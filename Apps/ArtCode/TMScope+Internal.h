@@ -33,6 +33,9 @@
 /// The parent scope, if one exists
 @property (nonatomic, weak) TMScope *parent;
 
+/// The children scopes, if any exist
+@property (nonatomic, strong, readonly) NSArray *children;
+
 /// Adds a new child scope with the given identifier.
 - (TMScope *)newChildScope;
 

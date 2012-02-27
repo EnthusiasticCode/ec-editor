@@ -49,8 +49,6 @@ static NSMutableDictionary *_extensionClasses;
 
 - (TMUnit *)codeUnitForCodeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
-    if (!rootScopeIdentifier)
-        rootScopeIdentifier = [TMSyntaxNode syntaxForCodeFile:codeFile].scopeName;
     id cacheKey = [self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier];
     TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
     if (!codeUnit)
@@ -68,7 +66,6 @@ static NSMutableDictionary *_extensionClasses;
 
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope
 {
-    ECASSERT(fileURL && [scope length]);
     return [NSString stringWithFormat:@"%@:%@", scope, [fileURL absoluteString]];
 }
 
