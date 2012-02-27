@@ -96,6 +96,7 @@
     NSDictionary *item = [self.filteredItems objectAtIndex:indexPath.row];
     RemoteDirectoryBrowserController *nextController = [[RemoteDirectoryBrowserController alloc] initWithConnection:self.connection url:self.URL];
     [nextController setURL:[self.URL URLByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+    nextController.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
     
     [self.navigationController pushViewController:nextController animated:YES];
 }

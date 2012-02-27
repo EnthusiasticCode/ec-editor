@@ -24,6 +24,10 @@
     void (^_completionHandler)(id<CKConnection>);
     __weak NSObject *_originalDelegate;
     
+    /// Dictionary of remote paths to the local URL to be uploaded there
+    NSMutableDictionary *_uploads;
+    
+    /// Dictionary of remote items to an NSNumber indicating the progress percent
     NSMutableDictionary *_transfersProgress;
     NSUInteger _transfersStarted;
     NSInteger _transfersCompleted;
@@ -38,6 +42,7 @@
     _remoteURL = nil;
     _localURL = nil;
     _completionHandler = nil;
+    _uploads = nil;
     _transfersProgress = nil;
     [super viewDidUnload];
 }
@@ -54,17 +59,68 @@
     }
     
     // TODO set icon
-    cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] objectForKey:cxFilenameKey];
+    if ([[self.conflictURLs objectAtIndex:indexPath.row] isKindOfClass:[NSDictionary class]])
+        cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] objectForKey:cxFilenameKey];
+    else
+        cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] lastPathComponent];
     
     return cell;
 }
 
+#pragma mark Connection Uploads
 
-#pragma mark - Connection Downloads
-
-- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
+- (void)connection:(id <CKConnection>)con checkedExistenceOfPath:(NSString *)path pathExists:(BOOL)exists error:(NSError *)error
 {
-    [_transfersProgress setObject:percent forKey:path];
+    // This method will be called by the upload request
+    NSURL *localURL = [_uploads objectForKey:path];
+    ECASSERT(localURL);
+        
+    if (!exists)
+    {
+        // Check for local file existance
+        BOOL isDirectory = NO;
+        if (![[NSFileManager defaultManager] fileExistsAtPath:localURL.path isDirectory:&isDirectory])
+            return; // TODO raise error?
+        
+        // Start the upload if no conflicts
+        if (isDirectory)
+            [con recursivelyUpload:localURL.path to:_remoteURL.path];
+        else
+            [con uploadFileAtURL:localURL toPath:_remoteURL.path posixPermissions:nil];
+    }
+    else
+    {
+        [self.conflictURLs addObject:path];
+        self.conflictTableView.hidden = NO;
+        self.toolbar.hidden = NO;
+        self.progressView.hidden = YES;
+        [self.conflictTableView reloadData];
+        [self.conflictTableView setEditing:YES animated:NO];
+        [self selectAllAction:nil];
+        self.navigationItem.title = @"Select files to replace";
+    }
+}
+
+- (void)connection:(id <CKPublishingConnection>)con uploadDidBegin:(NSString *)remotePath
+{
+    _transfersStarted++;
+    [_transfersProgress setObject:[NSNumber numberWithFloat:0] forKey:remotePath];
+}
+
+- (void)connection:(id <CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error
+{
+    // TODO manage error
+    _transfersCompleted++;
+    [_transfersProgress removeObjectForKey:remotePath];
+    if ([self isTransferFinished])
+    {
+        [self _callCompletionHandler];
+    }
+}
+
+- (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent
+{
+    [_transfersProgress setObject:percent forKey:remotePath];
     if (!self.progressView.isHidden)
     {
         __block float totalProgress = 0;
@@ -75,26 +131,21 @@
     }
 }
 
-//- (void)connection:(id <CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length
-//{
-//    
-//}
+#pragma mark - Connection Downloads
 
 - (void)connection:(id <CKConnection>)con downloadDidBegin:(NSString *)remotePath
 {
-    _transfersStarted++;
-    [_transfersProgress setObject:[NSNumber numberWithFloat:0] forKey:remotePath];
+    [self connection:con uploadDidBegin:remotePath];
 }
 
 - (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error
 {
-    // TODO manage error
-    _transfersCompleted++;
-    [_transfersProgress removeObjectForKey:remotePath];
-    if ([self isTransferFinished])
-    {
-        [self _callCompletionHandler];
-    }
+    [self connection:con uploadDidFinish:remotePath error:error];
+}
+
+- (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent
+{
+    [self connection:con upload:path progressedTo:percent];
 }
 
 #pragma mark - Connection Cancel Transfer
@@ -135,6 +186,36 @@
     [_connection cancelAll];
     if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
         [self _callCompletionHandler];
+}
+
+- (void)uploadItemURLs:(NSArray *)itemURLs withConnection:(id<CKConnection>)connection toURL:(NSURL *)remoteURL completionHandler:(void (^)(id<CKConnection>))completionHandler
+{
+    ECASSERT(connection != nil);
+    
+    // Reset progress
+    self.progressView.progress = 0;
+    _transfersStarted = 0;
+    _transfersCompleted = 0;
+    
+    // Change the connection's delegate
+    _originalDelegate = [connection delegate];
+    [connection setDelegate:self];
+    
+    _items = itemURLs;
+    _connection = connection;
+    _remoteURL = remoteURL;
+    _completionHandler = [completionHandler copy];
+    
+    _uploads = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
+    _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
+    
+    NSString *remotePath = [remoteURL path];
+    for (NSURL *item in itemURLs)
+    {
+        NSString *uploadPath = [remotePath stringByAppendingPathComponent:[item lastPathComponent]];
+        [_uploads setObject:item forKey:uploadPath];
+        [connection checkExistenceOfPath:uploadPath];
+    }
 }
 
 - (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(void (^)(id<CKConnection>))completionHandler
@@ -255,16 +336,37 @@
 
 - (void)replaceAction:(id)sender
 {
-    for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
+    if ([_uploads count])
     {
-        NSDictionary *item = [self.conflictURLs objectAtIndex:indexPath.row];
-        if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+        for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
         {
-            [_connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[_localURL path] overwrite:YES];
+            NSURL *localURL = [_uploads objectForKey:[self.conflictURLs objectAtIndex:indexPath.row]];
+            
+            // Check for file existance
+            BOOL isDirectory = NO;
+            if (![[NSFileManager defaultManager] fileExistsAtPath:localURL.path isDirectory:&isDirectory])
+                continue;
+            
+            // Start the upload if no conflicts
+            if (isDirectory)
+                [_connection recursivelyUpload:localURL.path to:_remoteURL.path];
+            else
+                [_connection uploadFileAtURL:localURL toPath:_remoteURL.path posixPermissions:nil];
         }
-        else
+    }
+    else
+    {
+        for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
         {
-            [_connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[_localURL path] overwrite:YES delegate:nil];
+            NSDictionary *item = [self.conflictURLs objectAtIndex:indexPath.row];
+            if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+            {
+                [_connection recursivelyDownload:[item objectForKey:cxFilenameKey] to:[_localURL path] overwrite:YES];
+            }
+            else
+            {
+                [_connection downloadFile:[item objectForKey:cxFilenameKey] toDirectory:[_localURL path] overwrite:YES delegate:nil];
+            }
         }
     }
     [self keepOriginalAction:sender];
@@ -283,7 +385,7 @@
         self.conflictTableView.hidden = YES;
         self.toolbar.hidden = YES;
         self.progressView.hidden = NO;
-        self.navigationItem.title = @"Downloading";
+        self.navigationItem.title = [_uploads count] ? @"Uploading" : @"Downloading";
     }
 }
 

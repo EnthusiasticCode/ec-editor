@@ -303,9 +303,9 @@
     [[challenge sender] cancelAuthenticationChallenge:challenge];
 }
 
-- (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-}
+//- (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+//{
+//}
 
 - (NSString *)connection:(id <CKConnection>)con passphraseForHost:(NSString *)host username:(NSString *)username publicKeyPath:(NSString *)publicKeyPath
 {
@@ -315,17 +315,16 @@
 
 #pragma mark Connection Directory Management
 
-- (void)connection:(id <CKPublishingConnection>)con didCreateDirectory:(NSString *)dirPath error:(NSError *)error
-{
-    
-}
+//- (void)connection:(id <CKPublishingConnection>)con didCreateDirectory:(NSString *)dirPath error:(NSError *)error
+//{
+//    
+//}
 
 #pragma mark Connection Editing Content
 
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    // TODO check cache first
-    // TODO check why this is called 3 times
+    // TODO check cache first but keep an eye that remotetransferscontroller also uses this
     [con directoryContents];
 }
 
@@ -353,47 +352,15 @@
     }
 }
 
-- (void)connection:(id <CKConnection>)con didRename:(NSString *)fromPath to:(NSString *)toPath error:(NSError *)error
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con didSetPermissionsForFile:(NSString *)path error:(NSError *)error
-{
-
-}
-
-#pragma mark Connection Uploads
-
-- (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath sentDataOfLength:(unsigned long long)length
-{
-    
-}
-
-- (void)connection:(id <CKPublishingConnection>)con uploadDidBegin:(NSString *)remotePath
-{
-    
-}
-
-- (void)connection:(id <CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con didCancelTransfer:(NSString *)remotePath
-{
-    
-}
-
-- (void)connection:(id <CKConnection>)con checkedExistenceOfPath:(NSString *)path pathExists:(BOOL)exists error:(NSError *)error
-{
-    
-}
+//- (void)connection:(id <CKConnection>)con didRename:(NSString *)fromPath to:(NSString *)toPath error:(NSError *)error
+//{
+//    
+//}
+//
+//- (void)connection:(id <CKConnection>)con didSetPermissionsForFile:(NSString *)path error:(NSError *)error
+//{
+//
+//}
 
 #pragma mark Connection Transcript
 
