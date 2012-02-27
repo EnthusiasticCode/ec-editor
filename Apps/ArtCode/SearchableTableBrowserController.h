@@ -10,6 +10,7 @@
 
 @interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate> {
 @protected
+    UINavigationController *_modalNavigationController;
     UIActionSheet *_toolEditDeleteActionSheet;
 }
 
@@ -47,5 +48,12 @@
 /// Shows a confirmation button to confirm the deletion.
 /// Subclasses should override the action sheed delegate to modify the behaviour of the confirmation button.
 - (IBAction)toolEditDeleteAction:(id)sender;
+
+#pragma mark Modal navigation
+
+/// Shows a modal navigation controller and adds a cancel button to the left of the given view controller. The cancel button will invoke modalNavigationControllerDismissAction:.
+- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController completion:(void(^)())completion;
+- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController;
+- (void)modalNavigationControllerDismissAction:(id)sender;
 
 @end

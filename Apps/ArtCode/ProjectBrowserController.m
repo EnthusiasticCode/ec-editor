@@ -323,7 +323,7 @@ static void *_directoryObservingContext;
             }];
             
             // Show bezel alert
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
     }
     else if (actionSheet == _toolItemExportActionSheet)
@@ -343,7 +343,7 @@ static void *_directoryObservingContext;
                 [project compressProjectToURL:zipURL];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
@@ -423,7 +423,7 @@ static void *_directoryObservingContext;
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     if (result == MFMailComposeResultSent)
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
 }
 

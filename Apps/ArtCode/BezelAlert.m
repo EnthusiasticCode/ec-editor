@@ -11,6 +11,9 @@
 
 #import "UIImage+BlockDrawing.h"
 
+NSString * const BezelAlertOkIcon = @"bezelAlert_okIcon";
+NSString * const BezelAlertCancelIcon = @"bezelAlert_cancelIcon";
+NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 
 @implementation BezelAlert {
     NSTimer *alertTimer;
@@ -314,6 +317,11 @@ extern CGRect UIKeyboardFrame;
     viewController.contentSizeForViewInPopover = viewFrame.size;
     
     [self addAlertMessageWithViewController:viewController displayImmediatly:immediate];
+}
+
+- (void)addAlertMessageWithText:(NSString *)text imageNamed:(NSString *)imageName displayImmediatly:(BOOL)immediate
+{
+    [self addAlertMessageWithText:text image:[UIImage imageNamed:imageName] displayImmediatly:immediate];
 }
 
 @end

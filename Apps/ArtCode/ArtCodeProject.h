@@ -100,11 +100,13 @@
 @interface ProjectRemote : NSObject
 
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic) NSInteger type;
+@property (nonatomic, strong) NSString *scheme;
 @property (nonatomic, strong) NSString *host;
 @property (nonatomic) NSInteger port;
-// TODO store identity in keychain
 @property (nonatomic, strong) NSString *user;
+/// The password will be stored in the keychain for the service: sheme://host:port and the gien user
 @property (nonatomic, strong) NSString *password;
+
+- (NSURL *)URL;
 
 @end

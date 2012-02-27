@@ -42,7 +42,19 @@
     // TODO add check for duplicate, validate fields
     ProjectRemote *remote = [ProjectRemote new];
     remote.name = self.remoteName.text;
-    remote.type = self.remoteType.selectedSegmentIndex;
+    switch (self.remoteType.selectedSegmentIndex) {
+        case 0:
+            remote.scheme = @"ftp";
+            break;
+#warning TODO set proper schemes
+        case 1:
+            remote.scheme = @"ssh";
+            break;
+            
+        case 2:
+            remote.scheme = @"webdav";
+            break;
+    }
     remote.host = self.remoteHost.text;
     remote.port = [self.remotePort.text integerValue];
     // TODO save password in keychain instead

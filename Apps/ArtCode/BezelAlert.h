@@ -16,6 +16,10 @@ enum {
 };
 typedef NSInteger BezelAlertAnimationType;
 
+extern NSString * const BezelAlertOkIcon;
+extern NSString * const BezelAlertCancelIcon;
+extern NSString * const BezelAlertForbiddenIcon;
+
 
 /// Shows a bezel styled alert for a given time.
 @interface BezelAlert : UIViewController
@@ -56,5 +60,6 @@ typedef NSInteger BezelAlertAnimationType;
 
 /// Conviniance method to add a message with an image and a text under it.
 - (void)addAlertMessageWithText:(NSString *)text image:(UIImage *)image displayImmediatly:(BOOL)immediate;
+- (void)addAlertMessageWithText:(NSString *)text imageNamed:(NSString *)imageName displayImmediatly:(BOOL)immediate;
 
 @end

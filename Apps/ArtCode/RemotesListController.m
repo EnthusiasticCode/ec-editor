@@ -44,6 +44,7 @@ static void *_currentProjectRemotesContext;
     if (context == &_currentProjectRemotesContext)
     {
         [self invalidateFilteredItems];
+        [self.tableView reloadData];
     }
     else
     {
@@ -55,18 +56,21 @@ static void *_currentProjectRemotesContext;
 
 - (NSArray *)filteredItems
 {
-    if ([self.searchBar.text length] == 0)
+    if (!_filteredRemotes)
     {
-        _filteredRemotes = self.artCodeTab.currentProject.remotes;
-        _filteredRemotesHitMasks = nil;
-    }
-    else
-    {
-        NSArray *hitMasks = nil;
-        _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectRemote *element) {
-            return element.name;
-        }];
-        _filteredRemotesHitMasks = hitMasks;
+        if ([self.searchBar.text length] == 0)
+        {
+            _filteredRemotes = self.artCodeTab.currentProject.remotes;
+            _filteredRemotesHitMasks = nil;
+        }
+        else
+        {
+            NSArray *hitMasks = nil;
+            _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectRemote *element) {
+                return element.name;
+            }];
+            _filteredRemotesHitMasks = hitMasks;
+        }
     }
     return _filteredRemotes;
 }
@@ -121,6 +125,8 @@ static void *_currentProjectRemotesContext;
     ProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
     cell.textLabel.text = remote.name;
     cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
+    cell.detailTextLabel.text = [[remote URL] absoluteString];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return cell;
 }
 
@@ -128,7 +134,10 @@ static void *_currentProjectRemotesContext;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    if (!self.isEditing)
+    {
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+    }
 }
 
 #pragma mark - Private methods

@@ -42,7 +42,6 @@ static void *_openQuicklyObservingContext;
     UIPopoverController *_toolNormalAddPopover;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
-    UINavigationController *_directoryBrowserNavigationController;
     
     NSMutableArray *_selectedURLs;
     
@@ -56,8 +55,6 @@ static void *_openQuicklyObservingContext;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
-- (void)_directoryBrowserShowWithRightBarItem:(UIBarButtonItem *)rightItem;
-- (void)_directoryBrowserDismissAction:(id)sender;
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
 
@@ -322,7 +319,7 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_cancelIcon"] displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -330,7 +327,10 @@ static void *_openQuicklyObservingContext;
     {
         if (buttonIndex == 0) // Copy
         {
-            [self _directoryBrowserShowWithRightBarItem:[[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)]];
+            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
+            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Duplicate
         {
@@ -348,7 +348,7 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -356,9 +356,28 @@ static void *_openQuicklyObservingContext;
     {
         if (buttonIndex == 0) // Move
         {
-            [self _directoryBrowserShowWithRightBarItem:[[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)]];
+            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
+            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
         }
-        else if (buttonIndex == 1) // iTunes
+        else if (buttonIndex == 1) // Upload
+        {
+            NSInteger remoteCount = [self.artCodeTab.currentProject.remotes count];
+            if (remoteCount == 0)
+            {
+                // No remotes message 
+                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No remotes present" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+            }
+            else if (remoteCount == 1)
+            {
+                // Show only remote in modal
+            }
+            else {
+                // TODO Show remote selection in modal
+            }
+        }
+        else if (buttonIndex == 2) // iTunes
         {
             self.loading = YES;
             NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
@@ -370,10 +389,10 @@ static void *_openQuicklyObservingContext;
                 }];
             }];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
-        else if (buttonIndex == 2) // Mail
+        else if (buttonIndex == 3) // Mail
         {
             MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
             mailComposer.mailComposeDelegate = self;
@@ -413,7 +432,7 @@ static void *_openQuicklyObservingContext;
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     if (result == MFMailComposeResultSent)
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -438,7 +457,7 @@ static void *_openQuicklyObservingContext;
 {
     if (!_toolEditItemExportActionSheet)
     {
-        _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+        _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Upload to remote connection", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
         _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
@@ -454,30 +473,10 @@ static void *_openQuicklyObservingContext;
     [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
-- (void)_directoryBrowserShowWithRightBarItem:(UIBarButtonItem *)rightItem
-{
-    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    directoryBrowser.navigationItem.leftBarButtonItem = cancelItem;
-    directoryBrowser.navigationItem.rightBarButtonItem = rightItem;
-    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-    _directoryBrowserNavigationController = [[UINavigationController alloc] initWithRootViewController:directoryBrowser];
-    _directoryBrowserNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:_directoryBrowserNavigationController animated:YES completion:nil];
-}
-
-- (void)_directoryBrowserDismissAction:(id)sender
-{
-    [self dismissViewControllerAnimated:YES completion:^{
-        _directoryBrowserNavigationController = nil;
-    }];
-}
-
 - (void)_directoryBrowserCopyAction:(id)sender
 {    
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_directoryBrowserNavigationController.topViewController;
+    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *moveURL = directoryBrowser.selectedURL;
     if (moveURL == nil)
         moveURL = directoryBrowser.URL;
@@ -488,19 +487,19 @@ static void *_openQuicklyObservingContext;
     conflictController.navigationItem.leftBarButtonItem = cancelItem;
     // Show conflict controller
     NSFileManager *fileManager = [NSFileManager new];
-    [_directoryBrowserNavigationController pushViewController:conflictController animated:YES];
+    [_modalNavigationController pushViewController:conflictController animated:YES];
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
         [self setEditing:NO animated:YES];
-        [self _directoryBrowserDismissAction:sender];
+        [self modalNavigationControllerDismissAction:sender];
     }];
 }
 
 - (void)_directoryBrowserMoveAction:(id)sender
 {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_directoryBrowserNavigationController.topViewController;
+    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *moveURL = directoryBrowser.selectedURL;
     if (moveURL == nil)
         moveURL = directoryBrowser.URL;
@@ -511,12 +510,12 @@ static void *_openQuicklyObservingContext;
     conflictController.navigationItem.leftBarButtonItem = cancelItem;
     // Show conflict controller
     NSFileManager *fileManager = [NSFileManager new];
-    [_directoryBrowserNavigationController pushViewController:conflictController animated:YES];
+    [_modalNavigationController pushViewController:conflictController animated:YES];
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
         [self setEditing:NO animated:YES];
-        [self _directoryBrowserDismissAction:sender];
+        [self modalNavigationControllerDismissAction:sender];
     }];
 }
 

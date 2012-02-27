@@ -12,6 +12,7 @@
 #import "ArchiveUtilities.h"
 #import "Cache.h"
 #import "UIColor+HexColor.h"
+#import "Keychain.h"
 
 static NSString * const ProjectPlistFileName = @".acproj";
 static NSString * const ProjectExtension = @".weakpkg";
@@ -498,7 +499,17 @@ static Cache *openProjects = nil;
 
 @implementation ProjectRemote
 
-@synthesize name, type, host, port, user, password;
+@synthesize name, scheme, host, port, user;
+
+- (void)setPassword:(NSString *)password
+{
+    [[Keychain sharedKeychain] setPassword:password forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:scheme host:host port:port] account:user];
+}
+
+- (NSString *)password
+{
+    return [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:scheme host:host port:port] account:user];
+}
 
 - (id)initWithPropertyDictionary:(NSDictionary *)dict
 {
@@ -506,17 +517,22 @@ static Cache *openProjects = nil;
     if (!self)
         return nil;
     name = [dict objectForKey:@"name"];
-    type = [[dict objectForKey:@"type"] integerValue];
+    scheme = [dict objectForKey:@"scheme"];
     host = [dict objectForKey:@"host"];
     port = [[dict objectForKey:@"port"] integerValue];
     user = [dict objectForKey:@"user"];
-    password = [dict objectForKey:@"password"];
     return self;
 }
 
 - (NSDictionary *)propertyDictionary
 {
-    return [NSDictionary dictionaryWithObjectsAndKeys:name, @"name", [NSString stringWithFormat:@"%d", type], @"type", host, @"host", [NSString stringWithFormat:@"%d", port], @"port", user, @"user", password, @"password", nil];
+    return [NSDictionary dictionaryWithObjectsAndKeys:name, @"name", scheme, @"scheme", host, @"host", [NSString stringWithFormat:@"%d", port], @"port", user, @"user", nil];
+}
+
+- (NSURL *)URL
+{
+    NSString *portString = port ? [NSString stringWithFormat:@":%d", port] : @"";
+    return [user length] ? [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@@%@%@", scheme, user, host, portString]] : [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@", scheme, host, portString]];
 }
 
 @end

@@ -12,6 +12,7 @@
 #import "ShapePopoverBackgroundView.h"
 #import "NSTimer+BlockTimer.h"
 #import "HighlightTableViewCell.h"
+#import "UIImage+AppStyle.h"
 
 
 @implementation SearchableTableBrowserController {
@@ -126,6 +127,7 @@
     _quickBrowsersPopover = nil;
     
     _toolEditDeleteActionSheet = nil;
+    _modalNavigationController = nil;
     
     [super viewDidUnload];
 }
@@ -286,6 +288,33 @@
         _toolEditDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+#pragma mark - Modal navigation
+
+- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController completion:(void(^)())completion
+{
+    // Prepare left cancel button item
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    viewController.navigationItem.leftBarButtonItem = cancelItem;
+    
+    // Prepare new modal navigation controller and present it
+    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:_modalNavigationController animated:YES completion:completion];
+}
+
+- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
+{
+    [self modalNavigationControllerPresentWithRootViewController:viewController completion:nil];
+}
+
+- (void)modalNavigationControllerDismissAction:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        _modalNavigationController = nil;
+    }];
 }
 
 @end

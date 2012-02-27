@@ -206,7 +206,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     if ([self.searchFilterMatches count] == 0)
     {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:[UIImage imageNamed:@"bezelAlert_nothingIcon"] displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
         return;
     }
     
@@ -233,7 +233,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 {
     if ([self.searchFilterMatches count] == 0)
     {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" image:[UIImage imageNamed:@"bezelAlert_nothingIcon"] displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
         return;
     }
     
@@ -260,7 +260,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     
     [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
     
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", [matches count]] image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", [matches count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     
     _isReplacing = NO;
     [self _applyFindFilterAndFlash:NO];

@@ -93,7 +93,7 @@
     [project flush];
     
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     [self.artCodeTab pushURL:project.URL];
 }
 

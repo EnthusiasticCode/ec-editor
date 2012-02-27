@@ -83,6 +83,6 @@
         return;
     }
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" image:[UIImage imageNamed:@"bezelAlert_okIcon"] displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
 }
 @end

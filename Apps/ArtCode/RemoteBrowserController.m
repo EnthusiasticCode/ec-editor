@@ -31,8 +31,6 @@
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
-- (void)_modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController;
-- (void)_modalNavigationControllerDismissAction:(id)sender;
 - (void)_modalNavigationControllerDownloadAction:(id)sender;
 
 @end
@@ -48,8 +46,6 @@
     NSURLCredential *_loginCredential;
     /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
     BOOL _keychainUsed;
-    
-    UINavigationController *_modalNavigationController;
 }
 
 @synthesize loginLabel = _loginLabel;
@@ -135,7 +131,6 @@
     [self setLoginUser:nil];
     [self setLoginPassword:nil];
     [self setLoginAlwaysAskPassword:nil];
-    _modalNavigationController = nil;
     _selectedItems = nil;
     [super viewDidUnload];
 }
@@ -231,7 +226,7 @@
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     if (_keychainUsed)
     {
-        self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[NSString stringWithFormat:@"%@://%@", self.URL.scheme, self.URL.host] account:self.URL.user];
+        self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.URL.user];
         self.loginAlwaysAskPassword.on = NO;
     }
     if (self.URL.user)
@@ -262,7 +257,7 @@
     // Check for keychain password
     if (!_loginCredential && !_keychainUsed && self.URL.user)
     {
-        NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[NSString stringWithFormat:@"%@://%@", self.URL.scheme, self.URL.host] account:self.URL.user];
+        NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.URL.user];
         if (password)
         {
             _loginCredential = [NSURLCredential credentialWithUser:self.URL.user password:password persistence:NSURLCredentialPersistenceForSession];
@@ -448,7 +443,7 @@
             return;
         RemoteTransferController *transferController = [RemoteTransferController new];
         transferController.navigationItem.rightBarButtonItem = nil;
-        [self _modalNavigationControllerPresentWithRootViewController:transferController];
+        [self modalNavigationControllerPresentWithRootViewController:transferController];
         [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection) {
             self.loading = YES;
             [self setEditing:NO animated:YES];
@@ -497,22 +492,14 @@
     DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
     directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-    [self _modalNavigationControllerPresentWithRootViewController:directoryBrowser];
+    [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
 }
 
 #pragma mark Modal Navigation Controller for Progress
 
-- (void)_modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
+- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
 {
-    // Prepare left cancel button item
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_modalNavigationControllerDismissAction:)];
-    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    viewController.navigationItem.leftBarButtonItem = cancelItem;
-
-    // Prepare new modal navigation controller and present it
-    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:_modalNavigationController animated:YES completion:^{
+    [super modalNavigationControllerPresentWithRootViewController:viewController completion:^{
         // In case the transfer finishes before the presentation animation, dismiss immediatly
         if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] 
             && [(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
@@ -524,7 +511,7 @@
     }];
 }
 
-- (void)_modalNavigationControllerDismissAction:(id)sender
+- (void)modalNavigationControllerDismissAction:(id)sender
 {
     if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
     {
