@@ -59,7 +59,8 @@
     remote.port = [self.remotePort.text integerValue];
     // TODO save password in keychain instead
     remote.user = self.remoteUser.text;
-    remote.password = self.remotePassword.text;
+    if ([self.remotePassword.text length])
+        remote.password = self.remotePassword.text;
     [self.artCodeTab.currentProject addRemote:remote];
     [self.presentingPopoverController dismissPopoverAnimated:YES];
 }

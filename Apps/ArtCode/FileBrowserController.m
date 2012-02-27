@@ -16,6 +16,8 @@
 #import "DirectoryBrowserController.h"
 #import "MoveConflictController.h"
 
+#import "RemoteDirectoryBrowserController.h"
+
 #import "NSString+PluralFormat.h"
 #import "NSURL+Utilities.h"
 #import "BezelAlert.h"
@@ -372,6 +374,9 @@ static void *_openQuicklyObservingContext;
             else if (remoteCount == 1)
             {
                 // Show only remote in modal
+                RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
+                uploadController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+                [self modalNavigationControllerPresentWithRootViewController:uploadController];
             }
             else {
                 // TODO Show remote selection in modal
@@ -457,7 +462,7 @@ static void *_openQuicklyObservingContext;
 {
     if (!_toolEditItemExportActionSheet)
     {
-        _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Upload to remote connection", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+        _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Upload to remote", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
         _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];

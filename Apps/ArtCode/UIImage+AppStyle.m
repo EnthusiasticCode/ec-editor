@@ -709,4 +709,12 @@
     }
 }
 
++ (UIImage *)styleBackButtonBackgroundImage
+{
+    static UIImage *_styleBackButtonBackgroundImage = nil;
+    if (!_styleBackButtonBackgroundImage)
+        _styleBackButtonBackgroundImage = [[UIImage imageNamed:@"topBar_BackButton"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 20, 0, 10)];
+    return _styleBackButtonBackgroundImage;
+}
+
 @end

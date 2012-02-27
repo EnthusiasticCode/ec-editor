@@ -36,8 +36,6 @@
 @end
 
 @implementation RemoteBrowserController {
-    id<CKPublishingConnection> _connection;
-
     /// Array of unfiltered items in the current directory
     NSMutableArray *_directoryItems;
     NSArray *_filteredItems;
@@ -53,8 +51,19 @@
 @synthesize loginPassword = _loginPassword;
 @synthesize loginAlwaysAskPassword = _loginAlwaysAskPassword;
 
+- (id)initWithConnection:(id<CKConnection>)con url:(NSURL *)conUrl
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _connection = con;
+    _URL = conUrl;
+    return self;
+}
+
 #pragma mark - Properties
 
+@synthesize connection = _connection;
 @synthesize _selectedItems;
 
 - (NSMutableArray *)_selectedItems
@@ -64,14 +73,14 @@
     return _selectedItems;
 }
 
-@synthesize URL;
+@synthesize URL = _URL;
 
 - (void)setURL:(NSURL *)value
 {
-    if (value == URL)
+    if (value == _URL)
         return;
     [self willChangeValueForKey:@"URL"];
-    if (_connection && [value.host isEqualToString:URL.host])
+    if (_connection && [value.host isEqualToString:_URL.host])
     {
         // If already connected to the host, just change directory
         [self _changeToDirectory:value.path];
@@ -85,7 +94,7 @@
     {
         [self _closeConnection];
     }
-    URL = value;
+    _URL = value;
     [self didChangeValueForKey:@"URL"];
 }
 
@@ -204,7 +213,8 @@
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self._selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    if (self.isEditing)
+        [self._selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
     [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }
 
@@ -278,6 +288,8 @@
         [self setLoginUser:nil];
         [self setLoginPassword:nil];
         [self setLoginAlwaysAskPassword:nil];
+        // Set directory
+        [self _changeToDirectory:self.URL.path];
         return;
     }
     
@@ -313,6 +325,7 @@
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
     // TODO check cache first
+    // TODO check why this is called 3 times
     [con directoryContents];
 }
 
@@ -384,10 +397,10 @@
 
 #pragma mark Connection Transcript
 
-- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
-{
-    NSLog(@"transcript: %@", string);
-}
+//- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
+//{
+//    NSLog(@"transcript: %@", string);
+//}
 
 #pragma mark - Login Screen
 
@@ -396,12 +409,11 @@
     self.loading = YES;
     if (!self.loginAlwaysAskPassword.isOn)
     {
-        [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[NSString stringWithFormat:@"%@://%@", self.URL.scheme, self.URL.host] account:self.loginUser.text];
+        [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.loginUser.text];
     }
     // Create a temporary login credential and try to connect again
     _loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
     [self _connectToURL:self.URL];
-    [self _changeToDirectory:self.URL.path];
 }
 
 #pragma mark - Action Sheed Delegate
@@ -431,22 +443,26 @@
 
 - (void)_connectToURL:(NSURL *)url
 {
+    ECASSERT(!_connection && "This should only be called once.");
     self.loading = YES;
     _keychainUsed = NO;
     [self _closeConnection];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    _connection = [[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
+    _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
     [_connection setDelegate:self];
     [_connection connect]; 
 }
 
 - (void)_changeToDirectory:(NSString *)directory
 {
+    if (![_connection isConnected])
+        return;
     self.loading = YES;
     if (!_directoryItems)
         _directoryItems = [NSMutableArray new];
     else
         [_directoryItems removeAllObjects];
+    [_connection setDelegate:self];
     [_connection changeToDirectory:[directory length] ? directory : @"/"];
 }
 

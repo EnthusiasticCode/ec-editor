@@ -69,4 +69,7 @@
 /// Image for a normal button in the application for the given state.
 + (UIImage *)styleNormalButtonBackgroundImageForControlState:(UIControlState)state;
 
+/// Image for a back button.
++ (UIImage *)styleBackButtonBackgroundImage;
+
 @end

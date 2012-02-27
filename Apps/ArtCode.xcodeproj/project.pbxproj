@@ -315,6 +315,7 @@
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
+		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
 		CD8A677C13D0BB000037D742 /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8A677B13D0BB000037D742 /* ipad_icon.png */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
@@ -787,6 +788,8 @@
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
+		CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = RemoteDirectoryBrowserController.h; sourceTree = "<group>"; };
+		CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteDirectoryBrowserController.m; sourceTree = "<group>"; };
 		CD8A677B13D0BB000037D742 /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
@@ -1389,20 +1392,22 @@
 				CD7D2B4613C0D55700B889EE /* FileBrowserController.h */,
 				CD7D2B4713C0D55700B889EE /* FileBrowserController.m */,
 				CDB5DB6214C6F532003DFD1F /* New file */,
-				CD69C8FE14F1638900FCC987 /* Move sheet */,
+				CD69C8FE14F1638900FCC987 /* Export sheets */,
 			);
 			name = "File Browser";
 			sourceTree = "<group>";
 		};
-		CD69C8FE14F1638900FCC987 /* Move sheet */ = {
+		CD69C8FE14F1638900FCC987 /* Export sheets */ = {
 			isa = PBXGroup;
 			children = (
 				CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */,
 				CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
 				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
+				CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */,
+				CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */,
 			);
-			name = "Move sheet";
+			name = "Export sheets";
 			sourceTree = "<group>";
 		};
 		CD69C8FF14F163C100FCC987 /* Remotes Browsers */ = {
@@ -2265,6 +2270,7 @@
 				CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */,
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
 				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
+				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
