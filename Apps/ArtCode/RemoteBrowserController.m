@@ -50,7 +50,6 @@
     BOOL _keychainUsed;
     
     UINavigationController *_modalNavigationController;
-    UIActionSheet *_toolEditExportActionSheet;
 }
 
 @synthesize loginLabel = _loginLabel;
@@ -138,7 +137,6 @@
     [self setLoginAlwaysAskPassword:nil];
     _modalNavigationController = nil;
     _selectedItems = nil;
-    _toolEditExportActionSheet = nil;
     [super viewDidUnload];
 }
 
@@ -460,21 +458,6 @@
             }];
         }];
     }
-    else if (actionSheet == _toolEditExportActionSheet)
-    {
-        if (buttonIndex == 0) // Download
-        {
-            // Show directory browser presenter to select where to download
-            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
-            directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-            [self _modalNavigationControllerPresentWithRootViewController:directoryBrowser];
-        }
-        else if (buttonIndex == 1) // Move
-        {
-            // TODO
-        }
-    }
 }
 
 #pragma mark - Private methods
@@ -510,11 +493,11 @@
 
 - (void)_toolEditExportAction:(id)sender
 {
-    if (!_toolEditExportActionSheet)
-    {
-        _toolEditExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Download selected", @"Move selected", nil];
-    }
-    [_toolEditExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+    // Show directory browser presenter to select where to download
+    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
+    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    [self _modalNavigationControllerPresentWithRootViewController:directoryBrowser];
 }
 
 #pragma mark Modal Navigation Controller for Progress
