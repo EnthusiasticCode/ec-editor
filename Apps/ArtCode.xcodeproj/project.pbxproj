@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
+		B7148DBB14FAB9040064FA1C /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = B7148DBA14FAB9040064FA1C /* NSIndexSet+StringRanges.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */ = {isa = PBXBuildFile; fileRef = B728597314E714C100E3DE65 /* CStringCachingString.m */; };
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
@@ -74,7 +75,6 @@
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = B78CAEA614F24A61006BD660 /* WeakArray.m */; };
-		B78CAF2914F5B853006BD660 /* RangeSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B78CAF2814F5B852006BD660 /* RangeSet.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -367,6 +367,8 @@
 /* Begin PBXFileReference section */
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
+		B7148DB914FAB9040064FA1C /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
+		B7148DBA14FAB9040064FA1C /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
 		B71A1DE51435112700672F65 /* NewFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
@@ -439,8 +441,6 @@
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
 		B78CAEA514F24A61006BD660 /* WeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakArray.h; sourceTree = "<group>"; };
 		B78CAEA614F24A61006BD660 /* WeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakArray.m; sourceTree = "<group>"; };
-		B78CAF2714F5B852006BD660 /* RangeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeSet.h; sourceTree = "<group>"; };
-		B78CAF2814F5B852006BD660 /* RangeSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RangeSet.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1103,6 +1103,8 @@
 				CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */,
 				B7FB799C14D602C60080A714 /* NSTimer+BlockTimer.h */,
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
+				B7148DB914FAB9040064FA1C /* NSIndexSet+StringRanges.h */,
+				B7148DBA14FAB9040064FA1C /* NSIndexSet+StringRanges.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
 				B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */,
@@ -1157,8 +1159,6 @@
 				B7FB79C414D604FA0080A714 /* Cache.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
-				B78CAF2714F5B852006BD660 /* RangeSet.h */,
-				B78CAF2814F5B852006BD660 /* RangeSet.m */,
 				B728597214E714C100E3DE65 /* CStringCachingString.h */,
 				B728597314E714C100E3DE65 /* CStringCachingString.m */,
 			);
@@ -2144,7 +2144,7 @@
 				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
 				CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */,
 				B78CAEA714F24A61006BD660 /* WeakArray.m in Sources */,
-				B78CAF2914F5B853006BD660 /* RangeSet.m in Sources */,
+				B7148DBB14FAB9040064FA1C /* NSIndexSet+StringRanges.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

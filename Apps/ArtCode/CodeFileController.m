@@ -642,7 +642,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range
 {
-    [self.codeView updateTextFromStringRange:range toStringRange:range];
+#warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit piles up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
+//    [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -783,27 +784,27 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     // Apply debounce to selection change
     [_selectionChangeDebounceTimer invalidate];
-    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-        // Retrieve the current scope
-        [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
-            // Set current symbol in title
-            TMSymbol *currentSymbol = nil;
-            for (TMSymbol *symbol in [self.codeUnit symbolList])
-            {
-                if (symbol.range.location > scope.location)
-                    break;
-                currentSymbol = symbol;
-            }
-            if (currentSymbol != _currentSymbol)
-            {
-                _currentSymbol = currentSymbol;
-                [self.singleTabController updateDefaultToolbarTitle];
-            }
-            // Change accessory keyboard
-            [self _keyboardAccessoryItemSetupWithScope:scope];
-
-        }];
-    } repeats:NO];
+//    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+//        // Retrieve the current scope
+//        [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
+//            // Set current symbol in title
+//            TMSymbol *currentSymbol = nil;
+//            for (TMSymbol *symbol in [self.codeUnit symbolList])
+//            {
+//                if (symbol.range.location > scope.location)
+//                    break;
+//                currentSymbol = symbol;
+//            }
+//            if (currentSymbol != _currentSymbol)
+//            {
+//                _currentSymbol = currentSymbol;
+//                [self.singleTabController updateDefaultToolbarTitle];
+//            }
+//            // Change accessory keyboard
+//            [self _keyboardAccessoryItemSetupWithScope:scope];
+//
+//        }];
+//    } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods

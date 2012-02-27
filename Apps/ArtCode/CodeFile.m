@@ -490,6 +490,7 @@ while (0)
         }
         NSDictionary *nextChange = [_pendingChanges objectAtIndex:0];
         [_pendingChanges removeObjectAtIndex:0];
+        OSSpinLockUnlock(&_pendingChangesLock);
         id changeType = [nextChange objectForKey:_changeTypeKey];
         ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeRemoveAll));
         OSSpinLockLock(&_contentsLock);
@@ -501,7 +502,6 @@ while (0)
         else if (changeType == _changeTypeAttributeRemoveAll)
             [_contents setAttributes:self.theme.commonAttributes range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
         OSSpinLockUnlock(&_contentsLock);
-        OSSpinLockUnlock(&_pendingChangesLock);
         for (id<CodeFilePresenter> presenter in [self presenters])
             if ([presenter respondsToSelector:@selector(codeFile:didChangeAttributesInRange:)])
                 [presenter codeFile:self didChangeAttributesInRange:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
