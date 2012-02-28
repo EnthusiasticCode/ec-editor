@@ -41,6 +41,7 @@
 #pragma mark - Attributed string content writing methods
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
+- (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAllAttributesInRange:(NSRange)range;
 
 #pragma mark - Find and replace functionality

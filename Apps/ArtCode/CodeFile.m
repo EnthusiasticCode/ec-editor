@@ -21,6 +21,7 @@ static WeakDictionary *_codeFiles;
 static NSString * const _changeTypeKey = @"CodeFileChangeTypeKey";
 static NSString * const _changeTypeAttributeAdd = @"CodeFileChangeTypeAttributeAdd";
 static NSString * const _changeTypeAttributeRemove = @"CodeFileChangeTypeAttributeRemove";
+static NSString * const _changeTypeAttributeSet = @"CodeFileChangeTypeAttributeSet";
 static NSString * const _changeTypeAttributeRemoveAll = @"CodeFileChangeTypeAttributeRemoveAll";
 static NSString * const _changeRangeKey = @"CodeFileChangeRangeKey";
 static NSString * const _changeAttributesKey= @"CodeFileChangeAttributesKey";
@@ -449,6 +450,16 @@ while (0)
     CONTENT_MODIFIER_EXPECTED_GENERATION([NSDictionary dictionaryWithObjectsAndKeys:attributeNames, _changeAttributeNamesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemove, _changeTypeKey, nil]);
 }
 
+- (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range
+{
+    CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:attributes, _changeAttributesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeSet, _changeTypeKey, nil]);
+}
+
+- (BOOL)setAttributes:(NSDictionary *)attributes range:(NSRange)range expectedGeneration:(CodeFileGeneration)expectedGeneration
+{
+    CONTENT_MODIFIER_EXPECTED_GENERATION([NSDictionary dictionaryWithObjectsAndKeys:attributes, _changeAttributesKey, [NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeSet, _changeTypeKey, nil]);
+}
+
 - (void)removeAllAttributesInRange:(NSRange)range
 {
     CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemoveAll, _changeTypeKey, nil]);
@@ -480,7 +491,6 @@ while (0)
     ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (!_hasPendingChanges)
         return;
-#warning TODO this loops forever if another thread is adding changes faster than we process them, maybe put a timeout and leave the remaining changes for the next batch?
     for (;;)
     {
         if (![_pendingChanges count])
@@ -492,19 +502,35 @@ while (0)
         [_pendingChanges removeObjectAtIndex:0];
         OSSpinLockUnlock(&_pendingChangesLock);
         id changeType = [nextChange objectForKey:_changeTypeKey];
-        ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeRemoveAll));
+        ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeSet|| changeType == _changeTypeAttributeRemoveAll));
+        ECASSERT([nextChange objectForKey:_changeRangeKey]);
+        NSRange range = [[nextChange objectForKey:_changeRangeKey] rangeValue];
         OSSpinLockLock(&_contentsLock);
         if (changeType == _changeTypeAttributeAdd)
-            [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+        {
+            ECASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
+        }
         else if (changeType == _changeTypeAttributeRemove)
+        {
+            ECASSERT([[nextChange objectForKey:_changeAttributeNamesKey] count]);
             for (NSString *attributeName in [nextChange objectForKey:_changeAttributeNamesKey])
-                [_contents removeAttribute:attributeName range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+                [_contents removeAttribute:attributeName range:range];
+        }
+        else if (changeType == _changeTypeAttributeSet)
+        {
+            ECASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            [_contents setAttributes:self.theme.commonAttributes range:range];
+            [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
+        }
         else if (changeType == _changeTypeAttributeRemoveAll)
-            [_contents setAttributes:self.theme.commonAttributes range:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+        {
+            [_contents setAttributes:self.theme.commonAttributes range:range];
+        }
         OSSpinLockUnlock(&_contentsLock);
         for (id<CodeFilePresenter> presenter in [self presenters])
             if ([presenter respondsToSelector:@selector(codeFile:didChangeAttributesInRange:)])
-                [presenter codeFile:self didChangeAttributesInRange:[[nextChange objectForKey:_changeRangeKey] rangeValue]];
+                [presenter codeFile:self didChangeAttributesInRange:range];
         OSSpinLockLock(&_pendingChangesLock);
     }
 }
