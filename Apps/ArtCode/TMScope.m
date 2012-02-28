@@ -14,7 +14,6 @@ NSMutableDictionary *systemScopesScoreCache;
 @implementation TMScope {
     /// The string range of the scope's identifier in it's qualified identifier.
     NSRange _identifierRange;
-    NSMutableArray *_children;
 }
 
 #pragma mark - Class methods
