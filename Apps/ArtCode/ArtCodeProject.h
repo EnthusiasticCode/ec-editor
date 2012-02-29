@@ -86,6 +86,6 @@
 @property (nonatomic, strong) NSString *note;
 
 /// Returns the line in the file URL 
-- (NSUInteger)line;
+@property (nonatomic, readonly) NSInteger line;
 
 @end

@@ -368,16 +368,18 @@ static Cache *openProjects = nil;
 
 @implementation ProjectBookmark
 
-@synthesize bookmarkPath, project, note;
+@synthesize bookmarkPath, project, note, line;
 
 - (NSURL *)URL
 {
     return [NSURL URLWithString:bookmarkPath relativeToURL:project.URL];
 }
 
-- (NSUInteger)line
+- (NSInteger)line
 {
-    return [[[self.URL fragmentDictionary] objectForKey:@"line"] integerValue];
+    if (line < 0)
+        line = [[[self.URL fragmentDictionary] objectForKey:@"line"] integerValue];
+    return line;
 }
 
 #pragma mark Private methods
@@ -393,6 +395,8 @@ static Cache *openProjects = nil;
     project = aProject;
     bookmarkPath = [[aUrl absoluteString] substringFromIndex:[[aProject.URL absoluteString] length]];
     note = aNote;
+    line = -1;
+    
     return self;
 }
 
@@ -405,6 +409,7 @@ static Cache *openProjects = nil;
     project = aProject;
     bookmarkPath = [dictionary objectForKey:@"URL"];
     note = [dictionary objectForKey:@"note"];
+    line = -1;
     
     return self;
 }
