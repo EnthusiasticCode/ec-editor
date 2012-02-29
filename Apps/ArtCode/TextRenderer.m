@@ -1269,7 +1269,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             segmentRangeEnd = NSMaxRange(segmentRange);
             affectedSegmentHeight = segment.renderSegmentHeight;
             
-            // Skip untouched segments
+            // Skip untouched segmentse
+#warning TODO NIK this assert fails if you insert a character at 0
             ECASSERT(segmentRange.location < fromRangeEnd);
             if (segmentRangeEnd >= fromRange.location)
             {
