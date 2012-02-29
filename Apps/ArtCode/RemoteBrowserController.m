@@ -394,7 +394,7 @@
             return;
         RemoteTransferController *transferController = [RemoteTransferController new];
         transferController.navigationItem.rightBarButtonItem = nil;
-        [self modalNavigationControllerPresentWithRootViewController:transferController];
+        [self modalNavigationControllerPresentViewController:transferController];
         [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection) {
             self.loading = YES;
             [self setEditing:NO animated:YES];
@@ -447,14 +447,14 @@
     DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
     directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-    [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
+    [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 
 #pragma mark Modal Navigation Controller for Progress
 
-- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
+- (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController
 {
-    [super modalNavigationControllerPresentWithRootViewController:viewController completion:^{
+    [super modalNavigationControllerPresentViewController:viewController completion:^{
         // In case the transfer finishes before the presentation animation, dismiss immediatly
         if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] 
             && [(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
@@ -474,11 +474,9 @@
     }
     else
     {
-        if (self.tableView.indexPathForSelectedRow)
+        if (!self.isEditing && self.tableView.indexPathForSelectedRow)
             [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
-        [self dismissViewControllerAnimated:YES completion:^{
-            _modalNavigationController = nil;
-        }];
+        [super modalNavigationControllerDismissAction:sender];
     }
 }
 
@@ -487,16 +485,14 @@
     // Retrieve URL to move to
     DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *moveURL = directoryBrowser.selectedURL;
-    if (moveURL == nil)
-        moveURL = directoryBrowser.URL;
     
     // Show conflit resolution controller
     RemoteTransferController *transferController = [RemoteTransferController new];
-    // TODO cancel item should also call cancel for the transferController. could be done checking if the nav controller child controller is the remotetransfer and isfinished
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
+    
     // Resolve conflicts and start downloading
     [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection) {
         [self setEditing:NO animated:YES];

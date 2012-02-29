@@ -17,6 +17,7 @@
 #import "MoveConflictController.h"
 
 #import "RemoteDirectoryBrowserController.h"
+#import "RemoteTransferController.h"
 
 #import "NSString+PluralFormat.h"
 #import "NSURL+Utilities.h"
@@ -59,6 +60,7 @@ static void *_openQuicklyObservingContext;
 
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
+- (void)_remoteDirectoryBrowserUploadAction:(id)sender;
 
 @end
 
@@ -336,7 +338,7 @@ static void *_openQuicklyObservingContext;
             DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
             directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-            [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
+            [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Duplicate
         {
@@ -365,7 +367,7 @@ static void *_openQuicklyObservingContext;
             DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
             directoryBrowser.URL = self.artCodeTab.currentProject.URL;
-            [self modalNavigationControllerPresentWithRootViewController:directoryBrowser];
+            [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Upload
         {
@@ -380,7 +382,8 @@ static void *_openQuicklyObservingContext;
                 // Show only remote in modal
                 RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
                 uploadController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
-                [self modalNavigationControllerPresentWithRootViewController:uploadController];
+                uploadController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Upload" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)];
+                [self modalNavigationControllerPresentViewController:uploadController];
             }
             else {
                 // TODO Show remote selection in modal
@@ -482,6 +485,21 @@ static void *_openQuicklyObservingContext;
     [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
+#pragma mark Modal actions
+
+- (void)modalNavigationControllerDismissAction:(id)sender
+{
+    if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
+    {
+        [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
+    }
+    else
+    {
+        [self setEditing:NO animated:YES];
+        [super modalNavigationControllerDismissAction:sender];
+    }
+}
+
 - (void)_directoryBrowserCopyAction:(id)sender
 {    
     // Retrieve URL to move to
@@ -510,19 +528,33 @@ static void *_openQuicklyObservingContext;
     // Retrieve URL to move to
     DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *moveURL = directoryBrowser.selectedURL;
-    if (moveURL == nil)
-        moveURL = directoryBrowser.URL;
+    
     // Initialize conflict controller
     MoveConflictController *conflictController = [[MoveConflictController alloc] init];
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    conflictController.navigationItem.leftBarButtonItem = cancelItem;
+    [self modalNavigationControllerPresentViewController:conflictController];
+    
     // Show conflict controller
     NSFileManager *fileManager = [NSFileManager new];
-    [_modalNavigationController pushViewController:conflictController animated:YES];
     [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
         [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
     } completion:^{
+        [self setEditing:NO animated:YES];
+        [self modalNavigationControllerDismissAction:sender];
+    }];
+}
+
+- (void)_remoteDirectoryBrowserUploadAction:(id)sender
+{
+    // Retrieve remote URL to upload to
+    RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
+    NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
+    
+    // Initialize transfer/conflict controller
+    RemoteTransferController *remoteTransferController = [RemoteTransferController new];
+    [self modalNavigationControllerPresentViewController:remoteTransferController];
+    
+    // Start upload
+    [remoteTransferController uploadItemURLs:[_selectedURLs copy] withConnection:remoteDirectoryBrowser.connection toURL:remoteURL completionHandler:^(id<CKConnection> connection) {
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];

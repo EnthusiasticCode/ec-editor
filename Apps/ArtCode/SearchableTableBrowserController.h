@@ -52,8 +52,8 @@
 #pragma mark Modal navigation
 
 /// Shows a modal navigation controller and adds a cancel button to the left of the given view controller. The cancel button will invoke modalNavigationControllerDismissAction:.
-- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController completion:(void(^)())completion;
-- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController;
+- (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController completion:(void(^)())completion;
+- (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController;
 - (void)modalNavigationControllerDismissAction:(id)sender;
 
 @end

@@ -57,8 +57,8 @@
 {
     NSIndexPath *selectedIndexPath = self.tableView.indexPathForSelectedRow;
     if (selectedIndexPath == nil)
-        return nil;
-    return [[_directoryItemsList objectAtIndex:[selectedIndexPath indexAtPosition:1]] URL];
+        return self.URL;
+    return [[_directoryItemsList objectAtIndex:selectedIndexPath.row] URL];
 }
 
 #pragma mark - View lifecycle

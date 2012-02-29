@@ -292,7 +292,7 @@
 
 #pragma mark - Modal navigation
 
-- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController completion:(void(^)())completion
+- (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController completion:(void(^)())completion
 {
     // Prepare left cancel button item
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
@@ -300,14 +300,23 @@
     viewController.navigationItem.leftBarButtonItem = cancelItem;
     
     // Prepare new modal navigation controller and present it
-    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:_modalNavigationController animated:YES completion:completion];
+    if (!_modalNavigationController)
+    {
+        _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+        _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentViewController:_modalNavigationController animated:YES completion:completion];
+    }
+    else
+    {
+        [_modalNavigationController pushViewController:viewController animated:YES];
+        if (completion)
+            completion();
+    }
 }
 
-- (void)modalNavigationControllerPresentWithRootViewController:(UIViewController *)viewController
+- (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController
 {
-    [self modalNavigationControllerPresentWithRootViewController:viewController completion:nil];
+    [self modalNavigationControllerPresentViewController:viewController completion:nil];
 }
 
 - (void)modalNavigationControllerDismissAction:(id)sender
