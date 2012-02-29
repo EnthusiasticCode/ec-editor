@@ -37,9 +37,12 @@
 
 @implementation RemoteBrowserController {
     /// Array of unfiltered items in the current directory
-    NSMutableArray *_directoryItems;
+    NSArray *_directoryItems;
     NSArray *_filteredItems;
     NSArray *_filteredItemsHitMasks;
+    
+    /// Caches path to array of directory contents.
+    NSMutableDictionary *_directoryContentCache;
     
     NSURLCredential *_loginCredential;
     /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
@@ -131,7 +134,7 @@
     
     self.searchBar.placeholder = @"Filter files in this remote folder";
     
-    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(refreshAction:)]];
     
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
 }
@@ -325,30 +328,37 @@
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
     // TODO check cache first but keep an eye that remotetransferscontroller also uses this
+    if ((_directoryItems = [_directoryContentCache objectForKey:dirPath]))
+    {
+        self.loading = NO;
+        [self invalidateFilteredItems];
+        [self.tableView reloadData];
+        // Enable non-editing buttons
+        for (UIBarButtonItem *barItem in self.toolNormalItems)
+        {
+            [(UIButton *)barItem.customView setEnabled:YES];
+        }
+        return;
+    }
     [con directoryContents];
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
+    // Cache results
+    if (!_directoryContentCache)
+        _directoryContentCache = [NSMutableDictionary new];
+    [_directoryContentCache setObject:contents forKey:dirPath];
+    
     self.loading = NO;
-    _directoryItems = [contents mutableCopy];
+    _directoryItems = contents;
     [self invalidateFilteredItems];
     [self.tableView reloadData];
+    
     // Enable non-editing buttons
     for (UIBarButtonItem *barItem in self.toolNormalItems)
     {
         [(UIButton *)barItem.customView setEnabled:YES];
-    }
-}
-
-- (void)connection:(id <CKConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath moreComing:(BOOL)flag
-{
-    [_directoryItems addObjectsFromArray:contents];
-    if (!flag)
-    {
-        self.loading = NO;
-        [self invalidateFilteredItems];
-        [self.tableView reloadData];
     }
 }
 
@@ -425,10 +435,6 @@
     if (![_connection isConnected])
         return;
     self.loading = YES;
-    if (!_directoryItems)
-        _directoryItems = [NSMutableArray new];
-    else
-        [_directoryItems removeAllObjects];
     [_connection setDelegate:self];
     [_connection changeToDirectory:[directory length] ? directory : @"/"];
 }
@@ -440,6 +446,12 @@
 }
 
 #pragma mark - Tool actions
+
+- (void)refreshAction:(id)sender
+{
+    self.loading = YES;
+    [_connection directoryContents];
+}
 
 - (void)_toolEditExportAction:(id)sender
 {

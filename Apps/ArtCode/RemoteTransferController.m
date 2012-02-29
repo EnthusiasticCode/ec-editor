@@ -73,6 +73,7 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
+    // Implementation to substitute non working checkExistenceOfPath:
     [_uploads enumerateKeysAndObjectsUsingBlock:^(NSString *uploadPath, NSURL *localURL, BOOL *stop) {
         // Check for existance
         BOOL exists = NO;

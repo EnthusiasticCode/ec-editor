@@ -20,6 +20,8 @@
 /// Set the URL to open. This methos will activelly connect to the URL.
 @property (nonatomic, strong) NSURL *URL;
 
+- (IBAction)refreshAction:(id)sender;
+
 #pragma mark Login panel outlets
 
 @property (strong, nonatomic) IBOutlet UILabel *loginLabel;
