@@ -395,7 +395,7 @@
         RemoteTransferController *transferController = [RemoteTransferController new];
         transferController.navigationItem.rightBarButtonItem = nil;
         [self modalNavigationControllerPresentViewController:transferController];
-        [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection) {
+        [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection, NSError *error) {
             self.loading = YES;
             [self setEditing:NO animated:YES];
             [_connection directoryContents];
@@ -494,7 +494,7 @@
     [_modalNavigationController pushViewController:transferController animated:YES];
     
     // Resolve conflicts and start downloading
-    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection) {
+    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         if (self.tableView.indexPathForSelectedRow)
             [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];

@@ -12,7 +12,7 @@
 
 @interface RemoteTransferController ()
 
-- (void)_callCompletionHandler;
+- (void)_callCompletionHandlerWithError:(NSError *)error;
 
 @end
 
@@ -21,7 +21,7 @@
     NSArray *_items;
     NSURL *_remoteURL;
     NSURL *_localURL;
-    void (^_completionHandler)(id<CKConnection>);
+    RemoteTransferCompletionBlock _completionHandler;
     __weak NSObject *_originalDelegate;
     
     /// Dictionary of remote paths to the local URL to be uploaded there
@@ -31,6 +31,7 @@
     NSMutableDictionary *_transfersProgress;
     NSUInteger _transfersStarted;
     NSInteger _transfersCompleted;
+    NSError *_transferError;
 }
 
 #pragma mark - View lifecycle
@@ -44,6 +45,7 @@
     _completionHandler = nil;
     _uploads = nil;
     _transfersProgress = nil;
+    _transferError = nil;
     [super viewDidUnload];
 }
 
@@ -67,7 +69,26 @@
     return cell;
 }
 
-#pragma mark Connection Uploads
+#pragma mark - Connection
+
+- (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
+{
+    [_uploads enumerateKeysAndObjectsUsingBlock:^(NSString *uploadPath, NSURL *localURL, BOOL *stop) {
+        // Check for existance
+        BOOL exists = NO;
+        for (NSDictionary *item in contents)
+        {
+            if ([[item objectForKey:cxFilenameKey] isEqualToString:[uploadPath lastPathComponent]])
+            {
+                exists = YES;
+                break;
+            }
+        }
+        [self connection:(id<CKConnection>)con checkedExistenceOfPath:uploadPath pathExists:exists error:nil];
+    }];
+}
+
+#pragma mark - Connection Uploads
 
 - (void)connection:(id <CKConnection>)con checkedExistenceOfPath:(NSString *)path pathExists:(BOOL)exists error:(NSError *)error
 {
@@ -86,7 +107,7 @@
         if (isDirectory)
             [con recursivelyUpload:localURL.path to:_remoteURL.path];
         else
-            [con uploadFileAtURL:localURL toPath:_remoteURL.path posixPermissions:nil];
+            [con uploadFileAtURL:localURL toPath:path posixPermissions:nil];
     }
     else
     {
@@ -109,12 +130,18 @@
 
 - (void)connection:(id <CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error
 {
-    // TODO manage error
+    if (error)
+    {
+        _transferError = error;
+        [self cancelCurrentTransfer];
+        return;
+    }
+        
     _transfersCompleted++;
     [_transfersProgress removeObjectForKey:remotePath];
     if ([self isTransferFinished])
     {
-        [self _callCompletionHandler];
+        [self _callCompletionHandlerWithError:nil];
     }
 }
 
@@ -170,7 +197,7 @@
     [self.progressView setProgress:(float)_transfersCompleted / (float)_transfersStarted animated:YES];
     if ([self isTransferFinished])
     {
-        [self _callCompletionHandler];
+        [self _callCompletionHandlerWithError:nil];
     }
 }
 
@@ -185,10 +212,10 @@
 {
     [_connection cancelAll];
     if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
-        [self _callCompletionHandler];
+        [self _callCompletionHandlerWithError:_transferError];
 }
 
-- (void)uploadItemURLs:(NSArray *)itemURLs withConnection:(id<CKConnection>)connection toURL:(NSURL *)remoteURL completionHandler:(void (^)(id<CKConnection>))completionHandler
+- (void)uploadItemURLs:(NSArray *)itemURLs withConnection:(id<CKConnection>)connection toURL:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler
 {
     ECASSERT(connection != nil);
     
@@ -214,11 +241,13 @@
     {
         NSString *uploadPath = [remotePath stringByAppendingPathComponent:[item lastPathComponent]];
         [_uploads setObject:item forKey:uploadPath];
-        [connection checkExistenceOfPath:uploadPath];
+//        [connection checkExistenceOfPath:uploadPath];
     }
+    [connection changeToDirectory:remotePath];
+    [connection directoryContents];
 }
 
-- (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(void (^)(id<CKConnection>))completionHandler
+- (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(RemoteTransferCompletionBlock)completionHandler
 {
     ECASSERT(connection != nil);
     
@@ -281,11 +310,11 @@
     {
         [connection setDelegate:_originalDelegate];
         if (completionHandler)
-            completionHandler(connection);
+            completionHandler(connection, nil);
     }
 }
 
-- (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(void (^)(id<CKConnection>))completionHandler
+- (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler
 {
     ECASSERT(connection != nil);
     
@@ -293,7 +322,7 @@
     if ([items count] == 0)
     {
         if (completionHandler)
-            completionHandler(connection);
+            completionHandler(connection, nil);
         return;
     }
     
@@ -377,7 +406,7 @@
     [super keepOriginalAction:sender];
     if ([self isTransferFinished])
     {
-        [self _callCompletionHandler];
+        [self _callCompletionHandlerWithError:nil];
     }
     else
     {
@@ -391,11 +420,11 @@
 
 #pragma mark - Private methods
 
-- (void)_callCompletionHandler
+- (void)_callCompletionHandlerWithError:(NSError *)error
 {
     [_connection setDelegate:_originalDelegate];
     if (_completionHandler)
-        _completionHandler(_connection);
+        _completionHandler(_connection, error);
 }
 
 @end
