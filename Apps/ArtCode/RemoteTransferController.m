@@ -242,10 +242,10 @@
     {
         NSString *uploadPath = [remotePath stringByAppendingPathComponent:[item lastPathComponent]];
         [_uploads setObject:item forKey:uploadPath];
-        [connection checkExistenceOfPath:uploadPath];
+//        [connection checkExistenceOfPath:uploadPath];
     }
-//    [connection changeToDirectory:remotePath];
-//    [connection directoryContents];
+    [connection changeToDirectory:remotePath];
+    [connection directoryContents];
 }
 
 - (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completion:(RemoteTransferCompletionBlock)completionHandler
