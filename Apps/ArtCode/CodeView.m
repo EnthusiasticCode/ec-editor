@@ -815,7 +815,11 @@ static void init(CodeView *self)
     
     // TODO as OUI get rangeOfComposedCharacterSequencesForRange: or rangeOfComposedCharacterSequenceAtIndex:
     if (deleteRange.length == 0)
+    {
+        if (deleteRange.location == 0)
+            return;
         deleteRange = NSMakeRange(deleteRange.location - 1, 1);
+    }
     
     [self _editDataSourceInRange:deleteRange withString:@""];
 }
