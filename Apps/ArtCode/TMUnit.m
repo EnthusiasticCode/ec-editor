@@ -58,14 +58,9 @@ static OnigRegexp *_namedCapturesRegexp;
     NSMutableDictionary *_patternsIncludedByPattern;
     NSMutableDictionary *_extensions;
 }
-- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options;
 - (void)_setHasPendingChanges;
 - (void)_generateScopes;
 - (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
-- (void)_shiftScopesByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange;
-- (void)_removeScopesInRange:(NSRange)range;
-- (void)_addedScope:(TMScope *)scope;
-- (void)_removedScope:(TMScope *)scope;
 - (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
@@ -125,9 +120,7 @@ static OnigRegexp *_namedCapturesRegexp;
         else
             strongSelf->_syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
         OSSpinLockLock(&strongSelf->_scopesLock);
-        strongSelf->_rootScope = [[TMScope alloc] init];
-        strongSelf->_rootScope.identifier = _syntax.scopeName;
-        strongSelf->_rootScope.syntaxNode = _syntax;
+        strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.scopeName syntaxNode:strongSelf->_syntax];
         OSSpinLockUnlock(&strongSelf->_scopesLock);
     }];
     
@@ -194,20 +187,20 @@ static OnigRegexp *_namedCapturesRegexp;
     }
 }
 
-- (void)scopeAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options withCompletionHandler:(void (^)(TMScope *))completionHandler
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     if ([_codeFile currentGeneration] == _scopesGeneration)
     {
         OSSpinLockLock(&_scopesLock);
-        TMScope *scopeCopy = [[[self _scopeStackAtOffset:offset options:options] lastObject] copy];
+        TMScope *scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:0] lastObject] copy];
         OSSpinLockUnlock(&_scopesLock);
         completionHandler(scopeCopy);
     }
     else
     {
         [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
-            [self scopeAtOffset:offset options:options withCompletionHandler:completionHandler];
+            [self scopeAtOffset:offset withCompletionHandler:completionHandler];
         } afterDelay:0.3];
     }
 }
@@ -238,34 +231,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Private Methods
-
-- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options
-{
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    if (offset >= _rootScope.length)
-        return nil;
-    NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:_rootScope];
-    for (;;)
-    {
-        BOOL recurse = NO;
-        for (TMScope *childScope in [[scopeStack lastObject] children])
-        {
-            NSRange childScopeRange = NSMakeRange(childScope.location, childScope.length);
-            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
-            if ((options == TMUnitScopeQueryContainedOnly && childScopeRange.location < offset && childScopeEnd > offset)
-                || (options == TMUnitScopeQueryAdjacentStart && childScopeRange.location <= offset && childScopeEnd > offset)
-                || (options == TMUnitScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd > offset))
-            {
-                [scopeStack addObject:childScope];
-                recurse = YES;
-                break;
-            }
-        }
-        if (!recurse)
-            break;
-    }
-    return scopeStack;
-}
 
 - (void)_setHasPendingChanges
 {
@@ -307,16 +272,27 @@ static OnigRegexp *_namedCapturesRegexp;
         NSRange newRange = currentChange->newRange;
         ECASSERT(oldRange.location == newRange.location);
         // Adjust the scope tree to account for the change
-        [self _shiftScopesByReplacingRange:oldRange withRange:newRange];
+        [_rootScope shiftByReplacingRange:oldRange withRange:newRange];
         // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
         [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
         if (!newRange.length)
             [_unparsedRanges addIndex:newRange.location];
         OSSpinLockLock(&_pendingChangesLock);
     }
-    // We're done applying the current pending changes, reset the hasPendingChanges flag and get the next range
+    // We're done applying the current pending changes, reset the hasPendingChanges flag
     _hasPendingChanges = NO;
-    NSRange nextRange = [_unparsedRanges firstRange];    
+    
+    // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
+    NSUInteger fileLength;
+    if (![_codeFile length:&fileLength expectedGeneration:startingGeneration])
+    {
+        OSSpinLockUnlock(&_pendingChangesLock);
+        return;
+    }
+    [_unparsedRanges removeIndexesInRange:NSMakeRange(fileLength, NSUIntegerMax - fileLength)];
+    
+    // Get the next unparsed range
+    NSRange nextRange = [_unparsedRanges firstRange];
     OSSpinLockUnlock(&_pendingChangesLock);
         
     // Parse the next range
@@ -324,11 +300,11 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         // Get the first line range
         NSRange lineRange = NSMakeRange(nextRange.location, 0);
-        if (![self.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+        if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
             return;
 
         // Setup the scope stack
-        NSMutableArray *scopeStack = [self _scopeStackAtOffset:lineRange.location options:TMUnitScopeQueryAdjacentEnd];
+        NSMutableArray *scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryAdjacentEnd];
         if (!scopeStack)
             scopeStack = [NSMutableArray arrayWithObject:_rootScope];
 
@@ -342,11 +318,11 @@ static OnigRegexp *_namedCapturesRegexp;
             OSSpinLockUnlock(&_pendingChangesLock);
             
             // Delete all scopes in the line
-            [self _removeScopesInRange:lineRange];
+            [_rootScope removeChildScopesInRange:lineRange];
             
             // Setup the line
             NSString *uncachedString;
-            if (![self.codeFile string:&uncachedString inRange:lineRange expectedGeneration:startingGeneration])
+            if (![_codeFile string:&uncachedString inRange:lineRange expectedGeneration:startingGeneration])
                 return;
             
             CStringCachingString *line = [CStringCachingString stringWithString:uncachedString];
@@ -415,10 +391,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope generation:startingGeneration])
                         return;
                     previousTokenStart = resultRange.location;
-                    TMScope *matchScope = [scope newChildScope];
-                    matchScope.identifier = firstSyntaxNode.scopeName;
-                    matchScope.syntaxNode = firstSyntaxNode;
-                    matchScope.location = resultRange.location;
+                    TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location];
                     matchScope.length = resultRange.length;
                     if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:matchScope generation:startingGeneration])
                         return;
@@ -440,10 +413,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope generation:startingGeneration])
                         return;
                     previousTokenStart = resultRange.location;
-                    TMScope *spanScope = [scope newChildScope];
-                    spanScope.identifier = firstSyntaxNode.scopeName;
-                    spanScope.syntaxNode = firstSyntaxNode;
-                    spanScope.location = resultRange.location;
+                    TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location];
                     // Create the end regexp
                     NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
                     [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
@@ -473,10 +443,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     // Handle content name nested scope
                     if (firstSyntaxNode.contentName)
                     {
-                        TMScope *contentScope = [spanScope newChildScope];
-                        contentScope.identifier = firstSyntaxNode.contentName;
-                        contentScope.syntaxNode = firstSyntaxNode;
-                        contentScope.location = NSMaxRange(resultRange);
+                        TMScope *contentScope = [spanScope newChildScopeWithIdentifier:firstSyntaxNode.contentName syntaxNode:firstSyntaxNode location:NSMaxRange(resultRange)];
                         contentScope.endRegexp = spanScope.endRegexp;
                         [scopeStack addObject:contentScope];
                     }
@@ -508,11 +475,11 @@ static OnigRegexp *_namedCapturesRegexp;
             OSSpinLockUnlock(&_pendingChangesLock);
             // proceed to next line
             lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-            if (![self.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+            if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
                 return;
         }
         // The lineRange now refers to the first line after the unparsed range we just finished parsing. We check whether the scope stack at the end of the range we just finished parsing and the scope stack at the beginning of the range that was parsed before match, if they don't, it means the changes influenced this line too, so we add it to the unparsed changes
-        NSArray *nextScopeStack = [self _scopeStackAtOffset:lineRange.location options:TMUnitScopeQueryContainedOnly];
+        NSArray *nextScopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryContainedOnly];
         __block BOOL reparseLine = NO;
         if (scopeStack.count == nextScopeStack.count)
         {
@@ -529,6 +496,12 @@ static OnigRegexp *_namedCapturesRegexp;
         nextRange = [_unparsedRanges firstRange];
         OSSpinLockUnlock(&_pendingChangesLock);
     }
+    
+#if DEBUG
+    // Check the scope tree's consistency
+    [_rootScope performSelector:@selector(_checkConsistency)];
+#endif
+    
     _scopesGeneration = startingGeneration;
 }
 
@@ -543,9 +516,7 @@ static OnigRegexp *_namedCapturesRegexp;
     if (name)
     {
         ECASSERT([name isKindOfClass:[NSString class]]);
-        capturesScope = [scope newChildScope];
-        capturesScope.identifier = name;
-        capturesScope.location = [result bodyRange].location + offset;
+        capturesScope = [scope newChildScopeWithIdentifier:name syntaxNode:nil location:[result bodyRange].location + offset];
         capturesScope.length = [result bodyRange].length;
         if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
             return NO;
@@ -560,10 +531,8 @@ static OnigRegexp *_namedCapturesRegexp;
         if (!currentCaptureName)
             continue;
         ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
-        TMScope *currentCaptureScope = [capturesScope ? capturesScope : scope newChildScope];
-        currentCaptureScope.identifier = currentCaptureName;
         ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
-        currentCaptureScope.location = currentMatchRange.location + offset;
+        TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location + offset];
         currentCaptureScope.length = currentMatchRange.length;
         if (![self _parsedTokenInRange:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withScope:currentCaptureScope generation:generation])
             return NO;
@@ -571,118 +540,12 @@ static OnigRegexp *_namedCapturesRegexp;
     return YES;
 }
 
-- (void)_shiftScopesByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
-{
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    ECASSERT(oldRange.location == newRange.location);
-    
-    NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[[NSArray arrayWithObject:_rootScope] objectEnumerator]];
-    NSUInteger oldRangeEnd = NSMaxRange(oldRange);
-    NSInteger offset = newRange.length - oldRange.length;
-    // Enumerate all the scopes and adjust them for the change
-    while ([scopeEnumeratorStack count])
-    {
-        TMScope *scope = nil;
-        while (scope = [[scopeEnumeratorStack lastObject] nextObject])
-        {
-            NSRange scopeRange = NSMakeRange(scope.location, scope.length);
-            if (NSMaxRange(scopeRange) <= oldRange.location)
-            {
-                // If the scope is before the affected range, continue to the next scope
-                continue;
-            }
-            else if (scopeRange.location >= oldRange.location && scopeRange.location < oldRangeEnd)
-            {
-                // If the scope's start is within the affected range it's going to get removed during regeneration, just continue to the next scope
-                continue;
-            }
-            else if (scopeRange.location >= oldRangeEnd)
-            {
-                // If the scope is past the affected range, shift the location
-                scope.location += offset;
-            }
-            else if (NSMaxRange(scopeRange) < oldRangeEnd)
-            {
-                // If the affected range overlaps the tail of the scope, cut it off
-                scope.length -= NSIntersectionRange(NSMakeRange(scope.location, scope.length), oldRange).length;
-            }
-            else
-            {
-                // If the scope is none of the above, the affected range is completely contained in it, let's stretch it to cover the difference
-                ECASSERT(oldRange.length < scopeRange.length && scopeRange.location < oldRange.location && NSMaxRange(scopeRange) >= NSMaxRange(oldRange));
-                scope.length += offset;
-            }
-            
-            // Recurse over the scope's children
-            if (scope.children.count)
-                [scopeEnumeratorStack addObject:scope.children.objectEnumerator];
-        }
-        [scopeEnumeratorStack removeLastObject];
-    }
-}
-
-- (void)_removeScopesInRange:(NSRange)range
-{
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
-    TMScope *scope = _rootScope;
-    NSUInteger childScopeIndex = 0;
-    for (;;)
-    {
-        if (childScopeIndex + 1 <= scope.children.count)
-        {
-            TMScope *childScope = [scope.children objectAtIndex:childScopeIndex];
-            NSRange childScopeRange = NSMakeRange(childScope.location, childScope.length);
-            if (NSMaxRange(childScopeRange) <= range.location)
-            {
-                // If the child scope is before the affected range, continue to the next scope
-                ++childScopeIndex;
-                continue;
-            }
-            else if (childScopeRange.location >= range.location && childScopeRange.location < NSMaxRange(range))
-            {
-                // If the child scope's start is within the affected range, delete it
-                [self _removedScope:childScope];
-                [scope.children removeObjectAtIndex:childScopeIndex];
-                continue;
-            }
-            else if (childScopeRange.location < NSMaxRange(range))
-            {
-                // If it's neither of the above two cases, but it doesn't start after the line either, it means it overlaps, recurse over it's children
-                [childScopeIndexStack addObject:[NSNumber numberWithUnsignedInteger:childScopeIndex]];
-                childScopeIndex = 0;
-                scope = childScope;
-                continue;
-            }
-        }
-        // If we got here it means we're done enumerating this scope's children, go back to enumerating it's siblings
-        if (!childScopeIndexStack.count)
-            break;
-        childScopeIndex = [[childScopeIndexStack lastObject] unsignedIntegerValue];
-        [childScopeIndexStack removeLastObject];
-        ++childScopeIndex;
-        scope = scope.parent;
-    }
-}
-
-- (void)_addedScope:(TMScope *)scope
-{
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    
-}
-
-- (void)_removedScope:(TMScope *)scope
-{
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    
-}
-
 - (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
-    NSDictionary *attributes = [self.codeFile.theme attributesForScope:scope];
+    NSDictionary *attributes = [_codeFile.theme attributesForScope:scope];
     if (![attributes count])
         return YES;
-    return [self.codeFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
+    return [_codeFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
