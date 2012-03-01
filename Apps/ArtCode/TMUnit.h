@@ -11,17 +11,6 @@
 @class TMIndex, TMScope, CodeFile, UIImage;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
-/// Options to specify the behaviour of the scope query methods. These are not cumulative.
-typedef enum
-{
-    /// The query will match only scopes that fully contain the queried range or offset
-    TMUnitScopeQueryContainedOnly = 0,
-    /// The query will also match scopes that start adjacent to the queried range or offset
-    TMUnitScopeQueryAdjacentStart,
-    /// The query will also match scopes that end adjacent to the queried range or offset
-    TMUnitScopeQueryAdjacentEnd,
-} TMUnitScopeQueryOptions;
-
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface TMUnit : NSObject
 
@@ -40,7 +29,7 @@ typedef enum
 
 - (void)rootScopeWithCompletionHandler:(void(^)(TMScope *rootScope))completionHandler;
 
-- (void)scopeAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 /// If filterRange is not NULL, in output it will contain the file buffer string range that contains 

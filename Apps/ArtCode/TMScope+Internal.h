@@ -9,41 +9,57 @@
 #import "TMScope.h"
 
 @class TMSyntaxNode, OnigRegexp;
+@protocol TMScopeDelegate;
+
+/// Options to specify the behaviour of the scope query methods. These are not cumulative.
+typedef enum
+{
+    /// The query will match only scopes that fully contain the queried range or offset
+    TMScopeQueryContainedOnly = 0,
+    /// The query will also match scopes that start adjacent to the queried range or offset
+    TMScopeQueryAdjacentStart,
+    /// The query will also match scopes that end adjacent to the queried range or offset
+    TMScopeQueryAdjacentEnd,
+} TMScopeQueryOptions;
 
 @interface TMScope ()
 
-/// The identifier of the scope's class
-@property (nonatomic, strong) NSString *identifier;
-
 /// The syntax node that created the scope
-@property (nonatomic, strong) TMSyntaxNode *syntaxNode;
+@property (nonatomic, strong, readonly) TMSyntaxNode *syntaxNode;
+
+/// Delegate for callbacks, only applicable for root scopes
+@property (nonatomic, weak) id<TMScopeDelegate>delegate;
 
 /// Cached end regexp for scopes with a span syntax node
 @property (nonatomic, strong) OnigRegexp *endRegexp;
-
-/// The location of the scope
-@property (nonatomic) NSUInteger location;
 
 /// The length of the scope
 @property (nonatomic) NSUInteger length;
 
 /// The parent scope, if one exists
-@property (nonatomic, weak) TMScope *parent;
+@property (nonatomic, weak, readonly) TMScope *parent;
 
 /// The children scopes, if any exist
-@property (nonatomic, strong, readonly) NSMutableArray *children;
+@property (nonatomic, strong, readonly) NSArray *children;
 
-/// Adds a new child scope with the given identifier.
-- (TMScope *)newChildScope;
+/// Adds a new child scope with the given properties
+- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location;
 
-/// Return a number indicating how much a scope selector array matches the search.
-/// A scope selector array is an array of strings defining a context of scopes where
-/// a scope must be child of the previous scope in the array.
-- (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search;
+/// Creates a new root scope
++ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
 
-/// Returns a number indicating how much the receiver matches the search scope selector.
-/// A scope selector reference is a string containing a single scope context (ie: scopes divided by spaces).
-- (float)_scoreForSearchScope:(NSString *)search;
+/// Method to query the scope tree. Can only be called on root scopes
+- (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options;
+
+/// Methods to apply changes to the scope tree. Can only be called on root scopes
+- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange;
+- (void)removeChildScopesInRange:(NSRange)range;
 
 @end
 
+@protocol TMScopeDelegate <NSObject>
+
+- (void)scope:(TMScope *)scope didAddScope:(TMScope *)scope;
+- (void)scope:(TMScope *)scope willRemoveScope:(TMScope *)scope;
+
+@end

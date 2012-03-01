@@ -11,10 +11,33 @@
 /// Caches a scope identifier to a dictionary of scope selector references to scores.
 NSMutableDictionary *systemScopesScoreCache;
 
-@implementation TMScope {
+@interface TMScope ()
+{
     /// The string range of the scope's identifier in it's qualified identifier.
     NSRange _identifierRange;
+    NSMutableArray *_children;
+    struct
+    {
+        unsigned didAddScope : 1;
+        unsigned willRemoveScope : 1;
+        unsigned reserved:6;
+    } _delegateFlags;
 }
+
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
+
+/// Return a number indicating how much a scope selector array matches the search.
+/// A scope selector array is an array of strings defining a context of scopes where
+/// a scope must be child of the previous scope in the array.
+- (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search;
+
+/// Returns a number indicating how much the receiver matches the search scope selector.
+/// A scope selector reference is a string containing a single scope context (ie: scopes divided by spaces).
+- (float)_scoreForSearchScope:(NSString *)search;
+
+@end
+
+@implementation TMScope
 
 #pragma mark - Class methods
 
@@ -25,7 +48,16 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, endRegexp = _endRegexp, location = _location, length = _length, parent = _parent, children = _children, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
+@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
+
+- (void)setDelegate:(id<TMScopeDelegate>)delegate
+{
+    if (delegate == _delegate)
+        return;
+    _delegate = delegate;
+    _delegateFlags.didAddScope = [delegate respondsToSelector:@selector(scope:didAddScope:)];
+    _delegateFlags.willRemoveScope = [delegate respondsToSelector:@selector(scope:willRemoveScope:)];
+}
 
 - (NSString *)identifier
 {
@@ -34,9 +66,22 @@ NSMutableDictionary *systemScopesScoreCache;
     return [_qualifiedIdentifier substringWithRange:_identifierRange];
 }
 
-- (void)setIdentifier:(NSString *)identifier
+- (NSArray *)children
 {
-    NSString *parentQualifiedIdentifier = self.parent.qualifiedIdentifier;    
+    return [_children copy];
+}
+
++ (NSSet *)keyPathsForValuesAffectingQualifiedIdentifier
+{
+    return [NSSet setWithObject:@"identifier"];
+}
+
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    NSString *parentQualifiedIdentifier = parent.qualifiedIdentifier;    
     _identifierRange.location = [parentQualifiedIdentifier length];
     if (_identifierRange.location > 0)
     {
@@ -44,12 +89,12 @@ NSMutableDictionary *systemScopesScoreCache;
         {
             _qualifiedIdentifier = [NSString stringWithFormat:@"%@ %@", parentQualifiedIdentifier, identifier];
             _identifierRange.location++;
-            _identifiersStack = [self.parent.identifiersStack arrayByAddingObject:identifier];
+            _identifiersStack = [parent.identifiersStack arrayByAddingObject:identifier];
         }
         else
         {
             _qualifiedIdentifier = parentQualifiedIdentifier;
-            _identifiersStack = self.parent.identifiersStack;
+            _identifiersStack = parent.identifiersStack;
         }
     }
     else
@@ -58,11 +103,8 @@ NSMutableDictionary *systemScopesScoreCache;
         _identifiersStack = identifier ? [NSArray arrayWithObject:identifier] : nil;
     }
     _identifierRange.length = [identifier length];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingQualifiedIdentifier
-{
-    return [NSSet setWithObject:@"identifier"];
+    _syntaxNode = syntaxNode;
+    return self;
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -78,20 +120,170 @@ NSMutableDictionary *systemScopesScoreCache;
 
 - (NSString *)description
 {
-    return self.qualifiedIdentifier;
+    return [[super description] stringByAppendingString:self.qualifiedIdentifier];
 }
 
 #pragma mark - Initializers
 
-- (TMScope *)newChildScope
+static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSComparisonResult(TMScope *first, TMScope *second){
+    if (first.location < second.location)
+        return NSOrderedAscending;
+    else if (first.location > second.location)
+        return NSOrderedDescending;
+    else
+        return NSOrderedSame;
+};
+
+- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location
 {
-    TMScope *childScope = [[[self class] alloc] init];
-    childScope.parent = self;
+    TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode];
+    childScope->_location = location;
     if (!_children)
         _children = [NSMutableArray new];
-    [_children addObject:childScope];
+    NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex usingComparator:childScopeComparator];
+    if (childInsertionIndex == [_children count])
+        [_children addObject:childScope];
+    else
+        [_children insertObject:childScope atIndex:childInsertionIndex];
+    if (_delegateFlags.didAddScope)
+        [_delegate scope:self didAddScope:childScope];
     return childScope;
 }
+
++ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
+{
+    return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode];
+}
+
+#pragma mark - Scope Tree Querying
+
+- (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options
+{
+    ECASSERT(!_parent);
+    if (offset >= _length)
+        return nil;
+    NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
+    for (;;)
+    {
+        BOOL recurse = NO;
+        for (TMScope *childScope in ((TMScope *)scopeStack.lastObject)->_children)
+        {
+            NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
+            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
+            if ((options == TMScopeQueryContainedOnly && childScopeRange.location < offset && childScopeEnd > offset)
+                || (options == TMScopeQueryAdjacentStart && childScopeRange.location <= offset && childScopeEnd > offset)
+                || (options == TMScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd > offset))
+            {
+                [scopeStack addObject:childScope];
+                recurse = YES;
+                break;
+            }
+        }
+        if (!recurse)
+            break;
+    }
+    return scopeStack;
+}
+
+#pragma mark - Scope Tree Changes
+
+- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
+{
+    ECASSERT(oldRange.location == newRange.location);
+    ECASSERT(!_parent);
+    
+    NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[[NSArray arrayWithObject:self] objectEnumerator]];
+    NSUInteger oldRangeEnd = NSMaxRange(oldRange);
+    NSInteger offset = newRange.length - oldRange.length;
+    // Enumerate all the scopes and adjust them for the change
+    while ([scopeEnumeratorStack count])
+    {
+        TMScope *scope = nil;
+        while (scope = [[scopeEnumeratorStack lastObject] nextObject])
+        {
+            NSRange scopeRange = NSMakeRange(scope->_location, scope->_length);
+            if (NSMaxRange(scopeRange) <= oldRange.location)
+            {
+                // If the scope is before the affected range, continue to the next scope
+                continue;
+            }
+            else if (scopeRange.location >= oldRange.location && scopeRange.location < oldRangeEnd)
+            {
+                // If the scope's start is within the affected range it's going to get removed during regeneration, just continue to the next scope
+                continue;
+            }
+            else if (scopeRange.location >= oldRangeEnd)
+            {
+                // If the scope is past the affected range, shift the location
+                scope->_location += offset;
+            }
+            else if (NSMaxRange(scopeRange) < oldRangeEnd)
+            {
+                // If the affected range overlaps the tail of the scope, cut it off
+                scope->_length -= NSIntersectionRange(scopeRange, oldRange).length;
+            }
+            else
+            {
+                // If the scope is none of the above, the affected range is completely contained in it, let's stretch it to cover the difference
+                ECASSERT(oldRange.length < scopeRange.length && scopeRange.location < oldRange.location && NSMaxRange(scopeRange) >= NSMaxRange(oldRange));
+                scope->_length += offset;
+            }
+            
+            // Recurse over the scope's children
+            if (scope->_children.count)
+                [scopeEnumeratorStack addObject:scope->_children.objectEnumerator];
+        }
+        [scopeEnumeratorStack removeLastObject];
+    }
+}
+
+- (void)removeChildScopesInRange:(NSRange)range
+{
+    ECASSERT(!_parent);
+    NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
+    TMScope *scope = self;
+    NSUInteger childScopeIndex = 0;
+    for (;;)
+    {
+        if (childScopeIndex + 1 <= scope->_children.count)
+        {
+            TMScope *childScope = [scope->_children objectAtIndex:childScopeIndex];
+            NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
+            if (NSMaxRange(childScopeRange) <= range.location)
+            {
+                // If the child scope is before the affected range, continue to the next scope
+                ++childScopeIndex;
+                continue;
+            }
+            else if (childScopeRange.location >= range.location && childScopeRange.location < NSMaxRange(range))
+            {
+                // If the child scope's start is within the affected range, delete it
+                if (_delegateFlags.willRemoveScope)
+                    [_delegate scope:self willRemoveScope:childScope];
+                [scope->_children removeObjectAtIndex:childScopeIndex];
+                continue;
+            }
+            else if (childScopeRange.location < NSMaxRange(range))
+            {
+                // If it's neither of the above two cases, but it doesn't start after the line either, it means it overlaps, recurse over it's children
+                [childScopeIndexStack addObject:[NSNumber numberWithUnsignedInteger:childScopeIndex]];
+                childScopeIndex = 0;
+                scope = childScope;
+                continue;
+            }
+        }
+        // If we got here it means we're done enumerating this scope's children, go back to enumerating it's siblings
+        if (!childScopeIndexStack.count)
+            break;
+        childScopeIndex = [[childScopeIndexStack lastObject] unsignedIntegerValue];
+        [childScopeIndexStack removeLastObject];
+        ++childScopeIndex;
+        scope = scope->_parent;
+        if (!scope)
+            break;
+    }
+}
+
 
 #pragma mark - Scoring
 // Reference implementation: https://github.com/cehoffman/textpow/blob/master/lib/textpow/score_manager.rb
@@ -185,5 +377,28 @@ NSMutableDictionary *systemScopesScoreCache;
     ECASSERT(result < INFINITY);
     return currentSearch == nil ? result : 0;
 }
+
+#pragma mark - Debug Methods
+
+#if DEBUG
+
+- (void)_checkConsistency
+{
+    if (!self.children.count)
+        return;
+    
+    NSUInteger scopeEnd = self.location + self.length;
+    NSUInteger previousChildLocation = 0;
+    
+    for (TMScope *childScope in self.children)
+    {
+        ECASSERT(previousChildLocation <= childScope.location);
+        ECASSERT(childScope.location + childScope.length <= scopeEnd);
+        previousChildLocation = childScope.location;
+        [childScope _checkConsistency];
+    }
+}
+
+#endif
 
 @end
