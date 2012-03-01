@@ -58,7 +58,7 @@ static OnigRegexp *_namedCapturesRegexp;
     NSMutableDictionary *_patternsIncludedByPattern;
     NSMutableDictionary *_extensions;
 }
-- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset;
+- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options;
 - (void)_setHasPendingChanges;
 - (void)_generateScopes;
 - (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
@@ -194,20 +194,20 @@ static OnigRegexp *_namedCapturesRegexp;
     }
 }
 
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
+- (void)scopeAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options withCompletionHandler:(void (^)(TMScope *))completionHandler
 {
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     if ([_codeFile currentGeneration] == _scopesGeneration)
     {
         OSSpinLockLock(&_scopesLock);
-        TMScope *scopeCopy = [[[self _scopeStackAtOffset:offset] lastObject] copy];
+        TMScope *scopeCopy = [[[self _scopeStackAtOffset:offset options:options] lastObject] copy];
         OSSpinLockUnlock(&_scopesLock);
         completionHandler(scopeCopy);
     }
     else
     {
         [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
-            [self scopeAtOffset:offset withCompletionHandler:completionHandler];
+            [self scopeAtOffset:offset options:options withCompletionHandler:completionHandler];
         } afterDelay:0.3];
     }
 }
@@ -239,7 +239,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Private Methods
 
-- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset
+- (NSMutableArray *)_scopeStackAtOffset:(NSUInteger)offset options:(TMUnitScopeQueryOptions)options
 {
     ECASSERT(!OSSpinLockTry(&_scopesLock));
     if (offset >= _rootScope.length)
@@ -249,12 +249,18 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         BOOL recurse = NO;
         for (TMScope *childScope in [[scopeStack lastObject] children])
-            if (childScope.location < offset && childScope.location + childScope.length > offset)
+        {
+            NSRange childScopeRange = NSMakeRange(childScope.location, childScope.length);
+            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
+            if ((options == TMUnitScopeQueryContainedOnly && childScopeRange.location < offset && childScopeEnd > offset)
+                || (options == TMUnitScopeQueryAdjacentStart && childScopeRange.location <= offset && childScopeEnd > offset)
+                || (options == TMUnitScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd > offset))
             {
                 [scopeStack addObject:childScope];
                 recurse = YES;
                 break;
             }
+        }
         if (!recurse)
             break;
     }
@@ -299,18 +305,21 @@ static OnigRegexp *_namedCapturesRegexp;
         startingGeneration = currentChange->generation;
         NSRange oldRange = currentChange->oldRange;
         NSRange newRange = currentChange->newRange;
+        ECASSERT(oldRange.location == newRange.location);
         // Adjust the scope tree to account for the change
         [self _shiftScopesByReplacingRange:oldRange withRange:newRange];
-        // Replace the ranges in the unparsed ranges, use a placeholder range of length 1 if the new range is of length 0 because the change was a deletion
-        [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange.length ? newRange : NSMakeRange(newRange.location, 1)];
+        // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
+        [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
+        if (!newRange.length)
+            [_unparsedRanges addIndex:newRange.location];
         OSSpinLockLock(&_pendingChangesLock);
     }
-    // We're done applying the current pending changes, reset the hasPendingChanges flag
+    // We're done applying the current pending changes, reset the hasPendingChanges flag and get the next range
     _hasPendingChanges = NO;
+    NSRange nextRange = [_unparsedRanges firstRange];    
     OSSpinLockUnlock(&_pendingChangesLock);
-    
-    // Next we parse the unparsed ranges. We always use our starting generation as expected generation.
-    NSRange nextRange = [_unparsedRanges firstRange];
+        
+    // Parse the next range
     while (nextRange.location != NSNotFound)
     {
         // Get the first line range
@@ -319,7 +328,7 @@ static OnigRegexp *_namedCapturesRegexp;
             return;
 
         // Setup the scope stack
-        NSMutableArray *scopeStack = [self _scopeStackAtOffset:lineRange.location];
+        NSMutableArray *scopeStack = [self _scopeStackAtOffset:lineRange.location options:TMUnitScopeQueryAdjacentEnd];
         if (!scopeStack)
             scopeStack = [NSMutableArray arrayWithObject:_rootScope];
 
@@ -328,7 +337,9 @@ static OnigRegexp *_namedCapturesRegexp;
         while (lineRange.location < NSMaxRange(nextRange))
         {
             // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
+            OSSpinLockLock(&_pendingChangesLock);
             [_unparsedRanges addIndexesInRange:lineRange];
+            OSSpinLockUnlock(&_pendingChangesLock);
             
             // Delete all scopes in the line
             [self _removeScopesInRange:lineRange];
@@ -489,29 +500,34 @@ static OnigRegexp *_namedCapturesRegexp;
             {
                 NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
                 if (stretchedLength > scope.length)
-                scope.length = stretchedLength;
+                    scope.length = stretchedLength;
             }
             // Remove the line range from the unparsed ranges
-            [_unparsedRanges removeIndexesInRange:NSMakeRange(lineRange.location, NSMaxRange(lineRange) - lineRange.location)];
+            OSSpinLockLock(&_pendingChangesLock);
+            [_unparsedRanges removeIndexesInRange:lineRange];
+            OSSpinLockUnlock(&_pendingChangesLock);
             // proceed to next line
             lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
             if (![self.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
                 return;
         }
-        NSArray *nextScopeStack = [self _scopeStackAtOffset:NSMaxRange(lineRange)];
-        __block BOOL addNextLine = NO;
+        // The lineRange now refers to the first line after the unparsed range we just finished parsing. We check whether the scope stack at the end of the range we just finished parsing and the scope stack at the beginning of the range that was parsed before match, if they don't, it means the changes influenced this line too, so we add it to the unparsed changes
+        NSArray *nextScopeStack = [self _scopeStackAtOffset:lineRange.location options:TMUnitScopeQueryContainedOnly];
+        __block BOOL reparseLine = NO;
         if (scopeStack.count == nextScopeStack.count)
         {
             [scopeStack enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
                 if (obj == [nextScopeStack objectAtIndex:idx])
                     return;
-                addNextLine = YES;
+                reparseLine = YES;
                 *stop = YES;
             }];
         }
-        if (addNextLine || (nextScopeStack && nextScopeStack.count != scopeStack.count))
-            [_unparsedRanges addIndex:NSMaxRange(lineRange)];
+        OSSpinLockLock(&_pendingChangesLock);
+        if (reparseLine || (nextScopeStack && nextScopeStack.count != scopeStack.count))
+            [_unparsedRanges addIndex:lineRange.location];
         nextRange = [_unparsedRanges firstRange];
+        OSSpinLockUnlock(&_pendingChangesLock);
     }
     _scopesGeneration = startingGeneration;
 }

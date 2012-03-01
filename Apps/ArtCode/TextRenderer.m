@@ -1270,8 +1270,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             affectedSegmentHeight = segment.renderSegmentHeight;
             
             // Skip untouched segmentse
-#warning TODO NIK this assert fails if you insert a character at 0
-            ECASSERT(segmentRange.location < fromRangeEnd);
+            ECASSERT(segmentRange.location <= fromRangeEnd);
             if (segmentRangeEnd >= fromRange.location)
             {
                 // Will remove every segment after the current if changes are crossing multiple segments

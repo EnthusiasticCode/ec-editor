@@ -797,38 +797,42 @@ static void init(CodeView *self)
 
 - (void)deleteBackward
 {
-    TextRange *sel = (TextRange *)[self selectedTextRange];
-    if (!sel)
-        return;
-    
-    NSUInteger s = ((TextPosition *)sel.start).index;
-    NSUInteger e = ((TextPosition *)sel.end).index;
-    
-    if (s < e)
+    NSRange deleteRange;
+    if (_markedRange.location != NSNotFound)
     {
-        [self replaceRange:sel withText:@""];
+        deleteRange = _markedRange;
     }
-    else if (s == 0)
+    else if (_selectionView)
     {
-        return;
+        deleteRange = _selectionView.selection;
     }
     else
     {
-        NSRange cr = (NSRange){ s - 1, 1 };
-        [self _editDataSourceInRange:cr withString:@""];
+        ECASSERT(NO); // no selection to delete
     }
+    
+    [self unmarkText];
+    
+    // TODO as OUI get rangeOfComposedCharacterSequencesForRange: or rangeOfComposedCharacterSequenceAtIndex:
+    if (deleteRange.length == 0)
+    {
+        if (deleteRange.location == 0)
+            return;
+        deleteRange = NSMakeRange(deleteRange.location - 1, 1);
+    }
+    
+    [self _editDataSourceInRange:deleteRange withString:@""];
 }
 
 #pragma mark - UITextInputTraits protocol
 
-// TODO return key based on contest
+@synthesize keyboardType = _keyboardType, returnKeyType = _returnKeyType;
 
 - (UIKeyboardAppearance)keyboardAppearance
 {
     return UIKeyboardAppearanceDefault;
 }
 
-@synthesize keyboardType;
 - (UIReturnKeyType)returnKeyType
 {
     return UIReturnKeyDefault;
@@ -849,8 +853,7 @@ static void init(CodeView *self)
     return UITextAutocorrectionTypeNo;
 }
 
-#pragma mark -
-#pragma mark UITextInput protocol
+#pragma mark - UITextInput protocol
 
 @synthesize inputDelegate;
 @synthesize tokenizer;
@@ -897,6 +900,8 @@ static void init(CodeView *self)
     NSUInteger e = ((TextPosition *)range.end).index;
     if (e < s)
         return;
+    
+    [self unmarkText];
     
     NSUInteger textLength = [self.dataSource stringLengthForTextRenderer:self.renderer];
     if (s > textLength)
@@ -995,12 +1000,14 @@ static void init(CodeView *self)
 - (void)unmarkText
 {
     if (_markedRange.length == 0)
+    {
+        _markedRange = NSMakeRange(NSNotFound, 0);
         return;
+    }
     
     // TODO needsdisplay for markedText layer.
     [self willChangeValueForKey:@"markedTextRange"];
-    _markedRange.location = 0;
-    _markedRange.length = 0;
+    _markedRange = NSMakeRange(NSNotFound, 0);
     [self didChangeValueForKey:@"markedTextRange"];
 }
 
@@ -1351,10 +1358,12 @@ static void init(CodeView *self)
     // Commit string
     [inputDelegate textWillChange:self];
     [self.dataSource codeView:self commitString:string forTextInRange:range];
-    [inputDelegate textDidChange:self];
     
     // Update caret location
     [self _setSelectedTextRange:selection notifyDelegate:NO];
+    
+    // NOTE this delegate method has to be called after the changed selection or UIKeyboardImpl will crash in some cases
+    [inputDelegate textDidChange:self];
 }
 
 - (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string
