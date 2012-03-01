@@ -554,7 +554,7 @@ static void *_openQuicklyObservingContext;
     [self modalNavigationControllerPresentViewController:remoteTransferController];
     
     // Start upload
-    [remoteTransferController uploadItemURLs:[_selectedURLs copy] withConnection:remoteDirectoryBrowser.connection toURL:remoteURL completionHandler:^(id<CKConnection> connection, NSError *error) {
+    [remoteTransferController uploadItemURLs:[_selectedURLs copy] toConnection:remoteDirectoryBrowser.connection url:remoteURL completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];

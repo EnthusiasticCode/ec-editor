@@ -13,14 +13,15 @@
 
 typedef void(^RemoteTransferCompletionBlock)(id<CKConnection> connection, NSError *error);
 
+
 @interface RemoteTransferController : MoveConflictController
 
 /// Uploads the given local file URLs to specified connection.
-- (void)uploadItemURLs:(NSArray *)itemURLs withConnection:(id<CKConnection>)connection toURL:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler;
+- (void)uploadItemURLs:(NSArray *)itemURLs toConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// This method will start the download process of the given items relative to the given remote URL from the connection to the local URL.
 /// Items are an array of dictionaries as returned by the CKConnection.
-- (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completionHandler:(RemoteTransferCompletionBlock)completionHandler;
+- (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// This method will start the process of deleting the given items. Folders will be deleted recursevly.
 - (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler;

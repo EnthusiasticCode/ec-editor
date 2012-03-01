@@ -41,9 +41,6 @@
     NSArray *_filteredItems;
     NSArray *_filteredItemsHitMasks;
     
-    /// Caches path to array of directory contents.
-    NSMutableDictionary *_directoryContentCache;
-    
     NSURLCredential *_loginCredential;
     /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
     BOOL _keychainUsed;
@@ -327,29 +324,11 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    // TODO check cache first but keep an eye that remotetransferscontroller also uses this
-    if ((_directoryItems = [_directoryContentCache objectForKey:dirPath]))
-    {
-        self.loading = NO;
-        [self invalidateFilteredItems];
-        [self.tableView reloadData];
-        // Enable non-editing buttons
-        for (UIBarButtonItem *barItem in self.toolNormalItems)
-        {
-            [(UIButton *)barItem.customView setEnabled:YES];
-        }
-        return;
-    }
     [con directoryContents];
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    // Cache results
-    if (!_directoryContentCache)
-        _directoryContentCache = [NSMutableDictionary new];
-    [_directoryContentCache setObject:contents forKey:dirPath];
-    
     self.loading = NO;
     _directoryItems = contents;
     [self invalidateFilteredItems];
@@ -506,7 +485,7 @@
     [_modalNavigationController pushViewController:transferController animated:YES];
     
     // Resolve conflicts and start downloading
-    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completionHandler:^(id<CKConnection> connection, NSError *error) {
+    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         if (self.tableView.indexPathForSelectedRow)
             [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
