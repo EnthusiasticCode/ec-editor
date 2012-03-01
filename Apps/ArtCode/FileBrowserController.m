@@ -113,6 +113,8 @@ static void *_openQuicklyObservingContext;
     _directory = directory;
     if (self.isViewLoaded && self.view.superview != nil)
     {
+        self.searchBar.text = nil;
+        _isShowingOpenQuickly = NO;
         self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         _currentObservedProject = self.artCodeTab.currentProject;
@@ -124,14 +126,17 @@ static void *_openQuicklyObservingContext;
 
 - (NSArray *)filteredItems
 {
-    return [(_isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter) fileURLs];
+    if (_isShowingOpenQuickly)
+    {
+        self.openQuicklyPresenter.filterString = self.searchBar.text;
+        return [self.openQuicklyPresenter fileURLs];
+    }
+    return [self.directoryPresenter fileURLs];
 }
 
 - (void)invalidateFilteredItems
 {
     _isShowingOpenQuickly = [self.searchBar.text length] != 0;
-    if (_isShowingOpenQuickly)
-        self.openQuicklyPresenter.filterString = self.searchBar.text;
 }
 
 #pragma mark - View lifecycle
