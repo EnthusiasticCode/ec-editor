@@ -114,7 +114,7 @@ static void *_openQuicklyObservingContext;
     if (self.isViewLoaded && self.view.superview != nil)
     {
         self.searchBar.text = nil;
-        _isShowingOpenQuickly = NO;
+        [self invalidateFilteredItems];
         self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         _currentObservedProject = self.artCodeTab.currentProject;
@@ -126,17 +126,21 @@ static void *_openQuicklyObservingContext;
 
 - (NSArray *)filteredItems
 {
-    if (_isShowingOpenQuickly)
-    {
-        self.openQuicklyPresenter.filterString = self.searchBar.text;
-        return [self.openQuicklyPresenter fileURLs];
-    }
-    return [self.directoryPresenter fileURLs];
+    return [(_isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter) fileURLs];
 }
 
 - (void)invalidateFilteredItems
 {
     _isShowingOpenQuickly = [self.searchBar.text length] != 0;
+    if (_isShowingOpenQuickly)
+    {
+        self.openQuicklyPresenter.filterString = self.searchBar.text;
+        self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [[self.openQuicklyPresenter fileURLs] count], [[self.directoryPresenter fileURLs] count]];
+    }
+    else
+    {
+        self.infoLabel.text = [NSString stringWithFormatForSingular:@"One item in this folder" plural:@"%u items in this folder" count:[self.directoryPresenter.fileURLs count]];
+    }
 }
 
 #pragma mark - View lifecycle
@@ -182,6 +186,7 @@ static void *_openQuicklyObservingContext;
         [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     }
     
+    [self invalidateFilteredItems];
     [super viewWillAppear:animated];
 }
 
