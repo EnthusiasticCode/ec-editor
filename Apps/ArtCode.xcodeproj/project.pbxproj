@@ -342,6 +342,15 @@
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
+		CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */; };
+		CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */; };
+		CDBD3F7E150014CF0050B10C /* bottomToolBar_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F76150014CF0050B10C /* bottomToolBar_Button.png */; };
+		CDBD3F7F150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F77150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png */; };
+		CDBD3F80150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F78150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Selected.png */; };
+		CDBD3F81150014CF0050B10C /* bottomToolBar_Icon_Files_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F79150014CF0050B10C /* bottomToolBar_Icon_Files_Normal.png */; };
+		CDBD3F82150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7A150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png */; };
+		CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */; };
+		CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */; };
 		CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */; };
 		CDC13330145FFE390028423F /* CodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* CodeFileSearchOptionsController.m */; };
 		CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333214602F5E0028423F /* searchBar_Background.png */; };
@@ -821,6 +830,15 @@
 		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
 		CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighlightTableViewCell.h; sourceTree = "<group>"; };
 		CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HighlightTableViewCell.m; sourceTree = "<group>"; };
+		CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserControllerBottomBar.xib; sourceTree = "<group>"; };
+		CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Background.png; sourceTree = "<group>"; };
+		CDBD3F76150014CF0050B10C /* bottomToolBar_Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Button.png; sourceTree = "<group>"; };
+		CDBD3F77150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Bookmarks_Normal.png; sourceTree = "<group>"; };
+		CDBD3F78150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Bookmarks_Selected.png; sourceTree = "<group>"; };
+		CDBD3F79150014CF0050B10C /* bottomToolBar_Icon_Files_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Files_Normal.png; sourceTree = "<group>"; };
+		CDBD3F7A150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Files_Selected.png; sourceTree = "<group>"; };
+		CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Normal.png; sourceTree = "<group>"; };
+		CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Selected.png; sourceTree = "<group>"; };
 		CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkBrowserController.h; sourceTree = "<group>"; };
 		CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkBrowserController.m; sourceTree = "<group>"; };
 		CDC1332E145FFE390028423F /* CodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchOptionsController.h; sourceTree = "<group>"; };
@@ -1614,6 +1632,7 @@
 				CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
 				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
+				CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1630,6 +1649,7 @@
 				CDFF3DF613C0DA1100108DE2 /* Icons */,
 				CD78C1BE14E15CDA00EBBBFF /* Bezel Alert */,
 				CDA23CB514EDC6760031B019 /* Symbol Icons */,
+				CDBD3F74150014B80050B10C /* Bottom Browser Toolbar */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -1790,6 +1810,21 @@
 				CD7BD9E914D817D40048A48A /* NewFileFolderController.m */,
 			);
 			name = "New file";
+			sourceTree = "<group>";
+		};
+		CDBD3F74150014B80050B10C /* Bottom Browser Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */,
+				CDBD3F76150014CF0050B10C /* bottomToolBar_Button.png */,
+				CDBD3F77150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png */,
+				CDBD3F78150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Selected.png */,
+				CDBD3F79150014CF0050B10C /* bottomToolBar_Icon_Files_Normal.png */,
+				CDBD3F7A150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png */,
+				CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */,
+				CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */,
+			);
+			name = "Bottom Browser Toolbar";
 			sourceTree = "<group>";
 		};
 		CDC1333114602F430028423F /* Search Bar */ = {
@@ -2156,6 +2191,15 @@
 				CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */,
 				CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */,
 				CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */,
+				CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */,
+				CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */,
+				CDBD3F7E150014CF0050B10C /* bottomToolBar_Button.png in Resources */,
+				CDBD3F7F150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png in Resources */,
+				CDBD3F80150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Selected.png in Resources */,
+				CDBD3F81150014CF0050B10C /* bottomToolBar_Icon_Files_Normal.png in Resources */,
+				CDBD3F82150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png in Resources */,
+				CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */,
+				CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

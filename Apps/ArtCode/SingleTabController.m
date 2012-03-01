@@ -469,20 +469,21 @@ static const void *contentViewControllerContext;
     }
     else if (currentURLExists)
     {
-        // TODO route bookmarks and remotes
         if (currentURLIsDirectory)
         {
-            if ([url isBookmarksVariant])
+            if ([url isRemotesVariant])
             {
-//                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
-//                    result = self.contentViewController;
-//                else
-//                    result = [BookmarkBrowserController new];
-                
                 if ([self.contentViewController isKindOfClass:[RemotesListController class]])
                     result = self.contentViewController;
                 else
                     result = [RemotesListController new];
+            }
+            else if ([url isBookmarksVariant])
+            {
+                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+                    result = self.contentViewController;
+                else
+                    result = [BookmarkBrowserController new];
             }
             else
             {

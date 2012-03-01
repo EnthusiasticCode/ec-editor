@@ -21,6 +21,7 @@
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 #import "CodeFileSearchBarController.h"
+#import "SearchableTableBrowserController.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
@@ -100,6 +101,10 @@ CGRect UIKeyboardFrame;
     [[TopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal];
     [[TopBarToolButton appearance] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateSelected];
     [[TopBarToolButton appearanceWhenContainedIn:[CodeFileSearchBarView class], nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Browsers bottom tool bar
+    [[BottomToolBarButton appearance] setBackgroundImage:[[UIImage imageNamed:@"bottomToolBar_Button"] resizableImageWithCapInsets:UIEdgeInsetsMake(7, 7, 7, 7)] forState:UIControlStateNormal];
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements

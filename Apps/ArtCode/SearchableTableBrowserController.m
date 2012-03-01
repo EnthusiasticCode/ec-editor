@@ -13,6 +13,9 @@
 #import "NSTimer+BlockTimer.h"
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
+#import "ArtCodeTab.h"
+#import "ArtCodeProject.h"
+#import "ArtCodeURL.h"
 
 
 @implementation SearchableTableBrowserController {
@@ -23,7 +26,7 @@
 
 #pragma mark - Properties
 
-@synthesize tableView, searchBar, infoLabel, toolEditItems, toolNormalItems;
+@synthesize tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
 
 - (UISearchBar *)searchBar
 {
@@ -115,6 +118,29 @@
 {
     [super viewDidLoad];
     self.toolbarItems = self.toolNormalItems;
+    
+    // Adjust layout if bottomToolBar has been loaded
+    if (self.bottomToolBar != nil)
+    {
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
+        self.tableView.frame = tableViewFrame;
+        self.bottomToolBar.frame = CGRectMake(tableViewFrame.origin.x, CGRectGetMaxY(tableViewFrame), tableViewFrame.size.width, self.bottomToolBar.bounds.size.height);
+        [self.view addSubview:self.bottomToolBar];
+        
+        // Select button
+        NSInteger selectedTag = 0;
+        if ([self.artCodeTab.currentURL isBookmarksVariant])
+            selectedTag = 1;
+        else if ([self.artCodeTab.currentURL isRemotesVariant])
+            selectedTag = 2;
+        for (UIView *subview in self.bottomToolBar.subviews)
+        {
+            if ([subview isKindOfClass:[BottomToolBarButton class]] 
+                && [(BottomToolBarButton *)subview tag] == selectedTag)
+                [(BottomToolBarButton *)subview setSelected:YES];
+        }
+    }
 }
 
 - (void)viewDidUnload
@@ -129,6 +155,7 @@
     _toolEditDeleteActionSheet = nil;
     _modalNavigationController = nil;
     
+    [self setBottomToolBar:nil];
     [super viewDidUnload];
 }
 
@@ -290,6 +317,23 @@
     [_toolEditDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
+- (IBAction)toolPushUrlForTagAction:(id)sender
+{
+    switch ([sender tag]) {
+        case 1:
+            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingBookmarksVariant]];
+            break;
+            
+        case 2:
+            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingRemotesVariant]];
+            break;
+            
+        default:
+            [self.artCodeTab pushURL:self.artCodeTab.currentProject.URL];
+            break;
+    }
+}
+
 #pragma mark - Modal navigation
 
 - (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController completion:(void(^)())completion
@@ -325,5 +369,11 @@
         _modalNavigationController = nil;
     }];
 }
+
+@end
+
+@implementation BottomToolBarButton
+
+// Only used for appearance customization
 
 @end

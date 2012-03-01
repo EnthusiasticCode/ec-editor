@@ -43,11 +43,18 @@
 /// This property should be set in loadView.
 @property (nonatomic, strong) NSArray *toolEditItems;
 
+/// A bottom toolbar to be displayed statically on the view. This view is loaded usually via a nib in loadView.
+@property (strong, nonatomic) IBOutlet UIView *bottomToolBar;
+
 #pragma mark Common actions
 
 /// Shows a confirmation button to confirm the deletion.
 /// Subclasses should override the action sheed delegate to modify the behaviour of the confirmation button.
 - (IBAction)toolEditDeleteAction:(id)sender;
+
+/// Pushes on the current tab an URL based on the sender's tag.
+/// 0 for top project directory, 1 for bookmarks and 2 for remotes
+- (IBAction)toolPushUrlForTagAction:(id)sender;
 
 #pragma mark Modal navigation
 
@@ -56,4 +63,8 @@
 - (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController;
 - (void)modalNavigationControllerDismissAction:(id)sender;
 
+@end
+
+/// Appearance customization superclass
+@interface BottomToolBarButton : UIButton
 @end

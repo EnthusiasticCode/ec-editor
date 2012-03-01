@@ -80,6 +80,22 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return [self URLByAppendingFragmentDictionary:fragments];
 }
 
+- (BOOL)isRemotesVariant
+{
+    return [[self fragmentDictionary] objectForKey:@"remotes"] != nil;
+}
+
+- (NSURL *)URLByAddingRemotesVariant
+{
+    NSMutableDictionary *fragments = [[self fragmentDictionary] mutableCopy];
+    if ([fragments objectForKey:@"remotes"] != nil)
+        return [self copy];
+    if (fragments == nil)
+        fragments = [NSMutableDictionary new];
+    [fragments setObject:@"" forKey:@"remotes"];
+    return [self URLByAppendingFragmentDictionary:fragments];
+}
+
 - (NSString *)prettyPathRelativeToProjectDirectory
 {
     return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];

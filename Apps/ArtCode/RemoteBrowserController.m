@@ -53,7 +53,7 @@
 
 - (id)initWithConnection:(id<CKConnection>)con url:(NSURL *)conUrl
 {
-    self = [super init];
+    self = [super initWithTitle:nil searchBarStaticOnTop:NO];
     if (!self)
         return nil;
     _connection = con;

@@ -89,11 +89,17 @@
 {
     [super loadView];
     
-    // Tool edit items
-    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
-    
-    // Customize subviews
-    self.searchBar.placeholder = @"Filter bookmarks";
+    if ([self isMemberOfClass:[BookmarkBrowserController class]])
+    {
+        // Tool edit items
+        self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+        
+        // Customize subviews
+        self.searchBar.placeholder = @"Filter bookmarks";
+        
+        // Load the bottom toolbar
+        [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
+    }
 }
 
 #pragma mark - Table view data source
