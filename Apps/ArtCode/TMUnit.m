@@ -318,7 +318,7 @@ static OnigRegexp *_namedCapturesRegexp;
     _hasPendingChanges = NO;
     NSRange nextRange = [_unparsedRanges firstRange];    
     OSSpinLockUnlock(&_pendingChangesLock);
-    
+        
     // Parse the next range
     while (nextRange.location != NSNotFound)
     {
