@@ -10,12 +10,12 @@
 #import "ArtCodeURL.h"
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
-#import "Cache.h"
+#import "WeakDictionary.h"
 #import "UIColor+HexColor.h"
 
 static NSString * const ProjectPlistFileName = @".acproj";
 static NSString * const ProjectExtension = @".weakpkg";
-static Cache *openProjects = nil;
+static WeakDictionary *openProjects = nil;
 
 
 @interface ProjectBookmark (/* Private methods */)
@@ -294,7 +294,7 @@ static Cache *openProjects = nil;
     NSURL *projectUrl = [[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
     
     if (!openProjects)
-        openProjects = [Cache new];
+        openProjects = [WeakDictionary new];
     
     id project = [openProjects objectForKey:projectUrl];
     if (project)
@@ -332,7 +332,7 @@ static Cache *openProjects = nil;
     NSURL *projectUrl = [[ArtCodeURL projectsDirectory] URLByAppendingPathComponent:name isDirectory:YES];
     
     if (!openProjects)
-        openProjects = [Cache new];
+        openProjects = [WeakDictionary new];
     
     id project = [openProjects objectForKey:projectUrl];
     if (project)

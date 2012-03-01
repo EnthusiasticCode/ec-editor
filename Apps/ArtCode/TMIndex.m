@@ -9,7 +9,7 @@
 #import "TMIndex+Internal.h"
 #import "TMUnit+Internal.h"
 #import "TMSyntaxNode.h"
-#import "Cache.h"
+#import "WeakDictionary.h"
 #import "CodeFile.h"
 
 static NSMutableDictionary *_extensionClasses;
@@ -17,7 +17,7 @@ static NSMutableDictionary *_extensionClasses;
 @interface TMIndex ()
 {
     NSMutableDictionary *_extensions;
-    Cache *_codeUnitCache;
+    WeakDictionary *_codeUnits;
 }
 - (id)_codeUnitCacheKeyForFileURL:(NSURL *)fileURL scope:(NSString *)scope;
 @end
@@ -43,18 +43,18 @@ static NSMutableDictionary *_extensionClasses;
             return;
         [_extensions setObject:extension forKey:key];
     }];
-    _codeUnitCache = [[Cache alloc] init];
+    _codeUnits = [[WeakDictionary alloc] init];
     return self;
 }
 
 - (TMUnit *)codeUnitForCodeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
 {
     id cacheKey = [self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier];
-    TMUnit *codeUnit = [_codeUnitCache objectForKey:cacheKey];
+    TMUnit *codeUnit = [_codeUnits objectForKey:cacheKey];
     if (!codeUnit)
     {
         codeUnit = [[TMUnit alloc] initWithIndex:self codeFile:codeFile rootScopeIdentifier:rootScopeIdentifier];
-        [_codeUnitCache setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier]];
+        [_codeUnits setObject:codeUnit forKey:[self _codeUnitCacheKeyForFileURL:[codeFile fileURL] scope:rootScopeIdentifier]];
     }
     return codeUnit;
 }

@@ -194,7 +194,6 @@
 		B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BB14D6033D0080A714 /* UIControl+BlockAction.m */; };
 		B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */; };
 		B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */; };
-		B7FB79C814D604FA0080A714 /* Cache.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C414D604FA0080A714 /* Cache.m */; };
 		B7FB79C914D604FA0080A714 /* RectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C614D604FA0080A714 /* RectSet.m */; };
 		B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */; };
 		B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D314D605FA0080A714 /* CodeView.m */; };
@@ -580,8 +579,6 @@
 		B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveUtilities.h; sourceTree = "<group>"; };
 		B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveUtilities.m; sourceTree = "<group>"; };
-		B7FB79C314D604FA0080A714 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cache.h; sourceTree = "<group>"; };
-		B7FB79C414D604FA0080A714 /* Cache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cache.m; sourceTree = "<group>"; };
 		B7FB79C514D604FA0080A714 /* RectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectSet.h; sourceTree = "<group>"; };
 		B7FB79C614D604FA0080A714 /* RectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RectSet.m; sourceTree = "<group>"; };
 		B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryPresenter.h; sourceTree = "<group>"; };
@@ -1155,8 +1152,6 @@
 				B78CAEA614F24A61006BD660 /* WeakArray.m */,
 				B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */,
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
-				B7FB79C314D604FA0080A714 /* Cache.h */,
-				B7FB79C414D604FA0080A714 /* Cache.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
 				B728597214E714C100E3DE65 /* CStringCachingString.h */,
@@ -2095,7 +2090,6 @@
 				B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */,
 				B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */,
 				B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */,
-				B7FB79C814D604FA0080A714 /* Cache.m in Sources */,
 				B7FB79C914D604FA0080A714 /* RectSet.m in Sources */,
 				B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */,
 				B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */,
