@@ -138,6 +138,7 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 {
     TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode];
     childScope->_location = location;
+    childScope->_parent = self;
     if (!_children)
         _children = [NSMutableArray new];
     NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex usingComparator:childScopeComparator];
@@ -169,10 +170,12 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
         for (TMScope *childScope in ((TMScope *)scopeStack.lastObject)->_children)
         {
             NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
+            if (childScopeRange.location > offset)
+                break;
             NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
             if ((options == TMScopeQueryContainedOnly && childScopeRange.location < offset && childScopeEnd > offset)
                 || (options == TMScopeQueryAdjacentStart && childScopeRange.location <= offset && childScopeEnd > offset)
-                || (options == TMScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd > offset))
+                || (options == TMScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd >= offset))
             {
                 [scopeStack addObject:childScope];
                 recurse = YES;
@@ -187,10 +190,16 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 
 #pragma mark - Scope Tree Changes
 
+#define CHECK_IF_WITHIN_PARENT_BOUNDS(scope) ECASSERT(scope->_parent ? scope->_location >= scope->_parent->_location && scope->_location + scope->_length <= scope->_parent->_location + scope->_parent->_length : YES);
+
 - (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
 {
     ECASSERT(oldRange.location == newRange.location);
     ECASSERT(!_parent);
+    
+#if DEBUG
+    [self _checkConsistency];
+#endif
     
     NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[[NSArray arrayWithObject:self] objectEnumerator]];
     NSUInteger oldRangeEnd = NSMaxRange(oldRange);
@@ -205,67 +214,118 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
             if (NSMaxRange(scopeRange) <= oldRange.location)
             {
                 // If the scope is before the affected range, continue to the next scope
+                CHECK_IF_WITHIN_PARENT_BOUNDS(scope);
                 continue;
             }
             else if (scopeRange.location >= oldRange.location && scopeRange.location < oldRangeEnd)
             {
-                // If the scope's start is within the affected range it's going to get removed during regeneration, just continue to the next scope
-                continue;
+                // If the scope's start is within the affected range it's going to get removed during regeneration if it was deleted, however if it wasn't, let's assume it's been stretched
+                scope->_length += offset;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(scope);
             }
             else if (scopeRange.location >= oldRangeEnd)
             {
                 // If the scope is past the affected range, shift the location
                 scope->_location += offset;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(scope);
             }
             else if (NSMaxRange(scopeRange) < oldRangeEnd)
             {
                 // If the affected range overlaps the tail of the scope, cut it off
                 scope->_length -= NSIntersectionRange(scopeRange, oldRange).length;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(scope);
             }
             else
             {
                 // If the scope is none of the above, the affected range is completely contained in it, let's stretch it to cover the difference
                 ECASSERT(oldRange.length < scopeRange.length && scopeRange.location < oldRange.location && NSMaxRange(scopeRange) >= NSMaxRange(oldRange));
                 scope->_length += offset;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(scope);
             }
             
             // Recurse over the scope's children
             if (scope->_children.count)
+            {
                 [scopeEnumeratorStack addObject:scope->_children.objectEnumerator];
+            }
         }
         [scopeEnumeratorStack removeLastObject];
     }
+    
+#if DEBUG
+    [self _checkConsistency];
+#endif
 }
 
 - (void)removeChildScopesInRange:(NSRange)range
 {
     ECASSERT(!_parent);
+
+#if DEBUG
+    [self _checkConsistency];
+#endif
+
     NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
     TMScope *scope = self;
+    NSUInteger rangeEnd = NSMaxRange(range);
     NSUInteger childScopeIndex = 0;
     for (;;)
     {
         if (childScopeIndex + 1 <= scope->_children.count)
         {
+            BOOL recurse = NO;
             TMScope *childScope = [scope->_children objectAtIndex:childScopeIndex];
             NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
-            if (NSMaxRange(childScopeRange) <= range.location)
+            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
+            if (childScopeRange.location < range.location && childScopeEnd <= range.location)
             {
                 // If the child scope is before the affected range, continue to the next scope
                 ++childScopeIndex;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(childScope);
                 continue;
             }
-            else if (childScopeRange.location >= range.location && childScopeRange.location < NSMaxRange(range))
+            else if (childScopeRange.location >= rangeEnd)
             {
-                // If the child scope's start is within the affected range, delete it
+                // The child scope and all the others that follow start after the end of the range, we can break out
+                // Nothing to do here, we'll break out after the if chain finishes
+                CHECK_IF_WITHIN_PARENT_BOUNDS(childScope);
+            }
+            else if (range.location <= childScopeRange.location && rangeEnd >= childScopeEnd)
+            {
+                // If the child scope is completely contained in the range
                 if (_delegateFlags.willRemoveScope)
                     [_delegate scope:self willRemoveScope:childScope];
                 [scope->_children removeObjectAtIndex:childScopeIndex];
                 continue;
             }
-            else if (childScopeRange.location < NSMaxRange(range))
+            else if (childScopeRange.location >= range.location)
             {
-                // If it's neither of the above two cases, but it doesn't start after the line either, it means it overlaps, recurse over it's children
+                // If the child scope isn't contained in the range, but it's start is, clip off it's head, then recurse
+                ECASSERT(rangeEnd > childScopeRange.location && childScopeRange.length >= rangeEnd - childScopeRange.location);
+                childScope->_length -= rangeEnd - childScopeRange.location;
+                childScope->_location = rangeEnd;
+                recurse = YES;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(childScope);
+            }
+            else if (childScopeEnd <= rangeEnd)
+            {
+                // If the child scope isn't contained in the range, but it's end is, clip off it's tail, then recurse
+                ECASSERT(childScopeEnd >= range.location && childScopeRange.length >= childScopeEnd - range.location);
+                childScope->_length -= childScopeEnd - range.location;
+                recurse = YES;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(childScope);
+            }
+            else
+            {
+                // If we got here, it should mean the range is strictly contained by the child scope, just recurse
+                ECASSERT(childScopeRange.location < range.location && childScopeEnd > rangeEnd);
+                recurse = YES;
+                CHECK_IF_WITHIN_PARENT_BOUNDS(childScope);
+            }
+            
+            // Recurse on the child scope's children if needed
+            if (recurse)
+            {
                 [childScopeIndexStack addObject:[NSNumber numberWithUnsignedInteger:childScopeIndex]];
                 childScopeIndex = 0;
                 scope = childScope;
@@ -273,15 +333,21 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
             }
         }
         // If we got here it means we're done enumerating this scope's children, go back to enumerating it's siblings
+#if DEBUG
+        [scope _checkConsistency];
+#endif
         if (!childScopeIndexStack.count)
             break;
         childScopeIndex = [[childScopeIndexStack lastObject] unsignedIntegerValue];
         [childScopeIndexStack removeLastObject];
         ++childScopeIndex;
         scope = scope->_parent;
-        if (!scope)
-            break;
+        ECASSERT(scope);
     }
+    
+#if DEBUG
+    [self _checkConsistency];
+#endif
 }
 
 
@@ -384,17 +450,17 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 
 - (void)_checkConsistency
 {
-    if (!self.children.count)
+    if (!_children.count)
         return;
     
-    NSUInteger scopeEnd = self.location + self.length;
+    NSUInteger scopeEnd = _location + _length;
     NSUInteger previousChildLocation = 0;
     
-    for (TMScope *childScope in self.children)
+    for (TMScope *childScope in _children)
     {
-        ECASSERT(previousChildLocation <= childScope.location);
-        ECASSERT(childScope.location + childScope.length <= scopeEnd);
-        previousChildLocation = childScope.location;
+        ECASSERT(previousChildLocation <= childScope->_location);
+        ECASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
+        previousChildLocation = childScope->_location;
         [childScope _checkConsistency];
     }
 }
