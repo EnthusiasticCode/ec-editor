@@ -554,16 +554,10 @@ static OnigRegexp *_namedCapturesRegexp;
     ECASSERT(scope);
     if (!dictionary || !result)
         return YES;
-    TMScope *capturesScope = scope;
-    NSString *name = [[dictionary objectForKey:@"0"] objectForKey:_captureName];
-    if (name)
-    {
-        ECASSERT([name isKindOfClass:[NSString class]]);
-        capturesScope = [scope newChildScopeWithIdentifier:name syntaxNode:nil location:[result bodyRange].location + offset];
-        capturesScope.length = [result bodyRange].length;
-        if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
-            return NO;
-    }
+    TMScope *capturesScope = [scope newChildScopeWithIdentifier:[[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset];
+    capturesScope.length = [result bodyRange].length;
+    if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
+        return NO;
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
     {
