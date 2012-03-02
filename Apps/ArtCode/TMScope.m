@@ -24,7 +24,7 @@ NSMutableDictionary *systemScopesScoreCache;
     } _delegateFlags;
 }
 
-- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type;
 
 /// Return a number indicating how much a scope selector array matches the search.
 /// A scope selector array is an array of strings defining a context of scopes where
@@ -48,7 +48,7 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack;
+@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
 
 - (void)setDelegate:(id<TMScopeDelegate>)delegate
 {
@@ -76,7 +76,7 @@ NSMutableDictionary *systemScopesScoreCache;
     return [NSSet setWithObject:@"identifier"];
 }
 
-- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type
 {
     self = [super init];
     if (!self)
@@ -104,6 +104,7 @@ NSMutableDictionary *systemScopesScoreCache;
     }
     _identifierRange.length = [identifier length];
     _syntaxNode = syntaxNode;
+    _type = type;
     return self;
 }
 
@@ -134,9 +135,9 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
         return NSOrderedSame;
 };
 
-- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location
+- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
-    TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode];
+    TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
     childScope->_location = location;
     childScope->_parent = self;
     if (!_children)
@@ -153,7 +154,7 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 
 + (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
 {
-    return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode];
+    return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode type:TMScopeTypeRoot];
 }
 
 #pragma mark - Scope Tree Querying
@@ -452,6 +453,14 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 {
     if (!_children.count)
         return;
+    
+    ECASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
+    
+    ECASSERT(_type == TMScopeTypeRoot || _parent);
+    ECASSERT(_type != TMScopeTypeContent || _parent->_type == TMScopeTypeSpan);
+    ECASSERT(_type != TMScopeTypeCapture || _parent->_type == TMScopeTypeMatch || _parent->_type == TMScopeTypeBegin || _parent->_type == TMScopeTypeEnd);
+    ECASSERT(_type != TMScopeTypeBegin || _parent->_type == TMScopeTypeSpan);
+    ECASSERT(_type != TMScopeTypeEnd || _parent->_type == TMScopeTypeSpan);
     
     NSUInteger scopeEnd = _location + _length;
     NSUInteger previousChildLocation = 0;

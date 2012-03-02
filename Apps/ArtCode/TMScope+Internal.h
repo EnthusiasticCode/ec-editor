@@ -43,7 +43,7 @@ typedef enum
 @property (nonatomic, strong, readonly) NSArray *children;
 
 /// Adds a new child scope with the given properties
-- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location;
+- (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type;
 
 /// Creates a new root scope
 + (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;

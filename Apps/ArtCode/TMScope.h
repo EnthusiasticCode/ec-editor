@@ -8,6 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum
+{
+    TMScopeTypeMatch,
+    TMScopeTypeCapture,
+    TMScopeTypeSpan,
+    TMScopeTypeBegin,
+    TMScopeTypeEnd,
+    TMScopeTypeContent,
+    TMScopeTypeRoot,
+} TMScopeType;
+
 @interface TMScope : NSObject <NSCopying>
 
 #pragma mark Scope properties
@@ -27,6 +38,9 @@
 
 /// The length of the scope
 @property (nonatomic, readonly) NSUInteger length;
+
+/// The type of the scope
+@property (nonatomic, readonly) TMScopeType type;
 
 #pragma mark Scoring a scope
 

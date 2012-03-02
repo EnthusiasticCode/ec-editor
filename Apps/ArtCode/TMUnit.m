@@ -61,7 +61,7 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_setHasPendingChanges;
 - (void)_generateScopes;
 - (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation;
-- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
+- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 @end
@@ -457,7 +457,7 @@ static OnigRegexp *_namedCapturesRegexp;
                 return NO;
             previousTokenStart = NSMaxRange(resultRange);
             // Handle end captures
-            [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult offset:lineRange.location inScope:scope generation:generation];
+            [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope generation:generation];
             scope.length = NSMaxRange(resultRange) - scope.location;
             ECASSERT([scopeStack count]);
             [scopeStack removeLastObject];
@@ -473,13 +473,13 @@ static OnigRegexp *_namedCapturesRegexp;
             if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope generation:generation])
                 return NO;
             previousTokenStart = resultRange.location;
-            TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location];
+            TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeMatch];
             matchScope.length = resultRange.length;
             if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:matchScope generation:generation])
                 return NO;
             previousTokenStart = NSMaxRange(resultRange);
             // Handle match pattern captures
-            [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult offset:lineRange.location inScope:matchScope generation:generation];
+            [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult type:TMScopeTypeMatch offset:lineRange.location parentScope:matchScope generation:generation];
             // We need to make sure position increases, or it would loop forever with a 0 width match
             NSUInteger newPosition = NSMaxRange([firstResult bodyRange]);
             if (position == newPosition)
@@ -495,7 +495,7 @@ static OnigRegexp *_namedCapturesRegexp;
             if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope generation:generation])
                 return NO;
             previousTokenStart = resultRange.location;
-            TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location];
+            TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeSpan];
             // Create the end regexp
             NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
             [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
@@ -519,13 +519,13 @@ static OnigRegexp *_namedCapturesRegexp;
             if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:scope generation:generation])
                 return NO;
             previousTokenStart = NSMaxRange(resultRange);
-            if (![self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult offset:lineRange.location inScope:spanScope generation:generation])
+            if (![self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult type:TMScopeTypeBegin offset:lineRange.location parentScope:spanScope generation:generation])
                 return NO;
             [scopeStack addObject:spanScope];
             // Handle content name nested scope
             if (firstSyntaxNode.contentName)
             {
-                TMScope *contentScope = [spanScope newChildScopeWithIdentifier:firstSyntaxNode.contentName syntaxNode:firstSyntaxNode location:NSMaxRange(resultRange)];
+                TMScope *contentScope = [spanScope newChildScopeWithIdentifier:firstSyntaxNode.contentName syntaxNode:firstSyntaxNode location:NSMaxRange(resultRange) type:TMScopeTypeContent];
                 contentScope.endRegexp = spanScope.endRegexp;
                 [scopeStack addObject:contentScope];
             }
@@ -547,17 +547,22 @@ static OnigRegexp *_namedCapturesRegexp;
     return YES;
 }
 
-- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result offset:(NSUInteger)offset inScope:(TMScope *)scope generation:(CodeFileGeneration)generation
+- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
     ECASSERT(!OSSpinLockTry(&_scopesLock));
     ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ECASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
     ECASSERT(scope);
     if (!dictionary || !result)
         return YES;
-    TMScope *capturesScope = [scope newChildScopeWithIdentifier:[[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset];
-    capturesScope.length = [result bodyRange].length;
-    if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
-        return NO;
+    TMScope *capturesScope = scope;
+    if (type != TMScopeTypeMatch)
+    {
+        capturesScope = [scope newChildScopeWithIdentifier:[[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
+        capturesScope.length = [result bodyRange].length;
+        if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
+            return NO;
+    }
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
     {
@@ -569,7 +574,7 @@ static OnigRegexp *_namedCapturesRegexp;
             continue;
         ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
         ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
-        TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location + offset];
+        TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location + offset type:TMScopeTypeCapture];
         currentCaptureScope.length = currentMatchRange.length;
         if (![self _parsedTokenInRange:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withScope:currentCaptureScope generation:generation])
             return NO;
