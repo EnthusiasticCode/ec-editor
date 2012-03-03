@@ -10,6 +10,7 @@
 
 typedef enum
 {
+    TMScopeTypeUnknown = 0,
     TMScopeTypeMatch,
     TMScopeTypeCapture,
     TMScopeTypeSpan,

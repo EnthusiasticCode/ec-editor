@@ -22,6 +22,16 @@ typedef enum
     TMScopeQueryAdjacentEnd,
 } TMScopeQueryOptions;
 
+/// Scope flags. Not all flags are valid for all scope types
+typedef enum
+{
+    TMScopeHasBegin = 1 << 0,
+    TMScopeHasEnd = 1 << 1,
+    TMScopeHasBeginScope = 1 << 2,
+    TMScopeHasEndScope = 1 << 3,
+    TMScopeHasContentScope = 1 << 4,
+} TMScopeFlags;
+
 @interface TMScope ()
 
 /// The syntax node that created the scope
@@ -36,6 +46,9 @@ typedef enum
 /// The length of the scope
 @property (nonatomic) NSUInteger length;
 
+/// Flags for additional type specific attributes
+@property (nonatomic) TMScopeFlags flags;
+
 /// The parent scope, if one exists
 @property (nonatomic, weak, readonly) TMScope *parent;
 
@@ -47,6 +60,9 @@ typedef enum
 
 /// Creates a new root scope
 + (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
+
+/// Removes the scope from it's parent's children
+- (void)removeFromParent;
 
 /// Method to query the scope tree. Can only be called on root scopes
 - (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options;

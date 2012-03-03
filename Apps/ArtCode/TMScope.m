@@ -48,7 +48,7 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
+@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, flags = _flags, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
 
 - (void)setDelegate:(id<TMScopeDelegate>)delegate
 {
@@ -149,12 +149,23 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
         [_children insertObject:childScope atIndex:childInsertionIndex];
     if (_delegateFlags.didAddScope)
         [_delegate scope:self didAddScope:childScope];
+    
     return childScope;
 }
 
 + (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
 {
     return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode type:TMScopeTypeRoot];
+}
+
+- (void)removeFromParent
+{
+    ECASSERT(_parent && _parent->_children && [_parent->_children containsObject:self]);
+    // We're only using it on span and content type scopes at the moment, but there's no reason why it shouldn't work with other types
+    ECASSERT(_type == TMScopeTypeContent || _type == TMScopeTypeSpan);
+    if (_type == TMScopeTypeContent)
+        _parent->_flags ^= TMScopeHasContentScope;
+    [_parent->_children removeObject:self];
 }
 
 #pragma mark - Scope Tree Querying
@@ -454,22 +465,39 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     if (!_children.count)
         return;
     
+    // 0 length scopes should not exist in a consistent tree
+    ECASSERT(_length);
+    
+    // Scope must have a valid type
     ECASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
     
+    // If the scope isn't a root scope, it must have a parent scope. Additionally some types can only be children of others.
     ECASSERT(_type == TMScopeTypeRoot || _parent);
     ECASSERT(_type != TMScopeTypeContent || _parent->_type == TMScopeTypeSpan);
     ECASSERT(_type != TMScopeTypeCapture || _parent->_type == TMScopeTypeMatch || _parent->_type == TMScopeTypeBegin || _parent->_type == TMScopeTypeEnd);
     ECASSERT(_type != TMScopeTypeBegin || _parent->_type == TMScopeTypeSpan);
     ECASSERT(_type != TMScopeTypeEnd || _parent->_type == TMScopeTypeSpan);
     
+    // Children must be sorted, must not overlap, and must not extend beyond the parent's range, and must have non-zero length (this gets rechecked on recursion, but that's ok)
     NSUInteger scopeEnd = _location + _length;
-    NSUInteger previousChildLocation = 0;
-    
+    NSUInteger previousChildLocation = NSUIntegerMax;
+    NSUInteger previousChildEnd = NSUIntegerMax;
+    BOOL isFirstChild = YES;
     for (TMScope *childScope in _children)
     {
-        ECASSERT(previousChildLocation <= childScope->_location);
+        ECASSERT(childScope->_length);
         ECASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
+        if (!isFirstChild && childScope->_type != TMScopeTypeCapture) // Temporary workaround for captures not being handled correctly
+        {
+            ECASSERT(previousChildLocation < childScope->_location);
+            ECASSERT(previousChildEnd <= childScope->_location);
+        }
+        else
+        {
+            isFirstChild = NO;
+        }
         previousChildLocation = childScope->_location;
+        previousChildEnd = childScope->_location + childScope->_length;
         [childScope _checkConsistency];
     }
 }
