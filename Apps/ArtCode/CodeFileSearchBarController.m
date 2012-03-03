@@ -88,14 +88,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     return self;
 }
 
-- (void)dealloc
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.regExpOptions] forKey:@"CodeFileFindRegExpOptions"];
-    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.hitMustOption] forKey:@"CodeFileFindHitMustOption"];
-    [defaults synchronize];
-}
-
 #pragma mark - View Lifecycle
 
 - (void)viewDidUnload 
@@ -115,7 +107,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 }
 
 - (void)viewDidDisappear:(BOOL)animated
-{    
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.regExpOptions] forKey:@"CodeFileFindRegExpOptions"];
+    [defaults setObject:[NSNumber numberWithUnsignedInteger:self.hitMustOption] forKey:@"CodeFileFindHitMustOption"];
+    [defaults synchronize];
+    
     [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
     
     if ([searchFilterMatches count] > 0)
