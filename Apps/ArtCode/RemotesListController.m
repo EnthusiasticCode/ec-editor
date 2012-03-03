@@ -19,6 +19,8 @@ static void *_currentProjectRemotesContext;
 
 @interface RemotesListController ()
 
+@property (nonatomic, strong) ArtCodeProject *currentProject;
+
 - (void)_toolAddAction:(id)sender;
 - (void)_toolDeleteAction:(id)sender;
 
@@ -53,6 +55,18 @@ static void *_currentProjectRemotesContext;
 }
 
 #pragma mark - Properties
+
+@synthesize currentProject;
+
+- (void)setCurrentProject:(ArtCodeProject *)value
+{
+    if (value == currentProject)
+        return;
+    
+    [currentProject removeObserver:self forKeyPath:@"remotes" context:&_currentProjectRemotesContext];
+    currentProject = value;
+    [currentProject addObserver:self forKeyPath:@"remotes" options:NSKeyValueObservingOptionNew context:&_currentProjectRemotesContext];
+}
 
 - (NSArray *)filteredItems
 {
@@ -111,13 +125,13 @@ static void *_currentProjectRemotesContext;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.artCodeTab.currentProject addObserver:self forKeyPath:@"remotes" options:NSKeyValueObservingOptionNew context:&_currentProjectRemotesContext];
+    self.currentProject = self.artCodeTab.currentProject;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    self.currentProject = nil;
     [super viewWillDisappear:animated];
-    [self.artCodeTab.currentProject removeObserver:self forKeyPath:@"remotes" context:&_currentProjectRemotesContext];
 }
 
 #pragma mark - Table view datasource
