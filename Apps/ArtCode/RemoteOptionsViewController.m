@@ -45,4 +45,33 @@
     return YES;
 }
 
+- (NSString *)remoteTypeString
+{
+    switch (self.remoteType.selectedSegmentIndex)
+    {
+        case 0:
+            return @"ftp";
+            
+        case 1:
+            return @"sftp";
+            
+        case 2:
+            return @"http";
+    }
+    return nil;
+}
+
+- (IBAction)remoteTypeChangedAction:(id)sender {
+}
+
+- (void)setRemoteTypeString:(NSString *)remoteTypeString
+{
+    if ([remoteTypeString isEqualToString:@"ftp"])
+        self.remoteType.selectedSegmentIndex = 0;
+    else if ([remoteTypeString isEqualToString:@"sftp"])
+        self.remoteType.selectedSegmentIndex = 1;
+    else if ([remoteTypeString isEqualToString:@"http"])
+        self.remoteType.selectedSegmentIndex = 2;
+}
+
 @end

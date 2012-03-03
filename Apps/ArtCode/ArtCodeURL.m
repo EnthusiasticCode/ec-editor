@@ -96,6 +96,15 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return [self URLByAppendingFragmentDictionary:fragments];
 }
 
+- (BOOL)isRemoteURL
+{
+    return [self.scheme isEqualToString:@"ftp"]
+    || [self.scheme isEqualToString:@"ssh"]
+    || [self.scheme isEqualToString:@"sftp"]
+    || [self.scheme isEqualToString:@"http"]
+    || [self.scheme isEqualToString:@"https"];
+}
+
 - (NSString *)prettyPathRelativeToProjectDirectory
 {
     return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];

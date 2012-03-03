@@ -506,7 +506,7 @@ static const void *contentViewControllerContext;
             codeFileController.fileURL = url;
         }
     }
-    else if ([url.scheme isEqualToString:@"ftp"])
+    else if ([url isRemoteURL])
     {
         if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
             result = self.contentViewController;

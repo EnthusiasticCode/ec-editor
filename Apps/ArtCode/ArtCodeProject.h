@@ -69,6 +69,7 @@
 /// Access the remotes stored for the project.
 @property (nonatomic, copy, readonly) NSArray *remotes;
 
+- (ProjectRemote *)remoteForURL:(NSURL *)remoteURL;
 - (void)addRemote:(ProjectRemote *)remote;
 - (void)removeRemote:(ProjectRemote *)remote;
 
@@ -98,6 +99,8 @@
 
 
 @interface ProjectRemote : NSObject
+
+@property (nonatomic, weak, readonly) ArtCodeProject *project;
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *scheme;

@@ -214,7 +214,7 @@
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
 {
-    return YES;
+    return self.artCodeTab.currentURL != nil;
 }
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender

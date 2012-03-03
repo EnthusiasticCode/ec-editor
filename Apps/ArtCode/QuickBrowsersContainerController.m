@@ -17,6 +17,7 @@
 #import "QuickFolderInfoController.h"
 #import "QuickFileInfoController.h"
 #import "QuickTOCController.h"
+#import "QuickRemoteInfoController.h"
 
 @implementation QuickBrowsersContainerController
 
@@ -26,6 +27,7 @@
     static QuickBrowsersContainerController *_projectController = nil;
     static QuickBrowsersContainerController *_folderController = nil;
     static QuickBrowsersContainerController *_fileController = nil;
+    static QuickBrowsersContainerController *_remoteController = nil;
     static NSArray *_commonControllers = nil;
     if (!_commonControllers)
         _commonControllers = [NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil];
@@ -38,7 +40,8 @@
         [ArtCodeURL projectNameFromURL:contentController.artCodeTab.currentURL isProjectRoot:&isProjectRoot];
         if (isProjectRoot)
         {
-            if ([contentController.artCodeTab.currentURL isBookmarksVariant])
+            if ([contentController.artCodeTab.currentURL isBookmarksVariant]
+                || [contentController.artCodeTab.currentURL isRemotesVariant])
             {
                 if (!_commonController)
                 {
@@ -83,6 +86,18 @@
             }
             return _folderController;
         }
+    }
+    else if ([contentController.artCodeTab.currentURL isRemoteURL])
+    {
+        if (!_remoteController)
+        {
+            _remoteController = [[QuickBrowsersContainerController alloc] init];
+            _remoteController.contentController = contentController;
+            NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickRemoteInfoController new]];
+            [viewControllers addObjectsFromArray:_commonControllers];
+            [_remoteController setViewControllers:viewControllers animated:NO];
+        }
+        return _remoteController;
     }
     else
     {

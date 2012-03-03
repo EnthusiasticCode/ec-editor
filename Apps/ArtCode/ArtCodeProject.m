@@ -19,6 +19,13 @@ static NSString * const ProjectExtension = @".weakpkg";
 static WeakDictionary *openProjects = nil;
 
 
+@interface ArtCodeProject (/* Private methods */)
+
+@property (nonatomic, getter = isDirty) BOOL dirty;
+
+@end
+
+
 @interface ProjectBookmark (/* Private methods */)
 
 @property (nonatomic, weak) ArtCodeProject *project;
@@ -30,16 +37,17 @@ static WeakDictionary *openProjects = nil;
 @end
 
 
-@interface ProjectRemote ()
+@interface ProjectRemote (/* Private methods */)
 
-- (id)initWithPropertyDictionary:(NSDictionary *)dict;
+@property (nonatomic, weak, readwrite) ArtCodeProject *project;
+
+- (id)initWithProject:(ArtCodeProject *)proj propertyDictionary:(NSDictionary *)dict;
 - (NSDictionary *)propertyDictionary;
 
 @end
 
 
 @implementation ArtCodeProject {
-    BOOL _dirty;
     NSURL *_plistUrl;
     
     NSMutableArray *bookmarks;
@@ -53,6 +61,7 @@ static WeakDictionary *openProjects = nil;
 
 #pragma mark Properties
 
+@synthesize dirty;
 @synthesize URL, labelColor, bookmarks, remotes;
 
 - (NSString *)name
@@ -84,7 +93,7 @@ static WeakDictionary *openProjects = nil;
     if (value == labelColor)
         return;
     
-    _dirty = YES;
+    self.dirty = YES;
     labelColor = value;
 }
 
@@ -124,7 +133,7 @@ static WeakDictionary *openProjects = nil;
             remotes = [NSMutableArray new];
             for (NSDictionary *r in plistRemotes)
             {
-                [remotes addObject:[[ProjectRemote alloc] initWithPropertyDictionary:r]];
+                [remotes addObject:[[ProjectRemote alloc] initWithProject:self propertyDictionary:r]];
             }
         }
     }
@@ -134,7 +143,7 @@ static WeakDictionary *openProjects = nil;
 
 - (void)flush
 {
-    if (!_dirty)
+    if (!self.isDirty)
         return;
     
     NSMutableDictionary *plist = [NSMutableDictionary new];
@@ -163,7 +172,7 @@ static WeakDictionary *openProjects = nil;
         [[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:newURL atomically:YES];
     }];
     
-    _dirty = NO;
+    self.dirty = NO;
 }
 
 - (BOOL)compressProjectToURL:(NSURL *)exportUrl
@@ -196,7 +205,7 @@ static WeakDictionary *openProjects = nil;
     
     ProjectBookmark *bookmark = [[ProjectBookmark alloc] initWithProject:self URL:[fileURL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:line] forKey:@"line"]] note:note];
     [bookmarks addObject:bookmark];
-    _dirty = YES;
+    self.dirty = YES;
     
     // Clearing cacheing dictionary entry
     if ([_fileToBookmarksCache count])
@@ -208,7 +217,7 @@ static WeakDictionary *openProjects = nil;
 - (void)removeBookmark:(ProjectBookmark *)bookmark
 {
     [bookmarks removeObject:bookmark];
-    _dirty = YES;
+    self.dirty = YES;
     
     // Clearing cacheing dictionary entry
     if ([_fileToBookmarksCache count])
@@ -272,14 +281,30 @@ static WeakDictionary *openProjects = nil;
 
 #pragma mark Remotes methods
 
+- (ProjectRemote *)remoteForURL:(NSURL *)remoteURL
+{
+    for (ProjectRemote *remote in remotes)
+    {
+        if ([remote.host isEqualToString:remoteURL.host]
+            && [remote.scheme isEqualToString:remoteURL.scheme]
+            && remote.port == [remoteURL.port intValue]
+            && [remote.user isEqualToString:remoteURL.user])
+        {
+            return remote;
+        }
+    }
+    return nil;
+}
+
 - (void)addRemote:(ProjectRemote *)remote
 {
     NSIndexSet *addSet = [NSIndexSet indexSetWithIndex:[remotes count]];
     [self willChange:NSKeyValueChangeInsertion valuesAtIndexes:addSet forKey:@"remotes"];
     if (!remotes)
         remotes = [NSMutableArray new];
+    remote.project = self;
     [remotes addObject:remote];
-    _dirty = YES;
+    self.dirty = YES;
     [self didChange:NSKeyValueChangeInsertion valuesAtIndexes:addSet forKey:@"remotes"];
 }
 
@@ -291,7 +316,7 @@ static WeakDictionary *openProjects = nil;
     NSIndexSet *removeSet = [NSIndexSet indexSetWithIndex:removeIndex];
     [self willChange:NSKeyValueChangeRemoval valuesAtIndexes:removeSet forKey:@"remotes"];
     [remotes removeObject:remote];
-    _dirty = YES;
+    self.dirty = YES;
     [self didChange:NSKeyValueChangeRemoval valuesAtIndexes:removeSet forKey:@"remotes"];
 }
 
@@ -504,23 +529,70 @@ static WeakDictionary *openProjects = nil;
 
 @implementation ProjectRemote
 
-@synthesize name, scheme, host, port, user;
+@synthesize project, name, scheme, host, port, user;
+
+- (void)setName:(NSString *)value
+{
+    if (value == name)
+        return;
+    
+    name = value;
+    self.project.dirty = YES;
+}
+
+- (void)setScheme:(NSString *)value
+{
+    if (value == scheme)
+        return;
+    
+    scheme = value;
+    self.project.dirty = YES;
+}
+
+- (void)setHost:(NSString *)value
+{
+    if (value == host)
+        return;
+    
+    host = value;
+    self.project.dirty = YES;
+}
+
+- (void)setPort:(NSInteger)value
+{
+    if (value == port)
+        return;
+    
+    port = value;
+    self.project.dirty = YES;
+}
+
+- (void)setUser:(NSString *)value
+{
+    if (value == user)
+        return;
+    
+    user = value;
+    self.project.dirty = YES;
+}
 
 - (void)setPassword:(NSString *)password
 {
+    ECASSERT([user length]);
     [[Keychain sharedKeychain] setPassword:password forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:scheme host:host port:port] account:user];
 }
 
 - (NSString *)password
 {
-    return [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:scheme host:host port:port] account:user];
+    return [user length] ? [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:scheme host:host port:port] account:user] : nil;
 }
 
-- (id)initWithPropertyDictionary:(NSDictionary *)dict
+- (id)initWithProject:(ArtCodeProject *)proj propertyDictionary:(NSDictionary *)dict
 {
     self = [super init];
     if (!self)
         return nil;
+    project = proj;
     name = [dict objectForKey:@"name"];
     scheme = [dict objectForKey:@"scheme"];
     host = [dict objectForKey:@"host"];
