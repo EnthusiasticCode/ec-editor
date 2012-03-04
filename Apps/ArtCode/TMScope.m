@@ -137,6 +137,7 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
 
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
+    ECASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
     TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
     childScope->_location = location;
     childScope->_parent = self;
@@ -487,7 +488,7 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     {
         ECASSERT(childScope->_length);
         ECASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
-        if (!isFirstChild && childScope->_type != TMScopeTypeCapture) // Temporary workaround for captures not being handled correctly
+        if (!isFirstChild)
         {
             ECASSERT(previousChildLocation < childScope->_location);
             ECASSERT(previousChildEnd <= childScope->_location);

@@ -579,21 +579,29 @@ static OnigRegexp *_namedCapturesRegexp;
         if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
             return NO;
     }
+    NSMutableArray *capturesScopesStack = [NSMutableArray arrayWithObject:capturesScope];
     NSUInteger numMatchRanges = [result count];
     for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
     {
         NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
+        currentMatchRange.location += offset;
         if (!currentMatchRange.length)
             continue;
         NSString *currentCaptureName = [[dictionary objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_captureName];
         if (!currentCaptureName)
             continue;
-        ECASSERT([currentCaptureName isKindOfClass:[NSString class]]);
-        ECASSERT(currentMatchRange.location >= [result bodyRange].location && NSMaxRange(currentMatchRange) <= NSMaxRange([result bodyRange]));
-        TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location + offset type:TMScopeTypeCapture];
+        while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length)
+        {
+            ECASSERT([capturesScopesStack count]);
+            [capturesScopesStack removeLastObject];
+            capturesScope = [capturesScopesStack lastObject];
+        }
+        TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location type:TMScopeTypeCapture];
         currentCaptureScope.length = currentMatchRange.length;
         if (![self _parsedTokenInRange:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withScope:currentCaptureScope generation:generation])
             return NO;
+        [capturesScopesStack addObject:currentCaptureScope];
+        capturesScope = currentCaptureScope;
     }
     return YES;
 }
