@@ -13,6 +13,20 @@
 
 typedef void(^RemoteTransferCompletionBlock)(id<CKConnection> connection, NSError *error);
 
+enum RemoteSyncDirection {
+    RemoteSyncDirectionLocalToRemote,
+    RemoteSyncDirectionRemoteToLocal
+};
+
+enum RemoteSyncChangeDetermination {
+    RemoteSyncChangeDeterminationModificationTime,
+    RemoteSyncChangeDeterminationSize
+};
+
+/// An NSNumber with an int value of RemoteSyncDirection enum indicating if the syncronization should happen between remote to tocal.
+extern NSString * const RemoteSyncOptionDirectionKey;
+/// Indicates what to use to determine if a file has been modified.
+extern NSString * const RemoteSyncOptionChangeDeterminationKey;
 
 @interface RemoteTransferController : MoveConflictController
 
@@ -22,6 +36,9 @@ typedef void(^RemoteTransferCompletionBlock)(id<CKConnection> connection, NSErro
 /// This method will start the download process of the given items relative to the given remote URL from the connection to the local URL.
 /// Items are an array of dictionaries as returned by the CKConnection.
 - (void)downloadItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL toLocalURL:(NSURL *)localURL completion:(RemoteTransferCompletionBlock)completionHandler;
+
+/// Syncronizes a local with a remote URL. Shows what is going to be moved before actually perform the operation.
+- (void)syncLocalDirectoryURL:(NSURL *)localURL withConnection:(id<CKConnection>)connection remoteURL:(NSURL *)remoteURL options:(NSDictionary *)optionsDictionary completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// This method will start the process of deleting the given items. Folders will be deleted recursevly.
 - (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler;

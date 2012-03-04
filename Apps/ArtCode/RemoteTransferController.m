@@ -8,11 +8,18 @@
 
 #import "RemoteTransferController.h"
 #import "UIImage+AppStyle.h"
+#import "ArtCodeURL.h"
 #import <Connection/CKConnectionRegistry.h>
+
+NSString * const RemoteSyncOptionDirectionKey = @"direction";
+NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination";
 
 @interface RemoteTransferController ()
 
 - (void)_callCompletionHandlerWithError:(NSError *)error;
+
+/// Method used to recursevly append files to upload in a syncronization
+- (void)_syncLocalURL:(NSURL *)local toRemotePath:(NSString *)remote;
 
 @end
 
@@ -26,6 +33,9 @@
     
     /// Dictionary of remote paths to the local URL to be uploaded there
     NSMutableDictionary *_uploads;
+    NSMutableDictionary *_syncs;
+    BOOL _syncIsFromRemote;
+    BOOL _syncUseFileSize;
     
     /// Dictionary of remote items to an NSNumber indicating the progress percent
     NSMutableDictionary *_transfersProgress;
@@ -62,9 +72,15 @@
     
     // TODO set icon
     if ([[self.conflictURLs objectAtIndex:indexPath.row] isKindOfClass:[NSDictionary class]])
+    {
         cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] objectForKey:cxFilenameKey];
+        cell.detailTextLabel.text = nil;
+    }
     else
+    {
         cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] lastPathComponent];
+        cell.detailTextLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] prettyPath];
+    }
     
     return cell;
 }
@@ -73,20 +89,65 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
-    // Implementation to substitute non working checkExistenceOfPath:
-    [_uploads enumerateKeysAndObjectsUsingBlock:^(NSString *uploadPath, NSURL *localURL, BOOL *stop) {
-        // Check for existance
-        BOOL exists = NO;
-        for (NSDictionary *item in contents)
-        {
-            if ([[item objectForKey:cxFilenameKey] isEqualToString:[uploadPath lastPathComponent]])
+    if (_uploads != nil)
+    {
+        // Implementation to substitute non working checkExistenceOfPath:
+        [_uploads enumerateKeysAndObjectsUsingBlock:^(NSString *uploadPath, NSURL *localURL, BOOL *stop) {
+            // Check for existance
+            BOOL exists = NO;
+            for (NSDictionary *item in contents)
             {
-                exists = YES;
-                break;
+                if ([[item objectForKey:cxFilenameKey] isEqualToString:[uploadPath lastPathComponent]])
+                {
+                    exists = YES;
+                    break;
+                }
+            }
+            [self connection:(id<CKConnection>)con checkedExistenceOfPath:uploadPath pathExists:exists error:nil];
+        }];
+    }
+    else if (_syncs != nil)
+    {
+        if (_syncIsFromRemote)
+        {
+            
+        }
+        else
+        {
+            NSNumber *fileSize = nil;
+            NSDate *fileModificationDate = nil;
+            for (NSDictionary *item in contents)
+            {
+                NSString *remoteItemPath = [dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
+                NSURL *localItemURL = [_syncs objectForKey:remoteItemPath];
+                if (localItemURL == nil)
+                {
+                    // TODO remove orphaned files?
+                    continue;
+                }
+                // Determine if the item should not be synced
+                if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+                {
+                    // Directory already exists, no need to create it
+                    [_syncs removeObjectForKey:remoteItemPath];
+                }
+                if (_syncUseFileSize)
+                {
+                    [localItemURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
+                    if ([fileSize isEqualToNumber:[item objectForKey:NSFileSize]])
+                        [_syncs removeObjectForKey:remoteItemPath];
+                }
+                else
+                {
+                    [localItemURL getResourceValue:&fileModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+                    if ([fileModificationDate compare:[item objectForKey:NSFileModificationDate]] == NSOrderedAscending)
+                        [_syncs removeObjectForKey:remoteItemPath];
+                }
             }
         }
-        [self connection:(id<CKConnection>)con checkedExistenceOfPath:uploadPath pathExists:exists error:nil];
-    }];
+        [self.conflictURLs setArray:[_syncs allKeys]];
+        [self.conflictTableView reloadData];
+    }
 }
 
 #pragma mark - Connection Uploads
@@ -234,6 +295,7 @@
     _remoteURL = remoteURL;
     _completionHandler = [completionHandler copy];
     
+    _syncs = nil;
     _uploads = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
     _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
     
@@ -313,6 +375,48 @@
         if (completionHandler)
             completionHandler(connection, nil);
     }
+}
+
+- (void)syncLocalDirectoryURL:(NSURL *)localURL withConnection:(id<CKConnection>)connection remoteURL:(NSURL *)remoteURL options:(NSDictionary *)optionsDictionary completion:(RemoteTransferCompletionBlock)completionHandler
+{
+    ECASSERT(connection != nil);
+    
+    // Reset progress
+    self.progressView.progress = 0;
+    _transfersStarted = 0;
+    _transfersCompleted = 0;
+    
+    // Change the connection's delegate
+    _originalDelegate = [connection delegate];
+    [connection setDelegate:self];
+    
+    _connection = connection;
+    _localURL = localURL;
+    _remoteURL = remoteURL;
+    _completionHandler = [completionHandler copy];
+    _uploads = nil;
+    
+    // Get options
+    _syncIsFromRemote = [[optionsDictionary objectForKey:RemoteSyncOptionDirectionKey] boolValue];
+    _syncUseFileSize = [[optionsDictionary objectForKey:RemoteSyncOptionChangeDeterminationKey] boolValue];
+    _syncs = [NSMutableDictionary new];
+    
+    NSString *remotePath = remoteURL.path;
+    if (!_syncIsFromRemote)
+    {
+        [self _syncLocalURL:localURL toRemotePath:remotePath];
+    }
+    else
+    {
+        [connection changeToDirectory:remotePath];
+        [connection directoryContents];
+    }
+    
+    self.conflictTableView.hidden = NO;
+    self.toolbar.hidden = NO;
+    self.progressView.hidden = YES;
+    [self.conflictTableView setEditing:NO animated:NO];
+    self.navigationItem.title = @"Files that will be synchronized";
 }
 
 - (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler
@@ -426,6 +530,24 @@
     [_connection setDelegate:_originalDelegate];
     if (_completionHandler)
         _completionHandler(_connection, error);
+}
+
+- (void)_syncLocalURL:(NSURL *)local toRemotePath:(NSString *)remote
+{
+    ECASSERT(_syncs);
+    
+    NSNumber *isDirectory = nil;
+    for (NSURL *localFileURL in [[NSFileManager defaultManager] enumeratorAtURL:local includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLFileSizeKey, nil] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil])
+    {
+        [_syncs setObject:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]] forKey:localFileURL];
+        [localFileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
+        if ([isDirectory boolValue])
+        {
+            [self _syncLocalURL:localFileURL toRemotePath:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]]];
+        }
+    }
+    [_connection changeToDirectory:remote];
+    [_connection directoryContents];
 }
 
 @end

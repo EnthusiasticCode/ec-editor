@@ -62,6 +62,15 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 @end
 
+@implementation NSString (ArtCodeURL)
+
+- (NSString *)prettyPath
+{
+    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
+}
+
+@end
+
 @implementation NSURL (ArtCodeURL)
 
 - (BOOL)isBookmarksVariant
@@ -105,9 +114,14 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     || [self.scheme isEqualToString:@"https"];
 }
 
+- (NSString *)prettyPath
+{
+    return [[self path] prettyPath];
+}
+
 - (NSString *)prettyPathRelativeToProjectDirectory
 {
-    return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
+    return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] prettyPath];
 }
 
 @end

@@ -1527,13 +1527,6 @@
 			name = "Quick Browsers";
 			sourceTree = "<group>";
 		};
-		CD7BC79214B7054800313CDB /* Remotes Controllers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Remotes Controllers";
-			sourceTree = "<group>";
-		};
 		CD7D2AD413C0CD2600B889EE = {
 			isa = PBXGroup;
 			children = (
@@ -1714,7 +1707,6 @@
 				CD9ED8E51466C3E600A517A5 /* Keyboard Accessory */,
 				CD6580C514157B300079412F /* Find & Replace Controllers */,
 				CD6E416D14614A2A00A9CE7F /* Minimap View */,
-				CD7BC79214B7054800313CDB /* Remotes Controllers */,
 			);
 			name = Editor;
 			sourceTree = "<group>";

@@ -24,6 +24,13 @@
 
 @end
 
+@interface NSString (ArtCodeURL)
+
+/// Substitute / with ▸
+- (NSString *)prettyPath;
+
+@end
+
 @interface NSURL (ArtCodeURL)
 
 /// Indicate if the URL has a bookmarks specifier.
@@ -36,6 +43,9 @@
 
 /// Indicates if the URL should be opened with a remote connection
 - (BOOL)isRemoteURL;
+
+/// Substitute / with ▸
+- (NSString *)prettyPath;
 
 /// Returns a string that has a pretty path format that removes '.weakpkg' extensions and adds ▸ instead of /
 - (NSString *)prettyPathRelativeToProjectDirectory;

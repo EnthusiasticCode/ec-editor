@@ -101,9 +101,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
+    
     [self _addFindFilterCodeViewPass];
     [self _applyFindFilterAndFlash:YES];
-    
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -120,6 +121,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         [self.targetCodeFileController.codeView updateAllText];
     }
     self.searchFilterMatches = nil;
+    
+    [super viewDidDisappear:animated];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
