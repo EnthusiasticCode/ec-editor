@@ -16,6 +16,16 @@
     ProjectRemote *_remote;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    self.navigationItem.title = @"Remote Informations";
+    self.tabBarItem.title = @"Info";
+    return self;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
