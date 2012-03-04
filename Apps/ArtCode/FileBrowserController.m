@@ -61,6 +61,7 @@ static void *_openQuicklyObservingContext;
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
 - (void)_remoteDirectoryBrowserUploadAction:(id)sender;
+- (void)_remoteDirectoryBrowserSyncAction:(id)sender;
 
 @end
 
@@ -68,6 +69,8 @@ static void *_openQuicklyObservingContext;
 #pragma mark -
 
 @implementation FileBrowserController
+@synthesize bottomToolBarDetailLabel = _bottomToolBarDetailLabel;
+@synthesize bottomToolBarSyncButton = _bottomToolBarSyncButton;
 
 - (id)init
 {
@@ -113,13 +116,13 @@ static void *_openQuicklyObservingContext;
     _directory = directory;
     if (self.isViewLoaded && self.view.superview != nil)
     {
-        self.searchBar.text = nil;
-        [self invalidateFilteredItems];
         self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
         [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
+        self.searchBar.text = nil;
+        [self invalidateFilteredItems];
         [self.tableView reloadData];
     }
 }
@@ -158,7 +161,7 @@ static void *_openQuicklyObservingContext;
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
     
     // Load the bottom toolbar
-    [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
+    [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload
@@ -168,11 +171,14 @@ static void *_openQuicklyObservingContext;
     _toolEditItemExportActionSheet = nil;
     _toolEditItemDuplicateActionSheet = nil;
     
+    [self setBottomToolBarDetailLabel:nil];
+    [self setBottomToolBarSyncButton:nil];
     [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    // Initialize presenters
     self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
     self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
@@ -188,6 +194,9 @@ static void *_openQuicklyObservingContext;
     
     [self invalidateFilteredItems];
     [super viewWillAppear:animated];
+    
+    // Hide sync button if no remotes
+    self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentProject.remotes count] == 0;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -569,6 +578,38 @@ static void *_openQuicklyObservingContext;
     // Start upload
     [remoteTransferController uploadItemURLs:[_selectedURLs copy] toConnection:remoteDirectoryBrowser.connection url:remoteURL completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
+        [self modalNavigationControllerDismissAction:sender];
+    }];
+}
+
+- (IBAction)syncAction:(id)sender
+{
+    if ([self.artCodeTab.currentProject.remotes count] == 1)
+    {
+        // Show only remote in modal
+        RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
+        syncController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+        syncController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserSyncAction:)];
+        [self modalNavigationControllerPresentViewController:syncController];
+    }
+    else 
+    {
+        // TODO
+    }
+}
+
+- (void)_remoteDirectoryBrowserSyncAction:(id)sender
+{
+    // Retrieve remote URL to upload to
+    RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
+    NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
+    
+    // Initialize transfer/conflict controller
+    RemoteTransferController *remoteTransferController = [RemoteTransferController new];
+    [self modalNavigationControllerPresentViewController:remoteTransferController];
+    
+    // Start sync
+    [remoteTransferController syncLocalDirectoryURL:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection remoteURL:remoteURL options:nil completion:^(id<CKConnection> connection, NSError *error) {
         [self modalNavigationControllerDismissAction:sender];
     }];
 }

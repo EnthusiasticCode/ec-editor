@@ -267,7 +267,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
 
 - (BOOL)isTransferFinished
 {
-    return _transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0;
+    return _transfersStarted == 0 || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0);
 }
 
 - (void)cancelCurrentTransfer

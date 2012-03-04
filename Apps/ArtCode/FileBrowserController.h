@@ -19,4 +19,12 @@
 @property (nonatomic, strong, readonly) DirectoryPresenter *directoryPresenter;
 @property (nonatomic, strong, readonly) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
 
+#pragma mark - Synchronization UI
+
+@property (strong, nonatomic) IBOutlet UILabel *bottomToolBarDetailLabel;
+@property (strong, nonatomic) IBOutlet BottomToolBarButton *bottomToolBarSyncButton;
+
+/// Shows a modal that will proceed to syncronize the current directory with a remote one.
+- (IBAction)syncAction:(id)sender;
+
 @end
