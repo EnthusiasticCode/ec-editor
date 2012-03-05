@@ -22,6 +22,9 @@
 
 - (IBAction)refreshAction:(id)sender;
 
+/// Shows a modal to synchronize the current remote path with a local folder
+- (IBAction)syncAction:(id)sender;
+
 #pragma mark Login panel outlets
 
 @property (strong, nonatomic) IBOutlet UILabel *loginLabel;

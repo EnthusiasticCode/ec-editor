@@ -584,7 +584,7 @@ static void *_openQuicklyObservingContext;
 
 - (IBAction)syncAction:(id)sender
 {
-    // TODO all files need to be saved before starting sync
+#warning TODO all files need to be saved before starting sync
     if ([self.artCodeTab.currentProject.remotes count] == 1)
     {
         // Show only remote in modal

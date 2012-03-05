@@ -32,6 +32,7 @@
 - (void)_toolEditExportAction:(id)sender;
 
 - (void)_modalNavigationControllerDownloadAction:(id)sender;
+- (void)_modalNavigationControllerSyncAction:(id)sender;
 
 @end
 
@@ -137,6 +138,10 @@
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(refreshAction:)]];
     
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
+    
+    // Load the bottom toolbar
+    if ([self isMemberOfClass:[RemoteBrowserController class]])
+        [[NSBundle mainBundle] loadNibNamed:@"RemoteBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload
@@ -453,6 +458,15 @@
     [_connection directoryContents];
 }
 
+- (IBAction)syncAction:(id)sender
+{
+    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
+    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    [self modalNavigationControllerPresentViewController:directoryBrowser];
+
+}
+
 - (void)_toolEditExportAction:(id)sender
 {
     // Show directory browser presenter to select where to download
@@ -500,7 +514,7 @@
     
     // Show conflit resolution controller
     RemoteTransferController *transferController = [RemoteTransferController new];
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
@@ -510,9 +524,26 @@
         [self setEditing:NO animated:YES];
         if (self.tableView.indexPathForSelectedRow)
             [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
-        [self dismissViewControllerAnimated:YES completion:^{
-            _modalNavigationController = nil;
-        }];
+        [self modalNavigationControllerDismissAction:sender];
+    }];
+}
+
+- (void)_modalNavigationControllerSyncAction:(id)sender
+{
+    // Retrieve URL to sync to
+    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
+    NSURL *localURL = directoryBrowser.selectedURL;
+    
+    // Show sync controller
+    RemoteTransferController *transferController = [RemoteTransferController new];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    transferController.navigationItem.leftBarButtonItem = cancelItem;
+    [_modalNavigationController pushViewController:transferController animated:YES];
+    
+    // Start sync
+    [transferController syncLocalDirectoryURL:localURL withConnection:(id<CKConnection>)_connection remoteURL:self.URL options:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:RemoteSyncDirectionRemoteToLocal], RemoteSyncOptionDirectionKey, nil] completion:^(id<CKConnection> connection, NSError *error) {
+        [self modalNavigationControllerDismissAction:sender];
     }];
 }
 

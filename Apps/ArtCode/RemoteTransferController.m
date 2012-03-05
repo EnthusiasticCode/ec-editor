@@ -42,6 +42,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     NSUInteger _transfersStarted;
     NSInteger _transfersCompleted;
     NSError *_transferError;
+    BOOL _transferCanceled;
 }
 
 #pragma mark - View lifecycle
@@ -52,6 +53,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     
     _uploads = nil;
     _syncs = nil;
+    _transferCanceled = NO;
 }
 
 - (void)viewDidUnload
@@ -75,7 +77,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
     
     // TODO set icon
@@ -116,44 +118,65 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     }
     else if (_syncs != nil)
     {
-        _transfersCompleted++;
-        if (_syncIsFromRemote)
+        NSComparisonResult expectedToSync = _syncIsFromRemote ? NSOrderedAscending : NSOrderedDescending;
+        NSNumber *fileSize = nil;
+        NSDate *fileModificationDate = nil;
+        for (NSDictionary *item in contents)
         {
-            
-        }
-        else
-        {
-            NSNumber *fileSize = nil;
-            NSDate *fileModificationDate = nil;
-            for (NSDictionary *item in contents)
+            NSString *remoteItemPath = [dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
+            NSURL *localItemURL = [_syncs objectForKey:remoteItemPath];
+            if (localItemURL == nil)
             {
-                NSString *remoteItemPath = [dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
-                NSURL *localItemURL = [_syncs objectForKey:remoteItemPath];
-                if (localItemURL == nil)
+                if ( ! _syncIsFromRemote)
                 {
+                    // local to remote: if no local file, skip
                     // TODO remove orphaned files?
                     continue;
                 }
-                // Determine if the item should not be synced
-                if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
-                {
-                    // Directory already exists, no need to create it
-                    [_syncs removeObjectForKey:remoteItemPath];
-                }
-                if (_syncUseFileSize)
-                {
-                    [localItemURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
-                    if ([fileSize isEqualToNumber:[item objectForKey:NSFileSize]])
-                        [_syncs removeObjectForKey:remoteItemPath];
-                }
                 else
                 {
-                    [localItemURL getResourceValue:&fileModificationDate forKey:NSURLContentModificationDateKey error:NULL];
-                    if ([fileModificationDate compare:[item objectForKey:NSFileModificationDate]] == NSOrderedAscending)
-                        [_syncs removeObjectForKey:remoteItemPath];
+                    ECASSERT([remoteItemPath hasPrefix:_remoteURL.path]);
+                    localItemURL = [_localURL URLByAppendingPathComponent:[remoteItemPath substringFromIndex:[_remoteURL.path length]]];
+                    // remote to local: add item to be downloaded if not a directory
+                    if ([item objectForKey:NSFileType] != NSFileTypeDirectory)
+                    {
+                        [_syncs setObject:localItemURL forKey:remoteItemPath];
+                        continue;
+                    }
                 }
             }
+            // if remote is a directory, no need to recreate it
+            if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+            {
+                [_syncs removeObjectForKey:remoteItemPath];
+                if (_syncIsFromRemote)
+                {
+                    // remote to local: recursion in directory tree
+                    _transfersStarted++;
+                    [_connection changeToDirectory:remoteItemPath];
+                    [_connection directoryContents];
+                }
+                continue;
+            }
+            // Determine if the item should not be synced
+            if (_syncUseFileSize)
+            {
+                // remote to/from local: have the same hanling in this case
+                [localItemURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
+                if ([fileSize isEqualToNumber:[item objectForKey:NSFileSize]])
+                    [_syncs removeObjectForKey:remoteItemPath];
+            }
+            else
+            {
+                // remote to local: local date later remote date means no sync
+                // local to remote: local date earlier remote date means no sync
+                [localItemURL getResourceValue:&fileModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+                if ([fileModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
+                    [_syncs removeObjectForKey:remoteItemPath];
+            }
         }
+        
+        _transfersCompleted++;
         if (_transfersCompleted == _transfersStarted)
         {
             if ([_syncs count] == 0)
@@ -271,7 +294,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
 
 - (void)connection:(id <CKConnection>)con didCancelTransfer:(NSString *)remotePath
 {
-    [self connection:con downloadDidFinish:remotePath error:NULL];
+    [self connection:con uploadDidFinish:remotePath error:NULL];
 }
 
 #pragma mark - Connection Delete Items
@@ -297,11 +320,14 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
 
 - (BOOL)isTransferFinished
 {
-    return _transfersStarted == 0 || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0);
+    return _transferCanceled || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [self.conflictURLs count] == 0);
 }
 
 - (void)cancelCurrentTransfer
 {
+    if (_transferCanceled)
+        return;
+    _transferCanceled = YES;
     [_connection cancelAll];
     if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
         [self _callCompletionHandlerWithError:_transferError];
@@ -429,17 +455,14 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     _syncUseFileSize = [[optionsDictionary objectForKey:RemoteSyncOptionChangeDeterminationKey] boolValue];
     _syncs = [NSMutableDictionary new];
     
-    NSString *remotePath = remoteURL.path;
-    if (!_syncIsFromRemote)
+    [self _syncLocalURL:localURL toRemotePath:remoteURL.path];
+    if (_syncIsFromRemote)
     {
-        [self _syncLocalURL:localURL toRemotePath:remotePath];
+        _transfersStarted++;
+        [_connection changeToDirectory:remoteURL.path];
+        [_connection directoryContents];
     }
-    else
-    {
-        [connection changeToDirectory:remotePath];
-        [connection directoryContents];
-    }
-    
+
     self.conflictTableView.hidden = YES;
     self.toolbar.hidden = YES;
     self.progressView.hidden = NO;
@@ -502,7 +525,10 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
         [_syncs enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, NSURL *localURL, BOOL *stop) {
             if (_syncIsFromRemote)
             {
-                // TODO
+                // remote to local: create local directory to be sure; download files
+                NSString *localDirecotryPath = [localURL.path stringByDeletingLastPathComponent];
+                [[NSFileManager defaultManager] createDirectoryAtPath:localDirecotryPath withIntermediateDirectories:YES attributes:nil error:NULL];
+                [_connection downloadFile:remotePath toDirectory:localDirecotryPath overwrite:YES delegate:nil];
             }
             else
             {
@@ -575,6 +601,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
         else
             self.navigationItem.title = @"Downloading";
         self.navigationItem.rightBarButtonItem.enabled = NO;
+        [self.conflictURLs removeAllObjects];
     }
 }
 
@@ -601,9 +628,13 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
             [self _syncLocalURL:localFileURL toRemotePath:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]]];
         }
     }
-    _transfersStarted++;
-    [_connection changeToDirectory:remote];
-    [_connection directoryContents];
+    
+    if ( ! _syncIsFromRemote)
+    {
+        _transfersStarted++;
+        [_connection changeToDirectory:remote];
+        [_connection directoryContents];
+    }
 }
 
 @end

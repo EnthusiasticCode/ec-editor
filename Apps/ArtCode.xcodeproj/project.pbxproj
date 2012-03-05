@@ -232,6 +232,7 @@
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */; };
+		CD227E6E1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416714E9C4120045ADFD /* itemIcon_Accept.png */; };
@@ -681,6 +682,7 @@
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
 		CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileBrowserBottomToolBar.xib; sourceTree = "<group>"; };
+		CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteBrowserBottomToolBar.xib; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD27416714E9C4120045ADFD /* itemIcon_Accept.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Accept.png; sourceTree = "<group>"; };
@@ -1634,6 +1636,7 @@
 				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
 				CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */,
 				CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */,
+				CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -2201,6 +2204,7 @@
 				CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */,
 				CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */,
 				CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */,
+				CD227E6E1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
