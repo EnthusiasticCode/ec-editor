@@ -46,6 +46,14 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
 
 #pragma mark - View lifecycle
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    _uploads = nil;
+    _syncs = nil;
+}
+
 - (void)viewDidUnload
 {
     _connection = nil;
@@ -108,6 +116,7 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     }
     else if (_syncs != nil)
     {
+        _transfersCompleted++;
         if (_syncIsFromRemote)
         {
             
@@ -145,8 +154,29 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
                 }
             }
         }
-        [self.conflictURLs setArray:[_syncs allKeys]];
-        [self.conflictTableView reloadData];
+        if (_transfersCompleted == _transfersStarted)
+        {
+            if ([_syncs count] == 0)
+            {
+                [self cancelCurrentTransfer];
+            }
+            else 
+            {
+                _transfersStarted = _transfersCompleted = 0;
+                self.progressView.progress = 0;
+                self.conflictTableView.hidden = NO;
+                self.toolbar.hidden = NO;
+                self.progressView.hidden = YES;
+                [self.conflictTableView setEditing:NO animated:NO];
+                self.navigationItem.title = @"Files that will be synchronized";
+                [self.conflictURLs setArray:[_syncs allKeys]];
+                [self.conflictTableView reloadData];
+            }
+        }
+        else 
+        {
+            [self.progressView setProgress:(float)_transfersCompleted / (float)_transfersStarted animated:YES];
+        }
     }
 }
 
@@ -295,7 +325,6 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     _remoteURL = remoteURL;
     _completionHandler = [completionHandler copy];
     
-    _syncs = nil;
     _uploads = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
     _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[itemURLs count]];
     
@@ -394,7 +423,6 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     _localURL = localURL;
     _remoteURL = remoteURL;
     _completionHandler = [completionHandler copy];
-    _uploads = nil;
     
     // Get options
     _syncIsFromRemote = [[optionsDictionary objectForKey:RemoteSyncOptionDirectionKey] boolValue];
@@ -412,11 +440,10 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
         [connection directoryContents];
     }
     
-    self.conflictTableView.hidden = NO;
-    self.toolbar.hidden = NO;
-    self.progressView.hidden = YES;
-    [self.conflictTableView setEditing:NO animated:NO];
-    self.navigationItem.title = @"Files that will be synchronized";
+    self.conflictTableView.hidden = YES;
+    self.toolbar.hidden = YES;
+    self.progressView.hidden = NO;
+    self.navigationItem.title = @"Calculating differences";
 }
 
 - (void)deleteItems:(NSArray *)items fromConnection:(id<CKConnection>)connection url:(NSURL *)remoteURL completionHandler:(RemoteTransferCompletionBlock)completionHandler
@@ -470,7 +497,29 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
 
 - (void)replaceAction:(id)sender
 {
-    if ([_uploads count])
+    if (_syncs)
+    {
+        [_syncs enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, NSURL *localURL, BOOL *stop) {
+            if (_syncIsFromRemote)
+            {
+                // TODO
+            }
+            else
+            {
+                NSNumber *isDirectory = nil;
+                [localURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
+                if ([isDirectory boolValue])
+                {
+                    [_connection createDirectoryAtPath:remotePath posixPermissions:nil];
+                }
+                else
+                {
+                    [_connection uploadFileAtURL:localURL toPath:remotePath posixPermissions:nil];
+                }
+            }
+        }];
+    }
+    else if (_uploads)
     {
         for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
         {
@@ -519,7 +568,13 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
         self.conflictTableView.hidden = YES;
         self.toolbar.hidden = YES;
         self.progressView.hidden = NO;
-        self.navigationItem.title = [_uploads count] ? @"Uploading" : @"Downloading";
+        if (_syncs)
+            self.navigationItem.title = @"Synchronizing";
+        else if (_uploads)
+            self.navigationItem.title = @"Uploading";
+        else
+            self.navigationItem.title = @"Downloading";
+        self.navigationItem.rightBarButtonItem.enabled = NO;
     }
 }
 
@@ -539,13 +594,14 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
     NSNumber *isDirectory = nil;
     for (NSURL *localFileURL in [[NSFileManager defaultManager] enumeratorAtURL:local includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLFileSizeKey, nil] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil])
     {
-        [_syncs setObject:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]] forKey:localFileURL];
+        [_syncs setObject:localFileURL forKey:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]]];
         [localFileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
         if ([isDirectory boolValue])
         {
             [self _syncLocalURL:localFileURL toRemotePath:[remote stringByAppendingPathComponent:[localFileURL lastPathComponent]]];
         }
     }
+    _transfersStarted++;
     [_connection changeToDirectory:remote];
     [_connection directoryContents];
 }
