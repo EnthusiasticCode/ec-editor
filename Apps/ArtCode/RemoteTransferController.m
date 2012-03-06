@@ -80,16 +80,25 @@ NSString * const RemoteSyncOptionChangeDeterminationKey = @"changeDetermination"
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
     
-    // TODO set icon
-    if ([[self.conflictURLs objectAtIndex:indexPath.row] isKindOfClass:[NSDictionary class]])
+    id item = [self.conflictURLs objectAtIndex:indexPath.row];
+    if ([item isKindOfClass:[NSDictionary class]])
     {
-        cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] objectForKey:cxFilenameKey];
+        cell.textLabel.text = [item objectForKey:cxFilenameKey];
         cell.detailTextLabel.text = nil;
+        if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+            cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+        else
+            cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[item objectForKey:cxFilenameKey] pathExtension]];
     }
     else
     {
         cell.textLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] lastPathComponent];
         cell.detailTextLabel.text = [[self.conflictURLs objectAtIndex:indexPath.row] prettyPath];
+        NSString *ext = [cell.textLabel.text pathExtension];
+        if ([ext length])
+            cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:ext];
+        else
+            cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     }
     
     return cell;

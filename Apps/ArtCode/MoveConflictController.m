@@ -91,8 +91,12 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    // TODO set icon
     cell.textLabel.text = [[self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]] lastPathComponent];
+    NSString *ext = [cell.textLabel.text pathExtension];
+    if ([ext length])
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:ext];
+    else
+        cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     
     return cell;
 }
