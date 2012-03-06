@@ -375,7 +375,7 @@ static const void *contentViewControllerContext;
         else
         {
             NSURL *url = self.artCodeTab.currentURL;
-            NSArray *pathComponents = [[ArtCodeURL pathRelativeToProjectsDirectory:url] pathComponents];
+            NSArray *pathComponents = [[[ArtCodeURL pathRelativeToProjectsDirectory:url] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] pathComponents];
             if ([pathComponents count])
             {
                 NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
