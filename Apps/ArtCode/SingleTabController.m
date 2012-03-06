@@ -389,13 +389,8 @@ static const void *contentViewControllerContext;
             }
             else if (url.host)
             {
-                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:url.scheme, url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
             }
-            // TODO parse URL query to determine images etc...
-            //            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:
-            //                                                               [currentURL.path stringByDeletingLastPathComponent],
-            //                                                               [currentURL lastPathComponent], nil] 
-            //                                                selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 1)]];
         }
     }
     
