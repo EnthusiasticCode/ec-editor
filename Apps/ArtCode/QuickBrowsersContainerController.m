@@ -40,8 +40,7 @@
         [ArtCodeURL projectNameFromURL:contentController.artCodeTab.currentURL isProjectRoot:&isProjectRoot];
         if (isProjectRoot)
         {
-            if ([contentController.artCodeTab.currentURL isBookmarksVariant]
-                || [contentController.artCodeTab.currentURL isRemotesVariant])
+            if ([contentController.artCodeTab.currentURL isBookmarksVariant])
             {
                 if (!_commonController)
                 {
@@ -94,8 +93,12 @@
             _remoteController = [[QuickBrowsersContainerController alloc] init];
             _remoteController.contentController = contentController;
             NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickRemoteInfoController new]];
-            [viewControllers addObjectsFromArray:_commonControllers];
+//            [viewControllers addObjectsFromArray:_commonControllers];
             [_remoteController setViewControllers:viewControllers animated:NO];
+        }
+        else
+        {
+            _remoteController.contentController = contentController;
         }
         return _remoteController;
     }

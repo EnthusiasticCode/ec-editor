@@ -15,6 +15,8 @@
 #import "NewRemoteViewController.h"
 #import "UIViewController+PresentingPopoverController.h"
 
+@class SingleTabController, TopBarToolbar;
+
 static void *_currentProjectRemotesContext;
 
 @interface RemotesListController ()
@@ -132,6 +134,13 @@ static void *_currentProjectRemotesContext;
 {
     self.currentProject = nil;
     [super viewWillDisappear:animated];
+}
+
+#pragma mark - Single tab content controller protocol methods
+
+- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
+{
+    return NO;
 }
 
 #pragma mark - Table view datasource
