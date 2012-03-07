@@ -21,7 +21,7 @@
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    NSFileWrapper *fileWrapper = [[NSFileWrapper alloc] init];
+    NSFileWrapper *fileWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
     return fileWrapper;
 }
 
