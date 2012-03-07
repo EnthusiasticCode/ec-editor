@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-@class ACProjectFolder;
+
+@class ACProjectFolder, ACProjectFile;
 
 @interface ACProject : UIDocument
 
@@ -27,6 +28,9 @@
 @property (nonatomic, strong, readonly) ACProjectFolder *rootFolder;
 @property (nonatomic, strong, readonly) NSArray *bookmarks;
 @property (nonatomic, strong, readonly) NSArray *remotes;
+
+/// Adds a remote to the project with a full remote url <scheme>://user@host:port
+- (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;
 
 #pragma mark Project whide operations
 

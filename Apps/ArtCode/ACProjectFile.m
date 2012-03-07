@@ -7,6 +7,15 @@
 //
 
 #import "ACProjectFile.h"
+#import "ACProject.h"
+
+@interface ACProject (Bookmarks)
+
+- (void)addNewBookmarkWithFile:(ACProjectFile *)file point:(id)point;
+- (NSArray *)bookmarksForFile:(ACProjectFile *)file;
+
+@end
+
 
 @implementation ACProjectFile
 

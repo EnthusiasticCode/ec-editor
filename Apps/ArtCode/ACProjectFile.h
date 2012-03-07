@@ -26,4 +26,12 @@
 /// Returns a FileBuffer that can handle the file editing.
 @property (nonatomic, strong, readonly) FileBuffer *codeFileBuffer;
 
+#pragma mark Managing file bookmarks
+
+/// Add a bookmark to the file.
+- (void)addBookmarkWithPoint:(id)point;
+
+/// Get the bookmarks for the file.
+- (NSArray *)bookmarks;
+
 @end
