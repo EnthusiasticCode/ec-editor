@@ -109,7 +109,11 @@ describe(@"The ACProject class", ^{
     context(@"project creation", ^{
         
         NSString *projectName = @"testproject";
-        NSURL *projectURL = [[[ACProject projectsURL] URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"acproj"];
+        __block NSURL *projectURL = nil;
+        
+        beforeAll(^{
+            projectURL = [[[ACProject projectsURL] URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"acproj"];
+        });
         
         beforeEach(^{
             [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
