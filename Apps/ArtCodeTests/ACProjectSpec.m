@@ -134,7 +134,7 @@ describe(@"The ACProject class", ^{
     });
 });
 
-describe(@"An opened ACProject", ^{
+describe(@"A new opened ACProject", ^{
     
     NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
     __block ACProject *project = nil;
@@ -157,10 +157,6 @@ describe(@"An opened ACProject", ^{
         }];
     });
     
-    it(@"has a root folder", ^{
-        [[project.rootFolder should] beNonNil];
-    });
-    
     it(@"has a UUID", ^{
         [[project.UUID should] beNonNil];
     });
@@ -175,6 +171,82 @@ describe(@"An opened ACProject", ^{
             UIColor *testColor = [UIColor blackColor];
             project.labelColor = testColor;
             [[project.labelColor should] equal:testColor];
+        });
+    });
+    
+    context(@"root folder", ^{
+        
+        it(@"is not nil", ^{
+            [[project.rootFolder should] beNonNil];
+        });
+       
+        it(@"has no children", ^{
+            [[[project.rootFolder should] have:0] children];
+        });
+    });
+    
+    context(@"root folder's subfolder", ^{
+        
+        NSString *subfolderName = @"testsubfolder";
+        
+        it(@"can be created and deleted with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[err should] beNil];
+            [[[project.rootFolder should] have:1] children];
+            
+            // Retrieve
+            id item = [project.rootFolder.children objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectFolder class]];
+            
+            // Remove
+            [item remove];
+            [[[project.rootFolder should] have:0] children];
+        });
+        
+        context(@"when created", ^{
+            
+            __block ACProjectFolder *subfolder = nil;
+            
+            beforeEach(^{
+                [project.rootFolder addNewFolderWithName:subfolderName error:nil];
+                subfolder = [project.rootFolder.children objectAtIndex:0];
+            });
+            
+            afterEach(^{
+                [[project.rootFolder.children objectAtIndex:0] remove];
+            });
+            
+            it(@"should have a consistent name", ^{
+                [[[subfolder name] should] equal:subfolderName];
+            });
+            
+            it(@"should have no children", ^{
+                [[[subfolder should] have:0] children];
+            });
+        });
+    });
+    
+    context(@"root folder's subfolder", ^{
+
+        NSString *subfolderName = @"subfolder";
+        
+        it(@"can be created with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[err should] beNil];
+            [[[project.rootFolder should] have:1] children];
+        });
+        
+        context(@"created successfuly", ^{
+            
+            beforeEach(^{
+                
+            });
+        });
+        
+        it(@"can be retrieved", ^{
+            
         });
     });
     
