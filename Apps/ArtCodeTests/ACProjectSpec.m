@@ -10,6 +10,7 @@
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
+#import "ACProjectFileBookmark.h"
 
 SPEC_BEGIN(ACProjectSpec)
 
@@ -228,7 +229,7 @@ describe(@"A new opened ACProject", ^{
         });
     });
     
-    context(@"root folder's file", ^{
+    context(@"root folder's text file", ^{
        
         NSString *fileName = @"testfile.txt";
         NSData *fileData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
@@ -269,6 +270,40 @@ describe(@"A new opened ACProject", ^{
             
             it(@"has no bookmarks", ^{
                 [[[file should] have:0] bookmarks];
+            });
+            
+            it(@"can create and remove a bookmark", ^{
+                [file addBookmarkWithPoint:[NSNumber numberWithInt:0]];
+                [[[file should] have:1] bookmarks];
+                
+                id item = [file.bookmarks objectAtIndex:0];
+                [[item should] beMemberOfClass:[ACProjectFileBookmark class]];
+                
+                [item remove];
+                [[[file should] have:0] bookmarks];
+            });
+            
+            context(@"having a line bookmark", ^{
+                
+                __block ACProjectFileBookmark *bookmark = nil;
+                NSNumber *bookmarkPoint = [NSNumber numberWithInt:0];
+                
+                beforeEach(^{
+                    [file addBookmarkWithPoint:bookmarkPoint];
+                    bookmark = [file.bookmarks objectAtIndex:0];
+                });
+                
+                afterEach(^{
+                    [bookmark remove];
+                });
+                
+                it(@"with a consistent file", ^{
+                    [[bookmark.file should] equal:file]; 
+                });
+                
+                it(@"with a consistent line point", ^{
+                    [[bookmark.bookmarkPoint should] equal:bookmarkPoint];
+                });
             });
         });
     });
