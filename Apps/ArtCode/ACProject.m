@@ -10,4 +10,19 @@
 
 @implementation ACProject
 
+#pragma mark - UIDocument
+
+- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    NSFileWrapper *fileWrapper = (NSFileWrapper *)contents;
+    
+    return YES;
+}
+
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+    NSFileWrapper *fileWrapper = [[NSFileWrapper alloc] init];
+    return fileWrapper;
+}
+
 @end
