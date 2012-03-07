@@ -13,7 +13,7 @@
 @interface ACProjectFile : ACProjectFileSystemItem
 
 /// Default NSUTF8FileEncoding
-@property (nonatomic) int fileEncoding;
+@property (nonatomic) NSStringEncoding fileEncoding;
 
 #pragma mark Code File specific properties
 

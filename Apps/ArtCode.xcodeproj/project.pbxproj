@@ -363,6 +363,12 @@
 		CDB5DB6514C6F56A003DFD1F /* DirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
+		CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
+		CDBC78301507CBF800461A71 /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
+		CDBC78311507CBF800461A71 /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
+		CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
+		CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
+		CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
 		CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */; };
 		CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */; };
@@ -2427,6 +2433,12 @@
 			files = (
 				B77101501506E40B006AF1FB /* ACProjectSpec.m in Sources */,
 				B77101541506E76F006AF1FB /* ACProject.m in Sources */,
+				CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */,
+				CDBC78301507CBF800461A71 /* ACProjectFileSystemItem.m in Sources */,
+				CDBC78311507CBF800461A71 /* ACProjectFile.m in Sources */,
+				CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */,
+				CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */,
+				CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

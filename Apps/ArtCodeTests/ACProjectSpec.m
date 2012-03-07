@@ -9,6 +9,7 @@
 #import <Kiwi.h>
 #import "ACProject.h"
 #import "ACProjectFolder.h"
+#import "ACProjectFile.h"
 
 SPEC_BEGIN(ACProjectSpec)
 
@@ -214,39 +215,61 @@ describe(@"A new opened ACProject", ^{
             });
             
             afterEach(^{
-                [[project.rootFolder.children objectAtIndex:0] remove];
+                [subfolder remove];
             });
             
-            it(@"should have a consistent name", ^{
+            it(@"has a consistent name", ^{
                 [[[subfolder name] should] equal:subfolderName];
             });
             
-            it(@"should have no children", ^{
+            it(@"has no children", ^{
                 [[[subfolder should] have:0] children];
             });
         });
     });
     
-    context(@"root folder's subfolder", ^{
-
-        NSString *subfolderName = @"subfolder";
+    context(@"root folder's file", ^{
+       
+        NSString *fileName = @"testfile.txt";
+        NSData *fileData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
         
-        it(@"can be created with no error", ^{
+        it(@"can be created and deleted with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
             [[err should] beNil];
             [[[project.rootFolder should] have:1] children];
+            
+            id item = [project.rootFolder.children objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectFile class]];
+            
+            [item remove];
+            [[[project.rootFolder should] have:0] children];
         });
         
-        context(@"created successfuly", ^{
+        context(@"when created", ^{
+            
+            __block ACProjectFile *file = nil;
             
             beforeEach(^{
-                
+                [project.rootFolder addNewFileWithName:fileName data:fileData error:nil];
+                file = [project.rootFolder.children objectAtIndex:0];
             });
-        });
-        
-        it(@"can be retrieved", ^{
             
+            afterEach(^{
+                [file remove];
+            });
+            
+            it(@"has a consistent name", ^{
+                [[[file name] should] equal:fileName];
+            });
+            
+            it(@"has UTF8 encoding by default", ^{
+                [[theValue(file.fileEncoding) should] equal:theValue(NSUTF8StringEncoding)];
+            });
+            
+            it(@"has no bookmarks", ^{
+                [[[file should] have:0] bookmarks];
+            });
         });
     });
     
