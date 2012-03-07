@@ -105,8 +105,6 @@ describe(@"The ACProject class", ^{
     it(@"define a global projects directory URL", ^{
         BOOL isDirectory = NO;
         [[[ACProject projectsURL] should] beNonNil];
-        [[theValue([[NSFileManager new] fileExistsAtPath:[[ACProject projectsURL] path] isDirectory:&isDirectory]) should] beYes];
-        [[theValue(isDirectory) should] beYes];
     });
     
     context(@"project creation", ^{

@@ -7,6 +7,10 @@
 //
 
 #import "ACProject.h"
+#import "NSURL+Utilities.h"
+
+static NSString * const ProjectsDirectoryName = @"LocalProjects";
+
 
 @implementation ACProject
 
@@ -28,6 +32,16 @@
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
 {
     NSLog(@">>>>>>>>>>>>>>>>> %@", error);
+}
+
+#pragma mark - Class Methods
+
++ (NSURL *)projectsURL
+{
+    static NSURL *_projectsURL = nil;
+    if (!_projectsURL)
+        _projectsURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
+    return _projectsURL;
 }
 
 @end

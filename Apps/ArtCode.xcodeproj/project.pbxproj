@@ -369,6 +369,7 @@
 		CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
 		CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
 		CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
+		CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
 		CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */; };
 		CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */; };
@@ -2439,6 +2440,7 @@
 				CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */,
 				CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */,
 				CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */,
+				CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
