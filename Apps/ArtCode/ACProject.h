@@ -41,9 +41,6 @@
 /// The local URL at which all projects are stored
 + (NSURL *)projectsURL;
 
-/// Return the project URL from it's name
-+ (NSURL *)projectURLFromName:(NSString *)projectName;
-
 /// Creates a new project and, if set, decompress the archive at the given URL.
 + (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(BOOL success))completionHandler;
 

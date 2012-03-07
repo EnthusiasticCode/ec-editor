@@ -97,7 +97,7 @@ describe(@"An newly created project ACProject", ^{
     });
 });
 
-describe(@"ACProject class", ^{
+describe(@"The ACProject class", ^{
     
     it(@"define a global projects directory URL", ^{
         BOOL isDirectory = NO;
@@ -106,48 +106,26 @@ describe(@"ACProject class", ^{
         [[theValue(isDirectory) should] beYes];
     });
     
-    context(@"project URL from name", ^{
-        
-        NSString *projectName = @"testproject";
-        
-        it(@"is defined", ^{
-            [[[ACProject projectURLFromName:projectName] should] beNonNil];
-        });
-        
-        it(@"is descendant of projectURL", ^{
-            [[theValue([[[ACProject projectURLFromName:projectName] path] hasPrefix:[[ACProject projectsURL] path]]) should] beYes];
-        });
-        
-        it(@"has an acproj extension", ^{
-            [[[[ACProject projectURLFromName:projectName] pathExtension] should] equal:@"acproj"];
-        });
-    });
-    
     context(@"project creation", ^{
         
         NSString *projectName = @"testproject";
+        NSURL *projectURL = [[[ACProject projectsURL] URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"acproj"];
         
         beforeEach(^{
-            [[NSFileManager new] removeItemAtURL:[ACProject projectURLFromName:projectName] error:NULL];
+            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
         });
         
-        it(@"is successful and actually create the project file", ^{
+        afterAll(^{
+            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
+        });
+        
+        it(@"is successful", ^{
             __block BOOL successful = NO;
             [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(BOOL success) {
                 successful = success;
             }];
             
-            [[theValue(successful) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
-        });
-        
-        it(@"creates a project at the project URL", ^{
-            NSURL *projectURL = [ACProject projectURLFromName:projectName];
-            
-            [[theValue([[NSFileManager new] fileExistsAtPath:projectURL.path]) should] beNo];
-            
-            [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:nil];
-            
-            [[theValue([[NSFileManager new] fileExistsAtPath:projectURL.path]) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+            [[expectFutureValue(theValue(successful)) shouldEventually] beYes];
         });
     });
 });
@@ -158,13 +136,15 @@ describe(@"An opened ACProject", ^{
     __block ACProject *project = nil;
     
     beforeEach(^{
+        __block BOOL isOpened = NO;
         [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
         project = [[ACProject alloc] initWithFileURL:projectURL];
         [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            [project openWithCompletionHandler:nil];
+            [project openWithCompletionHandler:^(BOOL success) {
+                isOpened = success;
+            }];
         }];
-        
-        [[theValue([project documentState]) shouldEventuallyBeforeTimingOutAfter(2)] equal:theValue(UIDocumentStateNormal)];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
     });
     
     afterEach(^{
