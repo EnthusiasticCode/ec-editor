@@ -72,6 +72,13 @@
 		B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C77144B54120084B050 /* Sunburst.tmTheme */; };
 		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
+		B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
+		B77100F21506DDD5006AF1FB /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
+		B77100F51506DE6E006AF1FB /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
+		B77100F81506DF34006AF1FB /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
+		B77100FB1506DF57006AF1FB /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
+		B77100FE1506DF88006AF1FB /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
+		B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
@@ -473,6 +480,20 @@
 		B7656C77144B54120084B050 /* Sunburst.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Sunburst.tmTheme; sourceTree = "<group>"; };
 		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
+		B77100ED1506DAFF006AF1FB /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
+		B77100EE1506DAFF006AF1FB /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
+		B77100F01506DDD5006AF1FB /* ACProjectItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectItem.h; sourceTree = "<group>"; };
+		B77100F11506DDD5006AF1FB /* ACProjectItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectItem.m; sourceTree = "<group>"; };
+		B77100F31506DE6E006AF1FB /* ACProjectFileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFileSystemItem.h; sourceTree = "<group>"; };
+		B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileSystemItem.m; sourceTree = "<group>"; };
+		B77100F61506DF34006AF1FB /* ACProjectFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFile.h; sourceTree = "<group>"; };
+		B77100F71506DF34006AF1FB /* ACProjectFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFile.m; sourceTree = "<group>"; };
+		B77100F91506DF56006AF1FB /* ACProjectFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFolder.h; sourceTree = "<group>"; };
+		B77100FA1506DF56006AF1FB /* ACProjectFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFolder.m; sourceTree = "<group>"; };
+		B77100FC1506DF88006AF1FB /* ACProjectFileBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFileBookmark.h; sourceTree = "<group>"; };
+		B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileBookmark.m; sourceTree = "<group>"; };
+		B77100FF1506DFC2006AF1FB /* ACProjectRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectRemote.h; sourceTree = "<group>"; };
+		B77101001506DFC2006AF1FB /* ACProjectRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectRemote.m; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
@@ -940,6 +961,7 @@
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				B77100EC1506DAE6006AF1FB /* ACProject */,
 				B7FB79CA14D605050080A714 /* Filesystem */,
 				B75F658214D868EB008B88C5 /* ArtCodeURL.h */,
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
@@ -1123,6 +1145,27 @@
 			);
 			name = "Language Bundles";
 			path = Bundles;
+			sourceTree = "<group>";
+		};
+		B77100EC1506DAE6006AF1FB /* ACProject */ = {
+			isa = PBXGroup;
+			children = (
+				B77100ED1506DAFF006AF1FB /* ACProject.h */,
+				B77100EE1506DAFF006AF1FB /* ACProject.m */,
+				B77100F01506DDD5006AF1FB /* ACProjectItem.h */,
+				B77100F11506DDD5006AF1FB /* ACProjectItem.m */,
+				B77100F31506DE6E006AF1FB /* ACProjectFileSystemItem.h */,
+				B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */,
+				B77100F61506DF34006AF1FB /* ACProjectFile.h */,
+				B77100F71506DF34006AF1FB /* ACProjectFile.m */,
+				B77100F91506DF56006AF1FB /* ACProjectFolder.h */,
+				B77100FA1506DF56006AF1FB /* ACProjectFolder.m */,
+				B77100FC1506DF88006AF1FB /* ACProjectFileBookmark.h */,
+				B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */,
+				B77100FF1506DFC2006AF1FB /* ACProjectRemote.h */,
+				B77101001506DFC2006AF1FB /* ACProjectRemote.m */,
+			);
+			name = ACProject;
 			sourceTree = "<group>";
 		};
 		B7AC172714216C59009E9205 /* Third Party */ = {
@@ -2321,6 +2364,13 @@
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
 				CDBD3FA415015E080050B10C /* QuickRemoteInfoController.m in Sources */,
+				B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */,
+				B77100F21506DDD5006AF1FB /* ACProjectItem.m in Sources */,
+				B77100F51506DE6E006AF1FB /* ACProjectFileSystemItem.m in Sources */,
+				B77100F81506DF34006AF1FB /* ACProjectFile.m in Sources */,
+				B77100FB1506DF57006AF1FB /* ACProjectFolder.m in Sources */,
+				B77100FE1506DF88006AF1FB /* ACProjectFileBookmark.m in Sources */,
+				B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
