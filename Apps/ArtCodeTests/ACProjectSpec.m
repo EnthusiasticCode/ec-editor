@@ -8,28 +8,50 @@
 
 #import <Kiwi.h>
 #import "ACProject.h"
+#import "ACProjectFolder.h"
 
 SPEC_BEGIN(ACProjectSpec)
 
 describe(@"A non-existing ACProject", ^{
-    NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
-    __block ACProject *project = nil;
     
-    beforeEach(^{
-        [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
-        project = [[ACProject alloc] initWithFileURL:projectURL];
+    context(@"with a valid URL", ^{
+
+        NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
+        __block ACProject *project = nil;
+        
+        beforeEach(^{
+            [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
+            project = [[ACProject alloc] initWithFileURL:projectURL];
+        });
+        
+        it(@"can be initialized", ^{
+            [[project should] beNonNil];
+        });
+        
+        it(@"can be saved", ^{
+            __block BOOL saved;
+            [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+                saved = success;
+            }];
+            [[theValue(saved) should] beYes];
+        });
+        
+        it(@"should not have a root folder", ^{
+            [[project.rootFolder should] beNil];
+        });
+        
     });
     
-    it(@"can be initialized", ^{
-        [[project should] beNonNil];
-    });
-    
-    it(@"can be saved", ^{
-        __block BOOL saved;
-        [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            saved = success;
-        }];
-        [[theValue(saved) should] beYes];
+    context(@"with an invalid URL", ^{
+        
+        it(@"should not be initialized", ^{
+            NSURL *invalidProjectURL = [NSURL URLWithString:@"http://www.google.com"];
+            [[theBlock(^{
+                ACProject *project = [[ACProject alloc] initWithFileURL:invalidProjectURL];
+                project = nil;
+            }) should] raise];
+        });
+        
     });
     
 });
@@ -55,7 +77,11 @@ describe(@"An existing ACProject", ^{
         [project closeWithCompletionHandler:nil];
         [[theValue([project documentState]) shouldEventuallyBeforeTimingOutAfter(2)] equal:theValue(UIDocumentStateClosed)];
     });
-
+    
+    it(@"should have a root folder", ^{
+        [[project.rootFolder should] beNonNil];
+    });
+    
 });
 
 SPEC_END
