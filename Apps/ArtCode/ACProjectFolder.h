@@ -10,7 +10,11 @@
 
 @interface ACProjectFolder : ACProjectFileSystemItem
 
-@property (nonatomic, copy, readonly) NSArray *children; // Array of items in the folder (either UUIDs or object references)
+/// Array of items in the folder (either UUIDs or object references)
+@property (nonatomic, copy, readonly) NSArray *children;
+
+#pragma mark Creating new folders and files
+
 - (BOOL)addNewFolderWithName:(NSString *)name error:(NSError **)error;
 - (BOOL)addNewFileWithName:(NSString *)name data:(NSData *)data error:(NSError **)error;
 

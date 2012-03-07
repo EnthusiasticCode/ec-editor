@@ -7,11 +7,15 @@
 //
 
 #import "ACProjectItem.h"
+
 @class ACProjectFile;
 
 @interface ACProjectFileBookmark : ACProjectItem
 
+/// The file where this bookmark is defined
 @property (nonatomic, weak, readonly) ACProjectFile *file;
-@property (nonatomic, strong) id bookmarkPoint; // An NSNumber with the line or a NSString with the symbol pointed by the bookmark
+
+/// An NSNumber with the line or a NSString with the symbol pointed by the bookmark.
+@property (nonatomic, strong) id bookmarkPoint;
 
 @end

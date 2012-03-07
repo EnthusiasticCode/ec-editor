@@ -20,10 +20,19 @@ typedef enum
 
 @interface ACProjectItem : NSObject
 
-@property (nonatomic, weak, readonly) ACProject *project; // Parent project
-@property (nonatomic, strong, readonly) id UUID; // Unique within project
-@property (nonatomic, readonly) ACProjectItemType *type; // Item type, see enum
-- (NSURL *)URL; // absolute URL of the item if applicable, nil otherwise
-- (void)remove; // Delete the item
+/// Parent project
+@property (nonatomic, weak, readonly) ACProject *project;
+
+/// Unique within project
+@property (nonatomic, strong, readonly) id UUID;
+
+/// Item type, see enum
+@property (nonatomic, readonly) ACProjectItemType *type;
+
+/// absolute URL of the item if applicable, nil otherwise
+- (NSURL *)URL;
+
+/// Delete the item
+- (void)remove;
 
 @end

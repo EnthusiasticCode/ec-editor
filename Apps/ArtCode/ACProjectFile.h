@@ -7,13 +7,23 @@
 //
 
 #import "ACProjectFileSystemItem.h"
+
 @class FileBuffer;
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
-@property (nonatomic) int fileEncoding; // Default NSUTF8FileEncoding
-@property (nonatomic, strong) NSString *codeFileExplicitSyntaxIdentifier; // file syntax to be used for syntax highlight. If nill the system should use the most appropriate file type based on the file path
-- (NSString *)codeFileSyntaxIdentifier; // Returns the explicit file syntax identifier or one derived from the file path or content
+/// Default NSUTF8FileEncoding
+@property (nonatomic) int fileEncoding;
+
+#pragma mark Code File specific properties
+
+/// file syntax to be used for syntax highlight. If nill the system should use the most appropriate file type based on the file path
+@property (nonatomic, strong) NSString *codeFileExplicitSyntaxIdentifier;
+
+/// Returns the explicit file syntax identifier or one derived from the file path or content
+- (NSString *)codeFileSyntaxIdentifier;
+
+/// Returns a FileBuffer that can handle the file editing.
 @property (nonatomic, strong, readonly) FileBuffer *codeFileBuffer;
 
 @end
