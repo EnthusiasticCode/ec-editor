@@ -103,7 +103,6 @@ describe(@"An newly created project ACProject", ^{
 describe(@"The ACProject class", ^{
     
     it(@"define a global projects directory URL", ^{
-        BOOL isDirectory = NO;
         [[[ACProject projectsURL] should] beNonNil];
     });
     
@@ -125,12 +124,12 @@ describe(@"The ACProject class", ^{
         });
         
         it(@"is successful", ^{
-            __block BOOL successful = NO;
-            [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(BOOL success) {
-                successful = success;
+            __block ACProject *project = nil;
+            [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+                project = createdProject;
             }];
             
-            [[expectFutureValue(theValue(successful)) shouldEventually] beYes];
+            [[expectFutureValue(project) shouldEventually] beNonNil];
         });
     });
 });
@@ -145,9 +144,7 @@ describe(@"A new opened ACProject", ^{
         [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
         project = [[ACProject alloc] initWithFileURL:projectURL];
         [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            [project openWithCompletionHandler:^(BOOL success) {
-                isOpened = success;
-            }];
+            isOpened = success;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
     });
@@ -160,19 +157,6 @@ describe(@"A new opened ACProject", ^{
     
     it(@"has a UUID", ^{
         [[project.UUID should] beNonNil];
-    });
-    
-    context(@"label color", ^{
-        
-        it(@"is nil on a new project", ^{
-            [[project.labelColor should] beNil];
-        });
-        
-        it(@"is settable with a UIColor", ^{
-            UIColor *testColor = [UIColor blackColor];
-            project.labelColor = testColor;
-            [[project.labelColor should] equal:testColor];
-        });
     });
     
     context(@"root folder", ^{

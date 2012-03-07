@@ -17,11 +17,8 @@
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
 @property (nonatomic, strong, readonly) id UUID;
 
-/// The name of the project that correspont to its filesystem folder name
+/// The name of the project that correspont to its filesystem folder name.
 @property (nonatomic, strong) NSString *name;
-
-/// color of the project’s label
-@property (nonatomic, strong) UIColor *labelColor;
 
 #pragma mark Project Content
 
@@ -42,6 +39,6 @@
 + (NSURL *)projectsURL;
 
 /// Creates a new project and, if set, decompress the archive at the given URL.
-+ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(BOOL success))completionHandler;
++ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(ACProject *createdProject))completionHandler;
 
 @end

@@ -44,4 +44,19 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return _projectsURL;
 }
 
++ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *))completionHandler
+{
+    // Ensure that projects URL exists
+    [[NSFileManager new] createDirectoryAtURL:[self projectsURL] withIntermediateDirectories:YES attributes:nil error:NULL];
+    
+    // Create the project
+    NSURL *projectURL = [[self projectsURL] URLByAppendingPathComponent:[name stringByAppendingPathExtension:@"acproj"]];
+    ACProject *project = [[ACProject alloc] initWithFileURL:projectURL];
+    [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+        // Inform the completion handler
+        if (completionHandler)
+            completionHandler(success ? project : nil);
+    }];
+}
+
 @end
