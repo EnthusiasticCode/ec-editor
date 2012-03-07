@@ -25,4 +25,9 @@
     return fileWrapper;
 }
 
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
+{
+    NSLog(@">>>>>>>>>>>>>>>>> %@", error);
+}
+
 @end

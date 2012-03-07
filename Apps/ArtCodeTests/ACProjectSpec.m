@@ -29,11 +29,14 @@ describe(@"A non-existing ACProject", ^{
         });
         
         it(@"can be saved", ^{
-            __block BOOL saved;
+            [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
+            __block BOOL saved = NO;
             [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
                 saved = success;
             }];
-            [[theValue(saved) should] beYes];
+            [[expectFutureValue(theValue(saved)) shouldEventually] beYes];
+            [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
+            [[theValue([[[NSFileManager alloc] init] fileExistsAtPath:[projectURL path]]) should] beYes];
         });
         
         it(@"should not have a root folder", ^{
@@ -62,20 +65,35 @@ describe(@"An newly created project ACProject", ^{
     
     beforeEach(^{
         [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
+        ACProject *newProject = [[ACProject alloc] initWithFileURL:projectURL];
+        [newProject saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
+        [newProject closeWithCompletionHandler:nil];
         project = [[ACProject alloc] initWithFileURL:projectURL];
-        [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
     });
     
     it(@"can be opened", ^{
-        [project openWithCompletionHandler:nil];
-        [[theValue([project documentState]) shouldEventuallyBeforeTimingOutAfter(2)] equal:theValue(UIDocumentStateNormal)];
+        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
+        __block BOOL opened = NO;
+        [project openWithCompletionHandler:^(BOOL success) {
+            opened = success;
+        }];
+        [[expectFutureValue(theValue(opened)) shouldEventually] beYes];
+        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
     });
 
     it(@"can be opened and then closed", ^{
-        [project openWithCompletionHandler:nil];
-        [[theValue([project documentState]) shouldEventuallyBeforeTimingOutAfter(2)] equal:theValue(UIDocumentStateNormal)];
-        [project closeWithCompletionHandler:nil];
-        [[theValue([project documentState]) shouldEventuallyBeforeTimingOutAfter(2)] equal:theValue(UIDocumentStateClosed)];
+        __block BOOL opened = NO;
+        [project openWithCompletionHandler:^(BOOL success) {
+            opened = success;
+        }];
+        [[expectFutureValue(theValue(opened)) shouldEventually] beYes];
+        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
+        __block BOOL closed = NO;
+        [project closeWithCompletionHandler:^(BOOL success) {
+            closed = success;
+        }];
+        [[expectFutureValue(theValue(closed)) shouldEventually] beYes];
+        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
     });
 });
 
