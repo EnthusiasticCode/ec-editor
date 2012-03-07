@@ -20,8 +20,8 @@
 /// The name of the project that correspont to its filesystem folder name
 @property (nonatomic, strong) NSString *name;
 
-/// UIColor or NSString with hex color of the project’s label
-@property (nonatomic, strong) id labelColor;
+/// color of the project’s label
+@property (nonatomic, strong) UIColor *labelColor;
 
 #pragma mark Project Content
 
@@ -40,6 +40,9 @@
 
 /// The local URL at which all projects are stored
 + (NSURL *)projectsURL;
+
+/// Return the project URL from it's name
++ (NSURL *)projectURLFromName:(NSString *)projectName;
 
 /// Creates a new project and, if set, decompress the archive at the given URL.
 + (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(BOOL success))completionHandler;
