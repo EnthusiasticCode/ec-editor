@@ -303,11 +303,7 @@ static OnigRegexp *_namedCapturesRegexp;
     // Get the next unparsed range
     NSRange nextRange = [_unparsedRanges firstRange];
     OSSpinLockUnlock(&_pendingChangesLock);
-    
-#if DEBUG
-    [_rootScope performSelector:@selector(_checkConsistency)];
-#endif
-    
+        
     NSMutableArray *scopeStack = nil;
     
     // Parse the next range
@@ -402,10 +398,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation
 {
-#if DEBUG
-    [_rootScope performSelector:@selector(_checkConsistency)];
-#endif
-    
     line = [CStringCachingString stringWithString:line];
     NSUInteger position = 0;
     NSUInteger previousTokenStart = lineRange.location;
