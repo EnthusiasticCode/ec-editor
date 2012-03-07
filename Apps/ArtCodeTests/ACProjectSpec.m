@@ -11,6 +11,7 @@
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 #import "ACProjectFileBookmark.h"
+#import "ACProjectRemote.h"
 
 SPEC_BEGIN(ACProjectSpec)
 
@@ -308,15 +309,47 @@ describe(@"A new opened ACProject", ^{
         });
     });
     
-    context(@"remotes", ^{
+    context(@"remote", ^{
         
-        it(@"are empty on a new project", ^{
+        NSString *remoteName = @"testremote";
+        NSURL *remoteURL = [NSURL URLWithString:@"ssh://test@test.com:21"];
+        
+        it(@"can be added with valid data and removed", ^{
+            [[[project should] have:0] remotes];
+            [project addRemoteWithName:remoteName URL:remoteURL];
+            [[[project should] have:1] remotes];
+            
+            id item = [project.remotes objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectRemote class]];
+            
+            [item remove];
             [[[project should] have:0] remotes];
         });
         
-        it(@"can be added with valid data", ^{
-            [project addRemoteWithName:@"testremote" URL:[NSURL URLWithString:@"ssh://test@test.com:21"]];
-            [[[project should] have:1] remotes];
+        context(@"when present", ^{
+           
+            __block ACProjectRemote *remote = nil;
+
+            beforeEach(^{
+                [project addRemoteWithName:remoteName URL:remoteURL];
+                remote = [project.remotes objectAtIndex:0];
+            });
+            
+            afterEach(^{
+                [remote remove];
+            });
+            
+            it(@"has a consistent name", ^{
+                [[remote.name should] equal:remoteName];
+            });
+            
+            it(@"has a consistent URL composition", ^{
+                [[remote.scheme should] equal:remoteURL.scheme];
+                [[remote.host should] equal:remoteURL.host];
+                [[remote.port should] equal:remoteURL.port];
+                [[remote.user should] equal:remoteURL.user];
+                [[remote.password should] beNil];
+            });
         });
     });
 });

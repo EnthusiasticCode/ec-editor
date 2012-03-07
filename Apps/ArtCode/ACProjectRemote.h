@@ -16,4 +16,7 @@
 @property (nonatomic, strong) NSNumber *port;
 @property (nonatomic, strong) NSString *user;
 
+/// The password is saved using keychain for the receiver's service and user.
+@property (nonatomic, strong) NSString *password;
+
 @end
