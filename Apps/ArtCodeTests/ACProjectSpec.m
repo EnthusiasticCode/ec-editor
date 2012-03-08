@@ -202,14 +202,14 @@ describe(@"A new opened ACProject", ^{
         
         NSString *subfolderName = @"testsubfolder";
         
-        it(@"contents folder's subfolder can be created with no error", ^{
+        it(@"can be created with no error", ^{
             NSError *err = nil;
             [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
         });
         
-        it(@"contents folder's subfolder can be created and retrieved with no error", ^{
+        it(@"can be retrieved with no error", ^{
             NSError *err = nil;
             [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
@@ -220,7 +220,7 @@ describe(@"A new opened ACProject", ^{
             [[item should] beMemberOfClass:[ACProjectFolder class]];
         });
         
-        it(@"can be created, retrieved and deleted with no error", ^{
+        it(@"can be deleted with no error", ^{
             NSError *err = nil;
             [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
@@ -246,6 +246,10 @@ describe(@"A new opened ACProject", ^{
             
             afterEach(^{
                 [subfolder remove];
+            });
+            
+            it(@"is of correct type", ^{
+                [[theValue(subfolder.type) should] equal:theValue(ACPFolder)];
             });
             
             it(@"has a consistent name", ^{
@@ -306,6 +310,10 @@ describe(@"A new opened ACProject", ^{
                 [file remove];
             });
             
+            it(@"is of correct type", ^{
+                [[theValue(file.type) should] equal:theValue(ACPFile)];
+            });
+            
             it(@"has an UUID", ^{
                 [[[file UUID] should] beNonNil];
             });
@@ -326,7 +334,20 @@ describe(@"A new opened ACProject", ^{
                 [[[file should] have:0] bookmarks];
             });
             
-            it(@"can create and remove a bookmark", ^{
+            it(@"can create a bookmark", ^{
+                [file addBookmarkWithPoint:[NSNumber numberWithInt:0]];
+                [[[file should] have:1] bookmarks];
+            });
+            
+            it(@"can retrieve a bookmark", ^{
+                [file addBookmarkWithPoint:[NSNumber numberWithInt:0]];
+                [[[file should] have:1] bookmarks];
+                
+                id item = [file.bookmarks objectAtIndex:0];
+                [[item should] beMemberOfClass:[ACProjectFileBookmark class]];                
+            });
+            
+            it(@"can remove a bookmark", ^{
                 [file addBookmarkWithPoint:[NSNumber numberWithInt:0]];
                 [[[file should] have:1] bookmarks];
                 
@@ -349,6 +370,10 @@ describe(@"A new opened ACProject", ^{
                 
                 afterEach(^{
                     [bookmark remove];
+                });
+                
+                it(@"is of correct type", ^{
+                    [[theValue(bookmark.type) should] equal:theValue(ACPFileBookmark)];
                 });
                 
                 it(@"with a consistent file", ^{
@@ -409,6 +434,10 @@ describe(@"A new opened ACProject", ^{
             
             afterEach(^{
                 [remote remove];
+            });
+            
+            it(@"is of correct type", ^{
+                [[theValue(remote.type) should] equal:theValue(ACPRemote)];
             });
             
             it(@"has a consistent name", ^{

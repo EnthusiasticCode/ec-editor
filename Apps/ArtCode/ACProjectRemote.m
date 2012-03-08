@@ -105,6 +105,18 @@
     return plist;
 }
 
+#pragma mark - Item methods
+
+- (NSURL *)URL
+{
+    return _URL;
+}
+
+- (ACProjectItemType)type
+{
+    return ACPRemote;
+}
+
 #pragma mark - Private Methods
 
 - (NSURL *)_URLWithScheme:(NSString *)scheme host:(NSString *)host port:(NSNumber *)port user:(NSString *)user

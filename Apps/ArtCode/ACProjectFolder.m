@@ -8,6 +8,7 @@
 
 #import "ACProjectFolder+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
+#import "ACProject.h"
 
 @interface ACProjectFolder ()
 {

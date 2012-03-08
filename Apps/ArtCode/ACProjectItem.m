@@ -13,6 +13,8 @@
 
 @synthesize project = _project, UUID = _UUID;
 
+#pragma mark - Initialization
+
 - (id)init
 {
     ECASSERT(NO); // The designed initalizer is initWithProject:
@@ -33,6 +35,8 @@
     return self;
 }
 
+#pragma mark - Plist Internal Methods
+
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
 {
     self = [super init];
@@ -41,6 +45,23 @@
     _project = project;
     _UUID = [plistDictionary objectForKey:@"uuid"];
     return self;
+}
+
+- (NSDictionary *)propertyListDictionary
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
+}
+
+#pragma mark - Public Methods
+
+- (NSURL *)URL
+{
+    return nil;
+}
+
+- (ACProjectItemType)type
+{
+    return ACPUnknown;
 }
 
 @end

@@ -13,11 +13,13 @@
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 
+#import "NSURL+Utilities.h"
+
 @implementation ACProjectFileBookmark
 
 @synthesize file = _file, bookmarkPoint = _bookmarkPoint;
 
-#pragma mark - Project Item Internal
+#pragma mark - Plist Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
 {
@@ -45,6 +47,18 @@
     [plist setObject:_bookmarkPoint forKey:@"point"];
     
     return plist;
+}
+
+#pragma mark - Item methods
+
+- (NSURL *)URL
+{
+    return [self.file.URL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:self.bookmarkPoint forKey:([self.bookmarkPoint isKindOfClass:[NSNumber class]] ? @"line" : @"symbol")]];
+}
+
+- (ACProjectItemType)type
+{
+    return ACPFileBookmark;
 }
 
 @end

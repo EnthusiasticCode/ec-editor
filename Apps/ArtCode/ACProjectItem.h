@@ -27,7 +27,7 @@ typedef enum
 @property (nonatomic, strong, readonly) id UUID;
 
 /// Item type, see enum
-@property (nonatomic, readonly) ACProjectItemType *type;
+@property (nonatomic, readonly) ACProjectItemType type;
 
 /// absolute URL of the item if applicable, nil otherwise
 - (NSURL *)URL;

@@ -319,6 +319,7 @@
 		CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9E914D817D40048A48A /* NewFileFolderController.m */; };
 		CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */; };
 		CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */; };
+		CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
 		CD7D2AE613C0CD2600B889EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		CD7D2AE813C0CD2600B889EE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
@@ -2447,6 +2448,7 @@
 				CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */,
 				CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */,
 				CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */,
+				CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
