@@ -19,7 +19,7 @@
 
 @interface ACProject (RemotesInternal)
 
-- (void)removeRemote:(ACProjectRemote *)remote;
+- (void)removeRemote:(id)remoteUUID;
 
 @end
 
@@ -133,7 +133,7 @@
 
 - (void)remove
 {
-    [self.project removeRemote:self];
+    [self.project removeRemote:self.UUID];
 }
 
 #pragma mark - Private Methods

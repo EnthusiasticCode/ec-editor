@@ -25,6 +25,17 @@
 
 @implementation ACProjectFile
 
+@synthesize fileEncoding = _fileEncoding;
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
+{
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
+    if (!self)
+        return nil;
+    _fileEncoding = NSUTF8StringEncoding;
+    return self;
+}
+
 - (NSFileWrapper *)defaultContents
 {
     NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];

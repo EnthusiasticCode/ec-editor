@@ -10,8 +10,6 @@
 
 @interface ACProjectRemote : ACProjectItem
 
-- (id)initWithProject:(ACProject *)project name:(NSString *)name URL:(NSURL *)remoteURL;
-
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *scheme;
 @property (nonatomic, strong) NSString *host;

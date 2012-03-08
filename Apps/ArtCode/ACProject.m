@@ -9,7 +9,7 @@
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
-#import "ACProjectRemote.h"
+#import "ACProjectRemote+Internal.h"
 
 #import "ACProjectItem+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
@@ -23,14 +23,14 @@ static NSString * const _contentsFolderName = @"Contents";
 
 @implementation ACProject {
     BOOL _isDirty;
-    NSMutableArray *_remotes;
+    NSMutableDictionary *_remotes;
+    NSMutableDictionary *_bookmarks;
 }
 
 #pragma mark - Properties
 
 @synthesize UUID = _UUID, labelColor = _labelColor;
 @synthesize contentsFolder = _contentsFolder;
-@synthesize bookmarks = _bookmarks, remotes = _remotes;
 
 - (id)UUID
 {
@@ -54,6 +54,25 @@ static NSString * const _contentsFolderName = @"Contents";
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil contents:contents];
     }
     return _contentsFolder;
+}
+
+- (NSArray *)bookmarks
+{
+    return [_bookmarks allValues];
+}
+
+- (NSArray *)remotes
+{
+    return [_remotes allValues];
+}
+
+- (id)initWithFileURL:(NSURL *)url
+{
+    self = [super initWithFileURL:url];
+    if (!self)
+        return nil;
+    _bookmarks = [[NSMutableDictionary alloc] init];
+    _remotes = [[NSMutableDictionary alloc] init];
 }
 
 #pragma mark - UIDocument
@@ -220,20 +239,20 @@ static NSString * const _contentsFolderName = @"Contents";
 
 - (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
 {
-    if (!_remotes)
-        _remotes = [NSMutableArray new];
-    [_remotes addObject:[[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL]];
+    ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
+    if (remote)
+        [_remotes setObject:remote forKey:remote.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
 #pragma mark - Internal Methods
 
-- (void)removeRemote:(ACProjectRemote *)remote
+- (void)removeRemote:(id)remoteUUID
 {
-    ECASSERT(remote);
+    ECASSERT(remoteUUID);
     if ([_remotes count] == 0)
         return;
-    [_remotes removeObject:remote];
+    [_remotes removeObjectForKey:remoteUUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
