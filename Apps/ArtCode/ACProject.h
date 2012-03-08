@@ -12,21 +12,13 @@
 
 @interface ACProject : UIDocument
 
-#pragma mark Project Properties
+#pragma mark Project Content
 
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
 @property (nonatomic, strong, readonly) id UUID;
 
-/// The name of the project that correspont to its filesystem folder name.
-@property (nonatomic, strong) NSString *name;
-
 /// A color that rapresent the project.
 @property (nonatomic, strong) UIColor *labelColor;
-
-/// URL of the project bundle.
-- (NSURL *)URL;
-
-#pragma mark Project Content
 
 @property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;
 @property (nonatomic, strong, readonly) NSArray *bookmarks;

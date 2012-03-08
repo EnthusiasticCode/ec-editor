@@ -27,6 +27,19 @@ static NSString * const _contentsFolderName = @"Contents";
 @synthesize contentsFolder = _contentsFolder;
 @synthesize bookmarks = _bookmarks, remotes = _remotes;
 
+- (id)UUID
+{
+    if (!_UUID && self.documentState & UIDocumentStateClosed)
+    {
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
+        _UUID = (__bridge NSString *)uuidString;
+        CFRelease(uuidString);
+        CFRelease(uuid);
+    }
+    return _UUID;
+}
+
 - (ACProjectFolder *)contentsFolder
 {
     if (!_contentsFolder && self.documentState != UIDocumentStateClosed)

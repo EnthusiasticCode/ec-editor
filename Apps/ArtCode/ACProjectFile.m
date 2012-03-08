@@ -23,9 +23,7 @@
 
 @end
 
-@implementation ACProjectFile {
-    NSFileWrapper *_contents;
-}
+@implementation ACProjectFile
 
 - (NSFileWrapper *)defaultContents
 {

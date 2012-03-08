@@ -15,7 +15,6 @@
 
 @interface ACProjectFolder ()
 {
-    NSFileWrapper *_contents;
     NSMutableArray *_children;
 }
 @end
