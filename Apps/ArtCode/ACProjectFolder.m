@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import "ACProjectFile.h"
 #import "ACProjectFolder+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
-#import "ACProject.h"
+
 
 @interface ACProjectFolder ()
 {
@@ -33,24 +34,39 @@
     return self;
 }
 
-- (NSFileWrapper *)contents
+- (NSFileWrapper *)defaultContents
 {
-    if (!_contents)
-    {
-        _contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-        _contents.preferredFilename = self.name;
-    }
-    return _contents;
+    NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+    contents.preferredFilename = self.name;
+    return contents;
 }
 
-- (BOOL)addNewFolderWithName:(NSString *)name error:(NSError *__autoreleasing *)error
+- (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
 {
-    NSFileWrapper *newFolderContents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    newFolderContents.preferredFilename = name;
-    ACProjectFolder *newFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:nil parent:self contents:newFolderContents];
+    if (!contents)
+        contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+    contents.preferredFilename = name;
+    ACProjectFolder *newFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:plist parent:self contents:contents];
     if ([self.contents addFileWrapper:newFolder.contents])
     {
         [_children addObject:newFolder];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
+- (BOOL)addNewFileWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
+{
+    if (!contents)
+        contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
+    contents.preferredFilename = name;
+    ACProjectFile *newFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:plist parent:self contents:contents];
+    if ([self.contents addFileWrapper:newFile.contents])
+    {
+        [_children addObject:newFile];
         return YES;
     }
     else

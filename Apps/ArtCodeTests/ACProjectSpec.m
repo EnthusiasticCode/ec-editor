@@ -204,14 +204,14 @@ describe(@"A new opened ACProject", ^{
         
         it(@"can be created with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
         });
         
         it(@"can be retrieved with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
             
@@ -222,7 +222,7 @@ describe(@"A new opened ACProject", ^{
         
         it(@"can be deleted with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
             
@@ -240,7 +240,7 @@ describe(@"A new opened ACProject", ^{
             __block ACProjectFolder *subfolder = nil;
             
             beforeEach(^{
-                [project.contentsFolder addNewFolderWithName:subfolderName error:nil];
+                [project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:nil];
                 subfolder = [project.contentsFolder.children objectAtIndex:0];
             });
             
@@ -265,18 +265,18 @@ describe(@"A new opened ACProject", ^{
     context(@"contents folder's text file", ^{
        
         NSString *fileName = @"testfile.txt";
-        NSData *fileData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
+        NSFileWrapper *fileContents = [[NSFileWrapper alloc] initRegularFileWithContents:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
         
         it(@"can be created with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName contents:fileContents plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
         });
 
         it(@"can be created and retrieved with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName contents:fileContents plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
             
@@ -286,7 +286,7 @@ describe(@"A new opened ACProject", ^{
 
         it(@"can be created, retrieved and deleted with no error", ^{
             NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName contents:fileContents plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
             
@@ -302,7 +302,7 @@ describe(@"A new opened ACProject", ^{
             __block ACProjectFile *file = nil;
             
             beforeEach(^{
-                [project.contentsFolder addNewFileWithName:fileName data:fileData error:nil];
+                [project.contentsFolder addNewFileWithName:fileName contents:fileContents plist:nil error:nil];
                 file = [project.contentsFolder.children objectAtIndex:0];
             });
             
@@ -463,7 +463,7 @@ describe(@"An existing ACProject", ^{
     UIColor *projectLabelColor = [UIColor redColor];
     NSString *subfolderName = @"testfolder";
     NSString *fileName = @"testfile.txt";
-    NSData *fileData = [@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding];
+    NSFileWrapper *fileContents = [[NSFileWrapper alloc] initRegularFileWithContents:[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding]];
     NSNumber *bookmarkPoint = [NSNumber numberWithInt:1];
     
     beforeAll(^{
@@ -477,9 +477,9 @@ describe(@"An existing ACProject", ^{
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
-        [project.contentsFolder addNewFolderWithName:subfolderName error:NULL];
+        [project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:NULL];
         ACProjectFolder *subfolder = [project.contentsFolder.children objectAtIndex:0];
-        [subfolder addNewFileWithName:fileName data:fileData error:NULL];
+        [subfolder addNewFileWithName:fileName contents:fileContents plist:nil error:NULL];
         ACProjectFile *file = [subfolder.children objectAtIndex:1];
         [file addBookmarkWithPoint:bookmarkPoint];
         

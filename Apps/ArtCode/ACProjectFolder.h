@@ -18,7 +18,7 @@
 
 #pragma mark Creating new folders and files
 
-- (BOOL)addNewFolderWithName:(NSString *)name error:(NSError **)error;
-- (BOOL)addNewFileWithName:(NSString *)name data:(NSData *)data error:(NSError **)error;
+- (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;
+- (BOOL)addNewFileWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;
 
 @end

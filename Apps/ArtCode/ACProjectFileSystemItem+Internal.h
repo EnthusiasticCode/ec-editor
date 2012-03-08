@@ -12,6 +12,8 @@
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
 
-@property (nonatomic, strong, readonly) NSFileWrapper *contents;
+- (NSFileWrapper *)contents;
+
+- (NSFileWrapper *)defaultContents;
 
 @end

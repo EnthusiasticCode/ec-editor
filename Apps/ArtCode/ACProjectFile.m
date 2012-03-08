@@ -7,6 +7,7 @@
 //
 
 #import "ACProjectFile.h"
+#import "ACProjectFileSystemItem+Internal.h"
 #import "ACProject.h"
 
 @interface ACProject (Bookmarks)
@@ -16,7 +17,19 @@
 
 @end
 
+@interface ACProjectFile ()
+{
+    NSFileWrapper *_contents;
+}
+@end
 
 @implementation ACProjectFile
+
+- (NSFileWrapper *)defaultContents
+{
+    NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
+    contents.preferredFilename = self.name;
+    return contents;
+}
 
 @end
