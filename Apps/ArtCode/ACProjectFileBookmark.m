@@ -9,6 +9,10 @@
 #import "ACProjectFileBookmark.h"
 #import "ACProjectItem+Internal.h"
 
+#import "ACProject.h"
+#import "ACProjectFolder.h"
+#import "ACProjectFile.h"
+
 @implementation ACProjectFileBookmark
 
 @synthesize file = _file, bookmarkPoint = _bookmarkPoint;
@@ -20,16 +24,26 @@
     self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self)
         return nil;
-    // TODO setup file using something like [project.contentsFolder  fileSystemItemWithUUID:]
+    id item = [plistDictionary objectForKey:@"file"];
+    if (!item)
+        return nil;
+    item = [project.contentsFolder descendantItemWithUUID:item];
+    if (!item)
+        return nil;
+    _file = (ACProjectFile *)item;
     _bookmarkPoint = [plistDictionary objectForKey:@"point"];
+    if (!_bookmarkPoint)
+        return nil;
     return self;
 }
 
 - (NSDictionary *)propertyListDictionary
 {
-    // TODO save file uuid
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
+    
+    [plist setObject:self.file.UUID forKey:@"file"];
     [plist setObject:_bookmarkPoint forKey:@"point"];
+    
     return plist;
 }
 

@@ -16,6 +16,6 @@
 @property (nonatomic, weak, readonly) ACProjectFile *file;
 
 /// An NSNumber with the line or a NSString with the symbol pointed by the bookmark.
-@property (nonatomic, strong) id bookmarkPoint;
+@property (nonatomic, strong, readonly) id bookmarkPoint;
 
 @end
