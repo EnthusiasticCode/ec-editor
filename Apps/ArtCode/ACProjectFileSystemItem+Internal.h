@@ -11,6 +11,7 @@
 @interface ACProjectFileSystemItem (Internal)
 
 - (id)initWithName:(NSString *)name parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
-- (NSFileWrapper *)contents;
+
+@property (nonatomic, strong) NSFileWrapper *contents;
 
 @end

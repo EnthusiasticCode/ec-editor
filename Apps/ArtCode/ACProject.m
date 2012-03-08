@@ -53,13 +53,21 @@ static NSString * const _contentsFolderName = @"Contents";
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     NSFileWrapper *bundleWrapper = (NSFileWrapper *)contents;
+    __block NSFileWrapper *contentsWrapper = nil;
     
     [[bundleWrapper fileWrappers] enumerateKeysAndObjectsUsingBlock:^(NSString *fileName, NSFileWrapper *fileWrapper, BOOL *stop) {
         if ([fileName isEqualToString:_projectPlistFileName])
         {
-            
+            ECASSERT([fileWrapper isRegularFile]);
+            [self loadPropertyListDictionary:[NSPropertyListSerialization propertyListWithData:[fileWrapper regularFileContents] options:NSPropertyListImmutable format:NULL error:outError]];
+        }
+        else if([fileName isEqualToString:_contentsFolderName])
+        {
+            contentsWrapper = fileWrapper;
         }
     }];
+    
+    self.contentsFolder.contents = contentsWrapper;
     
     return YES;
 }
