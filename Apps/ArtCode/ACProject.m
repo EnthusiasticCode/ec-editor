@@ -22,6 +22,7 @@ static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
 @implementation ACProject {
+    BOOL _isDirty;
     NSMutableArray *_remotes;
 }
 
@@ -56,6 +57,22 @@ static NSString * const _contentsFolderName = @"Contents";
 }
 
 #pragma mark - UIDocument
+
+- (NSUndoManager *)undoManager
+{
+    return nil;
+}
+
+- (BOOL)hasUnsavedChanges
+{
+    return _isDirty;
+}
+
+- (void)updateChangeCount:(UIDocumentChangeKind)change
+{
+    ECASSERT(change == UIDocumentChangeDone);
+    _isDirty = YES;
+}
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
@@ -206,6 +223,17 @@ static NSString * const _contentsFolderName = @"Contents";
     if (!_remotes)
         _remotes = [NSMutableArray new];
     [_remotes addObject:[[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL]];
+    [self updateChangeCount:UIDocumentChangeDone];
+}
+
+#pragma mark - Internal Methods
+
+- (void)removeRemote:(ACProjectRemote *)remote
+{
+    ECASSERT(remote);
+    if ([_remotes count] == 0)
+        return;
+    [_remotes removeObject:remote];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 

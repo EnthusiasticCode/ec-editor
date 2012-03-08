@@ -8,10 +8,17 @@
 
 #import "ACProjectRemote.h"
 #import "ACProjectItem+Internal.h"
+#import "ACProject.h"
 
 @interface ACProjectRemote ()
 
 - (NSURL *)_URLWithScheme:(NSString *)scheme host:(NSString *)host port:(NSNumber *)port user:(NSString *)user;
+
+@end
+
+@interface ACProject (RemotesInternal)
+
+- (void)removeRemote:(ACProjectRemote *)remote;
 
 @end
 
@@ -109,6 +116,11 @@
 - (ACProjectItemType)type
 {
     return ACPRemote;
+}
+
+- (void)remove
+{
+    [self.project removeRemote:self];
 }
 
 #pragma mark - Private Methods
