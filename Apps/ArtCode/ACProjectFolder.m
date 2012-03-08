@@ -89,7 +89,7 @@
 - (NSURL *)URL
 {
     if (self.parentFolder == nil)
-        return [self.project.URL URLByAppendingPathComponent:self.name isDirectory:YES];
+        return [self.project.fileURL URLByAppendingPathComponent:self.name isDirectory:YES];
     return [self.parentFolder.URL URLByAppendingPathComponent:self.name isDirectory:YES];
 }
 
