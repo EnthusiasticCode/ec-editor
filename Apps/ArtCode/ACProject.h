@@ -20,6 +20,9 @@
 /// The name of the project that correspont to its filesystem folder name.
 @property (nonatomic, strong) NSString *name;
 
+/// A color that rapresent the project.
+@property (nonatomic, strong) UIColor *labelColor;
+
 #pragma mark Project Content
 
 @property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;

@@ -174,6 +174,19 @@ describe(@"A new opened ACProject", ^{
         [[project.UUID should] beNonNil];
     });
     
+    context(@"label color", ^{
+       
+        it(@"can be set", ^{
+            [project.labelColor shouldBeNil];
+            project.labelColor = [UIColor redColor];
+        });
+        
+        it(@"can be set and read", ^{
+            project.labelColor = [UIColor redColor];
+            [[project.labelColor should] equal:[UIColor redColor]];
+        });
+    });
+    
     context(@"contents folder", ^{
         
         it(@"is not nil", ^{
@@ -395,6 +408,7 @@ describe(@"An existing ACProject", ^{
     NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
     __block ACProject *project = nil;
     __block id projectUUID = nil;
+    UIColor *projectLabelColor = [UIColor redColor];
     NSString *subfolderName = @"testfolder";
     NSString *fileName = @"testfile.txt";
     NSData *fileData = [@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding];
@@ -410,6 +424,7 @@ describe(@"An existing ACProject", ^{
         [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         
         projectUUID = project.UUID;
+        project.labelColor = projectLabelColor;
         [project.contentsFolder addNewFolderWithName:subfolderName error:NULL];
         ACProjectFolder *subfolder = [project.contentsFolder.children objectAtIndex:0];
         [subfolder addNewFileWithName:fileName data:fileData error:NULL];
@@ -434,6 +449,10 @@ describe(@"An existing ACProject", ^{
     
     it(@"saved its UUID", ^{
         [[project.UUID should] equal:projectUUID];
+    });
+    
+    it(@"saved its labelColor", ^{
+        [[project.labelColor should] equal:projectLabelColor];
     });
     
     it(@"has a valid content", ^{
