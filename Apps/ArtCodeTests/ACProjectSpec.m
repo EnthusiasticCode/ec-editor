@@ -46,8 +46,8 @@ describe(@"A new, non-opened ACProject", ^{
             [[theValue([[[NSFileManager alloc] init] fileExistsAtPath:[projectURL path]]) should] beYes];
         });
         
-        it(@"should not have a root folder", ^{
-            [project.rootFolder shouldBeNil];
+        it(@"should not have a contents folder", ^{
+            [project.contentsFolder shouldBeNil];
         });
         
     });
@@ -174,52 +174,52 @@ describe(@"A new opened ACProject", ^{
         [[project.UUID should] beNonNil];
     });
     
-    context(@"root folder", ^{
+    context(@"contents folder", ^{
         
         it(@"is not nil", ^{
-            [[project.rootFolder should] beNonNil];
+            [[project.contentsFolder should] beNonNil];
         });
        
         it(@"has no children", ^{
-            [[[project.rootFolder should] have:0] children];
+            [[[project.contentsFolder should] have:0] children];
         });
     });
     
-    context(@"root folder's subfolder", ^{
+    context(@"contents folder's subfolder", ^{
         
         NSString *subfolderName = @"testsubfolder";
         
-        it(@"root folder's subfolder can be created with no error", ^{
+        it(@"contents folder's subfolder can be created with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
         });
         
-        it(@"root folder's subfolder can be created and retrieved with no error", ^{
+        it(@"contents folder's subfolder can be created and retrieved with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
             
             // Retrieve
-            id item = [project.rootFolder.children objectAtIndex:0];
+            id item = [project.contentsFolder.children objectAtIndex:0];
             [[item should] beMemberOfClass:[ACProjectFolder class]];
         });
         
         it(@"can be created, retrieved and deleted with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
             
             // Retrieve
-            id item = [project.rootFolder.children objectAtIndex:0];
+            id item = [project.contentsFolder.children objectAtIndex:0];
             [[item should] beMemberOfClass:[ACProjectFolder class]];
             
             // Remove
             [item remove];
-            [[[project.rootFolder should] have:0] children];
+            [[[project.contentsFolder should] have:0] children];
         });
         
         context(@"when created", ^{
@@ -227,8 +227,8 @@ describe(@"A new opened ACProject", ^{
             __block ACProjectFolder *subfolder = nil;
             
             beforeEach(^{
-                [project.rootFolder addNewFolderWithName:subfolderName error:nil];
-                subfolder = [project.rootFolder.children objectAtIndex:0];
+                [project.contentsFolder addNewFolderWithName:subfolderName error:nil];
+                subfolder = [project.contentsFolder.children objectAtIndex:0];
             });
             
             afterEach(^{
@@ -245,39 +245,39 @@ describe(@"A new opened ACProject", ^{
         });
     });
     
-    context(@"root folder's text file", ^{
+    context(@"contents folder's text file", ^{
        
         NSString *fileName = @"testfile.txt";
         NSData *fileData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
         
         it(@"can be created with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
         });
 
         it(@"can be created and retrieved with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
             
-            id item = [project.rootFolder.children objectAtIndex:0];
+            id item = [project.contentsFolder.children objectAtIndex:0];
             [[item should] beMemberOfClass:[ACProjectFile class]];
         });
 
         it(@"can be created, retrieved and deleted with no error", ^{
             NSError *err = nil;
-            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [[theValue([project.contentsFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
             [err shouldBeNil];
-            [[[project.rootFolder should] have:1] children];
+            [[[project.contentsFolder should] have:1] children];
             
-            id item = [project.rootFolder.children objectAtIndex:0];
+            id item = [project.contentsFolder.children objectAtIndex:0];
             [[item should] beMemberOfClass:[ACProjectFile class]];
             
             [item remove];
-            [[[project.rootFolder should] have:0] children];
+            [[[project.contentsFolder should] have:0] children];
         });
         
         context(@"when created", ^{
@@ -285,8 +285,8 @@ describe(@"A new opened ACProject", ^{
             __block ACProjectFile *file = nil;
             
             beforeEach(^{
-                [project.rootFolder addNewFileWithName:fileName data:fileData error:nil];
-                file = [project.rootFolder.children objectAtIndex:0];
+                [project.contentsFolder addNewFileWithName:fileName data:fileData error:nil];
+                file = [project.contentsFolder.children objectAtIndex:0];
             });
             
             afterEach(^{
@@ -410,8 +410,8 @@ describe(@"An existing ACProject", ^{
         [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         
         projectUUID = project.UUID;
-        [project.rootFolder addNewFolderWithName:subfolderName error:NULL];
-        ACProjectFolder *subfolder = [project.rootFolder.children objectAtIndex:0];
+        [project.contentsFolder addNewFolderWithName:subfolderName error:NULL];
+        ACProjectFolder *subfolder = [project.contentsFolder.children objectAtIndex:0];
         [subfolder addNewFileWithName:fileName data:fileData error:NULL];
         ACProjectFile *file = [subfolder.children objectAtIndex:1];
         [file addBookmarkWithPoint:bookmarkPoint];
@@ -437,9 +437,9 @@ describe(@"An existing ACProject", ^{
     });
     
     it(@"has a valid content", ^{
-        [[[project.rootFolder should] have:1] children];
+        [[[project.contentsFolder should] have:1] children];
         
-        id item = [project.rootFolder.children objectAtIndex:0];
+        id item = [project.contentsFolder.children objectAtIndex:0];
         [[item should] beMemberOfClass:[ACProjectFolder class]];
         
         ACProjectFolder *subfolder = (ACProjectFolder *)item;

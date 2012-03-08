@@ -11,23 +11,23 @@
 #import "ACProjectFolder.h"
 #import "NSURL+Utilities.h"
 
-static NSString * const ProjectsDirectoryName = @"LocalProjects";
-static NSString * const _rootFolderName = @"RootFolder";
+static NSString * const _projectsFolderName = @"LocalProjects";
+static NSString * const _contentsFolderName = @"Contents";
 
 
 @implementation ACProject
 
-@synthesize rootFolder = _rootFolder;
+@synthesize contentsFolder = _contentsFolder;
 
 - (ACProjectFolder *)rootFolder
 {
     if (self.documentState == UIDocumentStateClosed)
         return nil;
-    if (!_rootFolder)
+    if (!_contentsFolder)
     {
-        _rootFolder = [[ACProjectFolder alloc] initWithName:_rootFolderName parent:nil contents:nil];
+        _contentsFolder = [[ACProjectFolder alloc] initWithName:_contentsFolderName parent:nil contents:nil];
     }
-    return _rootFolder;
+    return _contentsFolder;
 }
 
 #pragma mark - UIDocument
@@ -56,7 +56,7 @@ static NSString * const _rootFolderName = @"RootFolder";
 {
     static NSURL *_projectsURL = nil;
     if (!_projectsURL)
-        _projectsURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
+        _projectsURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_projectsFolderName isDirectory:YES];
     return _projectsURL;
 }
 

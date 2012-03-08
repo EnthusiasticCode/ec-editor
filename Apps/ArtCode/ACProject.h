@@ -22,7 +22,7 @@
 
 #pragma mark Project Content
 
-@property (nonatomic, strong, readonly) ACProjectFolder *rootFolder;
+@property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;
 @property (nonatomic, strong, readonly) NSArray *bookmarks;
 @property (nonatomic, strong, readonly) NSArray *remotes;
 
