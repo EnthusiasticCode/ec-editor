@@ -371,7 +371,22 @@ describe(@"A new opened ACProject", ^{
         NSString *remoteName = @"testremote";
         NSURL *remoteURL = [NSURL URLWithString:@"ssh://test@test.com:21"];
         
-        it(@"can be added with valid data and removed", ^{
+        it(@"can be added with valid data", ^{
+            [[[project should] have:0] remotes];
+            [project addRemoteWithName:remoteName URL:remoteURL];
+            [[[project should] have:1] remotes];
+        });
+        
+        it(@"can be retrieved", ^{
+            [[[project should] have:0] remotes];
+            [project addRemoteWithName:remoteName URL:remoteURL];
+            [[[project should] have:1] remotes];
+            
+            id item = [project.remotes objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectRemote class]];            
+        });
+        
+        it(@"can be removed", ^{
             [[[project should] have:0] remotes];
             [project addRemoteWithName:remoteName URL:remoteURL];
             [[[project should] have:1] remotes];

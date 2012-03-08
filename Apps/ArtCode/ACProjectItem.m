@@ -23,6 +23,7 @@
     self = [super init];
     if (!self)
         return nil;
+    ECASSERT(project);
     _project = project;
     CFUUIDRef uuid = CFUUIDCreate(NULL);
     CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
