@@ -359,33 +359,19 @@ static OnigRegexp *_namedCapturesRegexp;
             if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
                 return;
         }
-        // The lineRange now refers to the first line after the unparsed range we just finished parsing. We check whether the scope stack at the end of the range we just finished parsing and the scope stack at the beginning of the range that was parsed before match, if they don't, it means the changes influenced this line too
-        NSArray *nextScopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryAdjacentStart];
-        __block BOOL reparseLine = NO;
-        if (scopeStack.count == nextScopeStack.count)
-        {
-            [scopeStack enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                if (obj == [nextScopeStack objectAtIndex:idx])
-                    return;
-                reparseLine = YES;
-                *stop = YES;
-            }];
-        }
-        else if (nextScopeStack)
-        {
-            reparseLine = YES;
-        }
+        // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
+        BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
         
         // If we need to reparse the line, we add it to the unparsed ranges
         OSSpinLockLock(&_pendingChangesLock);
-        if (reparseLine)
+        if (!mergeSuccessful)
             [_unparsedRanges addIndex:lineRange.location];
         // Get the next unparsed range
         nextRange = [_unparsedRanges firstRange];
         OSSpinLockUnlock(&_pendingChangesLock);
         
         // If we're reparsing the line, we can reuse the same scope stack, if not, we need to reset it to nil so the next cycle gets a new one
-        if (!reparseLine)
+        if (mergeSuccessful)
             scopeStack = nil;
     }
     
@@ -402,6 +388,20 @@ static OnigRegexp *_namedCapturesRegexp;
     NSUInteger position = 0;
     NSUInteger previousTokenStart = lineRange.location;
     NSUInteger lineEnd = NSMaxRange(lineRange);
+    
+    // Check for a span scope with a missing content scope
+    {
+        TMScope *scope = [scopeStack lastObject];
+        if (scope.type == TMScopeTypeSpan && ! scope.flags & TMScopeHasContentScope && scope.syntaxNode.contentName)
+        {
+            TMScope *contentScope = [scope newChildScopeWithIdentifier:scope.syntaxNode.contentName syntaxNode:scope.syntaxNode location:lineRange.location type:TMScopeTypeContent];
+            ECASSERT(scope.endRegexp);
+            contentScope.endRegexp = scope.endRegexp;
+            scope.flags |= TMScopeHasContentScope;
+            [scopeStack addObject:contentScope];
+        }
+    }
+    
     for (;;)
     {
         TMScope *scope = [scopeStack lastObject];
@@ -436,7 +436,7 @@ static OnigRegexp *_namedCapturesRegexp;
             NSRange resultRange = [endResult bodyRange];
             resultRange.location += lineRange.location;
             // Handle content name nested scope
-            if (syntaxNode.contentName)
+            if (scope.type == TMScopeTypeContent)
             {
                 if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope generation:generation])
                     return NO;

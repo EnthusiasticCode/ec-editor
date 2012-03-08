@@ -390,6 +390,81 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     }
 }
 
+- (BOOL)attemptMergeAtOffset:(NSUInteger)offset
+{
+    ECASSERT(!_parent);
+    if (offset >= _length)
+        return NO;
+    // We're looking for two scopes to merge, one ending at offset, one starting at offset
+    TMScope *head = nil;
+    TMScope *tail = nil;
+    NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
+    for (;;)
+    {
+        BOOL recurse = NO;
+        for (TMScope *childScope in ((TMScope *)scopeStack.lastObject)->_children)
+        {
+            NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
+            if (childScopeRange.location > offset)
+            {
+                // We're past the offset, break out
+                break;
+            }
+            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
+            if (childScopeEnd < offset)
+            {
+                // We're before the offset, continue to the next scope
+            }
+            else if (childScopeRange.location < offset && childScopeEnd > offset)
+            {
+                // We're containing the offset, recurse
+                [scopeStack addObject:childScope];
+                recurse = YES;
+                break;
+            }
+            else if (childScopeEnd == offset)
+            {
+                // We're a possible head scope
+                head = childScope;                
+            }
+            else if (childScopeRange.location == offset)
+            {
+                // We're a possible tail scope
+                tail = childScope;
+                if (head && head->_type == TMScopeTypeSpan && head->_type == tail->_type && [head.identifier isEqualToString:tail.identifier] && !head->_flags & TMScopeHasEnd && !tail->_flags & TMScopeHasBegin)
+                {
+                    // Confirmed the scopes match
+                    break;
+                }
+                else
+                {
+                    head = nil;
+                    tail = nil;
+                }
+            }
+        }
+        // If head and tail aren't both set, reset them both so we don't match up head and tail in different scopes
+        if ((head && !tail) || (!head && tail))
+        {
+            head = nil;
+            tail = nil;
+        }
+        if (!recurse)
+            break;
+    }
+    
+    if (!head)
+        return NO;
+    
+    ECASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
+    ECASSERT(head->_location + head->_length == tail->_location);
+    
+    [head->_children addObjectsFromArray:tail->_children];
+    [head->_parent->_children removeObject:tail];
+    
+    return YES;
+}
+
 
 #pragma mark - Scoring
 // Reference implementation: https://github.com/cehoffman/textpow/blob/master/lib/textpow/score_manager.rb
