@@ -13,18 +13,19 @@
 #import "ACProject.h"
 
 
-@interface ACProjectFolder ()
-{
+
+@implementation ACProjectFolder {
     NSMutableArray *_children;
 }
-@end
 
-@implementation ACProjectFolder
+#pragma mark - Properties
 
 - (NSArray *)children
 {
     return [_children copy];
 }
+
+#pragma mark - Initialization
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
@@ -34,6 +35,8 @@
     _children = [[NSMutableArray alloc] init];
     return self;
 }
+
+#pragma mark - Contents
 
 - (NSFileWrapper *)defaultContents
 {

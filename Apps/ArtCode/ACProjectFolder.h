@@ -10,6 +10,8 @@
 
 @interface ACProjectFolder : ACProjectFileSystemItem
 
+#pragma mark Accessing folder's content
+
 /// Array of items in the folder.
 @property (nonatomic, copy, readonly) NSArray *children;
 

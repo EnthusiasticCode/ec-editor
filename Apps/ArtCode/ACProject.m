@@ -71,8 +71,9 @@ static NSString * const _contentsFolderName = @"Contents";
     self = [super initWithFileURL:url];
     if (!self)
         return nil;
-    _bookmarks = [[NSMutableDictionary alloc] init];
-    _remotes = [[NSMutableDictionary alloc] init];
+    _bookmarks = [NSMutableDictionary new];
+    _remotes = [NSMutableDictionary new];
+    return self;
 }
 
 #pragma mark - UIDocument
