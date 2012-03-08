@@ -7,12 +7,28 @@
 //
 
 #import "ACProject.h"
+#import "ACProjectFileSystemItem+Internal.h"
+#import "ACProjectFolder.h"
 #import "NSURL+Utilities.h"
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
+static NSString * const _rootFolderName = @"RootFolder";
 
 
 @implementation ACProject
+
+@synthesize rootFolder = _rootFolder;
+
+- (ACProjectFolder *)rootFolder
+{
+    if (self.documentState == UIDocumentStateClosed)
+        return nil;
+    if (!_rootFolder)
+    {
+        _rootFolder = [[ACProjectFolder alloc] initWithName:_rootFolderName parent:nil contents:nil];
+    }
+    return _rootFolder;
+}
 
 #pragma mark - UIDocument
 

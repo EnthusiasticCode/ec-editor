@@ -15,7 +15,7 @@
 
 SPEC_BEGIN(ACProjectSpec)
 
-describe(@"A non-existing ACProject", ^{
+describe(@"A new, non-opened ACProject", ^{
         
     context(@"with a valid URL", ^{
 
@@ -25,6 +25,10 @@ describe(@"A non-existing ACProject", ^{
         beforeEach(^{
             [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
             project = [[ACProject alloc] initWithFileURL:projectURL];
+        });
+        
+        afterAll(^{
+            [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
         });
         
         it(@"can be initialized", ^{
@@ -37,13 +41,13 @@ describe(@"A non-existing ACProject", ^{
             [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
                 saved = success;
             }];
-            [[expectFutureValue(theValue(saved)) shouldEventually] beYes];
+            [[expectFutureValue(theValue(saved)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
             [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
             [[theValue([[[NSFileManager alloc] init] fileExistsAtPath:[projectURL path]]) should] beYes];
         });
         
         it(@"should not have a root folder", ^{
-            [[project.rootFolder should] beNil];
+            [project.rootFolder shouldBeNil];
         });
         
     });
@@ -69,9 +73,20 @@ describe(@"An newly created project ACProject", ^{
     beforeEach(^{
         [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
         ACProject *newProject = [[ACProject alloc] initWithFileURL:projectURL];
-        [newProject saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
-        [newProject closeWithCompletionHandler:nil];
+        __block BOOL saved = NO;
+        [newProject saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+            if (success)
+                [newProject closeWithCompletionHandler:^(BOOL success) {
+                    if (success)
+                        saved = YES;
+                }];
+        }];
+        [[expectFutureValue(theValue(saved)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         project = [[ACProject alloc] initWithFileURL:projectURL];
+    });
+    
+    afterAll(^{
+        [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
     });
     
     it(@"can be opened", ^{
@@ -80,7 +95,7 @@ describe(@"An newly created project ACProject", ^{
         [project openWithCompletionHandler:^(BOOL success) {
             opened = success;
         }];
-        [[expectFutureValue(theValue(opened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(opened)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
     });
 
@@ -89,13 +104,13 @@ describe(@"An newly created project ACProject", ^{
         [project openWithCompletionHandler:^(BOOL success) {
             opened = success;
         }];
-        [[expectFutureValue(theValue(opened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(opened)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
         __block BOOL closed = NO;
         [project closeWithCompletionHandler:^(BOOL success) {
             closed = success;
         }];
-        [[expectFutureValue(theValue(closed)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(closed)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
     });
 });
@@ -174,10 +189,28 @@ describe(@"A new opened ACProject", ^{
         
         NSString *subfolderName = @"testsubfolder";
         
-        it(@"can be created and deleted with no error", ^{
+        it(@"root folder's subfolder can be created with no error", ^{
             NSError *err = nil;
             [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
-            [[err should] beNil];
+            [err shouldBeNil];
+            [[[project.rootFolder should] have:1] children];
+        });
+        
+        it(@"root folder's subfolder can be created and retrieved with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [err shouldBeNil];
+            [[[project.rootFolder should] have:1] children];
+            
+            // Retrieve
+            id item = [project.rootFolder.children objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectFolder class]];
+        });
+        
+        it(@"can be created, retrieved and deleted with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFolderWithName:subfolderName error:&err]) should] beYes];
+            [err shouldBeNil];
             [[[project.rootFolder should] have:1] children];
             
             // Retrieve
@@ -217,10 +250,27 @@ describe(@"A new opened ACProject", ^{
         NSString *fileName = @"testfile.txt";
         NSData *fileData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
         
-        it(@"can be created and deleted with no error", ^{
+        it(@"can be created with no error", ^{
             NSError *err = nil;
             [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
-            [[err should] beNil];
+            [err shouldBeNil];
+            [[[project.rootFolder should] have:1] children];
+        });
+
+        it(@"can be created and retrieved with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [err shouldBeNil];
+            [[[project.rootFolder should] have:1] children];
+            
+            id item = [project.rootFolder.children objectAtIndex:0];
+            [[item should] beMemberOfClass:[ACProjectFile class]];
+        });
+
+        it(@"can be created, retrieved and deleted with no error", ^{
+            NSError *err = nil;
+            [[theValue([project.rootFolder addNewFileWithName:fileName data:fileData error:&err]) should] beYes];
+            [err shouldBeNil];
             [[[project.rootFolder should] have:1] children];
             
             id item = [project.rootFolder.children objectAtIndex:0];
@@ -334,7 +384,7 @@ describe(@"A new opened ACProject", ^{
                 [[remote.host should] equal:remoteURL.host];
                 [[remote.port should] equal:remoteURL.port];
                 [[remote.user should] equal:remoteURL.user];
-                [[remote.password should] beNil];
+                [remote.password shouldBeNil];
             });
         });
     });
