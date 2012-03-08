@@ -63,16 +63,15 @@
 
 #pragma mark - Initialization
 
-- (id)initWithProject:(ACProject *)project name:(NSString *)name scheme:(NSString *)scheme host:(NSString *)host
+- (id)initWithProject:(ACProject *)project name:(NSString *)name URL:(NSURL *)remoteURL
 {
     self = [super initWithProject:project propertyListDictionary:nil];
     if (!self)
         return nil;
     ECASSERT(name);
-    ECASSERT(scheme);
-    ECASSERT(host);
+    ECASSERT(remoteURL);
     _name = name;
-    _URL = [self _URLWithScheme:scheme host:host port:nil user:nil];
+    _URL = remoteURL;
     return self;
 }
 

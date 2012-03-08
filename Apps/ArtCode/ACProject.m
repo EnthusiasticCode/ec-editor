@@ -21,7 +21,11 @@ static NSString * const _projectsFolderName = @"LocalProjects";
 static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
-@implementation ACProject
+@implementation ACProject {
+    NSMutableArray *_remotes;
+}
+
+#pragma mark - Properties
 
 @synthesize UUID = _UUID, labelColor = _labelColor;
 @synthesize contentsFolder = _contentsFolder;
@@ -193,6 +197,16 @@ static NSString * const _contentsFolderName = @"Contents";
         if (completionHandler)
             completionHandler(success ? project : nil);
     }];
+}
+
+#pragma mark - Public Methods
+
+- (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
+{
+    if (!_remotes)
+        _remotes = [NSMutableArray new];
+    [_remotes addObject:[[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL]];
+    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 @end
