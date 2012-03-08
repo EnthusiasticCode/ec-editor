@@ -238,6 +238,20 @@ static NSString * const _contentsFolderName = @"Contents";
 
 #pragma mark - Public Methods
 
+- (ACProjectItem *)itemWithUUID:(id)uuid
+{
+    ACProjectItem *item = nil;
+    // TODO search firt in files dictionary
+    
+    if ((item = [_remotes objectForKey:uuid]))
+        return item;
+    
+    if ((item = [_bookmarks objectForKey:uuid]))
+        return item;
+    
+    return nil;
+}
+
 - (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
 {
     ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
