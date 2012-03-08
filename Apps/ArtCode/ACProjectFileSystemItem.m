@@ -7,18 +7,26 @@
 //
 
 #import "ACProjectFileSystemItem+Internal.h"
+#import "ACProjectFolder+Internal.h"
 
 @implementation ACProjectFileSystemItem
 
-@synthesize name = _name;
+@synthesize name = _name, parentFolder = _parentFolder;
 
-- (id)initWithName:(NSString *)name parent:(ACProjectFileSystemItem *)parent contents:(NSFileWrapper *)contents
+- (id)initWithName:(NSString *)name parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
     self = [super init];
     if (!self)
         return nil;
     _name = name;
+    _parentFolder = parent;
     return self;
+}
+
+- (void)remove
+{
+    ECASSERT(self.parentFolder);
+    [self.parentFolder removeChild:self];
 }
 
 @end

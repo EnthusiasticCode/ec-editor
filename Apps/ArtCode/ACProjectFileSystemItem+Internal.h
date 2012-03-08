@@ -10,7 +10,7 @@
 
 @interface ACProjectFileSystemItem (Internal)
 
-- (id)initWithName:(NSString *)name parent:(ACProjectFileSystemItem *)parent contents:(NSFileWrapper *)contents;
+- (id)initWithName:(NSString *)name parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
 - (NSFileWrapper *)contents;
 
 @end

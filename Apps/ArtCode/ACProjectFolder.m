@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFolder.h"
+#import "ACProjectFolder+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
 
 @interface ACProjectFolder ()
@@ -54,6 +54,13 @@
     {
         return NO;
     }
+}
+
+- (void)removeChild:(ACProjectFileSystemItem *)child
+{
+    ECASSERT([_children containsObject:child]);
+    [self.contents removeFileWrapper:child.contents];
+    [_children removeObject:child];
 }
 
 @end
