@@ -10,8 +10,11 @@
 
 @interface ACProjectFolder : ACProjectFileSystemItem
 
-/// Array of items in the folder (either UUIDs or object references)
+/// Array of items in the folder.
 @property (nonatomic, copy, readonly) NSArray *children;
+
+/// Retrieves an item descendant of the receiver's that has the given UUID.
+- (ACProjectFileSystemItem *)descendantItemWithUUID:(NSString *)uuid;
 
 #pragma mark Creating new folders and files
 

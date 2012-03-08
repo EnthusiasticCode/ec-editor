@@ -306,6 +306,14 @@ describe(@"A new opened ACProject", ^{
                 [file remove];
             });
             
+            it(@"has an UUID", ^{
+                [[[file UUID] should] beNonNil];
+            });
+            
+            it(@"can be retrieved with its UUID", ^{
+                [[[project.contentsFolder descendantItemWithUUID:file.UUID] should] equal:file];
+            });
+            
             it(@"has a consistent name", ^{
                 [[[file name] should] equal:fileName];
             });
