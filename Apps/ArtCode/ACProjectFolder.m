@@ -23,9 +23,9 @@
     return [_children copy];
 }
 
-- (id)initWithName:(NSString *)name parent:(ACProjectFileSystemItem *)parent contents:(NSFileWrapper *)contents
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
-    self = [super initWithName:name parent:parent contents:contents];
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
     if (!self)
         return nil;
     _children = [[NSMutableArray alloc] init];
@@ -44,7 +44,9 @@
 
 - (BOOL)addNewFolderWithName:(NSString *)name error:(NSError *__autoreleasing *)error
 {
-    ACProjectFolder *newFolder = [[ACProjectFolder alloc] initWithName:name parent:self contents:nil];
+    NSFileWrapper *newFolderContents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+    newFolderContents.preferredFilename = name;
+    ACProjectFolder *newFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:nil parent:self contents:newFolderContents];
     if ([self.contents addFileWrapper:newFolder.contents])
     {
         [_children addObject:newFolder];

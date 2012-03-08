@@ -8,17 +8,19 @@
 
 #import "ACProjectFileSystemItem+Internal.h"
 #import "ACProjectFolder+Internal.h"
+#import "ACProjectItem+Internal.h"
 
 @implementation ACProjectFileSystemItem
 
 @synthesize name = _name, parentFolder = _parentFolder;
 
-- (id)initWithName:(NSString *)name parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
-    self = [super init];
+    ECASSERT(project && contents && contents.preferredFilename);
+    self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self)
         return nil;
-    _name = name;
+    _name = contents.preferredFilename;
     _parentFolder = parent;
     return self;
 }

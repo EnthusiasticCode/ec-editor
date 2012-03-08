@@ -10,8 +10,8 @@
 
 @interface ACProjectFileSystemItem (Internal)
 
-- (id)initWithName:(NSString *)name parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
 
-@property (nonatomic, strong) NSFileWrapper *contents;
+@property (nonatomic, strong, readonly) NSFileWrapper *contents;
 
 @end
