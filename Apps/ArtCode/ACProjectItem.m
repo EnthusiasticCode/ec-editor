@@ -20,21 +20,6 @@
     ECASSERT(NO); // The designed initalizer is initWithProject:
 }
 
-- (id)initWithProject:(ACProject *)project
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    ECASSERT(project);
-    _project = project;
-    CFUUIDRef uuid = CFUUIDCreate(NULL);
-    CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-    _UUID = (__bridge NSString *)uuidString;
-    CFRelease(uuidString);
-    CFRelease(uuid);
-    return self;
-}
-
 #pragma mark - Plist Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
@@ -42,8 +27,17 @@
     self = [super init];
     if (!self)
         return nil;
+    ECASSERT(project);
     _project = project;
     _UUID = [plistDictionary objectForKey:@"uuid"];
+    if (!_UUID)
+    {
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
+        _UUID = (__bridge NSString *)uuidString;
+        CFRelease(uuidString);
+        CFRelease(uuid);
+    }
     return self;
 }
 

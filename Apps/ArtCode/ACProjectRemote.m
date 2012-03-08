@@ -65,7 +65,7 @@
 
 - (id)initWithProject:(ACProject *)project name:(NSString *)name scheme:(NSString *)scheme host:(NSString *)host
 {
-    self = [super initWithProject:project];
+    self = [super initWithProject:project propertyListDictionary:nil];
     if (!self)
         return nil;
     ECASSERT(name);
@@ -74,11 +74,6 @@
     _name = name;
     _URL = [self _URLWithScheme:scheme host:host port:nil user:nil];
     return self;
-}
-
-- (id)initWithProject:(ACProject *)project
-{
-    ECASSERT(NO); // Not the designed initalizer
 }
 
 #pragma mark - Plist Internal Methods

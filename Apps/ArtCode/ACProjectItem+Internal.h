@@ -10,12 +10,7 @@
 
 @interface ACProjectItem (Internal)
 
-/// Designed initalizer. Generates an UUID for the item.
-- (id)initWithProject:(ACProject *)project;
-
-#pragma mark Plist encoding
-
-/// Initialize the item from a property list dictionary.
+/// Designed initalizer. Initialize the item from a property list dictionary.
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary;
 
 /// Encode the item in a propety list dictionary.
