@@ -9,6 +9,7 @@
 #import "ACProjectRemote.h"
 #import "ACProjectItem+Internal.h"
 #import "ACProject.h"
+#import "Keychain.h"
 
 @interface ACProjectRemote ()
 
@@ -66,6 +67,18 @@
     if ([user isEqualToString:_URL.user])
         return;
     _URL = [self _URLWithScheme:_URL.scheme host:_URL.host port:_URL.port user:user];
+}
+
+- (NSString *)password
+{
+    return [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_URL.scheme host:_URL.host port:[_URL.port integerValue]] account:_URL.user];
+}
+
+- (void)setPassword:(NSString *)password
+{
+    if (!_URL.user)
+        return;
+    [[Keychain sharedKeychain] setPassword:password forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_URL.scheme host:_URL.host port:[_URL.port integerValue]] account:_URL.user];
 }
 
 #pragma mark - Initialization
