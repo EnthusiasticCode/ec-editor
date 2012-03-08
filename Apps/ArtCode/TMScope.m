@@ -416,6 +416,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     TMScope *head = nil;
     TMScope *tail = nil;
     BOOL scopesMatch = NO;
+    BOOL treeIsBroken = NO;
     NSArray *leftScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
     NSArray *rightScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryRight | TMScopeQueryOpenOnly];
     
@@ -430,9 +431,14 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         if (head && head->_type == TMScopeTypeSpan && head->_type == tail->_type && [head.identifier isEqualToString:tail.identifier] && !head->_flags & TMScopeHasEnd && !tail->_flags & TMScopeHasBegin)
         {
             scopesMatch = YES;
+            treeIsBroken = YES;
             break;
         }
+        treeIsBroken = YES;
     }
+    
+    if (!treeIsBroken)
+        return YES;
     
     if (!scopesMatch)
         return NO;

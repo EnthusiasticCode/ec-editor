@@ -70,7 +70,7 @@ typedef enum
 /// Methods to apply changes to the scope tree. Can only be called on root scopes
 - (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange;
 - (void)removeChildScopesInRange:(NSRange)range;
-/// Attempts to merge a broken scope tree at the specified offset. Returns YES if successful
+/// Attempts to merge a broken scope tree at the specified offset. Returns YES if successful or if the tree is not broken
 - (BOOL)attemptMergeAtOffset:(NSUInteger)offset;
 
 @end
