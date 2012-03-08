@@ -126,7 +126,7 @@ NSMutableDictionary *systemScopesScoreCache;
 
 #pragma mark - Initializers
 
-static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSComparisonResult(TMScope *first, TMScope *second){
+static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSComparisonResult(TMScope *first, TMScope *second){
     if (first.location < second.location)
         return NSOrderedAscending;
     else if (first.location > second.location)
@@ -143,7 +143,7 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     childScope->_parent = self;
     if (!_children)
         _children = [NSMutableArray new];
-    NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex usingComparator:childScopeComparator];
+    NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex usingComparator:scopeComparator];
     if (childInsertionIndex == [_children count])
         [_children addObject:childScope];
     else
@@ -179,24 +179,41 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
     for (;;)
     {
-        BOOL recurse = NO;
-        for (TMScope *childScope in ((TMScope *)scopeStack.lastObject)->_children)
+        TMScope *scope = [scopeStack lastObject];
+        if (!scope->_children || !scope->_children.count)
+            break;
+        NSRange childrenRange = NSMakeRange(0, scope->_children.count);
+        TMScope *sentinel = [[TMScope alloc] init];
+        sentinel->_location = offset;
+        NSUInteger insertionIndex = [scope->_children indexOfObject:sentinel inSortedRange:childrenRange options:NSBinarySearchingInsertionIndex | NSBinarySearchingFirstEqual usingComparator:scopeComparator];
+        ECASSERT(insertionIndex != NSNotFound);
+        
+        if (insertionIndex < childrenRange.length)
         {
-            NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
-            if (childScopeRange.location > offset)
-                break;
-            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
-            if ((options == TMScopeQueryContainedOnly && childScopeRange.location < offset && childScopeEnd > offset)
-                || (options == TMScopeQueryAdjacentStart && childScopeRange.location <= offset && childScopeEnd > offset)
-                || (options == TMScopeQueryAdjacentEnd && childScopeRange.location < offset && childScopeEnd >= offset))
+            TMScope *childScope = [scope->_children objectAtIndex:insertionIndex];
+            NSUInteger childScopeLocation = childScope->_location;
+            NSUInteger childScopeEnd = childScope->_location + childScope->_length;
+            if ((childScopeLocation < offset && childScopeEnd > offset)
+                || (childScopeLocation == offset && options & TMScopeQueryRight && (!options & TMScopeQueryOpenOnly || !childScope->_flags & TMScopeHasBegin)))
             {
                 [scopeStack addObject:childScope];
-                recurse = YES;
-                break;
+                continue;
             }
         }
-        if (!recurse)
-            break;
+        if (insertionIndex > 0)
+        {
+            TMScope *childScope = [scope->_children objectAtIndex:insertionIndex - 1];
+            NSUInteger childScopeLocation = childScope->_location;
+            NSUInteger childScopeEnd = childScope->_location + childScope->_length;
+            if ((childScopeLocation < offset && childScopeEnd > offset)
+                || (childScopeEnd == offset && options & TMScopeQueryLeft && (!options & TMScopeQueryOpenOnly || !childScope->_flags & TMScopeHasEnd)))
+            {
+                [scopeStack addObject:childScope];
+                continue;
+            }
+        }
+        // We didn't find a matching child scope, break out
+        break;
     }
     return scopeStack;
 }
@@ -398,62 +415,26 @@ static NSComparisonResult (^childScopeComparator)(TMScope *, TMScope *) = ^NSCom
     // We're looking for two scopes to merge, one ending at offset, one starting at offset
     TMScope *head = nil;
     TMScope *tail = nil;
-    NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
-    for (;;)
+    BOOL scopesMatch = NO;
+    NSArray *leftScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
+    NSArray *rightScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryRight | TMScopeQueryOpenOnly];
+    
+    NSUInteger maxDepth = MIN(leftScopeStack.count, rightScopeStack.count);
+    
+    for (NSUInteger depth = 0; depth < maxDepth; ++depth)
     {
-        BOOL recurse = NO;
-        for (TMScope *childScope in ((TMScope *)scopeStack.lastObject)->_children)
+        head = [leftScopeStack objectAtIndex:depth];
+        tail = [rightScopeStack objectAtIndex:depth];
+        if (head == tail)
+            continue;
+        if (head && head->_type == TMScopeTypeSpan && head->_type == tail->_type && [head.identifier isEqualToString:tail.identifier] && !head->_flags & TMScopeHasEnd && !tail->_flags & TMScopeHasBegin)
         {
-            NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
-            if (childScopeRange.location > offset)
-            {
-                // We're past the offset, break out
-                break;
-            }
-            NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
-            if (childScopeEnd < offset)
-            {
-                // We're before the offset, continue to the next scope
-            }
-            else if (childScopeRange.location < offset && childScopeEnd > offset)
-            {
-                // We're containing the offset, recurse
-                [scopeStack addObject:childScope];
-                recurse = YES;
-                break;
-            }
-            else if (childScopeEnd == offset)
-            {
-                // We're a possible head scope
-                head = childScope;                
-            }
-            else if (childScopeRange.location == offset)
-            {
-                // We're a possible tail scope
-                tail = childScope;
-                if (head && head->_type == TMScopeTypeSpan && head->_type == tail->_type && [head.identifier isEqualToString:tail.identifier] && !head->_flags & TMScopeHasEnd && !tail->_flags & TMScopeHasBegin)
-                {
-                    // Confirmed the scopes match
-                    break;
-                }
-                else
-                {
-                    head = nil;
-                    tail = nil;
-                }
-            }
-        }
-        // If head and tail aren't both set, reset them both so we don't match up head and tail in different scopes
-        if ((head && !tail) || (!head && tail))
-        {
-            head = nil;
-            tail = nil;
-        }
-        if (!recurse)
+            scopesMatch = YES;
             break;
+        }
     }
     
-    if (!head)
+    if (!scopesMatch)
         return NO;
     
     ECASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);

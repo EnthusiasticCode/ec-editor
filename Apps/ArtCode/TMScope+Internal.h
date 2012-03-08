@@ -14,12 +14,12 @@
 /// Options to specify the behaviour of the scope query methods. These are not cumulative.
 typedef enum
 {
-    /// The query will match only scopes that fully contain the queried range or offset
-    TMScopeQueryContainedOnly = 0,
-    /// The query will also match scopes that start adjacent to the queried range or offset
-    TMScopeQueryAdjacentStart,
-    /// The query will also match scopes that end adjacent to the queried range or offset
-    TMScopeQueryAdjacentEnd,
+    /// The query will match scopes to the right of the range or offset
+    TMScopeQueryRight = 1 << 0,
+    /// The query will match scopes to the left of the range or offset
+    TMScopeQueryLeft = 1 << 1,
+    /// The query will only match scopes to the left or right if they're missing the end or begin respectively
+    TMScopeQueryOpenOnly = 1 << 2,
 } TMScopeQueryOptions;
 
 /// Scope flags. Not all flags are valid for all scope types

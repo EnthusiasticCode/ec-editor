@@ -200,7 +200,7 @@ static OnigRegexp *_namedCapturesRegexp;
         generationsMatch = [_codeFile currentGeneration] == _scopesGeneration;
         TMScope *scopeCopy = nil;
         if (generationsMatch)
-            scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:0] lastObject] copy];
+            scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
         OSSpinLockUnlock(&_scopesLock);
         if (generationsMatch)
             completionHandler(scopeCopy);
@@ -313,10 +313,13 @@ static OnigRegexp *_namedCapturesRegexp;
         NSRange lineRange = NSMakeRange(nextRange.location, 0);
         if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
             return;
+        // Zero length line means end of file
+        if (!lineRange.length)
+            return;
 
         // Setup the scope stack
         if (!scopeStack)
-            scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryAdjacentEnd];
+            scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
         if (!scopeStack)
             scopeStack = [NSMutableArray arrayWithObject:_rootScope];
 
