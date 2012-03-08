@@ -7,7 +7,15 @@
 //
 
 #import "ACProjectItem.h"
+#import "ACProjectItem+Internal.h"
 
 @implementation ACProjectItem
+
+#pragma mark - Internal Methods
+
+- (NSDictionary *)propertyListDictionary
+{
+    return [NSDictionary dictionary];
+}
 
 @end

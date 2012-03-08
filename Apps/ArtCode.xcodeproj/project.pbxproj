@@ -952,6 +952,7 @@
 		CDE8FA8214B9B32A00CFC953 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
 		CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
+		CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectItem+Internal.h"; sourceTree = "<group>"; };
 		CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTable_Background.png; sourceTree = "<group>"; };
 		CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundNormal.png; sourceTree = "<group>"; };
 		CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundSelected.png; sourceTree = "<group>"; };
@@ -1226,6 +1227,7 @@
 			children = (
 				B77100ED1506DAFF006AF1FB /* ACProject.h */,
 				B77100EE1506DAFF006AF1FB /* ACProject.m */,
+				CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */,
 				B77100F01506DDD5006AF1FB /* ACProjectItem.h */,
 				B77100F11506DDD5006AF1FB /* ACProjectItem.m */,
 				B77100F31506DE6E006AF1FB /* ACProjectFileSystemItem.h */,
