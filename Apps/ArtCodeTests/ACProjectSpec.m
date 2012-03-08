@@ -319,7 +319,7 @@ describe(@"A new opened ACProject", ^{
             });
             
             it(@"can be retrieved with its UUID", ^{
-                [[[project.contentsFolder descendantItemWithUUID:file.UUID] should] equal:file];
+                [[[project itemWithUUID:file.UUID] should] equal:file];
             });
             
             it(@"has a consistent name", ^{
@@ -507,8 +507,8 @@ describe(@"An existing ACProject", ^{
         [[project.labelColor should] equal:projectLabelColor];
     });
     
-    it(@"content has 2 descendants", ^{
-        [[[project.contentsFolder should] have:2] descendants];
+    it(@"has 2 files", ^{
+        [[[project should] have:2] files];
     });
     
     it(@"has a valid content", ^{

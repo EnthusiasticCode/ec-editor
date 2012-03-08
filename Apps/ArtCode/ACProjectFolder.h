@@ -15,12 +15,6 @@
 /// Array of items in the folder.
 @property (nonatomic, copy, readonly) NSArray *children;
 
-/// Array of items in this folder and in its subfolders.
-@property (nonatomic, copy, readonly) NSArray *descendants;
-
-/// Retrieves an item descendant of the receiver's that has the given UUID.
-- (ACProjectFileSystemItem *)descendantItemWithUUID:(NSString *)uuid;
-
 #pragma mark Creating new folders and files
 
 - (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;

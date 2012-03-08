@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACProjectFolder, ACProjectFile;
+@class ACProjectItem, ACProjectFolder, ACProjectFile;
 
 @interface ACProject : UIDocument
 
@@ -21,8 +21,12 @@
 @property (nonatomic, strong) UIColor *labelColor;
 
 @property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;
+@property (nonatomic, strong, readonly) NSArray *files;
 @property (nonatomic, strong, readonly) NSArray *bookmarks;
 @property (nonatomic, strong, readonly) NSArray *remotes;
+
+/// Retrieve an item (file, folder, bookmark or remote) that has the given uuid.
+- (ACProjectItem *)itemWithUUID:(id)uuid;
 
 /// Adds a remote to the project with a full remote url <scheme>://user@host:port
 - (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;

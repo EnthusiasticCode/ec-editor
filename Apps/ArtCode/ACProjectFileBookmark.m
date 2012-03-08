@@ -29,8 +29,8 @@
     id item = [plistDictionary objectForKey:@"file"];
     if (!item)
         return nil;
-    item = [project.contentsFolder descendantItemWithUUID:item];
-    if (!item)
+    item = [project itemWithUUID:item];
+    if (!item || ![item isKindOfClass:[ACProjectFile class]])
         return nil;
     _file = (ACProjectFile *)item;
     _bookmarkPoint = [plistDictionary objectForKey:@"point"];
