@@ -288,6 +288,10 @@ describe(@"A new opened ACProject", ^{
                     [[bookmark.bookmarkPoint should] equal:bookmarkPoint];
                 });
             });
+            
+            it(@"has a file buffer", ^{
+                [[[file should] receive] codeFileBuffer];
+            });
         });
     });
     
@@ -333,6 +337,74 @@ describe(@"A new opened ACProject", ^{
                 [[remote.password should] beNil];
             });
         });
+    });
+});
+
+describe(@"An existing ACProject", ^{
+    
+    NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
+    __block ACProject *project = nil;
+    __block id projectUUID = nil;
+    NSString *subfolderName = @"testfolder";
+    NSString *fileName = @"testfile.txt";
+    NSData *fileData = [@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding];
+    NSNumber *bookmarkPoint = [NSNumber numberWithInt:1];
+    
+    beforeAll(^{
+        __block BOOL isOpened = NO;
+        [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
+        project = [[ACProject alloc] initWithFileURL:projectURL];
+        [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+            isOpened = success;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        
+        projectUUID = project.UUID;
+        [project.rootFolder addNewFolderWithName:subfolderName error:NULL];
+        ACProjectFolder *subfolder = [project.rootFolder.children objectAtIndex:0];
+        [subfolder addNewFileWithName:fileName data:fileData error:NULL];
+        ACProjectFile *file = [subfolder.children objectAtIndex:1];
+        [file addBookmarkWithPoint:bookmarkPoint];
+        
+        [project closeWithCompletionHandler:^(BOOL success) {
+            isOpened = success;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [project openWithCompletionHandler:^(BOOL success) {
+            isOpened = success;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+    });
+    
+    afterAll(^{
+        [project closeWithCompletionHandler:^(BOOL success) {
+            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
+        }];
+    });
+    
+    it(@"saved its UUID", ^{
+        [[project.UUID should] equal:projectUUID];
+    });
+    
+    it(@"has a valid content", ^{
+        [[[project.rootFolder should] have:1] children];
+        
+        id item = [project.rootFolder.children objectAtIndex:0];
+        [[item should] beMemberOfClass:[ACProjectFolder class]];
+        
+        ACProjectFolder *subfolder = (ACProjectFolder *)item;
+        [[subfolder.name should] equal:subfolderName];
+        [[[subfolder should] have:1] children];
+        
+        item = [subfolder.children objectAtIndex:0];
+        [[item should] beMemberOfClass:[ACProjectFile class]];
+        
+        ACProjectFile *file = (ACProjectFile *)item;
+        [[file.name should] equal:fileName];
+        [[[file should] have:1] bookmarks];
+        
+        ACProjectFileBookmark *bookmark = [file.bookmarks objectAtIndex:0];
+        [[bookmark.bookmarkPoint should] equal:bookmarkPoint];
     });
 });
 
