@@ -10,6 +10,8 @@
 #import "ACProjectFolder+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
 
+#import "ACProject.h"
+
 
 @interface ACProjectFolder ()
 {
@@ -80,6 +82,20 @@
     ECASSERT([_children containsObject:child]);
     [self.contents removeFileWrapper:child.contents];
     [_children removeObject:child];
+}
+
+#pragma mark - Item methods
+
+- (NSURL *)URL
+{
+    if (self.parentFolder == nil)
+        return [self.project.URL URLByAppendingPathComponent:self.name isDirectory:YES];
+    return [self.parentFolder.URL URLByAppendingPathComponent:self.name isDirectory:YES];
+}
+
+- (ACProjectItemType)type
+{
+    return ACPFolder;
 }
 
 @end

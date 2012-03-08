@@ -174,6 +174,10 @@ describe(@"A new opened ACProject", ^{
         [[project.UUID should] beNonNil];
     });
     
+    it(@"has an URL", ^{
+        [[[project URL] should] beNonNil];
+    });
+    
     context(@"label color", ^{
        
         it(@"can be set", ^{

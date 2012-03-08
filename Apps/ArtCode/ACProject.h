@@ -23,6 +23,9 @@
 /// A color that rapresent the project.
 @property (nonatomic, strong) UIColor *labelColor;
 
+/// URL of the project bundle.
+- (NSURL *)URL;
+
 #pragma mark Project Content
 
 @property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;

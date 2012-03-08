@@ -8,7 +8,13 @@
 
 #import "ACProjectFile.h"
 #import "ACProjectFileSystemItem+Internal.h"
+
 #import "ACProject.h"
+#import "ACProjectFolder.h"
+
+@interface ACProjectFile ()
+
+@end
 
 @interface ACProject (Bookmarks)
 
@@ -17,19 +23,27 @@
 
 @end
 
-@interface ACProjectFile ()
-{
+@implementation ACProjectFile {
     NSFileWrapper *_contents;
 }
-@end
-
-@implementation ACProjectFile
 
 - (NSFileWrapper *)defaultContents
 {
     NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
     contents.preferredFilename = self.name;
     return contents;
+}
+
+#pragma mark - Item methods
+
+- (NSURL *)URL
+{
+    return [self.parentFolder.URL URLByAppendingPathComponent:self.name];
+}
+
+- (ACProjectItemType)type
+{
+    return ACPFile;
 }
 
 @end
