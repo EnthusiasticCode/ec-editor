@@ -12,7 +12,11 @@
 
 #import "ACProject.h"
 
+@interface ACProjectFolder ()
 
+@property (nonatomic, strong, readonly) NSMutableDictionary *_descendants;
+
+@end
 
 @implementation ACProjectFolder {
     NSMutableArray *_children;
@@ -20,9 +24,31 @@
 
 #pragma mark - Properties
 
+@synthesize _descendants;
+
 - (NSArray *)children
 {
     return [_children copy];
+}
+
+- (NSArray *)descendants
+{
+    return [[self _descendants] allValues];
+}
+
+- (NSMutableDictionary *)_descendants
+{
+    if (!_descendants)
+    {
+        _descendants = [NSMutableDictionary dictionaryWithCapacity:[_children count]];
+        for (ACProjectFileSystemItem *item in _children)
+        {
+            [_descendants setObject:item forKey:item.UUID];
+            if ([item isMemberOfClass:[ACProjectFolder class]])
+                [_descendants addEntriesFromDictionary:[(ACProjectFolder *)item _descendants]];
+        }
+    }
+    return _descendants;
 }
 
 #pragma mark - Initialization
@@ -32,7 +58,7 @@
     self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
     if (!self)
         return nil;
-    _children = [[NSMutableArray alloc] init];
+    _children = [NSMutableArray new];
     return self;
 }
 
@@ -54,6 +80,8 @@
     if ([self.contents addFileWrapper:newFolder.contents])
     {
         [_children addObject:newFolder];
+        // Clear descendants instead of making the new folder calculate its own if not needed
+        _descendants = nil;
         return YES;
     }
     else
@@ -71,6 +99,9 @@
     if ([self.contents addFileWrapper:newFile.contents])
     {
         [_children addObject:newFile];
+        // If descendants are populated, add the new file
+        if (_descendants)
+            [_descendants setObject:newFile forKey:newFile.UUID];
         return YES;
     }
     else

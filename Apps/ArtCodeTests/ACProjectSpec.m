@@ -507,6 +507,10 @@ describe(@"An existing ACProject", ^{
         [[project.labelColor should] equal:projectLabelColor];
     });
     
+    it(@"content has 2 descendants", ^{
+        [[[project.contentsFolder should] have:2] descendants];
+    });
+    
     it(@"has a valid content", ^{
         [[[project.contentsFolder should] have:1] children];
         

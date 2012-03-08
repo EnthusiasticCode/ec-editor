@@ -42,8 +42,10 @@
 
 - (NSFileWrapper *)defaultContents
 {
-    return [[NSFileWrapper alloc] init];
+    return [NSFileWrapper new];
 }
+
+#pragma mark - Item methods
 
 - (void)remove
 {

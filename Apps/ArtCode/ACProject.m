@@ -241,8 +241,9 @@ static NSString * const _contentsFolderName = @"Contents";
 - (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
 {
     ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
-    if (remote)
-        [_remotes setObject:remote forKey:remote.UUID];
+    if (!remote)
+        return;
+    [_remotes setObject:remote forKey:remote.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
