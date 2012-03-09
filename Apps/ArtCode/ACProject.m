@@ -17,7 +17,11 @@
 #import "NSURL+Utilities.h"
 #import "UIColor+HexColor.h"
 
+/// UUID to dictionary of cached projects informations (uuid, path, labelColor, localizedName).
+static NSMutableDictionary *_projectCachedInfos = nil;
+
 static NSString * const _projectsFolderName = @"LocalProjects";
+static NSString * const _projectsCachedInfoFileName = @".acprojcache";
 static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
@@ -35,7 +39,19 @@ static NSString * const _contentsFolderName = @"Contents";
 
 - (id)UUID
 {
-    if (!_UUID && !self.documentState & UIDocumentStateClosed)
+    // Retrieve UUID from cache if possible
+    if (self.documentState & UIDocumentStateClosed)
+    {
+        [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
+            if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
+            {
+                _UUID = uuid;
+                *stop = YES;
+            }
+        }];
+    }
+    // Generate an UUID on a new project
+    else if (!_UUID)
     {
         CFUUIDRef uuid = CFUUIDCreate(NULL);
         CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
@@ -45,6 +61,33 @@ static NSString * const _contentsFolderName = @"Contents";
         [self updateChangeCount:UIDocumentChangeDone];
     }
     return _UUID;
+}
+
+- (UIColor *)labelColor
+{
+    // Retrieve labelColor from cache if possible
+    if (!_labelColor && self.documentState & UIDocumentStateClosed)
+    {
+        [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
+            if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
+            {
+                NSString *labelColorString = [info objectForKey:@"labelColor"];
+                if ([labelColorString length])
+                    _labelColor = [UIColor colorWithHexString:labelColorString];
+                *stop = YES;
+            }
+        }];
+    }
+    return _labelColor;
+}
+
+- (void)setLabelColor:(UIColor *)value
+{
+    if (value == _labelColor)
+        return;
+    
+    _labelColor = value;
+    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (ACProjectFolder *)contentsFolder
@@ -101,6 +144,7 @@ static NSString * const _contentsFolderName = @"Contents";
 {
     ECASSERT(change == UIDocumentChangeDone);
     _isDirty = YES;
+    [[self class] updateCacheForProject:self];
 }
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -225,6 +269,45 @@ static NSString * const _contentsFolderName = @"Contents";
 }
 
 #pragma mark - Class Methods
+
++ (void)initialize
+{
+    // Loads the chached projects informations from plist
+    _projectCachedInfos = [NSMutableDictionary new];
+    NSURL *cacheFileURL = [[self projectsURL] URLByAppendingPathComponent:_projectsCachedInfoFileName];
+    if ([[NSFileManager new] fileExistsAtPath:cacheFileURL.path])
+    {
+        for (NSDictionary *info in [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:cacheFileURL] options:NSPropertyListImmutable format:nil error:NULL])
+        {
+            if ([info objectForKey:@"uuid"])
+                [_projectCachedInfos setObject:info forKey:[info objectForKey:@"uuid"]];
+        }
+    }
+}
+
++ (void)updateCacheForProject:(ACProject *)project
+{
+    // Updates the entry for a project's cache
+    ECASSERT(_projectCachedInfos);
+    ECASSERT([project documentState] & UIDocumentStateNormal);
+    [_projectCachedInfos setObject:[NSDictionary dictionaryWithObjectsAndKeys:project.UUID, @"uuid", [project.fileURL lastPathComponent], @"path", project.localizedName, @"localizedName", [project.labelColor hexString], @"labelColor", nil] forKey:project.UUID];
+}
+
++ (void)prepareForBackground
+{
+    // Saves cached projects informations plist
+    if (![_projectCachedInfos count])
+        return;
+    [[NSPropertyListSerialization dataWithPropertyList:[_projectCachedInfos allValues] format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:[[self projectsURL] URLByAppendingPathComponent:_projectsCachedInfoFileName] atomically:YES];
+}
+
++ (ACProject *)projectWithUUID:(id)uuid
+{
+    NSDictionary *projectInfo = [_projectCachedInfos objectForKey:uuid];
+    if (!projectInfo || ![projectInfo objectForKey:@"path"])
+        return nil;
+    return [[ACProject alloc] initWithFileURL:[[self projectsURL] URLByAppendingPathComponent:[projectInfo objectForKey:@"path"]]];
+}
 
 + (NSURL *)projectsURL
 {

@@ -37,10 +37,16 @@
 
 #pragma mark Creating new projects
 
-/// The local URL at which all projects are stored
+/// The local URL at which all projects are stored.
 + (NSURL *)projectsURL;
 
 /// Creates a new project and, if set, decompress the archive at the given URL.
 + (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(ACProject *createdProject))completionHandler;
+
+/// Returns a new ACProject what has the given uuid.
++ (ACProject *)projectWithUUID:(id)uuid;
+
+/// Performs saving operarions before entering in background.
++ (void)prepareForBackground;
 
 @end
