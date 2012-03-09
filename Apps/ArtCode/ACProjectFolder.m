@@ -12,7 +12,7 @@
 #import "ACProjectFileSystemItem+Internal.h"
 #import "ACProject+Internal.h"
 
-static NSString * const _childrenKey = @"ACProjectFolderChildrenKey";
+static NSString * const _childrenKey = @"children";
 
 @implementation ACProjectFolder {
     NSMutableDictionary *_children;
@@ -37,9 +37,7 @@ static NSString * const _childrenKey = @"ACProjectFolderChildrenKey";
     ECASSERT(childrenPlists.count == contents.fileWrappers.count);
     [contents.fileWrappers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSFileWrapper *fileWrapper, BOOL *stop) {
         ECASSERT(fileWrapper.isRegularFile || fileWrapper.isDirectory);
-        NSDictionary *childPlist = [childrenPlists objectForKey:key];
-        Class childClass = fileWrapper.isDirectory ? [ACProjectFolder class] : [ACProjectFile class];
-        ACProjectFileSystemItem *item = [[childClass alloc] initWithProject:project propertyListDictionary:childPlist parent:self contents:fileWrapper];
+        ACProjectFileSystemItem *item = [[(fileWrapper.isDirectory ? [ACProjectFolder class] : [ACProjectFile class]) alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:key] parent:self contents:fileWrapper];
         [_children setObject:item forKey:key];
         [project didAddFileSystemItem:item];
     }];

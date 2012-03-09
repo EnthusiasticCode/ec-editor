@@ -17,6 +17,12 @@
 
 @end
 
+@interface ACProject (Remotes)
+
+- (void)removeRemote:(ACProjectRemote *)remote;
+
+@end
+
 @implementation ACProjectRemote {
     NSURL *_URL;
 }
@@ -24,6 +30,7 @@
 #pragma mark - Properties
 
 @synthesize name = _name;
+@dynamic scheme, host, port, user;
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
@@ -127,8 +134,7 @@
 
 - (void)remove
 {
-    [self.project didRemoveRemote:self];
-    [super remove];
+    [self.project removeRemote:self];
 }
 
 #pragma mark - Private Methods

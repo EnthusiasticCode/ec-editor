@@ -6,35 +6,60 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFile+Internal.h"
+#import "ACProjectFile.h"
 #import "ACProjectFileSystemItem+Internal.h"
+#import "ACProjectItem+Internal.h"
 
 #import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
 
-#import "ACProjectFileBookmark+Internal.h"
+#import "ACProjectFileBookmark.h"
 
+static NSString * const _plistFileEncodingKey = @"fileEncoding";
+static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
-@implementation ACProjectFile {
-    NSMutableArray *_bookmarks;
-}
+/// Project internal methods to manage bookarks
+@interface ACProject (Bookmarks)
 
-@synthesize fileEncoding = _fileEncoding;
+- (void)addBookmarkWithFile:(ACProjectFile *)file point:(id)point;
+- (NSArray *)bookmarksForFile:(ACProjectFile *)file;
+
+@end
+
+@implementation ACProjectFile
+
+#pragma mark - Properties
+
+@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier;
+@synthesize codeFileBuffer = _codeFileBuffer;
 
 - (NSArray *)bookmarks
 {
-    return [_bookmarks copy];
+    return [self.project bookmarksForFile:self];
 }
+
+#pragma mark - Initialization and serialization
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
     self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
     if (!self)
         return nil;
-    _fileEncoding = NSUTF8StringEncoding;
-    _bookmarks = [[NSMutableArray alloc] init];
+    _fileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey] ? [[plistDictionary objectForKey:_plistFileEncodingKey] unsignedIntegerValue] : NSUTF8StringEncoding;
+    _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
     return self;
 }
+
+- (NSDictionary *)propertyListDictionary
+{
+    NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
+    [plist setObject:[NSNumber numberWithUnsignedInteger:self.fileEncoding] forKey:_plistFileEncodingKey];
+    if (self.codeFileExplicitSyntaxIdentifier)
+        [plist setObject:self.codeFileExplicitSyntaxIdentifier forKey:_plistExplicitSyntaxKey];
+    return plist;
+}
+
+#pragma mark - Public Methods
 
 - (NSFileWrapper *)defaultContents
 {
@@ -45,12 +70,7 @@
 
 - (void)addBookmarkWithPoint:(id)point
 {
-    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:nil file:self bookmarkPoint:point];
-    if (!bookmark)
-        return;
-    [_bookmarks addObject:bookmark];
-    [self.project didAddBookmark:bookmark];
-    [self.project updateChangeCount:UIDocumentChangeDone];
+    [self.project addBookmarkWithFile:self point:point];
 }
 
 #pragma mark - Item methods
@@ -63,13 +83,6 @@
 - (ACProjectItemType)type
 {
     return ACPFile;
-}
-
-#pragma mark - Internal methods
-
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
-{
-    [_bookmarks removeObject:bookmark];
 }
 
 @end

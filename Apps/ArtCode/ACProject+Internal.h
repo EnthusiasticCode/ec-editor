@@ -11,11 +11,6 @@
 
 @interface ACProject (Internal)
 
-- (void)didRemoveRemote:(ACProjectRemote *)remote;
-
-- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark;
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
-
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
 - (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
 

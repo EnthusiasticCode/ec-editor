@@ -10,13 +10,10 @@
 #import "ACProjectFolder+Internal.h"
 #import "ACProjectItem+Internal.h"
 
-@interface ACProjectFileSystemItem ()
-{
+
+@implementation ACProjectFileSystemItem {
     NSFileWrapper *_contents;
 }
-@end
-
-@implementation ACProjectFileSystemItem
 
 @synthesize name = _name, parentFolder = _parentFolder;
 
@@ -50,6 +47,13 @@
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
 {
     return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil contents:nil];
+}
+
+- (NSDictionary *)propertyListDictionary
+{
+    NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
+    [plist setObject:self.name forKey:@"name"];
+    return plist;
 }
 
 - (void)remove

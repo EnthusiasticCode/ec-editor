@@ -61,7 +61,6 @@
 
 - (void)remove
 {
-    [self.project updateChangeCount:UIDocumentChangeDone];
 }
 
 @end

@@ -6,14 +6,22 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFileBookmark+Internal.h"
+#import "ACProjectFileBookmark.h"
 #import "ACProjectItem+Internal.h"
 
 #import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
-#import "ACProjectFile+Internal.h"
+#import "ACProjectFile.h"
 
 #import "NSURL+Utilities.h"
+
+
+@interface ACProject (Bookmarks)
+
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark;
+
+@end
+
 
 @implementation ACProjectFileBookmark
 
@@ -21,30 +29,17 @@
 
 #pragma mark - Plist Internal Methods
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint
+- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint
 {
-    self = [super initWithProject:project propertyListDictionary:plistDictionary];
+    self = [super initWithProject:project propertyListDictionary:nil];
     if (!self)
         return nil;
-    if (file)
-    {
-        _file = file;
-    }
-    else
-    {
-        id uuid = [plistDictionary objectForKey:@"file"];
-        if (uuid)
-            _file = (ACProjectFile *)[project itemWithUUID:uuid];
-    }
-    if (!_file || ![_file isKindOfClass:[ACProjectFile class]])
+    
+    if (!file || file.type != ACPFile || !bookmarkPoint)
         return nil;
     
-    if (bookmarkPoint)
-        _bookmarkPoint = bookmarkPoint;
-    else
-        _bookmarkPoint = [plistDictionary objectForKey:@"point"];
-    if (!_bookmarkPoint)
-        return nil;
+    _file = file;
+    _bookmarkPoint = bookmarkPoint;
     
     return self;
 }
@@ -63,7 +58,10 @@
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
 {
-    return [self initWithProject:project propertyListDictionary:plistDictionary file:nil bookmarkPoint:nil];
+    id uuid = [plistDictionary objectForKey:@"file"];
+    if (!uuid)
+        return nil;
+    return [self initWithProject:project file:(ACProjectFile *)[project itemWithUUID:uuid] bookmarkPoint:[plistDictionary objectForKey:@"point"]];
 }
 
 - (NSURL *)URL
@@ -78,9 +76,7 @@
 
 - (void)remove
 {
-    [self.file didRemoveBookmark:self];
-    [self.project didRemoveBookmark:self];
-    [super remove];
+    [self.project removeBookmark:self];
 }
 
 @end

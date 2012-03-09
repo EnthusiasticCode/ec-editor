@@ -9,7 +9,7 @@
 #import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
-#import "ACProjectRemote+Internal.h"
+#import "ACProjectRemote.h"
 
 #import "ACProjectItem+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
@@ -24,6 +24,22 @@ static NSString * const _projectsFolderName = @"LocalProjects";
 static NSString * const _projectsCachedInfoFileName = @".acprojcache";
 static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
+
+
+/// Bookmark internal initialization for creation
+@interface ACProjectFileBookmark (Internal)
+
+- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint;
+
+@end
+
+/// Remotes internal inialization for creation
+@interface ACProjectRemote (Internal)
+
+- (id)initWithProject:(ACProject *)project name:(NSString *)name URL:(NSURL *)remoteURL;
+
+@end
+
 
 @implementation ACProject {
     BOOL _isDirty;
@@ -208,7 +224,8 @@ static NSString * const _contentsFolderName = @"Contents";
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     // Update global project cache
-    [[self class] updateCacheForProject:self];
+    if (!([self documentState] & UIDocumentStateClosed))
+        [[self class] updateCacheForProject:self];
     
     // Creating project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
@@ -358,25 +375,43 @@ static NSString * const _contentsFolderName = @"Contents";
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
-#pragma mark - Internal Methods
+#pragma mark - Internal Remotes Methods
 
-- (void)didRemoveRemote:(ACProjectRemote *)remote
+- (void)removeRemote:(ACProjectRemote *)remote
 {
     ECASSERT(remote);
     [_remotes removeObjectForKey:remote.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
+#pragma mark - Internal Bookmarks Methods
+
+- (void)addBookmarkWithFile:(ACProjectFile *)file point:(id)point
 {
-    ECASSERT(bookmark);
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self file:file bookmarkPoint:point];
     [_bookmarks setObject:bookmark forKey:bookmark.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark
 {
-    ECASSERT(bookmark);
     [_bookmarks removeObjectForKey:bookmark.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
 }
+
+- (NSArray *)bookmarksForFile:(ACProjectFile *)file
+{
+    NSMutableArray *fileBookmarks = [NSMutableArray new];
+    [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id key, ACProjectFileBookmark *bookmark, BOOL *stop) {
+        if (bookmark.file == file)
+        {
+            [fileBookmarks addObject:bookmark];
+        }
+    }];
+    return [fileBookmarks copy];
+}
+
+#pragma mark - Internal Files Methods
 
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
