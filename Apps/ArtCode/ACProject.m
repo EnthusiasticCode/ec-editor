@@ -35,7 +35,7 @@ static NSString * const _contentsFolderName = @"Contents";
 
 - (id)UUID
 {
-    if (!_UUID && self.documentState & UIDocumentStateClosed)
+    if (!_UUID && !self.documentState & UIDocumentStateClosed)
     {
         CFUUIDRef uuid = CFUUIDCreate(NULL);
         CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
@@ -49,7 +49,7 @@ static NSString * const _contentsFolderName = @"Contents";
 
 - (ACProjectFolder *)contentsFolder
 {
-    if (!_contentsFolder && self.documentState != UIDocumentStateClosed)
+    if (!_contentsFolder && !self.documentState & UIDocumentStateClosed)
     {
         NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
         contents.preferredFilename = _contentsFolderName;
@@ -137,7 +137,8 @@ static NSString * const _contentsFolderName = @"Contents";
         for (NSDictionary *bookmarkPlist in [plist objectForKey:@"bookmarks"])
         {
             ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self propertyListDictionary:bookmarkPlist];
-            [bookmarksFromPlist setObject:bookmark forKey:bookmark.UUID];
+            if (bookmark)
+                [bookmarksFromPlist setObject:bookmark forKey:bookmark.UUID];
         }
         _bookmarks = [bookmarksFromPlist copy];
     }
@@ -149,7 +150,8 @@ static NSString * const _contentsFolderName = @"Contents";
         for (NSDictionary *remotePlist in [plist objectForKey:@"remotes"])
         {
             ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self propertyListDictionary:remotePlist];
-            [remotesFromPlist setObject:remote forKey:remote.UUID];
+            if (remote)
+                [remotesFromPlist setObject:remote forKey:remote.UUID];
         }
         _remotes = [remotesFromPlist copy];
     }

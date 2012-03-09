@@ -487,6 +487,7 @@ describe(@"An existing ACProject", ^{
             isOpened = success;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+        project = [[ACProject alloc] initWithFileURL:projectURL];
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];

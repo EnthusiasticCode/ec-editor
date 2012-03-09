@@ -61,6 +61,11 @@
 
 #pragma mark - Item methods
 
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
+{
+    return [self initWithProject:project propertyListDictionary:plistDictionary file:nil bookmarkPoint:nil];
+}
+
 - (NSURL *)URL
 {
     return [self.file.URL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:self.bookmarkPoint forKey:([self.bookmarkPoint isKindOfClass:[NSNumber class]] ? @"line" : @"symbol")]];
