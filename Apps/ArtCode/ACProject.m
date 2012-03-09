@@ -392,7 +392,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Remotes Methods
 
-- (void)removeRemote:(ACProjectRemote *)remote
+- (void)didRemoveRemote:(ACProjectRemote *)remote
 {
     ECASSERT(remote);
     [_remotes removeObjectForKey:remote.UUID];
@@ -401,20 +401,20 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Bookmarks Methods
 
-- (void)addBookmarkWithFile:(ACProjectFile *)file point:(id)point
+- (void)didAddBookmarkWithFile:(ACProjectFile *)file point:(id)point
 {
     ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self file:file bookmarkPoint:point];
     [_bookmarks setObject:bookmark forKey:bookmark.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (void)removeBookmark:(ACProjectFileBookmark *)bookmark
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
     [_bookmarks removeObjectForKey:bookmark.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (NSArray *)bookmarksForFile:(ACProjectFile *)file
+- (NSArray *)implBookmarksForFile:(ACProjectFile *)file
 {
     NSMutableArray *fileBookmarks = [NSMutableArray new];
     [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id key, ACProjectFileBookmark *bookmark, BOOL *stop) {

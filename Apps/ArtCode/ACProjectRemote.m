@@ -20,7 +20,7 @@
 
 @interface ACProject (Remotes)
 
-- (void)removeRemote:(ACProjectRemote *)remote;
+- (void)didRemoveRemote:(ACProjectRemote *)remote;
 
 @end
 
@@ -135,7 +135,8 @@
 
 - (void)remove
 {
-    [self.project removeRemote:self];
+    [self.project didRemoveRemote:self];
+    [super remove];
 }
 
 #pragma mark - Private Methods

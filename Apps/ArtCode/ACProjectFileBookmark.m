@@ -18,7 +18,7 @@
 
 @interface ACProject (Bookmarks)
 
-- (void)removeBookmark:(ACProjectFileBookmark *)bookmark;
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
 
 @end
 
@@ -76,7 +76,8 @@
 
 - (void)remove
 {
-    [self.project removeBookmark:self];
+    [self.project didRemoveBookmark:self];
+    [super remove];
 }
 
 @end

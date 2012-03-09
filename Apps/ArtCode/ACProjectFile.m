@@ -21,8 +21,8 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
 
-- (void)addBookmarkWithFile:(ACProjectFile *)file point:(id)point;
-- (NSArray *)bookmarksForFile:(ACProjectFile *)file;
+- (void)didAddBookmarkWithFile:(ACProjectFile *)file point:(id)point;
+- (NSArray *)implBookmarksForFile:(ACProjectFile *)file;
 
 @end
 
@@ -35,7 +35,7 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (NSArray *)bookmarks
 {
-    return [self.project bookmarksForFile:self];
+    return [self.project implBookmarksForFile:self];
 }
 
 #pragma mark - Initialization and serialization
@@ -63,7 +63,7 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (void)addBookmarkWithPoint:(id)point
 {
-    [self.project addBookmarkWithFile:self point:point];
+    [self.project didAddBookmarkWithFile:self point:point];
 }
 
 #pragma mark - Item methods
