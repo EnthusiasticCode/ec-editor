@@ -16,7 +16,7 @@
 #import "NSURL+Utilities.h"
 
 
-@interface ACProject (Bookmarks)
+@interface ACProjectFile (Bookmarks)
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
 
@@ -76,8 +76,7 @@
 
 - (void)remove
 {
-    [self.project didRemoveBookmark:self];
-    [super remove];
+    [self.file didRemoveBookmark:self];
 }
 
 @end

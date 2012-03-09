@@ -22,11 +22,14 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 @interface ACProject (Bookmarks)
 
 - (void)didAddBookmarkWithFile:(ACProjectFile *)file point:(id)point;
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
 - (NSArray *)implBookmarksForFile:(ACProjectFile *)file;
 
 @end
 
-@implementation ACProjectFile
+@implementation ACProjectFile {
+    NSArray *_bookmarksCache;
+}
 
 #pragma mark - Properties
 
@@ -35,7 +38,9 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (NSArray *)bookmarks
 {
-    return [self.project implBookmarksForFile:self];
+    if (!_bookmarksCache)
+        _bookmarksCache = [self.project implBookmarksForFile:self];
+    return _bookmarksCache;
 }
 
 #pragma mark - Initialization and serialization
@@ -63,6 +68,7 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (void)addBookmarkWithPoint:(id)point
 {
+    _bookmarksCache = nil;
     [self.project didAddBookmarkWithFile:self point:point];
 }
 
@@ -79,6 +85,12 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 }
 
 #pragma mark - Internal Methods
+
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
+{
+    _bookmarksCache = nil;
+    [self.project didRemoveBookmark:bookmark];
+}
 
 - (NSFileWrapper *)defaultContents
 {
