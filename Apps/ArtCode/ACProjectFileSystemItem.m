@@ -47,10 +47,16 @@
 
 #pragma mark - Item methods
 
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
+{
+    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil contents:nil];
+}
+
 - (void)remove
 {
     ECASSERT(self.parentFolder);
     [self.parentFolder didRemoveChild:self];
+    [super remove];
 }
 
 @end

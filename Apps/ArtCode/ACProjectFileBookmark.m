@@ -80,6 +80,7 @@
 {
     [self.file didRemoveBookmark:self];
     [self.project didRemoveBookmark:self];
+    [super remove];
 }
 
 @end

@@ -7,9 +7,11 @@
 //
 
 #import "ACProject.h"
-@class ACProjectFileBookmark, ACProjectFileSystemItem;
+@class ACProjectFileBookmark, ACProjectFileSystemItem, ACProjectRemote;
 
 @interface ACProject (Internal)
+
+- (void)didRemoveRemote:(ACProjectRemote *)remote;
 
 - (void)didAddBookmark:(ACProjectFileBookmark *)bookmark;
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;

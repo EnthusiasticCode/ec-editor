@@ -294,7 +294,7 @@ static NSString * const _contentsFolderName = @"Contents";
 {
     // Updates the entry for a project's cache
     ECASSERT(_projectCachedInfos);
-    ECASSERT([project documentState] & UIDocumentStateNormal);
+    ECASSERT(![project documentState] & UIDocumentStateClosed);
     [_projectCachedInfos setObject:[NSDictionary dictionaryWithObjectsAndKeys:project.UUID, @"uuid", [project.fileURL lastPathComponent], @"path", project.localizedName, @"localizedName", [project.labelColor hexString], @"labelColor", nil] forKey:project.UUID];
 }
 
@@ -360,39 +360,34 @@ static NSString * const _contentsFolderName = @"Contents";
 
 #pragma mark - Internal Methods
 
-- (void)removeRemote:(id)remoteUUID
+- (void)didRemoveRemote:(ACProjectRemote *)remote
 {
-    ECASSERT(remoteUUID);
-    [_remotes removeObjectForKey:remoteUUID];
-    [self updateChangeCount:UIDocumentChangeDone];
+    ECASSERT(remote);
+    [_remotes removeObjectForKey:remote.UUID];
 }
 
 - (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
 {
     ECASSERT(bookmark);
     [_bookmarks setObject:bookmark forKey:bookmark.UUID];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
     ECASSERT(bookmark);
     [_bookmarks removeObjectForKey:bookmark.UUID];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
     ECASSERT(fileSystemItem);
     [_files setObject:fileSystemItem forKey:fileSystemItem.UUID];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
     ECASSERT(fileSystemItem);
     [_files removeObjectForKey:fileSystemItem.UUID];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 @end

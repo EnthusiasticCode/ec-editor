@@ -8,18 +8,12 @@
 
 #import "ACProjectRemote.h"
 #import "ACProjectItem+Internal.h"
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 #import "Keychain.h"
 
 @interface ACProjectRemote ()
 
 - (NSURL *)_URLWithScheme:(NSString *)scheme host:(NSString *)host port:(NSNumber *)port user:(NSString *)user;
-
-@end
-
-@interface ACProject (RemotesInternal)
-
-- (void)removeRemote:(id)remoteUUID;
 
 @end
 
@@ -133,7 +127,8 @@
 
 - (void)remove
 {
-    [self.project removeRemote:self.UUID];
+    [self.project didRemoveRemote:self];
+    [super remove];
 }
 
 #pragma mark - Private Methods

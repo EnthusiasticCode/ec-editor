@@ -50,6 +50,7 @@
         return;
     [_bookmarks addObject:bookmark];
     [self.project didAddBookmark:bookmark];
+    [self.project updateChangeCount:UIDocumentChangeDone];
 }
 
 #pragma mark - Item methods

@@ -7,6 +7,7 @@
 //
 
 #import "ACProjectItem.h"
+#import "ACProject.h"
 #import "ACProjectItem+Internal.h"
 
 @implementation ACProjectItem
@@ -56,6 +57,11 @@
 - (ACProjectItemType)type
 {
     return ACPUnknown;
+}
+
+- (void)remove
+{
+    [self.project updateChangeCount:UIDocumentChangeDone];
 }
 
 @end
