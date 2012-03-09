@@ -38,27 +38,30 @@ static NSString * const _contentsFolderName = @"Contents";
 @synthesize contentsFolder = _contentsFolder;
 
 - (id)UUID
-{
-    // Retrieve UUID from cache if possible
-    if (self.documentState & UIDocumentStateClosed)
+{    
+    if (!_UUID)
     {
-        [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-            if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
-            {
-                _UUID = uuid;
-                *stop = YES;
-            }
-        }];
-    }
-    // Generate an UUID on a new project
-    else if (!_UUID)
-    {
-        CFUUIDRef uuid = CFUUIDCreate(NULL);
-        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-        _UUID = (__bridge NSString *)uuidString;
-        CFRelease(uuidString);
-        CFRelease(uuid);
-        [self updateChangeCount:UIDocumentChangeDone];
+        // Retrieve UUID from cache if possible
+        if (self.documentState & UIDocumentStateClosed)
+        {
+            [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
+                if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
+                {
+                    _UUID = uuid;
+                    *stop = YES;
+                }
+            }];
+        }
+        // Generate an UUID on a new project
+        else
+        {
+            CFUUIDRef uuid = CFUUIDCreate(NULL);
+            CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
+            _UUID = (__bridge NSString *)uuidString;
+            CFRelease(uuidString);
+            CFRelease(uuid);
+            [self updateChangeCount:UIDocumentChangeDone];
+        }
     }
     return _UUID;
 }
@@ -144,7 +147,6 @@ static NSString * const _contentsFolderName = @"Contents";
 {
     ECASSERT(change == UIDocumentChangeDone);
     _isDirty = YES;
-    [[self class] updateCacheForProject:self];
 }
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
@@ -205,6 +207,9 @@ static NSString * const _contentsFolderName = @"Contents";
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
+    // Update global project cache
+    [[self class] updateCacheForProject:self];
+    
     // Creating project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
