@@ -14,6 +14,4 @@
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
 - (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
 
-+ (void)updateCacheForProject:(ACProject *)project;
-
 @end

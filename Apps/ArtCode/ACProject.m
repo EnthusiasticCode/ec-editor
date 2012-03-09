@@ -25,6 +25,19 @@ static NSString * const _projectsCachedInfoFileName = @".acprojcache";
 static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
+static NSString * const _plistUUIDKey = @"uuid";
+static NSString * const _plistLocalizedNameKey = @"localizedName";
+static NSString * const _plistLabelColorKey = @"labelColor";
+static NSString * const _plistContentsKey = @"contents";
+static NSString * const _plistBookmarksKey = @"bookmarks";
+static NSString * const _plistRemotesKey = @"remotes";
+
+@interface ACProject ()
+
+/// Updates and saves the projects informations cache with data from the provided project.
++ (void)updateCacheForProject:(ACProject *)project;
+
+@end
 
 /// Bookmark internal initialization for creation
 @interface ACProjectFileBookmark (Internal)
@@ -61,7 +74,7 @@ static NSString * const _contentsFolderName = @"Contents";
         if (self.documentState & UIDocumentStateClosed)
         {
             [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-                if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
+                if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:self.localizedName])
                 {
                     _UUID = uuid;
                     *stop = YES;
@@ -88,9 +101,9 @@ static NSString * const _contentsFolderName = @"Contents";
     if (!_labelColor && self.documentState & UIDocumentStateClosed)
     {
         [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-            if ([[info objectForKey:@"localizedName"] isEqualToString:self.localizedName])
+            if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:self.localizedName])
             {
-                NSString *labelColorString = [info objectForKey:@"labelColor"];
+                NSString *labelColorString = [info objectForKey:_plistLabelColorKey];
                 if ([labelColorString length])
                     _labelColor = [UIColor colorWithHexString:labelColorString];
                 *stop = YES;
@@ -184,19 +197,19 @@ static NSString * const _contentsFolderName = @"Contents";
     }];
     
     // Project's properties
-    _UUID = [plist objectForKey:@"uuid"];
-    if ([plist objectForKey:@"labelColor"])
-        _labelColor = [UIColor colorWithHexString:[plist objectForKey:@"labelColor"]];
+    _UUID = [plist objectForKey:_plistUUIDKey];
+    if ([plist objectForKey:_plistLabelColorKey])
+        _labelColor = [UIColor colorWithHexString:[plist objectForKey:_plistLabelColorKey]];
     
     // Project's content
     if (contentsWrapper)
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:@"contents"] parent:nil contents:contentsWrapper];
+        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil contents:contentsWrapper];
     
     // Bookmarks
-    if ([plist objectForKey:@"bookmarks"])
+    if ([plist objectForKey:_plistBookmarksKey])
     {
         NSMutableDictionary *bookmarksFromPlist = [NSMutableDictionary new];
-        for (NSDictionary *bookmarkPlist in [plist objectForKey:@"bookmarks"])
+        for (NSDictionary *bookmarkPlist in [plist objectForKey:_plistBookmarksKey])
         {
             ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self propertyListDictionary:bookmarkPlist];
             if (bookmark)
@@ -206,10 +219,10 @@ static NSString * const _contentsFolderName = @"Contents";
     }
     
     // Remotes
-    if ([plist objectForKey:@"remotes"])
+    if ([plist objectForKey:_plistRemotesKey])
     {
         NSMutableDictionary *remotesFromPlist = [NSMutableDictionary new];
-        for (NSDictionary *remotePlist in [plist objectForKey:@"remotes"])
+        for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey])
         {
             ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self propertyListDictionary:remotePlist];
             if (remote)
@@ -236,16 +249,16 @@ static NSString * const _contentsFolderName = @"Contents";
     
     // Project properties
     if (self.UUID)
-        [plist setObject:self.UUID forKey:@"uuid"];
+        [plist setObject:self.UUID forKey:_plistUUIDKey];
     if (self.labelColor)
-        [plist setObject:[self.labelColor hexString] forKey:@"labelColor"];
+        [plist setObject:[self.labelColor hexString] forKey:_plistLabelColorKey];
     
     // Filesystem content
     if (contentsWrapper)
     {
         NSDictionary *contentsPlist = self.contentsFolder.propertyListDictionary;
         if (contentsPlist)
-            [plist setObject:contentsPlist forKey:@"contents"];
+            [plist setObject:contentsPlist forKey:_plistContentsKey];
     }
 
     // Bookmarks
@@ -256,7 +269,7 @@ static NSString * const _contentsFolderName = @"Contents";
         {
             [bookmarksPlist addObject:[bookmark propertyListDictionary]];
         }
-        [plist setObject:bookmarksPlist forKey:@"bookmarks"];
+        [plist setObject:bookmarksPlist forKey:_plistBookmarksKey];
     }
     
     // Remotes
@@ -267,7 +280,7 @@ static NSString * const _contentsFolderName = @"Contents";
         {
             [remotesPlist addObject:[remote propertyListDictionary]];
         }
-        [plist setObject:remotesPlist forKey:@"remotes"];
+        [plist setObject:remotesPlist forKey:_plistRemotesKey];
     }
     
     // Creating project plist wrapper
@@ -301,8 +314,9 @@ static NSString * const _contentsFolderName = @"Contents";
     {
         for (NSDictionary *info in [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:cacheFileURL] options:NSPropertyListImmutable format:nil error:NULL])
         {
-            if ([info objectForKey:@"uuid"])
-                [_projectCachedInfos setObject:info forKey:[info objectForKey:@"uuid"]];
+            // TODO check for zombies
+            if ([info objectForKey:_plistUUIDKey])
+                [_projectCachedInfos setObject:info forKey:[info objectForKey:_plistUUIDKey]];
         }
     }
 }
@@ -312,7 +326,8 @@ static NSString * const _contentsFolderName = @"Contents";
     // Updates the entry for a project's cache
     ECASSERT(_projectCachedInfos);
     ECASSERT(![project documentState] & UIDocumentStateClosed);
-    [_projectCachedInfos setObject:[NSDictionary dictionaryWithObjectsAndKeys:project.UUID, @"uuid", [project.fileURL lastPathComponent], @"path", project.localizedName, @"localizedName", [project.labelColor hexString], @"labelColor", nil] forKey:project.UUID];
+    [_projectCachedInfos setObject:[NSDictionary dictionaryWithObjectsAndKeys:project.UUID, _plistUUIDKey, [project.fileURL lastPathComponent], @"path", project.localizedName, _plistLocalizedNameKey, [project.labelColor hexString], _plistLabelColorKey, nil] forKey:project.UUID];
+    [self prepareForBackground];
 }
 
 + (void)prepareForBackground
