@@ -6,15 +6,13 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFile.h"
+#import "ACProjectFile+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
 
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
 
-@interface ACProjectFile ()
-
-@end
+#import "ACProjectFileBookmark+Internal.h"
 
 @interface ACProject (Bookmarks)
 
@@ -24,8 +22,16 @@
 @end
 
 @implementation ACProjectFile
+{
+    NSMutableArray *_bookmarks;
+}
 
 @synthesize fileEncoding = _fileEncoding;
+
+- (NSArray *)bookmarks
+{
+    return [_bookmarks copy];
+}
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
@@ -33,6 +39,7 @@
     if (!self)
         return nil;
     _fileEncoding = NSUTF8StringEncoding;
+    _bookmarks = [[NSMutableArray alloc] init];
     return self;
 }
 
@@ -41,6 +48,15 @@
     NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
     contents.preferredFilename = self.name;
     return contents;
+}
+
+- (void)addBookmarkWithPoint:(id)point
+{
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:nil file:self bookmarkPoint:point];
+    if (!bookmark)
+        return;
+    [_bookmarks addObject:bookmark];
+    [self.project didAddBookmark:bookmark];
 }
 
 #pragma mark - Item methods
@@ -53,6 +69,13 @@
 - (ACProjectItemType)type
 {
     return ACPFile;
+}
+
+#pragma mark - Internal methods
+
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
+{
+    [_bookmarks removeObject:bookmark];
 }
 
 @end

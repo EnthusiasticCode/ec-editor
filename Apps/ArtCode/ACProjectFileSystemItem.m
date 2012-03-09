@@ -50,7 +50,7 @@
 - (void)remove
 {
     ECASSERT(self.parentFolder);
-    [self.parentFolder removeChild:self];
+    [self.parentFolder didRemoveChild:self];
 }
 
 @end

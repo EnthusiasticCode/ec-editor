@@ -115,7 +115,7 @@
 {
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
     [plist setObject:_name forKey:@"name"];
-    [plist setObject:_URL forKey:@"url"];
+    [plist setObject:[_URL absoluteString] forKey:@"url"];
     return plist;
 }
 

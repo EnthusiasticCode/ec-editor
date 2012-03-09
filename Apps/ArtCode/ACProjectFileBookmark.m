@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFileBookmark.h"
+#import "ACProjectFileBookmark+Internal.h"
 #import "ACProjectItem+Internal.h"
 
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
-#import "ACProjectFile.h"
+#import "ACProjectFile+Internal.h"
 
 #import "NSURL+Utilities.h"
 
@@ -21,21 +21,31 @@
 
 #pragma mark - Plist Internal Methods
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint
 {
     self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self)
         return nil;
-    id item = [plistDictionary objectForKey:@"file"];
-    if (!item)
+    if (file)
+    {
+        _file = file;
+    }
+    else
+    {
+        id uuid = [plistDictionary objectForKey:@"file"];
+        if (uuid)
+            _file = (ACProjectFile *)[project itemWithUUID:uuid];
+    }
+    if (!_file || ![_file isKindOfClass:[ACProjectFile class]])
         return nil;
-    item = [project itemWithUUID:item];
-    if (!item || ![item isKindOfClass:[ACProjectFile class]])
-        return nil;
-    _file = (ACProjectFile *)item;
-    _bookmarkPoint = [plistDictionary objectForKey:@"point"];
+    
+    if (bookmarkPoint)
+        _bookmarkPoint = bookmarkPoint;
+    else
+        _bookmarkPoint = [plistDictionary objectForKey:@"point"];
     if (!_bookmarkPoint)
         return nil;
+    
     return self;
 }
 
@@ -59,6 +69,12 @@
 - (ACProjectItemType)type
 {
     return ACPFileBookmark;
+}
+
+- (void)remove
+{
+    [self.file didRemoveBookmark:self];
+    [self.project didRemoveBookmark:self];
 }
 
 @end

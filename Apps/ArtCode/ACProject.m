@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
 #import "ACProjectRemote+Internal.h"
@@ -23,6 +23,7 @@ static NSString * const _contentsFolderName = @"Contents";
 
 @implementation ACProject {
     BOOL _isDirty;
+    NSMutableDictionary *_files;
     NSMutableDictionary *_remotes;
     NSMutableDictionary *_bookmarks;
 }
@@ -41,6 +42,7 @@ static NSString * const _contentsFolderName = @"Contents";
         _UUID = (__bridge NSString *)uuidString;
         CFRelease(uuidString);
         CFRelease(uuid);
+        [self updateChangeCount:UIDocumentChangeDone];
     }
     return _UUID;
 }
@@ -52,6 +54,7 @@ static NSString * const _contentsFolderName = @"Contents";
         NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
         contents.preferredFilename = _contentsFolderName;
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil contents:contents];
+        [self updateChangeCount:UIDocumentChangeDone];
     }
     return _contentsFolder;
 }
@@ -71,6 +74,7 @@ static NSString * const _contentsFolderName = @"Contents";
     self = [super initWithFileURL:url];
     if (!self)
         return nil;
+    _files = [NSMutableDictionary new];
     _bookmarks = [NSMutableDictionary new];
     _remotes = [NSMutableDictionary new];
     return self;
@@ -124,10 +128,11 @@ static NSString * const _contentsFolderName = @"Contents";
     // Bookmarks
     if ([plist objectForKey:@"bookmarks"])
     {
-        NSMutableArray *bookmarksFromPlist = [NSMutableArray new];
-        for (NSDictionary *bookmark in [plist objectForKey:@"bookmarks"])
+        NSMutableDictionary *bookmarksFromPlist = [NSMutableDictionary new];
+        for (NSDictionary *bookmarkPlist in [plist objectForKey:@"bookmarks"])
         {
-            [bookmarksFromPlist addObject:[[ACProjectFileBookmark alloc] initWithProject:self propertyListDictionary:bookmark]];
+            ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self propertyListDictionary:bookmarkPlist];
+            [bookmarksFromPlist setObject:bookmark forKey:bookmark.UUID];
         }
         _bookmarks = [bookmarksFromPlist copy];
     }
@@ -135,10 +140,11 @@ static NSString * const _contentsFolderName = @"Contents";
     // Remotes
     if ([plist objectForKey:@"remotes"])
     {
-        NSMutableArray *remotesFromPlist = [NSMutableArray new];
-        for (NSDictionary *remote in [plist objectForKey:@"remotes"])
+        NSMutableDictionary *remotesFromPlist = [NSMutableDictionary new];
+        for (NSDictionary *remotePlist in [plist objectForKey:@"remotes"])
         {
-            [remotesFromPlist addObject:[[ACProjectRemote alloc] initWithProject:self propertyListDictionary:remote]];
+            ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self propertyListDictionary:remotePlist];
+            [remotesFromPlist setObject:remote forKey:remote.UUID];
         }
         _remotes = [remotesFromPlist copy];
     }
@@ -238,6 +244,16 @@ static NSString * const _contentsFolderName = @"Contents";
 
 #pragma mark - Public Methods
 
+- (ACProjectItem *)itemWithUUID:(id)uuid
+{
+    ACProjectItem *item = [_files objectForKey:uuid];
+    if (!item)
+        item = [_bookmarks objectForKey:uuid];
+    if (!item)
+        item = [_remotes objectForKey:uuid];
+    return item;
+}
+
 - (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
 {
     ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
@@ -252,9 +268,35 @@ static NSString * const _contentsFolderName = @"Contents";
 - (void)removeRemote:(id)remoteUUID
 {
     ECASSERT(remoteUUID);
-    if ([_remotes count] == 0)
-        return;
     [_remotes removeObjectForKey:remoteUUID];
+    [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
+{
+    ECASSERT(bookmark);
+    [_bookmarks setObject:bookmark forKey:bookmark.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
+{
+    ECASSERT(bookmark);
+    [_bookmarks removeObjectForKey:bookmark.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
+{
+    ECASSERT(fileSystemItem);
+    [_files setObject:fileSystemItem forKey:fileSystemItem.UUID];
+    [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
+{
+    ECASSERT(fileSystemItem);
+    [_files removeObjectForKey:fileSystemItem.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 

@@ -668,6 +668,9 @@
 		B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileSystemItem+Internal.h"; sourceTree = "<group>"; };
 		B7E7DBD71508E87B00A1BD1F /* ACProjectFolder+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFolder+Internal.h"; sourceTree = "<group>"; };
 		B7E7DCAA1509491500A1BD1F /* ACProjectRemote+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectRemote+Internal.h"; sourceTree = "<group>"; };
+		B7E7DCF715097FCA00A1BD1F /* ACProject+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProject+Internal.h"; sourceTree = "<group>"; };
+		B7E7DCF81509845B00A1BD1F /* ACProjectFileBookmark+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileBookmark+Internal.h"; sourceTree = "<group>"; };
+		B7E7DCF91509894A00A1BD1F /* ACProjectFile+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFile+Internal.h"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -1229,6 +1232,7 @@
 			isa = PBXGroup;
 			children = (
 				B77100ED1506DAFF006AF1FB /* ACProject.h */,
+				B7E7DCF715097FCA00A1BD1F /* ACProject+Internal.h */,
 				B77100EE1506DAFF006AF1FB /* ACProject.m */,
 				B77100F01506DDD5006AF1FB /* ACProjectItem.h */,
 				CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */,
@@ -1240,8 +1244,10 @@
 				B7E7DBD71508E87B00A1BD1F /* ACProjectFolder+Internal.h */,
 				B77100FA1506DF56006AF1FB /* ACProjectFolder.m */,
 				B77100F61506DF34006AF1FB /* ACProjectFile.h */,
+				B7E7DCF91509894A00A1BD1F /* ACProjectFile+Internal.h */,
 				B77100F71506DF34006AF1FB /* ACProjectFile.m */,
 				B77100FC1506DF88006AF1FB /* ACProjectFileBookmark.h */,
+				B7E7DCF81509845B00A1BD1F /* ACProjectFileBookmark+Internal.h */,
 				B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */,
 				B77100FF1506DFC2006AF1FB /* ACProjectRemote.h */,
 				B7E7DCAA1509491500A1BD1F /* ACProjectRemote+Internal.h */,

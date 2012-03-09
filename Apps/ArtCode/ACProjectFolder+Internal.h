@@ -10,6 +10,6 @@
 
 @interface ACProjectFolder (Internal)
 
-- (void)removeChild:(ACProjectFileSystemItem *)child;
+- (void)didRemoveChild:(ACProjectFileSystemItem *)child;
 
 @end

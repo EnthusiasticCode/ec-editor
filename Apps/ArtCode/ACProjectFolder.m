@@ -9,12 +9,7 @@
 #import "ACProjectFile.h"
 #import "ACProjectFolder+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
-
-#import "ACProject.h"
-
-@interface ACProjectFolder ()
-
-@end
+#import "ACProject+Internal.h"
 
 @implementation ACProjectFolder {
     NSMutableArray *_children;
@@ -56,6 +51,7 @@
     if ([self.contents addFileWrapper:newFolder.contents])
     {
         [_children addObject:newFolder];
+        [self.project didAddFileSystemItem:newFolder];
         return YES;
     }
     else
@@ -73,6 +69,7 @@
     if ([self.contents addFileWrapper:newFile.contents])
     {
         [_children addObject:newFile];
+        [self.project didAddFileSystemItem:newFile];
         return YES;
     }
     else
@@ -81,7 +78,7 @@
     }
 }
 
-- (void)removeChild:(ACProjectFileSystemItem *)child
+- (void)didRemoveChild:(ACProjectFileSystemItem *)child
 {
     ECASSERT([_children containsObject:child]);
     [self.contents removeFileWrapper:child.contents];
