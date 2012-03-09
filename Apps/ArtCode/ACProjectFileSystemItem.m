@@ -7,9 +7,16 @@
 //
 
 #import "ACProjectFileSystemItem+Internal.h"
-#import "ACProjectFolder+Internal.h"
 #import "ACProjectItem+Internal.h"
 
+#import "ACProjectFolder.h"
+
+/// Forlder internal method to remove a child item
+@interface ACProjectFolder (Internal)
+
+- (void)removeChild:(ACProjectFileSystemItem *)child;
+
+@end
 
 @implementation ACProjectFileSystemItem {
     NSFileWrapper *_contents;
@@ -59,7 +66,7 @@
 - (void)remove
 {
     ECASSERT(self.parentFolder);
-    [self.parentFolder didRemoveChild:self];
+    [self.parentFolder removeChild:self];
     [super remove];
 }
 

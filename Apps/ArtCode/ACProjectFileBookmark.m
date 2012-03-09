@@ -9,7 +9,7 @@
 #import "ACProjectFileBookmark.h"
 #import "ACProjectItem+Internal.h"
 
-#import "ACProject+Internal.h"
+#import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 

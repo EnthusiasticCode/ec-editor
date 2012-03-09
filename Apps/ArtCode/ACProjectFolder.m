@@ -6,10 +6,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProjectFile.h"
-#import "ACProjectFolder+Internal.h"
+#import "ACProjectFolder.h"
 #import "ACProjectItem+Internal.h"
 #import "ACProjectFileSystemItem+Internal.h"
+
+#import "ACProjectFile.h"
 #import "ACProject+Internal.h"
 
 static NSString * const _childrenKey = @"children";
@@ -25,7 +26,7 @@ static NSString * const _childrenKey = @"children";
     return _children.allValues;
 }
 
-#pragma mark - Initialization
+#pragma mark - Initialization and serialization
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
 {
@@ -44,14 +45,18 @@ static NSString * const _childrenKey = @"children";
     return self;
 }
 
-#pragma mark - Contents
-
-- (NSFileWrapper *)defaultContents
+- (NSDictionary *)propertyListDictionary
 {
-    NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    contents.preferredFilename = self.name;
-    return contents;
+    NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
+    NSMutableDictionary *children = [[NSMutableDictionary alloc] initWithCapacity:_children.count];
+    [_children enumerateKeysAndObjectsUsingBlock:^(NSString *key, ACProjectFileSystemItem *item, BOOL *stop) {
+        [children setObject:item.propertyListDictionary forKey:key];
+    }];
+    [plist setObject:children forKey:_childrenKey];
+    return plist;
 }
+
+#pragma mark - Contents
 
 - (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
 {
@@ -93,15 +98,6 @@ static NSString * const _childrenKey = @"children";
     }
 }
 
-- (void)didRemoveChild:(ACProjectFileSystemItem *)child
-{
-    ECASSERT([_children.allValues containsObject:child]);
-    NSString *key = [self.contents keyForFileWrapper:child.contents];
-    ECASSERT(key);
-    [self.contents removeFileWrapper:child.contents];
-    [_children removeObjectForKey:key];
-}
-
 #pragma mark - Item methods
 
 - (NSURL *)URL
@@ -116,22 +112,29 @@ static NSString * const _childrenKey = @"children";
     return ACPFolder;
 }
 
-- (NSDictionary *)propertyListDictionary
-{
-    NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
-    NSMutableDictionary *children = [[NSMutableDictionary alloc] initWithCapacity:_children.count];
-    [_children enumerateKeysAndObjectsUsingBlock:^(NSString *key, ACProjectFileSystemItem *item, BOOL *stop) {
-        [children setObject:item.propertyListDictionary forKey:key];
-    }];
-    [plist setObject:children forKey:_childrenKey];
-    return plist;
-}
-
 - (void)remove
 {
     for (ACProjectFileSystemItem *item in _children.allValues)
         [item remove];
     [super remove];
+}
+
+#pragma mark - Internal Methods
+
+- (NSFileWrapper *)defaultContents
+{
+    NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+    contents.preferredFilename = self.name;
+    return contents;
+}
+
+- (void)removeChild:(ACProjectFileSystemItem *)child
+{
+    ECASSERT([_children.allValues containsObject:child]);
+    NSString *key = [self.contents keyForFileWrapper:child.contents];
+    ECASSERT(key);
+    [self.contents removeFileWrapper:child.contents];
+    [_children removeObjectForKey:key];
 }
 
 @end

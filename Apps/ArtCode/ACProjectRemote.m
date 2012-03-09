@@ -8,7 +8,8 @@
 
 #import "ACProjectRemote.h"
 #import "ACProjectItem+Internal.h"
-#import "ACProject+Internal.h"
+
+#import "ACProject.h"
 #import "Keychain.h"
 
 @interface ACProjectRemote ()

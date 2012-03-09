@@ -61,13 +61,6 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 #pragma mark - Public Methods
 
-- (NSFileWrapper *)defaultContents
-{
-    NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
-    contents.preferredFilename = self.name;
-    return contents;
-}
-
 - (void)addBookmarkWithPoint:(id)point
 {
     [self.project addBookmarkWithFile:self point:point];
@@ -83,6 +76,15 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 - (ACProjectItemType)type
 {
     return ACPFile;
+}
+
+#pragma mark - Internal Methods
+
+- (NSFileWrapper *)defaultContents
+{
+    NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
+    contents.preferredFilename = self.name;
+    return contents;
 }
 
 @end
