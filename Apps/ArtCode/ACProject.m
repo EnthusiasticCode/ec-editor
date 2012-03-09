@@ -59,6 +59,11 @@ static NSString * const _contentsFolderName = @"Contents";
     return _contentsFolder;
 }
 
+- (NSArray *)files
+{
+    return [_files allValues];
+}
+
 - (NSArray *)bookmarks
 {
     return [_bookmarks allValues];

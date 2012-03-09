@@ -161,7 +161,7 @@ describe(@"A new opened ACProject", ^{
         [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
     });
     
     afterEach(^{
@@ -473,24 +473,24 @@ describe(@"An existing ACProject", ^{
         [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
         [project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:NULL];
         ACProjectFolder *subfolder = [project.contentsFolder.children objectAtIndex:0];
         [subfolder addNewFileWithName:fileName contents:fileContents plist:nil error:NULL];
-        ACProjectFile *file = [subfolder.children objectAtIndex:1];
+        ACProjectFile *file = [subfolder.children objectAtIndex:0];
         [file addBookmarkWithPoint:bookmarkPoint];
         
         [project closeWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
     });
     
     afterAll(^{

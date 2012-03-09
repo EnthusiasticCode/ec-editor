@@ -14,15 +14,8 @@
 
 #import "ACProjectFileBookmark+Internal.h"
 
-@interface ACProject (Bookmarks)
 
-- (void)addNewBookmarkWithFile:(ACProjectFile *)file point:(id)point;
-- (NSArray *)bookmarksForFile:(ACProjectFile *)file;
-
-@end
-
-@implementation ACProjectFile
-{
+@implementation ACProjectFile {
     NSMutableArray *_bookmarks;
 }
 
