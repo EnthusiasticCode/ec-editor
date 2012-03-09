@@ -11,9 +11,15 @@
 #import "ACProjectFileSystemItem+Internal.h"
 
 #import "ACProjectFile.h"
-#import "ACProject+Internal.h"
+#import "ACProject.h"
 
 static NSString * const _childrenKey = @"children";
+
+@interface ACProject (Folders)
+
+- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
+
+@end
 
 @implementation ACProjectFolder {
     NSMutableDictionary *_children;
@@ -128,7 +134,7 @@ static NSString * const _childrenKey = @"children";
     return contents;
 }
 
-- (void)removeChild:(ACProjectFileSystemItem *)child
+- (void)didRemoveChild:(ACProjectFileSystemItem *)child
 {
     ECASSERT([_children.allValues containsObject:child]);
     NSString *key = [self.contents keyForFileWrapper:child.contents];

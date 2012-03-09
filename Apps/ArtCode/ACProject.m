@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProject+Internal.h"
+#import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
 #import "ACProjectRemote.h"

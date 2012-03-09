@@ -8,13 +8,21 @@
 
 #import "ACProjectFileSystemItem+Internal.h"
 #import "ACProjectItem+Internal.h"
+#import "ACProject.h"
 
 #import "ACProjectFolder.h"
+
+
+@interface ACProject (FileSystemItems)
+
+- (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
+
+@end
 
 /// Forlder internal method to remove a child item
 @interface ACProjectFolder (Internal)
 
-- (void)removeChild:(ACProjectFileSystemItem *)child;
+- (void)didRemoveChild:(ACProjectFileSystemItem *)child;
 
 @end
 
@@ -66,7 +74,8 @@
 - (void)remove
 {
     ECASSERT(self.parentFolder);
-    [self.parentFolder removeChild:self];
+    [self.parentFolder didRemoveChild:self];
+    [self.project didRemoveFileSystemItem:self];
     [super remove];
 }
 
