@@ -19,7 +19,7 @@ describe(@"A new, non-opened ACProject", ^{
         
     context(@"with a valid URL", ^{
 
-        NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
+        NSURL *projectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"testproject.acproj"];
         __block ACProject *project = nil;
         
         beforeEach(^{
@@ -67,19 +67,24 @@ describe(@"A new, non-opened ACProject", ^{
 });
 
 describe(@"An newly created project ACProject", ^{
-    NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
+    NSURL *projectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"testproject.acproj"];
+    NSURL *movedProjectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"movedproject.acproj"];
     __block ACProject *project = nil;
+    __block id projectUUID = nil;
     
     beforeEach(^{
         [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
+        [[[NSFileManager alloc] init] removeItemAtURL:movedProjectURL error:NULL];
         ACProject *newProject = [[ACProject alloc] initWithFileURL:projectURL];
         __block BOOL saved = NO;
         [newProject saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            if (success)
-                [newProject closeWithCompletionHandler:^(BOOL success) {
-                    if (success)
-                        saved = YES;
-                }];
+            if (!success)
+                return;
+            projectUUID = newProject.UUID;
+            [newProject closeWithCompletionHandler:^(BOOL success) {
+                if (success)
+                    saved = YES;
+            }];
         }];
         [[expectFutureValue(theValue(saved)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         project = [[ACProject alloc] initWithFileURL:projectURL];
@@ -87,6 +92,7 @@ describe(@"An newly created project ACProject", ^{
     
     afterAll(^{
         [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
+        [[[NSFileManager alloc] init] removeItemAtURL:movedProjectURL error:NULL];
     });
     
     it(@"can be opened", ^{
@@ -112,6 +118,33 @@ describe(@"An newly created project ACProject", ^{
         }];
         [[expectFutureValue(theValue(closed)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
+    });
+    
+    it(@"can be retrieved by UUID", ^{
+        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
+        [[projectByUUID.fileURL should] equal:projectURL];
+    });
+    
+    it(@"can be moved and still be retrieved by UUID", ^{
+        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+        __block NSError *error = nil;
+        [fileCoordinator coordinateReadingItemAtURL:projectURL options:0 writingItemAtURL:movedProjectURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+            [[[NSFileManager alloc] init] moveItemAtURL:newReadingURL toURL:newWritingURL error:&error];
+        }];
+        [error shouldBeNil];
+        [[expectFutureValue(project.fileURL) shouldEventually] equal:movedProjectURL];
+        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
+        [[projectByUUID.fileURL should] equal:movedProjectURL];
+    });
+    
+    it(@"can be deleted and not retrieved by UUID", ^{
+        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+        __block NSError *error = nil;
+        [fileCoordinator coordinateWritingItemAtURL:projectURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL *newURL) {
+            [[[NSFileManager alloc] init] removeItemAtURL:newURL error:&error];
+        }];
+        [error shouldBeNil];
+        [[expectFutureValue([ACProject projectWithUUID:projectUUID]) shouldEventually] beNil];
     });
 });
 
@@ -207,6 +240,7 @@ describe(@"A new opened ACProject", ^{
             [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
             [err shouldBeNil];
             [[[project.contentsFolder should] have:1] children];
+            [[[[project.contentsFolder.children objectAtIndex:0] name] should] equal:subfolderName];
         });
         
         it(@"can be retrieved with no error", ^{
@@ -220,21 +254,87 @@ describe(@"A new opened ACProject", ^{
             [[item should] beMemberOfClass:[ACProjectFolder class]];
         });
         
-        it(@"can be deleted with no error", ^{
-            NSError *err = nil;
-            [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
-            [err shouldBeNil];
-            [[[project.contentsFolder should] have:1] children];
+        context(@"after being created", ^{
             
-            // Retrieve
-            id item = [project.contentsFolder.children objectAtIndex:0];
-            [[item should] beMemberOfClass:[ACProjectFolder class]];
+            __block ACProjectFolder *subfolder = nil;
+            NSString *subfolder2Name = @"subfolder2";
+            __block ACProjectFolder *subfolder2 = nil;
+            __block id subfolderUUID = nil;
+            __block id subfolder2UUID = nil;
+            NSString *newSubfolderName = @"newsubfoldername";
             
-            // Remove
-            [item remove];
-            [[[project.contentsFolder should] have:0] children];
+            beforeEach(^{
+                NSError *err = nil;
+                [[theValue([project.contentsFolder addNewFolderWithName:subfolderName contents:nil plist:nil error:&err]) should] beYes];
+                [err shouldBeNil];
+                [[[project.contentsFolder should] have:1] children];
+                [[theValue([project.contentsFolder addNewFolderWithName:subfolder2Name contents:nil plist:nil error:&err]) should] beYes];
+                [err shouldBeNil];
+                [[[project.contentsFolder should] have:2] children];
+                
+                // Retrieve
+                id item = [project.contentsFolder.children objectAtIndex:1];
+                [[item should] beMemberOfClass:[ACProjectFolder class]];
+                
+                subfolder = (ACProjectFolder *)item;
+                subfolderUUID = subfolder.UUID;
+                [[subfolder.name should] equal:subfolderName];
+                
+                item = [project.contentsFolder.children objectAtIndex:0];
+                [[item should] beMemberOfClass:[ACProjectFolder class]];
+                
+                subfolder2 = (ACProjectFolder *)item;
+                subfolder2UUID = subfolder2.UUID;
+                [[subfolder2.name should] equal:subfolder2Name];
+            });
+
+            it(@"can be deleted with no error", ^{
+                // Remove
+                [subfolder remove];
+                [[[project.contentsFolder should] have:1] children];
+                [subfolder2 remove];
+                [[[project.contentsFolder should] have:0] children];
+            });
+            
+            it(@"can be renamed", ^{
+                subfolder.name = newSubfolderName;
+                [[subfolder.name should] equal:newSubfolderName];
+            });
+            
+            it(@"can be moved", ^{
+                NSError *error = nil;
+                [subfolder2 moveToFolder:subfolder error:&error];
+                [error shouldBeNil];
+                [[[subfolder should] have:1] children];
+                [[[project.contentsFolder should] have:1] children];
+            });
+            
+            it(@"can be copied", ^{
+                NSError *error = nil;
+                [subfolder2 copyToFolder:subfolder2 error:&error];
+                [error shouldBeNil];
+                [[[subfolder should] have:1] children];
+                [[[project.contentsFolder should] have:2] children];
+            });
+            
+            it(@"can be retrieved by UUID", ^{
+                [[[project itemWithUUID:subfolderUUID] should] equal:subfolder];
+            });
+            
+            it(@"can be retrieved by UUID after being moved", ^{
+                NSError *error = nil;
+                [subfolder2 moveToFolder:subfolder error:&error];
+                [error shouldBeNil];
+                [[[project itemWithUUID:subfolder2UUID] should] equal:[subfolder.children objectAtIndex:0]];
+            });
+            
+            it(@"cannot be retrieved by UUID after being deleted", ^{
+                [subfolder2 remove];
+                [[project itemWithUUID:subfolder2UUID] shouldBeNil];
+            });
+            
         });
-        
+                
         context(@"when created", ^{
             
             __block ACProjectFolder *subfolder = nil;
