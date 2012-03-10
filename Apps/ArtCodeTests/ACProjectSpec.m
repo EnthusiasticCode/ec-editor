@@ -146,6 +146,7 @@ describe(@"An newly created project ACProject", ^{
         [error shouldBeNil];
         [[expectFutureValue([ACProject projectWithUUID:projectUUID]) shouldEventually] beNil];
     });
+    
 });
 
 describe(@"The ACProject class", ^{
@@ -553,6 +554,35 @@ describe(@"A new opened ACProject", ^{
             });
         });
     });
+    
+    it(@"has a list of files", ^{
+        [[[project should] have:0] files];
+        [project.contentsFolder addNewFolderWithName:@"test folder" contents:nil plist:nil error:NULL];
+        [[[project should] have:1] files];
+        [[project.contentsFolder.children objectAtIndex:0] addNewFileWithName:@"test file 1" contents:nil plist:nil error:NULL];
+        [[[project should] have:2] files];
+        [[project.contentsFolder.children objectAtIndex:0] addNewFileWithName:@"test file 2" contents:nil plist:nil error:NULL];
+        [[[project should] have:3] files];
+        [[[[project.contentsFolder.children objectAtIndex:0] children] objectAtIndex:0] remove];
+        [[[project should] have:2] files];
+        [[project.contentsFolder.children objectAtIndex:0] remove];
+        [[[project should] have:0] files];
+    });
+    
+    it(@"has a list of bookmarks", ^{
+        [[[project should] have:0] bookmarks];
+        [project.contentsFolder addNewFileWithName:@"test file" contents:nil plist:nil error:NULL];
+        ACProjectFile *testFile = [project.contentsFolder.children objectAtIndex:0];
+        [testFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:0]];
+        [[[project should] have:1] bookmarks];
+        [testFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:1]];
+        [[[project should] have:2] bookmarks];
+        [[[testFile bookmarks] objectAtIndex:0] remove];
+        [[[project should] have:1] bookmarks];
+        [testFile remove];
+        [[[project should] have:0] bookmarks];
+    });
+
 });
 
 describe(@"An existing ACProject", ^{
