@@ -13,6 +13,7 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
+#import "ACProject.h"
 
 #import "HighlightTableViewCell.h"
 
@@ -137,12 +138,13 @@
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex)
         {
+            ECASSERT(NO); // TODO reimplement
             self.loading = YES;
             NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
             [self setEditing:NO animated:YES];
             for (NSIndexPath *indexPath in selectedRows)
             {
-                [self.artCodeTab.currentProject removeBookmark:[self.filteredItems objectAtIndex:indexPath.row]];
+//                [self.artCodeTab.currentProject removeBookmark:[self.filteredItems objectAtIndex:indexPath.row]];
             }
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

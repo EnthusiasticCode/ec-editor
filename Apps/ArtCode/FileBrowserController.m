@@ -29,6 +29,10 @@
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFolder.h"
+
 #import "UIViewController+PresentingPopoverController.h"
 
 #import "DirectoryPresenter.h"
@@ -144,6 +148,14 @@ static void *_openQuicklyObservingContext;
     {
         self.infoLabel.text = [NSString stringWithFormatForSingular:@"One item in this folder" plural:@"%u items in this folder" count:[self.directoryPresenter.fileURLs count]];
     }
+}
+
+#pragma mark - ArtCodeTab Category
+
+- (void)artCodeTabReload
+{
+    ECASSERT(self.artCodeTab.currentItem.type == ACPFolder);
+    self.directory = self.artCodeTab.currentItem.URL;
 }
 
 #pragma mark - View lifecycle
@@ -359,7 +371,7 @@ static void *_openQuicklyObservingContext;
         {
             DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            directoryBrowser.URL = self.artCodeTab.currentItem.URL;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Duplicate
@@ -388,7 +400,7 @@ static void *_openQuicklyObservingContext;
         {
             DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            directoryBrowser.URL = self.artCodeTab.currentItem.URL;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Upload

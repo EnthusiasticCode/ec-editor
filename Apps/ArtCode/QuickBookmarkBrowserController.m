@@ -12,6 +12,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeProject.h"
+#import "ACProject.h"
 
 
 @interface QuickBookmarkBrowserController (/*Private methods*/)
@@ -46,7 +47,7 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[[self.artCodeTab.currentProject URL] URLByAddingBookmarksVariant]];
+    [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectBookmarkListPath]];
 }
 
 @end

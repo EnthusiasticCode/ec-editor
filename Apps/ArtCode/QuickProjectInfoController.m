@@ -13,6 +13,7 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
+#import "ACProject.h"
 
 #import "ColorSelectionControl.h"
 
@@ -62,7 +63,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.projectNameTextField.text = [self.artCodeTab.currentProject name];
+    self.projectNameTextField.text = [self.artCodeTab.currentProject localizedName];
     // TODO add project files and size
 }
 
@@ -80,7 +81,7 @@
     
     // TODO check that name is ok
 
-    [self.artCodeTab.currentProject setName:textField.text];
+//    [self.artCodeTab.currentProject setName:textField.text];
 }
 
 #pragma mark - Private Methods

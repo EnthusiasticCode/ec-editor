@@ -95,6 +95,58 @@
     return self;
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+	return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    [_quickBrowsersPopover dismissPopoverAnimated:YES];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [self willChangeValueForKey:@"editing"];
+    
+    [super setEditing:editing animated:animated];
+    [self.tableView setEditing:editing animated:animated];
+    
+    if (editing && [self.toolEditItems count])
+    {
+        self.toolbarItems = self.toolEditItems;
+        for (UIBarButtonItem *item in self.toolEditItems)
+        {
+            [(UIButton *)item.customView setEnabled:NO];
+        }
+    }
+    else
+    {
+        self.toolbarItems = self.toolNormalItems;
+    }
+    
+    [self didChangeValueForKey:@"editing"];
+}
+
++ (BOOL)automaticallyNotifiesObserversOfEditing
+{
+    return NO;
+}
+
+#pragma mark - ArtCodeTab Category
+
+- (void)artCodeTabReload
+{
+    if (self.isViewLoaded && self.view.superview != nil)
+    {
+        [self invalidateFilteredItems];
+        [self.tableView reloadData];
+    }
+}
+
+#pragma mark - View lifecycle
+
 - (void)loadView
 {
     [super loadView];
@@ -169,45 +221,6 @@
 {
     [super viewDidDisappear:animated];
     [self invalidateFilteredItems];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [_quickBrowsersPopover dismissPopoverAnimated:YES];
-}
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    [self willChangeValueForKey:@"editing"];
-    
-    [super setEditing:editing animated:animated];
-    [self.tableView setEditing:editing animated:animated];
-    
-    if (editing && [self.toolEditItems count])
-    {
-        self.toolbarItems = self.toolEditItems;
-        for (UIBarButtonItem *item in self.toolEditItems)
-        {
-            [(UIButton *)item.customView setEnabled:NO];
-        }
-    }
-    else
-    {
-        self.toolbarItems = self.toolNormalItems;
-    }
-    
-    [self didChangeValueForKey:@"editing"];
-}
-
-+ (BOOL)automaticallyNotifiesObserversOfEditing
-{
-    return NO;
 }
 
 #pragma mark - Single tab content controller protocol methods

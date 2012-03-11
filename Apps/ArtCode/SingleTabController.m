@@ -465,8 +465,6 @@ static const void *loadingObservingContext;
                 result = self.contentViewController;
             else
                 result = [[ProjectBrowserController alloc] init];
-            ProjectBrowserController *projectTableController = (ProjectBrowserController *)result;
-            projectTableController.projectsDirectory = [ACProject projectsURL];
         }
         // Project's bookmarks list
         else if ([currentURL isArtCodeProjectBookmarksList])

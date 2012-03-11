@@ -36,6 +36,11 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFile.h"
+#import "ACProjectFileBookmark.h"
+
 
 @interface CodeFileController () {
     UIActionSheet *_toolsActionSheet;
@@ -159,14 +164,15 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         [_codeView addGestureRecognizer:redoRecognizer];
         
         // Bookmark markers
-        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
-            {
-                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
-                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
-                drawStencilStar(NULL, context);
-            }
-        } underText:NO forKey:@"bookmarkMarkers"];
+#warning TODO NIK reimplement bookmarks
+//        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+//            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
+//            {
+//                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
+//                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
+//                drawStencilStar(NULL, context);
+//            }
+//        } underText:NO forKey:@"bookmarkMarkers"];
         
         // Accessory view
         CodeFileKeyboardAccessoryView *accessoryView = [CodeFileKeyboardAccessoryView new];
@@ -350,6 +356,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 + (BOOL)automaticallyNotifiesObserversOfMinimapVisible
 {
     return NO;
+}
+
+#pragma mark - ArtCodeTab Category
+
+- (void)artCodeTabReload
+{
+    ECASSERT(self.artCodeTab.currentItem.type == ACPFile);
+    self.fileURL = self.artCodeTab.currentItem.URL;
 }
 
 #pragma mark - Single tab controller informal protocol
@@ -666,21 +680,22 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    NSArray *bookmarks = [self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:lineNumber];
-    if ([bookmarks count] == 0)
-    {
-        [self.artCodeTab.currentProject addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
-    }
-    else
-    {
-        for (ProjectBookmark *bookmark in bookmarks)
-        {
-            [self.artCodeTab.currentProject removeBookmark:bookmark];
-        }
-    }
-    [self.codeView setNeedsDisplay];
-    if (_minimapVisible)
-        [_minimapView setNeedsDisplay];
+    ECASSERT(NO); // Need implementation
+//    NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
+//    if ([bookmarks count] == 0)
+//    {
+//        [(ACProjectFile *)self.artCodeTab.currentItem addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
+//    }
+//    else
+//    {
+//        for (ProjectBookmark *bookmark in bookmarks)
+//        {
+//            [self.artCodeTab.currentProject removeBookmark:bookmark];
+//        }
+//    }
+//    [self.codeView setNeedsDisplay];
+//    if (_minimapVisible)
+//        [_minimapView setNeedsDisplay];
 }
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame

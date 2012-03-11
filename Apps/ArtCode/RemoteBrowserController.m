@@ -17,6 +17,11 @@
 #import "DirectoryBrowserController.h"
 #import "RemoteTransferController.h"
 
+#import "ArtCodeURL.h"
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectRemote.h"
+
 #import <Connection/CKConnectionRegistry.h>
 
 @interface RemoteBrowserController ()
@@ -125,6 +130,15 @@
 {
     _filteredItems = nil;
     _filteredItemsHitMasks = nil;
+}
+
+#pragma mark - ArtCodeTab Category
+
+- (void)artCodeTabReload
+{
+    ECASSERT(self.artCodeTab.currentItem.type == ACPRemote);
+    ECASSERT(![self.artCodeTab.currentItem.URL isArtCodeURL]);
+    self.URL = self.artCodeTab.currentItem.URL;
 }
 
 #pragma mark - View lifecycle

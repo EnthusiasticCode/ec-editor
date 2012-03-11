@@ -16,6 +16,7 @@
 #import "ArtCodeProject.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
+#import "ACProject.h"
 
 #import "SingleTabController.h"
 #import "NewProjectNavigationController.h"
@@ -161,6 +162,13 @@ static void *_directoryObservingContext;
 - (NSString *)title
 {
     return @"ArtCode";
+}
+
+#pragma mark - ArtCodeTab Methods
+
+- (void)artCodeTabReload
+{
+    self.projectsDirectory = [ACProject projectsURL];
 }
 
 #pragma mark - View lifecycle
