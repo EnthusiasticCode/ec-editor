@@ -115,7 +115,7 @@ static void *_openQuicklyObservingContext;
     {
         [_selectedURLs removeAllObjects];
         [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-        [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+        [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
     }
     _directory = directory;
     if (self.isViewLoaded && self.view.superview != nil)
@@ -124,7 +124,7 @@ static void *_openQuicklyObservingContext;
         self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
+        [_currentObservedProject addObserver:self forKeyPath:@"localizedName" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
         self.searchBar.text = nil;
         [self invalidateFilteredItems];
         [self.tableView reloadData];
@@ -194,9 +194,12 @@ static void *_openQuicklyObservingContext;
 - (void)viewWillAppear:(BOOL)animated
 {
     // Initialize presenters
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    if (self.directory)
+    {
+        self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     
-    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+        self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    }
     
     [_selectedURLs removeAllObjects];
     
@@ -204,7 +207,7 @@ static void *_openQuicklyObservingContext;
     {
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+        [_currentObservedProject addObserver:self forKeyPath:@"localizedName" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     }
     
     [self invalidateFilteredItems];
@@ -223,7 +226,7 @@ static void *_openQuicklyObservingContext;
     _selectedURLs = nil;
     
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
     _currentObservedProject = nil;
 }
 
@@ -270,7 +273,7 @@ static void *_openQuicklyObservingContext;
     self.directoryPresenter = nil;
     self.openQuicklyPresenter = nil;
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
 }
 
 #pragma mark - Single tab content controller protocol methods

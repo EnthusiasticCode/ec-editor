@@ -168,6 +168,11 @@ static NSString * const _plistRemotesKey = @"remotes";
     return [[self.fileURL lastPathComponent] stringByDeletingPathExtension];
 }
 
++ (NSSet *)keyPathsForValuesAffectingLocalizedName
+{
+    return [NSSet setWithObject:@"fileURL"];
+}
+
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     NSFileWrapper *bundleWrapper = (NSFileWrapper *)contents;

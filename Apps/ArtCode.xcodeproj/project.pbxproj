@@ -846,7 +846,7 @@
 		CD7BD9E914D817D40048A48A /* NewFileFolderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileFolderController.m; sourceTree = "<group>"; };
 		CD7BD9EA14D817D40048A48A /* NewFileTemplateSelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileTemplateSelectionController.h; sourceTree = "<group>"; };
 		CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileTemplateSelectionController.m; sourceTree = "<group>"; };
-		CD7BD9EF14D83C850048A48A /* UIViewController+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIViewController+Utilities.h"; sourceTree = "<group>"; };
+		CD7BD9EF14D83C850048A48A /* UIViewController+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Utilities.h"; sourceTree = "<group>"; };
 		CD7BD9F014D83C850048A48A /* UIViewController+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Utilities.m"; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
