@@ -186,7 +186,7 @@ static void *_directoryObservingContext;
 - (void)_showProjectsInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[ArtCodeURL projectsDirectory]];
+    [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath]];
 }
 
 @end

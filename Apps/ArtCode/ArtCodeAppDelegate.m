@@ -205,8 +205,6 @@ CGRect UIKeyboardFrame;
 - (void)saveApplicationStateToDisk
 {
     [ArtCodeTab saveTabsToDisk];
-#warning FIX save projects
-//    [ArtCodeProject saveProjectsToDisk];
 }
 
 @end

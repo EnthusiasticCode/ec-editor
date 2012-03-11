@@ -108,7 +108,7 @@ NSString * const artCodeURLProjectRemoteListPath = @"remotes";
 
 - (BOOL)isArtCodeProjectsList
 {
-    return [self.path isEqualToString:artCodeURLProjectListPath];
+    return [self.host isEqualToString:artCodeURLProjectListPath];
 }
 
 - (BOOL)isArtCodeProjectBookmarksList

@@ -22,6 +22,7 @@ static NSMutableArray *_mutableTabs;
 
 @interface ArtCodeTab ()
 
+@property (nonatomic, getter = isLoading) BOOL loading;
 @property (nonatomic, strong) ACProject *currentProject;
 @property (nonatomic, strong) ACProjectItem *currentItem;
 
@@ -36,7 +37,7 @@ static NSMutableArray *_mutableTabs;
     NSMutableArray *_mutableHistoryURLs;
 }
 
-@synthesize currentProject = _currentProject, currentItem = _currentItem;
+@synthesize loading = _loading, currentProject = _currentProject, currentItem = _currentItem;
 
 #pragma mark - Class methods
 
@@ -152,8 +153,9 @@ static NSMutableArray *_mutableTabs;
         [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
-        [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[[ArtCodeURL projectsDirectory] absoluteString]];
-        [_mutableHistoryURLs addObject:[ArtCodeURL projectsDirectory]];
+        NSURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
+        [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.absoluteString];
+        [_mutableHistoryURLs addObject:projectsURL];
     }
     else
     {
@@ -241,6 +243,7 @@ static NSMutableArray *_mutableTabs;
     // If both are true, we need to make an async load, else we load synchronous
     if (changeProjects && toProject)
     {
+        self.loading = YES;
         [toProject openWithCompletionHandler:^(BOOL success) {
             [self.currentProject closeWithCompletionHandler:nil];
             self.currentProject = nil;
@@ -252,6 +255,7 @@ static NSMutableArray *_mutableTabs;
                     self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
             }
             completionHandler(success);
+            self.loading = NO;
         }];
     }
     else

@@ -18,6 +18,8 @@
 + (void)removeTab:(ArtCodeTab *)tab;
 + (void)saveTabsToDisk;
 
+@property (nonatomic, readonly, getter = isLoading) BOOL loading;
+
 @property (nonatomic, strong, readonly) NSArray *historyURLs;
 
 @property (nonatomic) NSUInteger currentHistoryPosition;
