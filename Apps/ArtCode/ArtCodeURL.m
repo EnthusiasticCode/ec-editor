@@ -37,11 +37,11 @@ NSString * const artCodeURLProjectRemoteListPath = @"remotes";
     {
         ECASSERT(project);
         ECASSERT(item.project == project);
-        URLString = [NSString stringWithFormat:@"%@://%@-%@/%@", artCodeURLScheme, [project UUID], [item UUID], path];
+        URLString = [NSString stringWithFormat:@"%@://%@-%@/%@", artCodeURLScheme, [project UUID], [item UUID], path ?  path : @""];
     }
     else if (project)
     {
-        URLString = [NSString stringWithFormat:@"%@://%@/%@", artCodeURLScheme, [project UUID], path];
+        URLString = [NSString stringWithFormat:@"%@://%@/%@", artCodeURLScheme, [project UUID], path ?  path : @""];
     }
     else if (path)
     {
