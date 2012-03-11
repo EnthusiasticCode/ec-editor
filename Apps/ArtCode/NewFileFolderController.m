@@ -7,7 +7,7 @@
 //
 
 #import "NewFileFolderController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"

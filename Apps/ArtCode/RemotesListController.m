@@ -14,7 +14,7 @@
 #import "HighlightTableViewCell.h"
 #import "ShapePopoverBackgroundView.h"
 #import "NewRemoteViewController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 
 @class SingleTabController, TopBarToolbar;
 

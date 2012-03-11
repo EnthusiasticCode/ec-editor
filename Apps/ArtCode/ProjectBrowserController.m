@@ -19,9 +19,9 @@
 #import "ACProject.h"
 
 #import "SingleTabController.h"
-#import "NewProjectNavigationController.h"
 
 #import "NSURL+Utilities.h"
+#import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
@@ -411,9 +411,8 @@ static void *_directoryObservingContext;
     if (!_toolItemPopover)
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
-        NewProjectNavigationController *newProjectNavigationController = (NewProjectNavigationController *)[storyboard instantiateInitialViewController];
+        UINavigationController *newProjectNavigationController = (UINavigationController *)[storyboard instantiateInitialViewController];
         [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-        newProjectNavigationController.projectsDirectory = [ACProject projectsURL];
         newProjectNavigationController.artCodeTab = self.artCodeTab;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];

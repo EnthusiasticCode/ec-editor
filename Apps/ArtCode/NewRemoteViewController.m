@@ -9,7 +9,7 @@
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
 
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 
 @interface NewRemoteViewController ()
 

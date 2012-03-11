@@ -33,7 +33,7 @@
 #import "ACProjectItem.h"
 #import "ACProjectFolder.h"
 
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 
 #import "DirectoryPresenter.h"
 #import "SmartFilteredDirectoryPresenter.h"

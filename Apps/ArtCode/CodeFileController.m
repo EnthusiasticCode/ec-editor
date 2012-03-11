@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 #import "CodeFileSearchBarController.h"
 #import "QuickBrowsersContainerController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 #import "TopBarTitleControl.h"
 
 #import <QuartzCore/QuartzCore.h>

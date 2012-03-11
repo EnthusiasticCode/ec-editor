@@ -259,7 +259,6 @@
 		CD2BA05A14CFF65700031E78 /* QuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */; };
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
-		CD333CFC14C0340200E0EEE2 /* NewProjectNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
 		CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
 		CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
@@ -319,7 +318,7 @@
 		CD7BC79E14B70FE600313CDB /* itemIcon_Tab.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79D14B70FE600313CDB /* itemIcon_Tab.png */; };
 		CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9E914D817D40048A48A /* NewFileFolderController.m */; };
 		CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */; };
-		CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */; };
+		CD7BD9F114D83C850048A48A /* UIViewController+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7BD9F014D83C850048A48A /* UIViewController+Utilities.m */; };
 		CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		CD7D1266150946D5003DE99B /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD7D2AE413C0CD2600B889EE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
@@ -773,8 +772,6 @@
 		CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Contrast.m"; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
 		CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectImportController.m; sourceTree = "<group>"; };
-		CD333CFA14C0340200E0EEE2 /* NewProjectNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectNavigationController.h; sourceTree = "<group>"; };
-		CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectNavigationController.m; sourceTree = "<group>"; };
 		CD3D69E014C45B9300325970 /* topBar_BackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton.png; sourceTree = "<group>"; };
 		CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURLSpec.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
@@ -849,8 +846,8 @@
 		CD7BD9E914D817D40048A48A /* NewFileFolderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileFolderController.m; sourceTree = "<group>"; };
 		CD7BD9EA14D817D40048A48A /* NewFileTemplateSelectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileTemplateSelectionController.h; sourceTree = "<group>"; };
 		CD7BD9EB14D817D40048A48A /* NewFileTemplateSelectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileTemplateSelectionController.m; sourceTree = "<group>"; };
-		CD7BD9EF14D83C850048A48A /* UIViewController+PresentingPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+PresentingPopoverController.h"; sourceTree = "<group>"; };
-		CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+PresentingPopoverController.m"; sourceTree = "<group>"; };
+		CD7BD9EF14D83C850048A48A /* UIViewController+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIViewController+Utilities.h"; sourceTree = "<group>"; };
+		CD7BD9F014D83C850048A48A /* UIViewController+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Utilities.m"; sourceTree = "<group>"; };
 		CD7D2ADF13C0CD2600B889EE /* ArtCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArtCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7D2AE313C0CD2600B889EE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CD7D2AE513C0CD2600B889EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1318,8 +1315,8 @@
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
 				B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */,
 				B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */,
-				CD7BD9EF14D83C850048A48A /* UIViewController+PresentingPopoverController.h */,
-				CD7BD9F014D83C850048A48A /* UIViewController+PresentingPopoverController.m */,
+				CD7BD9EF14D83C850048A48A /* UIViewController+Utilities.h */,
+				CD7BD9F014D83C850048A48A /* UIViewController+Utilities.m */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 			);
 			name = Additions;
@@ -1521,8 +1518,6 @@
 		CD333CF914C033BD00E0EEE2 /* New Project */ = {
 			isa = PBXGroup;
 			children = (
-				CD333CFA14C0340200E0EEE2 /* NewProjectNavigationController.h */,
-				CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */,
 				B7AC174114216D1C009E9205 /* NewProjectController.h */,
 				B7AC174214216D1C009E9205 /* NewProjectController.m */,
 				CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */,
@@ -2486,7 +2481,6 @@
 				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
 				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,
 				CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */,
-				CD333CFC14C0340200E0EEE2 /* NewProjectNavigationController.m in Sources */,
 				CDB5DB6514C6F56A003DFD1F /* DirectoryBrowserController.m in Sources */,
 				CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */,
 				CD7B435114CECA5700090CAE /* QuickBrowsersContainerController.m in Sources */,
@@ -2542,7 +2536,7 @@
 				B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */,
 				CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */,
 				CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */,
-				CD7BD9F114D83C850048A48A /* UIViewController+PresentingPopoverController.m in Sources */,
+				CD7BD9F114D83C850048A48A /* UIViewController+Utilities.m in Sources */,
 				B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */,
 				CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */,
 				CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */,

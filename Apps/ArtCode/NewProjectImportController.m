@@ -7,8 +7,6 @@
 //
 
 #import "NewProjectImportController.h"
-#import "NewProjectNavigationController.h"
-
 
 #import "NSURL+Utilities.h"
 #import "DirectoryPresenter.h"
@@ -106,10 +104,10 @@ static void *_directoryObservingContext;
 #warning FIX
     ECASSERT(NO);
     
-    NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
-//    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
-    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+//    NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
+////    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
+//    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+//    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
 }
 
 @end
