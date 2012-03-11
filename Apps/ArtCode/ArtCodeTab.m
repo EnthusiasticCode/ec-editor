@@ -8,7 +8,7 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
-#import "ArtCodeProject.h"
+#import "ACProject.h"
 #import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
@@ -20,17 +20,23 @@ static NSURL *_plistURL;
 static NSMutableArray *_mutableTabDictionaries;
 static NSMutableArray *_mutableTabs;
 
-@interface ArtCodeTab () {
-    NSMutableDictionary *_mutableDictionary;
-    NSMutableArray *_mutableHistoryURLs;
-    ArtCodeProject *_currentProject;
-}
+@interface ArtCodeTab ()
+
+@property (nonatomic, strong) ACProject *currentProject;
+@property (nonatomic, strong) ACProjectItem *currentItem;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
+- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
 
 @implementation ArtCodeTab
+{
+    NSMutableDictionary *_mutableDictionary;
+    NSMutableArray *_mutableHistoryURLs;
+}
+
+@synthesize currentProject = _currentProject, currentItem = _currentItem;
 
 #pragma mark - Class methods
 
@@ -109,21 +115,6 @@ static NSMutableArray *_mutableTabs;
     return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
 
-- (ArtCodeProject *)currentProject
-{
-#warning TODO NIK set this when project is selected and don't recalculate every time
-    if (!_currentProject)
-    {
-        for (NSURL *historyURL in _mutableHistoryURLs)
-        {
-            _currentProject = [ArtCodeProject projectWithURL:historyURL];
-            if (_currentProject)
-                break;
-        }
-    }
-    return _currentProject;
-}
-
 + (NSSet *)keyPathsForValuesAffectingCurrentURL
 {
     return [NSSet setWithObject:@"currentHistoryPosition"];
@@ -189,7 +180,9 @@ static NSMutableArray *_mutableTabs;
     {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
         [_mutableHistoryURLs addObject:url];
-        self.currentHistoryPosition = 0;
+        [self _moveFromURL:nil toURL:url completionHandler:^(BOOL success) {
+            self.currentHistoryPosition = 0;
+        }];
         return;
     }
     NSUInteger lastPosition = [self.historyURLs count] - 1;
@@ -201,19 +194,74 @@ static NSMutableArray *_mutableTabs;
     }
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
     [_mutableHistoryURLs addObject:url];
-    self.currentHistoryPosition += 1;
+    [self moveForwardInHistory];
 }
 
 - (void)moveBackInHistory
 {
-    if (self.canMoveBackInHistory)
-        self.currentHistoryPosition -= 1;
+    if (!self.canMoveBackInHistory)
+        return;
+    
+    // Get the history position before we initiate the move so it's consistent
+    NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;    
+    [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition - 1] completionHandler:^(BOOL success) {
+        self.currentHistoryPosition = historyPositionBeforeMove - 1;
+    }];
 }
 
 - (void)moveForwardInHistory
 {
-    if (self.canMoveForwardInHistory)
-        self.currentHistoryPosition += 1;
+    if (!self.canMoveForwardInHistory)
+        return;
+    
+    // Get the history position before we initiate the move so it's consistent
+    NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;
+    [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1] completionHandler:^(BOOL success) {
+        self.currentHistoryPosition = historyPositionBeforeMove + 1;
+    }];
+}
+
+#pragma mark - Private Methods
+
+- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler
+{
+    NSArray *fromUUIDs = [fromURL artCodeUUIDs];
+    NSArray *toUUIDs = [toURL artCodeUUIDs];
+    
+    // Check if we're changing projects, and if the project we're changing to exists
+    BOOL changeProjects = NO;
+    ACProject *toProject = nil;
+    if ((fromUUIDs.count || toUUIDs.count) && ![(fromUUIDs.count ? [fromUUIDs objectAtIndex:0] : nil) isEqual:(toUUIDs.count ? [toUUIDs objectAtIndex:0] : nil)])
+    {
+        changeProjects = YES;
+        if ([toUUIDs count] && [toUUIDs objectAtIndex:0])
+            toProject = [ACProject projectWithUUID:[toUUIDs objectAtIndex:0]];
+    }
+
+    // If both are true, we need to make an async load, else we load synchronous
+    if (changeProjects && toProject)
+    {
+        [toProject openWithCompletionHandler:^(BOOL success) {
+            [self.currentProject closeWithCompletionHandler:nil];
+            self.currentProject = nil;
+            self.currentItem = nil;
+            if (success)
+            {
+                self.currentProject = toProject;
+                if ([toUUIDs count] > 1)
+                    self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+            }
+            completionHandler(success);
+        }];
+    }
+    else
+    {
+        // If we're here, the project is the same
+        self.currentItem = nil;
+        if ([toUUIDs count] > 1)
+            self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+        completionHandler(YES);
+    }
 }
 
 @end

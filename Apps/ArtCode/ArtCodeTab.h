@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application, ArtCodeProject;
+@class Application, ACProject, ACProjectItem;
 
 @interface ArtCodeTab : NSObject
 
@@ -27,7 +27,10 @@
 @property (nonatomic, strong, readonly) NSURL *currentURL;
 
 /// The current project for the tab's URL.
-@property (nonatomic, strong, readonly) ArtCodeProject *currentProject;
+@property (nonatomic, strong, readonly) ACProject *currentProject;
+
+/// The current project item for the tab's URL.
+@property (nonatomic, strong, readonly) ACProjectItem *currentItem;
 
 /// A value indicating if calling moveBackInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBackInHistory;
