@@ -104,6 +104,8 @@ NSString * const artCodeURLProjectRemoteListPath = @"remotes";
     return [self.scheme isEqualToString:artCodeURLScheme];
 }
 
+#warning TODO controlling the path is not sufficient, there has to be a check on uuids
+
 - (BOOL)isArtCodeProjectsList
 {
     return [self.path isEqualToString:artCodeURLProjectListPath];
