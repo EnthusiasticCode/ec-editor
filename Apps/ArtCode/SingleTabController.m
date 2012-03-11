@@ -464,7 +464,7 @@ static const void *loadingObservingContext;
             if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
                 result = self.contentViewController;
             else
-                result = [[ProjectBrowserController alloc] init];
+                result = [ProjectBrowserController new];
         }
         // Project's bookmarks list
         else if ([currentURL isArtCodeProjectBookmarksList])
@@ -492,7 +492,7 @@ static const void *loadingObservingContext;
                     if ([self.contentViewController isKindOfClass:[CodeFileController class]])
                         result = self.contentViewController;
                     else
-                        result = [[CodeFileController alloc] init];
+                        result = [CodeFileController new];
                     break;
                 }
                     
@@ -516,6 +516,9 @@ static const void *loadingObservingContext;
             }
         }
         
+        // Set the tab explicitly since result might not have a parent view controller yet
+        result.artCodeTab = self.artCodeTab;
+
         // Reload
         [result artCodeTabReload];
     }

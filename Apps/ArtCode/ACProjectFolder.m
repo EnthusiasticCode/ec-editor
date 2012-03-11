@@ -41,7 +41,6 @@ static NSString * const _childrenKey = @"children";
         return nil;
     _children = [[NSMutableDictionary alloc] initWithCapacity:contents.fileWrappers.count];
     NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
-    ECASSERT(childrenPlists.count == contents.fileWrappers.count);
     [contents.fileWrappers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSFileWrapper *fileWrapper, BOOL *stop) {
         ECASSERT(fileWrapper.isRegularFile || fileWrapper.isDirectory);
         ACProjectFileSystemItem *item = [[(fileWrapper.isDirectory ? [ACProjectFolder class] : [ACProjectFile class]) alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:key] parent:self contents:fileWrapper];
