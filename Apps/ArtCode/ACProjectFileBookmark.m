@@ -27,6 +27,13 @@
 
 @synthesize file = _file, bookmarkPoint = _bookmarkPoint;
 
+- (NSString *)description
+{
+    if ([_bookmarkPoint isKindOfClass:[NSNumber class]])
+        return [NSString stringWithFormat:@"%@: Line %u", _file.name, [_bookmarkPoint unsignedIntValue]];
+    return [NSString stringWithFormat:@"%@: %@", _file.name, _bookmarkPoint];
+}
+
 #pragma mark - Plist Internal Methods
 
 - (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint

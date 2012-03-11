@@ -14,6 +14,9 @@
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFile.h"
+#import "ACProjectFileBookmark.h"
 
 #import "HighlightTableViewCell.h"
 
@@ -48,18 +51,15 @@
 
 - (NSArray *)filteredItems
 {
-#warning FIX
-    ECASSERT(NO);
-    
     if (!_filteredItems)
     {
         if ([self.searchBar.text length])
         {
-//            NSArray *hitMasks = nil;
-//            _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
-//                return [bookmark description];
-//            }];
-//            _filteredItemsHitMask = hitMasks;
+            NSArray *hitMasks = nil;
+            _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileBookmark *bookmark) {
+                return [bookmark description];
+            }];
+            _filteredItemsHitMask = hitMasks;
             
             if ([_filteredItems count] == 0)
                 self.infoLabel.text = @"No bookmarks found.";
@@ -110,17 +110,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-#warning FIX
-    ECASSERT(NO);
-    
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
-//    ProjectBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
-//    
-//    cell.textLabel.text = [bookmark description];
-//    cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
+    ACProjectFileBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+    
+    cell.textLabel.text = [bookmark description];
+    cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
 //    cell.detailTextLabel.text = bookmark.note;
-//    cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
+    cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
     
     return cell;
 }
