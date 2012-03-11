@@ -57,6 +57,14 @@
     return [NSFileWrapper new];
 }
 
+- (NSString *)pathRelativeToProject
+{
+    if (self.parentFolder == nil)
+        return @"/";
+    
+    return [[self.parentFolder pathRelativeToProject] stringByAppendingPathComponent:self.name];
+}
+
 #pragma mark - Item methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary

@@ -276,24 +276,6 @@ static void *_openQuicklyObservingContext;
     [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
 }
 
-#pragma mark - Single tab content controller protocol methods
-
-- (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
-{
-    BOOL isRoot = NO;
-    NSString *projectName = [ArtCodeURL projectNameFromURL:self.artCodeTab.currentURL isProjectRoot:&isRoot];
-    if (!isRoot)
-    {
-        return NO; // default behaviour
-    }
-    else
-    {
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], projectName, nil] 
-                        selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
-    }
-    return YES;
-}
-
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath

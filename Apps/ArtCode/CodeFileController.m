@@ -394,22 +394,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if (_currentSymbol)
     {
-        NSMutableArray *components = [[[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents] mutableCopy];
-        NSString *file = [components objectAtIndex:0];
-        [components removeObjectAtIndex:0];
-        if ([components count] > 0)
-        {
-            [components insertObject:[file stringByDeletingPathExtension] atIndex:0];
-            file = [components lastObject];
-            [components removeLastObject];
-        }
+        NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathRelativeToProject];
         if (_currentSymbol.icon)
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[self.artCodeTab.currentProject.localizedName stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         else
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[self.artCodeTab.currentProject.localizedName stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         return YES;
     }

@@ -15,9 +15,10 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 
-// TODO refactor to ArtCodeProject
 #import "ACProject.h"
 #import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
+#import "ACProjectFileBookmark.h"
 
 #import "ProjectBrowserController.h"
 #import "FileBrowserController.h"
@@ -25,6 +26,7 @@
 #import "CodeFileController.h"
 #import "RemotesListController.h"
 #import "RemoteBrowserController.h"
+#import "UIImage+AppStyle.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
 static const void *tabCurrentURLObservingContext;
@@ -385,19 +387,40 @@ static const void *loadingObservingContext;
         else
         {
             NSURL *url = self.artCodeTab.currentURL;
-            NSArray *pathComponents = [[[ArtCodeURL pathRelativeToProjectsDirectory:url] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] pathComponents];
-            if ([pathComponents count])
+            if ([url isArtCodeURL])
             {
-                NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
-                NSInteger lastIndex = [pathComponents count] - 1;
-                [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
-                    if (idx == 0 || idx == lastIndex)
-                        return;
-                    [path appendFormat:@"/%@", component];
-                }];
-                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
+                ACProjectItem *item = self.artCodeTab.currentItem;
+                switch (item.type)
+                {
+                    case ACPRemote:
+                        url = [item URL];
+                        break;
+                        
+                    case ACPFileBookmark:
+                        item = (ACProjectItem *)[(ACProjectFileBookmark *)item file];
+                        
+                    default:
+                    {
+                        NSString *path = [(ACProjectFileSystemItem *)item pathRelativeToProject];
+                        // If project root set color and project name 
+                        if ([path length] <= 1)
+                        {
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], [self.artCodeTab.currentProject localizedName], nil] selectedIndexes:nil];
+                        }
+                        // or path and file name for items
+                        else
+                        {
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[[item.project localizedName] stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], nil] selectedIndexes:nil];
+                        }
+                        // Mark url as handled
+                        url = nil;
+                        break;
+                    }
+                }
             }
-            else if (url.host)
+            
+            // If URL has not been handled jet
+            if (url)
             {
                 [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
             }

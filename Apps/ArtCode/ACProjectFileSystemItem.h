@@ -20,6 +20,9 @@
 /// The name of the item corresponding to its filesystem path component.
 @property (nonatomic, strong) NSString *name;
 
+/// Returns a string containing the path relative to the project and starting with /.
+- (NSString *)pathRelativeToProject;
+
 #pragma mark Managing the item
 
 /// Move the item to a new folder.
