@@ -34,7 +34,6 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 #pragma mark - Properties
 
 @synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier;
-@synthesize codeFileBuffer = _codeFileBuffer;
 
 - (NSArray *)bookmarks
 {

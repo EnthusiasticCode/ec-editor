@@ -8,8 +8,6 @@
 
 #import "ACProjectFileSystemItem.h"
 
-@class FileBuffer;
-
 @interface ACProjectFile : ACProjectFileSystemItem
 
 /// Default NSUTF8FileEncoding
@@ -22,9 +20,6 @@
 
 /// Returns the explicit file syntax identifier or one derived from the file path or content
 - (NSString *)codeFileSyntaxIdentifier;
-
-/// Returns a FileBuffer that can handle the file editing.
-@property (nonatomic, strong, readonly) FileBuffer *codeFileBuffer;
 
 #pragma mark Managing file bookmarks
 

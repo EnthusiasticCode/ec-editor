@@ -486,9 +486,6 @@ describe(@"A new opened ACProject", ^{
                 });
             });
             
-            it(@"has a file buffer", ^{
-                [[[file should] receive] codeFileBuffer];
-            });
         });
     });
     
