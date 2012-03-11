@@ -17,6 +17,8 @@
 #import "NSURL+Utilities.h"
 #import "UIColor+HexColor.h"
 
+#import "ArtCodeURL.h"
+
 /// UUID to dictionary of cached projects informations (uuid, path, labelColor, localizedName).
 static NSMutableDictionary *_projectCachedInfos = nil;
 
@@ -54,7 +56,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 @end
 
 
-@implementation ACProject {
+@implementation ACProject
+{
     BOOL _isDirty;
     NSMutableDictionary *_files;
     NSMutableDictionary *_remotes;
@@ -63,7 +66,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Properties
 
-@synthesize UUID = _UUID, labelColor = _labelColor;
+@synthesize UUID = _UUID, artCodeURL = _artCodeURL, labelColor = _labelColor;
 @synthesize contentsFolder = _contentsFolder;
 
 - (id)UUID
@@ -93,6 +96,21 @@ static NSString * const _plistRemotesKey = @"remotes";
         }
     }
     return _UUID;
+}
+
+- (NSURL *)artCodeURL
+{
+    if (!_artCodeURL)
+    {
+        if (self.UUID)
+            _artCodeURL = [ArtCodeURL artCodeURLWithProject:self item:nil path:nil];
+    }
+    return _artCodeURL;
+}
+
++ (NSSet *)keyPathsForValuesAffectingArtCodeURL
+{
+    return [NSSet setWithObject:@"UUID"];
 }
 
 - (UIColor *)labelColor

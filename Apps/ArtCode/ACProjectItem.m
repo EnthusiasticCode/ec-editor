@@ -9,10 +9,11 @@
 #import "ACProjectItem.h"
 #import "ACProject.h"
 #import "ACProjectItem+Internal.h"
+#import "ArtCodeURL.h"
 
 @implementation ACProjectItem
 
-@synthesize project = _project, UUID = _UUID;
+@synthesize project = _project, UUID = _UUID, artCodeURL = _artCodeURL;
 
 #pragma mark - Initialization
 
@@ -52,6 +53,13 @@
 - (NSURL *)URL
 {
     return nil;
+}
+
+- (NSURL *)artCodeURL
+{
+    if (!_artCodeURL)
+        _artCodeURL = [ArtCodeURL artCodeURLWithProject:self.project item:self path:nil];
+    return _artCodeURL;
 }
 
 - (ACProjectItemType)type

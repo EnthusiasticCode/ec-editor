@@ -16,6 +16,7 @@
 
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
 @property (nonatomic, strong, readonly) id UUID;
+@property (nonatomic, strong, readonly) NSURL *artCodeURL;
 
 /// A color that rapresent the project.
 @property (nonatomic, strong) UIColor *labelColor;

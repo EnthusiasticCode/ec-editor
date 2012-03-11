@@ -25,6 +25,7 @@ typedef enum
 
 /// Unique within project
 @property (nonatomic, strong, readonly) id UUID;
+@property (nonatomic, strong, readonly) NSURL *artCodeURL;
 
 /// Item type, see enum
 @property (nonatomic, readonly) ACProjectItemType type;
