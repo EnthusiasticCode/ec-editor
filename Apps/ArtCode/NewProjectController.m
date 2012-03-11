@@ -40,8 +40,7 @@
     
     self.projectColorButton.hidden = NO;
     self.projectNameTextField.enabled = YES;
-//    [self stopRightBarButtonItemActivityIndicator];
-    [self startRightBarButtonItemActivityIndicator];
+    [self stopRightBarButtonItemActivityIndicator];
     
     [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
     [self.projectNameTextField becomeFirstResponder];
