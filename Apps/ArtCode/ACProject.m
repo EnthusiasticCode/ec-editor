@@ -196,6 +196,11 @@ static NSString * const _plistRemotesKey = @"remotes";
     _isDirty = YES;
 }
 
+- (NSString *)localizedName
+{
+    return [[self.fileURL lastPathComponent] stringByDeletingPathExtension];
+}
+
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
     NSFileWrapper *bundleWrapper = (NSFileWrapper *)contents;

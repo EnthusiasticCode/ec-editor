@@ -30,22 +30,8 @@
 
 static void *_directoryObservingContext;
 
-#define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
+@interface ProjectBrowserController ()
 
-@interface ProjectBrowserController () {
-    UIPopoverController *_toolItemPopover;
-    
-    NSArray *_toolItemsNormal;
-    NSArray *_toolItemsEditing;
-
-    UIActionSheet *_toolItemDeleteActionSheet;
-    UIActionSheet *_toolItemExportActionSheet;
-    
-    UIImage *_cellNormalBackground;
-    UIImage *_cellSelectedBackground;
-    
-    NSInteger additionals;
-}
 @property (nonatomic, strong) GridView *gridView;
 
 /// Represent a directory's contents.
@@ -61,11 +47,21 @@ static void *_directoryObservingContext;
 #pragma mark -
 
 @implementation ProjectBrowserController
-
+{
+    UIPopoverController *_toolItemPopover;
+    
+    NSArray *_toolItemsNormal;
+    NSArray *_toolItemsEditing;
+    
+    UIActionSheet *_toolItemDeleteActionSheet;
+    UIActionSheet *_toolItemExportActionSheet;
+    
+    UIImage *_cellNormalBackground;
+    UIImage *_cellSelectedBackground;
+}
 #pragma mark - Properties
 
-@synthesize gridView = _gridView;
-@synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
+@synthesize gridView = _gridView, directoryPresenter = _directoryPresenter;
 
 - (GridView *)gridView
 {
@@ -91,15 +87,7 @@ static void *_directoryObservingContext;
         return;
     [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
     _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];    
-}
-
-- (void)setProjectsDirectory:(NSURL *)projectsDirectory
-{
-    if (projectsDirectory == _projectsDirectory)
-        return;
-    _projectsDirectory = projectsDirectory;
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionInitial context:&_directoryObservingContext];    
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -153,6 +141,9 @@ static void *_directoryObservingContext;
         case NSKeyValueChangeRemoval:
             [self.gridView deleteCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
             break;
+        case NSKeyValueChangeSetting:
+            [self.gridView reloadData];
+            break;
         default:
             ECASSERT(NO && "unhandled KVO change");
             break;
@@ -168,7 +159,7 @@ static void *_directoryObservingContext;
 
 - (void)artCodeTabReload
 {
-    self.projectsDirectory = [ACProject projectsURL];
+    // Nothing to do here, since it always shows the same thing
 }
 
 #pragma mark - View lifecycle
@@ -212,7 +203,7 @@ static void *_directoryObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[ACProject projectsURL] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -224,7 +215,6 @@ static void *_directoryObservingContext;
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-//    return additionals;
     return [self.directoryPresenter.fileURLs count];
 }
 
@@ -247,16 +237,11 @@ static void *_directoryObservingContext;
     }
     
     // Setup project title
-#warning FIX
-    ECASSERT(NO);
-//    NSString *projectName = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
-//    ArtCodeProject *project = [ArtCodeProject projectWithName:projectName];
-//    cell.title.text = projectName;
-//    cell.label.text = @"";
-//    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+    ACProject *project = [[ACProject alloc] initWithFileURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+    cell.title.text = project.localizedName;
+    cell.label.text = @"";
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
 
-//    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
-    
     return cell;
 }
 
@@ -279,8 +264,6 @@ static void *_directoryObservingContext;
             [(UIButton *)item.customView setEnabled:enable];
         }];
     }
-//    additionals--;
-//    [gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:cellIndex] animated:YES];
 }
 
 - (void)gridView:(GridView *)gridView didDeselectCellAtIndex:(NSInteger)cellIndex
@@ -288,26 +271,6 @@ static void *_directoryObservingContext;
     // Will update editing items like in select
     [self gridView:gridView didSelectCellAtIndex:cellIndex];
 }
-
-//- (void)textFieldDidEndEditing:(UITextField *)textField
-//{
-//    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
-//}
-//
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField
-//{
-//    if (![textField.text length])
-//        return NO;
-//    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
-//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-//    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
-//        NSFileManager *fileManager = [[NSFileManager alloc] init];
-//        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
-//    }];
-//    [textField resignFirstResponder];
-//    [self.gridView reloadData];
-//    return YES;
-//}
 
 #pragma mark - Action Sheet Delegate
 
@@ -443,8 +406,6 @@ static void *_directoryObservingContext;
 
 - (void)_toolNormalAddAction:(id)sender
 {
-//    additionals++;
-//    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:(additionals - 1)] animated:YES];
     
     // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
     if (!_toolItemPopover)
@@ -452,7 +413,7 @@ static void *_directoryObservingContext;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
         NewProjectNavigationController *newProjectNavigationController = (NewProjectNavigationController *)[storyboard instantiateInitialViewController];
         [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-        newProjectNavigationController.projectsDirectory = self.projectsDirectory;
+        newProjectNavigationController.projectsDirectory = [ACProject projectsURL];
         newProjectNavigationController.artCodeTab = self.artCodeTab;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
