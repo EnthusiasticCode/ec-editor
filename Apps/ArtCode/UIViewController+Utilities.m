@@ -29,7 +29,8 @@ static const void *_rightBarButtonItemOriginal;
     if(objc_getAssociatedObject(self, &_rightBarButtonItemOriginal))
         return;
     
-    objc_setAssociatedObject(self, &_rightBarButtonItemOriginal, self.navigationItem.rightBarButtonItem, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    UIBarButtonItem *originalItem = self.navigationItem.rightBarButtonItem;
+    objc_setAssociatedObject(self, &_rightBarButtonItemOriginal, originalItem ? originalItem : [NSNull null], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:activityIndicator];
@@ -42,7 +43,10 @@ static const void *_rightBarButtonItemOriginal;
     if (original)
     {
         objc_setAssociatedObject(self, &_rightBarButtonItemOriginal, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        self.navigationItem.rightBarButtonItem = original;
+        if ((NSNull *)original != [NSNull null])
+            self.navigationItem.rightBarButtonItem = original;
+        else
+            self.navigationItem.rightBarButtonItem = nil;
     }
 }
 
