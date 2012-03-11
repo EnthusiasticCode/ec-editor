@@ -487,7 +487,7 @@ static const void *loadingObservingContext;
         // Project's item
         else
         {
-            switch (tab.currentProjectItem.type) {   
+            switch (tab.currentItem.type) {   
                 case ACPFile:
                 case ACPFileBookmark:
                 {
@@ -520,6 +520,10 @@ static const void *loadingObservingContext;
         
         // Reload
         [result artCodeTabReload];
+    }
+    else 
+    {
+        ECASSERT(NO); // Unknown URL
     }
     
     // Update title if controller didn't change
