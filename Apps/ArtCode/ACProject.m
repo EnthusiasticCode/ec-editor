@@ -20,14 +20,15 @@
 #import "ArtCodeURL.h"
 
 /// UUID to dictionary of cached projects informations (uuid, path, labelColor, localizedName).
-static NSMutableDictionary *_projectCachedInfos = nil;
+static NSMutableDictionary *_projectsList = nil;
 
 static NSString * const _projectsFolderName = @"LocalProjects";
-static NSString * const _projectsCachedInfoFileName = @".acprojcache";
 static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
+static NSString * const _projectsListKey = @"ACProjectProjectsList";
 static NSString * const _plistUUIDKey = @"uuid";
+static NSString * const _plistPathKey = @"path";
 static NSString * const _plistLocalizedNameKey = @"localizedName";
 static NSString * const _plistLabelColorKey = @"labelColor";
 static NSString * const _plistContentsKey = @"contents";
@@ -37,7 +38,10 @@ static NSString * const _plistRemotesKey = @"remotes";
 @interface ACProject ()
 
 /// Updates and saves the projects informations cache with data from the provided project.
-+ (void)updateCacheForProject:(ACProject *)project;
++ (void)_updateCacheForProject:(ACProject *)project;
++ (id)_uuidForProject:(ACProject *)project;
++ (UIColor *)_labelColorForProject:(ACProject *)project;
++ (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project;
 
 @end
 
@@ -66,34 +70,14 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Properties
 
-@synthesize UUID = _UUID, artCodeURL = _artCodeURL, labelColor = _labelColor;
+@synthesize UUID = _UUID, artCodeURL = _artCodeURL;
 @synthesize contentsFolder = _contentsFolder;
 
 - (id)UUID
 {    
     if (!_UUID)
     {
-        // Retrieve UUID from cache if possible
-        if (self.documentState & UIDocumentStateClosed)
-        {
-            [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-                if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:self.localizedName])
-                {
-                    _UUID = uuid;
-                    *stop = YES;
-                }
-            }];
-        }
-        // Generate an UUID on a new project
-        else
-        {
-            CFUUIDRef uuid = CFUUIDCreate(NULL);
-            CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-            _UUID = (__bridge NSString *)uuidString;
-            CFRelease(uuidString);
-            CFRelease(uuid);
-            [self updateChangeCount:UIDocumentChangeDone];
-        }
+        _UUID = [ACProject _uuidForProject:self];
     }
     return _UUID;
 }
@@ -115,29 +99,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (UIColor *)labelColor
 {
-    // Retrieve labelColor from cache if possible
-    if (!_labelColor && self.documentState & UIDocumentStateClosed)
-    {
-        [_projectCachedInfos enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-            if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:self.localizedName])
-            {
-                NSString *labelColorString = [info objectForKey:_plistLabelColorKey];
-                if ([labelColorString length])
-                    _labelColor = [UIColor colorWithHexString:labelColorString];
-                *stop = YES;
-            }
-        }];
-    }
-    return _labelColor;
+    return [ACProject _labelColorForProject:self];
 }
 
 - (void)setLabelColor:(UIColor *)value
 {
-    if (value == _labelColor)
-        return;
-    
-    _labelColor = value;
-    [self updateChangeCount:UIDocumentChangeDone];
+    [ACProject _setLabelColor:value forProject:self];
 }
 
 - (ACProjectFolder *)contentsFolder
@@ -219,11 +186,6 @@ static NSString * const _plistRemotesKey = @"remotes";
         }
     }];
     
-    // Project's properties
-    _UUID = [plist objectForKey:_plistUUIDKey];
-    if ([plist objectForKey:_plistLabelColorKey])
-        _labelColor = [UIColor colorWithHexString:[plist objectForKey:_plistLabelColorKey]];
-    
     // Project's content
     if (contentsWrapper)
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil contents:contentsWrapper];
@@ -259,22 +221,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
 {
-    // Update global project cache
-    if (!([self documentState] & UIDocumentStateClosed))
-        [[self class] updateCacheForProject:self];
-    
     // Creating project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
     // Creating project contents wrapper
     NSFileWrapper *contentsWrapper = [self.contentsFolder contents];
     contentsWrapper.preferredFilename = _contentsFolderName;
-    
-    // Project properties
-    if (self.UUID)
-        [plist setObject:self.UUID forKey:_plistUUIDKey];
-    if (self.labelColor)
-        [plist setObject:[self.labelColor hexString] forKey:_plistLabelColorKey];
     
     // Filesystem content
     if (contentsWrapper)
@@ -330,43 +282,62 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 + (void)initialize
 {
-    // Loads the chached projects informations from plist
-    _projectCachedInfos = [NSMutableDictionary new];
-    NSURL *cacheFileURL = [[self projectsURL] URLByAppendingPathComponent:_projectsCachedInfoFileName];
-    if ([[NSFileManager new] fileExistsAtPath:cacheFileURL.path])
+    // Loads the saved projects informations from user defaults
+    _projectsList = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:_projectsListKey] mutableCopy];
+    if (!_projectsList)
     {
-        for (NSDictionary *info in [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:cacheFileURL] options:NSPropertyListImmutable format:nil error:NULL])
-        {
-            // TODO check for zombies
-            if ([info objectForKey:_plistUUIDKey])
-                [_projectCachedInfos setObject:info forKey:[info objectForKey:_plistUUIDKey]];
-        }
+        _projectsList = [NSMutableDictionary new];
+        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
     }
 }
 
-+ (void)updateCacheForProject:(ACProject *)project
++ (id)_uuidForProject:(ACProject *)project
 {
-    // Updates the entry for a project's cache
-    ECASSERT(_projectCachedInfos);
-    ECASSERT(![project documentState] & UIDocumentStateClosed);
-    [_projectCachedInfos setObject:[NSDictionary dictionaryWithObjectsAndKeys:project.UUID, _plistUUIDKey, [project.fileURL lastPathComponent], @"path", project.localizedName, _plistLocalizedNameKey, [project.labelColor hexString], _plistLabelColorKey, nil] forKey:project.UUID];
-    [self prepareForBackground];
-}
-
-+ (void)prepareForBackground
-{
-    // Saves cached projects informations plist
-    if (![_projectCachedInfos count])
-        return;
-    [[NSPropertyListSerialization dataWithPropertyList:[_projectCachedInfos allValues] format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL] writeToURL:[[self projectsURL] URLByAppendingPathComponent:_projectsCachedInfoFileName] atomically:YES];
+    __block id projectUUID = nil;
+    [_projectsList enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
+        if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:project.localizedName])
+        {
+            projectUUID = uuid;
+            *stop = YES;
+        }
+    }];
+    if (!projectUUID)
+    {
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
+        projectUUID = (__bridge NSString *)uuidString;
+        CFRelease(uuidString);
+        CFRelease(uuid);
+        // The label color is nil if we're here
+        [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:projectUUID, _plistUUIDKey, project.fileURL.lastPathComponent, _plistPathKey, project.localizedName, _plistLocalizedNameKey, nil] forKey:projectUUID];
+        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    }
+    return projectUUID;
 }
 
 + (ACProject *)projectWithUUID:(id)uuid
 {
-    NSDictionary *projectInfo = [_projectCachedInfos objectForKey:uuid];
-    if (!projectInfo || ![projectInfo objectForKey:@"path"])
+    NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
+    if (!projectInfo || ![projectInfo objectForKey:_plistPathKey])
         return nil;
-    return [[ACProject alloc] initWithFileURL:[[self projectsURL] URLByAppendingPathComponent:[projectInfo objectForKey:@"path"]]];
+    return [[ACProject alloc] initWithFileURL:[[self projectsURL] URLByAppendingPathComponent:[projectInfo objectForKey:_plistPathKey]]];
+}
+
++ (UIColor *)_labelColorForProject:(ACProject *)project
+{
+    NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
+    UIColor *labelColor = nil;
+    if ([hexString length])
+        labelColor = [UIColor colorWithHexString:hexString];
+    return labelColor;
+}
+
++ (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project
+{
+    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
+    [projectInfo setValue:color.hexString forKey:_plistLabelColorKey];
+    [_projectsList setObject:projectInfo forKey:project.UUID];
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
 }
 
 + (NSURL *)projectsURL

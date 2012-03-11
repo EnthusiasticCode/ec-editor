@@ -251,7 +251,8 @@ static void *_directoryObservingContext;
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+        ACProject *project = [[ACProject alloc] initWithFileURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+        [self.artCodeTab pushURL:project.artCodeURL];
     }
 }
 

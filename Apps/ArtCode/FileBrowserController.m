@@ -154,8 +154,11 @@ static void *_openQuicklyObservingContext;
 
 - (void)artCodeTabReload
 {
-    ECASSERT(self.artCodeTab.currentItem.type == ACPFolder);
-    self.directory = self.artCodeTab.currentItem.URL;
+    ECASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
+    if (self.artCodeTab.currentItem)
+        self.directory = self.artCodeTab.currentItem.URL;
+    else
+        self.directory = self.artCodeTab.currentProject.contentsFolder.URL;
 }
 
 #pragma mark - View lifecycle
