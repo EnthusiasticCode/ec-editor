@@ -10,8 +10,17 @@
 #import "ArtCodeProject.h"
 #import "NSURL+Utilities.h"
 
+#import "ACProject.h"
+#import "ACProjectItem.h"
+
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
+static NSString * const artCodeURLScheme = @"artcode";
+
+NSString * const artCodeURLProjectListPath = @"projects";
+NSString * const artCodeURLProjectBookmarkListPath = @"bookmarks";
+NSString * const artCodeURLProjectRemoteListPath = @"remotes";
+
 
 @interface ArtCodeURL ()
 
@@ -20,6 +29,30 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 @end
 
 @implementation ArtCodeURL
+
++ (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path
+{
+    NSString *URLString = nil;
+    if (item)
+    {
+        ECASSERT(project);
+        ECASSERT(item.project == project);
+        URLString = [NSString stringWithFormat:@"%@://%@-%@/%@", artCodeURLScheme, [project UUID], [item UUID], path];
+    }
+    else if (project)
+    {
+        URLString = [NSString stringWithFormat:@"%@://%@/%@", artCodeURLScheme, [project UUID], path];
+    }
+    else if (path)
+    {
+        URLString = [NSString stringWithFormat:@"%@://%@", artCodeURLScheme, path];
+    }
+    else 
+    {
+        return nil;
+    }
+    return [NSURL URLWithString:URLString];
+}
 
 + (NSURL *)projectsDirectory
 {
@@ -62,16 +95,50 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 
 @end
 
-@implementation NSString (ArtCodeURL)
-
-- (NSString *)prettyPath
-{
-    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
-}
-
-@end
+#pragma mark -
 
 @implementation NSURL (ArtCodeURL)
+
+- (BOOL)isArtCodeURL
+{
+    return [self.scheme isEqualToString:artCodeURLScheme];
+}
+
+- (BOOL)isArtCodeProjectsList
+{
+    return [self.path isEqualToString:artCodeURLProjectListPath];
+}
+
+- (BOOL)isArtCodeProjectBookmarksList
+{
+    return [self.path isEqualToString:artCodeURLProjectBookmarkListPath];
+}
+
+- (BOOL)isArtCodeProjectRemotesList
+{
+    return [self.path isEqualToString:artCodeURLProjectRemoteListPath];
+}
+
+- (NSArray *)artCodeUUIDs
+{
+    static NSRegularExpression *uuidRegExp = nil;
+    if (!uuidRegExp)
+        uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"(?:([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?)+" options:NSRegularExpressionCaseInsensitive error:NULL];
+    NSArray *matches = [uuidRegExp matchesInString:self.host options:0 range:NSMakeRange(0, [self.host length])];
+    if ([matches count] == 0)
+        return nil;
+    ECASSERT([matches count] == 1);
+    NSTextCheckingResult *regExpResult = [matches objectAtIndex:0];
+    NSInteger regExpResultCount = [regExpResult numberOfRanges];
+    ECASSERT(regExpResultCount > 1);
+    NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:regExpResultCount - 1];
+    for (NSInteger i = 1; i < regExpResultCount; ++i)
+    {
+        [uuids addObject:[self.host substringWithRange:[regExpResult rangeAtIndex:i]]];
+    }
+    return [uuids copy];
+}
+
 
 - (BOOL)isBookmarksVariant
 {
@@ -122,6 +189,17 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
 - (NSString *)prettyPathRelativeToProjectDirectory
 {
     return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] prettyPath];
+}
+
+@end
+
+#pragma mark -
+
+@implementation NSString (ArtCodeURL)
+
+- (NSString *)prettyPath
+{
+    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
 }
 
 @end

@@ -89,7 +89,6 @@
 		B771014C1506E340006AF1FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
-		B77101501506E40B006AF1FB /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		B77101531506E4E8006AF1FB /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101401506E28B006AF1FB /* libKiwi.a */; };
 		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
@@ -262,6 +261,9 @@
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD333CFC14C0340200E0EEE2 /* NewProjectNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
+		CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
+		CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */; };
 		CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */; };
@@ -775,6 +777,7 @@
 		CD333CFA14C0340200E0EEE2 /* NewProjectNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectNavigationController.h; sourceTree = "<group>"; };
 		CD333CFB14C0340200E0EEE2 /* NewProjectNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectNavigationController.m; sourceTree = "<group>"; };
 		CD3D69E014C45B9300325970 /* topBar_BackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton.png; sourceTree = "<group>"; };
+		CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURLSpec.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstantGestureRecognizer.h; sourceTree = "<group>"; };
 		CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InstantGestureRecognizer.m; sourceTree = "<group>"; };
@@ -1250,6 +1253,7 @@
 			isa = PBXGroup;
 			children = (
 				B771014F1506E40B006AF1FB /* ACProjectSpec.m */,
+				CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */,
 				B77101291506E20F006AF1FB /* Supporting Files */,
 			);
 			path = ArtCodeTests;
@@ -2438,7 +2442,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B77101501506E40B006AF1FB /* ACProjectSpec.m in Sources */,
 				B77101541506E76F006AF1FB /* ACProject.m in Sources */,
 				CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */,
 				CDBC78301507CBF800461A71 /* ACProjectFileSystemItem.m in Sources */,
@@ -2449,6 +2452,9 @@
 				CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */,
 				CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */,
 				CD7D1266150946D5003DE99B /* Keychain.m in Sources */,
+				CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */,
+				CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */,
+				CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
