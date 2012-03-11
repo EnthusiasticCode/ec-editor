@@ -9,7 +9,7 @@
 #import "NewProjectImportController.h"
 #import "NewProjectNavigationController.h"
 
-#import "ArtCodeProject.h"
+
 #import "NSURL+Utilities.h"
 #import "DirectoryPresenter.h"
 #import "BezelAlert.h"
@@ -103,8 +103,11 @@ static void *_directoryObservingContext;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#warning FIX
+    ECASSERT(NO);
+    
     NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
-    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
+//    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
 }

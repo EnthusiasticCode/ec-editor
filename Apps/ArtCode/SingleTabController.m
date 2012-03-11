@@ -14,7 +14,7 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 // TODO refactor to ArtCodeProject
 #import "ACProject.h"
 #import "ACProjectItem.h"

@@ -12,7 +12,7 @@
 #import "NSArray+ScoreForAbbreviation.h"
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "Keychain.h"
 #import "DirectoryBrowserController.h"
 #import "RemoteTransferController.h"
@@ -474,19 +474,25 @@
 
 - (IBAction)syncAction:(id)sender
 {
+#warning FIX
+    ECASSERT(NO);
+    
     DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
-    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+//    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 
 }
 
 - (void)_toolEditExportAction:(id)sender
 {
+#warning FIX
+    ECASSERT(NO);
+    
     // Show directory browser presenter to select where to download
     DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+//    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 

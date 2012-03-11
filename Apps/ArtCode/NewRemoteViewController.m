@@ -8,7 +8,7 @@
 
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "UIViewController+PresentingPopoverController.h"
 
 @interface NewRemoteViewController ()
@@ -39,30 +39,33 @@
 
 - (void)_createAction:(id)sender
 {
+#warning FIX
+    ECASSERT(NO);
+    
     // TODO add check for duplicate, validate fields
-    ProjectRemote *remote = [ProjectRemote new];
-    remote.name = self.remoteName.text;
-    switch (self.remoteType.selectedSegmentIndex) {
-        case 0:
-            remote.scheme = @"ftp";
-            break;
-#warning TODO set proper schemes
-        case 1:
-            remote.scheme = @"ssh";
-            break;
-            
-        case 2:
-            remote.scheme = @"webdav";
-            break;
-    }
-    remote.host = self.remoteHost.text;
-    remote.port = [self.remotePort.text integerValue];
-    // TODO save password in keychain instead
-    remote.user = self.remoteUser.text;
-    if ([self.remotePassword.text length])
-        remote.password = self.remotePassword.text;
-    [self.artCodeTab.currentProject addRemote:remote];
-    [self.presentingPopoverController dismissPopoverAnimated:YES];
+//    ProjectRemote *remote = [ProjectRemote new];
+//    remote.name = self.remoteName.text;
+//    switch (self.remoteType.selectedSegmentIndex) {
+//        case 0:
+//            remote.scheme = @"ftp";
+//            break;
+//#warning TODO set proper schemes
+//        case 1:
+//            remote.scheme = @"ssh";
+//            break;
+//            
+//        case 2:
+//            remote.scheme = @"webdav";
+//            break;
+//    }
+//    remote.host = self.remoteHost.text;
+//    remote.port = [self.remotePort.text integerValue];
+//    // TODO save password in keychain instead
+//    remote.user = self.remoteUser.text;
+//    if ([self.remotePassword.text length])
+//        remote.password = self.remotePassword.text;
+//    [self.artCodeTab.currentProject addRemote:remote];
+//    [self.presentingPopoverController dismissPopoverAnimated:YES];
 }
 
 @end

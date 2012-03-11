@@ -8,7 +8,8 @@
 
 #import "RemotesListController.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+#import "ACProject.h"
+
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"
 #import "ShapePopoverBackgroundView.h"
@@ -21,7 +22,7 @@ static void *_currentProjectRemotesContext;
 
 @interface RemotesListController ()
 
-@property (nonatomic, strong) ArtCodeProject *currentProject;
+@property (nonatomic, strong) ACProject *currentProject;
 
 - (void)_toolAddAction:(id)sender;
 - (void)_toolDeleteAction:(id)sender;
@@ -60,8 +61,11 @@ static void *_currentProjectRemotesContext;
 
 @synthesize currentProject;
 
-- (void)setCurrentProject:(ArtCodeProject *)value
+- (void)setCurrentProject:(ACProject *)value
 {
+#warning FIX
+    ECASSERT(NO);
+    
     if (value == currentProject)
         return;
     
@@ -72,6 +76,9 @@ static void *_currentProjectRemotesContext;
 
 - (NSArray *)filteredItems
 {
+#warning FIX
+    ECASSERT(NO);
+    
     if (!_filteredRemotes)
     {
         if ([self.searchBar.text length] == 0)
@@ -81,11 +88,11 @@ static void *_currentProjectRemotesContext;
         }
         else
         {
-            NSArray *hitMasks = nil;
-            _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectRemote *element) {
-                return element.name;
-            }];
-            _filteredRemotesHitMasks = hitMasks;
+//            NSArray *hitMasks = nil;
+//            _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectRemote *element) {
+//                return element.name;
+//            }];
+//            _filteredRemotesHitMasks = hitMasks;
         }
     }
     return _filteredRemotes;
@@ -147,12 +154,15 @@ static void *_currentProjectRemotesContext;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#warning FIX
+    ECASSERT(NO);
+    
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
-    ProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
-    cell.textLabel.text = remote.name;
-    cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
-    cell.detailTextLabel.text = [[remote URL] absoluteString];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//    ProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+//    cell.textLabel.text = remote.name;
+//    cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
+//    cell.detailTextLabel.text = [[remote URL] absoluteString];
+//    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return cell;
 }
 

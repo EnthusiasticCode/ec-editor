@@ -7,7 +7,7 @@
 //
 
 #import "ArtCodeURL.h"
-#import "ArtCodeProject.h"
+
 #import "NSURL+Utilities.h"
 
 #import "ACProject.h"

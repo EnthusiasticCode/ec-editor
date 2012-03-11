@@ -24,7 +24,7 @@
 #import "SearchableTableBrowserController.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "CodeFile.h"
 
 #import "TMScope.h"
@@ -205,7 +205,8 @@ CGRect UIKeyboardFrame;
 - (void)saveApplicationStateToDisk
 {
     [ArtCodeTab saveTabsToDisk];
-    [ArtCodeProject saveProjectsToDisk];
+#warning FIX save projects
+//    [ArtCodeProject saveProjectsToDisk];
 }
 
 @end

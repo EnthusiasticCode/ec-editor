@@ -12,7 +12,7 @@
 #import "AppStyle.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "ACProject.h"
 
 #import "ColorSelectionControl.h"

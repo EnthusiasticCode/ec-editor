@@ -13,7 +13,7 @@
 #import "ColorSelectionControl.h"
 
 #import "ArtCodeAppDelegate.h"
-#import "ArtCodeProject.h"
+
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
@@ -247,11 +247,13 @@ static void *_directoryObservingContext;
     }
     
     // Setup project title
-    NSString *projectName = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
-    ArtCodeProject *project = [ArtCodeProject projectWithName:projectName];
-    cell.title.text = projectName;
-    cell.label.text = @"";
-    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+#warning FIX
+    ECASSERT(NO);
+//    NSString *projectName = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
+//    ArtCodeProject *project = [ArtCodeProject projectWithName:projectName];
+//    cell.title.text = projectName;
+//    cell.label.text = @"";
+//    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
 
 //    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
     
@@ -342,13 +344,15 @@ static void *_directoryObservingContext;
             [self setEditing:NO animated:YES];
             
             self.loading = YES;
+#warning FIX
+            ECASSERT(NO);
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-                ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-                if (!project)
-                    return;
-                
-                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-                [project compressProjectToURL:zipURL];
+//                ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
+//                if (!project)
+//                    return;
+//                
+//                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+//                [project compressProjectToURL:zipURL];
             }];
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -489,16 +493,17 @@ static void *_directoryObservingContext;
     NSFileManager *fileManager = [NSFileManager new];
     
     [self setEditing:NO animated:YES];
-    
-    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-        if (!project)
-            return;
-        
-        [coordinator coordinateReadingItemAtURL:project.URL options:0 writingItemAtURL:[ArtCodeProject projectURLFromName:[ArtCodeProject validNameForNewProjectName:project.name]] options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
-        }];
-    }];
+#warning FIX
+    ECASSERT(NO);    
+//    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+//        ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
+//        if (!project)
+//            return;
+//        
+//        [coordinator coordinateReadingItemAtURL:project.URL options:0 writingItemAtURL:[ArtCodeProject projectURLFromName:[ArtCodeProject validNameForNewProjectName:project.name]] options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+//            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+//        }];
+//    }];
     self.loading = NO;
 }
 

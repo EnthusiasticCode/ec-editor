@@ -10,7 +10,7 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "QuickFileBrowserController.h"
 #import "QuickBookmarkBrowserController.h"
 #import "QuickProjectInfoController.h"

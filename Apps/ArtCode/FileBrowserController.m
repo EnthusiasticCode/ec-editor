@@ -25,7 +25,7 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 
@@ -44,7 +44,7 @@ static void *_openQuicklyObservingContext;
 
 
 @interface FileBrowserController () {
-    ArtCodeProject *_currentObservedProject;
+    ACProject *_currentObservedProject;
     
     UIPopoverController *_toolNormalAddPopover;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
@@ -458,7 +458,9 @@ static void *_openQuicklyObservingContext;
                 [mailComposer addAttachmentData:attachment mimeType:@"text/plain" fileName:[url lastPathComponent]];
             }];
             
-            [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", [[ArtCodeProject projectWithURL:[_selectedURLs objectAtIndex:0]] name]]];
+#warning FIX
+    ECASSERT(NO);
+//            [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", [[ArtCodeProject projectWithURL:[_selectedURLs objectAtIndex:0]] name]]];
             
             if ([_selectedURLs count] == 1)
                 [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];

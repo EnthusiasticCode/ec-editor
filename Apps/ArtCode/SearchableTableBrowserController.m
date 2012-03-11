@@ -14,7 +14,7 @@
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "ArtCodeURL.h"
 
 
@@ -332,19 +332,21 @@
 
 - (IBAction)toolPushUrlForTagAction:(id)sender
 {
-    switch ([sender tag]) {
-        case 1:
-            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingBookmarksVariant]];
-            break;
-            
-        case 2:
-            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingRemotesVariant]];
-            break;
-            
-        default:
-            [self.artCodeTab pushURL:self.artCodeTab.currentProject.URL];
-            break;
-    }
+#warning FIX
+ECASSERT(NO);
+//    switch ([sender tag]) {
+//        case 1:
+//            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingBookmarksVariant]];
+//            break;
+//            
+//        case 2:
+//            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingRemotesVariant]];
+//            break;
+//            
+//        default:
+//            [self.artCodeTab pushURL:self.artCodeTab.currentProject.URL];
+//            break;
+//    }
 }
 
 #pragma mark - Modal navigation

@@ -11,7 +11,7 @@
 
 #import "BezelAlert.h"
 
-#import "ArtCodeProject.h"
+
 #import "AppStyle.h"
 #import "ColorSelectionControl.h"
 #import "ArtCodeTab.h"
@@ -75,26 +75,29 @@
 
 - (IBAction)createProjectAction:(id)sender
 {
-    NSString *projectName = self.projectNameTextField.text;
-    if ([projectName length] == 0)
-    {
-        self.descriptionLabel.text = @"A project name must be specified.";
-        return;
-    }
-    if ([ArtCodeProject projectWithNameExists:projectName])
-    {
-        self.descriptionLabel.text = @"A project with this name already exists, use a different name.";
-        return;
-    }
+#warning FIX
+    ECASSERT(NO);
     
-    ArtCodeProject *project = [ArtCodeProject createProjectWithName:projectName];
-    if (projectColor)
-        project.labelColor = projectColor;
-    [project flush];
-    
-    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-    [self.artCodeTab pushURL:project.URL];
+//    NSString *projectName = self.projectNameTextField.text;
+//    if ([projectName length] == 0)
+//    {
+//        self.descriptionLabel.text = @"A project name must be specified.";
+//        return;
+//    }
+//    if ([ArtCodeProject projectWithNameExists:projectName])
+//    {
+//        self.descriptionLabel.text = @"A project with this name already exists, use a different name.";
+//        return;
+//    }
+//    
+//    ArtCodeProject *project = [ArtCodeProject createProjectWithName:projectName];
+//    if (projectColor)
+//        project.labelColor = projectColor;
+//    [project flush];
+//    
+//    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+//    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+//    [self.artCodeTab pushURL:project.URL];
 }
 
 @end

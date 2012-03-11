@@ -34,7 +34,7 @@
 #import "TMPreference.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 
 #import "ACProject.h"
 #import "ACProjectItem.h"
