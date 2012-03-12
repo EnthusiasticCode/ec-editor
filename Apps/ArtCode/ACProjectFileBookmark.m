@@ -36,9 +36,9 @@
 
 #pragma mark - Plist Internal Methods
 
-- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint
 {
-    self = [super initWithProject:project propertyListDictionary:nil];
+    self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self)
         return nil;
     
@@ -51,24 +51,11 @@
     return self;
 }
 
-- (NSDictionary *)propertyListDictionary
-{
-    NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
-    
-    [plist setObject:self.file.UUID forKey:@"file"];
-    [plist setObject:_bookmarkPoint forKey:@"point"];
-    
-    return plist;
-}
-
 #pragma mark - Item methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
 {
-    id uuid = [plistDictionary objectForKey:@"file"];
-    if (!uuid)
-        return nil;
-    return [self initWithProject:project file:(ACProjectFile *)[project itemWithUUID:uuid] bookmarkPoint:[plistDictionary objectForKey:@"point"]];
+    return [self initWithProject:project propertyListDictionary:plistDictionary file:nil bookmarkPoint:nil];
 }
 
 - (NSURL *)URL

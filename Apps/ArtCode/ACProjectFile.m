@@ -17,25 +17,26 @@
 
 static NSString * const _plistFileEncodingKey = @"fileEncoding";
 static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
+static NSString * const _plistBookmarksKey = @"bookmarks";
 
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
 
 - (void)didAddBookmark:(ACProjectFileBookmark *)bookmark;
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
-- (NSMutableArray *)implBookmarksForFile:(ACProjectFile *)file;
 
 @end
 
 /// Bookmark internal initialization for creation
 @interface ACProjectFileBookmark (Internal)
 
-- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint;
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint;
 
 @end
 
-@implementation ACProjectFile {
-    NSMutableArray *_bookmarksCache;
+@implementation ACProjectFile
+{
+    NSMutableDictionary *_bookmarks;
 }
 
 #pragma mark - Properties
@@ -44,9 +45,7 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (NSArray *)bookmarks
 {
-    if (!_bookmarksCache)
-        _bookmarksCache = [self.project implBookmarksForFile:self];
-    return _bookmarksCache;
+    return [_bookmarks allValues];
 }
 
 #pragma mark - Initialization and serialization
@@ -58,6 +57,18 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
         return nil;
     _fileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey] ? [[plistDictionary objectForKey:_plistFileEncodingKey] unsignedIntegerValue] : NSUTF8StringEncoding;
     _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
+    _bookmarks = [[NSMutableDictionary alloc] init];
+    [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
+        NSScanner *scanner = [NSScanner scannerWithString:point];
+        NSInteger line;
+        if ([scanner scanInteger:&line])
+            point = [NSNumber numberWithInteger:line];
+        ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
+        if (!bookmark)
+            return;
+        [_bookmarks setObject:bookmark forKey:point];
+        [project didAddBookmark:bookmark];
+    }];
     return self;
 }
 
@@ -67,6 +78,14 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
     [plist setObject:[NSNumber numberWithUnsignedInteger:self.fileEncoding] forKey:_plistFileEncodingKey];
     if (self.codeFileExplicitSyntaxIdentifier)
         [plist setObject:self.codeFileExplicitSyntaxIdentifier forKey:_plistExplicitSyntaxKey];
+    NSMutableDictionary *bookmarks = [[NSMutableDictionary alloc] init];
+    [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id point, ACProjectFileBookmark *bookmark, BOOL *stop) {
+        if ([point isKindOfClass:[NSNumber class]])
+            point = [(NSNumber *)point stringValue];
+        ECASSERT([point isKindOfClass:[NSString class]]);
+        [bookmarks setObject:bookmark.propertyListDictionary forKey:point];
+    }];
+    [plist setObject:bookmarks forKey:_plistBookmarksKey];
     return plist;
 }
 
@@ -74,9 +93,10 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (void)addBookmarkWithPoint:(id)point
 {
-    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project file:self bookmarkPoint:point];
-    [_bookmarksCache addObject:bookmark];
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:nil file:self bookmarkPoint:point];
+    [_bookmarks setObject:bookmark forKey:point];
     [self.project didAddBookmark:bookmark];
+    [self.project updateChangeCount:UIDocumentChangeDone];
 }
 
 #pragma mark - Item methods
@@ -91,12 +111,21 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
     return ACPFile;
 }
 
+- (void)remove
+{
+    for (ACProjectFileBookmark *bookmark in _bookmarks.allValues)
+        [bookmark remove];
+    [super remove];
+}
+
 #pragma mark - Internal Methods
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
-    [_bookmarksCache removeObject:bookmark];
+    [self willChangeValueForKey:@"bookmarks"];
+    [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
     [self.project didRemoveBookmark:bookmark];
+    [self didChangeValueForKey:@"bookmarks"];
 }
 
 - (NSFileWrapper *)defaultContents
