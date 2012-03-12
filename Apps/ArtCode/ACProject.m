@@ -395,6 +395,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
+    // Called when adding a file and in loading phase
     ECASSERT(fileSystemItem);
     [self willChangeValueForKey:@"files"];
     [_filesCache setObject:fileSystemItem forKey:fileSystemItem.UUID];

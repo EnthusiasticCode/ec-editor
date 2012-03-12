@@ -128,6 +128,7 @@ static void *_directoryObservingContext;
         }
         else
         {
+#warning FIX!!! this point is never reached, create for saving doesn't apparently check for existance
             [self _createProjectFromZipAtURL:zipURL attempt:attemptNumber + 1];
         }
     }];
