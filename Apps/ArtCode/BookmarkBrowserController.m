@@ -24,19 +24,11 @@
 #import "NSString+PluralFormat.h"
 
 
-@interface BookmarkBrowserController (/*Private methods*/)
-
-- (void)_toolEditDeleteAction:(id)sender;
-
-@end
-
 
 @implementation BookmarkBrowserController {
 @protected
     NSArray *_filteredItems;
     NSArray *_filteredItemsHitMask;
-    
-    UIActionSheet *_toolEditItemDeleteActionSheet;
 }
 
 - (id)init
@@ -96,7 +88,7 @@
     if ([self isMemberOfClass:[BookmarkBrowserController class]])
     {
         // Tool edit items
-        self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+        self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
         
         // Customize subviews
         self.searchBar.placeholder = @"Filter bookmarks";
@@ -129,15 +121,16 @@
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
+    [super tableView:table didSelectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet == _toolEditItemDeleteActionSheet)
+    if (actionSheet == _toolEditDeleteActionSheet)
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex)
         {
@@ -154,18 +147,6 @@
             [self.tableView reloadData];
         }
     }
-}
-
-#pragma mark - Private methods
-
-- (void)_toolEditDeleteAction:(id)sender
-{
-    if (!_toolEditItemDeleteActionSheet)
-    {
-        _toolEditItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
-        _toolEditItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-    }
-    [_toolEditItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 @end
