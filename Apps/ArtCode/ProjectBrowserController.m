@@ -155,13 +155,6 @@ static void *_directoryObservingContext;
     return @"ArtCode";
 }
 
-#pragma mark - ArtCodeTab Methods
-
-- (void)artCodeTabReload
-{
-    // Nothing to do here, since it always shows the same thing
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView

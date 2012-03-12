@@ -293,11 +293,6 @@ static void *artCodeTabKey;
 - (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
 {
     objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_ASSIGN);
-    [self artCodeTabReload];
-}
-
-- (void)artCodeTabReload
-{
 }
 
 @end

@@ -541,9 +541,6 @@ static const void *loadingObservingContext;
         
         // Set the tab explicitly since result might not have a parent view controller yet
         result.artCodeTab = self.artCodeTab;
-
-        // Reload
-        [result artCodeTabReload];
     }
     else 
     {

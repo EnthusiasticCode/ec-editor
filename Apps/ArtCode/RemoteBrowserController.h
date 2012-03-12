@@ -13,12 +13,12 @@
 @interface RemoteBrowserController : SearchableTableBrowserController
 
 /// Takes over the control of the given connection that is pointing to the given URL.
-- (id)initWithConnection:(id<CKConnection>)con url:(NSURL *)conUrl;
+- (id)initWithConnection:(id<CKConnection>)con remoteURL:(NSURL *)conUrl;
 
 @property (nonatomic, strong, readonly) id<CKConnection> connection;
 
 /// Set the URL to open. This methos will activelly connect to the URL.
-@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, strong) NSURL *remoteURL;
 
 - (IBAction)refreshAction:(id)sender;
 

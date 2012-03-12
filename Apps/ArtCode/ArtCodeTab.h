@@ -61,7 +61,4 @@
 /// This methods try to retrieve the tab recursively on the receiver's parent view controller.
 @property (nonatomic, weak) ArtCodeTab *artCodeTab;
 
-/// Called when the view controller should refres
-- (void)artCodeTabReload;
-
 @end

@@ -360,8 +360,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - ArtCodeTab Category
 
-- (void)artCodeTabReload
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
 {
+    [super setArtCodeTab:artCodeTab];
+    
     ECASSERT(self.artCodeTab.currentItem.type == ACPFile);
     self.fileURL = self.artCodeTab.currentItem.URL;
 }

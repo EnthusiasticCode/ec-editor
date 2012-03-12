@@ -152,8 +152,10 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - ArtCodeTab Category
 
-- (void)artCodeTabReload
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
 {
+    [super setArtCodeTab:artCodeTab];
+    
     ECASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
     if (self.artCodeTab.currentItem)
         self.directory = self.artCodeTab.currentItem.URL;
@@ -403,7 +405,7 @@ static void *_openQuicklyObservingContext;
             {
                 // Show only remote in modal
                 RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
-                uploadController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+                uploadController.artCodeTab = self.artCodeTab;
                 uploadController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Upload" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)];
                 [self modalNavigationControllerPresentViewController:uploadController];
             }
@@ -591,7 +593,7 @@ static void *_openQuicklyObservingContext;
     {
         // Show only remote in modal
         RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-        syncController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+        syncController.artCodeTab = self.artCodeTab;
         syncController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserSyncAction:)];
         [self modalNavigationControllerPresentViewController:syncController];
     }

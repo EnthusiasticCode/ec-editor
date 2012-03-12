@@ -135,17 +135,6 @@
     return NO;
 }
 
-#pragma mark - ArtCodeTab Category
-
-- (void)artCodeTabReload
-{
-    if (self.isViewLoaded && self.view.superview != nil)
-    {
-        [self invalidateFilteredItems];
-        [self.tableView reloadData];
-    }
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
