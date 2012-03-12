@@ -149,6 +149,8 @@ static void *_directoryObservingContext;
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+#warning FIX port to project file list, not url
+ECASSERT(NO);
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
     NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
@@ -161,7 +163,7 @@ static void *_directoryObservingContext;
     
     cell.textLabel.text = [fileURL lastPathComponent];
     cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
-    cell.detailTextLabel.text = [fileURL prettyPathRelativeToProjectDirectory];
+//    cell.detailTextLabel.text = [fileURL prettyPathRelativeToProjectDirectory];
     
     return cell;
 }

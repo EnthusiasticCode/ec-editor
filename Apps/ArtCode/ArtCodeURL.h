@@ -26,18 +26,6 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 /// ie: artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath; generates artcode://projects
 + (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path;
 
-////////////////////////////////////////////////////// TODO remove methods below this point
-
-/// Returns the URL in which projects are stored
-+ (NSURL *)projectsDirectory;
-
-/// Returns a path relative to the projects directory if the file is within it, nil otherwise.
-+ (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL;
-
-/// Gets the project name from an URL or nil if no project was found.
-/// Uppon return, in isProjectRoot is not NULL, it will contain a value indicating if the given URL is a project root.
-+ (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot;
-
 @end
 
 @interface NSURL (ArtCodeURL)
@@ -61,24 +49,8 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 /// ie: the URL is in the format artcode://<project uuid>[-<item uuid>]...
 - (NSArray *)artCodeUUIDs;
 
-////////////////////////////////////////////////////// TODO remove/refactor methods below this point
-
-/// Indicate if the URL has a bookmarks specifier.
-- (BOOL)isBookmarksVariant;
-- (NSURL *)URLByAddingBookmarksVariant;
-
-/// Remotes 
-- (BOOL)isRemotesVariant;
-- (NSURL *)URLByAddingRemotesVariant;
-
-/// Indicates if the URL should be opened with a remote connection
-- (BOOL)isRemoteURL;
-
 /// Substitute / with ▸
 - (NSString *)prettyPath;
-
-/// Returns a string that has a pretty path format that removes '.weakpkg' extensions and adds ▸ instead of /
-- (NSString *)prettyPathRelativeToProjectDirectory;
 
 @end
 

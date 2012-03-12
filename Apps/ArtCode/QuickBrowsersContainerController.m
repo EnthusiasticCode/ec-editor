@@ -10,6 +10,9 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
 
 #import "QuickFileBrowserController.h"
 #import "QuickBookmarkBrowserController.h"
@@ -32,61 +35,23 @@
     if (!_commonControllers)
         _commonControllers = [NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil];
     
-    BOOL isDirectory = NO;
-    [[NSFileManager defaultManager] fileExistsAtPath:[contentController.artCodeTab.currentURL path] isDirectory:&isDirectory];
-    if (isDirectory)
+    ECASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
+
+    if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList])
     {
-        BOOL isProjectRoot = NO;
-        [ArtCodeURL projectNameFromURL:contentController.artCodeTab.currentURL isProjectRoot:&isProjectRoot];
-        if (isProjectRoot)
+        if (!_commonController)
         {
-            if ([contentController.artCodeTab.currentURL isBookmarksVariant])
-            {
-                if (!_commonController)
-                {
-                    _commonController = [[QuickBrowsersContainerController alloc] init];
-                    _commonController.contentController = contentController;
-                    [_commonController setViewControllers:_commonControllers animated:NO];
-                }
-                else
-                {
-                    _commonController.contentController = contentController;
-                }
-                return _commonController;
-            }
-            
-            if (!_projectController)
-            {
-                _projectController = [[QuickBrowsersContainerController alloc] init];
-                _projectController.contentController = contentController;
-                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickProjectInfoController new]];
-                [viewControllers addObjectsFromArray:_commonControllers];
-                [_projectController setViewControllers:viewControllers animated:NO];
-            }
-            else
-            {
-                _projectController.contentController = contentController;
-            }
-            return _projectController;
+            _commonController = [[QuickBrowsersContainerController alloc] init];
+            _commonController.contentController = contentController;
+            [_commonController setViewControllers:_commonControllers animated:NO];
         }
         else
         {
-            if (!_folderController)
-            {
-                _folderController = [[QuickBrowsersContainerController alloc] init];
-                _folderController.contentController = contentController;
-                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickFolderInfoController new]];
-                [viewControllers addObjectsFromArray:_commonControllers];
-                [_folderController setViewControllers:viewControllers animated:NO];
-            }
-            else
-            {
-                _folderController.contentController = contentController;
-            }
-            return _folderController;
+            _commonController.contentController = contentController;
         }
+        return _commonController;
     }
-    else if ([contentController.artCodeTab.currentURL isRemoteURL])
+    else if ([contentController.artCodeTab.currentURL isArtCodeProjectRemotesList])
     {
         if (!_remoteController)
         {
@@ -104,19 +69,55 @@
     }
     else
     {
-        if (!_fileController)
+        ACProjectFileSystemItem *fileItem = (ACProjectFileSystemItem *)contentController.artCodeTab.currentItem;
+        if ([fileItem parentFolder] == nil)
         {
-            _fileController = [[QuickBrowsersContainerController alloc] init];
-            _fileController.contentController = contentController;
-            NSMutableArray *viewControllers = [NSMutableArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], nil];
-            [viewControllers addObjectsFromArray:_commonControllers];
-            [_fileController setViewControllers:viewControllers animated:NO];
+            if (!_projectController)
+            {
+                _projectController = [[QuickBrowsersContainerController alloc] init];
+                _projectController.contentController = contentController;
+                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickProjectInfoController new]];
+                [viewControllers addObjectsFromArray:_commonControllers];
+                [_projectController setViewControllers:viewControllers animated:NO];
+            }
+            else
+            {
+                _projectController.contentController = contentController;
+            }
+            return _projectController;
+        }
+        else if (fileItem.type == ACPFolder)
+        {
+            if (!_folderController)
+            {
+                _folderController = [[QuickBrowsersContainerController alloc] init];
+                _folderController.contentController = contentController;
+                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickFolderInfoController new]];
+                [viewControllers addObjectsFromArray:_commonControllers];
+                [_folderController setViewControllers:viewControllers animated:NO];
+            }
+            else
+            {
+                _folderController.contentController = contentController;
+            }
+            return _folderController;
         }
         else
         {
-            _fileController.contentController = contentController;
+            if (!_fileController)
+            {
+                _fileController = [[QuickBrowsersContainerController alloc] init];
+                _fileController.contentController = contentController;
+                NSMutableArray *viewControllers = [NSMutableArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], nil];
+                [viewControllers addObjectsFromArray:_commonControllers];
+                [_fileController setViewControllers:viewControllers animated:NO];
+            }
+            else
+            {
+                _fileController.contentController = contentController;
+            }
+            return _fileController;
         }
-        return _fileController;
     }
     return nil;
 }

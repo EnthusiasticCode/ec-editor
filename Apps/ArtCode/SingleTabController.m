@@ -401,16 +401,16 @@ static const void *loadingObservingContext;
                         
                     default:
                     {
-                        NSString *path = [(ACProjectFileSystemItem *)item pathRelativeToProject];
                         // If project root set color and project name 
-                        if ([path length] <= 1)
+                        if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
                         {
                             [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], [self.artCodeTab.currentProject localizedName], nil] selectedIndexes:nil];
                         }
                         // or path and file name for items
                         else
                         {
-                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[[item.project localizedName] stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], nil] selectedIndexes:nil];
+                            NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
                         }
                         // Mark url as handled
                         url = nil;

@@ -394,14 +394,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if (_currentSymbol)
     {
-        NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathRelativeToProject];
+        NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject];
         if (_currentSymbol.icon)
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[self.artCodeTab.currentProject.localizedName stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         else
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[self.artCodeTab.currentProject.localizedName stringByAppendingPathComponent:[path stringByDeletingLastPathComponent]], [path lastPathComponent], _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         return YES;
     }

@@ -57,12 +57,12 @@
     return [NSFileWrapper new];
 }
 
-- (NSString *)pathRelativeToProject
+- (NSString *)pathInProject
 {
     if (self.parentFolder == nil)
-        return @"/";
+        return self.project.localizedName;
     
-    return [[self.parentFolder pathRelativeToProject] stringByAppendingPathComponent:self.name];
+    return [[self.parentFolder pathInProject] stringByAppendingPathComponent:self.name];
 }
 
 #pragma mark - Item methods

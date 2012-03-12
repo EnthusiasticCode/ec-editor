@@ -302,14 +302,15 @@ static void *_directoryObservingContext;
     }
     else if (actionSheet == _toolItemExportActionSheet)
     {
+#warning FIX
+ECASSERT(NO);
         if (buttonIndex == 0) // export to iTunes
         {
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
             
             self.loading = YES;
-#warning FIX
-            ECASSERT(NO);
+
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
 //                ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
 //                if (!project)
@@ -338,9 +339,9 @@ static void *_directoryObservingContext;
                 NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
                 
                 // Generate mail subject
-                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
-                if (projectName)
-                    [subject appendFormat:@"%@, ", projectName];
+//                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
+//                if (projectName)
+//                    [subject appendFormat:@"%@, ", projectName];
                 
                 // Generate a working temporary directory to write attachments into
                 NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
