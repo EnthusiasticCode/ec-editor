@@ -117,6 +117,7 @@ static void *_currentFolderContext;
             _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
                 return element.name;
             }];
+            _filteredItemsHitMasks = hitMasks;
             if ([_filteredItems count] == 0)
                 self.infoLabel.text = @"No items in this folder match the filter";
             else
