@@ -7,6 +7,7 @@
 //
 
 #import "ACProjectFileSystemItem.h"
+@class ACProjectFileBookmark;
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
@@ -28,5 +29,6 @@
 
 /// Get the bookmarks for the file.
 - (NSArray *)bookmarks;
+- (ACProjectFileBookmark *)bookmarkForPoint:(id)point;
 
 @end

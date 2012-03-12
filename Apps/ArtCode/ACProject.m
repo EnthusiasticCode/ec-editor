@@ -56,9 +56,9 @@ static NSString * const _plistRemotesKey = @"remotes";
 @implementation ACProject
 {
     BOOL _isDirty;
-    NSMutableDictionary *_files;
+    NSMutableDictionary *_filesCache;
+    NSMutableDictionary *_bookmarksCache;
     NSMutableDictionary *_remotes;
-    NSMutableDictionary *_bookmarks;
 }
 
 #pragma mark - Properties
@@ -114,12 +114,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (NSArray *)files
 {
-    return [_files allValues];
+    return [_filesCache allValues];
 }
 
 - (NSArray *)bookmarks
 {
-    return [_bookmarks allValues];
+    return [_bookmarksCache allValues];
 }
 
 - (NSArray *)remotes
@@ -132,8 +132,8 @@ static NSString * const _plistRemotesKey = @"remotes";
     self = [super initWithFileURL:url];
     if (!self)
         return nil;
-    _files = [NSMutableDictionary new];
-    _bookmarks = [NSMutableDictionary new];
+    _filesCache = [NSMutableDictionary new];
+    _bookmarksCache = [NSMutableDictionary new];
     _remotes = [NSMutableDictionary new];
     return self;
 }
@@ -188,19 +188,6 @@ static NSString * const _plistRemotesKey = @"remotes";
     if (contentsWrapper)
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil contents:contentsWrapper];
     
-    // Bookmarks
-    if ([plist objectForKey:_plistBookmarksKey])
-    {
-        NSMutableDictionary *bookmarksFromPlist = [NSMutableDictionary new];
-        for (NSDictionary *bookmarkPlist in [plist objectForKey:_plistBookmarksKey])
-        {
-            ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self propertyListDictionary:bookmarkPlist];
-            if (bookmark)
-                [bookmarksFromPlist setObject:bookmark forKey:bookmark.UUID];
-        }
-        _bookmarks = [bookmarksFromPlist copy];
-    }
-    
     // Remotes
     if ([plist objectForKey:_plistRemotesKey])
     {
@@ -234,17 +221,6 @@ static NSString * const _plistRemotesKey = @"remotes";
             [plist setObject:contentsPlist forKey:_plistContentsKey];
     }
 
-    // Bookmarks
-    if ([self.bookmarks count])
-    {
-        NSMutableArray *bookmarksPlist = [NSMutableArray arrayWithCapacity:[self.bookmarks count]];
-        for (ACProjectFileBookmark *bookmark in self.bookmarks)
-        {
-            [bookmarksPlist addObject:[bookmark propertyListDictionary]];
-        }
-        [plist setObject:bookmarksPlist forKey:_plistBookmarksKey];
-    }
-    
     // Remotes
     if ([self.remotes count])
     {
@@ -332,10 +308,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 + (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project
 {
+    [project willChangeValueForKey:@"labelColor"];
     NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
     [projectInfo setValue:color.hexString forKey:_plistLabelColorKey];
     [_projectsList setObject:projectInfo forKey:project.UUID];
     [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    [project didChangeValueForKey:@"labelColor"];
 }
 
 + (NSURL *)projectsURL
@@ -365,9 +343,9 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (ACProjectItem *)itemWithUUID:(id)uuid
 {
-    ACProjectItem *item = [_files objectForKey:uuid];
+    ACProjectItem *item = [_filesCache objectForKey:uuid];
     if (!item)
-        item = [_bookmarks objectForKey:uuid];
+        item = [_bookmarksCache objectForKey:uuid];
     if (!item)
         item = [_remotes objectForKey:uuid];
     return item;
@@ -393,37 +371,24 @@ static NSString * const _plistRemotesKey = @"remotes";
     [self willChangeValueForKey:@"remotes"];
     [_remotes removeObjectForKey:remote.UUID];
     [self didChangeValueForKey:@"remotes"];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 #pragma mark - Internal Bookmarks Methods
 
 - (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
 {
+    ECASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
-    [_bookmarks setObject:bookmark forKey:bookmark.UUID];
+    [_bookmarksCache setObject:bookmark forKey:bookmark.UUID];
     [self didChangeValueForKey:@"bookmarks"];
-    [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
+    ECASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
-    [_bookmarks removeObjectForKey:bookmark.UUID];
+    [_bookmarksCache removeObjectForKey:bookmark.UUID];
     [self didChangeValueForKey:@"bookmarks"];
-    [self updateChangeCount:UIDocumentChangeDone];
-}
-
-- (NSMutableArray *)implBookmarksForFile:(ACProjectFile *)file
-{
-    NSMutableArray *fileBookmarks = [NSMutableArray new];
-    [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id key, ACProjectFileBookmark *bookmark, BOOL *stop) {
-        if (bookmark.file == file)
-        {
-            [fileBookmarks addObject:bookmark];
-        }
-    }];
-    return fileBookmarks;
 }
 
 #pragma mark - Internal Files Methods
@@ -431,13 +396,17 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
     ECASSERT(fileSystemItem);
-    [_files setObject:fileSystemItem forKey:fileSystemItem.UUID];
+    [self willChangeValueForKey:@"files"];
+    [_filesCache setObject:fileSystemItem forKey:fileSystemItem.UUID];
+    [self didChangeValueForKey:@"files"];
 }
 
 - (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
 {
     ECASSERT(fileSystemItem);
-    [_files removeObjectForKey:fileSystemItem.UUID];
+    [self willChangeValueForKey:@"files"];
+    [_filesCache removeObjectForKey:fileSystemItem.UUID];
+    [self didChangeValueForKey:@"files"];
 }
 
 @end
