@@ -177,7 +177,7 @@ static NSMutableArray *_mutableTabs;
 - (void)pushURL:(NSURL *)url
 {
     ECASSERT(url);
-    _currentProject = nil;
+    // Moving in case of no previous history
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
@@ -187,6 +187,7 @@ static NSMutableArray *_mutableTabs;
         }];
         return;
     }
+    // Adding path to history and move forward
     NSUInteger lastPosition = [self.historyURLs count] - 1;
     if (self.currentHistoryPosition < lastPosition)
     {

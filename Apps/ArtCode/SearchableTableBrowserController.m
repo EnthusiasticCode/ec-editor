@@ -13,9 +13,10 @@
 #import "NSTimer+BlockTimer.h"
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
-#import "ArtCodeTab.h"
 
+#import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
+#import "ACProject.h"
 
 
 @implementation SearchableTableBrowserController {
@@ -182,9 +183,9 @@
         
         // Select button
         NSInteger selectedTag = 0;
-        if ([self.artCodeTab.currentURL isBookmarksVariant])
+        if ([self.artCodeTab.currentURL isArtCodeProjectBookmarksList])
             selectedTag = 1;
-        else if ([self.artCodeTab.currentURL isRemotesVariant])
+        else if ([self.artCodeTab.currentURL isArtCodeProjectRemotesList])
             selectedTag = 2;
         for (UIView *subview in self.bottomToolBar.subviews)
         {
@@ -332,21 +333,19 @@
 
 - (IBAction)toolPushUrlForTagAction:(id)sender
 {
-#warning FIX
-ECASSERT(NO);
-//    switch ([sender tag]) {
-//        case 1:
-//            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingBookmarksVariant]];
-//            break;
-//            
-//        case 2:
-//            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingRemotesVariant]];
-//            break;
-//            
-//        default:
-//            [self.artCodeTab pushURL:self.artCodeTab.currentProject.URL];
-//            break;
-//    }
+    switch ([sender tag]) {
+        case 1:
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectBookmarkListPath]];
+            break;
+            
+        case 2:
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectRemoteListPath]];
+            break;
+            
+        default:
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:nil]];
+            break;
+    }
 }
 
 #pragma mark - Modal navigation
