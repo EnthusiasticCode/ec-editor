@@ -7,6 +7,8 @@
 //
 
 #import "RemotesListController.h"
+#import "SingleTabController.h"
+
 #import "ArtCodeTab.h"
 #import "ACProject.h"
 #import "ACProjectRemote.h"
@@ -16,6 +18,8 @@
 #import "ShapePopoverBackgroundView.h"
 #import "NewRemoteViewController.h"
 #import "UIViewController+Utilities.h"
+#import "NSString+PluralFormat.h"
+#import "BezelAlert.h"
 
 @class SingleTabController, TopBarToolbar;
 
@@ -26,7 +30,6 @@ static void *_currentProjectRemotesContext;
 @property (nonatomic, strong) ACProject *currentProject;
 
 - (void)_toolAddAction:(id)sender;
-- (void)_toolDeleteAction:(id)sender;
 
 @end
 
@@ -108,7 +111,7 @@ static void *_currentProjectRemotesContext;
 
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
     
-    self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolDeleteAction:)]];
+    self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
     
     // Load the bottom toolbar
     [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
@@ -167,6 +170,29 @@ static void *_currentProjectRemotesContext;
     if (!self.isEditing)
     {
         [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+    }
+}
+
+#pragma mark - Action sheed delegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (actionSheet == _toolEditDeleteActionSheet)
+    {
+        if (buttonIndex == actionSheet.destructiveButtonIndex)
+        {
+            self.loading = YES;
+            NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
+            [self setEditing:NO animated:YES];
+            for (NSIndexPath *indexPath in selectedRows)
+            {
+                [[self.filteredItems objectAtIndex:indexPath.row] remove];
+            }
+            self.loading = NO;
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+            [self invalidateFilteredItems];
+            [self.tableView reloadData];
+        }
     }
 }
 
