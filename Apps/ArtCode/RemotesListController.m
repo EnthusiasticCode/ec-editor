@@ -169,8 +169,9 @@ static void *_currentProjectRemotesContext;
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Action sheed delegate

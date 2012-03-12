@@ -8,8 +8,11 @@
 
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
+#import "ACProject.h"
+#import "ACProjectRemote.h"
 
 #import "UIViewController+Utilities.h"
+#import "BezelAlert.h"
 
 @interface NewRemoteViewController ()
 
@@ -39,33 +42,39 @@
 
 - (void)_createAction:(id)sender
 {
-#warning FIX
-    ECASSERT(NO);
+    NSMutableString *remoteURLString = [NSMutableString new];
+    switch (self.remoteType.selectedSegmentIndex) {
+        case 0:
+            [remoteURLString appendString:@"ftp://"];
+            break;
+            
+        case 1:
+            [remoteURLString appendString:@"ssh://"];
+            break;
+            
+        case 2:
+            [remoteURLString appendString:@"http://"];
+            break;
+    }
+    if ([self.remoteUser.text length])
+        [remoteURLString appendFormat:@"%@@", self.remoteUser.text];
+    [remoteURLString appendString:self.remoteHost.text];
+    if ([self.remotePort.text length])
+        [remoteURLString appendFormat:@":%d", [self.remotePort.text integerValue]];
     
-    // TODO add check for duplicate, validate fields
-//    ProjectRemote *remote = [ProjectRemote new];
-//    remote.name = self.remoteName.text;
-//    switch (self.remoteType.selectedSegmentIndex) {
-//        case 0:
-//            remote.scheme = @"ftp";
-//            break;
-//#warning TODO set proper schemes
-//        case 1:
-//            remote.scheme = @"ssh";
-//            break;
-//            
-//        case 2:
-//            remote.scheme = @"webdav";
-//            break;
-//    }
-//    remote.host = self.remoteHost.text;
-//    remote.port = [self.remotePort.text integerValue];
-//    // TODO save password in keychain instead
-//    remote.user = self.remoteUser.text;
-//    if ([self.remotePassword.text length])
-//        remote.password = self.remotePassword.text;
-//    [self.artCodeTab.currentProject addRemote:remote];
-//    [self.presentingPopoverController dismissPopoverAnimated:YES];
+    ACProjectRemote *remote = [self.artCodeTab.currentProject addRemoteWithName:self.remoteName.text URL:[NSURL URLWithString:remoteURLString]];
+    if (remote)
+    {
+        if ([self.remotePassword.text length])
+            remote.password = self.remotePassword.text;
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    }
+    else
+    {
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error adding new remote" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    }
+    
+    [self.presentingPopoverController dismissPopoverAnimated:YES];
 }
 
 @end

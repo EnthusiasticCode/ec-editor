@@ -380,13 +380,16 @@ static NSString * const _plistRemotesKey = @"remotes";
     return item;
 }
 
-- (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
+- (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
 {
     ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
     if (!remote)
-        return;
+        return nil;
+    [self willChangeValueForKey:@"remotes"];
     [_remotes setObject:remote forKey:remote.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
+    [self didChangeValueForKey:@"remotes"];
+    return remote;
 }
 
 #pragma mark - Internal Remotes Methods
@@ -394,7 +397,9 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)didRemoveRemote:(ACProjectRemote *)remote
 {
     ECASSERT(remote);
+    [self willChangeValueForKey:@"remotes"];
     [_remotes removeObjectForKey:remote.UUID];
+    [self didChangeValueForKey:@"remotes"];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACProjectItem, ACProjectFolder, ACProjectFile;
+@class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote;
 
 @interface ACProject : UIDocument
 
@@ -30,7 +30,7 @@
 - (ACProjectItem *)itemWithUUID:(id)uuid;
 
 /// Adds a remote to the project with a full remote url <scheme>://user@host:port
-- (void)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;
+- (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;
 
 #pragma mark Project whide operations
 

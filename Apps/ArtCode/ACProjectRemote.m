@@ -90,10 +90,12 @@
     self = [super initWithProject:project propertyListDictionary:nil];
     if (!self)
         return nil;
-    ECASSERT(name);
-    ECASSERT(remoteURL);
-    _name = name;
     _URL = remoteURL;
+    if (!_URL)
+        return nil;
+    _name = name;
+    if (![_name length])
+        _name = _URL.host;
     return self;
 }
 
@@ -104,12 +106,12 @@
     self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self)
         return nil;
-    _name = [plistDictionary objectForKey:@"name"];
-    if (!_name)
-        return nil;
     _URL = [NSURL URLWithString:[plistDictionary objectForKey:@"url"]];
     if (!_URL)
         return nil;
+    _name = [plistDictionary objectForKey:@"name"];
+    if (![_name length])
+        _name = _URL.host;
     return self;
 }
 
