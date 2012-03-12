@@ -21,14 +21,21 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
 
-- (void)didAddBookmarkWithFile:(ACProjectFile *)file point:(id)point;
+- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark;
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
-- (NSArray *)implBookmarksForFile:(ACProjectFile *)file;
+- (NSMutableArray *)implBookmarksForFile:(ACProjectFile *)file;
+
+@end
+
+/// Bookmark internal initialization for creation
+@interface ACProjectFileBookmark (Internal)
+
+- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint;
 
 @end
 
 @implementation ACProjectFile {
-    NSArray *_bookmarksCache;
+    NSMutableArray *_bookmarksCache;
 }
 
 #pragma mark - Properties
@@ -67,8 +74,9 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (void)addBookmarkWithPoint:(id)point
 {
-    _bookmarksCache = nil;
-    [self.project didAddBookmarkWithFile:self point:point];
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project file:self bookmarkPoint:point];
+    [_bookmarksCache addObject:bookmark];
+    [self.project didAddBookmark:bookmark];
 }
 
 #pragma mark - Item methods
@@ -87,7 +95,7 @@ static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
-    _bookmarksCache = nil;
+    [_bookmarksCache removeObject:bookmark];
     [self.project didRemoveBookmark:bookmark];
 }
 

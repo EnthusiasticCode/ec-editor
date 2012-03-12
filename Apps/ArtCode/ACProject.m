@@ -45,13 +45,6 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 @end
 
-/// Bookmark internal initialization for creation
-@interface ACProjectFileBookmark (Internal)
-
-- (id)initWithProject:(ACProject *)project file:(ACProjectFile *)file bookmarkPoint:(id)bookmarkPoint;
-
-@end
-
 /// Remotes internal inialization for creation
 @interface ACProjectRemote (Internal)
 
@@ -405,20 +398,23 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Bookmarks Methods
 
-- (void)didAddBookmarkWithFile:(ACProjectFile *)file point:(id)point
+- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
 {
-    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self file:file bookmarkPoint:point];
+    [self willChangeValueForKey:@"bookmarks"];
     [_bookmarks setObject:bookmark forKey:bookmark.UUID];
+    [self didChangeValueForKey:@"bookmarks"];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
 {
+    [self willChangeValueForKey:@"bookmarks"];
     [_bookmarks removeObjectForKey:bookmark.UUID];
+    [self didChangeValueForKey:@"bookmarks"];
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (NSArray *)implBookmarksForFile:(ACProjectFile *)file
+- (NSMutableArray *)implBookmarksForFile:(ACProjectFile *)file
 {
     NSMutableArray *fileBookmarks = [NSMutableArray new];
     [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id key, ACProjectFileBookmark *bookmark, BOOL *stop) {
@@ -427,7 +423,7 @@ static NSString * const _plistRemotesKey = @"remotes";
             [fileBookmarks addObject:bookmark];
         }
     }];
-    return [fileBookmarks copy];
+    return fileBookmarks;
 }
 
 #pragma mark - Internal Files Methods
