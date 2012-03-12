@@ -81,19 +81,12 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
     // TODO cache?
     static NSRegularExpression *uuidRegExp = nil;
     if (!uuidRegExp)
-        uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"(?:([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?)+" options:NSRegularExpressionCaseInsensitive error:NULL];
-    NSArray *matches = [uuidRegExp matchesInString:self.host options:0 range:NSMakeRange(0, [self.host length])];
-    if ([matches count] == 0)
-        return nil;
-    ECASSERT([matches count] == 1);
-    NSTextCheckingResult *regExpResult = [matches objectAtIndex:0];
-    NSInteger regExpResultCount = [regExpResult numberOfRanges];
-    ECASSERT(regExpResultCount > 1);
-    NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:regExpResultCount - 1];
-    for (NSInteger i = 1; i < regExpResultCount; ++i)
-    {
-        [uuids addObject:[self.host substringWithRange:[regExpResult rangeAtIndex:i]]];
-    }
+        uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?" options:NSRegularExpressionCaseInsensitive error:NULL];
+    
+    NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
+    [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+        [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
+    }];
     return [uuids copy];
 }
 
