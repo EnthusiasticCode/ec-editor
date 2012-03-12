@@ -141,13 +141,12 @@
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex)
         {
-            ECASSERT(NO); // TODO reimplement
             self.loading = YES;
             NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
             [self setEditing:NO animated:YES];
             for (NSIndexPath *indexPath in selectedRows)
             {
-//                [self.artCodeTab.currentProject removeBookmark:[self.filteredItems objectAtIndex:indexPath.row]];
+                [[self.filteredItems objectAtIndex:indexPath.row] remove];
             }
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
