@@ -136,7 +136,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         __weak CodeFileController *this = self;
         
         _codeView = [CodeView new];
-        _codeView.dataSource = self.codeFile;
+        _codeView.dataSource = self;
         _codeView.delegate = self;
         _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
         
@@ -276,7 +276,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [_codeFile removePresenter:self];
     _codeUnit = nil;
     _codeFile = codeFile;
-    _codeView.dataSource = _codeFile;
     _codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:_codeFile rootScopeIdentifier:nil];
     [_codeView updateAllText];
     [_codeFile addPresenter:self];
@@ -654,18 +653,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
     CodeFileGeneration generation;
     NSMutableAttributedString *attributedString = [[self.codeFile attributedStringInRange:stringRange generation:&generation] mutableCopy];
-    static NSRegularExpression *placeholderRegExp = nil;
-    if (!placeholderRegExp)
-        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    // Add placeholders styles
-    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        NSString *placeHolderName;
-        if (![self.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
-            *stop = YES;
-            return;
-        }
-        [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
-    }];
+    if (attributedString.length) {
+        static NSRegularExpression *placeholderRegExp = nil;
+        if (!placeholderRegExp)
+            placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+        // Add placeholders styles
+        [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+            NSString *placeHolderName;
+            if (![self.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
+                *stop = YES;
+                return;
+            }
+            [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
+        }];
+    }
     return attributedString;
 }
 

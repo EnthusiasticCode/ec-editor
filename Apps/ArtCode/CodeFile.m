@@ -57,11 +57,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 - (id)initWithFileURL:(NSURL *)url
 {
-    UNIMPLEMENTED();
-}
-
-- (id)_initWithFileURL:(NSURL *)url
-{
     ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     self = [super initWithFileURL:url];
     if (!self)
