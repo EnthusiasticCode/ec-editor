@@ -362,7 +362,7 @@
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
 		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
-		CDB5DB6514C6F56A003DFD1F /* DirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */; };
+		CDB5DB6514C6F56A003DFD1F /* ProjectFolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
 		CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
@@ -904,8 +904,8 @@
 		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* CodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
-		CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryBrowserController.h; sourceTree = "<group>"; };
-		CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryBrowserController.m; sourceTree = "<group>"; };
+		CDB5DB6314C6F56A003DFD1F /* ProjectFolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ProjectFolderBrowserController.h; sourceTree = "<group>"; };
+		CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectFolderBrowserController.m; sourceTree = "<group>"; };
 		CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveConflictController.h; sourceTree = "<group>"; };
 		CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoveConflictController.m; sourceTree = "<group>"; };
 		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
@@ -1572,8 +1572,8 @@
 		CD69C8FE14F1638900FCC987 /* Export sheets */ = {
 			isa = PBXGroup;
 			children = (
-				CDB5DB6314C6F56A003DFD1F /* DirectoryBrowserController.h */,
-				CDB5DB6414C6F56A003DFD1F /* DirectoryBrowserController.m */,
+				CDB5DB6314C6F56A003DFD1F /* ProjectFolderBrowserController.h */,
+				CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
 				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
 				CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */,
@@ -2481,7 +2481,7 @@
 				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
 				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,
 				CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */,
-				CDB5DB6514C6F56A003DFD1F /* DirectoryBrowserController.m in Sources */,
+				CDB5DB6514C6F56A003DFD1F /* ProjectFolderBrowserController.m in Sources */,
 				CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */,
 				CD7B435114CECA5700090CAE /* QuickBrowsersContainerController.m in Sources */,
 				CD7B435414CECA9900090CAE /* QuickFileBrowserController.m in Sources */,

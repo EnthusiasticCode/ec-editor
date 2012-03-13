@@ -14,7 +14,7 @@
 #import "ArtCodeTab.h"
 
 #import "Keychain.h"
-#import "DirectoryBrowserController.h"
+#import "ProjectFolderBrowserController.h"
 #import "RemoteTransferController.h"
 
 #import "ArtCodeURL.h"
@@ -477,7 +477,7 @@
 {
 #warning FIX
 ECASSERT(NO); 
-    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
 //    directoryBrowser.URL = self.artCodeTab.currentProject.fileURL;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -490,7 +490,7 @@ ECASSERT(NO);
     ECASSERT(NO);
     
     // Show directory browser presenter to select where to download
-    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
 //    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -529,8 +529,8 @@ ECASSERT(NO);
 - (void)_modalNavigationControllerDownloadAction:(id)sender
 {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
     
     // Show conflit resolution controller
     RemoteTransferController *transferController = [RemoteTransferController new];
@@ -539,20 +539,22 @@ ECASSERT(NO);
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
     
+ECASSERT(NO);
+#warning FIX
     // Resolve conflicts and start downloading
-    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.remoteURL toLocalURL:moveURL completion:^(id<CKConnection> connection, NSError *error) {
-        [self setEditing:NO animated:YES];
-        if (self.tableView.indexPathForSelectedRow)
-            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
-        [self modalNavigationControllerDismissAction:sender];
-    }];
+//    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.remoteURL toLocalURL:moveURL completion:^(id<CKConnection> connection, NSError *error) {
+//        [self setEditing:NO animated:YES];
+//        if (self.tableView.indexPathForSelectedRow)
+//            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+//        [self modalNavigationControllerDismissAction:sender];
+//    }];
 }
 
 - (void)_modalNavigationControllerSyncAction:(id)sender
 {
     // Retrieve URL to sync to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *localURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *localFolder = directoryBrowser.selectedFolder;
     
     // Show sync controller
     RemoteTransferController *transferController = [RemoteTransferController new];
@@ -560,11 +562,13 @@ ECASSERT(NO);
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
-    
+
+ECASSERT(NO);
+#warning FIX
     // Start sync
-    [transferController syncLocalDirectoryURL:localURL withConnection:(id<CKConnection>)_connection remoteURL:self.remoteURL options:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:RemoteSyncDirectionRemoteToLocal], RemoteSyncOptionDirectionKey, nil] completion:^(id<CKConnection> connection, NSError *error) {
-        [self modalNavigationControllerDismissAction:sender];
-    }];
+//    [transferController syncLocalDirectoryURL:localURL withConnection:(id<CKConnection>)_connection remoteURL:self.remoteURL options:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:RemoteSyncDirectionRemoteToLocal], RemoteSyncOptionDirectionKey, nil] completion:^(id<CKConnection> connection, NSError *error) {
+//        [self modalNavigationControllerDismissAction:sender];
+//    }];
 }
 
 @end

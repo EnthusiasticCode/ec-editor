@@ -13,7 +13,7 @@
 #import "HighlightTableViewCell.h"
 
 #import "NewFileController.h"
-#import "DirectoryBrowserController.h"
+#import "ProjectFolderBrowserController.h"
 #import "MoveConflictController.h"
 
 #import "RemoteDirectoryBrowserController.h"
@@ -303,9 +303,9 @@ static void *_currentFolderContext;
     {
         if (buttonIndex == 0) // Copy
         {
-            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentItem.URL;
+            directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Duplicate
@@ -334,9 +334,9 @@ ECASSERT(NO);
     {
         if (buttonIndex == 0) // Move
         {
-            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentItem.URL;
+            directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Upload
@@ -477,44 +477,48 @@ ECASSERT(NO);
 - (void)_directoryBrowserCopyAction:(id)sender
 {    
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
-    if (moveURL == nil)
-        moveURL = directoryBrowser.URL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
+    
     // Initialize conflict controller
     MoveConflictController *conflictController = [[MoveConflictController alloc] init];
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     conflictController.navigationItem.leftBarButtonItem = cancelItem;
+    
+    ECASSERT(NO);
+#warning FIX
     // Show conflict controller
-    NSFileManager *fileManager = [NSFileManager new];
-    [_modalNavigationController pushViewController:conflictController animated:YES];
-    [conflictController processItemURLs:[_selectedItems copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
-        [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
-    } completion:^{
-        [self setEditing:NO animated:YES];
-        [self modalNavigationControllerDismissAction:sender];
-    }];
+//    NSFileManager *fileManager = [NSFileManager new];
+//    [_modalNavigationController pushViewController:conflictController animated:YES];
+//    [conflictController processItemURLs:[_selectedItems copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
+//        [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
+//    } completion:^{
+//        [self setEditing:NO animated:YES];
+//        [self modalNavigationControllerDismissAction:sender];
+//    }];
 }
 
 - (void)_directoryBrowserMoveAction:(id)sender
 {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
     
     // Initialize conflict controller
     MoveConflictController *conflictController = [[MoveConflictController alloc] init];
     [self modalNavigationControllerPresentViewController:conflictController];
-    
+
+ECASSERT(NO);
+#warning FIX
     // Show conflict controller
-    NSFileManager *fileManager = [NSFileManager new];
-    [conflictController processItemURLs:[_selectedItems copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
-        [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
-    } completion:^{
-        [self setEditing:NO animated:YES];
-        [self modalNavigationControllerDismissAction:sender];
-    }];
+//    NSFileManager *fileManager = [NSFileManager new];
+//    [conflictController processItemURLs:[_selectedItems copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
+//        [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
+//    } completion:^{
+//        [self setEditing:NO animated:YES];
+//        [self modalNavigationControllerDismissAction:sender];
+//    }];
 }
 
 - (void)_remoteDirectoryBrowserUploadAction:(id)sender

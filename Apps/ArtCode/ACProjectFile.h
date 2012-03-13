@@ -27,11 +27,13 @@
 
 #pragma mark Managing file bookmarks
 
+/// Get the bookmarks for the file.
+- (NSArray *)bookmarks;
+
 /// Add a bookmark to the file.
 - (void)addBookmarkWithPoint:(id)point;
 
-/// Get the bookmarks for the file.
-- (NSArray *)bookmarks;
+/// Get a bookmark in this file with the given point if present.
 - (ACProjectFileBookmark *)bookmarkForPoint:(id)point;
 
 @end

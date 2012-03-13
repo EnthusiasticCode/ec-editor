@@ -45,6 +45,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 @end
 
+#pragma mark
+
 /// Remotes internal inialization for creation
 @interface ACProjectRemote (Internal)
 
@@ -52,6 +54,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 @end
 
+#pragma mark
 
 @implementation ACProject
 {
@@ -61,10 +64,10 @@ static NSString * const _plistRemotesKey = @"remotes";
     NSMutableDictionary *_remotes;
 }
 
-#pragma mark - Properties
-
 @synthesize UUID = _UUID, artCodeURL = _artCodeURL;
 @synthesize contentsFolder = _contentsFolder;
+
+#pragma mark - Properties
 
 - (id)UUID
 {    
