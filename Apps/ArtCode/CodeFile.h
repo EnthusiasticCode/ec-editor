@@ -7,15 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CodeView.h"
 
-@protocol CodeFilePresenter;
+@class TMTheme, CodeFile;
 
-@class TMTheme;
+@protocol CodeFilePresenter <NSObject>
 
-@interface CodeFile : UIDocument <CodeViewDataSource>
+@optional
+- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range;
 
-+ (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *codeFile))completionHandler;
+@end
+
+@interface CodeFile : UIDocument
 
 - (void)addPresenter:(id<CodeFilePresenter>)presenter;
 - (void)removePresenter:(id<CodeFilePresenter>)presenter;
@@ -62,9 +65,3 @@
 
 @end
 
-@protocol CodeFilePresenter <NSObject>
-@optional
-/// Both regular and attributed versions of these methods are called regardless of whether the change was triggered by a call to the regular or attributed version of the replace methods
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
-- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range;
-@end

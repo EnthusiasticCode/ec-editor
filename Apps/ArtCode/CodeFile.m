@@ -8,15 +8,8 @@
 
 #import "CodeFile+Generation.h"
 #import "TMTheme.h"
-#import "TMIndex.h"
-#import "TMUnit.h"
-#import "TMScope.h"
-#import "TMPreference.h"
-#import "WeakDictionary.h"
 #import "WeakArray.h"
 #import <libkern/OSAtomic.h>
-
-static WeakDictionary *_codeFiles;
 
 static NSString * const _changeTypeKey = @"CodeFileChangeTypeKey";
 static NSString * const _changeTypeAttributeAdd = @"CodeFileChangeTypeAttributeAdd";
@@ -28,7 +21,18 @@ static NSString * const _changeAttributesKey= @"CodeFileChangeAttributesKey";
 static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeNamesKey";
 
 @interface CodeFile ()
-{
+
+- (id)_initWithFileURL:(NSURL *)url;
+
+// Private content methods. All the following methods have to be called within a pending changes lock.
+- (void)_setHasPendingChanges;
+- (void)_processPendingChanges;
+
+@end
+
+#pragma mark - Implementations
+
+@implementation CodeFile {
     NSMutableAttributedString *_contents;
     CodeFileGeneration _contentsGeneration;
     OSSpinLock _contentsLock;
@@ -38,52 +42,9 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
     OSSpinLock _pendingChangesLock;
     BOOL _hasPendingChanges;
     NSUInteger _pendingGenerationOffset;
-    NSArray *_symbolList;
 }
-- (id)_initWithFileURL:(NSURL *)url;
-- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
-// Private content methods. All the following methods have to be called within a pending changes lock.
-- (void)_setHasPendingChanges;
-- (void)_processPendingChanges;
-@end
-
-#pragma mark - Implementations
-
-@implementation CodeFile
 
 @synthesize theme = _theme;
-
-+ (void)initialize
-{
-    if (self != [CodeFile class])
-        return;
-    _codeFiles = [[WeakDictionary alloc] init];
-}
-
-+ (void)codeFileWithFileURL:(NSURL *)fileURL completionHandler:(void (^)(CodeFile *))completionHandler
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(fileURL);
-    CodeFile *codeFile = [_codeFiles objectForKey:fileURL];
-    if (codeFile)
-        return completionHandler(codeFile);
-    __block BOOL fileExists;
-    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:fileURL options:NSFileCoordinatorReadingWithoutChanges error:NULL byAccessor:^(NSURL *newURL) {
-        fileExists = [[[NSFileManager alloc] init] fileExistsAtPath:[newURL path]];
-    }];
-    codeFile = [[self alloc] _initWithFileURL:fileURL];
-    [codeFile openWithCompletionHandler:^(BOOL success) {
-        if (success)
-        {
-            [_codeFiles setObject:codeFile forKey:fileURL];
-            completionHandler(codeFile);
-        }
-        else
-        {
-            completionHandler(nil);
-        }
-    }];
-}
 
 - (TMTheme *)theme
 {
@@ -127,42 +88,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 {
     [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
     return YES;
-}
-
-#pragma mark - Code View DataSource Methods
-
-- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
-{
-    return [self lengthWithGeneration:NULL];
-}
-
-- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
-{
-#warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-    NSMutableAttributedString *attributedString = [[self attributedStringInRange:stringRange generation:NULL] mutableCopy];
-    static NSRegularExpression *placeholderRegExp = nil;
-    if (!placeholderRegExp)
-        placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    // Add placeholders styles
-    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        [self _markPlaceholderWithName:[self stringInRange:[result rangeAtIndex:1]] inAttributedString:attributedString range:result.range];
-    }];
-    return attributedString;
-}
-
-- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
-{
-    return [self.theme commonAttributes];
-}
-
-- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
-{
-    [self replaceCharactersInRange:range withString:commitString];
-}
-
-- (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
-{
-    return [self attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Public methods
@@ -576,105 +501,6 @@ while (0)
     [self replaceCharactersInRange:replacementRange withString:replacementString];
     replacementRange.length = replacementString.length;
     return replacementRange;
-}
-
-#pragma mark - Private methods
-
-static CGFloat placeholderEndingsWidthCallback(void *refcon) {
-    if (refcon)
-    {
-        CGFloat height = CTFontGetXHeight(refcon);
-        return height / 2.0;
-    }
-    return 4.5;
-}
-
-static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
-    kCTRunDelegateVersion1,
-    NULL,
-    NULL,
-    NULL,
-    &placeholderEndingsWidthCallback
-};
-
-- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
-{
-    ECASSERT(range.length > 4);
-    
-    static CGColorRef placeholderFillColor = NULL;
-    if (!placeholderFillColor)
-        placeholderFillColor = CGColorRetain([UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
-    
-    static CGColorRef placeholderStrokeColor = NULL;
-    if (!placeholderStrokeColor)
-        placeholderStrokeColor = CGColorRetain([UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
-    
-    static TextRendererRunBlock placeHolderBodyBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
-        rect.origin.y += 1;
-        rect.size.height -= baselineOffset;
-        CGContextSetFillColorWithColor(context, placeholderFillColor);
-        CGContextAddRect(context, rect);
-        CGContextFillPath(context);
-        //
-        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), rect.origin.y);
-        CGContextMoveToPoint(context, rect.origin.x, CGRectGetMaxY(rect));
-        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
-        CGContextStrokePath(context);
-    };
-    
-    static TextRendererRunBlock placeholderLeftBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
-        rect.origin.y += 1;
-        rect.size.height -= baselineOffset;
-        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        //
-        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
-        CGContextClosePath(context);
-        CGContextSetFillColorWithColor(context, placeholderFillColor);
-        CGContextFillPath(context);
-        //
-        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
-        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
-        CGContextStrokePath(context);
-    };
-    
-    static TextRendererRunBlock placeholderRightBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
-        rect.origin.y += 1;
-        rect.size.height -= baselineOffset;
-        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
-        //
-        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
-        CGContextClosePath(context);
-        CGContextSetFillColorWithColor(context, placeholderFillColor);
-        CGContextFillPath(context);
-        //
-        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
-        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
-        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
-        CGContextStrokePath(context);
-    };
-    
-    // placeholder body style
-    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
-    
-    // Opening and Closing style
-    
-    //
-    CGFontRef font = (__bridge CGFontRef)[[TMTheme sharedAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
-    ECASSERT(font);
-    CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
-    
-    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
-    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
-    
-    CFRelease(delegateRef);
-    
-    // Placeholder behaviour
-    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
 }
 
 @end

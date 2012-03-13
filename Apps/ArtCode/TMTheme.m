@@ -7,9 +7,7 @@
 //
 
 #import "TMTheme.h"
-#import <CoreText/CoreText.h>
 #import "UIColor+HexColor.h"
-#import "TextRenderer.h"
 #import "TMScope.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
@@ -131,7 +129,8 @@ static NSDictionary *_sharedAttributes = nil;
                 [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
             }
             else if ([key isEqualToString:@"background"]) {
-                [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
+#warning TODO: adding this couples TMTheme with TextRenderer, a bit excessive
+                //[styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
             }
             else {
                 [styleSettings setObject:value forKey:key];

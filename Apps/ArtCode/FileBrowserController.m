@@ -271,7 +271,7 @@ static void *_currentFolderContext;
     }
     else
     {
-        [self.artCodeTab pushURL:[self.filteredItems objectAtIndex:indexPath.row]];
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
 }
 

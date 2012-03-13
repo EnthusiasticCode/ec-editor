@@ -14,12 +14,9 @@
 
 @class ArtCodeTab, TMUnit;
 
-@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDelegate, CodeFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
+@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, CodeFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
 #pragma mark - Controller's location
-
-/// The file URL that the controller is displaying
-@property (nonatomic, strong) NSURL *fileURL;
 
 @property (nonatomic, strong, readonly) CodeFile *codeFile;
 
