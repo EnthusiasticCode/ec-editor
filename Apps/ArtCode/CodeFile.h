@@ -20,38 +20,36 @@
 
 @interface CodeFile : UIDocument
 
+@property (nonatomic, strong) TMTheme *theme;
+
 - (void)addPresenter:(id<CodeFilePresenter>)presenter;
 - (void)removePresenter:(id<CodeFilePresenter>)presenter;
 - (NSArray *)presenters;
 
-@property (nonatomic, strong) TMTheme *theme;
-
-#pragma mark - String content reading methods
+#pragma mark String content reading methods
 - (NSUInteger)length;
 - (NSString *)string;
 - (NSString *)stringInRange:(NSRange)range;
 - (NSRange)lineRangeForRange:(NSRange)range;
 
-#pragma mark - Attributed string content reading methods
+#pragma mark Attributed string content reading methods
 - (NSAttributedString *)attributedString;
 - (NSAttributedString *)attributedStringInRange:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange inRange:(NSRange)rangeLimit;
 
-#pragma mark - String content writing methods
+#pragma mark String content writing methods
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 
-#pragma mark - Attributed string content writing methods
+#pragma mark Attributed string content writing methods
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
 - (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range;
 - (void)removeAllAttributesInRange:(NSRange)range;
 
-#pragma mark - Find and replace functionality
+#pragma mark Find and replace functionality
 - (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
-
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
-
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options;
 
 /// Returns the replacement string for the given template. See NSRegularExpression method for more informations.
