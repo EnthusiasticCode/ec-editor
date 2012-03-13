@@ -7,7 +7,7 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark;
+@class ACProjectFileBookmark, CodeFile;
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
@@ -21,6 +21,9 @@
 
 /// Returns the explicit file syntax identifier or one derived from the file path or content
 - (NSString *)codeFileSyntaxIdentifier;
+
+/// This returns an opened code file with the project file's contents. The returned code file MUST be released before releasing the associated project file 
+- (void)openCodeFileWithCompletionHandler:(void(^)(CodeFile *codeFile))completionHandler;
 
 #pragma mark Managing file bookmarks
 

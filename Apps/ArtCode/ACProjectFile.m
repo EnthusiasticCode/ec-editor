@@ -15,6 +15,10 @@
 
 #import "ACProjectFileBookmark.h"
 
+#import "CodeFile.h"
+#import <objc/runtime.h>
+
+
 static NSString * const _plistFileEncodingKey = @"fileEncoding";
 static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 static NSString * const _plistBookmarksKey = @"bookmarks";
@@ -34,9 +38,22 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 @end
 
+/// Proxy for CodeFile
+@interface CodeFileProxy : NSObject
++ (id)newProxyWithTarget:(CodeFile *)target owner:(ACProjectFile *)owner;
+@end
+
+@interface ACProjectFile ()
+- (void)_codeFileProxyDidDealloc;
+@end
+
 @implementation ACProjectFile
 {
     NSMutableDictionary *_bookmarks;
+    
+    __weak CodeFileProxy *_codeFileProxy;
+    CodeFile *_codeFile;
+    NSMutableArray *_pendingCodeFileCompletionHandlers;
 }
 
 #pragma mark - Properties
@@ -69,6 +86,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         [_bookmarks setObject:bookmark forKey:point];
         [project didAddBookmark:bookmark];
     }];
+    _pendingCodeFileCompletionHandlers = [[NSMutableArray alloc] init];
     return self;
 }
 
@@ -90,6 +108,39 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 #pragma mark - Public Methods
+
+- (void)openCodeFileWithCompletionHandler:(void (^)(CodeFile *))completionHandler
+{
+    // If we already have a proxy, 
+    if (_codeFileProxy && completionHandler)
+        return completionHandler((CodeFile *)_codeFileProxy);
+    
+    // Queue up the completion handler so it gets executed even this method is called multiple times
+    if (completionHandler)
+        [_pendingCodeFileCompletionHandlers addObject:completionHandler];
+    
+    // If we have a codeFile, but we don't have a proxy, it means there's an open OR close operation in flight
+    if (_codeFile)
+        return;
+    
+    _codeFile = [[CodeFile alloc] initWithFileURL:self.URL];
+    [_codeFile openWithCompletionHandler:^(BOOL success) {
+        if (success)
+        {
+            CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
+            _codeFileProxy = proxy;
+            for (void(^completionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
+                completionHandler((CodeFile *)proxy);
+            [_pendingCodeFileCompletionHandlers removeAllObjects];
+        }
+        else
+        {
+            // TODO: retrying forever might not be the best way to handle this error
+            _codeFile = nil;
+            [self openCodeFileWithCompletionHandler:nil];
+        }
+    }];
+}
 
 - (void)addBookmarkWithPoint:(id)point
 {
@@ -133,6 +184,57 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
     contents.preferredFilename = self.name;
     return contents;
+}
+
+#pragma mark - Private Methods
+
+- (void)_codeFileProxyDidDealloc
+{
+    ECASSERT(!_codeFileProxy && _codeFile);
+    [_codeFile closeWithCompletionHandler:^(BOOL success) {
+        _codeFile = nil;
+        if (_pendingCodeFileCompletionHandlers.count)
+            [self openCodeFileWithCompletionHandler:nil];
+    }];
+}
+
+@end
+
+
+@implementation CodeFileProxy
+{
+    CodeFile *_target;
+    ACProjectFile *_owner;
+}
+
++ (id)newProxyWithTarget:(CodeFile *)target owner:(ACProjectFile *)owner
+{
+    ECASSERT(target && owner);
+    CodeFileProxy *proxy = [self alloc];
+    proxy->_target = target;
+    proxy->_owner = owner;
+    return proxy;
+}
+
+- (void)dealloc
+{
+    [_owner _codeFileProxyDidDealloc];
+}
+
++ (BOOL)resolveClassMethod:(SEL)sel
+{
+    Method method = class_getClassMethod([CodeFile class], sel);
+    if (!method)
+        return NO;
+    Class metaClass = objc_getMetaClass("CodeFileProxy");
+    class_addMethod(metaClass, sel, method_getImplementation(method), method_getTypeEncoding(method));
+    return YES;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    ECASSERT(_target);
+    return _target;
 }
 
 @end
