@@ -17,7 +17,7 @@
 /// Returns an array of all projects
 + (NSArray *)projects;
 
-/// Creates a new project and, if set, decompress the archive at the given URL.
+/// Creates a new project by optionally decompressing the archive at the given URL, saves it and returns it.
 + (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(ACProject *createdProject))completionHandler;
 
 /// Returns the project with the given UUID, or nil if the project does not exist.

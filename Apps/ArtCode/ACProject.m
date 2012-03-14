@@ -85,7 +85,7 @@ static NSString * const _plistRemotesKey = @"remotes";
         return;
     
     
-    // Ensure that projects URL exists
+    // Ensure that projects directory exists
     [[[NSFileManager alloc] init] createDirectoryAtURL:[self _projectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
     
     // Loads the saved projects informations from user defaults
@@ -205,10 +205,19 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Projects list
 
++ (NSArray *)projects {
+    NSMutableArray *projects = [[NSMutableArray alloc] init];
+    for (NSString *uuid in _projectsList.allKeys) {
+        [projects addObject:[[self alloc] _initWithUUID:uuid]];
+    }
+    return projects;
+}
+
 + (ACProject *)projectWithUUID:(id)uuid {
     NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
-    if (!projectInfo)
+    if (!projectInfo) {
         return nil;
+    }
     return [[self alloc] _initWithUUID:uuid];
 }
 
@@ -218,6 +227,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (success) {
             [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
+            [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
         }
         if (completionHandler) {
             completionHandler(success ? project : nil);
@@ -301,6 +311,17 @@ static NSString * const _plistRemotesKey = @"remotes";
     return remote;
 }
 
+#pragma mark - Project-wide operations
+
+- (void)remove {
+    [_projectsList removeObjectForKey:self.UUID];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [[[NSFileCoordinator alloc] init] coordinateWritingItemAtURL:self.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+            [[[NSFileManager alloc] init] removeItemAtURL:newURL error:NULL];
+        }];
+    });
+}
+
 #pragma mark - Internal Remotes Methods
 
 - (void)didRemoveRemote:(ACProjectRemote *)remote {
@@ -353,7 +374,23 @@ static NSString * const _plistRemotesKey = @"remotes";
     return _projectsDirectory;
 }
 
++ (NSString *)_nameForProject:(ACProject *)project {
+    ECASSERT(project && [_projectsList objectForKey:project.UUID]);
+    return [[_projectsList objectForKey:project.UUID] objectForKey:_plistNameKey];
+}
+
++ (void)_setName:(NSString *)name forProject:(ACProject *)project {
+    ECASSERT(name && project && [_projectsList objectForKey:project.UUID]);
+    [project willChangeValueForKey:@"name"];
+    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];;
+    [projectInfo setObject:name forKey:_plistNameKey];
+    [_projectsList setObject:projectInfo forKey:project.UUID];
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    [project didChangeValueForKey:@"name"];
+}
+
 + (UIColor *)_labelColorForProject:(ACProject *)project {
+    ECASSERT(project && [_projectsList objectForKey:project.UUID]);
     NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
     UIColor *labelColor = nil;
     if ([hexString length]) {
@@ -363,9 +400,10 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project {
+    ECASSERT(color && project && [_projectsList objectForKey:project.UUID]);
     [project willChangeValueForKey:@"labelColor"];
     NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
-    [projectInfo setValue:color.hexString forKey:_plistLabelColorKey];
+    [projectInfo setObject:color.hexString forKey:_plistLabelColorKey];
     [_projectsList setObject:projectInfo forKey:project.UUID];
     [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
     [project didChangeValueForKey:@"labelColor"];
@@ -373,12 +411,27 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (id)_initWithUUID:(NSString *)uuid {
     self = [super initWithFileURL:[[[self class] _projectsDirectory] URLByAppendingPathComponent:uuid]];
-    if (!self)
+    if (!self) {
         return nil;
+    }
     _filesCache = [NSMutableDictionary new];
     _bookmarksCache = [NSMutableDictionary new];
     _remotes = [NSMutableDictionary new];
     return self;
 }
+
+#if DEBUG
+
++ (void)_removeAllProjects {
+    NSURL *projectsDirectory = [self _projectsDirectory];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *project in [fileManager contentsOfDirectoryAtURL:projectsDirectory includingPropertiesForKeys:nil options:0 error:NULL]) {
+        [fileManager removeItemAtURL:project error:NULL];
+    }
+    _projectsList = [[NSMutableDictionary alloc] init];
+    _projectUUIDs = [[NSMutableSet alloc] init];
+}
+
+#endif
 
 @end

@@ -14,11 +14,7 @@
 #import "ACProjectRemote.h"
 
 void clearProjectsDirectory(void) {
-    NSURL *projectsDirectory = [ACProject performSelector:@selector(_projectsDirectory)];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *project in [fileManager contentsOfDirectoryAtURL:projectsDirectory includingPropertiesForKeys:nil options:0 error:NULL]) {
-        [fileManager removeItemAtURL:project error:NULL];
-    }
+    [ACProject performSelector:@selector(_removeAllProjects)];
 }
 
 SPEC_BEGIN(ACProjectSpec)
@@ -87,23 +83,11 @@ describe(@"An newly created ACProject", ^{
         clearProjectsDirectory();
     });
     
-    it(@"can be opened", ^{
-        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
-        __block BOOL opened = NO;
-        [project openWithCompletionHandler:^(BOOL success) {
-            opened = success;
-        }];
-        [[expectFutureValue(theValue(opened)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+    it(@"is open", ^{
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
     });
 
-    it(@"can be opened and then closed", ^{
-        __block BOOL opened = NO;
-        [project openWithCompletionHandler:^(BOOL success) {
-            opened = success;
-        }];
-        [[expectFutureValue(theValue(opened)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
+    it(@"can be closed", ^{
         __block BOOL closed = NO;
         [project closeWithCompletionHandler:^(BOOL success) {
             closed = success;
