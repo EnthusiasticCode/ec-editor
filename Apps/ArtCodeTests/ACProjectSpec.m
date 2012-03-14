@@ -14,7 +14,7 @@
 #import "ACProjectRemote.h"
 
 void clearProjectsDirectory(void) {
-    NSURL *projectsDirectory = [ACProject performSelector:@selector(_projectsURL)];
+    NSURL *projectsDirectory = [ACProject performSelector:@selector(_projectsDirectory)];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     for (NSURL *project in [fileManager contentsOfDirectoryAtURL:projectsDirectory includingPropertiesForKeys:nil options:0 error:NULL]) {
         [fileManager removeItemAtURL:project error:NULL];

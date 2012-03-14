@@ -8,6 +8,7 @@
 
 #import "NSString+UUID.h"
 
+
 @implementation NSString (UUID)
 
 - (id)initWithGeneratedUUID {

@@ -1,61 +1,58 @@
 //
-//  CStringCachingString.m
+//  NSString+CStringCaching.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 2/11/12.
+//  Created by Uri Baghin on 3/14/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "CStringCachingString.h"
+#import "NSString+CStringCaching.h"
 #import <objc/runtime.h>
 
-@interface CStringCachingString ()
-{
+@interface CStringCachingString : NSObject {
     NSString *_string;
     NSStringEncoding _cachedEncoding;
     const char * _cachedCString;
 }
 @end
 
-@implementation CStringCachingString
+@implementation NSString (CStringCaching)
 
-+ (void)load
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    // Docs advise not to call this method, I say docs can shut up (and will probably be proved wrong eventually)
-    class_setSuperclass([CStringCachingString class], [NSObject class]);
-#pragma clang diagnostic pop
+- (NSString *)stringByCachingCString {
+    return [(NSString *)[CStringCachingString alloc] initWithString:self];
 }
 
-+ (BOOL)resolveClassMethod:(SEL)sel
-{
+@end
+
+@implementation CStringCachingString
+
++ (BOOL)resolveClassMethod:(SEL)sel {
     Method method = class_getClassMethod([NSString class], sel);
-    if (!method)
+    if (!method) {
         return NO;
+    }
     Class metaClass = objc_getMetaClass("CStringCachingString");
     class_addMethod(metaClass, sel, method_getImplementation(method), method_getTypeEncoding(method));
     return YES;
 }
 
-- (id)forwardingTargetForSelector:(SEL)aSelector
-{
-    if (!_string)
+- (id)forwardingTargetForSelector:(SEL)aSelector {
+    if (!_string) {
         _string = [NSString alloc];
+    }
     const char *selectorName = sel_getName(aSelector);
-    if (strncmp(selectorName, "init", 4) == 0)
+    if (strncmp(selectorName, "init", 4) == 0) {
         return nil;
+    }
     return _string;
 }
 
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
-{
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
     ECASSERT(_string);
     return [_string methodSignatureForSelector:aSelector];
 }
 
-- (void)forwardInvocation:(NSInvocation *)anInvocation
-{
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
     ECASSERT(_string);
     ECASSERT([NSStringFromSelector([anInvocation selector]) hasPrefix:@"init"]);
     [anInvocation invokeWithTarget:_string];
@@ -63,15 +60,15 @@
     [anInvocation setReturnValue:(void *)&self];
 }
 
-- (const char *)cStringUsingEncoding:(NSStringEncoding)encoding
-{
-    if (_cachedCString)
-        if (_cachedEncoding == encoding)
+- (const char *)cStringUsingEncoding:(NSStringEncoding)encoding {
+    ECASSERT(_string);
+    if (_cachedCString) {
+        if (_cachedEncoding == encoding) {
             return _cachedCString;
-        else
+        } else {
             return [_string cStringUsingEncoding:encoding];
-    if (!_string)
-        return NULL;
+        }
+    }
     _cachedCString = [_string cStringUsingEncoding:encoding];
     _cachedEncoding = encoding;
     return _cachedCString;

@@ -14,7 +14,7 @@
 #import "TMPreference.h"
 #import "TMSyntaxNode.h"
 #import "OnigRegexp.h"
-#import "CStringCachingString.h"
+#import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "CodeFile+Generation.h"
 #import <libkern/OSAtomic.h>
@@ -387,7 +387,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation
 {
-    line = [CStringCachingString stringWithString:line];
+    line = [line stringByCachingCString];
     NSUInteger position = 0;
     NSUInteger previousTokenStart = lineRange.location;
     NSUInteger lineEnd = NSMaxRange(lineRange);

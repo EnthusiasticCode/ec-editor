@@ -16,6 +16,7 @@
 
 #import "NSURL+Utilities.h"
 #import "UIColor+HexColor.h"
+#import "NSString+UUID.h"
 
 #import "ArtCodeURL.h"
 
@@ -25,14 +26,15 @@ static NSMutableSet *_projectUUIDs;
 static NSMutableDictionary *_projectsList = nil;
 
 static NSString * const _projectsFolderName = @"LocalProjects";
-static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _contentsFolderName = @"Contents";
 
+// Metadata
 static NSString * const _projectsListKey = @"ACProjectProjectsList";
-static NSString * const _plistUUIDKey = @"uuid";
-static NSString * const _plistPathKey = @"path";
 static NSString * const _plistNameKey = @"name";
 static NSString * const _plistLabelColorKey = @"labelColor";
+
+// Content
+static NSString * const _projectPlistFileName = @".acproj";
 static NSString * const _plistContentsKey = @"contents";
 static NSString * const _plistBookmarksKey = @"bookmarks";
 static NSString * const _plistRemotesKey = @"remotes";
@@ -82,7 +84,6 @@ static NSString * const _plistRemotesKey = @"remotes";
     if (self != [ACProject class])
         return;
     
-    _projectUUIDs = [[NSMutableSet alloc] init];
     
     // Ensure that projects URL exists
     [[[NSFileManager alloc] init] createDirectoryAtURL:[self _projectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -94,6 +95,8 @@ static NSString * const _plistRemotesKey = @"remotes";
         _projectsList = [NSMutableDictionary new];
         [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
     }
+    
+    _projectUUIDs = [[NSMutableSet alloc] initWithArray:_projectsList.allKeys];
 }
 
 #pragma mark - UIDocument
@@ -114,6 +117,10 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)updateChangeCount:(UIDocumentChangeKind)change {
     ECASSERT(change == UIDocumentChangeDone);
     _isDirty = YES;
+}
+
+- (NSString *)localizedName {
+    UNIMPLEMENTED(); // Use name instead
 }
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
@@ -200,19 +207,21 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 + (ACProject *)projectWithUUID:(id)uuid {
     NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
-    if (!projectInfo || ![projectInfo objectForKey:_plistPathKey])
+    if (!projectInfo)
         return nil;
     return [[self alloc] _initWithUUID:uuid];
 }
 
 + (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *))completionHandler {
-    // Create the project
-    NSURL *projectURL = [[self _projectsDirectory] URLByAppendingPathComponent:[name stringByAppendingPathExtension:@"acproj"]];
-    ACProject *project = [[self alloc] initWithFileURL:projectURL];
-    [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-        // Inform the completion handler
-        if (completionHandler)
+    NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
+    ACProject *project = [[self alloc] _initWithUUID:uuid];
+    [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+        if (success) {
+            [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
+        }
+        if (completionHandler) {
             completionHandler(success ? project : nil);
+        }
     }];
 }
 

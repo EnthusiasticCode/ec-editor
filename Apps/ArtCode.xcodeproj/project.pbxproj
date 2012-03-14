@@ -13,8 +13,9 @@
 		B7072B35150FF58B00580855 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
+		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
+		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
-		B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */ = {isa = PBXBuildFile; fileRef = B728597314E714C100E3DE65 /* CStringCachingString.m */; };
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
@@ -468,11 +469,11 @@
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B7072BBA15111A3000580855 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
 		B7072BBB15111A3000580855 /* NSString+UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UUID.m"; sourceTree = "<group>"; };
+		B7072BD01511443E00580855 /* NSString+CStringCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CStringCaching.h"; sourceTree = "<group>"; };
+		B7072BD11511443E00580855 /* NSString+CStringCaching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CStringCaching.m"; sourceTree = "<group>"; };
 		B71A1DE51435112700672F65 /* NewFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
-		B728597214E714C100E3DE65 /* CStringCachingString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CStringCachingString.h; sourceTree = "<group>"; };
-		B728597314E714C100E3DE65 /* CStringCachingString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CStringCachingString.m; sourceTree = "<group>"; };
 		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
@@ -1314,6 +1315,8 @@
 				B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */,
 				B7072BBA15111A3000580855 /* NSString+UUID.h */,
 				B7072BBB15111A3000580855 /* NSString+UUID.m */,
+				B7072BD01511443E00580855 /* NSString+CStringCaching.h */,
+				B7072BD11511443E00580855 /* NSString+CStringCaching.m */,
 				CD49925014D6F03F0046CD19 /* NSString+URLAdditions.h */,
 				CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */,
 				CD49925314D6F11E0046CD19 /* NSString+PluralFormat.h */,
@@ -1372,8 +1375,6 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
-				B728597214E714C100E3DE65 /* CStringCachingString.h */,
-				B728597314E714C100E3DE65 /* CStringCachingString.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -2458,6 +2459,7 @@
 				B7072B34150FF58200580855 /* TMTheme.m in Sources */,
 				B7072B35150FF58B00580855 /* WeakArray.m in Sources */,
 				B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */,
+				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2557,7 +2559,6 @@
 				B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */,
 				CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */,
 				CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */,
-				B728597414E714C100E3DE65 /* CStringCachingString.m in Sources */,
 				CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */,
 				CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */,
 				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
@@ -2577,6 +2578,7 @@
 				B77100FE1506DF88006AF1FB /* ACProjectFileBookmark.m in Sources */,
 				B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */,
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
+				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
