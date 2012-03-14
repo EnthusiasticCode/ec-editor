@@ -26,18 +26,12 @@
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
 
-#import "DirectoryPresenter.h"
-
 #import "NSURL+Utilities.h"
-
-static void *_directoryObservingContext;
 
 @interface ProjectBrowserController ()
 
 @property (nonatomic, strong) GridView *gridView;
 
-/// Represent a directory's contents.
-@property (nonatomic, strong) DirectoryPresenter *directoryPresenter;
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -45,7 +39,6 @@ static void *_directoryObservingContext;
 
 @end
 
-#pragma mark - Implementation
 #pragma mark -
 
 @implementation ProjectBrowserController
@@ -60,37 +53,26 @@ static void *_directoryObservingContext;
     
     UIImage *_cellNormalBackground;
     UIImage *_cellSelectedBackground;
+    
+    NSArray *_projects;
 }
-#pragma mark - Properties
 
-@synthesize gridView = _gridView, directoryPresenter = _directoryPresenter;
+@synthesize gridView = _gridView;
 
-- (GridView *)gridView
++ (BOOL)automaticallyNotifiesObserversOfEditing
 {
-    if (!_gridView)
-    {
-        _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-        _gridView.allowMultipleSelectionDuringEditing = YES;
-        _gridView.dataSource = self;
-        _gridView.delegate = self;
-        _gridView.rowHeight = 120 + 15;
-        _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _gridView.alwaysBounceVertical = YES;
-        _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
-        _gridView.backgroundView = [UIView new];
-        _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
-    }
-    return _gridView;
+    return NO;
 }
 
-- (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
+#pragma mark - NSObject
+
+- (void)dealloc
 {
-    if (directoryPresenter == _directoryPresenter)
-        return;
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionInitial context:&_directoryObservingContext];    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
 }
+
+#pragma mark - UIViewController
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
@@ -119,45 +101,10 @@ static void *_directoryObservingContext;
     [self didChangeValueForKey:@"editing"];
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfEditing
-{
-    return NO;
-}
-
-#pragma mark - Controller Methods
-
-- (void)dealloc
-{
-    self.directoryPresenter = nil; // this is so we stop observing
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context != &_directoryObservingContext)
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-    switch (kind) {
-        case NSKeyValueChangeInsertion:
-            [self.gridView insertCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
-            break;
-        case NSKeyValueChangeRemoval:
-            [self.gridView deleteCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
-            break;
-        case NSKeyValueChangeSetting:
-            [self.gridView reloadData];
-            break;
-        default:
-            ECASSERT(NO && "unhandled KVO change");
-            break;
-    }
-}
-
 - (NSString *)title
 {
     return @"ArtCode";
 }
-
-#pragma mark - View lifecycle
 
 - (void)loadView
 {
@@ -198,20 +145,32 @@ static void *_directoryObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-#warning TODO: use new ACProject API
-//    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[ACProject projectsURL] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidInsertProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        _projects = ACProject.projects;
+        NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+        [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }];
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        _projects = ACProject.projects;
+        NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+        [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }];
+    _projects = ACProject.projects;
+    [self.gridView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    self.directoryPresenter = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
+    _projects = nil;
 }
 
 #pragma mark - Grid View Data Source
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-    return [self.directoryPresenter.fileURLs count];
+    return _projects.count;
 }
 
 - (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -233,8 +192,8 @@ static void *_directoryObservingContext;
     }
     
     // Setup project title
-    ACProject *project = [[ACProject alloc] initWithFileURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
-    cell.title.text = project.localizedName;
+    ACProject *project = [_projects objectAtIndex:cellIndex];
+    cell.title.text = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
 
@@ -243,12 +202,9 @@ static void *_directoryObservingContext;
 
 #pragma mark - Grid View Delegate
 
-- (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex
-{
-    if (!self.isEditing)
-    {
-        ACProject *project = [[ACProject alloc] initWithFileURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
-        [self.artCodeTab pushURL:project.artCodeURL];
+- (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
+    if (!self.isEditing) {
+        [self.artCodeTab pushURL:[[_projects objectAtIndex:cellIndex] artCodeURL]];
     }
 }
 
@@ -276,22 +232,16 @@ static void *_directoryObservingContext;
     ECASSERT(self.isEditing);
     ECASSERT([self.gridView indexForSelectedCell] != -1);
     
-    if (actionSheet == _toolItemDeleteActionSheet)
-    {
-        if (buttonIndex == actionSheet.destructiveButtonIndex)
-        {
+    if (actionSheet == _toolItemDeleteActionSheet) {
+        if (buttonIndex == actionSheet.destructiveButtonIndex) {
             NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
             
-            // Remove files
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+            // Remove projects
             [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-                NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
-                [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                    [[NSFileManager new] removeItemAtURL:newURL error:NULL];
-                }];
+                [[_projects objectAtIndex:idx] remove];
             }];
-            
+
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
@@ -332,7 +282,7 @@ ECASSERT(NO);
             
             NSMutableString *subject = [NSMutableString new];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+                NSURL *projectURL = nil;
                 
                 // Generate mail subject
 //                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
@@ -386,6 +336,24 @@ ECASSERT(NO);
 }
 
 #pragma mark - Private Methods
+
+- (GridView *)gridView
+{
+    if (!_gridView)
+    {
+        _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        _gridView.allowMultipleSelectionDuringEditing = YES;
+        _gridView.dataSource = self;
+        _gridView.delegate = self;
+        _gridView.rowHeight = 120 + 15;
+        _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _gridView.alwaysBounceVertical = YES;
+        _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
+        _gridView.backgroundView = [UIView new];
+        _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
+    }
+    return _gridView;
+}
 
 - (void)_toolNormalAddAction:(id)sender
 {
@@ -452,6 +420,7 @@ ECASSERT(NO);
 
 @end
 
+#pragma mark -
 
 @implementation ProjectCell
 

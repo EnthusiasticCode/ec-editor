@@ -60,7 +60,7 @@
 - (NSString *)pathInProject
 {
     if (self.parentFolder == nil)
-        return self.project.localizedName;
+        return self.project.name;
     
     return [[self.parentFolder pathInProject] stringByAppendingPathComponent:self.name];
 }

@@ -404,7 +404,7 @@ static const void *loadingObservingContext;
                         // If project root set color and project name 
                         if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
                         {
-                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], [self.artCodeTab.currentProject localizedName], nil] selectedIndexes:nil];
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
                         }
                         // or path and file name for items
                         else

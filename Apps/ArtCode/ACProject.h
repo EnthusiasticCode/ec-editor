@@ -10,6 +10,13 @@
 
 @class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote;
 
+/// Notifications for the projects list
+extern NSString * const ACProjectWillInsertProjectNotificationName;
+extern NSString * const ACProjectDidInsertProjectNotificationName;
+extern NSString * const ACProjectWillRemoveProjectNotificationName;
+extern NSString * const ACProjectDidRemoveProjectNotificationName;
+extern NSString * const ACProjectNotificationIndexKey;
+
 @interface ACProject : UIDocument
 
 #pragma mark Projects list

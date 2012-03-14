@@ -20,6 +20,12 @@
 
 #import "ArtCodeURL.h"
 
+NSString * const ACProjectWillInsertProjectNotificationName = @"ACProjectWillInsertProjectNotificationName";
+NSString * const ACProjectDidInsertProjectNotificationName = @"ACProjectDidInsertProjectNotificationName";
+NSString * const ACProjectWillRemoveProjectNotificationName = @"ACProjectWillRemoveProjectNotificationName";
+NSString * const ACProjectDidRemoveProjectNotificationName = @"ACProjectDidRemoveProjectNotificationName";
+NSString * const ACProjectNotificationIndexKey = @"ACProjectNotificationIndexKey";
+
 static NSMutableSet *_projectUUIDs;
 
 /// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
@@ -226,8 +232,12 @@ static NSString * const _plistRemotesKey = @"remotes";
     ACProject *project = [[self alloc] _initWithUUID:uuid];
     [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (success) {
+            NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:_projectsList.count] forKey:ACProjectNotificationIndexKey];
+            [notificationCenter postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
             [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+            [notificationCenter postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
         }
         if (completionHandler) {
             completionHandler(success ? project : nil);
@@ -314,7 +324,11 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Project-wide operations
 
 - (void)remove {
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:[_projectsList.allKeys indexOfObject:self.UUID]] forKey:ACProjectNotificationIndexKey];
+    [notificationCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:[self class] userInfo:userInfo];
     [_projectsList removeObjectForKey:self.UUID];
+    [notificationCenter postNotificationName:ACProjectDidRemoveProjectNotificationName object:[self class] userInfo:userInfo];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [[[NSFileCoordinator alloc] init] coordinateWritingItemAtURL:self.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
             [[[NSFileManager alloc] init] removeItemAtURL:newURL error:NULL];

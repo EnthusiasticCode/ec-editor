@@ -91,7 +91,7 @@ static void *_currentFolderContext;
         return;
     
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
     _currentObservedProject = nil;
 
     [currentFolder removeObserver:self forKeyPath:@"children" context:&_currentFolderContext];
@@ -103,7 +103,7 @@ static void *_currentFolderContext;
     {
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-        [_currentObservedProject addObserver:self forKeyPath:@"localizedName" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
+        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     }
 }
 
@@ -231,7 +231,7 @@ static void *_currentFolderContext;
 - (void)dealloc
 {
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"localizedName" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
 }
 
 #pragma mark - Table view data source

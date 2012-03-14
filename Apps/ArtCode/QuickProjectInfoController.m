@@ -63,7 +63,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.projectNameTextField.text = [self.artCodeTab.currentProject localizedName];
+    self.projectNameTextField.text = [self.artCodeTab.currentProject name];
     // TODO add project files and size
 }
 
