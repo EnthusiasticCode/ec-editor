@@ -48,18 +48,18 @@
 - (void)removeAllAttributesInRange:(NSRange)range;
 
 #pragma mark Find and replace functionality
-- (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
-- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range;
-- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options;
+- (NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range DEPRECATED_ATTRIBUTE;
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range DEPRECATED_ATTRIBUTE;
+- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options DEPRECATED_ATTRIBUTE;
 
 /// Returns the replacement string for the given template. See NSRegularExpression method for more informations.
-- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate;
+- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate DEPRECATED_ATTRIBUTE;
 
 /// Replaces the given match with the given template
 /// The match must be valid and returns from one of the file file find methods
 /// After the replacement occurs, the file file could be changed in a way that invalidates matches found before the replacement took place. For this reason, the offset paramenter can be used to specify that the match location should be offsetted by the given amount.
 /// Returns the range of the replaced text after the replacement.
-- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset;
+- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset DEPRECATED_ATTRIBUTE;
 
 @end
 

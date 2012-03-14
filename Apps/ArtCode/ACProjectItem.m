@@ -11,65 +11,67 @@
 #import "ACProjectItem+Internal.h"
 #import "ArtCodeURL.h"
 
+#import "NSString+UUID.h"
+
+static NSMutableSet *_projectItemUUIDs;
+
 @implementation ACProjectItem
 
 @synthesize project = _project, UUID = _UUID, artCodeURL = _artCodeURL;
 
-#pragma mark - Initialization
+#pragma mark - NSObject
 
-- (id)init
-{
-    ECASSERT(NO); // The designed initalizer is initWithProject:
-}
-
-#pragma mark - Plist Internal Methods
-
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    ECASSERT(project);
-    _project = project;
-    _UUID = [plistDictionary objectForKey:@"uuid"];
-    if (!_UUID)
-    {
-        CFUUIDRef uuid = CFUUIDCreate(NULL);
-        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-        _UUID = (__bridge NSString *)uuidString;
-        CFRelease(uuidString);
-        CFRelease(uuid);
++ (void)initialize {
+    if (self != [ACProjectItem class]) {
+        return;
     }
-    return self;
+    _projectItemUUIDs = [[NSMutableSet alloc] init];
 }
 
-- (NSDictionary *)propertyListDictionary
-{
-    return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
+- (id)init {
+    UNIMPLEMENTED(); // The designed initalizer is initWithProject:
 }
 
 #pragma mark - Public Methods
 
-- (NSURL *)URL
-{
-    return nil;
-}
-
-- (NSURL *)artCodeURL
-{
+- (NSURL *)artCodeURL {
     if (!_artCodeURL)
         _artCodeURL = [ArtCodeURL artCodeURLWithProject:self.project item:self path:nil];
     return _artCodeURL;
 }
 
-- (ACProjectItemType)type
-{
+- (ACProjectItemType)type {
     return ACPUnknown;
 }
 
-- (void)remove
-{
+- (NSURL *)URL {
+    return nil;
+}
+
+- (void)remove {
     [self.project updateChangeCount:UIDocumentChangeDone];
+}
+
+#pragma mark - Internal Methods
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    ECASSERT(project);
+    _project = project;
+    _UUID = [plistDictionary objectForKey:@"uuid"];
+    if (!_UUID) {
+        _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
+    } else {
+        [_projectItemUUIDs addObject:_UUID];
+    }
+    return self;
+}
+
+- (NSDictionary *)propertyListDictionary {
+    return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
 }
 
 @end

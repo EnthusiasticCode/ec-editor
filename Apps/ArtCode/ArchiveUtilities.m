@@ -9,6 +9,7 @@
 #import "ArchiveUtilities.h"
 #import "archive.h"
 #import "archive_entry.h"
+#import "NSURL+Utilities.h"
 
 @implementation ArchiveUtilities
 
@@ -17,18 +18,7 @@
     ECASSERT(archiveURL && directoryURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSURL *workingDirectory = nil;
-    BOOL workingDirectoryAlreadyExists = YES;
-    do
-    {
-        CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
-        CFStringRef uuidString = CFUUIDCreateString(CFAllocatorGetDefault(), uuid);
-        workingDirectory = [directoryURL URLByAppendingPathComponent:[@"." stringByAppendingString:(__bridge NSString *)uuidString]];
-        CFRelease(uuidString);
-        CFRelease(uuid);
-        workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[workingDirectory path]];
-    }
-    while (workingDirectoryAlreadyExists);
+    NSURL *workingDirectory = [NSURL uniqueDirectoryInDirectory:directoryURL];
     if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
         return NO;
     NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];

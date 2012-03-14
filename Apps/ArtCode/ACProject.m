@@ -19,7 +19,9 @@
 
 #import "ArtCodeURL.h"
 
-/// UUID to dictionary of cached projects informations (uuid, path, labelColor, localizedName).
+static NSMutableSet *_projectUUIDs;
+
+/// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
 static NSMutableDictionary *_projectsList = nil;
 
 static NSString * const _projectsFolderName = @"LocalProjects";
@@ -29,7 +31,7 @@ static NSString * const _contentsFolderName = @"Contents";
 static NSString * const _projectsListKey = @"ACProjectProjectsList";
 static NSString * const _plistUUIDKey = @"uuid";
 static NSString * const _plistPathKey = @"path";
-static NSString * const _plistLocalizedNameKey = @"localizedName";
+static NSString * const _plistNameKey = @"name";
 static NSString * const _plistLabelColorKey = @"labelColor";
 static NSString * const _plistContentsKey = @"contents";
 static NSString * const _plistBookmarksKey = @"bookmarks";
@@ -37,11 +39,17 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 @interface ACProject ()
 
-/// Updates and saves the projects informations cache with data from the provided project.
-+ (void)_updateCacheForProject:(ACProject *)project;
-+ (id)_uuidForProject:(ACProject *)project;
+/// The local URL at which all projects are stored.
++ (NSURL *)_projectsDirectory;
+
+/// Project metadata getters and setters
++ (NSString *)_nameForProject:(ACProject *)project;
++ (void)_setName:(NSString *)name forProject:(ACProject *)project;
 + (UIColor *)_labelColorForProject:(ACProject *)project;
 + (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project;
+
+/// Designated initializer
+- (id)_initWithUUID:(NSString *)uuid;
 
 @end
 
@@ -67,139 +75,74 @@ static NSString * const _plistRemotesKey = @"remotes";
 @synthesize UUID = _UUID, artCodeURL = _artCodeURL;
 @synthesize contentsFolder = _contentsFolder;
 
-#pragma mark - Properties
+#pragma mark - NSObject
 
-- (id)UUID
-{    
-    if (!_UUID)
++ (void)initialize
+{
+    if (self != [ACProject class])
+        return;
+    
+    _projectUUIDs = [[NSMutableSet alloc] init];
+    
+    // Ensure that projects URL exists
+    [[[NSFileManager alloc] init] createDirectoryAtURL:[self _projectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
+    
+    // Loads the saved projects informations from user defaults
+    _projectsList = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:_projectsListKey] mutableCopy];
+    if (!_projectsList)
     {
-        _UUID = [ACProject _uuidForProject:self];
+        _projectsList = [NSMutableDictionary new];
+        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
     }
-    return _UUID;
-}
-
-- (NSURL *)artCodeURL
-{
-    if (!_artCodeURL)
-    {
-        if (self.UUID)
-            _artCodeURL = [ArtCodeURL artCodeURLWithProject:self item:nil path:nil];
-    }
-    return _artCodeURL;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingArtCodeURL
-{
-    return [NSSet setWithObject:@"UUID"];
-}
-
-- (UIColor *)labelColor
-{
-    return [ACProject _labelColorForProject:self];
-}
-
-- (void)setLabelColor:(UIColor *)value
-{
-    [ACProject _setLabelColor:value forProject:self];
-}
-
-- (ACProjectFolder *)contentsFolder
-{
-    if (!_contentsFolder && !self.documentState & UIDocumentStateClosed)
-    {
-        NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-        contents.preferredFilename = _contentsFolderName;
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil contents:contents];
-        [self updateChangeCount:UIDocumentChangeDone];
-    }
-    return _contentsFolder;
-}
-
-- (NSArray *)files
-{
-    return [_filesCache allValues];
-}
-
-- (NSArray *)bookmarks
-{
-    return [_bookmarksCache allValues];
-}
-
-- (NSArray *)remotes
-{
-    return [_remotes allValues];
-}
-
-- (id)initWithFileURL:(NSURL *)url
-{
-    self = [super initWithFileURL:url];
-    if (!self)
-        return nil;
-    _filesCache = [NSMutableDictionary new];
-    _bookmarksCache = [NSMutableDictionary new];
-    _remotes = [NSMutableDictionary new];
-    return self;
 }
 
 #pragma mark - UIDocument
 
-- (NSUndoManager *)undoManager
+- (id)initWithFileURL:(NSURL *)url
 {
+    UNIMPLEMENTED(); // Designated initializer is _initWithUUID:
+}
+
+- (NSUndoManager *)undoManager {
     return nil;
 }
 
-- (BOOL)hasUnsavedChanges
-{
+- (BOOL)hasUnsavedChanges {
     return _isDirty;
 }
 
-- (void)updateChangeCount:(UIDocumentChangeKind)change
-{
+- (void)updateChangeCount:(UIDocumentChangeKind)change {
     ECASSERT(change == UIDocumentChangeDone);
     _isDirty = YES;
 }
 
-- (NSString *)localizedName
-{
-    return [[self.fileURL lastPathComponent] stringByDeletingPathExtension];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingLocalizedName
-{
-    return [NSSet setWithObject:@"fileURL"];
-}
-
-- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
-{
+- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
     NSFileWrapper *bundleWrapper = (NSFileWrapper *)contents;
     __block NSFileWrapper *contentsWrapper = nil;
     __block NSDictionary *plist = nil;
     
     [[bundleWrapper fileWrappers] enumerateKeysAndObjectsUsingBlock:^(NSString *fileName, NSFileWrapper *fileWrapper, BOOL *stop) {
-        if ([fileName isEqualToString:_projectPlistFileName])
-        {
+        if ([fileName isEqualToString:_projectPlistFileName]) {
             ECASSERT([fileWrapper isRegularFile]);
             plist = [NSPropertyListSerialization propertyListWithData:[fileWrapper regularFileContents] options:NSPropertyListImmutable format:NULL error:outError];
-        }
-        else if([fileName isEqualToString:_contentsFolderName])
-        {
+        } else if([fileName isEqualToString:_contentsFolderName]) {
             contentsWrapper = fileWrapper;
         }
     }];
     
     // Project's content
-    if (contentsWrapper)
+    if (contentsWrapper) {
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil contents:contentsWrapper];
+    }
     
     // Remotes
-    if ([plist objectForKey:_plistRemotesKey])
-    {
+    if ([plist objectForKey:_plistRemotesKey]) {
         NSMutableDictionary *remotesFromPlist = [NSMutableDictionary new];
-        for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey])
-        {
+        for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey]) {
             ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self propertyListDictionary:remotePlist];
-            if (remote)
+            if (remote) {
                 [remotesFromPlist setObject:remote forKey:remote.UUID];
+            }
         }
         _remotes = [remotesFromPlist copy];
     }
@@ -207,8 +150,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     return YES;
 }
 
-- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
-{
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
     // Creating project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
@@ -217,19 +159,17 @@ static NSString * const _plistRemotesKey = @"remotes";
     contentsWrapper.preferredFilename = _contentsFolderName;
     
     // Filesystem content
-    if (contentsWrapper)
-    {
+    if (contentsWrapper) {
         NSDictionary *contentsPlist = self.contentsFolder.propertyListDictionary;
-        if (contentsPlist)
+        if (contentsPlist) {
             [plist setObject:contentsPlist forKey:_plistContentsKey];
+        }
     }
 
     // Remotes
-    if ([self.remotes count])
-    {
+    if ([self.remotes count]) {
         NSMutableArray *remotesPlist = [NSMutableArray arrayWithCapacity:[self.remotes count]];
-        for (ACProjectFileBookmark *remote in self.remotes)
-        {
+        for (ACProjectFileBookmark *remote in self.remotes) {
             [remotesPlist addObject:[remote propertyListDictionary]];
         }
         [plist setObject:remotesPlist forKey:_plistRemotesKey];
@@ -242,99 +182,33 @@ static NSString * const _plistRemotesKey = @"remotes";
     
     // Creating project bundle wrapper
     NSFileWrapper *bundleWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    if (contentsWrapper)
+    if (contentsWrapper) {
         [bundleWrapper addFileWrapper:contentsWrapper];
-    if (plistWrapper)
+    }
+    if (plistWrapper) {
         [bundleWrapper addFileWrapper:plistWrapper];
+    }
     
     return bundleWrapper;
 }
 
-- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
-{
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
     NSLog(@">>>>>>>>>>>>>>>>> %@", error);
 }
 
-#pragma mark - Class Methods
+#pragma mark - Projects list
 
-+ (void)initialize
-{
-    // Loads the saved projects informations from user defaults
-    _projectsList = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:_projectsListKey] mutableCopy];
-    if (!_projectsList)
-    {
-        _projectsList = [NSMutableDictionary new];
-        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-    }
-}
-
-+ (id)_uuidForProject:(ACProject *)project
-{
-    __block id projectUUID = nil;
-    [_projectsList enumerateKeysAndObjectsUsingBlock:^(id uuid, NSDictionary *info, BOOL *stop) {
-        if ([[info objectForKey:_plistLocalizedNameKey] isEqualToString:project.localizedName])
-        {
-            projectUUID = uuid;
-            *stop = YES;
-        }
-    }];
-    if (!projectUUID)
-    {
-        CFUUIDRef uuid = CFUUIDCreate(NULL);
-        CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-        projectUUID = (__bridge NSString *)uuidString;
-        CFRelease(uuidString);
-        CFRelease(uuid);
-        // The label color is nil if we're here
-        [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:projectUUID, _plistUUIDKey, project.fileURL.lastPathComponent, _plistPathKey, project.localizedName, _plistLocalizedNameKey, nil] forKey:projectUUID];
-        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-    }
-    return projectUUID;
-}
-
-+ (ACProject *)projectWithUUID:(id)uuid
-{
++ (ACProject *)projectWithUUID:(id)uuid {
     NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
     if (!projectInfo || ![projectInfo objectForKey:_plistPathKey])
         return nil;
-    return [[ACProject alloc] initWithFileURL:[[self projectsURL] URLByAppendingPathComponent:[projectInfo objectForKey:_plistPathKey]]];
+    return [[self alloc] _initWithUUID:uuid];
 }
 
-+ (UIColor *)_labelColorForProject:(ACProject *)project
-{
-    NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
-    UIColor *labelColor = nil;
-    if ([hexString length])
-        labelColor = [UIColor colorWithHexString:hexString];
-    return labelColor;
-}
-
-+ (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project
-{
-    [project willChangeValueForKey:@"labelColor"];
-    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
-    [projectInfo setValue:color.hexString forKey:_plistLabelColorKey];
-    [_projectsList setObject:projectInfo forKey:project.UUID];
-    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-    [project didChangeValueForKey:@"labelColor"];
-}
-
-+ (NSURL *)projectsURL
-{
-    static NSURL *_projectsURL = nil;
-    if (!_projectsURL)
-        _projectsURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_projectsFolderName isDirectory:YES];
-    return _projectsURL;
-}
-
-+ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *))completionHandler
-{
-    // Ensure that projects URL exists
-    [[NSFileManager new] createDirectoryAtURL:[self projectsURL] withIntermediateDirectories:YES attributes:nil error:NULL];
-    
++ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *))completionHandler {
     // Create the project
-    NSURL *projectURL = [[self projectsURL] URLByAppendingPathComponent:[name stringByAppendingPathExtension:@"acproj"]];
-    ACProject *project = [[ACProject alloc] initWithFileURL:projectURL];
+    NSURL *projectURL = [[self _projectsDirectory] URLByAppendingPathComponent:[name stringByAppendingPathExtension:@"acproj"]];
+    ACProject *project = [[self alloc] initWithFileURL:projectURL];
     [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         // Inform the completion handler
         if (completionHandler)
@@ -342,23 +216,75 @@ static NSString * const _plistRemotesKey = @"remotes";
     }];
 }
 
-#pragma mark - Public Methods
+#pragma mark - Project metadata
 
-- (ACProjectItem *)itemWithUUID:(id)uuid
-{
+- (id)UUID {
+    return self.fileURL.lastPathComponent.stringByDeletingPathExtension;
+}
+
+- (NSURL *)artCodeURL {
+    if (!_artCodeURL) {
+        _artCodeURL = [ArtCodeURL artCodeURLWithProject:self item:nil path:nil];
+    }
+    return _artCodeURL;
+}
+
+- (NSString *)name {
+    return [[self class] _nameForProject:self];
+}
+
+- (void)setName:(NSString *)name {
+    [[self class] _setName:name forProject:self];
+}
+
+- (UIColor *)labelColor {
+    return [[self class] _labelColorForProject:self];
+}
+
+- (void)setLabelColor:(UIColor *)value {
+    [[self class] _setLabelColor:value forProject:self];
+}
+
+#pragma mark - Project content
+
+- (ACProjectFolder *)contentsFolder {
+    if (!_contentsFolder && !self.documentState & UIDocumentStateClosed) {
+        NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
+        contents.preferredFilename = _contentsFolderName;
+        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil contents:contents];
+        [self updateChangeCount:UIDocumentChangeDone];
+    }
+    return _contentsFolder;
+}
+
+- (NSArray *)files {
+    return [_filesCache allValues];
+}
+
+- (NSArray *)bookmarks {
+    return [_bookmarksCache allValues];
+}
+
+- (NSArray *)remotes {
+    return [_remotes allValues];
+}
+
+- (ACProjectItem *)itemWithUUID:(id)uuid {
     ACProjectItem *item = [_filesCache objectForKey:uuid];
-    if (!item)
+    if (!item) {
         item = [_bookmarksCache objectForKey:uuid];
-    if (!item)
+    }
+    if (!item) {
         item = [_remotes objectForKey:uuid];
+    }
     return item;
 }
 
-- (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL
-{
+- (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL {
     ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
-    if (!remote)
+    if (!remote) {
         return nil;
+    }
     [self willChangeValueForKey:@"remotes"];
     [_remotes setObject:remote forKey:remote.UUID];
     [self updateChangeCount:UIDocumentChangeDone];
@@ -368,8 +294,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Remotes Methods
 
-- (void)didRemoveRemote:(ACProjectRemote *)remote
-{
+- (void)didRemoveRemote:(ACProjectRemote *)remote {
     ECASSERT(remote);
     [self willChangeValueForKey:@"remotes"];
     [_remotes removeObjectForKey:remote.UUID];
@@ -378,16 +303,14 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Bookmarks Methods
 
-- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark
-{
+- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark {
     ECASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
     [_bookmarksCache setObject:bookmark forKey:bookmark.UUID];
     [self didChangeValueForKey:@"bookmarks"];
 }
 
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark
-{
+- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark {
     ECASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
     [_bookmarksCache removeObjectForKey:bookmark.UUID];
@@ -396,8 +319,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Internal Files Methods
 
-- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
-{
+- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
     // Called when adding a file and in loading phase
     ECASSERT(fileSystemItem);
     [self willChangeValueForKey:@"files"];
@@ -405,12 +327,49 @@ static NSString * const _plistRemotesKey = @"remotes";
     [self didChangeValueForKey:@"files"];
 }
 
-- (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem
-{
+- (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
     ECASSERT(fileSystemItem);
     [self willChangeValueForKey:@"files"];
     [_filesCache removeObjectForKey:fileSystemItem.UUID];
     [self didChangeValueForKey:@"files"];
+}
+
+#pragma mark - Private Methods
+
++ (NSURL *)_projectsDirectory {
+    static NSURL *_projectsDirectory = nil;
+    if (!_projectsDirectory) {
+        _projectsDirectory = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_projectsFolderName isDirectory:YES];
+    }
+    return _projectsDirectory;
+}
+
++ (UIColor *)_labelColorForProject:(ACProject *)project {
+    NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
+    UIColor *labelColor = nil;
+    if ([hexString length]) {
+        labelColor = [UIColor colorWithHexString:hexString];
+    }
+    return labelColor;
+}
+
++ (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project {
+    [project willChangeValueForKey:@"labelColor"];
+    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
+    [projectInfo setValue:color.hexString forKey:_plistLabelColorKey];
+    [_projectsList setObject:projectInfo forKey:project.UUID];
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    [project didChangeValueForKey:@"labelColor"];
+}
+
+- (id)_initWithUUID:(NSString *)uuid {
+    self = [super initWithFileURL:[[[self class] _projectsDirectory] URLByAppendingPathComponent:uuid]];
+    if (!self)
+        return nil;
+    _filesCache = [NSMutableDictionary new];
+    _bookmarksCache = [NSMutableDictionary new];
+    _remotes = [NSMutableDictionary new];
+    return self;
 }
 
 @end

@@ -28,6 +28,8 @@
 
 #import "DirectoryPresenter.h"
 
+#import "NSURL+Utilities.h"
+
 static void *_directoryObservingContext;
 
 @interface ProjectBrowserController ()
@@ -196,7 +198,8 @@ static void *_directoryObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[ACProject projectsURL] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+#warning TODO: use new ACProject API
+//    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[ACProject projectsURL] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -337,24 +340,9 @@ ECASSERT(NO);
 //                    [subject appendFormat:@"%@, ", projectName];
                 
                 // Generate a working temporary directory to write attachments into
-                NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
-                __block NSURL *workingDirectory = nil;
-                __block BOOL workingDirectoryAlreadyExists = YES;
                 NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
                 NSFileManager *fileManager = [[NSFileManager alloc] init];
-                do
-                {
-                    CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
-                    CFStringRef uuidString = CFUUIDCreateString(CFAllocatorGetDefault(), uuid);
-                    workingDirectory = [tempDirectory URLByAppendingPathComponent:(__bridge NSString *)uuidString];
-                    CFRelease(uuidString);
-                    CFRelease(uuid);
-                    [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
-                        workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[newURL path]];
-                        workingDirectory = newURL;
-                    }];
-                }
-                while (workingDirectoryAlreadyExists);
+                NSURL *workingDirectory = [NSURL temporaryDirectory];
                 // Generate zip attachments
                 __block NSData *attachment = nil;
                 NSString *archiveName = [[[projectURL lastPathComponent] stringByDeletingPathExtension] stringByAppendingPathExtension:@"zip"];

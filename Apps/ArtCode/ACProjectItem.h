@@ -9,8 +9,7 @@
 #import <Foundation/Foundation.h>
 @class ACProject;
 
-typedef enum
-{
+typedef enum {
     ACPUnknown = 0,
     ACPFolder,
     ACPFile,

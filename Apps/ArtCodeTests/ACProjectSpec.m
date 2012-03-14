@@ -13,86 +13,78 @@
 #import "ACProjectFileBookmark.h"
 #import "ACProjectRemote.h"
 
+void clearProjectsDirectory(void) {
+    NSURL *projectsDirectory = [ACProject performSelector:@selector(_projectsURL)];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    for (NSURL *project in [fileManager contentsOfDirectoryAtURL:projectsDirectory includingPropertiesForKeys:nil options:0 error:NULL]) {
+        [fileManager removeItemAtURL:project error:NULL];
+    }
+}
+
 SPEC_BEGIN(ACProjectSpec)
 
-describe(@"A new, non-opened ACProject", ^{
-        
-    context(@"with a valid URL", ^{
-
-        NSURL *projectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"testproject.acproj"];
-        __block ACProject *project = nil;
-        
-        beforeEach(^{
-            [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
-            project = [[ACProject alloc] initWithFileURL:projectURL];
-        });
-        
-        afterAll(^{
-            [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
-        });
-        
-        it(@"can be initialized", ^{
-            [[project should] beNonNil];
-        });
-        
-        it(@"can be saved", ^{
-            [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
-            __block BOOL saved = NO;
-            [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-                saved = success;
-            }];
-            [[expectFutureValue(theValue(saved)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-            [[theValue([project documentState]) should] equal:theValue(UIDocumentStateNormal)];
-            [[theValue([[[NSFileManager alloc] init] fileExistsAtPath:[projectURL path]]) should] beYes];
-        });
-        
-        it(@"should not have a contents folder", ^{
-            [project.contentsFolder shouldBeNil];
-        });
-        
+describe(@"An ACProject", ^{
+    
+    NSString *projectName = @"Test Project";
+    
+    beforeAll(^{
+        clearProjectsDirectory();
     });
     
-    context(@"with an invalid URL", ^{
-        
-        it(@"should not be initialized", ^{
-            NSURL *invalidProjectURL = [NSURL URLWithString:@"http://www.google.com"];
-            [[theBlock(^{
-                ACProject *project = [[ACProject alloc] initWithFileURL:invalidProjectURL];
-                project = nil;
-            }) should] raise];
-        });
-        
+    afterAll(^{
+        clearProjectsDirectory();
+    });
+    
+    it(@"can be created", ^{
+        __block ACProject *project = nil;
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+            project = createdProject;
+        }];
+        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        [[[ACProject projects] should] haveCountOf:1];
+    });
+    
+    it(@"can be retrieved", ^{
+        ACProject *project = nil;
+        for (project in [ACProject projects]) {
+            if ([project.name isEqualToString:projectName]) {
+                break;
+            }
+        }
+        [[project should] beNonNil];
+    });
+    
+    it(@"can be deleted", ^{
+        ACProject *project = nil;
+        for (project in [ACProject projects]) {
+            if ([project.name isEqualToString:projectName]) {
+                break;
+            }
+        }
+        [[project should] beNonNil];
+        [project remove];
+        [[[ACProject projects] should] haveCountOf:0];
     });
     
 });
 
-describe(@"An newly created project ACProject", ^{
-    NSURL *projectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"testproject.acproj"];
-    NSURL *movedProjectURL = [[ACProject projectsURL] URLByAppendingPathComponent:@"movedproject.acproj"];
+describe(@"An newly created ACProject", ^{
+    NSString *projectName = @"Test Project";
+    NSString *newProjectName = @"Renamed Test Project";
     __block ACProject *project = nil;
     __block id projectUUID = nil;
     
     beforeEach(^{
-        [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
-        [[[NSFileManager alloc] init] removeItemAtURL:movedProjectURL error:NULL];
-        ACProject *newProject = [[ACProject alloc] initWithFileURL:projectURL];
-        __block BOOL saved = NO;
-        [newProject saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            if (!success)
-                return;
-            projectUUID = newProject.UUID;
-            [newProject closeWithCompletionHandler:^(BOOL success) {
-                if (success)
-                    saved = YES;
-            }];
+        clearProjectsDirectory();
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+            project = createdProject;
         }];
-        [[expectFutureValue(theValue(saved)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
-        project = [[ACProject alloc] initWithFileURL:projectURL];
+        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        projectUUID = project.UUID;
     });
     
     afterAll(^{
-        [[[NSFileManager alloc] init] removeItemAtURL:projectURL error:NULL];
-        [[[NSFileManager alloc] init] removeItemAtURL:movedProjectURL error:NULL];
+        clearProjectsDirectory();
     });
     
     it(@"can be opened", ^{
@@ -120,96 +112,28 @@ describe(@"An newly created project ACProject", ^{
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
     });
     
-    it(@"can be retrieved by UUID", ^{
-        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
-        [[projectByUUID.fileURL should] equal:projectURL];
-    });
-    
-    it(@"can be moved and still be retrieved by UUID", ^{
-        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-        __block NSError *error = nil;
-        [fileCoordinator coordinateReadingItemAtURL:projectURL options:0 writingItemAtURL:movedProjectURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            [[[NSFileManager alloc] init] moveItemAtURL:newReadingURL toURL:newWritingURL error:&error];
-        }];
-        [error shouldBeNil];
-        [[expectFutureValue(project.fileURL) shouldEventually] equal:movedProjectURL];
-        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
-        [[projectByUUID.fileURL should] equal:movedProjectURL];
-    });
-    
-    it(@"can be deleted and not retrieved by UUID", ^{
-        NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-        __block NSError *error = nil;
-        [fileCoordinator coordinateWritingItemAtURL:projectURL options:NSFileCoordinatorWritingForDeleting error:&error byAccessor:^(NSURL *newURL) {
-            [[[NSFileManager alloc] init] removeItemAtURL:newURL error:&error];
-        }];
-        [error shouldBeNil];
-        [[expectFutureValue([ACProject projectWithUUID:projectUUID]) shouldEventually] beNil];
-    });
-    
-});
-
-describe(@"The ACProject class", ^{
-    
-    it(@"define a global projects directory URL", ^{
-        [[[ACProject projectsURL] should] beNonNil];
-    });
-    
-    context(@"project creation", ^{
-        
-        NSString *projectName = @"testproject";
-        __block NSURL *projectURL = nil;
-        
-        beforeAll(^{
-            projectURL = [[[ACProject projectsURL] URLByAppendingPathComponent:projectName] URLByAppendingPathExtension:@"acproj"];
-        });
-        
-        beforeEach(^{
-            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        });
-        
-        afterAll(^{
-            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        });
-        
-        it(@"is successful", ^{
-            __block ACProject *project = nil;
-            [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
-                project = createdProject;
-            }];
-            
-            [[expectFutureValue(project) shouldEventually] beNonNil];
-        });
-    });
-});
-
-describe(@"A new opened ACProject", ^{
-    
-    NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
-    __block ACProject *project = nil;
-    
-    beforeEach(^{
-        __block BOOL isOpened = NO;
-        [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        project = [[ACProject alloc] initWithFileURL:projectURL];
-        [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
-            isOpened = success;
-        }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
-    });
-    
-    afterEach(^{
-        [project closeWithCompletionHandler:^(BOOL success) {
-            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        }];
-    });
-    
     it(@"has a UUID", ^{
         [[project.UUID should] beNonNil];
     });
     
+    it(@"can be retrieved by UUID", ^{
+        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
+        [[projectByUUID.name should] equal:project.name];
+    });
+    
+    it(@"can be renamed and still be retrieved by UUID", ^{
+        project.name = newProjectName;
+        ACProject *projectByUUID = [ACProject projectWithUUID:projectUUID];
+        [[projectByUUID.name should] equal:project.name];
+    });
+    
+    it(@"can be deleted and not retrieved by UUID", ^{
+        [project remove];
+        [[ACProject projectWithUUID:projectUUID] shouldBeNil];
+    });
+    
     context(@"label color", ^{
-       
+        
         it(@"can be set", ^{
             [project.labelColor shouldBeNil];
             project.labelColor = [UIColor redColor];
@@ -219,6 +143,30 @@ describe(@"A new opened ACProject", ^{
             project.labelColor = [UIColor redColor];
             [[project.labelColor should] equal:[UIColor redColor]];
         });
+    });
+    
+});
+
+describe(@"A new opened ACProject", ^{
+    
+    NSString *projectName = @"Test Project";
+    __block ACProject *project = nil;
+    
+    beforeEach(^{
+        clearProjectsDirectory();
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+            project = createdProject;
+        }];
+        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        __block BOOL isOpened = NO;
+        [project openWithCompletionHandler:^(BOOL success) {
+            isOpened = success;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+    });
+    
+    afterAll(^{
+        clearProjectsDirectory();
     });
     
     context(@"contents folder", ^{
@@ -584,7 +532,7 @@ describe(@"A new opened ACProject", ^{
 
 describe(@"An existing ACProject", ^{
     
-    NSURL *projectURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:@"testproject.acproj"]];
+    NSString *projectName = @"Test Project";
     __block ACProject *project = nil;
     __block id projectUUID = nil;
     UIColor *projectLabelColor = [UIColor redColor];
@@ -594,10 +542,13 @@ describe(@"An existing ACProject", ^{
     NSNumber *bookmarkPoint = [NSNumber numberWithInt:1];
     
     beforeAll(^{
+        clearProjectsDirectory();
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+            project = createdProject;
+        }];
+        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
         __block BOOL isOpened = NO;
-        [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        project = [[ACProject alloc] initWithFileURL:projectURL];
-        [project saveToURL:projectURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+        [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
@@ -614,7 +565,7 @@ describe(@"An existing ACProject", ^{
             isOpened = success;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
-        project = [[ACProject alloc] initWithFileURL:projectURL];
+        project = [ACProject projectWithUUID:projectUUID];
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
@@ -622,9 +573,7 @@ describe(@"An existing ACProject", ^{
     });
     
     afterAll(^{
-        [project closeWithCompletionHandler:^(BOOL success) {
-            [[NSFileManager new] removeItemAtURL:projectURL error:NULL];
-        }];
+        clearProjectsDirectory();
     });
     
     it(@"saved its UUID", ^{

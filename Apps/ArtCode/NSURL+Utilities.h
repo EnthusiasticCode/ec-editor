@@ -16,8 +16,11 @@
 /// Returns the application's library directory
 + (NSURL *)applicationLibraryDirectory;
 
-/// Return a temporary directory
+/// Returns a non-existing temporary directory
 + (NSURL *)temporaryDirectory;
+
+/// Returns a URL to a non-existing hidden directory within the specified directory
++ (NSURL *)uniqueDirectoryInDirectory:(NSURL *)directoryURL;
 
 /// Returns whether the receiver is a descendant of a subdirectory of the given directory
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL;
