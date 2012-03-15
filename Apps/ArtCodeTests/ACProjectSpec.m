@@ -17,6 +17,10 @@ void clearProjectsDirectory(void) {
     [ACProject performSelector:@selector(_removeAllProjects)];
 }
 
+// Redefine the default timeout because my iMac is so slow
+#undef kKW_DEFAULT_PROBE_TIMEOUT
+#define kKW_DEFAULT_PROBE_TIMEOUT 10
+
 SPEC_BEGIN(ACProjectSpec)
 
 describe(@"An ACProject", ^{
@@ -36,7 +40,7 @@ describe(@"An ACProject", ^{
         [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
             project = createdProject;
         }];
-        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
         [[[ACProject projects] should] haveCountOf:1];
     });
     
@@ -75,7 +79,7 @@ describe(@"An newly created ACProject", ^{
         [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
             project = createdProject;
         }];
-        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
         projectUUID = project.UUID;
     });
     
@@ -92,7 +96,7 @@ describe(@"An newly created ACProject", ^{
         [project closeWithCompletionHandler:^(BOOL success) {
             closed = success;
         }];
-        [[expectFutureValue(theValue(closed)) shouldEventuallyBeforeTimingOutAfter(5)] beYes];
+        [[expectFutureValue(theValue(closed)) shouldEventually] beYes];
         [[theValue([project documentState]) should] equal:theValue(UIDocumentStateClosed)];
     });
     
@@ -141,12 +145,12 @@ describe(@"A new opened ACProject", ^{
         [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
             project = createdProject;
         }];
-        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
         __block BOOL isOpened = NO;
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
     });
     
     afterAll(^{
@@ -542,12 +546,12 @@ describe(@"An existing ACProject", ^{
         [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
             project = createdProject;
         }];
-        [[expectFutureValue(project) shouldEventuallyBeforeTimingOutAfter(5)] beNonNil];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
         __block BOOL isOpened = NO;
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
@@ -560,12 +564,12 @@ describe(@"An existing ACProject", ^{
         [project closeWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         project = [ACProject projectWithUUID:projectUUID];
         [project openWithCompletionHandler:^(BOOL success) {
             isOpened = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventuallyBeforeTimingOutAfter(2)] beYes];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
     });
     
     afterAll(^{
