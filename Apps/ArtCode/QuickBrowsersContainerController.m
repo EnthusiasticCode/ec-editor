@@ -24,16 +24,12 @@
 
 @implementation QuickBrowsersContainerController
 
-+ (id)defaultQuickBrowsersContainerControllerForContentController:(UIViewController *)contentController
-{
++ (id)defaultQuickBrowsersContainerControllerForContentController:(UIViewController *)contentController {
     static QuickBrowsersContainerController *_commonController = nil;
     static QuickBrowsersContainerController *_projectController = nil;
     static QuickBrowsersContainerController *_folderController = nil;
     static QuickBrowsersContainerController *_fileController = nil;
     static QuickBrowsersContainerController *_remoteController = nil;
-    static NSArray *_commonControllers = nil;
-    if (!_commonControllers)
-        _commonControllers = [NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil];
     
     ECASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
 
@@ -43,7 +39,7 @@
         {
             _commonController = [[QuickBrowsersContainerController alloc] init];
             _commonController.contentController = contentController;
-            [_commonController setViewControllers:_commonControllers animated:NO];
+            [_commonController setViewControllers:[NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
         }
         else
         {
@@ -76,9 +72,7 @@
             {
                 _projectController = [[QuickBrowsersContainerController alloc] init];
                 _projectController.contentController = contentController;
-                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickProjectInfoController new]];
-                [viewControllers addObjectsFromArray:_commonControllers];
-                [_projectController setViewControllers:viewControllers animated:NO];
+                [_projectController setViewControllers:[NSArray arrayWithObjects:[QuickProjectInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
             }
             else
             {
@@ -92,9 +86,7 @@
             {
                 _folderController = [[QuickBrowsersContainerController alloc] init];
                 _folderController.contentController = contentController;
-                NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickFolderInfoController new]];
-                [viewControllers addObjectsFromArray:_commonControllers];
-                [_folderController setViewControllers:viewControllers animated:NO];
+                [_folderController setViewControllers:[NSArray arrayWithObjects:[QuickFolderInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
             }
             else
             {
@@ -108,9 +100,7 @@
             {
                 _fileController = [[QuickBrowsersContainerController alloc] init];
                 _fileController.contentController = contentController;
-                NSMutableArray *viewControllers = [NSMutableArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], nil];
-                [viewControllers addObjectsFromArray:_commonControllers];
-                [_fileController setViewControllers:viewControllers animated:NO];
+                [_fileController setViewControllers:[NSArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
             }
             else
             {
