@@ -266,6 +266,10 @@ describe(@"A new opened ACProject", ^{
                 [[project itemWithUUID:subfolder2UUID] shouldBeNil];
             });
             
+            it(@"has a last modified date", ^{
+                [[[subfolder contentModificationDate] should] beNonNil];
+            });
+            
         });
                 
         context(@"when created", ^{
@@ -357,6 +361,14 @@ describe(@"A new opened ACProject", ^{
             
             it(@"has a consistent name", ^{
                 [[[file name] should] equal:fileName];
+            });
+            
+            it(@"has a last modified date", ^{
+                [[[file contentModificationDate] should] beNonNil];
+            });
+            
+            it(@"has a size", ^{
+                [[theValue(file.fileSize) should] equal:theValue(0)];
             });
             
             it(@"has UTF8 encoding by default", ^{

@@ -11,6 +11,9 @@
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
+/// The size of the file in bytes
+@property (nonatomic, readonly) NSUInteger fileSize;
+
 /// Default NSUTF8FileEncoding
 @property (nonatomic) NSStringEncoding fileEncoding;
 

@@ -72,8 +72,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark
 
-@implementation ACProject
-{
+@implementation ACProject {
     BOOL _isDirty;
     NSMutableDictionary *_filesCache;
     NSMutableDictionary *_bookmarksCache;
@@ -85,8 +84,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - NSObject
 
-+ (void)initialize
-{
++ (void)initialize {
     if (self != [ACProject class])
         return;
     
@@ -95,20 +93,30 @@ static NSString * const _plistRemotesKey = @"remotes";
     [[[NSFileManager alloc] init] createDirectoryAtURL:[self _projectsDirectory] withIntermediateDirectories:YES attributes:nil error:NULL];
     
     // Loads the saved projects informations from user defaults
-    _projectsList = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:_projectsListKey] mutableCopy];
-    if (!_projectsList)
-    {
-        _projectsList = [NSMutableDictionary new];
-        [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    _projectsList = (NSMutableDictionary *)[[NSUserDefaults standardUserDefaults] dictionaryForKey:_projectsListKey];
+    
+    // Checks projects on filesystem, adds missing projects to the project list, removes zombies
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSMutableDictionary *newProjectsList = [[NSMutableDictionary alloc] init];
+    for (NSURL *projectURL in [fileManager contentsOfDirectoryAtURL:[self _projectsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL]) {
+        NSString *uuid = projectURL.lastPathComponent;
+        NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
+        if (projectInfo) {
+            [newProjectsList setObject:projectInfo forKey:uuid];
+        } else {
+            projectInfo = [NSDictionary dictionaryWithObject:uuid forKey:_plistNameKey];
+            [newProjectsList setObject:projectInfo forKey:uuid];
+        }
     }
+    _projectsList = newProjectsList;
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
     
     _projectUUIDs = [[NSMutableSet alloc] initWithArray:_projectsList.allKeys];
 }
 
 #pragma mark - UIDocument
 
-- (id)initWithFileURL:(NSURL *)url
-{
+- (id)initWithFileURL:(NSURL *)url {
     UNIMPLEMENTED(); // Designated initializer is _initWithUUID:
 }
 
@@ -248,7 +256,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Project metadata
 
 - (id)UUID {
-    return self.fileURL.lastPathComponent.stringByDeletingPathExtension;
+    return self.fileURL.lastPathComponent;
 }
 
 - (NSURL *)artCodeURL {
