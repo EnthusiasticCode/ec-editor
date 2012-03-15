@@ -425,7 +425,7 @@
         RemoteTransferController *transferController = [RemoteTransferController new];
         transferController.navigationItem.rightBarButtonItem = nil;
         [self modalNavigationControllerPresentViewController:transferController];
-        [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.remoteURL completionHandler:^(id<CKConnection> connection, NSError *error) {
+        [transferController deleteConnectionItems:self._selectedItems fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
             self.loading = YES;
             [self setEditing:NO animated:YES];
             [_connection directoryContents];

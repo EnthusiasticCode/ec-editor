@@ -532,7 +532,7 @@ ECASSERT(NO);
     [self modalNavigationControllerPresentViewController:remoteTransferController];
     
     // Start upload
-    [remoteTransferController uploadItemURLs:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection url:remoteURL completion:^(id<CKConnection> connection, NSError *error) {
+    [remoteTransferController uploadProjectItems:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection path:remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];
@@ -566,7 +566,7 @@ ECASSERT(NO);
     [self modalNavigationControllerPresentViewController:remoteTransferController];
     
     // Start sync
-    [remoteTransferController syncLocalDirectoryURL:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection remoteURL:remoteURL options:nil completion:^(id<CKConnection> connection, NSError *error) {
+    [remoteTransferController synchronizeLocalProjectFolder:self.currentFolder withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
         [self modalNavigationControllerDismissAction:sender];
     }];
 }

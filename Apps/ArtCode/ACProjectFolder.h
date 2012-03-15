@@ -15,6 +15,9 @@
 /// Array of items in the folder.
 @property (nonatomic, copy, readonly) NSArray *children;
 
+/// Gets the child with the given name if it exists, nil otherwise.
+- (ACProjectFileSystemItem *)childWithName:(NSString *)name;
+
 #pragma mark Creating new folders and files
 
 - (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;

@@ -22,6 +22,7 @@ static NSString * const _childrenKey = @"children";
 @end
 
 @implementation ACProjectFolder {
+    /// Dictionary of item name to ACProjectFileSystemItem.
     NSMutableDictionary *_children;
 }
 
@@ -62,6 +63,10 @@ static NSString * const _childrenKey = @"children";
 }
 
 #pragma mark - Contents
+
+- (ACProjectFileSystemItem *)childWithName:(NSString *)name {
+    return [_children objectForKey:name];
+}
 
 - (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
 {
