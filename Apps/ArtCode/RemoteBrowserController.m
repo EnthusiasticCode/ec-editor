@@ -148,15 +148,19 @@
 {
     [super loadView];
     
+    // Load the bottom toolbar
+    if ([self isMemberOfClass:[RemoteBrowserController class]])
+        [[NSBundle mainBundle] loadNibNamed:@"RemoteBrowserBottomToolBar" owner:self options:nil];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
     self.searchBar.placeholder = @"Filter files in this remote folder";
     
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(refreshAction:)]];
     
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
-    
-    // Load the bottom toolbar
-    if ([self isMemberOfClass:[RemoteBrowserController class]])
-        [[NSBundle mainBundle] loadNibNamed:@"RemoteBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload

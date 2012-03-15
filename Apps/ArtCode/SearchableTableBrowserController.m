@@ -27,12 +27,10 @@
 
 #pragma mark - Properties
 
-@synthesize tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
+@synthesize tableView = _tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
 
-- (UISearchBar *)searchBar
-{
-    if (!searchBar)
-    {
+- (UISearchBar *)searchBar {
+    if (!searchBar && self.isViewLoaded) {
         searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
         searchBar.delegate = self;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -40,31 +38,26 @@
     return searchBar;
 }
 
-- (UITableView *)tableView
-{
-    if (!tableView)
-    {
+- (UITableView *)tableView {
+    if (!_tableView && self.isViewLoaded) {
         CGRect bounds = self.view.bounds;
-        if (_isSearchBarStaticOnTop)
-        {
+        if (_isSearchBarStaticOnTop) {
             bounds.origin.y = 44;
             bounds.size.height -= 44;
         }
-        tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
-        tableView.delegate = self;
-        tableView.dataSource = self;
-        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
-        tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
-        tableView.allowsMultipleSelectionDuringEditing = YES;
+        _tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+        _tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
+        _tableView.allowsMultipleSelectionDuringEditing = YES;
     }
-    return tableView;
+    return _tableView;
 }
 
-- (UILabel *)infoLabel
-{
-    if (!infoLabel)
-    {
+- (UILabel *)infoLabel {
+    if (!infoLabel && self.isViewLoaded) {
         infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
         infoLabel.textAlignment = UITextAlignmentCenter;
         infoLabel.backgroundColor = [UIColor clearColor];
@@ -75,13 +68,11 @@
     return infoLabel;
 }
 
-- (NSArray *)filteredItems
-{
+- (NSArray *)filteredItems {
     return nil;
 }
 
-- (void)invalidateFilteredItems
-{
+- (void)invalidateFilteredItems {
 }
 
 #pragma mark - Controller lifecycle
@@ -137,9 +128,10 @@
 
 #pragma mark - View lifecycle
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    [super loadView];
+    [super viewDidLoad];
+    
     self.tableView.tableFooterView = self.infoLabel;
     if (_isSearchBarStaticOnTop)
     {
@@ -154,12 +146,6 @@
     
     self.editButtonItem.title = @"";
     self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.toolbarItems = self.toolNormalItems;
     
     // Adjust layout if bottomToolBar has been loaded
     if (self.bottomToolBar != nil)
@@ -187,7 +173,7 @@
 
 - (void)viewDidUnload
 {
-    tableView = nil;
+    _tableView = nil;
     searchBar = nil;
     infoLabel = nil;
     toolEditItems = nil;
@@ -204,6 +190,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.toolbarItems = self.toolNormalItems;
     [self.tableView reloadData];
 }
 

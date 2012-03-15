@@ -82,24 +82,24 @@ static void *_currentFolderContext;
 
 #pragma mark - Properties
 
-@synthesize currentFolder;
+@synthesize currentFolder = _currentFolder;
 @synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
 
 - (void)setCurrentFolder:(ACProjectFolder *)value
 {
-    if (value == currentFolder)
+    if (value == _currentFolder)
         return;
     
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
     [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
     _currentObservedProject = nil;
 
-    [currentFolder removeObserver:self forKeyPath:@"children" context:&_currentFolderContext];
-    currentFolder = value;
-    [currentFolder addObserver:self forKeyPath:@"children" options:NSKeyValueObservingOptionNew context:&_currentFolderContext];
+    [_currentFolder removeObserver:self forKeyPath:@"children" context:&_currentFolderContext];
+    _currentFolder = value;
+    [_currentFolder addObserver:self forKeyPath:@"children" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&_currentFolderContext];
     
     // Add observer for project to update tile if we are showing the root folder
-    if (currentFolder.parentFolder == nil)
+    if (_currentFolder.parentFolder == nil)
     {
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
@@ -107,12 +107,9 @@ static void *_currentFolderContext;
     }
 }
 
-- (NSArray *)filteredItems
-{
-    if (!_filteredItems)
-    {
-        if ([self.searchBar.text length])
-        {
+- (NSArray *)filteredItems {
+    if (!_filteredItems) {
+        if ([self.searchBar.text length]) {
             NSArray *hitMasks = nil;
             _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
                 return element.name;
@@ -122,9 +119,7 @@ static void *_currentFolderContext;
                 self.infoLabel.text = @"No items in this folder match the filter";
             else
                 self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [_filteredItems count], [self.currentFolder.children count]];
-        }
-        else
-        {
+        } else {
             _filteredItems = self.currentFolder.children;
             _filteredItemsHitMasks = nil;
             if ([_filteredItems count] == 0)
@@ -161,6 +156,13 @@ static void *_currentFolderContext;
 {
     [super loadView];
     
+    // Load the bottom toolbar
+    [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
     // Customize subviews
     self.searchBar.placeholder = @"Filter files in this folder";
     
@@ -168,9 +170,6 @@ static void *_currentFolderContext;
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
     
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-    
-    // Load the bottom toolbar
-    [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload
@@ -187,12 +186,9 @@ static void *_currentFolderContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // TODO do this better
-    [self setArtCodeTab:self.artCodeTab];
-    
     [_selectedItems removeAllObjects];
     
-    [self invalidateFilteredItems];
+//    [self invalidateFilteredItems];
     [super viewWillAppear:animated];
     
     // Hide sync button if no remotes
@@ -260,17 +256,13 @@ static void *_currentFolderContext;
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    if (self.isEditing)
-    {
+    if (self.isEditing) {
         if (!_selectedItems)
             _selectedItems = [NSMutableArray new];
         [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
-    }
-    else
-    {
+    } else {
         [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
 }
