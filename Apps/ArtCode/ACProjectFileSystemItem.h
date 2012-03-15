@@ -20,6 +20,9 @@
 /// The name of the item corresponding to its filesystem path component.
 @property (nonatomic, strong) NSString *name;
 
+/// The last modified date
+@property (nonatomic, strong, readonly) NSDate *contentModificationDate;
+
 /// Returns a string containing the path relative to the project and starting with the project name.
 - (NSString *)pathInProject;
 
