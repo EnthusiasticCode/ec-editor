@@ -17,7 +17,7 @@
 /// Default NSUTF8FileEncoding
 @property (nonatomic) NSStringEncoding fileEncoding;
 
-#pragma mark Code File specific properties
+#pragma mark Accessing the content
 
 /// file syntax to be used for syntax highlight. If nill the system should use the most appropriate file type based on the file path
 @property (nonatomic, strong) NSString *codeFileExplicitSyntaxIdentifier;

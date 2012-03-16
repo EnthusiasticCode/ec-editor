@@ -148,11 +148,6 @@ describe(@"A new opened ACProject", ^{
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];
-        __block BOOL isOpened = NO;
-        [project openWithCompletionHandler:^(BOOL success) {
-            isOpened = success;
-        }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
     });
     
     afterAll(^{
@@ -584,11 +579,6 @@ describe(@"An existing ACProject", ^{
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];
-        __block BOOL isOpened = NO;
-        [project openWithCompletionHandler:^(BOOL success) {
-            isOpened = success;
-        }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
@@ -604,15 +594,17 @@ describe(@"An existing ACProject", ^{
         [[expectFutureValue(file) shouldEventually] beNonNil];
         [file addBookmarkWithPoint:bookmarkPoint];
         
+        __block BOOL didClose = NO;
         [project closeWithCompletionHandler:^(BOOL success) {
-            isOpened = success;
+            didClose = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(didClose)) shouldEventually] beYes];
         project = [ACProject projectWithUUID:projectUUID];
+        __block BOOL didOpen = NO;
         [project openWithCompletionHandler:^(BOOL success) {
-            isOpened = success;
+            didOpen = success;
         }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[expectFutureValue(theValue(didOpen)) shouldEventually] beYes];
     });
     
     afterAll(^{

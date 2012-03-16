@@ -85,10 +85,25 @@ static NSString * const _childrenKey = @"children";
         ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:childName] parent:self fileURL:childURL];
         if (child) {
             [_children setObject:child forKey:childName];
+            [self.project didAddFileSystemItem:child];
         }
     }
 
     return self;
+}
+
+- (BOOL)writeToURL:(NSURL *)url {
+    [[[NSFileManager alloc] init] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:NULL];
+    __block BOOL success = YES;
+    [_children enumerateKeysAndObjectsUsingBlock:^(NSString *name, ACProjectFileSystemItem *child, BOOL *stop) {
+        NSURL *childURL = [url URLByAppendingPathComponent:name];
+        if (![child writeToURL:childURL]) {
+            success = NO;
+            *stop = YES;
+            return;
+        };
+    }];
+    return success;
 }
 
 #pragma mark - Accessing folder content

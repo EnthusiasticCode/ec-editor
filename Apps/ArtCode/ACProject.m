@@ -163,12 +163,18 @@ static NSString * const _plistRemotesKey = @"remotes";
     return YES;
 }
 
-- (BOOL)writeContents:(id)contents toURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation originalContentsURL:(NSURL *)originalContentsURL error:(NSError *__autoreleasing *)outError {
+- (BOOL)writeContents:(id)contents andAttributes:(NSDictionary *)additionalFileAttributes safelyToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation error:(NSError *__autoreleasing *)outError {
     // Create project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
+    // Create the contents folder if it doesn't exist
+    if (!_contentsFolder) {
+        NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
+        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL];
+    }
+    
     // Get content plist
-    NSDictionary *contentsPlist = self.contentsFolder.propertyListDictionary;
+    NSDictionary *contentsPlist = _contentsFolder.propertyListDictionary;
     if (contentsPlist) {
         [plist setObject:contentsPlist forKey:_plistContentsKey];
     }
@@ -185,16 +191,21 @@ static NSString * const _plistRemotesKey = @"remotes";
     // Write the document bundle if needed, ignore it if it fails
     [[[NSFileManager alloc] init] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:NULL];
     
+    // Apply attributes to document bundle
+    if (![url setResourceValues:additionalFileAttributes error:outError]) {
+        return NO;
+    };
+    
     // Write plist
     NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
-    if (![[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError] writeToURL:plistURL atomically:NO]) {
+    if (![[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError] writeToURL:plistURL atomically:YES]) {
         return NO;
     }
     
     // If we're being saved to a new URL, we need to force a write of all contents
-    if (self.contentsFolder && ![originalContentsURL isEqual:url]) {
+    if (_contentsFolder && saveOperation == UIDocumentSaveForCreating) {
         NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
-        if (![self.contentsFolder writeToURL:contentsURL]) {
+        if (![_contentsFolder writeToURL:contentsURL]) {
             return NO;
         }
     }
