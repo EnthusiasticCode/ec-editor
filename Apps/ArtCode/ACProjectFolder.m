@@ -21,38 +21,36 @@ static NSString * const _childrenKey = @"children";
 
 @end
 
+#pragma mark - 
+
 @implementation ACProjectFolder {
     /// Dictionary of item name to ACProjectFileSystemItem.
     NSMutableDictionary *_children;
 }
 
-#pragma mark - Properties
+#pragma mark - ACProjectItem
 
-- (NSArray *)children
-{
-    return _children.allValues;
+- (NSURL *)URL {
+    if (self.parentFolder == nil) {
+        return [self.project.fileURL URLByAppendingPathComponent:self.name isDirectory:YES];
+    }
+    return [self.parentFolder.URL URLByAppendingPathComponent:self.name isDirectory:YES];
 }
 
-#pragma mark - Initialization and serialization
-
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
-{
-    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
-    if (!self)
-        return nil;
-    _children = [[NSMutableDictionary alloc] initWithCapacity:contents.fileWrappers.count];
-    NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
-    [contents.fileWrappers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSFileWrapper *fileWrapper, BOOL *stop) {
-        ECASSERT(fileWrapper.isRegularFile || fileWrapper.isDirectory);
-        ACProjectFileSystemItem *item = [[(fileWrapper.isDirectory ? [ACProjectFolder class] : [ACProjectFile class]) alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:key] parent:self contents:fileWrapper];
-        [_children setObject:item forKey:key];
-        [project didAddFileSystemItem:item];
-    }];
-    return self;
+- (ACProjectItemType)type {
+    return ACPFolder;
 }
 
-- (NSDictionary *)propertyListDictionary
-{
+- (void)remove {
+    for (ACProjectFileSystemItem *item in _children.allValues) {
+        [item remove];
+    }
+    [super remove];
+}
+
+#pragma mark - ACProjectItem Internal
+
+- (NSDictionary *)propertyListDictionary {
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
     NSMutableDictionary *children = [[NSMutableDictionary alloc] initWithCapacity:_children.count];
     [_children enumerateKeysAndObjectsUsingBlock:^(NSString *key, ACProjectFileSystemItem *item, BOOL *stop) {
@@ -62,89 +60,91 @@ static NSString * const _childrenKey = @"children";
     return plist;
 }
 
-#pragma mark - Contents
+#pragma mark - ACProjectFileSystemItem Internal
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
+    if (!self) {
+        return nil;
+    }
+    
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    // Make sure the directory exists
+    [fileManager createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:NULL];
+    
+    // Create children
+    NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
+    for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
+        NSNumber *isDirectory = nil;
+        if (![childURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
+            continue;
+        }
+        Class childClass = [isDirectory boolValue] ? [ACProjectFolder class] : [ACProjectFile class];
+        NSString *childName = childURL.lastPathComponent;
+        ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:childName] parent:self fileURL:childURL];
+        if (child) {
+            [_children setObject:child forKey:childName];
+        }
+    }
+
+    return self;
+}
+
+#pragma mark - Accessing folder content
+
+- (NSArray *)children {
+    return _children.allValues;
+}
 
 - (ACProjectFileSystemItem *)childWithName:(NSString *)name {
     return [_children objectForKey:name];
 }
 
-- (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
-{
-    if (!contents)
-        contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    contents.preferredFilename = name;
-    ACProjectFolder *newFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:plist parent:self contents:contents];
-    NSString *key = [self.contents addFileWrapper:newFolder.contents];
-    if (key)
-    {
-        [_children setObject:newFolder forKey:key];
-        [self.project didAddFileSystemItem:newFolder];
+#pragma mark - Creating new folders and files
+
+- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(NSError *))completionHandler {
+    if ([_children objectForKey:name]) {
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
+        return;
+    }
+    NSURL *childURL = [self.URL URLByAppendingPathComponent:name];
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        ACProjectFolder *childFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
+        if (!childFolder) {
+            completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
+            return;
+        }
+        [_children setObject:childFolder forKey:name];
+        [self.project didAddFileSystemItem:childFolder];
         [self.project updateChangeCount:UIDocumentChangeDone];
-        return YES;
-    }
-    else
-    {
-        return NO;
-    }
+        completionHandler(nil);
+    }];
 }
 
-- (BOOL)addNewFileWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError *__autoreleasing *)error
-{
-    if (!contents)
-        contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
-    contents.preferredFilename = name;
-    ACProjectFile *newFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:plist parent:self contents:contents];
-    NSString *key = [self.contents addFileWrapper:newFile.contents];
-    if (key)
-    {
-        [_children setObject:newFile forKey:key];
-        [self.project didAddFileSystemItem:newFile];
+- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(NSError *))completionHandler {
+    if ([_children objectForKey:name]) {
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
+        return;
+    }
+    NSURL *childURL = [self.URL URLByAppendingPathComponent:name];
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        ACProjectFile *childFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
+        if (!childFile) {
+            completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
+            return;
+        }
+        [_children setObject:childFile forKey:name];
+        [self.project didAddFileSystemItem:childFile];
         [self.project updateChangeCount:UIDocumentChangeDone];
-        return YES;
-    }
-    else
-    {
-        return NO;
-    }
-}
-
-#pragma mark - Item methods
-
-- (NSURL *)URL
-{
-    if (self.parentFolder == nil)
-        return [self.project.fileURL URLByAppendingPathComponent:self.name isDirectory:YES];
-    return [self.parentFolder.URL URLByAppendingPathComponent:self.name isDirectory:YES];
-}
-
-- (ACProjectItemType)type
-{
-    return ACPFolder;
-}
-
-- (void)remove
-{
-    for (ACProjectFileSystemItem *item in _children.allValues)
-        [item remove];
-    [super remove];
+        completionHandler(nil);
+    }];
 }
 
 #pragma mark - Internal Methods
 
-- (NSFileWrapper *)defaultContents
-{
-    NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    contents.preferredFilename = self.name;
-    return contents;
-}
-
-- (void)didRemoveChild:(ACProjectFileSystemItem *)child
-{
+- (void)didRemoveChild:(ACProjectFileSystemItem *)child {
     ECASSERT([_children.allValues containsObject:child]);
-    NSString *key = [self.contents keyForFileWrapper:child.contents];
-    ECASSERT(key);
-    [self.contents removeFileWrapper:child.contents];
-    [_children removeObjectForKey:key];
+    [_children removeObjectForKey:child.name];
 }
 
 @end

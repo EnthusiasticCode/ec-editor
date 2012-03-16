@@ -10,12 +10,9 @@
 
 @interface ACProjectFileSystemItem (Internal)
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents;
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL;
 
-/// The file wrapper that handles the content of the item.
-- (NSFileWrapper *)contents;
-
-/// The file wrapper for a new item.
-- (NSFileWrapper *)defaultContents;
+/// Force a write to the specified URL. Must be called on the project's file access coordination queue
+- (BOOL)writeToURL:(NSURL *)url;
 
 @end

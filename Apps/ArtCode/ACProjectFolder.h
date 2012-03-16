@@ -10,7 +10,7 @@
 
 @interface ACProjectFolder : ACProjectFileSystemItem
 
-#pragma mark Accessing folder's content
+#pragma mark Accessing folder content
 
 /// Array of items in the folder.
 @property (nonatomic, copy, readonly) NSArray *children;
@@ -20,7 +20,7 @@
 
 #pragma mark Creating new folders and files
 
-- (BOOL)addNewFolderWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;
-- (BOOL)addNewFileWithName:(NSString *)name contents:(NSFileWrapper *)contents plist:(NSDictionary *)plist error:(NSError **)error;
+- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(NSError *error))completionHandler;
+- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(NSError *error))completionHandler;
 
 @end

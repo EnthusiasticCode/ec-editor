@@ -67,9 +67,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark - Initialization and serialization
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL
 {
-    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent contents:contents];
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
     if (!self)
         return nil;
     _fileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey] ? [[plistDictionary objectForKey:_plistFileEncodingKey] unsignedIntegerValue] : NSUTF8StringEncoding;
@@ -177,13 +177,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
     [self.project didRemoveBookmark:bookmark];
     [self didChangeValueForKey:@"bookmarks"];
-}
-
-- (NSFileWrapper *)defaultContents
-{
-    NSFileWrapper *contents = [[NSFileWrapper alloc] initRegularFileWithContents:nil];
-    contents.preferredFilename = self.name;
-    return contents;
 }
 
 #pragma mark - Private Methods

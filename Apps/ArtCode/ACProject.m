@@ -137,26 +137,19 @@ static NSString * const _plistRemotesKey = @"remotes";
     UNIMPLEMENTED(); // Use name instead
 }
 
-- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
-    NSFileWrapper *bundleWrapper = (NSFileWrapper *)contents;
-    __block NSFileWrapper *contentsWrapper = nil;
-    __block NSDictionary *plist = nil;
+- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)outError {
+    // Read plist
+    NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
+    NSData *plistData = [NSData dataWithContentsOfURL:plistURL options:NSDataReadingUncached error:outError];
+    NSDictionary *plist = nil;
+    if (plistData)
+        plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:outError];
     
-    [[bundleWrapper fileWrappers] enumerateKeysAndObjectsUsingBlock:^(NSString *fileName, NSFileWrapper *fileWrapper, BOOL *stop) {
-        if ([fileName isEqualToString:_projectPlistFileName]) {
-            ECASSERT([fileWrapper isRegularFile]);
-            plist = [NSPropertyListSerialization propertyListWithData:[fileWrapper regularFileContents] options:NSPropertyListImmutable format:NULL error:outError];
-        } else if([fileName isEqualToString:_contentsFolderName]) {
-            contentsWrapper = fileWrapper;
-        }
-    }];
+    // Read content folder
+    NSURL *contentURL = [url URLByAppendingPathComponent:_contentsFolderName];
+    _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil fileURL:contentURL];
     
-    // Project's content
-    if (contentsWrapper) {
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil contents:contentsWrapper];
-    }
-    
-    // Remotes
+    // Read remotes
     if ([plist objectForKey:_plistRemotesKey]) {
         NSMutableDictionary *remotesFromPlist = [NSMutableDictionary new];
         for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey]) {
@@ -167,27 +160,20 @@ static NSString * const _plistRemotesKey = @"remotes";
         }
         _remotes = [remotesFromPlist copy];
     }
-    
     return YES;
 }
 
-- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
-    // Creating project plist
+- (BOOL)writeContents:(id)contents toURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation originalContentsURL:(NSURL *)originalContentsURL error:(NSError *__autoreleasing *)outError {
+    // Create project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
-    // Creating project contents wrapper
-    NSFileWrapper *contentsWrapper = [self.contentsFolder contents];
-    contentsWrapper.preferredFilename = _contentsFolderName;
-    
-    // Filesystem content
-    if (contentsWrapper) {
-        NSDictionary *contentsPlist = self.contentsFolder.propertyListDictionary;
-        if (contentsPlist) {
-            [plist setObject:contentsPlist forKey:_plistContentsKey];
-        }
+    // Get content plist
+    NSDictionary *contentsPlist = self.contentsFolder.propertyListDictionary;
+    if (contentsPlist) {
+        [plist setObject:contentsPlist forKey:_plistContentsKey];
     }
-
-    // Remotes
+    
+    // Get remotes
     if ([self.remotes count]) {
         NSMutableArray *remotesPlist = [NSMutableArray arrayWithCapacity:[self.remotes count]];
         for (ACProjectFileBookmark *remote in self.remotes) {
@@ -196,21 +182,24 @@ static NSString * const _plistRemotesKey = @"remotes";
         [plist setObject:remotesPlist forKey:_plistRemotesKey];
     }
     
-    // Creating project plist wrapper
-    NSFileWrapper *plistWrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError]];
-    plistWrapper.preferredFilename = _projectPlistFileName;
+    // Write the document bundle if needed, ignore it if it fails
+    [[[NSFileManager alloc] init] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:NULL];
     
-    
-    // Creating project bundle wrapper
-    NSFileWrapper *bundleWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-    if (contentsWrapper) {
-        [bundleWrapper addFileWrapper:contentsWrapper];
-    }
-    if (plistWrapper) {
-        [bundleWrapper addFileWrapper:plistWrapper];
+    // Write plist
+    NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
+    if (![[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError] writeToURL:plistURL atomically:NO]) {
+        return NO;
     }
     
-    return bundleWrapper;
+    // If we're being saved to a new URL, we need to force a write of all contents
+    if (self.contentsFolder && ![originalContentsURL isEqual:url]) {
+        NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
+        if (![self.contentsFolder writeToURL:contentsURL]) {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
@@ -286,9 +275,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (ACProjectFolder *)contentsFolder {
     if (!_contentsFolder && !self.documentState & UIDocumentStateClosed) {
-        NSFileWrapper *contents = [[NSFileWrapper alloc] initDirectoryWithFileWrappers:nil];
-        contents.preferredFilename = _contentsFolderName;
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil contents:contents];
+        NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
+        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL];
         [self updateChangeCount:UIDocumentChangeDone];
     }
     return _contentsFolder;

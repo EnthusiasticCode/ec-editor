@@ -19,72 +19,72 @@
 
 @end
 
-/// Forlder internal method to remove a child item
+#pragma mark -
+
+/// Folder internal method to remove a child item
 @interface ACProjectFolder (Internal)
 
 - (void)didRemoveChild:(ACProjectFileSystemItem *)child;
 
 @end
 
+#pragma mark -
+
 @implementation ACProjectFileSystemItem {
     NSFileWrapper *_contents;
 }
 
-@synthesize name = _name, parentFolder = _parentFolder;
+@synthesize name = _name, parentFolder = _parentFolder, URL = _URL;
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent contents:(NSFileWrapper *)contents
-{
-    if (!project || !contents || !contents.preferredFilename)
-        return nil;
-    self = [super initWithProject:project propertyListDictionary:plistDictionary];
-    if (!self)
-        return nil;
-    _contents = contents;
-    _name = contents.preferredFilename;
-    _parentFolder = parent;
-    return self;
+#pragma mark - ACProjectItem
+
+- (void)remove {
+    ECASSERT(self.parentFolder);
+    [self.parentFolder didRemoveChild:self];
+    [self.project didRemoveFileSystemItem:self];
+    [super remove];
 }
 
-- (NSFileWrapper *)contents
-{
-    if (!_contents)
-        _contents = [self defaultContents];
-    return _contents;
+#pragma mark - ACProjectItem Internal
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
+    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil];
 }
 
-- (NSFileWrapper *)defaultContents
-{
-    return [NSFileWrapper new];
-}
-
-- (NSString *)pathInProject
-{
-    if (self.parentFolder == nil)
-        return self.project.name;
-    
-    return [[self.parentFolder pathInProject] stringByAppendingPathComponent:self.name];
-}
-
-#pragma mark - Item methods
-
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary
-{
-    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil contents:nil];
-}
-
-- (NSDictionary *)propertyListDictionary
-{
+- (NSDictionary *)propertyListDictionary {
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
     [plist setObject:self.name forKey:@"name"];
     return plist;
 }
 
-- (void)remove
-{
-    ECASSERT(self.parentFolder);
-    [self.parentFolder didRemoveChild:self];
-    [self.project didRemoveFileSystemItem:self];
-    [super remove];
+#pragma mark - Public Methods
+
+- (NSString *)pathInProject {
+    if (self.parentFolder == nil) {
+        return self.project.name;
+    }
+    
+    return [[self.parentFolder pathInProject] stringByAppendingPathComponent:self.name];
+}
+
+#pragma mark - Internal Methods
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+    if (!project || !fileURL) {
+        return nil;
+    }
+    self = [super initWithProject:project propertyListDictionary:plistDictionary];
+    if (!self) {
+        return nil;
+    }
+    _URL = fileURL;
+    _name = fileURL.lastPathComponent;
+    _parentFolder = parent;
+    return self;
+}
+
+- (BOOL)writeToURL:(NSURL *)url {
+    return YES;
 }
 
 @end

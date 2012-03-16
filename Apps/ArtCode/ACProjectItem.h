@@ -30,7 +30,7 @@ typedef enum {
 @property (nonatomic, readonly) ACProjectItemType type;
 
 /// absolute URL of the item if applicable, nil otherwise
-- (NSURL *)URL;
+@property (nonatomic, readonly) NSURL *URL;
 
 /// Delete the item
 - (void)remove;
