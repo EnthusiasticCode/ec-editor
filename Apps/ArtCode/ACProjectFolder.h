@@ -8,6 +8,9 @@
 
 #import "ACProjectFileSystemItem.h"
 
+@class ACProjectFile;
+
+
 @interface ACProjectFolder : ACProjectFileSystemItem
 
 #pragma mark Accessing folder content
@@ -20,7 +23,7 @@
 
 #pragma mark Creating new folders and files
 
-- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(NSError *error))completionHandler;
-- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(NSError *error))completionHandler;
+- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFolder *newFolder))completionHandler;
+- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFile *newFile))completionHandler;
 
 @end

@@ -55,7 +55,6 @@ static NSMutableSet *_projectItemUUIDs;
 #pragma mark - Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All project items need to be initialized in the project's file access coordination queue
     self = [super init];
     if (!self) {
         return nil;

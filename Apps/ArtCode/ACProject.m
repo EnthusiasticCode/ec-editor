@@ -274,11 +274,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Project content
 
 - (ACProjectFolder *)contentsFolder {
-    if (!_contentsFolder && !self.documentState & UIDocumentStateClosed) {
-        NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL];
-        [self updateChangeCount:UIDocumentChangeDone];
-    }
+    ECASSERT(_contentsFolder || self.documentState & UIDocumentStateClosed);
     return _contentsFolder;
 }
 

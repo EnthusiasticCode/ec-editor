@@ -73,6 +73,7 @@ static NSString * const _childrenKey = @"children";
     [fileManager createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:NULL];
     
     // Create children
+    _children = [[NSMutableDictionary alloc] init];
     NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
     for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
         NSNumber *isDirectory = nil;
@@ -102,41 +103,41 @@ static NSString * const _childrenKey = @"children";
 
 #pragma mark - Creating new folders and files
 
-- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(NSError *))completionHandler {
+- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFolder *))completionHandler {
     if ([_children objectForKey:name]) {
-        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
+        completionHandler(nil);
         return;
     }
     NSURL *childURL = [self.URL URLByAppendingPathComponent:name];
     [self.project performAsynchronousFileAccessUsingBlock:^{
         ACProjectFolder *childFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
         if (!childFolder) {
-            completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
+            completionHandler(nil);
             return;
         }
         [_children setObject:childFolder forKey:name];
         [self.project didAddFileSystemItem:childFolder];
         [self.project updateChangeCount:UIDocumentChangeDone];
-        completionHandler(nil);
+        completionHandler(childFolder);
     }];
 }
 
-- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(NSError *))completionHandler {
+- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFile *))completionHandler {
     if ([_children objectForKey:name]) {
-        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
+        completionHandler(nil);
         return;
     }
     NSURL *childURL = [self.URL URLByAppendingPathComponent:name];
     [self.project performAsynchronousFileAccessUsingBlock:^{
         ACProjectFile *childFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
         if (!childFile) {
-            completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
+            completionHandler(nil);
             return;
         }
         [_children setObject:childFile forKey:name];
         [self.project didAddFileSystemItem:childFile];
         [self.project updateChangeCount:UIDocumentChangeDone];
-        completionHandler(nil);
+        completionHandler(childFile);
     }];
 }
 
