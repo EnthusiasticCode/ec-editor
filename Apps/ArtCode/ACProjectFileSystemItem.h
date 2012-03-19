@@ -29,9 +29,18 @@
 #pragma mark Managing the item
 
 /// Move the item to a new folder.
-- (BOOL)moveToFolder:(ACProjectFolder *)newParent error:(NSError **)error;
+- (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void(^)(NSError *error))completionHandler;
 
 /// Copy the item to a new folder.
-- (BOOL)copyToFolder:(ACProjectFolder *)copyParent error:(NSError **)error;
+- (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void(^)(NSError *error))completionHandler;
+
+// Duplicate the receiver and changes its name accordingly.
+- (void)duplicateWithCompletionHandler:(void(^)(ACProjectFileSystemItem *duplicate, NSError *error))completionHandler;
+
+/// Recursively updates the contents of the receiver by adding or replacing items. Does not delete items 
+- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
+
+/// Recusivly publishes the contents of the receiver to the specified URL. Replaces items at destination.
+- (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
 @end

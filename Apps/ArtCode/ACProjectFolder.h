@@ -23,7 +23,8 @@
 
 #pragma mark Creating new folders and files
 
-- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFolder *newFolder))completionHandler;
-- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFile *newFile))completionHandler;
+- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFolder *newFolder, NSError *error))completionHandler;
+
+- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFile *newFile, NSError *error))completionHandler;
 
 @end
