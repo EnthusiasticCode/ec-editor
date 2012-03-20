@@ -808,7 +808,7 @@ static void init(CodeView *self)
     }
     else
     {
-        ECASSERT(NO); // no selection to delete
+        ASSERT(NO); // no selection to delete
     }
     
     [self unmarkText];
@@ -1335,7 +1335,7 @@ static void init(CodeView *self)
 
 - (void)_editDataSourceInRange:(NSRange)range withString:(NSString *)string selectionRange:(NSRange)selection
 {
-    ECASSERT(string);
+    ASSERT(string);
     
     if (!_flags.dataSourceHasCommitStringForTextInRange)
         return;
@@ -1703,7 +1703,7 @@ static void init(CodeView *self)
 
 - (void)drawRect:(CGRect)rect
 {
-    ECASSERT(parentCodeView != nil);
+    ASSERT(parentCodeView != nil);
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -1740,7 +1740,7 @@ static void init(CodeView *self)
 
 - (void)setFrame:(CGRect)frame
 {
-    ECASSERT(CGRectEqualToRect(frame, CGRectIntegral(frame)) && "If frame is not integral, the rendering is blurry.");
+    ASSERT(CGRectEqualToRect(frame, CGRectIntegral(frame)) && "If frame is not integral, the rendering is blurry.");
     
     if (CGRectEqualToRect(frame, self.frame))
         return;

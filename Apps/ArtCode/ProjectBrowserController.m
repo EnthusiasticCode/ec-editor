@@ -229,8 +229,8 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    ECASSERT(self.isEditing);
-    ECASSERT([self.gridView indexForSelectedCell] != -1);
+    ASSERT(self.isEditing);
+    ASSERT([self.gridView indexForSelectedCell] != -1);
     
     if (actionSheet == _toolItemDeleteActionSheet) {
         if (buttonIndex == actionSheet.destructiveButtonIndex) {
@@ -249,7 +249,7 @@
     else if (actionSheet == _toolItemExportActionSheet)
     {
 #warning FIX
-ECASSERT(NO);
+ASSERT(NO);
         if (buttonIndex == 0) // export to iTunes
         {
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
@@ -394,8 +394,8 @@ ECASSERT(NO);
 
 - (void)_toolEditDuplicateAction:(id)sender
 {
-    ECASSERT(self.isEditing);
-    ECASSERT([self.gridView indexForSelectedCell] != -1);
+    ASSERT(self.isEditing);
+    ASSERT([self.gridView indexForSelectedCell] != -1);
     
     self.loading = YES;
 
@@ -405,7 +405,7 @@ ECASSERT(NO);
     
     [self setEditing:NO animated:YES];
 #warning FIX
-    ECASSERT(NO);    
+    ASSERT(NO);    
 //    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
 //        ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
 //        if (!project)

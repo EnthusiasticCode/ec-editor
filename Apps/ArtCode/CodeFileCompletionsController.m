@@ -65,7 +65,7 @@
 
 - (TMUnit *)_codeUnit
 {
-    ECASSERT(self.targetCodeFileController != nil);
+    ASSERT(self.targetCodeFileController != nil);
     
     if (!_codeUnit)
         _codeUnit = [self._codeIndex codeUnitForCodeFile:self.targetCodeFileController.codeFile rootScopeIdentifier:nil];
@@ -74,7 +74,7 @@
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-    ECASSERT(self.targetCodeFileController.codeFile.length > self.offsetInDocumentForCompletions);
+    ASSERT(self.targetCodeFileController.codeFile.length > self.offsetInDocumentForCompletions);
     
     if (!_completionResults)
         _completionResults = [self._codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
@@ -149,7 +149,7 @@
     {
         switch ([chunk kind]) {
             case CXCompletionChunk_ResultType:
-                ECASSERT(resultType == nil && "There should be only one result type");
+                ASSERT(resultType == nil && "There should be only one result type");
                 resultType = [chunk text];
                 break;
                 
@@ -186,7 +186,7 @@
             case CXCompletionChunk_Optional:
             case CXCompletionChunk_VerticalSpace:
                 // Unhandled
-                ECASSERT(NO && "Unhandled chunk kind");
+                ASSERT(NO && "Unhandled chunk kind");
                 break;
                 
             default:
@@ -233,7 +233,7 @@
             case CXCompletionChunk_Optional:
             case CXCompletionChunk_VerticalSpace:
                 // Unhandled
-                ECASSERT(NO && "Unhandled chunk kind");
+                ASSERT(NO && "Unhandled chunk kind");
                 break;
                 
             default:

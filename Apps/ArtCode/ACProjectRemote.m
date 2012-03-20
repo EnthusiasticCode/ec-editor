@@ -145,8 +145,8 @@
 
 - (NSURL *)_URLWithScheme:(NSString *)scheme host:(NSString *)host port:(NSNumber *)port user:(NSString *)user
 {
-    ECASSERT([scheme length]);
-    ECASSERT([host length]);
+    ASSERT([scheme length]);
+    ASSERT([host length]);
     NSString *urlstring = [user length] ? [NSString stringWithFormat:@"%@://%@@%@", scheme, user, host] : [NSString stringWithFormat:@"%@://%@", scheme, host];
     return [NSURL URLWithString:port ? [NSString stringWithFormat:@"%@:%@", urlstring, port] : urlstring];
 }

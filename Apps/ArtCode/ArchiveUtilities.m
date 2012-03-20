@@ -15,7 +15,7 @@
 
 + (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL
 {
-    ECASSERT(archiveURL && directoryURL);
+    ASSERT(archiveURL && directoryURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSURL *workingDirectory = [NSURL uniqueDirectoryInDirectory:directoryURL];
@@ -83,10 +83,10 @@
 
 + (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL
 {
-    ECASSERT(directoryURL && archiveURL);
+    ASSERT(directoryURL && archiveURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    ECASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
+    ASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
     NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
     [fileManager changeCurrentDirectoryPath:[directoryURL path]];
     
@@ -129,7 +129,7 @@
                 // workaround for a bug in libarchive where an entry can have a path relative to the working directory before archive_read_disk_descend was called
                 if (!file)
                     file = fopen(strstr(archive_entry_sourcepath(entry), "/") + 1, "rb");
-                ECASSERT(file);
+                ASSERT(file);
                 char buff[8192];
                 size_t length = fread(buff, sizeof(char), sizeof(buff), file);
                 while (length > 0) {

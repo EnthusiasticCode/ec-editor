@@ -31,13 +31,13 @@
 
 - (NSUInteger)count
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     return [_contents count];
 }
 
 - (id)objectAtIndex:(NSUInteger)index
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     WeakObjectWrapper *wrapper = [_contents objectAtIndex:index];
     if (!wrapper)
         return nil;
@@ -46,14 +46,14 @@
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(__unsafe_unretained id [])buffer count:(NSUInteger)len
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [self _purge];
     return [_contents countByEnumeratingWithState:state objects:buffer count:len];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [self _purge];
     NSMutableArray *copy = [[NSMutableArray alloc] init];
     for (WeakObjectWrapper *wrapper in _contents)
@@ -65,25 +65,25 @@
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index
 {
-    ECASSERT(_contents && anObject);
+    ASSERT(_contents && anObject);
     [_contents insertObject:[WeakObjectWrapper wrapperWithObject:anObject] atIndex:index];
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [_contents removeObjectAtIndex:index];
 }
 
 - (void)addObject:(id)anObject
 {
-    ECASSERT(_contents && anObject);
+    ASSERT(_contents && anObject);
     [_contents addObject:[WeakObjectWrapper wrapperWithObject:anObject]];
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
 {
-    ECASSERT(_contents && anObject);
+    ASSERT(_contents && anObject);
     ((WeakObjectWrapper *)[_contents objectAtIndex:index])->object = anObject;
 }
 
@@ -91,7 +91,7 @@
 
 - (void)_purge
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     NSIndexSet *indexes = [_contents indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
         if (((WeakObjectWrapper *)obj)->object)
             return NO;

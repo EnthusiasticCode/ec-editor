@@ -31,7 +31,7 @@
     static QuickBrowsersContainerController *_fileController = nil;
     static QuickBrowsersContainerController *_remoteController = nil;
     
-    ECASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
+    ASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
 
     if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList])
     {

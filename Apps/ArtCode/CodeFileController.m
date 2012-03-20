@@ -349,7 +349,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     [super setArtCodeTab:artCodeTab];
     
-    ECASSERT(self.artCodeTab.currentItem.type == ACPFile);
+    ASSERT(self.artCodeTab.currentItem.type == ACPFile);
     [(ACProjectFile *)self.artCodeTab.currentItem openCodeFileWithCompletionHandler:^(CodeFile *codeFile) {
         self.codeFile = codeFile;
     }];
@@ -705,7 +705,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    ECASSERT(NO); // Need implementation
+    ASSERT(NO); // Need implementation
 //    NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
 //    if ([bookmarks count] == 0)
 //    {
@@ -725,7 +725,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
 {
-    ECASSERT(view && frame);
+    ASSERT(view && frame);
     
     if ([_keyboardAccessoryItemActions count] != 11)
         return NO;
@@ -865,7 +865,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
 {
-    ECASSERT(self._keyboardAccessoryView.superview);
+    ASSERT(self._keyboardAccessoryView.superview);
     
     self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
     if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
@@ -996,7 +996,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return;
     
     _keyboardAccessoryItemActions = configuration;
-    ECASSERT([_keyboardAccessoryItemActions count] == 11);
+    ASSERT([_keyboardAccessoryItemActions count] == 11);
     
     CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
     
@@ -1074,7 +1074,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 - (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
 {
-    ECASSERT(range.length > 4);
+    ASSERT(range.length > 4);
     
     static CGColorRef placeholderFillColor = NULL;
     if (!placeholderFillColor)
@@ -1140,7 +1140,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
     
     //
     CGFontRef font = (__bridge CGFontRef)[[TMTheme sharedAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
-    ECASSERT(font);
+    ASSERT(font);
     CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
     
     [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
@@ -1160,7 +1160,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
         return YES;
     if (selector == @selector(showCompletionsAtCursor))
         return YES;
-    ECASSERT(NO && "An action called a not supported selector");
+    ASSERT(NO && "An action called a not supported selector");
     return NO;
 }
 

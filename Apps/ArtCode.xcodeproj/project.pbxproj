@@ -2625,7 +2625,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders";
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+					../Headers,
+				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2642,7 +2645,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders";
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+					../Headers,
+				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2715,7 +2721,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
+				HEADER_SEARCH_PATHS = (
+					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/",
+					../Headers,
+				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"${BUILD_DIR}/",
@@ -2737,7 +2746,10 @@
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = "${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/";
+				HEADER_SEARCH_PATHS = (
+					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/",
+					../Headers,
+				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"${BUILD_DIR}/",

@@ -198,7 +198,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (IBAction)closeBarAction:(id)sender
 {
-    ECASSERT(self.singleTabController.toolbarViewController == self);
+    ASSERT(self.singleTabController.toolbarViewController == self);
     [self.singleTabController setToolbarViewController:nil animated:YES];
 }
 

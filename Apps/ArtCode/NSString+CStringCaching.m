@@ -48,20 +48,20 @@
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
-    ECASSERT(_string);
+    ASSERT(_string);
     return [_string methodSignatureForSelector:aSelector];
 }
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation {
-    ECASSERT(_string);
-    ECASSERT([NSStringFromSelector([anInvocation selector]) hasPrefix:@"init"]);
+    ASSERT(_string);
+    ASSERT([NSStringFromSelector([anInvocation selector]) hasPrefix:@"init"]);
     [anInvocation invokeWithTarget:_string];
     [anInvocation getReturnValue:&_string];
     [anInvocation setReturnValue:(void *)&self];
 }
 
 - (const char *)cStringUsingEncoding:(NSStringEncoding)encoding {
-    ECASSERT(_string);
+    ASSERT(_string);
     if (_cachedCString) {
         if (_cachedEncoding == encoding) {
             return _cachedCString;

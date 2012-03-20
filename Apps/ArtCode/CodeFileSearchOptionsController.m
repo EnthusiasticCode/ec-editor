@@ -145,10 +145,10 @@ static void const * parentSearchBarControllerContext;
             }
                 
             default:
-                ECASSERT(NO && "There shoud be a cell");
+                ASSERT(NO && "There shoud be a cell");
                 break;
         }
-        ECASSERT(cell != nil && "Cell not defined in storyboard");
+        ASSERT(cell != nil && "Cell not defined in storyboard");
     }
     else if ([_searchFilterMatches count] == 0)
     {
@@ -168,8 +168,8 @@ static void const * parentSearchBarControllerContext;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:PreviewCellIdentifier];
         }
         
-        ECASSERT([_searchFilterMatches count] > index);
-        ECASSERT([[_searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
+        ASSERT([_searchFilterMatches count] > index);
+        ASSERT([[_searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
         
         // Retrieve the match bounding box in the code view rendered text.
         CGRect matchRect = [self.parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[_searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;

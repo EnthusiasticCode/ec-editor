@@ -144,7 +144,7 @@ static void *_currentFolderContext;
 {
     [super setArtCodeTab:artCodeTab];
     
-    ECASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
+    ASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
     if (self.artCodeTab.currentItem)
         self.currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
     else

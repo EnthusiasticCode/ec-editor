@@ -31,8 +31,8 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
         path = [@"/" stringByAppendingString:path];
     if (item)
     {
-        ECASSERT(project);
-        ECASSERT(item.project == project);
+        ASSERT(project);
+        ASSERT(item.project == project);
         URLString = [NSString stringWithFormat:@"%@://%@-%@%@", artCodeURLScheme, [project UUID], [item UUID], path ? path : @""];
     }
     else if (project)

@@ -50,7 +50,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 - (id)initWithScopeSelector:(NSString *)scope settingsDictionary:(NSDictionary *)settingsDict
 {
-    ECASSERT([settingsDict count] != 0);
+    ASSERT([settingsDict count] != 0);
     self = [super init];
     if (!self)
         return nil;
@@ -86,14 +86,14 @@ static NSMutableDictionary *scopeToPreferenceCache;
     if (self != [TMPreference class])
         return;
     // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     NSMutableDictionary *preferences = [NSMutableDictionary new];
     for (NSURL *bundleURL in [TMBundle bundleURLs])
     {
         for (NSURL *preferenceURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
         {
             NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:preferenceURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
-            ECASSERT(plist != nil && "Couldn't load plist");
+            ASSERT(plist != nil && "Couldn't load plist");
             NSString *scopeSelector = [plist objectForKey:@"scope"];
             if (!scopeSelector)
                 continue;
@@ -184,7 +184,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
     // Search transformations
     NSMutableArray *transformations = [NSMutableArray new];
     [transformationSplitter enumerateMatchesInString:transformation options:0 range:NSMakeRange(0, [transformation length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        ECASSERT([result numberOfRanges] == 4);
+        ASSERT([result numberOfRanges] == 4);
         [transformations addObject:[[TMPreferenceSymbolTransformation alloc] initWithRegExp:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]] options:OnigOptionCaptureGroup] template:[transformation substringWithRange:[result rangeAtIndex:2]] isGlobal:[[transformation substringWithRange:[result rangeAtIndex:3]] length]]];
     }];
     

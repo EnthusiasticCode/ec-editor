@@ -49,7 +49,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 #pragma mark - UIDocument
 
 - (id)initWithFileURL:(NSURL *)url {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     self = [super initWithFileURL:url];
     if (!self) {
         return nil;
@@ -86,14 +86,14 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 - (void)addPresenter:(id<CodeFilePresenter>)presenter {
-    ECASSERT(![_presenters containsObject:presenter]);
+    ASSERT(![_presenters containsObject:presenter]);
     OSSpinLockLock(&_presentersLock);
     [_presenters addObject:presenter];
     OSSpinLockUnlock(&_presentersLock);
 }
 
 - (void)removePresenter:(id<CodeFilePresenter>)presenter {
-    ECASSERT([_presenters containsObject:presenter]);
+    ASSERT([_presenters containsObject:presenter]);
     OSSpinLockLock(&_presentersLock);
     [_presenters removeObject:presenter];
     OSSpinLockUnlock(&_presentersLock);
@@ -108,7 +108,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 - (CodeFileGeneration)currentGeneration {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return _contentsGeneration;
 }
 
@@ -116,7 +116,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 #define CONTENT_GETTER(type, value) \
 do {\
-ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
 type __value;\
 OSSpinLockLock(&_contentsLock);\
 __value = value;\
@@ -140,7 +140,7 @@ while (0)
 
 #define CONTENT_GETTER_EXPECTED_GENERATION(parameter, value) \
 do {\
-ECASSERT(parameter);\
+ASSERT(parameter);\
 OSSpinLockLock(&_contentsLock);\
 if (expectedGeneration != _contentsGeneration) {\
 OSSpinLockUnlock(&_contentsLock);\
@@ -253,7 +253,7 @@ while (0)
 #pragma mark - String content writing methods
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     
     // replacing an empty range with an empty string, no change required
     if (!range.length && ![string length]) {
@@ -291,11 +291,11 @@ while (0)
 
 #define CONTENT_MODIFIER(...) \
 do {\
-ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
 if (!range.length) {\
 return;\
 }\
-ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
 OSSpinLockLock(&_pendingChangesLock);\
 [_pendingChanges addObject:__VA_ARGS__];\
 [self _processPendingChanges];\
@@ -305,7 +305,7 @@ while (0)
 
 #define CONTENT_MODIFIER_EXPECTED_GENERATION(...) \
 do {\
-ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);\
+ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);\
 if (!range.length) {\
 return YES;\
 }\
@@ -361,28 +361,28 @@ while (0)
 #warning TODO these need support for transactions, pending changes and be better integrated with the multithreaded content management system, but they have to be replaced by onigregexp anyway so I'm leaving them broken for the time being
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [regexp numberOfMatchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [regexp matchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
 }
 
 - (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     return [result.regularExpression replacementStringForResult:result inString:[self string] offset:offset template:replacementTemplate];
 }
 
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(match && replacementTemplate);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(match && replacementTemplate);
     
     NSRange replacementRange = match.range;
     NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
@@ -396,7 +396,7 @@ while (0)
 #pragma mark - Private Methods
 
 - (void)_setHasPendingChanges {
-    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
+    ASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (_hasPendingChanges)
         return;
     _hasPendingChanges = YES;
@@ -409,8 +409,8 @@ while (0)
 
 - (void)_processPendingChanges
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(!OSSpinLockTry(&_pendingChangesLock));
     
     if (!_hasPendingChanges) {
         return;
@@ -427,20 +427,20 @@ while (0)
         OSSpinLockUnlock(&_pendingChangesLock);
         
         id changeType = [nextChange objectForKey:_changeTypeKey];
-        ECASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeSet|| changeType == _changeTypeAttributeRemoveAll));
-        ECASSERT([nextChange objectForKey:_changeRangeKey]);
+        ASSERT(changeType && (changeType == _changeTypeAttributeAdd || changeType == _changeTypeAttributeRemove || changeType == _changeTypeAttributeSet|| changeType == _changeTypeAttributeRemoveAll));
+        ASSERT([nextChange objectForKey:_changeRangeKey]);
         NSRange range = [[nextChange objectForKey:_changeRangeKey] rangeValue];
         
         OSSpinLockLock(&_contentsLock);
         if (changeType == _changeTypeAttributeAdd) {
-            ECASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            ASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
             [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
         } else if (changeType == _changeTypeAttributeRemove) {
-            ECASSERT([[nextChange objectForKey:_changeAttributeNamesKey] count]);
+            ASSERT([[nextChange objectForKey:_changeAttributeNamesKey] count]);
             for (NSString *attributeName in [nextChange objectForKey:_changeAttributeNamesKey])
                 [_contents removeAttribute:attributeName range:range];
         } else if (changeType == _changeTypeAttributeSet) {
-            ECASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            ASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
             [_contents setAttributes:self.theme.commonAttributes range:range];
             [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
         } else if (changeType == _changeTypeAttributeRemoveAll) {

@@ -12,7 +12,7 @@
 
 - (NSComparisonResult)compare:(NSURL *)other
 {
-    ECASSERT([self isFileURL] && [other isFileURL]);
+    ASSERT([self isFileURL] && [other isFileURL]);
     return [[self path] compare:[other path]];
 }
 

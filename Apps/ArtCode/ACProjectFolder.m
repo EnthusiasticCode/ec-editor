@@ -159,7 +159,7 @@ static NSString * const _childrenKey = @"children";
 #pragma mark - Internal Methods
 
 - (void)didRemoveChild:(ACProjectFileSystemItem *)child {
-    ECASSERT([_children.allValues containsObject:child]);
+    ASSERT([_children.allValues containsObject:child]);
     [_children removeObjectForKey:child.name];
 }
 

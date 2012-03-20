@@ -22,14 +22,14 @@
 
 - (NSUInteger)count
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [self _purge];
     return [_contents count];
 }
 
 - (id)objectForKey:(id)key
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     WeakObjectWrapper *wrapper = [_contents objectForKey:key];
     if (!wrapper)
         return nil;
@@ -43,14 +43,14 @@
 
 - (NSEnumerator *)keyEnumerator
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [self _purge];
     return [_contents keyEnumerator];
 }
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(__unsafe_unretained id [])buffer count:(NSUInteger)len
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [self _purge];
     return [_contents countByEnumeratingWithState:state objects:buffer count:len];
 }
@@ -68,19 +68,19 @@
     if (!self)
         return nil;
     _contents = [NSMutableDictionary dictionaryWithCapacity:numItems];
-    ECASSERT(_contents);
+    ASSERT(_contents);
     return self;
 }
 
 - (void)setObject:(id)object forKey:(id)key
 {
-    ECASSERT(_contents && object);
+    ASSERT(_contents && object);
     [_contents setObject:[WeakObjectWrapper wrapperWithObject:object] forKey:key];
 }
 
 - (void)removeObjectForKey:(id)key
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [_contents removeObjectForKey:key];
 }
 
@@ -88,7 +88,7 @@
 
 - (void)_purge
 {
-    ECASSERT(_contents);
+    ASSERT(_contents);
     [_contents removeObjectsForKeys:[[_contents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
         if (((WeakObjectWrapper *)[_contents objectForKey:key])->object)
             return NO;

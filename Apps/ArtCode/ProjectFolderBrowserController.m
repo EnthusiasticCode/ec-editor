@@ -63,7 +63,7 @@
 #pragma mark - UITableView Delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-    ECASSERT(self.navigationController != nil);
+    ASSERT(self.navigationController != nil);
 
     ProjectFolderBrowserController *nextBrowser = [[ProjectFolderBrowserController alloc] initWithStyle:self.tableView.style];
     nextBrowser.currentFolder = [self.currentFolder.childFolders objectAtIndex:indexPath.row];

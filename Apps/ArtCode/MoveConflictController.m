@@ -148,7 +148,7 @@
     [self.conflictTableView deleteRowsAtIndexPaths:[self.conflictTableView indexPathsForSelectedRows] withRowAnimation:UITableViewRowAnimationAutomatic];
     
     // Processing
-    ECASSERT(_processingBlock);
+    ASSERT(_processingBlock);
     float resolvedCount = [_resolvedItems count];
     [_resolvedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
         _processingBlock(item);

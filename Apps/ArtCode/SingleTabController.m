@@ -544,7 +544,7 @@ static const void *loadingObservingContext;
     }
     else 
     {
-        ECASSERT(NO); // Unknown URL
+        ASSERT(NO); // Unknown URL
     }
     
     // Update title if controller didn't change

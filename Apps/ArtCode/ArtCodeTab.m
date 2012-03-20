@@ -143,7 +143,7 @@ static NSMutableArray *_mutableTabs;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary
 {
-    ECASSERT(dictionary);
+    ASSERT(dictionary);
     self = [super init];
     if (!self)
         return nil;
@@ -164,8 +164,8 @@ static NSMutableArray *_mutableTabs;
     }
     if (![_mutableDictionary objectForKey:_currentHistoryPositionKey])
         [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:0] forKey:_currentHistoryPositionKey];
-    ECASSERT(_mutableDictionary == dictionary);
-    ECASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
+    ASSERT(_mutableDictionary == dictionary);
+    ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
     return self;
 }
 
@@ -176,7 +176,7 @@ static NSMutableArray *_mutableTabs;
 
 - (void)pushURL:(NSURL *)url
 {
-    ECASSERT(url);
+    ASSERT(url);
     // Moving in case of no previous history
     if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
     {

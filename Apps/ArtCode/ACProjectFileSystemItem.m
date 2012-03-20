@@ -39,7 +39,7 @@
 #pragma mark - ACProjectItem
 
 - (void)remove {
-    ECASSERT(self.parentFolder);
+    ASSERT(self.parentFolder);
     [self.parentFolder didRemoveChild:self];
     [self.project didRemoveFileSystemItem:self];
     [super remove];
@@ -70,7 +70,7 @@
 #pragma mark - Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All filesystem items need to be initialized in the project's file access coordination queue
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All filesystem items need to be initialized in the project's file access coordination queue
     if (!project || !fileURL) {
         return nil;
     }

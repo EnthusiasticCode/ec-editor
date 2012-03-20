@@ -224,12 +224,12 @@
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state
 {
-    ECASSERT(0 && "Should not be called, use titleFragments instead");
+    ASSERT(0 && "Should not be called, use titleFragments instead");
 }
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
 {
-    ECASSERT(0 && "Should not be called, use titleFragments instead");
+    ASSERT(0 && "Should not be called, use titleFragments instead");
 }
 
 #pragma mark - Private Methods

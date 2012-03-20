@@ -218,7 +218,7 @@ static const void *itemContext;
 
 - (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _itemWidth[position] = width;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -226,13 +226,13 @@ static const void *itemContext;
 
 - (CGFloat)itemDefaultWidthForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _itemWidth[position];
 }
 
 - (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _contentIntets[position] = insets;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -240,13 +240,13 @@ static const void *itemContext;
 
 - (UIEdgeInsets)contentInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _contentIntets[position];
 }
 
 - (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _itemInsets[position] = insets;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -254,7 +254,7 @@ static const void *itemContext;
 
 - (UIEdgeInsets)itemInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _itemInsets[position];
 }
 
@@ -264,7 +264,7 @@ static const void *itemContext;
 
 - (void)presentPopoverForItemAtIndex:(NSUInteger)index permittedArrowDirection:(UIPopoverArrowDirection)direction animated:(BOOL)animated
 {
-    ECASSERT(index < [self.items count]);
+    ASSERT(index < [self.items count]);
     
     UIView *itemView = [[self.items objectAtIndex:index] customView];
     if (!itemView)
@@ -343,13 +343,13 @@ static const void *itemContext;
 
 - (void)setWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _widthForPosition[position] = width;
 }
 
 - (CGFloat)widthForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _widthForPosition[position];
 }
 

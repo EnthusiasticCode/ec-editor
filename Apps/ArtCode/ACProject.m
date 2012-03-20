@@ -129,7 +129,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 - (void)updateChangeCount:(UIDocumentChangeKind)change {
-    ECASSERT(change == UIDocumentChangeDone);
+    ASSERT(change == UIDocumentChangeDone);
     _isDirty = YES;
 }
 
@@ -285,7 +285,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Project content
 
 - (ACProjectFolder *)contentsFolder {
-    ECASSERT(_contentsFolder || self.documentState & UIDocumentStateClosed);
+    ASSERT(_contentsFolder || self.documentState & UIDocumentStateClosed);
     return _contentsFolder;
 }
 
@@ -342,7 +342,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Internal Remotes Methods
 
 - (void)didRemoveRemote:(ACProjectRemote *)remote {
-    ECASSERT(remote);
+    ASSERT(remote);
     [self willChangeValueForKey:@"remotes"];
     [_remotes removeObjectForKey:remote.UUID];
     [self didChangeValueForKey:@"remotes"];
@@ -351,14 +351,14 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Internal Bookmarks Methods
 
 - (void)didAddBookmark:(ACProjectFileBookmark *)bookmark {
-    ECASSERT(bookmark);
+    ASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
     [_bookmarksCache setObject:bookmark forKey:bookmark.UUID];
     [self didChangeValueForKey:@"bookmarks"];
 }
 
 - (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark {
-    ECASSERT(bookmark);
+    ASSERT(bookmark);
     [self willChangeValueForKey:@"bookmarks"];
     [_bookmarksCache removeObjectForKey:bookmark.UUID];
     [self didChangeValueForKey:@"bookmarks"];
@@ -368,14 +368,14 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
     // Called when adding a file and in loading phase
-    ECASSERT(fileSystemItem);
+    ASSERT(fileSystemItem);
     [self willChangeValueForKey:@"files"];
     [_filesCache setObject:fileSystemItem forKey:fileSystemItem.UUID];
     [self didChangeValueForKey:@"files"];
 }
 
 - (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
-    ECASSERT(fileSystemItem);
+    ASSERT(fileSystemItem);
     [self willChangeValueForKey:@"files"];
     [_filesCache removeObjectForKey:fileSystemItem.UUID];
     [self didChangeValueForKey:@"files"];
@@ -392,12 +392,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (NSString *)_nameForProject:(ACProject *)project {
-    ECASSERT(project && [_projectsList objectForKey:project.UUID]);
+    ASSERT(project && [_projectsList objectForKey:project.UUID]);
     return [[_projectsList objectForKey:project.UUID] objectForKey:_plistNameKey];
 }
 
 + (void)_setName:(NSString *)name forProject:(ACProject *)project {
-    ECASSERT(name && project && [_projectsList objectForKey:project.UUID]);
+    ASSERT(name && project && [_projectsList objectForKey:project.UUID]);
     [project willChangeValueForKey:@"name"];
     NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];;
     [projectInfo setObject:name forKey:_plistNameKey];
@@ -407,7 +407,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (UIColor *)_labelColorForProject:(ACProject *)project {
-    ECASSERT(project && [_projectsList objectForKey:project.UUID]);
+    ASSERT(project && [_projectsList objectForKey:project.UUID]);
     NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
     UIColor *labelColor = nil;
     if ([hexString length]) {
@@ -417,7 +417,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project {
-    ECASSERT(color && project && [_projectsList objectForKey:project.UUID]);
+    ASSERT(color && project && [_projectsList objectForKey:project.UUID]);
     [project willChangeValueForKey:@"labelColor"];
     NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
     [projectInfo setObject:color.hexString forKey:_plistLabelColorKey];

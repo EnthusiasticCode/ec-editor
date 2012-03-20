@@ -136,8 +136,8 @@
 {
     [super setArtCodeTab:artCodeTab];
     
-    ECASSERT(self.artCodeTab.currentItem.type == ACPRemote);
-    ECASSERT(![self.artCodeTab.currentItem.URL isArtCodeURL]);
+    ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
+    ASSERT(![self.artCodeTab.currentItem.URL isArtCodeURL]);
     self.remoteURL = [self.artCodeTab.currentItem.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
 }
 
@@ -443,7 +443,7 @@
 
 - (void)_connectToURL:(NSURL *)url
 {
-    ECASSERT(!_connection && "This should only be called once.");
+    ASSERT(!_connection && "This should only be called once.");
     self.loading = YES;
     _keychainUsed = NO;
     [self _closeConnection];

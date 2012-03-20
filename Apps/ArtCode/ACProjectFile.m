@@ -91,7 +91,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         if ([point isKindOfClass:[NSNumber class]]) {
             point = [(NSNumber *)point stringValue];
         }
-        ECASSERT([point isKindOfClass:[NSString class]]);
+        ASSERT([point isKindOfClass:[NSString class]]);
         [bookmarks setObject:bookmark.propertyListDictionary forKey:point];
     }];
     [plist setObject:bookmarks forKey:_plistBookmarksKey];
@@ -190,7 +190,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark - Private Methods
 
 - (void)_codeFileProxyDidDealloc {
-    ECASSERT(!_codeFileProxy && _codeFile);
+    ASSERT(!_codeFileProxy && _codeFile);
     [_codeFile closeWithCompletionHandler:^(BOOL success) {
         _codeFile = nil;
         if (_pendingCodeFileCompletionHandlers.count)
@@ -208,7 +208,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 + (id)newProxyWithTarget:(CodeFile *)target owner:(ACProjectFile *)owner {
-    ECASSERT(target && owner);
+    ASSERT(target && owner);
     CodeFileProxy *proxy = [self alloc];
     proxy->_target = target;
     proxy->_owner = owner;
@@ -230,7 +230,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector {
-    ECASSERT(_target);
+    ASSERT(_target);
     return _target;
 }
 

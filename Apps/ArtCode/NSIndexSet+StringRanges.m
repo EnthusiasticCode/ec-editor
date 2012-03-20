@@ -42,7 +42,7 @@
 
 - (void)replaceIndexesInRange:(NSRange)oldRange withIndexesInRange:(NSRange)newRange
 {
-    ECASSERT(oldRange.location == newRange.location);
+    ASSERT(oldRange.location == newRange.location);
     if (oldRange.length)
         [self removeIndexesInRange:oldRange];
     [self shiftIndexesStartingAtIndex:oldRange.location by:newRange.length - oldRange.length];
@@ -52,7 +52,7 @@
 
 - (void)shiftIndexesByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
 {
-    ECASSERT(oldRange.location == newRange.location);
+    ASSERT(oldRange.location == newRange.location);
     NSInteger difference = oldRange.length - newRange.length;
     if (difference > 0)
         [self removeIndexesInRange:NSMakeRange(NSMaxRange(oldRange) - difference, difference)];

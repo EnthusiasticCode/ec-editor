@@ -46,7 +46,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     if (self != [TMSyntaxNode class])
         return;
     // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
-    ECASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
     _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -131,7 +131,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax
 {
-    ECASSERT(dictionary);
+    ASSERT(dictionary);
     self = [super init];
     if (!self)
         return nil;

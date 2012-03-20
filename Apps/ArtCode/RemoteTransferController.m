@@ -203,7 +203,7 @@ typedef enum {
                         // add a placeholder local item to the _transfer list if it is not a directory
                         // the placeholder will be created in the doneAction:
                         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-                            ECASSERT([dirPath hasPrefix:_connectionPath]);
+                            ASSERT([dirPath hasPrefix:_connectionPath]);
                             [_transfers setObject:[dirPath substringFromIndex:[_connectionPath length]] forKey:remoteItemPath];
                             continue;
                         }
@@ -225,7 +225,7 @@ typedef enum {
                 if (_syncUseFileSize) {
                     // remote to/from local: have the same hanling in this case
 #warning FIX get local item file size
-                    ECASSERT(NO);
+                    ASSERT(NO);
 //                    [localItem getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
                     if ([fileSize isEqualToNumber:[item objectForKey:NSFileSize]])
                         [_transfers removeObjectForKey:remoteItemPath];
@@ -233,7 +233,7 @@ typedef enum {
                     // remote to local: local date later remote date means no sync
                     // local to remote: local date earlier remote date means no sync
 #warning FIX get local item modification date
-                    ECASSERT(NO);
+                    ASSERT(NO);
 //                    [localItemURL getResourceValue:&fileModificationDate forKey:NSURLContentModificationDateKey error:NULL];
                     if ([fileModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
                         [_transfers removeObjectForKey:remoteItemPath];
@@ -292,7 +292,7 @@ typedef enum {
     // This method will be called by the upload request via connection:didReceiveContent:ofPath:error:
     // _transfers contains remote upload path to local ACProjectFileSystemItem to upload
     ACProjectFileSystemItem *localItem = [_transfers objectForKey:path];
-    ECASSERT(localItem);
+    ASSERT(localItem);
         
     if (!exists) {
         // Upload item on top directory
@@ -350,9 +350,9 @@ typedef enum {
 - (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error {
     // _transfers contain remotePath to the ACProjectFileSystemItem in which to copy the downloaded content
     ACProjectFileSystemItem *localItem = [_transfers objectForKey:remotePath];
-    ECASSERT(localItem);
+    ASSERT(localItem);
 #warning TODO uncomment when implemented
-    ECASSERT(NO);
+    ASSERT(NO);
 //    [localItem replaceContentWithURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[remotePath lastPathComponent]]];
     [self connection:con uploadDidFinish:remotePath error:error];
 }
@@ -418,7 +418,7 @@ typedef enum {
         // Add to transfers
         NSString *itemPath = [remotePath stringByAppendingPathComponent:itemName];
 #warning TODO create new project item and add to _transfers with itemPath as key
-        ECASSERT(NO);
+        ASSERT(NO);
         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
             [connection downloadFile:itemPath toDirectory:[[self _localTemporaryDirectoryURL] path] overwrite:YES delegate:nil];
         } else {
@@ -538,7 +538,7 @@ typedef enum {
                 NSDictionary *item = [_itemsConflicts objectAtIndex:indexPath.row];
                 NSString *itemPath = [_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
 #warning TODO create new project item and add to _transfers with itemPath as key
-                ECASSERT(NO);
+                ASSERT(NO);
                 if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
                     [_connection downloadFile:itemPath toDirectory:[[self _localTemporaryDirectoryURL] path] overwrite:YES delegate:nil];
                 } else {
@@ -561,7 +561,7 @@ typedef enum {
                     if ([item isKindOfClass:[NSString class]]) {
                         ACProjectFolder *targetFolder = [_localFolder subfolderWithPath:item];
 #warning TODO uncomment when implemented
-                        ECASSERT(NO);
+                        ASSERT(NO);
 //                        item = [targetFolder addNewFileWithName:[remotePath lastPathComponent] url:nil error:NULL];
                         [_resolvedTransfers setObject:item forKey:remotePath];
                     }
@@ -613,7 +613,7 @@ typedef enum {
 #pragma mark - Private methods
 
 - (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolder:(ACProjectFolder *)localFolder connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler {
-    ECASSERT(connection != nil);
+    ASSERT(connection != nil);
     
     _connection = connection;
     _connectionOriginalDelegate = [connection delegate];
@@ -646,7 +646,7 @@ typedef enum {
 
 - (void)_syncLocalProjectFolder:(ACProjectFolder *)folder toRemotePath:(NSString *)remotePath
 {
-    ECASSERT(_transfers);
+    ASSERT(_transfers);
     NSString *remoteItemPath = nil;
     for (ACProjectFileSystemItem *localItem in folder.children) {
         // Add to trasnfers as remote path to local project item
@@ -702,7 +702,7 @@ typedef enum {
         } else {
             // Create a subfolder
 #warning TODO uncomment when implemented
-            ECASSERT(NO);
+            ASSERT(NO);
             //                                localItem = [(ACProjectFolder *)localItem createfolder]
         }
     }

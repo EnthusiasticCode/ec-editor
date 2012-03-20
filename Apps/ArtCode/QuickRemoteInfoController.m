@@ -22,7 +22,7 @@
 - (id)init
 {
 #warning FIX
-    ECASSERT(NO);
+    ASSERT(NO);
     
     self = [super init];
     if (!self)
@@ -36,7 +36,7 @@
 //{
 //    [super viewWillAppear:animated];
 //    _remote = [self.artCodeTab.currentProject remoteForURL:self.artCodeTab.currentURL];
-//    ECASSERT(_remote != nil);
+//    ASSERT(_remote != nil);
 //    self.remoteName.text = _remote.name;
 //    self.remoteHost.text = _remote.host;
 //    self.remotePort.text = _remote.port ? [NSString stringWithFormat:@"%d", _remote.port] : nil;

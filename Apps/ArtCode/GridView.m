@@ -77,7 +77,7 @@
 
 - (void)setRowHeight:(CGFloat)value
 {
-    ECASSERT(value > 0.0);
+    ASSERT(value > 0.0);
     
     if (value == rowHeight)
         return;
@@ -92,7 +92,7 @@
 
 - (void)setColumnNumber:(NSUInteger)value
 {
-    ECASSERT(value > 0);
+    ASSERT(value > 0);
     
     if (value == columnNumber)
         return;
@@ -138,7 +138,7 @@
         _reusableCells = [NSMutableDictionary new];
     
     [cells enumerateObjectsUsingBlock:^(GridViewCell *cell, NSUInteger idx, BOOL *stop) {
-        ECASSERT(cell && cell.reuseIdentifier);
+        ASSERT(cell && cell.reuseIdentifier);
         
         [cell prepareForReuse];
         [cell removeFromSuperview];
@@ -218,7 +218,7 @@
 
 - (void)selectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
 {
-    ECASSERT(cellIndex < _cellCount);
+    ASSERT(cellIndex < _cellCount);
     
     if (self.isEditing)
     {
@@ -281,7 +281,7 @@
 
 - (void)deselectCellAtIndex:(NSInteger)cellIndex animated:(BOOL)animated
 {
-    ECASSERT(cellIndex < _cellCount);
+    ASSERT(cellIndex < _cellCount);
     
     if (self.isEditing)
     {
@@ -323,7 +323,7 @@
 
 - (void)endUpdates
 {
-    ECASSERT(_updateCount);
+    ASSERT(_updateCount);
     
     _updateCount--;
     if (_updateCount > 0)
@@ -471,7 +471,7 @@
         }
     }
 
-    ECASSERT([cellsAfterUpdate count] == cellsLoadedAfterUpdate.length);
+    ASSERT([cellsAfterUpdate count] == cellsLoadedAfterUpdate.length);
     
     _cells = cellsAfterUpdate;
     _cellsLoadedRange = cellsLoadedAfterUpdate;
@@ -581,7 +581,7 @@
 
 - (void)reloadData
 {
-    ECASSERT(self.dataSource);
+    ASSERT(self.dataSource);
     
     [self _enqueueReusableCells:_cells];
     _cells = nil;
@@ -614,7 +614,7 @@ static void _init(GridView *self)
 
 - (void)setContentSize:(CGSize)contentSize
 {
-    ECASSERT(NO && "Content size cannot be set manually");
+    ASSERT(NO && "Content size cannot be set manually");
 }
 
 - (void)layoutSubviews

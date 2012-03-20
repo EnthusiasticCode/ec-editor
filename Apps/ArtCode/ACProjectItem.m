@@ -59,7 +59,7 @@ static NSMutableSet *_projectItemUUIDs;
     if (!self) {
         return nil;
     }
-    ECASSERT(project);
+    ASSERT(project);
     _project = project;
     _UUID = [plistDictionary objectForKey:@"uuid"];
     if (!_UUID) {

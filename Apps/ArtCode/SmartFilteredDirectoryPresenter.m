@@ -133,12 +133,12 @@ static void * _directoryObservingContext;
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options
 {
-    ECASSERT(directoryURL);
+    ASSERT(directoryURL);
     self = [super init];
     if (!self)
         return nil;
     _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:directoryURL options:options];
-    ECASSERT(_directoryPresenter);
+    ASSERT(_directoryPresenter);
     [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionPrior context:&_directoryObservingContext];
     _mutableFileURLs = [[NSMutableArray alloc] init];
     return self;
@@ -186,7 +186,7 @@ static void * _directoryObservingContext;
                 [self _setScore:score hitMask:nil forFileURL:fileURL];
                 [indexes addIndex:[self _indexOfFileURL:fileURL options:0]];
             }
-            ECASSERT(![indexes containsIndex:NSNotFound] && "if a fileURL has a non-zero score, and was removed, it should have been there");
+            ASSERT(![indexes containsIndex:NSNotFound] && "if a fileURL has a non-zero score, and was removed, it should have been there");
             if ([indexes count])
             {
                 [_mutableFileURLs removeObjectsAtIndexes:indexes];
@@ -196,7 +196,7 @@ static void * _directoryObservingContext;
         }
         default:
         {
-            ECASSERT(NO && "directory presenter's fileURLs should never call a KVO change that isn't insert or remove");
+            ASSERT(NO && "directory presenter's fileURLs should never call a KVO change that isn't insert or remove");
         }
     }
 }
@@ -223,7 +223,7 @@ static void * _directoryObservingContext;
         __fileURLComparatorBlock = ^NSComparisonResult(NSURL *fileURL1, NSURL *fileURL2){
             NSNumber *associatedScore1 = objc_getAssociatedObject(fileURL1, &(weakSelf->_scoreAssociationKey));
             NSNumber *associatedScore2 = objc_getAssociatedObject(fileURL2, &(weakSelf->_scoreAssociationKey));
-            ECASSERT(associatedScore1 && associatedScore2);
+            ASSERT(associatedScore1 && associatedScore2);
             float score1 = [associatedScore1 floatValue];
             float score2 = [associatedScore2 floatValue];
             if (score1 > score2)
