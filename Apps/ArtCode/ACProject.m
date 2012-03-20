@@ -117,6 +117,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - UIDocument
 
 - (id)initWithFileURL:(NSURL *)url {
+    USE(url);
     UNIMPLEMENTED(); // Designated initializer is _initWithUUID:
 }
 
@@ -164,6 +165,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 - (BOOL)writeContents:(id)contents andAttributes:(NSDictionary *)additionalFileAttributes safelyToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation error:(NSError *__autoreleasing *)outError {
+    USE(contents);
+    ASSERT(url);
     // Create project plist
     NSMutableDictionary *plist = [[NSMutableDictionary alloc] init];
     
@@ -214,6 +217,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
+    USE(userInteractionPermitted);
     NSLog(@">>>>>>>>>>>>>>>>> %@", error);
 }
 

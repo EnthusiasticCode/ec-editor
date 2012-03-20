@@ -98,6 +98,7 @@ static NSDictionary *_sharedAttributes = nil;
         {
             // Load environment styles
             [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+                USE(stop);
                 UIColor *color = [UIColor colorWithHexString:value];
                 if (color)
                     [environmentAttributes setObject:color forKey:key];
@@ -112,6 +113,7 @@ static NSDictionary *_sharedAttributes = nil;
         
         // Pre-map settings with Core Text attributes
         [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+            USE(stop);
             ASSERT([value isKindOfClass:[NSString class]]);
             
             if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
@@ -153,6 +155,7 @@ static NSDictionary *_sharedAttributes = nil;
     
     __block float maxScore = 0;
     [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
+        USE(stop);
         float score = [scope scoreForScopeSelector:settingScope];
         if (score > maxScore)
         {

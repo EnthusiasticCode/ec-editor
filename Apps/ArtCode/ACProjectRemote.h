@@ -19,4 +19,7 @@
 /// The password is saved using keychain for the receiver's service and user.
 @property (nonatomic, strong) NSString *password;
 
+/// URL with the scheme, host, port and user
+@property (nonatomic, readonly) NSURL *URL;
+
 @end

@@ -59,13 +59,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     NSMutableArray *_pendingCodeFileCompletionHandlers;
 }
 
-@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier;
+@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier, contentModificationDate = _contentModificationDate, fileSize = _fileSize;
 
 #pragma mark - ACProjectItem
-
-- (NSURL *)URL {
-    return [self.parentFolder.URL URLByAppendingPathComponent:self.name];
-}
 
 - (ACProjectItemType)type {
     return ACPFile;
@@ -88,6 +84,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
     NSMutableDictionary *bookmarks = [[NSMutableDictionary alloc] init];
     [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id point, ACProjectFileBookmark *bookmark, BOOL *stop) {
+        USE(stop);
         if ([point isKindOfClass:[NSNumber class]]) {
             point = [(NSNumber *)point stringValue];
         }
@@ -109,6 +106,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
     _bookmarks = [[NSMutableDictionary alloc] init];
     [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
+        USE(stop);
         NSScanner *scanner = [NSScanner scannerWithString:point];
         NSInteger line;
         if ([scanner scanInteger:&line])
@@ -124,10 +122,11 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (BOOL)writeToURL:(NSURL *)url {
-    if ([url isEqual:self.URL]) {
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    if ([url isEqual:self.fileURL]) {
         return YES;
     } else {
-        return [[[NSFileManager alloc] init] copyItemAtURL:self.URL toURL:url error:NULL];
+        return [[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:url error:NULL];
     }
 }
 
@@ -149,7 +148,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         return;
     }
     
-    _codeFile = [[CodeFile alloc] initWithFileURL:self.URL];
+    _codeFile = [[CodeFile alloc] initWithFileURL:self.fileURL];
     [_codeFile openWithCompletionHandler:^(BOOL success) {
         if (success) {
             CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
@@ -192,6 +191,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 - (void)_codeFileProxyDidDealloc {
     ASSERT(!_codeFileProxy && _codeFile);
     [_codeFile closeWithCompletionHandler:^(BOOL success) {
+        USE(success);
         _codeFile = nil;
         if (_pendingCodeFileCompletionHandlers.count)
             [self openCodeFileWithCompletionHandler:nil];
@@ -230,6 +230,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector {
+    USE(aSelector);
     ASSERT(_target);
     return _target;
 }

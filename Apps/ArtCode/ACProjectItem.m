@@ -44,10 +44,6 @@ static NSMutableSet *_projectItemUUIDs;
     return ACPUnknown;
 }
 
-- (NSURL *)URL {
-    return nil;
-}
-
 - (void)remove {
     [self.project updateChangeCount:UIDocumentChangeDone];
 }

@@ -31,10 +31,10 @@
 #pragma mark -
 
 @implementation ACProjectFileSystemItem {
-    NSFileWrapper *_contents;
+    NSURL *_fileURL;
 }
 
-@synthesize name = _name, parentFolder = _parentFolder, URL = _URL;
+@synthesize name = _name, parentFolder = _parentFolder;
 
 #pragma mark - ACProjectItem
 
@@ -69,6 +69,12 @@
 
 #pragma mark - Internal Methods
 
+- (NSURL *)fileURL
+{
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    return _fileURL;
+}
+
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All filesystem items need to be initialized in the project's file access coordination queue
     if (!project || !fileURL) {
@@ -78,13 +84,14 @@
     if (!self) {
         return nil;
     }
-    _URL = fileURL;
+    _fileURL = fileURL;
     _name = fileURL.lastPathComponent;
     _parentFolder = parent;
     return self;
 }
 
 - (BOOL)writeToURL:(NSURL *)url {
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     return NO;
 }
 

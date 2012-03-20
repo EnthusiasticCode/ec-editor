@@ -65,6 +65,8 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 - (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
+    USE(typeName);
+    USE(outError);
     OSSpinLockLock(&_contentsLock);
     NSData *contentsData = [[_contents string] dataUsingEncoding:NSUTF8StringEncoding];
     OSSpinLockUnlock(&_contentsLock);
@@ -72,6 +74,8 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
+    USE(typeName);
+    USE(outError);
     [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
     return YES;
 }

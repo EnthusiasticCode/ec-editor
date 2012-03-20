@@ -58,9 +58,9 @@
     return [self initWithProject:project propertyListDictionary:plistDictionary file:nil bookmarkPoint:nil];
 }
 
-- (NSURL *)URL
+- (NSURL *)artCodeURL
 {
-    return [self.file.URL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:self.bookmarkPoint forKey:([self.bookmarkPoint isKindOfClass:[NSNumber class]] ? @"line" : @"symbol")]];
+    return [self.file.artCodeURL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:self.bookmarkPoint forKey:([self.bookmarkPoint isKindOfClass:[NSNumber class]] ? @"line" : @"symbol")]];
 }
 
 - (ACProjectItemType)type

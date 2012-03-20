@@ -53,6 +53,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
+    USE(zone);
     ASSERT(_contents);
     [self _purge];
     NSMutableArray *copy = [[NSMutableArray alloc] init];
@@ -93,6 +94,8 @@
 {
     ASSERT(_contents);
     NSIndexSet *indexes = [_contents indexesOfObjectsPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        USE(idx);
+        USE(stop);
         if (((WeakObjectWrapper *)obj)->object)
             return NO;
         return YES;
