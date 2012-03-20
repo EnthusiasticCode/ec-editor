@@ -356,7 +356,7 @@ describe(@"A new opened ACProject", ^{
             [[expectFutureValue(file) shouldEventually] beNonNil];
             [fileError shouldBeNil];
         });
-
+        
         it(@"can be created and retrieved with no error", ^{
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
@@ -391,6 +391,42 @@ describe(@"A new opened ACProject", ^{
             // Delete
             [item remove];
             [[[project.contentsFolder should] have:0] children];
+        });
+        
+        it(@"can be created with the contents of another URL", ^{
+            NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            NSURL *temporaryFile = [temporaryDirectory URLByAppendingPathComponent:@"temporaryFile"];
+            NSString *testContents = @"test contents";
+            
+            // Create temporary directory
+            NSError *temporaryDirectoryError = nil;
+            [fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:&temporaryDirectoryError];
+            [temporaryDirectoryError shouldBeNil];
+            
+            // Create temporary file
+            NSError *temporaryFileError = nil;
+            [testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:&temporaryFileError];
+            [temporaryFileError shouldBeNil];
+            
+            // Get temporary file size
+            NSError *temporaryFileSizeError = nil;
+            NSNumber *temporaryFileSize = nil;
+            [temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:&temporaryFileSizeError];
+            [[temporaryFileSize should] beNonNil];
+            [[temporaryFileSizeError should] beNonNil];
+            
+            // Create file
+            __block ACProjectFile *file = nil;
+            __block NSError *fileError = nil;
+            [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
+                file = newFile;
+                fileError = error;
+            }];
+            [[expectFutureValue(file) shouldEventually] beNonNil];
+            [fileError shouldBeNil];
+            
+            [[theValue(file.fileSize) should] equal:temporaryFileSize];
         });
         
         context(@"when created", ^{
