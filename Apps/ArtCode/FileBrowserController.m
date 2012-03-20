@@ -391,6 +391,9 @@ static void *_currentFolderContext;
                                 // Add attachement
                                 [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveToSendURL] mimeType:@"application/zip" fileName:[archiveToSendURL lastPathComponent]];
                                 
+                                // Remote temporary folder
+                                [[NSFileManager defaultManager] removeItemAtURL:tempDirecotryURL error:NULL];
+                                
                                 // Add precompiled mail fields
                                 [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", self.artCodeTab.currentProject.name]];
                                 [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
