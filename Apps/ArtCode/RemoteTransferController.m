@@ -45,6 +45,9 @@ typedef enum {
 /// Recursivelly queue uploads requests for the given item and subitems.
 - (void)_uploadProjectItem:(ACProjectFileSystemItem *)item toConnection:(id<CKConnection>)connection path:(NSString *)remotePath;
 
+/// Queue a download or a directory recursion for the given item.
+- (void)_downloadRemoteItem:(NSDictionary *)item fromConnection:(id<CKConnection>)connection path:(NSString *)remotePath;
+
 @end
 
 #pragma mark -
@@ -78,7 +81,7 @@ typedef enum {
     /// Dictionary of remote items to an NSNumber indicating the progress percent
     NSMutableDictionary *_transfersProgress;
     /// Number of trasfers started and completed, used to indicate completion percentage
-    NSUInteger _transfersStarted;
+    NSInteger _transfersStarted;
     NSInteger _transfersCompleted;
     NSError *_transferError;
     BOOL _transferCanceled;
@@ -166,6 +169,9 @@ typedef enum {
 #pragma mark - CKConnection
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error {
+    ASSERT(con == _connection);
+    ASSERT([dirPath hasPrefix:_connectionPath]);
+    
     switch (_transferOperation) {
         case RemoteTransferUploadOperation: {
             // _transfers contains remote path to top ACProjectFileSystemItem to upload
@@ -180,6 +186,26 @@ typedef enum {
                 }
                 [self connection:(id<CKConnection>)con checkedExistenceOfPath:uploadPath pathExists:exists error:nil];
             }];
+            break;
+        }
+            
+        case RemoteTransferDownloadOperation: {
+            // This codepath is reached if the download procedure recursed in a remote folder
+            // Create the local temporary folder
+            NSURL *localTemporaryURL = [[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[dirPath substringFromIndex:[_connectionPath length]]];
+            [[NSFileManager defaultManager] createDirectoryAtURL:localTemporaryURL withIntermediateDirectories:YES attributes:nil error:NULL];
+            // Append item to download queue
+            for (NSDictionary *item in contents) {
+                if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
+                    [_connection downloadFile:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]] toDirectory:localTemporaryURL.path overwrite:YES delegate:nil];
+                } else {
+                    _transfersStarted++;
+                    [_connection changeToDirectory:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+                    [_connection directoryContents];
+                }
+            }
+            // Inform of a completed transfer
+            _transfersCompleted++;
             break;
         }
             
@@ -311,17 +337,22 @@ typedef enum {
 }
 
 - (void)connection:(id <CKPublishingConnection>)con uploadDidBegin:(NSString *)remotePath {
+    ASSERT(con == _connection);
     _transfersStarted++;
     [_transfersProgress setObject:[NSNumber numberWithFloat:0] forKey:remotePath];
 }
 
 - (void)connection:(id <CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error {
+    ASSERT(con == _connection);
+    
+    // Handle error
     if (error) {
         _transferError = error;
         [self cancelCurrentTransfer];
         return;
     }
-        
+    
+    // Increase transfer progress
     _transfersCompleted++;
     [_transfersProgress removeObjectForKey:remotePath];
     if ([self isTransferFinished]) {
@@ -329,12 +360,15 @@ typedef enum {
     }
 }
 
-- (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent
-{
+- (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent {
+    ASSERT(con == _connection);
+    
     [_transfersProgress setObject:percent forKey:remotePath];
     if (!self.progressView.isHidden) {
         __block float totalProgress = 0;
         [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
+            USE(key);
+            USE(stop);
             totalProgress += [progress floatValue];
         }];
         [self.progressView setProgress:(totalProgress + _transfersCompleted * 100.0) / (([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
@@ -348,13 +382,27 @@ typedef enum {
 }
 
 - (void)connection:(id <CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error {
-    // _transfers contain remotePath to the ACProjectFileSystemItem in which to copy the downloaded content
-    ACProjectFileSystemItem *localItem = [_transfers objectForKey:remotePath];
-    ASSERT(localItem);
-#warning TODO uncomment when implemented
-    ASSERT(NO);
-//    [localItem replaceContentWithURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[remotePath lastPathComponent]]];
-    [self connection:con uploadDidFinish:remotePath error:error];
+    ASSERT(con == _connection);
+    
+    // Handle error
+    if (error) {
+        _transferError = error;
+        [self cancelCurrentTransfer];
+        return;
+    }
+    
+    // Increase transfer progress
+    _transfersCompleted++;
+    [_transfersProgress removeObjectForKey:remotePath];
+    if ([self isTransferFinished]) {
+        self.navigationItem.title = @"Finishing";
+        self.progressView.progress = 0;
+        [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(NSError *error) {
+            USE(error);
+            [self.progressView setProgress:1 animated:YES];
+            [self _callCompletionHandlerWithError:nil];
+        }];
+    }
 }
 
 - (void)connection:(id <CKConnection>)con download:(NSString *)path progressedTo:(NSNumber *)percent {
@@ -373,8 +421,9 @@ typedef enum {
     [self connection:con didDeleteFile:dirPath error:error];
 }
 
-- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error
-{
+- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error {
+    ASSERT(con == _connection);
+    
     if (error) {
         _transferError = error;
         [self cancelCurrentTransfer];
@@ -414,18 +463,14 @@ typedef enum {
             [_itemsConflicts addObject:item];
             continue;
         }
-        
+
         // Add to transfers
         NSString *itemPath = [remotePath stringByAppendingPathComponent:itemName];
-#warning TODO create new project item and add to _transfers with itemPath as key
-        ASSERT(NO);
         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-            [connection downloadFile:itemPath toDirectory:[[self _localTemporaryDirectoryURL] path] overwrite:YES delegate:nil];
+            [_transfers setObject:[self _localTemporaryDirectoryURL] forKey:itemPath];
         } else {
-            // TODO recursive with directoryContent
-            [connection recursivelyDownload:itemPath to:[[self _localTemporaryDirectoryURL] path] overwrite:YES];
+            [_transfers setObject:[NSNull null] forKey:itemPath];
         }
-        // Download handling will continue in connection:downloadDidFinish:error:
     }
     
     // Show conflict resolution table if neccessary
@@ -532,19 +577,31 @@ typedef enum {
             
         case RemoteTransferDownloadOperation: {
             self.navigationItem.title = @"Downloading";
-            // Items non in conflict are already downloading.
+            // _transfers has the list of remote paths to local temp directory URL to download in.
             // _itemConflicts contains top level remote items that may have been selected to download.
+            // Add resolved items to transfer list
             for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows]) {
                 NSDictionary *item = [_itemsConflicts objectAtIndex:indexPath.row];
                 NSString *itemPath = [_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
-#warning TODO create new project item and add to _transfers with itemPath as key
-                ASSERT(NO);
                 if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-                    [_connection downloadFile:itemPath toDirectory:[[self _localTemporaryDirectoryURL] path] overwrite:YES delegate:nil];
+                    [_transfers setObject:[self _localTemporaryDirectoryURL] forKey:itemPath];
                 } else {
-                    [_connection recursivelyDownload:itemPath to:[[self _localTemporaryDirectoryURL] path] overwrite:YES];
+                    [_transfers setObject:[NSNull null] forKey:itemPath];
                 }
             }
+            // Start transfers
+            // _transfers may contain NSNull values indicating that the remote path is infact a remote directory to recurse into
+            [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, NSURL* localDirecotryURL, BOOL *stop) {
+                if (localDirecotryURL) {
+                    [_connection downloadFile:remotePath toDirectory:localDirecotryURL.path overwrite:YES delegate:nil];
+                } else {
+                    ++_transfersStarted;
+                    [_connection changeToDirectory:remotePath];
+                    [_connection directoryContents];
+                }
+            }];
+            // NOTE at this point all remote items will be added to the download queue,
+            // the merge of downloaded items with local items will be done in connection:downloadDidFinish:error:
             break;
         }
             
@@ -666,7 +723,7 @@ typedef enum {
     }
 }
 
-- (void)_callCompletionHandlerWithError:(NSError *)error {
+- (void)_callCompletionHandlerWithError:(NSError *)error {    
     [_connection setDelegate:_connectionOriginalDelegate];
     if (_completionHandler)
         _completionHandler(_connection, error ? error : _transferError);
@@ -680,7 +737,10 @@ typedef enum {
             [self _uploadProjectItem:subitem toConnection:connection path:remotePath];
         }
     } else {
-        [connection uploadFileAtURL:item.URL toPath:remotePath posixPermissions:nil];
+        NSURL *publishURL = [[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[remotePath substringFromIndex:[_connectionPath length]]];
+        [item publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+            [connection uploadFileAtURL:publishURL toPath:remotePath posixPermissions:nil];
+        }];
     }
 }
 
