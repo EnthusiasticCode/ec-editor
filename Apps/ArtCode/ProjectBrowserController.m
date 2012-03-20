@@ -256,17 +256,19 @@ ASSERT(NO);
             [self setEditing:NO animated:YES];
             
             self.loading = YES;
-
+            NSInteger cellsToExportCount = [cellsToExport count];
+            __block NSInteger progress = 0;
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-//                ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-//                if (!project)
-//                    return;
-//                
-//                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-//                [project compressProjectToURL:zipURL];
+                ACProject *project = [_projects objectAtIndex:idx];
+
+                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
+                    if (++progress == cellsToExportCount) {
+                        self.loading = NO;
+                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                    }
+                }];
             }];
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
@@ -281,47 +283,46 @@ ASSERT(NO);
             [self setEditing:NO animated:YES];
             
             NSMutableString *subject = [NSMutableString new];
+            NSInteger cellsToExportCount = [cellsToExport count];
+            __block NSInteger progress = 0;
+            NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                NSURL *projectURL = nil;
+                ACProject *project = [_projects objectAtIndex:idx];
                 
                 // Generate mail subject
-//                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
-//                if (projectName)
-//                    [subject appendFormat:@"%@, ", projectName];
+                [subject appendFormat:@"%@, ", project.name];
                 
-                // Generate a working temporary directory to write attachments into
-                NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-                NSFileManager *fileManager = [[NSFileManager alloc] init];
-                NSURL *workingDirectory = [NSURL temporaryDirectory];
-                // Generate zip attachments
-                __block NSData *attachment = nil;
-                NSString *archiveName = [[[projectURL lastPathComponent] stringByDeletingPathExtension] stringByAppendingPathExtension:@"zip"];
-                [fileCoordinator coordinateReadingItemAtURL:projectURL options:0 writingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-                    NSURL *archiveURL = [newWritingURL URLByAppendingPathComponent:archiveName];
-                    [ArchiveUtilities compressDirectoryAtURL:newReadingURL toArchive:archiveURL];
-                    attachment = [NSData dataWithContentsOfURL:archiveURL];
-                }];
-                [mailComposer addAttachmentData:attachment mimeType:@"application/zip" fileName:archiveName];
-                // Remove attachments
-                [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
-                    [fileManager removeItemAtURL:newURL error:NULL];
+                // Process project
+                NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
+                    // Add attachment
+                    [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+                    [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
+                    
+                    // Complete process
+                    if (++progress == cellsToExportCount) {
+                        // Add mail subject
+                        if ([subject length] > 2) {
+                            [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
+                            [mailComposer setSubject:subject];
+                        } else {
+                            [mailComposer setSubject:@"ArtCode exported project"];
+                        }
+                        
+                        // Add body
+                        if (cellsToExportCount == 1)
+                            [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+                        else
+                            [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
+                        
+                        // Present
+                        [self presentViewController:mailComposer animated:YES completion:nil];
+                        [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+                        self.loading = NO;
+                    }
                 }];
             }];
-            
-            if ([subject length] > 2)
-                [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:([cellsToExport count] == 1 ? @" project" : @" projects")];
-            else
-                subject = nil;
-            [mailComposer setSubject:(subject ? subject : @"ArtCode exported project")];
-            
-            if ([cellsToExport count] == 1)
-                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
-            else
-                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
-            
-            [self presentViewController:mailComposer animated:YES completion:nil];
-            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            self.loading = NO;
         }
     }
 }
