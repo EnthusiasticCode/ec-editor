@@ -34,7 +34,7 @@
     NSURL *_fileURL;
 }
 
-@synthesize name = _name, parentFolder = _parentFolder;
+@synthesize name = _name, parentFolder = _parentFolder, contentModificationDate = _contentModificationDate;
 
 #pragma mark - ACProjectItem
 
@@ -69,8 +69,7 @@
 
 #pragma mark - Internal Methods
 
-- (NSURL *)fileURL
-{
+- (NSURL *)fileURL {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     return _fileURL;
 }
@@ -84,6 +83,10 @@
     if (!self) {
         return nil;
     }
+    NSDate *contentModificationDate = nil;
+    [fileURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+    
+    _contentModificationDate = contentModificationDate;
     _fileURL = fileURL;
     _name = fileURL.lastPathComponent;
     _parentFolder = parent;

@@ -174,6 +174,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     if (!_contentsFolder) {
         NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
         _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL];
+        ASSERT(_contentsFolder);
     }
     
     // Get content plist
