@@ -15,9 +15,7 @@
 
 #import "NSURL+Utilities.h"
 
-void clearProjectsDirectory(void) {
-    [ACProject performSelector:@selector(_removeAllProjects)];
-}
+static void clearProjectsDirectory(void);
 
 // Redefine the default timeout because my iMac is so slow
 #undef kKW_DEFAULT_PROBE_TIMEOUT
@@ -759,4 +757,11 @@ describe(@"An existing ACProject", ^{
 
 SPEC_END
 
-
+// this is just debug code so ignore the warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+#pragma clang diagnostic ignored "-Wselector"
+void clearProjectsDirectory(void) {
+    [ACProject performSelector:@selector(_removeAllProjects)];
+}
+#pragma clang diagnostic pop

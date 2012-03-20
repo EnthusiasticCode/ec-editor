@@ -433,14 +433,14 @@ while (0)
         
         OSSpinLockLock(&_contentsLock);
         if (changeType == _changeTypeAttributeAdd) {
-            ASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            ASSERT([(NSDictionary *)[nextChange objectForKey:_changeAttributesKey] count]);
             [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
         } else if (changeType == _changeTypeAttributeRemove) {
-            ASSERT([[nextChange objectForKey:_changeAttributeNamesKey] count]);
+            ASSERT([(NSArray *)[nextChange objectForKey:_changeAttributeNamesKey] count]);
             for (NSString *attributeName in [nextChange objectForKey:_changeAttributeNamesKey])
                 [_contents removeAttribute:attributeName range:range];
         } else if (changeType == _changeTypeAttributeSet) {
-            ASSERT([[nextChange objectForKey:_changeAttributesKey] count]);
+            ASSERT([(NSDictionary *)[nextChange objectForKey:_changeAttributesKey] count]);
             [_contents setAttributes:self.theme.commonAttributes range:range];
             [_contents addAttributes:[nextChange objectForKey:_changeAttributesKey] range:range];
         } else if (changeType == _changeTypeAttributeRemoveAll) {

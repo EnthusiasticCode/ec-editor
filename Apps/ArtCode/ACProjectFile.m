@@ -151,8 +151,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         if (success) {
             CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
             _codeFileProxy = proxy;
-            for (void(^completionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
-                completionHandler((CodeFile *)proxy);
+            for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
+                pendingCompletionHandler((CodeFile *)proxy);
             [_pendingCodeFileCompletionHandlers removeAllObjects];
         } else {
             // TODO: retrying forever might not be the best way to handle this error

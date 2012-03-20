@@ -397,7 +397,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 + (NSString *)_nameForProject:(ACProject *)project {
     ASSERT(project && [_projectsList objectForKey:project.UUID]);
-    return [[_projectsList objectForKey:project.UUID] objectForKey:_plistNameKey];
+    return [(NSDictionary *)[_projectsList objectForKey:project.UUID] objectForKey:_plistNameKey];
 }
 
 + (void)_setName:(NSString *)name forProject:(ACProject *)project {
@@ -412,7 +412,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 + (UIColor *)_labelColorForProject:(ACProject *)project {
     ASSERT(project && [_projectsList objectForKey:project.UUID]);
-    NSString *hexString = [[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
+    NSString *hexString = [(NSDictionary *)[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
     UIColor *labelColor = nil;
     if ([hexString length]) {
         labelColor = [UIColor colorWithHexString:hexString];
