@@ -34,7 +34,7 @@
     NSURL *uniqueDirectory;
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     do {
-        uniqueDirectory = [[NSURL fileURLWithPath:NSTemporaryDirectory()] URLByAppendingPathComponent:[[NSString alloc] initWithGeneratedUUID]];
+        uniqueDirectory = [directoryURL URLByAppendingPathComponent:[[NSString alloc] initWithGeneratedUUID]];
     }
     while ([fileManager fileExistsAtPath:[uniqueDirectory path]]);
     return uniqueDirectory;
