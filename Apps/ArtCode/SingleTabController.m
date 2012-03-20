@@ -19,6 +19,7 @@
 #import "ACProjectItem.h"
 #import "ACProjectFileSystemItem.h"
 #import "ACProjectFileBookmark.h"
+#import "ACProjectRemote.h"
 
 #import "ProjectBrowserController.h"
 #import "FileBrowserController.h"
@@ -393,7 +394,7 @@ static const void *loadingObservingContext;
                 switch (item.type)
                 {
                     case ACPRemote:
-                        url = [item URL];
+                        url = [(ACProjectRemote *)item URL];
                         break;
                         
                     case ACPFileBookmark:

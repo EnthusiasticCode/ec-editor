@@ -45,18 +45,6 @@ typedef enum {
 /// Recursivelly queue uploads requests for the given item and subitems.
 - (void)_uploadProjectItem:(ACProjectFileSystemItem *)item toConnection:(id<CKConnection>)connection path:(NSString *)remotePath;
 
-/// Queue a download or a directory recursion for the given item.
-- (void)_downloadRemoteItem:(NSDictionary *)item fromConnection:(id<CKConnection>)connection path:(NSString *)remotePath;
-
-@end
-
-#pragma mark -
-
-@interface ACProjectFolder (RemoteUtilities)
-
-/// Gets or create the subfolder with the given path relative to the receiver
-- (ACProjectFolder *)subfolderWithPath:(NSString *)relativePath;
-
 @end
 
 #pragma mark -
@@ -213,8 +201,6 @@ typedef enum {
             // _transfers are remote path to local project item
             // after the initial sync call, they represent the current status of the local content
             NSComparisonResult expectedToSync = _syncIsFromRemote ? NSOrderedAscending : NSOrderedDescending;
-            NSNumber *fileSize = nil;
-            NSDate *fileModificationDate = nil;
             for (NSDictionary *item in contents) {
                 NSString *remoteItemPath = [dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
                 ACProjectFileSystemItem *localItem = [_transfers objectForKey:remoteItemPath];
@@ -229,13 +215,12 @@ typedef enum {
                         // add a placeholder local item to the _transfer list if it is not a directory
                         // the placeholder will be created in the doneAction:
                         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-                            ASSERT([dirPath hasPrefix:_connectionPath]);
                             [_transfers setObject:[dirPath substringFromIndex:[_connectionPath length]] forKey:remoteItemPath];
                             continue;
                         }
                     }
                 }
-                // localItem here exists or it has been created
+                // localItem here exists
                 // if remote is a directory, no need to recreate it
                 if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
                     [_transfers removeObjectForKey:remoteItemPath];
@@ -248,20 +233,14 @@ typedef enum {
                     continue;
                 }
                 // Determine if the item should not be synced
-                if (_syncUseFileSize) {
+                if (_syncUseFileSize && localItem.type == ACPFile) {
                     // remote to/from local: have the same hanling in this case
-#warning FIX get local item file size
-                    ASSERT(NO);
-//                    [localItem getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
-                    if ([fileSize isEqualToNumber:[item objectForKey:NSFileSize]])
+                    if ([(ACProjectFile *)localItem fileSize] == [[item objectForKey:NSFileSize] unsignedIntegerValue])
                         [_transfers removeObjectForKey:remoteItemPath];
                 } else {
                     // remote to local: local date later remote date means no sync
                     // local to remote: local date earlier remote date means no sync
-#warning FIX get local item modification date
-                    ASSERT(NO);
-//                    [localItemURL getResourceValue:&fileModificationDate forKey:NSURLContentModificationDateKey error:NULL];
-                    if ([fileModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
+                    if ([localItem.contentModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
                         [_transfers removeObjectForKey:remoteItemPath];
                 }
             }
@@ -306,9 +285,6 @@ typedef enum {
             [(id<CKConnection>)con deleteDirectory:dirPath];
             break;
         }
-            
-        default:
-            break;
     }
 }
 
@@ -369,7 +345,7 @@ typedef enum {
         [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
             totalProgress += [progress floatValue];
         }];
-        [self.progressView setProgress:(totalProgress + _transfersCompleted * 100.0) / (([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
+        [self.progressView setProgress:(float)(totalProgress + _transfersCompleted * 100.0) / (float)(([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
     }
 }
 
@@ -393,9 +369,10 @@ typedef enum {
     _transfersCompleted++;
     [_transfersProgress removeObjectForKey:remotePath];
     if ([self isTransferFinished]) {
+        // For both download and sync from remote, once finished downloading the local folder will be updated with the temporary directory 
         self.navigationItem.title = @"Finishing";
         self.progressView.progress = 0;
-        [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(NSError *error) {
+        [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(NSError *blockerror) {
             [self.progressView setProgress:1 animated:YES];
             [self _callCompletionHandlerWithError:nil];
         }];
@@ -605,38 +582,36 @@ typedef enum {
         case RemoteTransferSynchronizationOperation: {
             self.navigationItem.title = @"Synchronizing";
             // Code path called by the user to commit a synch oreration.
-            // _transfers contain all the remote path to local item to be transfered
+            // _transfers contain all the remote path to local item/local path to be transfered
             // _syncIsFromRemote indicate the required direction of the transfer
             if (_syncIsFromRemote) {
-                // First precompute the content of _transfers to make sure that every value is an ACProjectFile to download to
-                NSMutableDictionary *_resolvedTransfers = [NSMutableDictionary new];
-                [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, id item, BOOL *stop) {
-                    // If item is a string, it represent the project folder path relative to _localFolder that should be created to put the item into.
-                    if ([item isKindOfClass:[NSString class]]) {
-                        ACProjectFolder *targetFolder = [_localFolder subfolderWithPath:item];
-#warning TODO uncomment when implemented
-                        ASSERT(NO);
-//                        item = [targetFolder addNewFileWithName:[remotePath lastPathComponent] url:nil error:NULL];
-                        [_resolvedTransfers setObject:item forKey:remotePath];
+                // Downloading items
+                [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, id itemOrlocalFolderPath, BOOL *stop) {
+                    ASSERT([remotePath hasPrefix:_connectionPath]);
+                    // localItem could be a string indicating the local path that should be created
+                    if ([itemOrlocalFolderPath isKindOfClass:[NSString class]]) {
+                        [[NSFileManager defaultManager] createDirectoryAtURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:(NSString *)itemOrlocalFolderPath isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:NULL];
+                        return;
                     }
+                    // Rebuild the already existing temporary directory in which the item should be downloaded
+                    NSURL *syncDirectoryURL = [[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[[remotePath substringFromIndex:[_connectionPath length]] stringByDeletingLastPathComponent] isDirectory:YES];
+                    // the connection:downloadDidFinish:error: will handle the actual transfer from the temp file to the local project file
+                    [_connection downloadFile:remotePath toDirectory:[syncDirectoryURL path] overwrite:YES delegate:nil];
                 }];
-                [_transfers addEntriesFromDictionary:_resolvedTransfers];
-            }
-            // Process transfers
-            [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, ACProjectFileSystemItem *localItem, BOOL *stop) {
-                if (_syncIsFromRemote) {
-                    // localItem is an ACProjectFile ready to receive the downloaded content
-                    // the connection:downloadDidFinish:erro: will handle the actual transfer from the temp file to the local project file
-                    [_connection downloadFile:remotePath toDirectory:[[self _localTemporaryDirectoryURL] path] overwrite:YES delegate:nil];
-                } else {
-                    // localItem can be a folder in which case the remote one is created
+            } else {
+                // Create all folders if needed
+                [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, ACProjectFileSystemItem *localItem, BOOL *stop) {
                     if (localItem.type == ACPFolder) {
                         [_connection createDirectoryAtPath:remotePath posixPermissions:nil];
-                    } else {
-                        [_connection uploadFileAtURL:localItem.URL toPath:remotePath posixPermissions:nil];
                     }
-                }
-            }];
+                }];
+                // Uploading items
+                [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, ACProjectFileSystemItem *localItem, BOOL *stop) {
+                    if (localItem.type == ACPFile) {
+                         [self _uploadProjectItem:localItem toConnection:_connection path:[remotePath stringByDeletingLastPathComponent]];
+                    }
+                }];
+            }
             break;
         }
             
@@ -743,27 +718,3 @@ typedef enum {
 
 @end
 
-#pragma mark -
-
-@implementation ACProjectFolder (RemoteUtilities)
-
-- (ACProjectFolder *)subfolderWithPath:(NSString *)relativePath {
-    ACProjectFolder *result = self;
-    for (NSString *component in [relativePath pathComponents]) {
-        // Returns the current result if it's not a folder
-        if (result.type != ACPFolder)
-            return result;
-        // Get's the child if it exists
-        if ([result childWithName:component]) {
-            result = (ACProjectFolder *)[result childWithName:component];
-        } else {
-            // Create a subfolder
-#warning TODO uncomment when implemented
-            ASSERT(NO);
-            //                                localItem = [(ACProjectFolder *)localItem createfolder]
-        }
-    }
-    return result;
-}
-
-@end

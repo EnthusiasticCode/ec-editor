@@ -137,8 +137,8 @@
     [super setArtCodeTab:artCodeTab];
     
     ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
-    ASSERT(![self.artCodeTab.currentItem.URL isArtCodeURL]);
-    self.remoteURL = [self.artCodeTab.currentItem.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
+    ASSERT(![((ACProjectRemote *)self.artCodeTab.currentItem).URL isArtCodeURL]);
+    self.remoteURL = [((ACProjectRemote *)self.artCodeTab.currentItem).URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
 }
 
 #pragma mark - View lifecycle
