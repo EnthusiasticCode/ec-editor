@@ -47,7 +47,6 @@ static NSString * const _childrenKey = @"children";
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
     NSMutableDictionary *children = [[NSMutableDictionary alloc] initWithCapacity:_children.count];
     [_children enumerateKeysAndObjectsUsingBlock:^(NSString *key, ACProjectFileSystemItem *item, BOOL *stop) {
-        USE(stop);
         [children setObject:item.propertyListDictionary forKey:key];
     }];
     [plist setObject:children forKey:_childrenKey];

@@ -85,6 +85,9 @@
     }
     NSDate *contentModificationDate = nil;
     [fileURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+    if (!contentModificationDate) {
+        contentModificationDate = [[NSDate alloc] init];
+    }
     
     _contentModificationDate = contentModificationDate;
     _fileURL = fileURL;

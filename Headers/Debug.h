@@ -1,9 +1,6 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-// General Macros
-#define USE(x) if (0) x=x
-
 // C Debug Macros
 #if DEBUG
 #include <assert.h>
@@ -18,7 +15,7 @@ if ((a)==NULL) {\
 
 #else
 #define ASSERT(a) // if (0 && ! (a)) abort()
-#define REQUIRE_NOT_NULL(a) USE(a)
+#define REQUIRE_NOT_NULL(a)
 #endif
 
 
@@ -44,7 +41,7 @@ if ((a)==NULL) {\
 
 #else
 
-#define EXPECT_CLASS(e, c) USE(e)
+#define EXPECT_CLASS(e, c)
 
 #endif
 

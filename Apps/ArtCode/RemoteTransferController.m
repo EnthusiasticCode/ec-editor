@@ -367,8 +367,6 @@ typedef enum {
     if (!self.progressView.isHidden) {
         __block float totalProgress = 0;
         [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
-            USE(key);
-            USE(stop);
             totalProgress += [progress floatValue];
         }];
         [self.progressView setProgress:(totalProgress + _transfersCompleted * 100.0) / (([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
@@ -398,7 +396,6 @@ typedef enum {
         self.navigationItem.title = @"Finishing";
         self.progressView.progress = 0;
         [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(NSError *error) {
-            USE(error);
             [self.progressView setProgress:1 animated:YES];
             [self _callCompletionHandlerWithError:nil];
         }];

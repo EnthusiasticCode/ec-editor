@@ -85,8 +85,6 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
     
     NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
     [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        USE(flags);
-        USE(stop);
         [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
     }];
     return [uuids copy];

@@ -59,7 +59,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     NSMutableArray *_pendingCodeFileCompletionHandlers;
 }
 
-@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier, contentModificationDate = _contentModificationDate, fileSize = _fileSize;
+@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier, fileSize = _fileSize;
 
 #pragma mark - ACProjectItem
 
@@ -84,7 +84,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
     NSMutableDictionary *bookmarks = [[NSMutableDictionary alloc] init];
     [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id point, ACProjectFileBookmark *bookmark, BOOL *stop) {
-        USE(stop);
         if ([point isKindOfClass:[NSNumber class]]) {
             point = [(NSNumber *)point stringValue];
         }
@@ -106,7 +105,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
     _bookmarks = [[NSMutableDictionary alloc] init];
     [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
-        USE(stop);
         NSScanner *scanner = [NSScanner scannerWithString:point];
         NSInteger line;
         if ([scanner scanInteger:&line])
@@ -191,7 +189,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 - (void)_codeFileProxyDidDealloc {
     ASSERT(!_codeFileProxy && _codeFile);
     [_codeFile closeWithCompletionHandler:^(BOOL success) {
-        USE(success);
         _codeFile = nil;
         if (_pendingCodeFileCompletionHandlers.count)
             [self openCodeFileWithCompletionHandler:nil];
@@ -230,7 +227,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (id)forwardingTargetForSelector:(SEL)aSelector {
-    USE(aSelector);
     ASSERT(_target);
     return _target;
 }

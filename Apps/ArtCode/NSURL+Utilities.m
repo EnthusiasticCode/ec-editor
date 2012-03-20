@@ -27,7 +27,7 @@
 }
 
 + (NSURL *)temporaryDirectory {
-    return [self uniqueDirectoryInDirectory:[NSURL URLWithString:NSTemporaryDirectory()]];
+    return [self uniqueDirectoryInDirectory:[NSURL fileURLWithPath:NSTemporaryDirectory()]];
 }
 
 + (NSURL *)uniqueDirectoryInDirectory:(NSURL *)directoryURL {
