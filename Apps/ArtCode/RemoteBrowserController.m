@@ -33,7 +33,6 @@
 - (void)_changeToDirectory:(NSString *)directory;
 - (void)_closeConnection;
 
-- (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
 - (void)_modalNavigationControllerDownloadAction:(id)sender;
@@ -479,24 +478,19 @@
 
 - (IBAction)syncAction:(id)sender
 {
-#warning FIX
-ECASSERT(NO); 
     ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
-//    directoryBrowser.URL = self.artCodeTab.currentProject.fileURL;
+    directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 
 }
 
 - (void)_toolEditExportAction:(id)sender
 {
-#warning FIX
-    ECASSERT(NO);
-    
     // Show directory browser presenter to select where to download
     ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-//    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 
@@ -543,15 +537,13 @@ ECASSERT(NO);
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
     
-ECASSERT(NO);
-#warning FIX
-    // Resolve conflicts and start downloading
-//    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.remoteURL toLocalURL:moveURL completion:^(id<CKConnection> connection, NSError *error) {
-//        [self setEditing:NO animated:YES];
-//        if (self.tableView.indexPathForSelectedRow)
-//            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
-//        [self modalNavigationControllerDismissAction:sender];
-//    }];
+    // Start download modal
+    [transferController downloadConnectionItems:([self._selectedItems count] ? [self._selectedItems copy] : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path toProjectFolder:moveFolder completion:^(id<CKConnection> connection, NSError *error) {
+        [self setEditing:NO animated:YES];
+        if (self.tableView.indexPathForSelectedRow)
+            [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+        [self modalNavigationControllerDismissAction:sender];
+    }];
 }
 
 - (void)_modalNavigationControllerSyncAction:(id)sender
@@ -567,12 +559,10 @@ ECASSERT(NO);
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
 
-ECASSERT(NO);
-#warning FIX
     // Start sync
-//    [transferController syncLocalDirectoryURL:localURL withConnection:(id<CKConnection>)_connection remoteURL:self.remoteURL options:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:RemoteSyncDirectionRemoteToLocal], RemoteSyncOptionDirectionKey, nil] completion:^(id<CKConnection> connection, NSError *error) {
-//        [self modalNavigationControllerDismissAction:sender];
-//    }];
+    [transferController synchronizeLocalProjectFolder:localFolder withConnection:(id<CKConnection>)_connection path:self.remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+        [self modalNavigationControllerDismissAction:sender];
+    }];
 }
 
 @end
