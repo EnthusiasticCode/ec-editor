@@ -96,11 +96,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
-    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL originalURL:originalURL];
     if (!self) {
         return nil;
     }
+    NSNumber *fileSize = nil;
+    [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
+    _fileSize = [fileSize unsignedIntegerValue];
     _fileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey] ? [[plistDictionary objectForKey:_plistFileEncodingKey] unsignedIntegerValue] : NSUTF8StringEncoding;
     _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
     _bookmarks = [[NSMutableDictionary alloc] init];

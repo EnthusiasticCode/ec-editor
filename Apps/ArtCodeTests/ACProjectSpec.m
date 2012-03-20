@@ -179,7 +179,7 @@ describe(@"A new opened ACProject", ^{
         it(@"can be created with no error", ^{
             __block ACProjectFolder *subfolder = nil;
             __block NSError *subfolderError = nil;
-            [project.contentsFolder addNewFolderWithName:subfolderName plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+            [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                 subfolder = newFolder;
                 subfolderError = error;
             }];
@@ -190,7 +190,7 @@ describe(@"A new opened ACProject", ^{
         it(@"can be retrieved with no error", ^{
             __block ACProjectFolder *subfolder = nil;
             __block NSError *subfolderError = nil;
-            [project.contentsFolder addNewFolderWithName:subfolderName plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+            [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                 subfolder = newFolder;
                 subfolderError = error;
             }];
@@ -202,6 +202,27 @@ describe(@"A new opened ACProject", ^{
             id item = [project.contentsFolder.children objectAtIndex:0];
             [[item should] beMemberOfClass:[ACProjectFolder class]];
             [[item should] equal:subfolder];
+        });
+        
+        it(@"can be created with the contents of a URL", ^{
+            // Create the temporary folder
+            NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            NSURL *temporarySubfolder = [temporaryDirectory URLByAppendingPathComponent:@"Temporary subfolder"];
+            NSFileManager *fileManager = [[NSFileManager alloc] init];
+            [[theValue([fileManager createDirectoryAtURL:[temporarySubfolder URLByAppendingPathComponent:@"test"] withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
+            
+            __block ACProjectFolder *subfolder = nil;
+            __block NSError *subfolderError = nil;
+            [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                subfolder = newFolder;
+                subfolderError = error;
+            }];
+            [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+            [subfolderError shouldBeNil];
+            
+            [[[subfolder should] have:1] children];
+            
+            [fileManager removeItemAtURL:temporaryDirectory error:NULL];
         });
         
         context(@"after being created", ^{
@@ -216,14 +237,14 @@ describe(@"A new opened ACProject", ^{
             NSString *newSubfolderName = @"newsubfoldername";
             
             beforeEach(^{
-                [project.contentsFolder addNewFolderWithName:subfolderName plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                     subfolder = newFolder;
                     subfolderError = error;
                 }];
                 [[expectFutureValue(subfolder) shouldEventually] beNonNil];
                 [subfolderError shouldBeNil];
                 subfolderUUID = subfolder.UUID;
-                [project.contentsFolder addNewFolderWithName:subfolder2Name plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                [project.contentsFolder addNewFolderWithName:subfolder2Name originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                     subfolder2 = newFolder;
                     subfolder2Error = error;
                 }];
@@ -313,7 +334,7 @@ describe(@"A new opened ACProject", ^{
             __block NSError *subfolderError = nil;
             
             beforeEach(^{
-                [project.contentsFolder addNewFolderWithName:subfolderName plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                     subfolder = newFolder;
                     subfolderError = error;
                 }];
@@ -347,7 +368,7 @@ describe(@"A new opened ACProject", ^{
         it(@"can be created with no error", ^{
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
-            [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+            [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
                 file = newFile;
                 fileError = error;
             }];
@@ -358,7 +379,7 @@ describe(@"A new opened ACProject", ^{
         it(@"can be created and retrieved with no error", ^{
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
-            [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+            [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
                 file = newFile;
                 fileError = error;
             }];
@@ -374,7 +395,7 @@ describe(@"A new opened ACProject", ^{
         it(@"can be created, retrieved and deleted with no error", ^{
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
-            [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+            [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
                 file = newFile;
                 fileError = error;
             }];
@@ -398,26 +419,20 @@ describe(@"A new opened ACProject", ^{
             NSString *testContents = @"test contents";
             
             // Create temporary directory
-            NSError *temporaryDirectoryError = nil;
-            [fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:&temporaryDirectoryError];
-            [temporaryDirectoryError shouldBeNil];
+            [[theValue([fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
             
             // Create temporary file
-            NSError *temporaryFileError = nil;
-            [testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:&temporaryFileError];
-            [temporaryFileError shouldBeNil];
+            [[theValue([testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:NULL]) should] beYes];
             
             // Get temporary file size
-            NSError *temporaryFileSizeError = nil;
             NSNumber *temporaryFileSize = nil;
-            [temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:&temporaryFileSizeError];
+            [[theValue([temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:NULL]) should] beYes];
             [[temporaryFileSize should] beNonNil];
-            [[temporaryFileSizeError should] beNonNil];
             
             // Create file
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
-            [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
+            [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
                 file = newFile;
                 fileError = error;
             }];
@@ -433,7 +448,7 @@ describe(@"A new opened ACProject", ^{
             __block NSError *fileError = nil;
             
             beforeEach(^{
-                [project.contentsFolder addNewFileWithName:fileName plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+                [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
                     file = newFile;
                     fileError = error;
                 }];
@@ -600,7 +615,7 @@ describe(@"A new opened ACProject", ^{
         
         __block ACProjectFolder *testFolder = nil;
         __block NSError *testFolderError = nil;
-        [project.contentsFolder addNewFolderWithName:@"test folder" plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+        [project.contentsFolder addNewFolderWithName:@"test folder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
             testFolder = newFolder;
             testFolderError = error;
         }];
@@ -610,7 +625,7 @@ describe(@"A new opened ACProject", ^{
         
         __block ACProjectFile *testFile1 = nil;
         __block NSError *testFile1Error = nil;
-        [testFolder addNewFileWithName:@"test file 1" plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+        [testFolder addNewFileWithName:@"test file 1" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
             testFile1 = newFile;
             testFile1Error = error;
         }];
@@ -620,7 +635,7 @@ describe(@"A new opened ACProject", ^{
         
         __block ACProjectFile *testFile2 = nil;
         __block NSError *testFile2Error = nil;
-        [testFolder addNewFileWithName:@"test file 2" plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+        [testFolder addNewFileWithName:@"test file 2" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
             testFile2 = newFile;
             testFile2Error = error;
         }];
@@ -639,7 +654,7 @@ describe(@"A new opened ACProject", ^{
         
         __block ACProjectFile *testFile = nil;
         __block NSError *testFileError = nil;
-        [project.contentsFolder addNewFileWithName:@"test file" plist:nil originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+        [project.contentsFolder addNewFileWithName:@"test file" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
             testFile = newFile;
             testFileError = error;
         }];
@@ -668,7 +683,6 @@ describe(@"An existing ACProject", ^{
     NSString *fileName = @"testfile.txt";
     NSURL *temporaryDirectory = [NSURL temporaryDirectory];
     NSURL *originalURL = [temporaryDirectory URLByAppendingPathComponent:@"originaltestfile.txt"];
-    [[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:originalURL atomically:YES];
     NSNumber *bookmarkPoint = [NSNumber numberWithInt:1];
     
     beforeAll(^{
@@ -681,19 +695,23 @@ describe(@"An existing ACProject", ^{
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
+
+        [[theValue([[[NSFileManager alloc] init] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
         
         __block ACProjectFolder *subfolder = nil;
         __block NSError *subfolderError = nil;
-        [project.contentsFolder addNewFolderWithName:subfolderName plist:nil originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporaryDirectory completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
             subfolder = newFolder;
             subfolderError = error;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         [subfolderError shouldBeNil];
         
+        [[theValue([[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:originalURL atomically:YES]) should] beYes];
+        
         __block ACProjectFile *file = nil;
         __block NSError *fileError = nil;
-        [subfolder addNewFileWithName:fileName plist:nil originalURL:originalURL completionHandler:^(ACProjectFile *newFile, NSError *error) {
+        [subfolder addNewFileWithName:fileName originalURL:originalURL completionHandler:^(ACProjectFile *newFile, NSError *error) {
             file = newFile;
             fileError = error;
         }];

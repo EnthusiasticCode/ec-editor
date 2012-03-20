@@ -55,27 +55,31 @@ static NSString * const _childrenKey = @"children";
 
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
-    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL originalURL:originalURL];
     if (!self) {
         return nil;
     }
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     // Make sure the directory exists
-    [fileManager createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:NULL];
+    if (![fileManager fileExistsAtPath:[fileURL path]]) {
+        if (![fileManager createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:NULL]) {
+            return nil;
+        }
+    }
     
     // Create children
     _children = [[NSMutableDictionary alloc] init];
     NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
-    for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
+    for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:originalURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
         NSNumber *isDirectory = nil;
         if (![childURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
             continue;
         }
         Class childClass = [isDirectory boolValue] ? [ACProjectFolder class] : [ACProjectFile class];
         NSString *childName = childURL.lastPathComponent;
-        ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:childName] parent:self fileURL:childURL];
+        ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:childName] parent:self fileURL:childURL originalURL:childURL];
         if (child) {
             [_children setObject:child forKey:childName];
             [self.project didAddFileSystemItem:child];
@@ -111,14 +115,14 @@ static NSString * const _childrenKey = @"children";
 
 #pragma mark - Creating new folders and files
 
-- (void)addNewFolderWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFolder *, NSError *))completionHandler {
+- (void)addNewFolderWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFolder *, NSError *))completionHandler {
     if ([_children objectForKey:name]) {
         completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
         return;
     }
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSURL *childURL = [self.fileURL URLByAppendingPathComponent:name];
-        ACProjectFolder *childFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
+        ACProjectFolder *childFolder = [[ACProjectFolder alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL originalURL:originalURL ? originalURL : childURL];
         if (!childFolder) {
             completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
             return;
@@ -130,14 +134,14 @@ static NSString * const _childrenKey = @"children";
     }];
 }
 
-- (void)addNewFileWithName:(NSString *)name plist:(NSDictionary *)plist originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFile *, NSError *))completionHandler {
+- (void)addNewFileWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFile *, NSError *))completionHandler {
     if ([_children objectForKey:name]) {
         completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
         return;
     }
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSURL *childURL = [self.fileURL URLByAppendingPathComponent:name];
-        ACProjectFile *childFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:plist parent:self fileURL:childURL];
+        ACProjectFile *childFile = [[ACProjectFile alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL originalURL:originalURL ? originalURL : childURL];
         if (!childFile) {
             completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
             return;

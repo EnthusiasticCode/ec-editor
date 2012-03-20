@@ -48,7 +48,7 @@
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil];
+    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil originalURL:nil];
 }
 
 - (NSDictionary *)propertyListDictionary {
@@ -74,9 +74,9 @@
     return _fileURL;
 }
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All filesystem items need to be initialized in the project's file access coordination queue
-    if (!project || !fileURL) {
+    if (!project || !fileURL || !originalURL || ![fileURL isFileURL] || ![originalURL isFileURL]) {
         return nil;
     }
     self = [super initWithProject:project propertyListDictionary:plistDictionary];
@@ -84,9 +84,17 @@
         return nil;
     }
     NSDate *contentModificationDate = nil;
-    [fileURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+    [originalURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
     if (!contentModificationDate) {
         contentModificationDate = [[NSDate alloc] init];
+    }
+    
+    if (![fileURL isEqual:originalURL]) {
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        if (![fileManager copyItemAtURL:originalURL toURL:fileURL error:NULL]) {
+            [fileManager removeItemAtURL:fileURL error:NULL];
+            return nil;
+        }
     }
     
     _contentModificationDate = contentModificationDate;

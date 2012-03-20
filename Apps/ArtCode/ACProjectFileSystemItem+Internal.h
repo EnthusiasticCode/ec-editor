@@ -16,7 +16,8 @@
 /// The content modification date should be updated whenever the file system item's in memory representation is changed
 @property (nonatomic, strong) NSDate *contentModificationDate;
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL;
+/// Designated initializer, both fileURL and originalURL are required, even if they're the same
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL ;
 
 /// Force a write to the specified URL. Must be called on the project's file access coordination queue
 - (BOOL)writeToURL:(NSURL *)url;
