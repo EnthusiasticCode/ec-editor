@@ -264,7 +264,7 @@ static OnigRegexp *_namedCapturesRegexp;
     ASSERT([NSOperationQueue currentQueue] == _internalQueue);
 
     // This is going to be the reference generation, if it changes we break out immediately because we know we're about to be called again
-    CodeFileGeneration startingGeneration;
+    CodeFileGeneration startingGeneration = 0;
     
     // First of all, we apply all the pending changes to the scope tree, the unparsed ranges and the blank ranges
     OSSpinLockLock(&_pendingChangesLock);

@@ -107,7 +107,7 @@ static const void *editItemContext;
         [UIView animateWithDuration:0.10 animations:^{
             // Layout title control
             [self layoutSubviews];
-        } completion:^(BOOL finished) {
+        } completion:^(BOOL outerAnimationfinished) {
             [UIView animateWithDuration:0.10 animations:^{
                 // Fade-out old items
                 for (UIBarButtonItem *item in oldItems) {
@@ -117,7 +117,7 @@ static const void *editItemContext;
                 for (UIBarButtonItem *item in toolItems) {
                     item.customView.alpha = 1;
                 }
-            } completion:^(BOOL finished) {
+            } completion:^(BOOL innerAnimationFinished) {
                 for (UIBarButtonItem *item in oldItems) {
                     [item.customView removeFromSuperview];
                 }

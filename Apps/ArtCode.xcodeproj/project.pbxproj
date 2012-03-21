@@ -2545,6 +2545,7 @@
 					"-Wmissing-declarations",
 					"-Wformat=2",
 					"-Wextra",
+					"-Wno-selector",
 					"-Wno-unused-parameter",
 				);
 			};
@@ -2597,6 +2598,7 @@
 					"-Wmissing-declarations",
 					"-Wformat=2",
 					"-Wextra",
+					"-Wno-selector",
 					"-Wno-unused-parameter",
 				);
 			};

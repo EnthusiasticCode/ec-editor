@@ -882,7 +882,6 @@ SPEC_END
 // this is just debug code so ignore the warnings
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-#pragma clang diagnostic ignored "-Wselector"
 void clearProjectsDirectory(void) {
     [ACProject performSelector:@selector(_removeAllProjects)];
 }

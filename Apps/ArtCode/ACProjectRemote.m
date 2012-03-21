@@ -33,9 +33,6 @@
 @synthesize name = _name;
 @dynamic scheme, host, port, user;
 
-// ignore selector warnings here
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     if (aSelector == @selector(scheme)
@@ -45,7 +42,6 @@
         return _URL;
     return nil;
 }
-#pragma clang diagnostic pop
 
 - (void)setScheme:(NSString *)scheme
 {
