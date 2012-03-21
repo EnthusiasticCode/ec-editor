@@ -182,6 +182,7 @@
     {
         cell = [ProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
         cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        cell.isAccessibilityElement = YES;
         
         if (!_cellNormalBackground)
             _cellNormalBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
@@ -193,6 +194,7 @@
     
     // Setup project title
     ACProject *project = [_projects objectAtIndex:cellIndex];
+    cell.accessibilityLabel = project.name;
     cell.title.text = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
@@ -352,6 +354,7 @@ ASSERT(NO);
         _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
         _gridView.backgroundView = [UIView new];
         _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
+        _gridView.accessibilityIdentifier = @"projects grid";
     }
     return _gridView;
 }
