@@ -90,7 +90,7 @@
     [self startRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = NO;
     self.projectNameTextField.enabled = NO;
-    [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+    [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
         [self stopRightBarButtonItemActivityIndicator];
         self.projectColorButton.enabled = YES;
         self.projectNameTextField.enabled = YES;

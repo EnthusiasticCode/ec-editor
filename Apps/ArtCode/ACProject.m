@@ -239,7 +239,8 @@ static NSString * const _plistRemotesKey = @"remotes";
     return [[self alloc] _initWithUUID:uuid];
 }
 
-+ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *))completionHandler {
++ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
+    ASSERT(completionHandler); // The returned project is open and it must be closed by caller
     NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
     ACProject *project = [[self alloc] _initWithUUID:uuid];
     [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
@@ -251,8 +252,10 @@ static NSString * const _plistRemotesKey = @"remotes";
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
             [notificationCenter postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
         }
-        if (completionHandler) {
-            completionHandler(success ? project : nil);
+        if (success) {
+            completionHandler(project, nil);
+        } else {
+            completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
         }
     }];
 }

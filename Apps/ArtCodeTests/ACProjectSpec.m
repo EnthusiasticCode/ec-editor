@@ -23,6 +23,8 @@ static void clearProjectsDirectory(void);
 
 SPEC_BEGIN(ACProjectSpec)
 
+#pragma mark - ACProject
+
 describe(@"An ACProject", ^{
     
     NSString *projectName = @"Test Project";
@@ -37,7 +39,8 @@ describe(@"An ACProject", ^{
     
     it(@"can be created", ^{
         __block ACProject *project = nil;
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+            [[error should] beNil];
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -66,7 +69,25 @@ describe(@"An ACProject", ^{
         [[[ACProject projects] should] haveCountOf:0];
     });
     
+    it(@"can be duplicated", ^{
+        __block ACProject *project = nil;
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+            [[error should] beNil];
+            project = createdProject;
+        }];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
+        __block ACProject *duplicateProject = nil;
+        [project duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+            [[error should] beNil];
+            duplicateProject = duplicate;
+        }];
+        [[expectFutureValue(project) shouldEventually] beNonNil];
+        [[duplicateProject shouldNot] equal:project];
+        [[duplicateProject.name shouldNot] equal:project.name];
+    });
 });
+
+#pragma mark - ACProject new instance 
 
 describe(@"An newly created ACProject", ^{
     NSString *projectName = @"Test Project";
@@ -76,7 +97,8 @@ describe(@"An newly created ACProject", ^{
     
     beforeEach(^{
         clearProjectsDirectory();
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+            [[error should] beNil];
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -147,7 +169,8 @@ describe(@"A new opened ACProject", ^{
     
     beforeEach(^{
         clearProjectsDirectory();
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+            [[error should] beNil];
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -792,7 +815,8 @@ describe(@"An existing ACProject", ^{
     beforeAll(^{
         clearProjectsDirectory();
         
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject) {
+        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+            [[error should] beNil];
             project = createdProject;
         }];
         [[expectFutureValue(project) shouldEventually] beNonNil];

@@ -25,7 +25,8 @@ extern NSString * const ACProjectNotificationIndexKey;
 + (NSArray *)projects;
 
 /// Creates a new project by optionally decompressing the archive at the given URL, saves it and returns it.
-+ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(ACProject *createdProject))completionHandler;
+/// The returned project is openes, it must be closed in the completion handler
++ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void(^)(ACProject *createdProject, NSError *error))completionHandler;
 
 /// Returns the project with the given UUID, or nil if the project does not exist.
 + (ACProject *)projectWithUUID:(id)uuid;
@@ -59,8 +60,14 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 #pragma mark Project-wide operations
 
+/// Duplicate the entire project.
+/// The returned project is openes, it must be closed in the completion handler.
+- (void)duplicateWithCompletionHandler:(void(^)(ACProject *duplicate, NSError *error))completionHandler;
+
+/// Compress the entire project to the destination URL.
 - (void)exportToArchiveWithURL:(NSURL *)archiveURL completionHandler:(void(^)(BOOL success))completionHandler;
 
+/// Completelly remove the project and its files.
 - (void)remove;
 
 @end

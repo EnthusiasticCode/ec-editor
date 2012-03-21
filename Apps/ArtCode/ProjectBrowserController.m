@@ -393,30 +393,24 @@ ASSERT(NO);
     [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
-- (void)_toolEditDuplicateAction:(id)sender
-{
+- (void)_toolEditDuplicateAction:(id)sender {
     ASSERT(self.isEditing);
     ASSERT([self.gridView indexForSelectedCell] != -1);
     
     self.loading = YES;
-
     NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    
+    NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
+    __block NSInteger progress = 0;
     [self setEditing:NO animated:YES];
-#warning FIX
-    ASSERT(NO);    
-//    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-//        ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-//        if (!project)
-//            return;
-//        
-//        [coordinator coordinateReadingItemAtURL:project.URL options:0 writingItemAtURL:[ArtCodeProject projectURLFromName:[ArtCodeProject validNameForNewProjectName:project.name]] options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-//            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
-//        }];
-//    }];
-    self.loading = NO;
+    
+    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        [[_projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+            [duplicate closeWithCompletionHandler:nil];
+            if (++progress == cellsToDuplicateCount) {
+                self.loading = NO;
+            }
+        }];
+    }];
 }
 
 @end
