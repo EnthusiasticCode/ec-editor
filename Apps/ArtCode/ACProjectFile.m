@@ -122,15 +122,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     return self;
 }
 
-- (BOOL)writeToURL:(NSURL *)url {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
-    if ([url isEqual:self.fileURL]) {
-        return YES;
-    } else {
-        return [[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:url error:NULL];
-    }
-}
-
 #pragma mark - Accessing the content
 
 - (void)openCodeFileWithCompletionHandler:(void (^)(CodeFile *))completionHandler {

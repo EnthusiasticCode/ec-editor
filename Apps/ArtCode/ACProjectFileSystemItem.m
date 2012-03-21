@@ -30,19 +30,14 @@
 
 #pragma mark -
 
-@implementation ACProjectFileSystemItem {
-    NSURL *_fileURL;
-}
+@implementation ACProjectFileSystemItem
 
-@synthesize name = _name, parentFolder = _parentFolder, contentModificationDate = _contentModificationDate;
+@synthesize parentFolder = _parentFolder, contentModificationDate = _contentModificationDate, fileURL = _fileURL;
 
 #pragma mark - ACProjectItem
 
 - (void)remove {
-    ASSERT(self.parentFolder);
-    [self.parentFolder didRemoveChild:self];
-    [self.project didRemoveFileSystemItem:self];
-    [super remove];
+    [self removeWithCompletionHandler:nil];
 }
 
 #pragma mark - ACProjectItem Internal
@@ -57,7 +52,11 @@
     return plist;
 }
 
-#pragma mark - Public Methods
+#pragma mark - Item Properties
+
+- (NSString *)name {
+    return [_fileURL lastPathComponent];
+}
 
 - (NSString *)pathInProject {
     if (self.parentFolder == nil) {
@@ -67,11 +66,35 @@
     return [[self.parentFolder pathInProject] stringByAppendingPathComponent:self.name];
 }
 
+#pragma mark - Item Contents
+
+- (void)removeWithCompletionHandler:(void (^)(NSError *))completionHandler {
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        NSError *error = nil;
+        if (![self removeSynchronouslyWithError:&error]) {
+            ASSERT(error);
+            if (completionHandler) {
+                completionHandler(error);
+            }
+        } else {
+            [super remove];
+            if (completionHandler) {
+                completionHandler(nil);
+            }
+        }
+    }];
+}
+
 #pragma mark - Internal Methods
 
 - (NSURL *)fileURL {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     return _fileURL;
+}
+
+- (void)setFileURL:(NSURL *)fileURL {
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    _fileURL = fileURL;
 }
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
@@ -99,14 +122,30 @@
     
     _contentModificationDate = contentModificationDate;
     _fileURL = fileURL;
-    _name = fileURL.lastPathComponent;
     _parentFolder = parent;
     return self;
 }
 
 - (BOOL)writeToURL:(NSURL *)url {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
-    return NO;
+    if ([url isEqual:self.fileURL]) {
+        return YES;
+    } else {
+        return [[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:url error:NULL];
+    }
+}
+
+- (BOOL)removeSynchronouslyWithError:(NSError *__autoreleasing *)error
+{
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    if (![[[NSFileManager alloc] init] removeItemAtURL:self.fileURL error:error]) {
+        ASSERT(!error || *error);
+        return NO;
+    } else {
+        [self.parentFolder didRemoveChild:self];
+        [self.project didRemoveFileSystemItem:self];
+        return YES;
+    }
 }
 
 @end

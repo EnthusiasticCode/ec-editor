@@ -9,6 +9,7 @@
 #import "NSURL+Utilities.h"
 #import "NSDictionary+URLAdditions.h"
 #import "NSString+UUID.h"
+#import "NSString+Utilities.h"
 
 @interface NSURL (Additions_Internal)
 
@@ -79,7 +80,7 @@
 }
 
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number {
-    return [[self URLByDeletingLastPathComponent] URLByAppendingPathComponent:[[[self lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@" (%u).%@", number, [self pathExtension]]];
+    return [self.URLByDeletingLastPathComponent URLByAppendingPathComponent:[self.lastPathComponent stringByAddingDuplicateNumber:number]];
 }
 
 - (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary {

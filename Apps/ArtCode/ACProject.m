@@ -258,10 +258,14 @@ static NSString * const _plistRemotesKey = @"remotes";
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
             [notificationCenter postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
             
-            completionHandler(project, nil);
+            if (completionHandler) {
+                completionHandler(project, nil);
+            }
         } else {
             ASSERT(project->_lastError);
-            completionHandler(nil, project->_lastError);
+            if (completionHandler) {
+                completionHandler(nil, project->_lastError);
+            }
         }
     }];
 }
