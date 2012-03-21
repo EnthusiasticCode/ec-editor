@@ -77,6 +77,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     NSMutableDictionary *_filesCache;
     NSMutableDictionary *_bookmarksCache;
     NSMutableDictionary *_remotes;
+    NSError *_lastError;
 }
 
 @synthesize UUID = _UUID, artCodeURL = _artCodeURL;
@@ -218,7 +219,10 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 - (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
+    _lastError = error;
+#if DEBUG
     NSLog(@">>>>>>>>>>>>>>>>> %@", error);
+#endif
 }
 
 #pragma mark - Projects list
@@ -245,17 +249,19 @@ static NSString * const _plistRemotesKey = @"remotes";
     ACProject *project = [[self alloc] _initWithUUID:uuid];
     [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (success) {
+            ASSERT(project->_lastError == nil);
+            // Post the creation of a new project to the notification center
             NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:_projectsList.count] forKey:ACProjectNotificationIndexKey];
             [notificationCenter postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
             [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
             [notificationCenter postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
-        }
-        if (success) {
+            
             completionHandler(project, nil);
         } else {
-            completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
+            ASSERT(project->_lastError);
+            completionHandler(nil, project->_lastError);
         }
     }];
 }

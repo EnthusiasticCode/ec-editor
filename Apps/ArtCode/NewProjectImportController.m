@@ -115,7 +115,7 @@ static void *_directoryObservingContext;
     
     [self startRightBarButtonItemActivityIndicator];
     self.tableView.userInteractionEnabled = NO;
-    [ACProject createProjectWithName:zipFileName importArchiveURL:zipURL completionHandler:^(ACProject *createdProject) {
+    [ACProject createProjectWithName:zipFileName importArchiveURL:zipURL completionHandler:^(ACProject *createdProject, NSError *error) {
         if (createdProject)
         {
             [createdProject closeWithCompletionHandler:^(BOOL success) {

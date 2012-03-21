@@ -13,7 +13,7 @@
 #import "TMBundle.h"
 #import "TMPreference.h"
 #import "TMSyntaxNode.h"
-#import "OnigRegexp.h"
+#import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "CodeFile+Generation.h"

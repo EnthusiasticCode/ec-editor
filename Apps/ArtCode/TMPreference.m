@@ -9,7 +9,7 @@
 #import "TMPreference.h"
 #import "TMBundle.h"
 #import "TMScope.h"
-#import "OnigRegexp.h"
+#import <CocoaOniguruma/OnigRegexp.h>
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
