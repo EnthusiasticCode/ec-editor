@@ -731,11 +731,11 @@ describe(@"A new opened ACProject", ^{
         [testFile2 removeWithCompletionHandler:^(NSError *error) {
             [error shouldBeNil];
         }];
-        [[[project should] have:2] files];
+        [[expectFutureValue(project.files) shouldEventually] haveCountOf:2];
         [testFolder removeWithCompletionHandler:^(NSError *error) {
             [error shouldBeNil];
         }];
-        [[[project should] have:0] files];
+        [[expectFutureValue(project.files) shouldEventually] haveCountOf:0];
     });
     
     it(@"has a list of bookmarks", ^{
