@@ -99,14 +99,13 @@ static NSString * const _plistRemotesKey = @"remotes";
     // Checks projects on filesystem, adds missing projects to the project list, removes zombies
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSMutableDictionary *newProjectsList = [[NSMutableDictionary alloc] init];
-    for (NSURL *projectURL in [fileManager contentsOfDirectoryAtURL:[self _projectsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL]) {
+    for (NSURL *projectURL in [fileManager contentsOfDirectoryAtURL:[self _projectsDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
         NSString *uuid = projectURL.lastPathComponent;
         NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
         if (projectInfo) {
             [newProjectsList setObject:projectInfo forKey:uuid];
         } else {
-            projectInfo = [NSDictionary dictionaryWithObject:uuid forKey:_plistNameKey];
-            [newProjectsList setObject:projectInfo forKey:uuid];
+            [fileManager removeItemAtURL:projectURL error:NULL];
         }
     }
     _projectsList = newProjectsList;
