@@ -240,10 +240,13 @@ static void *_currentFolderContext;
     // Configure the cell
     ACProjectFileSystemItem *fileItem = [self.filteredItems objectAtIndex:indexPath.row];
     
-    if (fileItem.type == ACPFolder)
+    if (fileItem.type == ACPFolder) {
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    else
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
         cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     
     cell.textLabel.text = fileItem.name;
     cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;

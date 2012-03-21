@@ -881,7 +881,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
-    // TODO better check for file type
+#warning TODO NIK better check for file type
     if (editingState || ![[self.codeFile.fileURL pathExtension] isEqualToString:@"html"])
     {
         return self.codeView;
