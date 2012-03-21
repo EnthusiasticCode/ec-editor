@@ -20,6 +20,7 @@
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0491519D4B000AE6AC3 /* libCocoaTouchOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */; };
+		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
@@ -438,6 +439,8 @@
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaTouchOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaTouchOniguruma.a"; sourceTree = "<group>"; };
+		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
+		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
 		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
 		B75B575C14B0B62D00053783 /* CodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFile.m; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
@@ -1252,6 +1255,8 @@
 				CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */,
 				CD49925314D6F11E0046CD19 /* NSString+PluralFormat.h */,
 				CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */,
+				B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */,
+				B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */,
 				B7FB799C14D602C60080A714 /* NSTimer+BlockTimer.h */,
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
@@ -2426,6 +2431,7 @@
 				B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */,
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
+				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2471,7 +2477,6 @@
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -2488,7 +2493,6 @@
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;

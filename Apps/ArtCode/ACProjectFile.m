@@ -101,6 +101,15 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     if (!self) {
         return nil;
     }
+    
+    // Make sure the file exists
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:fileURL.path]) {
+        if (![@"" writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:NULL]) {
+            return nil;
+        }
+    }
+    
     NSNumber *fileSize = nil;
     [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
     _fileSize = [fileSize unsignedIntegerValue];
@@ -120,15 +129,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }];
     _pendingCodeFileCompletionHandlers = [[NSMutableArray alloc] init];
     return self;
-}
-
-- (BOOL)writeToURL:(NSURL *)url {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
-    if ([url isEqual:self.fileURL]) {
-        return YES;
-    } else {
-        return [[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:url error:NULL];
-    }
 }
 
 #pragma mark - Accessing the content
