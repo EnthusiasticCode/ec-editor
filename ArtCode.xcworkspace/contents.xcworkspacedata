@@ -5,9 +5,9 @@
       location = "container:Apps/ArtCode.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ThirdParty/Connection/Connection.xcodeproj">
+      location = "group:Apps/../ThirdParty/Kiwi/Kiwi.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ThirdParty/Connection/DAVKit/DAVKit.xcodeproj">
+      location = "group:ThirdParty/cocoaoniguruma/framework/CocoaOniguruma.xcodeproj">
    </FileRef>
 </Workspace>

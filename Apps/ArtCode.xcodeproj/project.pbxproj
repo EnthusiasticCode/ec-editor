@@ -18,6 +18,8 @@
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
+		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
+		B757C0491519D4B000AE6AC3 /* libCocoaTouchOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */; };
 		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
@@ -95,7 +97,6 @@
 		B771014C1506E340006AF1FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
-		B77101531506E4E8006AF1FB /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101401506E28B006AF1FB /* libKiwi.a */; };
 		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
@@ -229,20 +230,6 @@
 		B7FB79ED14D6064C0080A714 /* TabController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79EA14D6064C0080A714 /* TabController.m */; };
 		B7FB79F114D606740080A714 /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79F014D606740080A714 /* GridView.m */; };
 		B7FB79F614D6086A0080A714 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB79F514D6086A0080A714 /* libarc.a */; };
-		B7FB79FC14D608CA0080A714 /* OnigRegexp.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79F914D608CA0080A714 /* OnigRegexp.m */; };
-		B7FB7A1314D6099E0080A714 /* ascii.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0114D6099E0080A714 /* ascii.c */; };
-		B7FB7A1414D6099E0080A714 /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0214D6099E0080A714 /* unicode.c */; };
-		B7FB7A1514D6099E0080A714 /* utf16_le.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0314D6099E0080A714 /* utf16_le.c */; };
-		B7FB7A1614D6099E0080A714 /* regcomp.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0514D6099E0080A714 /* regcomp.c */; };
-		B7FB7A1714D6099E0080A714 /* regenc.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0614D6099E0080A714 /* regenc.c */; };
-		B7FB7A1814D6099E0080A714 /* regerror.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0814D6099E0080A714 /* regerror.c */; };
-		B7FB7A1914D6099E0080A714 /* regexec.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0914D6099E0080A714 /* regexec.c */; };
-		B7FB7A1A14D6099E0080A714 /* regext.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0A14D6099E0080A714 /* regext.c */; };
-		B7FB7A1B14D6099E0080A714 /* regparse.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0C14D6099E0080A714 /* regparse.c */; };
-		B7FB7A1C14D6099E0080A714 /* regsyntax.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0E14D6099E0080A714 /* regsyntax.c */; };
-		B7FB7A1D14D6099E0080A714 /* regtrav.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A0F14D6099E0080A714 /* regtrav.c */; };
-		B7FB7A1E14D6099E0080A714 /* regversion.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A1014D6099E0080A714 /* regversion.c */; };
-		B7FB7A1F14D6099E0080A714 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A1114D6099E0080A714 /* st.c */; };
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
@@ -420,34 +407,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B771013F1506E28B006AF1FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B77101361506E28B006AF1FB /* Kiwi.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F5015B9F11583A77002E9A98;
-			remoteInfo = Kiwi;
-		};
-		B77101411506E28B006AF1FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B77101361506E28B006AF1FB /* Kiwi.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F5015C9E11584017002E9A98;
-			remoteInfo = KiwiTests;
-		};
-		B77101431506E28B006AF1FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B77101361506E28B006AF1FB /* Kiwi.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A3B16542139967B800E9CC6E;
-			remoteInfo = KiwiExamples;
-		};
-		B77101511506E43A006AF1FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B77101361506E28B006AF1FB /* Kiwi.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F5015B9E11583A77002E9A98;
-			remoteInfo = Kiwi;
-		};
 		CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
@@ -477,6 +436,8 @@
 		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
+		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
+		B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaTouchOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaTouchOniguruma.a"; sourceTree = "<group>"; };
 		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
 		B75B575C14B0B62D00053783 /* CodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFile.m; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
@@ -557,7 +518,6 @@
 		B771012A1506E20F006AF1FB /* ArtCodeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ArtCodeTests-Info.plist"; sourceTree = "<group>"; };
 		B771012C1506E20F006AF1FB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B77101311506E20F006AF1FB /* ArtCodeTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtCodeTests-Prefix.pch"; sourceTree = "<group>"; };
-		B77101361506E28B006AF1FB /* Kiwi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Kiwi.xcodeproj; path = ../ThirdParty/Kiwi/Kiwi.xcodeproj; sourceTree = "<group>"; };
 		B77101451506E336006AF1FB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B771014F1506E40B006AF1FB /* ACProjectSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectSpec.m; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
@@ -726,27 +686,6 @@
 		B7FB79F314D608590080A714 /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry.h; path = ../ThirdParty/libarchive/libarchive/libarchive/archive_entry.h; sourceTree = "<group>"; };
 		B7FB79F414D608590080A714 /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive.h; path = ../ThirdParty/libarchive/libarchive/libarchive/archive.h; sourceTree = "<group>"; };
 		B7FB79F514D6086A0080A714 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarc.a; path = ../ThirdParty/libarchive/arc/build/libarc.a; sourceTree = "<group>"; };
-		B7FB79F814D608CA0080A714 /* OnigRegexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OnigRegexp.h; path = ../ThirdParty/cocoaoniguruma/framework/core/OnigRegexp.h; sourceTree = "<group>"; };
-		B7FB79F914D608CA0080A714 /* OnigRegexp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OnigRegexp.m; path = ../ThirdParty/cocoaoniguruma/framework/core/OnigRegexp.m; sourceTree = "<group>"; };
-		B7FB79FF14D6099E0080A714 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/config.h; sourceTree = "<group>"; };
-		B7FB7A0114D6099E0080A714 /* ascii.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ascii.c; sourceTree = "<group>"; };
-		B7FB7A0214D6099E0080A714 /* unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unicode.c; sourceTree = "<group>"; };
-		B7FB7A0314D6099E0080A714 /* utf16_le.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf16_le.c; sourceTree = "<group>"; };
-		B7FB7A0414D6099E0080A714 /* oniguruma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = oniguruma.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/oniguruma.h; sourceTree = "<group>"; };
-		B7FB7A0514D6099E0080A714 /* regcomp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regcomp.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regcomp.c; sourceTree = "<group>"; };
-		B7FB7A0614D6099E0080A714 /* regenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regenc.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regenc.c; sourceTree = "<group>"; };
-		B7FB7A0714D6099E0080A714 /* regenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regenc.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regenc.h; sourceTree = "<group>"; };
-		B7FB7A0814D6099E0080A714 /* regerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regerror.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regerror.c; sourceTree = "<group>"; };
-		B7FB7A0914D6099E0080A714 /* regexec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regexec.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regexec.c; sourceTree = "<group>"; };
-		B7FB7A0A14D6099E0080A714 /* regext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regext.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regext.c; sourceTree = "<group>"; };
-		B7FB7A0B14D6099E0080A714 /* regint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regint.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regint.h; sourceTree = "<group>"; };
-		B7FB7A0C14D6099E0080A714 /* regparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regparse.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regparse.c; sourceTree = "<group>"; };
-		B7FB7A0D14D6099E0080A714 /* regparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regparse.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regparse.h; sourceTree = "<group>"; };
-		B7FB7A0E14D6099E0080A714 /* regsyntax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regsyntax.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regsyntax.c; sourceTree = "<group>"; };
-		B7FB7A0F14D6099E0080A714 /* regtrav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regtrav.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regtrav.c; sourceTree = "<group>"; };
-		B7FB7A1014D6099E0080A714 /* regversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regversion.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/regversion.c; sourceTree = "<group>"; };
-		B7FB7A1114D6099E0080A714 /* st.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = st.c; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/st.c; sourceTree = "<group>"; };
-		B7FB7A1214D6099E0080A714 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = st.h; path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/st.h; sourceTree = "<group>"; };
 		B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
 		B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
 		B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakDictionary.h; sourceTree = "<group>"; };
@@ -978,7 +917,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B77101531506E4E8006AF1FB /* libKiwi.a in Frameworks */,
+				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */,
 				B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */,
 				B77101481506E340006AF1FB /* MessageUI.framework in Frameworks */,
@@ -995,6 +934,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B757C0491519D4B000AE6AC3 /* libCocoaTouchOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
@@ -1270,24 +1210,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B77101371506E28B006AF1FB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B77101401506E28B006AF1FB /* libKiwi.a */,
-				B77101421506E28B006AF1FB /* KiwiTests.octest */,
-				B77101441506E28B006AF1FB /* KiwiExamples.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				B77101361506E28B006AF1FB /* Kiwi.xcodeproj */,
 				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
-				B7FB79F714D6087C0080A714 /* CocoaOniguruma */,
+				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
+				B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
@@ -1438,51 +1368,6 @@
 				B7AC175414216D91009E9205 /* libz.1.2.5.dylib */,
 			);
 			name = Archive;
-			sourceTree = "<group>";
-		};
-		B7FB79F714D6087C0080A714 /* CocoaOniguruma */ = {
-			isa = PBXGroup;
-			children = (
-				B7FB79F814D608CA0080A714 /* OnigRegexp.h */,
-				B7FB79F914D608CA0080A714 /* OnigRegexp.m */,
-				B7FB79FE14D6095B0080A714 /* oniguruma */,
-			);
-			name = CocoaOniguruma;
-			sourceTree = "<group>";
-		};
-		B7FB79FE14D6095B0080A714 /* oniguruma */ = {
-			isa = PBXGroup;
-			children = (
-				B7FB79FF14D6099E0080A714 /* config.h */,
-				B7FB7A0014D6099E0080A714 /* enc */,
-				B7FB7A0414D6099E0080A714 /* oniguruma.h */,
-				B7FB7A0514D6099E0080A714 /* regcomp.c */,
-				B7FB7A0614D6099E0080A714 /* regenc.c */,
-				B7FB7A0714D6099E0080A714 /* regenc.h */,
-				B7FB7A0814D6099E0080A714 /* regerror.c */,
-				B7FB7A0914D6099E0080A714 /* regexec.c */,
-				B7FB7A0A14D6099E0080A714 /* regext.c */,
-				B7FB7A0B14D6099E0080A714 /* regint.h */,
-				B7FB7A0C14D6099E0080A714 /* regparse.c */,
-				B7FB7A0D14D6099E0080A714 /* regparse.h */,
-				B7FB7A0E14D6099E0080A714 /* regsyntax.c */,
-				B7FB7A0F14D6099E0080A714 /* regtrav.c */,
-				B7FB7A1014D6099E0080A714 /* regversion.c */,
-				B7FB7A1114D6099E0080A714 /* st.c */,
-				B7FB7A1214D6099E0080A714 /* st.h */,
-			);
-			name = oniguruma;
-			sourceTree = "<group>";
-		};
-		B7FB7A0014D6099E0080A714 /* enc */ = {
-			isa = PBXGroup;
-			children = (
-				B7FB7A0114D6099E0080A714 /* ascii.c */,
-				B7FB7A0214D6099E0080A714 /* unicode.c */,
-				B7FB7A0314D6099E0080A714 /* utf16_le.c */,
-			);
-			name = enc;
-			path = ../ThirdParty/cocoaoniguruma/framework/core/oniguruma/enc;
 			sourceTree = "<group>";
 		};
 		CD05149714F7FAEE003CED2F /* Transfer */ = {
@@ -2083,7 +1968,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B77101521506E43A006AF1FB /* PBXTargetDependency */,
 			);
 			name = ArtCodeTests;
 			productName = "ArtCode Tests";
@@ -2131,10 +2015,6 @@
 					ProductGroup = CD1D6B1514F2B3B9007AC652 /* Products */;
 					ProjectRef = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
 				},
-				{
-					ProductGroup = B77101371506E28B006AF1FB /* Products */;
-					ProjectRef = B77101361506E28B006AF1FB /* Kiwi.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2145,27 +2025,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B77101401506E28B006AF1FB /* libKiwi.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libKiwi.a;
-			remoteRef = B771013F1506E28B006AF1FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B77101421506E28B006AF1FB /* KiwiTests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = KiwiTests.octest;
-			remoteRef = B77101411506E28B006AF1FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B77101441506E28B006AF1FB /* KiwiExamples.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = KiwiExamples.octest;
-			remoteRef = B77101431506E28B006AF1FB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CD1D6B1914F2B3B9007AC652 /* libConnection.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2527,20 +2386,6 @@
 				B7FB79EC14D6064C0080A714 /* TabBar.m in Sources */,
 				B7FB79ED14D6064C0080A714 /* TabController.m in Sources */,
 				B7FB79F114D606740080A714 /* GridView.m in Sources */,
-				B7FB79FC14D608CA0080A714 /* OnigRegexp.m in Sources */,
-				B7FB7A1314D6099E0080A714 /* ascii.c in Sources */,
-				B7FB7A1414D6099E0080A714 /* unicode.c in Sources */,
-				B7FB7A1514D6099E0080A714 /* utf16_le.c in Sources */,
-				B7FB7A1614D6099E0080A714 /* regcomp.c in Sources */,
-				B7FB7A1714D6099E0080A714 /* regenc.c in Sources */,
-				B7FB7A1814D6099E0080A714 /* regerror.c in Sources */,
-				B7FB7A1914D6099E0080A714 /* regexec.c in Sources */,
-				B7FB7A1A14D6099E0080A714 /* regext.c in Sources */,
-				B7FB7A1B14D6099E0080A714 /* regparse.c in Sources */,
-				B7FB7A1C14D6099E0080A714 /* regsyntax.c in Sources */,
-				B7FB7A1D14D6099E0080A714 /* regtrav.c in Sources */,
-				B7FB7A1E14D6099E0080A714 /* regversion.c in Sources */,
-				B7FB7A1F14D6099E0080A714 /* st.c in Sources */,
 				B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */,
 				B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */,
 				B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */,
@@ -2587,11 +2432,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B77101521506E43A006AF1FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Kiwi;
-			targetProxy = B77101511506E43A006AF1FB /* PBXContainerItemProxy */;
-		};
 		CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Connection;
