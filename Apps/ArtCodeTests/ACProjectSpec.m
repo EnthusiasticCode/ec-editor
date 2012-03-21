@@ -204,27 +204,79 @@ describe(@"A new opened ACProject", ^{
             [[item should] equal:subfolder];
         });
         
-        it(@"can be created with the contents of a URL", ^{
-            // Create the temporary folder
+        context(@"given a URL", ^{
+            
             NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            NSURL *temporaryDirectory2 = [NSURL temporaryDirectory];
             NSURL *temporarySubfolder = [temporaryDirectory URLByAppendingPathComponent:@"Temporary subfolder"];
             NSFileManager *fileManager = [[NSFileManager alloc] init];
-            [[theValue([fileManager createDirectoryAtURL:[temporarySubfolder URLByAppendingPathComponent:@"test"] withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
-            
             __block ACProjectFolder *subfolder = nil;
             __block NSError *subfolderError = nil;
-            [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-                subfolder = newFolder;
-                subfolderError = error;
-            }];
-            [[expectFutureValue(subfolder) shouldEventually] beNonNil];
-            [subfolderError shouldBeNil];
             
-            [[[subfolder should] have:1] children];
+            beforeEach(^{
+                // Create the temporary folder
+                [[theValue([fileManager createDirectoryAtURL:[temporarySubfolder URLByAppendingPathComponent:@"test"] withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
+            });
             
-            [fileManager removeItemAtURL:temporaryDirectory error:NULL];
+            afterEach(^{
+                subfolder = nil;
+                subfolderError = nil;
+                [fileManager removeItemAtURL:temporaryDirectory error:NULL];
+                [fileManager removeItemAtURL:temporaryDirectory2 error:NULL];
+            });
+            
+            it(@"can be created with the contents of that URL", ^{
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                    subfolder = newFolder;
+                    subfolderError = error;
+                }];
+                [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+                [subfolderError shouldBeNil];
+                [[[subfolder should] have:1] children];
+            });
+            
+            it(@"can be updated with the contents of that URL", ^{
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                    subfolder = newFolder;
+                    subfolderError = error;
+                }];
+                [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+                [subfolderError shouldBeNil];
+                
+                [[[subfolder should] have:0] children];
+                
+                __block BOOL updateComplete = NO;
+                __block NSError *updateError = nil;
+                [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(NSError *error) {
+                    updateComplete = YES;
+                    updateError = error;
+                }];
+                [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
+                [updateError shouldBeNil];
+                [[[subfolder should] have:1] children];
+            });
+            
+            it(@"can publish it's contents to that URL", ^{                
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                    subfolder = newFolder;
+                    subfolderError = error;
+                }];
+                [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+                [subfolderError shouldBeNil];
+                [[[subfolder should] have:1] children];
+                
+                __block BOOL publishComplete = NO;
+                __block NSError *publishError = nil;
+                [subfolder publishContentsToURL:temporaryDirectory2 completionHandler:^(NSError *error) {
+                    publishComplete = YES;
+                    publishError = error;
+                }];
+                [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
+                [publishError shouldBeNil];
+                [[theValue([fileManager fileExistsAtPath:[[temporaryDirectory2 URLByAppendingPathComponent:@"test"] path]]) should] beYes];
+            });
         });
-        
+                
         context(@"after being created", ^{
             
             __block ACProjectFolder *subfolder = nil;
@@ -412,34 +464,86 @@ describe(@"A new opened ACProject", ^{
             [[[project.contentsFolder should] have:0] children];
         });
         
-        it(@"can be created with the contents of another URL", ^{
+        context(@"given a URL", ^{
+            
             NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            NSURL *temporaryDirectory2 = [NSURL temporaryDirectory];
             NSFileManager *fileManager = [[NSFileManager alloc] init];
             NSURL *temporaryFile = [temporaryDirectory URLByAppendingPathComponent:@"temporaryFile"];
             NSString *testContents = @"test contents";
-            
-            // Create temporary directory
-            [[theValue([fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
-            
-            // Create temporary file
-            [[theValue([testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:NULL]) should] beYes];
-            
-            // Get temporary file size
-            NSNumber *temporaryFileSize = nil;
-            [[theValue([temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:NULL]) should] beYes];
-            [[temporaryFileSize should] beNonNil];
-            
-            // Create file
+            __block NSNumber *temporaryFileSize = nil;
             __block ACProjectFile *file = nil;
             __block NSError *fileError = nil;
-            [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
-                file = newFile;
-                fileError = error;
-            }];
-            [[expectFutureValue(file) shouldEventually] beNonNil];
-            [fileError shouldBeNil];
             
-            [[theValue(file.fileSize) should] equal:temporaryFileSize];
+            beforeEach(^{
+                // Create temporary directory
+                [[theValue([fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
+                
+                // Create temporary file
+                [[theValue([testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:NULL]) should] beYes];
+                
+                // Get temporary file size
+                [[theValue([temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:NULL]) should] beYes];
+                [[temporaryFileSize should] beNonNil];
+            });
+            
+            afterEach(^{
+                temporaryFileSize = nil;
+                file = nil;
+                fileError = nil;
+                [fileManager removeItemAtURL:temporaryDirectory error:NULL];
+                [fileManager removeItemAtURL:temporaryDirectory2 error:NULL];
+            });
+            
+            it(@"can be created with the contents of that URL", ^{
+                [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
+                    file = newFile;
+                    fileError = error;
+                }];
+                [[expectFutureValue(file) shouldEventually] beNonNil];
+                [fileError shouldBeNil];
+                [[theValue(file.fileSize) should] equal:temporaryFileSize];
+            });
+
+            it(@"can be updated with the contents of that URL", ^{
+                [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+                    file = newFile;
+                    fileError = error;
+                }];
+                [[expectFutureValue(file) shouldEventually] beNonNil];
+                [fileError shouldBeNil];
+                [[theValue(file.fileSize) should] beZero];
+                
+                __block BOOL updateComplete = NO;
+                __block NSError *updateError = nil;
+                [file updateWithContentsOfURL:temporaryFile completionHandler:^(NSError *error) {
+                    updateComplete = YES;
+                    updateError = error;
+                }];
+                [[expectFutureValue(theValue(updateComplete)) should] beYes];
+                [updateError shouldBeNil];
+                [[theValue(file.fileSize) should] equal:temporaryFileSize];
+            });
+            
+            it(@"can publish it's contents to that URL", ^{
+                [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
+                    file = newFile;
+                    fileError = error;
+                }];
+                [[expectFutureValue(file) shouldEventually] beNonNil];
+                [fileError shouldBeNil];
+                [[theValue(file.fileSize) should] equal:temporaryFileSize];
+                
+                __block BOOL publishComplete = NO;
+                __block NSError *publishError = nil;
+                [file publishContentsToURL:[temporaryDirectory2 URLByAppendingPathComponent:file.name] completionHandler:^(NSError *error) {
+                    publishComplete = YES;
+                    publishError = error;
+                }];
+                [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
+                [publishError shouldBeNil];
+                [[theValue([fileManager fileExistsAtPath:[[temporaryDirectory2 URLByAppendingPathComponent:file.name] path]]) should] beYes];
+            });
         });
         
         context(@"when created", ^{
