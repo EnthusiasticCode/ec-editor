@@ -16,8 +16,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 @class TextSegment;
 @class TextSegmentFrame;
 
-#pragma mark - TextRenderer Interface (Class extension)
-
 @interface TextRenderer () {
 @private
     NSMutableArray *textSegments;
@@ -763,6 +761,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     // If the segment already has it's string length, it means that this request
     // has been done to refresh it. See updateTextFromStringRange:toStringRange:
     // to understand how this stringLenght is properly adjusted.
+#warning TODO BOTH rename in textRenderer:attributedStringInPreferredRange: to internally check for consistency to avoid race conditions
     NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
     stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
     NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];

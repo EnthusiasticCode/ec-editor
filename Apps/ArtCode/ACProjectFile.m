@@ -134,6 +134,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark - Accessing the content
 
 - (void)openCodeFileWithCompletionHandler:(void (^)(CodeFile *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    
     // If we already have a proxy, 
     if (_codeFileProxy && completionHandler) {
         return completionHandler((CodeFile *)_codeFileProxy);
@@ -149,19 +151,27 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         return;
     }
     
-    _codeFile = [[CodeFile alloc] initWithFileURL:self.fileURL];
-    [_codeFile openWithCompletionHandler:^(BOOL success) {
-        if (success) {
-            CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
-            _codeFileProxy = proxy;
-            for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
-                pendingCompletionHandler((CodeFile *)proxy);
-            [_pendingCodeFileCompletionHandlers removeAllObjects];
-        } else {
-            // TODO: retrying forever might not be the best way to handle this error
-            _codeFile = nil;
-            [self openCodeFileWithCompletionHandler:nil];
-        }
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        _codeFile = [[CodeFile alloc] initWithFileURL:self.fileURL];
+        [_codeFile openWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
+                _codeFileProxy = proxy;
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
+                        pendingCompletionHandler((CodeFile *)proxy);
+                }];
+                [_pendingCodeFileCompletionHandlers removeAllObjects];
+            } else {
+                // Open failed, passing nil to pending completion handlers
+                _codeFile = nil;
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
+                        pendingCompletionHandler(nil);
+                }];
+                [_pendingCodeFileCompletionHandlers removeAllObjects];
+            }
+        }];
     }];
 }
 
