@@ -26,6 +26,11 @@
 @synthesize projectNameTextField;
 @synthesize descriptionLabel;
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.projectColorButton.accessibilityIdentifier = @"Label color";
+    self.projectColorButton.accessibilityLabel = L(@"No color label");
+}
 
 - (void)viewDidUnload {
     [self setProjectNameTextField:nil];
@@ -50,6 +55,7 @@
 {
     projectColor = sender.selectedColor;
     [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
+    self.projectColorButton.accessibilityLabel = [NSString stringWithFormat:L(@"%@ label"), projectColor];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -70,6 +76,7 @@
     {
         ColorSelectionControl *colorSelectionControl = [[ColorSelectionControl alloc] initWithFrame:CGRectMake(0, 0, 300, 200)];
         [colorSelectionControl addTarget:self action:@selector(_selectColorAction:) forControlEvents:UIControlEventTouchUpInside];
+        colorSelectionControl.accessibilityIdentifier = @"color selector";
 
         changeColorController = [UIViewController new];
         changeColorController.view = colorSelectionControl;
@@ -83,7 +90,7 @@
     NSString *projectName = self.projectNameTextField.text;
     if ([projectName length] == 0)
     {
-        self.descriptionLabel.text = @"A project name must be specified.";
+        self.descriptionLabel.text = L(@"A project name must be specified.");
         return;
     }
     
@@ -101,13 +108,13 @@
             NSURL *projectURL = createdProject.artCodeURL;
             [createdProject closeWithCompletionHandler:^(BOOL success) {
                 [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New project created" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
                 [self.artCodeTab pushURL:projectURL];
             }];
         }
         else
         {
-            self.descriptionLabel.text = @"A project with this name already exists, use a different name.";
+            self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
         }
     }];
 }

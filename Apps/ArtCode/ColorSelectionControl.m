@@ -10,13 +10,38 @@
 #import "ColorSelectionControl.h"
 #import "UIColor+AppStyle.h"
 
+@interface ColorSelectionControl ()
+
+@property (nonatomic, readonly, strong) NSArray *accessibilityColors;
+
+@end
+
 @implementation ColorSelectionControl
 
 @synthesize colors, colorCellsMargin, columns, rows, selectedColor, userInfo;
+@synthesize accessibilityColors = _accessibilityColors;
+
+- (NSArray *)accessibilityColors {
+    if (!_accessibilityColors) {
+        NSMutableArray *accessibilityColors = [NSMutableArray arrayWithCapacity:self.colors.count];
+        [self layoutIfNeeded];
+        [self.layer.sublayers enumerateObjectsUsingBlock:^(CALayer *layer, NSUInteger idx, BOOL *stop) {
+            UIAccessibilityElement *colorElement = [UIAccessibilityElement.alloc initWithAccessibilityContainer:self];
+            colorElement.isAccessibilityElement = YES;
+            colorElement.accessibilityLabel = [[self.colors objectAtIndex:idx] description];
+            colorElement.accessibilityTraits = UIAccessibilityTraitButton;
+            colorElement.accessibilityFrame = layer.frame;
+            [accessibilityColors addObject:colorElement];
+        }];
+        _accessibilityColors = [accessibilityColors copy];
+    }
+    return _accessibilityColors;
+}
 
 - (void)setColors:(NSArray *)array
 {
     colors = array;
+    _accessibilityColors = nil;
     
     [self.layer.sublayers makeObjectsPerformSelector:@selector(removeFromSuperlayer)];
     
@@ -92,6 +117,20 @@ static void _init(ColorSelectionControl *self)
         return nil;
     _init(self);
     return self;
+}
+
+#pragma mark - Accessibility
+
+- (NSInteger)accessibilityElementCount {
+    return [self.accessibilityColors count];
+}
+
+- (id)accessibilityElementAtIndex:(NSInteger)index {
+    return [self.accessibilityColors objectAtIndex:index];
+}
+
+- (NSInteger)indexOfAccessibilityElement:(id)element {
+    return [self.accessibilityColors indexOfObject:element];
 }
 
 @end

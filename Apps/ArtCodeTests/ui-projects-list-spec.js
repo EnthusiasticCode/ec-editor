@@ -24,7 +24,7 @@ describe("Projects list", function() {
     
     it("should show a popover when tapping the 'Add' button", function() {
       defaultToolbar.buttons()["Add"].tap();
-      target.delay(1);
+      target.delay(.5);
       expect(mainWindow.popover()).not.toBeNull();
       if (mainWindow.popover())
         mainWindow.popover().dismiss();
@@ -36,7 +36,7 @@ describe("Projects list", function() {
       
       beforeEach(function() {
         defaultToolbar.buttons()["Add"].tap();
-        target.delay(1);
+        target.delay(.5);
         popover = mainWindow.popover();
       });
       
@@ -48,6 +48,29 @@ describe("Projects list", function() {
         expect(popover.buttons().length).toEqual(2);
         expect(popover.buttons()["Create new project"]).not.toBeNull();
         expect(popover.buttons()["Import from iTunes"]).not.toBeNull();
+      });
+      
+      describe("create project", function() {
+        
+        beforeEach(function() {
+          popover.buttons()["Create new project"].tap();
+        });
+        
+        afterEach(function() {
+          if (popover.navigationBar().leftButton())
+            popover.navigationBar().leftButton().tap();
+        });
+        
+        it("should have a back and create button", function() {
+            expect(popover.navigationBar().leftButton()).not.toBeNull();
+            expect(popover.navigationBar().rightButton()).not.toBeNull();
+        });
+        
+        it("should have a label color and text items", function() {
+          expect(popover.buttons()["Label color"]).not.toBeNull();
+          expect(popover.textFields().length).toEqual(1);
+        });
+        
       });
       
     });
