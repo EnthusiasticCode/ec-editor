@@ -17,9 +17,10 @@
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
+		B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
+		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B757C0491519D4B000AE6AC3 /* libCocoaTouchOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
@@ -435,10 +436,10 @@
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
 		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
+		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
-		B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaTouchOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaTouchOniguruma.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
 		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
@@ -936,7 +937,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B757C0491519D4B000AE6AC3 /* libCocoaTouchOniguruma.a in Frameworks */,
+				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
@@ -1220,7 +1221,7 @@
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
-				B757C0481519D4B000AE6AC3 /* libCocoaTouchOniguruma.a */,
+				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
@@ -2324,6 +2325,7 @@
 				B7072B35150FF58B00580855 /* WeakArray.m in Sources */,
 				B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
+				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2469,8 +2471,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
+					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-					../Headers,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
@@ -2485,8 +2487,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
+					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-					../Headers,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
@@ -2538,7 +2540,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}",
+					../Headers,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
+					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 				WARNING_CFLAGS = (
@@ -2589,7 +2599,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}",
+					../Headers,
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
+					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -2613,17 +2631,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = (
-					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/",
-					../Headers,
-				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"${BUILD_DIR}/",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -2638,17 +2646,7 @@
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "NDEBUG=1";
 				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = (
-					"${BUILD_DIR}/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/usr/local/include/",
-					../Headers,
-				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"${BUILD_DIR}/",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
-					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/build/Products/Debug-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
