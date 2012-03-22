@@ -16,7 +16,8 @@
 #import "ACProjectFileBookmark.h"
 
 #import "CodeFile.h"
-#import <objc/runtime.h>
+#import "TMSyntaxNode.h"
+#import "TMUnit+Internal.h"
 
 
 static NSString * const _plistFileEncodingKey = @"fileEncoding";
@@ -43,10 +44,11 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark -
 
 @implementation ACProjectFile {
-    NSMutableDictionary *_bookmarks;    
+    NSMutableDictionary *_bookmarks;
+    NSUInteger _openCount;
 }
 
-@synthesize explicitFileEncoding = _explicitFileEncoding, fileEncoding = _fileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, codeFile = _codeFile, fileSize = _fileSize;
+@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, fileEncoding = _fileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, codeFile = _codeFile, syntax = _syntax, codeUnit = _codeUnit;
 
 #pragma mark - ACProjectItem
 
@@ -129,20 +131,60 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark - Accessing the content
 
-- (CodeFile *)codeFile {
-    if (!_codeFile) {
-        _codeFile = [[CodeFile alloc] init];
-        NSStringEncoding encoding = self.fileEncoding;
-        [self.project performAsynchronousFileAccessUsingBlock:^{
-            NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:NULL];
-            if (fileContents) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    [_codeFile replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
-                }];
-            }
-        }];
+- (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    if (_openCount) {
+        completionHandler(nil);
+        return;
     }
-    return _codeFile;
+    NSStringEncoding encoding = self.fileEncoding;
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:NULL];
+        if (fileContents) {
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                _codeFile = CodeFile.alloc.init;
+                [_codeFile replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
+                _syntax = [TMSyntaxNode syntaxForFileName:self.name];
+                if (!_syntax) {
+                    NSRange firstLineRange = [_codeFile lineRangeForRange:NSMakeRange(0, 0)];
+                    NSString *firstLine = [_codeFile stringInRange:firstLineRange];
+                    if (firstLine) {
+                        _syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
+                    }
+                }
+                if (_syntax) {
+                    _codeUnit = [TMUnit.alloc initWithProjectFile:self];
+                }
+                completionHandler(nil);
+            }];
+        }
+    }];
+}
+
+- (void)closeWithCompletionHandler:(void (^)(NSError *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    if (!_openCount) {
+        completionHandler([[NSError alloc] init]);
+        return;
+    }
+    --_openCount;
+    if (_openCount) {
+        completionHandler(nil);
+        return;
+    }
+    ASSERT(_codeFile);
+    NSString *fileContents = _codeFile.string;
+    NSStringEncoding encoding = self.fileEncoding;
+    __block NSError *error = nil;
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        [fileContents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            _codeFile = nil;
+            _syntax = nil;
+            _codeUnit = nil;
+            completionHandler(error);
+        }];
+    }];
 }
 
 #pragma mark - Managing file bookmarks

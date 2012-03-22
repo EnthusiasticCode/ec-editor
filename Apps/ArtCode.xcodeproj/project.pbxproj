@@ -19,6 +19,8 @@
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
 		B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
+		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
+		B72CEBFC151B468700757F94 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
@@ -436,7 +438,7 @@
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
 		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
-		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
+		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
@@ -921,6 +923,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
+				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
 				B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */,
 				B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */,
 				B77101481506E340006AF1FB /* MessageUI.framework in Frameworks */,
@@ -2324,6 +2327,7 @@
 				B7072B34150FF58200580855 /* TMTheme.m in Sources */,
 				B7072B35150FF58B00580855 /* WeakArray.m in Sources */,
 				B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */,
+				B72CEBFC151B468700757F94 /* TMBundle.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
 			);
@@ -2470,6 +2474,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TEST=1",
+					$inherited,
+				);
 				HEADER_SEARCH_PATHS = (
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
@@ -2486,6 +2494,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TEST=1",
+					$inherited,
+				);
 				HEADER_SEARCH_PATHS = (
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
