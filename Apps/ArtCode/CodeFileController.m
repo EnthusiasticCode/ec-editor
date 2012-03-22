@@ -56,6 +56,8 @@
 - (UIView *)_contentViewForEditingState:(BOOL)editingState;
 - (UIView *)_contentView;
 
+- (void)_setCodeViewAttributesForTheme:(TMTheme *)theme;
+
 /// Indicates if the current content view is the web preview.
 - (BOOL)_isWebPreview;
 - (void)_loadWebPreviewContentAndTitle;
@@ -138,21 +140,17 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         _codeView.delegate = self;
         _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
         
-        _codeView.backgroundColor = [UIColor whiteColor];
-        _codeView.caretColor = [UIColor blackColor];
-        _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
-
         _codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
         _codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
         
         _codeView.lineNumbersEnabled = YES;
         _codeView.lineNumbersWidth = 30;
         _codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-        _codeView.lineNumbersColor = [UIColor colorWithWhite:0.62 alpha:1];
-        _codeView.lineNumbersBackgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
         
         _codeView.alwaysBounceVertical = YES;
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
+        [self _setCodeViewAttributesForTheme:nil];
         
         UISwipeGestureRecognizer *undoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureUndo:)];
         undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
@@ -272,25 +270,18 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return;
     
     [_projectFile.codeFile removePresenter:self];
-    _projectFile = projectFile;
-    [_projectFile.codeFile addPresenter:self];
-    [_codeView updateAllText];
-    
-    // Update CodeView environment settings
-    if (_projectFile)
-    {
-        UIColor *color = nil;
-        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
-        self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
-        self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
-        self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
-        self.codeView.caretColor = color ? color : [UIColor blackColor];
-        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
-        self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
-    }
-    
-    [self _loadWebPreviewContentAndTitle];
+    [_projectFile closeWithCompletionHandler:nil];
+    _projectFile = nil;
+    [projectFile openWithCompletionHandler:^(NSError *error) {
+        if (error) {
+            return;
+        }
+        _projectFile = projectFile;
+        [_projectFile.codeFile addPresenter:self];
+        [self _setCodeViewAttributesForTheme:_projectFile.codeFile.theme];
+        [_codeView updateAllText];
+        [self _loadWebPreviewContentAndTitle];
+    }];
 }
 
 - (CGFloat)minimapWidth
@@ -1170,6 +1161,18 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 - (void)showCompletionsAtCursor
 {
     [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
+}
+
+- (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
+    UIColor *color = nil;
+    color = [theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+    self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+    self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
+    self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
+    color = [theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+    self.codeView.caretColor = color ? color : [UIColor blackColor];
+    color = [theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+    self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
 }
 
 @end

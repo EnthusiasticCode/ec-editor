@@ -91,7 +91,7 @@ static OnigRegexp *_namedCapturesRegexp;
     [extensionClassesForLanguage setObject:extensionClass forKey:key];
 }
 
-- (id)initWithProjectfile:(ACProjectFile *)projectFile {
+- (id)initWithProjectFile:(ACProjectFile *)projectFile {
     ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     self = [super init];
     if (!self)
