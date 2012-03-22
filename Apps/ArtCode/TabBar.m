@@ -323,7 +323,7 @@ static void init(TabBar *self)
     if (index == NSNotFound)
         [self _setSelectedTabControl:nil animated:animated];
     
-    ECASSERT(index < [tabControls count]);
+    ASSERT(index < [tabControls count]);
     UIControl *tabControl = [tabControls objectAtIndex:index];
     [self _setSelectedTabControl:tabControl animated:animated];
 }
@@ -376,15 +376,15 @@ static void init(TabBar *self)
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
-    ECASSERT(tabIndex < [tabControls count]);
+    ASSERT(tabIndex < [tabControls count]);
     UIControl *tabControl = [tabControls objectAtIndex:tabIndex];
     [self _removeTabControl:tabControl animated:animated];
 }
 
 - (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
-    ECASSERT(fromIndex < [tabControls count]);
-    ECASSERT(toIndex < [tabControls count]);
+    ASSERT(fromIndex < [tabControls count]);
+    ASSERT(toIndex < [tabControls count]);
     
     id obj = [tabControls objectAtIndex:fromIndex];
     [tabControls removeObjectAtIndex:fromIndex];
@@ -404,7 +404,7 @@ static void init(TabBar *self)
 
 - (void)setTitle:(NSString *)title forTabAtIndex:(NSUInteger)tabIndex
 {
-    ECASSERT(tabIndex < [tabControls count]);
+    ASSERT(tabIndex < [tabControls count]);
     
     UIButton *tabButton = (UIButton *)[tabControls objectAtIndex:tabIndex];
     [tabButton setTitle:title forState:UIControlStateNormal];
@@ -600,10 +600,10 @@ static void init(TabBar *self)
 
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
 {
-    ECASSERT(tabControl != nil);
+    ASSERT(tabControl != nil);
     
     NSUInteger tabIndex = [tabControls indexOfObject:tabControl];
-    ECASSERT(tabIndex != NSNotFound);
+    ASSERT(tabIndex != NSNotFound);
     
     if (delegateFlags.hasWillRemoveTabControlAtIndex
         && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
@@ -655,7 +655,7 @@ static void init(TabBar *self)
 
 - (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier
 {
-    ECASSERT(reuseIdentifier != nil);
+    ASSERT(reuseIdentifier != nil);
     UIControl *result = nil;
     for (UIControl *control in reusableTabControls)
     {

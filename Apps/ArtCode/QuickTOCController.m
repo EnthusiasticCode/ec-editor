@@ -17,7 +17,7 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
@@ -113,6 +113,7 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // TODO push an url instead
     [table deselectRowAtIndexPath:indexPath animated:YES];
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
     [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:[[[self filteredItems] objectAtIndex:indexPath.row] range]];

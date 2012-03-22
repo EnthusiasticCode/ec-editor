@@ -11,9 +11,10 @@
 
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
+#import "ArchiveUtilities.h"
 
 #import "NewFileController.h"
-#import "DirectoryBrowserController.h"
+#import "ProjectFolderBrowserController.h"
 #import "MoveConflictController.h"
 
 #import "RemoteDirectoryBrowserController.h"
@@ -25,34 +26,36 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 
-#import "UIViewController+PresentingPopoverController.h"
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
+#import "ACProjectFolder.h"
 
-#import "DirectoryPresenter.h"
-#import "SmartFilteredDirectoryPresenter.h"
+#import "UIViewController+Utilities.h"
+#import "NSArray+ScoreForAbbreviation.h"
 
 static void *_currentProjectContext;
-static void *_directoryObservingContext;
-static void *_openQuicklyObservingContext;
+static void *_currentFolderContext;
 
 
 @interface FileBrowserController () {
-    ArtCodeProject *_currentObservedProject;
+    ACProject *_currentObservedProject;
+    
+    NSArray *_filteredItems;
+    NSArray *_filteredItemsHitMasks;
     
     UIPopoverController *_toolNormalAddPopover;
     UIActionSheet *_toolEditItemDuplicateActionSheet;
     UIActionSheet *_toolEditItemExportActionSheet;
     
-    NSMutableArray *_selectedURLs;
-    
-    BOOL _isShowingOpenQuickly;
+    NSMutableArray *_selectedItems;
 }
 
-@property (nonatomic, strong) DirectoryPresenter *directoryPresenter;
-@property (nonatomic, strong) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
+@property (nonatomic, strong) ACProjectFolder *currentFolder;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -69,8 +72,6 @@ static void *_openQuicklyObservingContext;
 #pragma mark -
 
 @implementation FileBrowserController
-@synthesize bottomToolBarDetailLabel = _bottomToolBarDetailLabel;
-@synthesize bottomToolBarSyncButton = _bottomToolBarSyncButton;
 
 - (id)init
 {
@@ -82,68 +83,72 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - Properties
 
-@synthesize directory = _directory;
-@synthesize directoryPresenter = _directoryPresenter, openQuicklyPresenter = _openQuicklyPresenter;
+@synthesize currentFolder = _currentFolder;
+@synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
 
-- (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
+- (void)setCurrentFolder:(ACProjectFolder *)value
 {
-    if (directoryPresenter == _directoryPresenter)
+    if (value == _currentFolder)
         return;
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-}
+    
+    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
+    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
+    _currentObservedProject = nil;
 
-- (void)setOpenQuicklyPresenter:(SmartFilteredDirectoryPresenter *)openQuicklyPresenter
-{
-    if (openQuicklyPresenter == _openQuicklyPresenter)
-        return;
-    [_openQuicklyPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_openQuicklyObservingContext];
-    _openQuicklyPresenter = openQuicklyPresenter;
-    [_openQuicklyPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_openQuicklyObservingContext];
-}
-
-- (void)setDirectory:(NSURL *)directory
-{
-    if (directory == _directory)
-        return;
-    if (self.isViewLoaded && self.view.superview != nil)
+    [_currentFolder removeObserver:self forKeyPath:@"children" context:&_currentFolderContext];
+    _currentFolder = value;
+    [_currentFolder addObserver:self forKeyPath:@"children" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&_currentFolderContext];
+    
+    // Add observer for project to update tile if we are showing the root folder
+    if (_currentFolder.parentFolder == nil)
     {
-        [_selectedURLs removeAllObjects];
-        [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-        [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
-    }
-    _directory = directory;
-    if (self.isViewLoaded && self.view.superview != nil)
-    {
-        self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-        self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:_directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
         _currentObservedProject = self.artCodeTab.currentProject;
         [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];    
-        self.searchBar.text = nil;
-        [self invalidateFilteredItems];
-        [self.tableView reloadData];
+        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
     }
 }
 
-- (NSArray *)filteredItems
-{
-    return [(_isShowingOpenQuickly ? self.openQuicklyPresenter : self.directoryPresenter) fileURLs];
+- (NSArray *)filteredItems {
+    if (!_filteredItems) {
+        if ([self.searchBar.text length]) {
+            NSArray *hitMasks = nil;
+            _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
+                return element.name;
+            }];
+            _filteredItemsHitMasks = hitMasks;
+            if ([_filteredItems count] == 0)
+                self.infoLabel.text = @"No items in this folder match the filter";
+            else
+                self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [_filteredItems count], [self.currentFolder.children count]];
+        } else {
+            _filteredItems = self.currentFolder.children;
+            _filteredItemsHitMasks = nil;
+            if ([_filteredItems count] == 0)
+                self.infoLabel.text = @"This folder has no items";
+            else
+                self.infoLabel.text = [NSString stringWithFormatForSingular:@"One item in this folder" plural:@"%u items in this folder" count:[_filteredItems count]];
+        }
+    }
+    return _filteredItems;
 }
 
 - (void)invalidateFilteredItems
 {
-    _isShowingOpenQuickly = [self.searchBar.text length] != 0;
-    if (_isShowingOpenQuickly)
-    {
-        self.openQuicklyPresenter.filterString = self.searchBar.text;
-        self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [[self.openQuicklyPresenter fileURLs] count], [[self.directoryPresenter fileURLs] count]];
-    }
+    _filteredItems = nil;
+    _filteredItemsHitMasks = nil;
+}
+
+#pragma mark - ArtCodeTab Category
+
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
+{
+    [super setArtCodeTab:artCodeTab];
+    
+    ASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
+    if (self.artCodeTab.currentItem)
+        self.currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
     else
-    {
-        self.infoLabel.text = [NSString stringWithFormatForSingular:@"One item in this folder" plural:@"%u items in this folder" count:[self.directoryPresenter.fileURLs count]];
-    }
+        self.currentFolder = self.artCodeTab.currentProject.contentsFolder;
 }
 
 #pragma mark - View lifecycle
@@ -152,6 +157,13 @@ static void *_openQuicklyObservingContext;
 {
     [super loadView];
     
+    // Load the bottom toolbar
+    [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
     // Customize subviews
     self.searchBar.placeholder = @"Filter files in this folder";
     
@@ -159,9 +171,6 @@ static void *_openQuicklyObservingContext;
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
     
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-    
-    // Load the bottom toolbar
-    [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload
@@ -178,21 +187,9 @@ static void *_openQuicklyObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    // Initialize presenters
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    [_selectedItems removeAllObjects];
     
-    self.openQuicklyPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    
-    [_selectedURLs removeAllObjects];
-    
-    if (!_currentObservedProject)
-    {
-        _currentObservedProject = self.artCodeTab.currentProject;
-        [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-        [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-    }
-    
-    [self invalidateFilteredItems];
+//    [self invalidateFilteredItems];
     [super viewWillAppear:animated];
     
     // Hide sync button if no remotes
@@ -201,21 +198,14 @@ static void *_openQuicklyObservingContext;
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    self.currentFolder = nil;
     [super viewDidDisappear:animated];
-    
-    self.directoryPresenter = nil;
-    self.openQuicklyPresenter = nil;
-    _selectedURLs = nil;
-    
-    [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-    [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
-    _currentObservedProject = nil;
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
+    [_selectedItems removeAllObjects];
     [super setEditing:editing animated:animated];
-    [_selectedURLs removeAllObjects];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -224,24 +214,10 @@ static void *_openQuicklyObservingContext;
     {
         [self.singleTabController updateDefaultToolbarTitle];
     }
-    else if (context == &_directoryObservingContext || context == &_openQuicklyObservingContext)
+    else if (context == &_currentFolderContext)
     {
-        if (_isShowingOpenQuickly && object == _openQuicklyPresenter)
-        {
-            [self.tableView reloadData];
-            return;
-        }
-        if (object == _directoryPresenter && _isShowingOpenQuickly)
-            return;
+        [self invalidateFilteredItems];
         [self.tableView reloadData];
-        NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-        if (kind == NSKeyValueChangeInsertion)
-        {
-            [[change objectForKey:NSKeyValueChangeIndexesKey] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-                *stop = YES;
-            }];
-        }
     }
     else
     {
@@ -251,29 +227,8 @@ static void *_openQuicklyObservingContext;
 
 - (void)dealloc
 {
-    // this is so we stop observing
-    self.directoryPresenter = nil;
-    self.openQuicklyPresenter = nil;
     [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
     [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
-}
-
-#pragma mark - Single tab content controller protocol methods
-
-- (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
-{
-    BOOL isRoot = NO;
-    NSString *projectName = [ArtCodeURL projectNameFromURL:self.artCodeTab.currentURL isProjectRoot:&isRoot];
-    if (!isRoot)
-    {
-        return NO; // default behaviour
-    }
-    else
-    {
-        [titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], projectName, nil] 
-                        selectedIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]];
-    }
-    return YES;
 }
 
 #pragma mark - Table view data source
@@ -283,24 +238,21 @@ static void *_openQuicklyObservingContext;
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
     
     // Configure the cell
-    NSURL *fileURL = [self.filteredItems objectAtIndex:indexPath.row];
+    ACProjectFileSystemItem *fileItem = [self.filteredItems objectAtIndex:indexPath.row];
     
-    BOOL isDirecotry = NO;
-    [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
-    if (isDirecotry)
+    if (fileItem.type == ACPFolder) {
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    else
-        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileURL pathExtension]];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     
-    cell.textLabel.text = [fileURL lastPathComponent];
-    
-    if ([self.searchBar.text length])
-        cell.textLabelHighlightedCharacters = [self.openQuicklyPresenter hitMaskForFileURL:fileURL];
-    else
-        cell.textLabelHighlightedCharacters = nil;
+    cell.textLabel.text = fileItem.name;
+    cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
     
     // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-    if ([_selectedURLs containsObject:fileURL])
+    if ([_selectedItems containsObject:fileItem])
         [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     
     return cell;
@@ -308,18 +260,14 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    if (self.isEditing)
-    {
-        if (!_selectedURLs)
-            _selectedURLs = [NSMutableArray new];
-        [_selectedURLs addObject:[self.filteredItems objectAtIndex:indexPath.row]];
-    }
-    else
-    {
-        [self.artCodeTab pushURL:[self.filteredItems objectAtIndex:indexPath.row]];
+    if (self.isEditing) {
+        if (!_selectedItems)
+            _selectedItems = [NSMutableArray new];
+        [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    } else {
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
 }
 
@@ -328,7 +276,7 @@ static void *_openQuicklyObservingContext;
     [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
     if (self.isEditing)
     {
-        [_selectedURLs removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+        [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
     }
 }
 
@@ -341,15 +289,9 @@ static void *_openQuicklyObservingContext;
         if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
         {
             self.loading = YES;
-            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-            NSFileManager *fileManager = [NSFileManager new];
-            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-                [coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                    [fileManager removeItemAtURL:newURL error:NULL];
-                }];
-            }];
+            [_selectedItems makeObjectsPerformSelector:@selector(remove)];
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedURLs count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -357,28 +299,24 @@ static void *_openQuicklyObservingContext;
     {
         if (buttonIndex == 0) // Copy
         {
-            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Duplicate
         {
             self.loading = YES;
-            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-            NSFileManager *fileManager = [NSFileManager new];
-            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-                NSUInteger count = 0;
-                NSURL *dupUrl = nil;
-                do {
-                    dupUrl = [url URLByAddingDuplicateNumber:++count];
-                } while ([fileManager fileExistsAtPath:[dupUrl path]]);
-                [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:dupUrl options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-                    [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+            NSInteger selectedItemsCount = [_selectedItems count];
+            __block NSInteger duplicated = 0;
+            [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
+                [item duplicateWithCompletionHandler:^(ACProjectFileSystemItem *duplicate, NSError *error) {
+                    if (++duplicated == selectedItemsCount) {
+                        self.loading = NO;
+                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                    }
                 }];
             }];
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:[_selectedURLs count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
     }
@@ -386,9 +324,9 @@ static void *_openQuicklyObservingContext;
     {
         if (buttonIndex == 0) // Move
         {
-            DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+            ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
             directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-            directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+            directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
             [self modalNavigationControllerPresentViewController:directoryBrowser];
         }
         else if (buttonIndex == 1) // Upload
@@ -403,7 +341,7 @@ static void *_openQuicklyObservingContext;
             {
                 // Show only remote in modal
                 RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
-                uploadController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+                uploadController.artCodeTab = self.artCodeTab;
                 uploadController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Upload" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)];
                 [self modalNavigationControllerPresentViewController:uploadController];
             }
@@ -414,57 +352,72 @@ static void *_openQuicklyObservingContext;
         else if (buttonIndex == 2) // iTunes
         {
             self.loading = YES;
-            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-            NSFileManager *fileManager = [NSFileManager new];
-            NSURL *documentsURL = [NSURL applicationDocumentsDirectory];
-            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-                [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:documentsURL options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-                    [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+            NSInteger selectedItemsCount = [_selectedItems count];
+            __block NSInteger processed = 0;
+            [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
+                [item publishContentsToURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:item.name] completionHandler:^(NSError *error) {
+                    if (++processed == selectedItemsCount) {
+                        self.loading = NO;
+                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                    }
                 }];
             }];
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:[_selectedURLs count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             [self setEditing:NO animated:YES];
         }
         else if (buttonIndex == 3) // Mail
         {
-            MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
-            mailComposer.mailComposeDelegate = self;
-            mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-            mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+            NSURL *tempDirecotryURL = [NSURL temporaryDirectory];
             
-            // Compressing projects to export
+            // Compressing files to export
             self.loading = YES;
-            
-            NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-            [_selectedURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-                // Generate zip attachments
-                __block NSData *attachment = nil;
-                [coordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-                    attachment = [NSData dataWithContentsOfURL:newURL];
+            NSInteger selectedItemsCount = [_selectedItems count];
+            __block NSInteger processed = 0;
+            // Create temporary directory to compress
+            NSURL *directoryToZipURL = [tempDirecotryURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ Files", self.artCodeTab.currentProject.name]];
+            [[NSFileManager defaultManager] createDirectoryAtURL:directoryToZipURL withIntermediateDirectories:YES attributes:nil error:NULL];
+            // Add files to directory to zip
+            [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
+                [item publishContentsToURL:[directoryToZipURL URLByAppendingPathComponent:item.name] completionHandler:^(NSError *error) {
+                    if (++processed == selectedItemsCount) {
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                            // Compress directory
+                            NSURL *archiveToSendURL = [directoryToZipURL URLByAppendingPathExtension:@"zip"];
+                            [ArchiveUtilities compressDirectoryAtURL:directoryToZipURL toArchive:archiveToSendURL];
+                            // Switch to main thread to show mail composer
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                // Create mail composer
+                                MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+                                mailComposer.mailComposeDelegate = self;
+                                mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+                                mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+                                
+                                // Add attachement
+                                [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveToSendURL] mimeType:@"application/zip" fileName:[archiveToSendURL lastPathComponent]];
+                                
+                                // Remote temporary folder
+                                [[NSFileManager defaultManager] removeItemAtURL:tempDirecotryURL error:NULL];
+                                
+                                // Add precompiled mail fields
+                                [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", self.artCodeTab.currentProject.name]];
+                                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+
+                                // Present mail composer
+                                [self presentViewController:mailComposer animated:YES completion:nil];
+                                [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+                                self.loading = NO;
+                            });
+                        });
+                    }
                 }];
-                [mailComposer addAttachmentData:attachment mimeType:@"text/plain" fileName:[url lastPathComponent]];
             }];
-            
-            [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", [[ArtCodeProject projectWithURL:[_selectedURLs objectAtIndex:0]] name]]];
-            
-            if ([_selectedURLs count] == 1)
-                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
-            else
-                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
-            
             [self setEditing:NO animated:YES];
-            [self presentViewController:mailComposer animated:YES completion:nil];
-            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            self.loading = NO;
         }
     }
 }
 
 #pragma mark - Mail composer Delegate
 
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
-{
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
     if (result == MFMailComposeResultSent)
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     [self dismissModalViewControllerAnimated:YES];
@@ -472,8 +425,7 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark - Private Methods
 
-- (void)_toolNormalAddAction:(id)sender
-{
+- (void)_toolNormalAddAction:(id)sender {
     if (!_toolNormalAddPopover)
     {
         UINavigationController *popoverViewController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"NewFilePopover" bundle:nil] instantiateInitialViewController];
@@ -487,8 +439,7 @@ static void *_openQuicklyObservingContext;
     [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
-- (void)_toolEditExportAction:(id)sender
-{
+- (void)_toolEditExportAction:(id)sender {
     if (!_toolEditItemExportActionSheet)
     {
         _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Upload to remote", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
@@ -497,8 +448,7 @@ static void *_openQuicklyObservingContext;
     [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
-- (void)_toolEditDuplicateAction:(id)sender
-{
+- (void)_toolEditDuplicateAction:(id)sender {
     if (!_toolEditItemDuplicateActionSheet)
     {
         _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Copy to new location", @"Duplicate", nil];
@@ -509,8 +459,7 @@ static void *_openQuicklyObservingContext;
 
 #pragma mark Modal actions
 
-- (void)modalNavigationControllerDismissAction:(id)sender
-{
+- (void)modalNavigationControllerDismissAction:(id)sender {
     if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
     {
         [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
@@ -522,51 +471,45 @@ static void *_openQuicklyObservingContext;
     }
 }
 
-- (void)_directoryBrowserCopyAction:(id)sender
-{    
+- (void)_directoryBrowserCopyAction:(id)sender {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
-    if (moveURL == nil)
-        moveURL = directoryBrowser.URL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
+    
     // Initialize conflict controller
     MoveConflictController *conflictController = [[MoveConflictController alloc] init];
     UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     conflictController.navigationItem.leftBarButtonItem = cancelItem;
-    // Show conflict controller
-    NSFileManager *fileManager = [NSFileManager new];
-    [_modalNavigationController pushViewController:conflictController animated:YES];
-    [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
-        [fileManager copyItemAtURL:itemURL toURL:destinationURL error:NULL];
+    
+    // Start copy
+    [conflictController moveItems:[_selectedItems copy] toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
+        [item copyToFolder:moveFolder completionHandler:nil];
     } completion:^{
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];
 }
 
-- (void)_directoryBrowserMoveAction:(id)sender
-{
+- (void)_directoryBrowserMoveAction:(id)sender {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
     
     // Initialize conflict controller
     MoveConflictController *conflictController = [[MoveConflictController alloc] init];
     [self modalNavigationControllerPresentViewController:conflictController];
-    
-    // Show conflict controller
-    NSFileManager *fileManager = [NSFileManager new];
-    [conflictController processItemURLs:[_selectedURLs copy] toURL:moveURL usignProcessingBlock:^(NSURL *itemURL, NSURL *destinationURL) {
-        [fileManager moveItemAtURL:itemURL toURL:destinationURL error:NULL];
+
+    // Start moving
+    [conflictController moveItems:[_selectedItems copy] toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
+        [item moveToFolder:moveFolder completionHandler:nil];
     } completion:^{
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];
 }
 
-- (void)_remoteDirectoryBrowserUploadAction:(id)sender
-{
+- (void)_remoteDirectoryBrowserUploadAction:(id)sender {
     // Retrieve remote URL to upload to
     RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
@@ -576,31 +519,25 @@ static void *_openQuicklyObservingContext;
     [self modalNavigationControllerPresentViewController:remoteTransferController];
     
     // Start upload
-    [remoteTransferController uploadItemURLs:[_selectedURLs copy] toConnection:remoteDirectoryBrowser.connection url:remoteURL completion:^(id<CKConnection> connection, NSError *error) {
+    [remoteTransferController uploadProjectItems:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection path:remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         [self modalNavigationControllerDismissAction:sender];
     }];
 }
 
-- (IBAction)syncAction:(id)sender
-{
-#warning TODO all files need to be saved before starting sync
-    if ([self.artCodeTab.currentProject.remotes count] == 1)
-    {
+- (IBAction)syncAction:(id)sender {
+    if ([self.artCodeTab.currentProject.remotes count] == 1) {
         // Show only remote in modal
         RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-        syncController.URL = [[self.artCodeTab.currentProject.remotes objectAtIndex:0] URL];
+        syncController.artCodeTab = self.artCodeTab;
         syncController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserSyncAction:)];
         [self modalNavigationControllerPresentViewController:syncController];
-    }
-    else 
-    {
-        // TODO
+    } else {
+        // TODO show remote's selection
     }
 }
 
-- (void)_remoteDirectoryBrowserSyncAction:(id)sender
-{
+- (void)_remoteDirectoryBrowserSyncAction:(id)sender {
     // Retrieve remote URL to upload to
     RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
     NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
@@ -610,7 +547,7 @@ static void *_openQuicklyObservingContext;
     [self modalNavigationControllerPresentViewController:remoteTransferController];
     
     // Start sync
-    [remoteTransferController syncLocalDirectoryURL:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection remoteURL:remoteURL options:nil completion:^(id<CKConnection> connection, NSError *error) {
+    [remoteTransferController synchronizeLocalProjectFolder:self.currentFolder withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
         [self modalNavigationControllerDismissAction:sender];
     }];
 }

@@ -10,3 +10,7 @@
 [submodule "ThirdParty/Connection"]
 	path = ThirdParty/Connection
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
+
+[submodule "ThirdParty/jasmine"]
+	path = ThirdParty/jasmine
+	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/UIAutomation-jasmine-iphone.git

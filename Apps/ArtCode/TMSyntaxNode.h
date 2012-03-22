@@ -7,12 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-@class CodeFile, OnigRegexp;
+@class OnigRegexp;
 
 @interface TMSyntaxNode : NSObject <NSCopying>
 
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier;
-+ (TMSyntaxNode *)syntaxForCodeFile:(CodeFile *)codeFile;
+
++ (TMSyntaxNode *)syntaxForFileName:(NSString *)fileName;
+
++ (TMSyntaxNode *)syntaxForFirstLine:(NSString *)firstLine;
 
 @property (nonatomic, weak, readonly) TMSyntaxNode *rootSyntax;
 

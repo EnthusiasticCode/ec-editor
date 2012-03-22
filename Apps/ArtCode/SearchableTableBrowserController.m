@@ -13,9 +13,10 @@
 #import "NSTimer+BlockTimer.h"
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
+
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
 #import "ArtCodeURL.h"
+#import "ACProject.h"
 
 
 @implementation SearchableTableBrowserController {
@@ -26,12 +27,10 @@
 
 #pragma mark - Properties
 
-@synthesize tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
+@synthesize tableView = _tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
 
-- (UISearchBar *)searchBar
-{
-    if (!searchBar)
-    {
+- (UISearchBar *)searchBar {
+    if (!searchBar && self.isViewLoaded) {
         searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
         searchBar.delegate = self;
         searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -39,31 +38,26 @@
     return searchBar;
 }
 
-- (UITableView *)tableView
-{
-    if (!tableView)
-    {
+- (UITableView *)tableView {
+    if (!_tableView && self.isViewLoaded) {
         CGRect bounds = self.view.bounds;
-        if (_isSearchBarStaticOnTop)
-        {
+        if (_isSearchBarStaticOnTop) {
             bounds.origin.y = 44;
             bounds.size.height -= 44;
         }
-        tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
-        tableView.delegate = self;
-        tableView.dataSource = self;
-        tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
-        tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
-        tableView.allowsMultipleSelectionDuringEditing = YES;
+        _tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+        _tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
+        _tableView.allowsMultipleSelectionDuringEditing = YES;
     }
-    return tableView;
+    return _tableView;
 }
 
-- (UILabel *)infoLabel
-{
-    if (!infoLabel)
-    {
+- (UILabel *)infoLabel {
+    if (!infoLabel && self.isViewLoaded) {
         infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
         infoLabel.textAlignment = UITextAlignmentCenter;
         infoLabel.backgroundColor = [UIColor clearColor];
@@ -74,13 +68,11 @@
     return infoLabel;
 }
 
-- (NSArray *)filteredItems
-{
+- (NSArray *)filteredItems {
     return nil;
 }
 
-- (void)invalidateFilteredItems
-{
+- (void)invalidateFilteredItems {
 }
 
 #pragma mark - Controller lifecycle
@@ -93,82 +85,6 @@
     self.title = title;
     _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
     return self;
-}
-
-- (void)loadView
-{
-    [super loadView];
-    self.tableView.tableFooterView = self.infoLabel;
-    if (_isSearchBarStaticOnTop)
-    {
-        [self.view addSubview:self.searchBar];
-    }
-    else
-    {
-        self.tableView.tableHeaderView = self.searchBar;
-        self.tableView.contentOffset = CGPointMake(0, 45);
-    }
-    [self.view addSubview:self.tableView];
-    
-    self.editButtonItem.title = @"";
-    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.toolbarItems = self.toolNormalItems;
-    
-    // Adjust layout if bottomToolBar has been loaded
-    if (self.bottomToolBar != nil)
-    {
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
-        self.tableView.frame = tableViewFrame;
-        self.bottomToolBar.frame = CGRectMake(tableViewFrame.origin.x, CGRectGetMaxY(tableViewFrame), tableViewFrame.size.width, self.bottomToolBar.bounds.size.height);
-        [self.view addSubview:self.bottomToolBar];
-        
-        // Select button
-        NSInteger selectedTag = 0;
-        if ([self.artCodeTab.currentURL isBookmarksVariant])
-            selectedTag = 1;
-        else if ([self.artCodeTab.currentURL isRemotesVariant])
-            selectedTag = 2;
-        for (UIView *subview in self.bottomToolBar.subviews)
-        {
-            if ([subview isKindOfClass:[BottomToolBarButton class]] 
-                && [(BottomToolBarButton *)subview tag] == selectedTag)
-                [(BottomToolBarButton *)subview setSelected:YES];
-        }
-    }
-}
-
-- (void)viewDidUnload
-{
-    tableView = nil;
-    searchBar = nil;
-    infoLabel = nil;
-    toolEditItems = nil;
-    toolNormalItems = nil;
-    _quickBrowsersPopover = nil;
-    
-    _toolEditDeleteActionSheet = nil;
-    _modalNavigationController = nil;
-    
-    [self setBottomToolBar:nil];
-    [super viewDidUnload];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self.tableView reloadData];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    [self invalidateFilteredItems];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -208,6 +124,80 @@
 + (BOOL)automaticallyNotifiesObserversOfEditing
 {
     return NO;
+}
+
+#pragma mark - View lifecycle
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.tableView.tableFooterView = self.infoLabel;
+    if (_isSearchBarStaticOnTop)
+    {
+        [self.view addSubview:self.searchBar];
+    }
+    else
+    {
+        self.tableView.tableHeaderView = self.searchBar;
+        self.tableView.contentOffset = CGPointMake(0, 45);
+    }
+    [self.view addSubview:self.tableView];
+    
+    self.editButtonItem.title = @"";
+    self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+    
+    // Adjust layout if bottomToolBar has been loaded
+    if (self.bottomToolBar != nil)
+    {
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
+        self.tableView.frame = tableViewFrame;
+        self.bottomToolBar.frame = CGRectMake(tableViewFrame.origin.x, CGRectGetMaxY(tableViewFrame), tableViewFrame.size.width, self.bottomToolBar.bounds.size.height);
+        [self.view addSubview:self.bottomToolBar];
+        
+        // Select button
+        NSInteger selectedTag = 0;
+        if ([self.artCodeTab.currentURL isArtCodeProjectBookmarksList])
+            selectedTag = 1;
+        else if ([self.artCodeTab.currentURL isArtCodeProjectRemotesList])
+            selectedTag = 2;
+        for (UIView *subview in self.bottomToolBar.subviews)
+        {
+            if ([subview isKindOfClass:[BottomToolBarButton class]] 
+                && [(BottomToolBarButton *)subview tag] == selectedTag)
+                [(BottomToolBarButton *)subview setSelected:YES];
+        }
+    }
+}
+
+- (void)viewDidUnload
+{
+    _tableView = nil;
+    searchBar = nil;
+    infoLabel = nil;
+    toolEditItems = nil;
+    toolNormalItems = nil;
+    _quickBrowsersPopover = nil;
+    
+    _toolEditDeleteActionSheet = nil;
+    _modalNavigationController = nil;
+    
+    [self setBottomToolBar:nil];
+    [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.toolbarItems = self.toolNormalItems;
+    [self.tableView reloadData];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self invalidateFilteredItems];
 }
 
 #pragma mark - Single tab content controller protocol methods
@@ -321,15 +311,15 @@
 {
     switch ([sender tag]) {
         case 1:
-            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingBookmarksVariant]];
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectBookmarkListPath]];
             break;
             
         case 2:
-            [self.artCodeTab pushURL:[self.artCodeTab.currentProject.URL URLByAddingRemotesVariant]];
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectRemoteListPath]];
             break;
             
         default:
-            [self.artCodeTab pushURL:self.artCodeTab.currentProject.URL];
+            [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:nil]];
             break;
     }
 }

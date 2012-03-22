@@ -14,7 +14,12 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
+#import "ACProjectFileBookmark.h"
+#import "ACProjectRemote.h"
 
 #import "ProjectBrowserController.h"
 #import "FileBrowserController.h"
@@ -22,10 +27,12 @@
 #import "CodeFileController.h"
 #import "RemotesListController.h"
 #import "RemoteBrowserController.h"
+#import "UIImage+AppStyle.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
 static const void *tabCurrentURLObservingContext;
 static const void *contentViewControllerContext;
+static const void *loadingObservingContext;
 
 @interface SingleTabController ()
 
@@ -37,8 +44,8 @@ static const void *contentViewControllerContext;
 /// Will setup the toolbar items.
 - (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated;
 
-/// Routing method that resolve an URL to the view controller that can handle it.
-- (UIViewController *)_routeViewControllerWithURL:(NSURL *)url;
+/// Routing method that resolve the ArtCodeTab current location to the view controller that can handle it.
+- (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab;
 
 - (void)_defaultToolbarTitleButtonAction:(id)sender;
 - (void)_historyBackAction:(id)sender;
@@ -60,6 +67,8 @@ static const void *contentViewControllerContext;
     if (!_defaultToolbar)
     {
         self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
+        self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
+        self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
     }
     return _defaultToolbar;
 }
@@ -145,18 +154,20 @@ static const void *contentViewControllerContext;
     if (_contentViewController)
     {
         [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
-        [_contentViewController removeObserver:self forKeyPath:@"loading" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
         [_contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerContext];
+        
+        [_contentViewController removeObserver:self forKeyPath:@"loading" context:&loadingObservingContext];
     }
 
     // Setup new controller
     if ((_contentViewController = contentViewController))
     {
         [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
-        [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
         [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
+        
+        [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&loadingObservingContext];
     }
     
     [self _setupDefaultToolbarItemsAnimated:animated];
@@ -293,12 +304,14 @@ static const void *contentViewControllerContext;
     if (self.artCodeTab)
     {
         [self.artCodeTab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
+        [self.artCodeTab removeObserver:self forKeyPath:@"loading" context:&loadingObservingContext];
         [ArtCodeTab removeTab:self.artCodeTab];
     }
     
     [super setArtCodeTab:tab];
 
     [self.artCodeTab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
+    [self.artCodeTab addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&loadingObservingContext];
 }
 
 #pragma mark - Controller methods
@@ -320,7 +333,7 @@ static const void *contentViewControllerContext;
     {
         self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
         self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
-        [self setContentViewController:[self _routeViewControllerWithURL:self.artCodeTab.currentURL] animated:YES];
+        [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
     }
     else if (context == &contentViewControllerContext)
     {
@@ -330,8 +343,10 @@ static const void *contentViewControllerContext;
             [self _setupDefaultToolbarItemsAnimated:YES];
         else if ([keyPath isEqualToString:@"title"])
             [self updateDefaultToolbarTitle];
-        else if ([keyPath isEqualToString:@"loading"])
-            self.defaultToolbar.titleControl.loadingMode = [object isLoading];
+    }
+    else if (context == &loadingObservingContext)
+    {
+        self.defaultToolbar.titleControl.loadingMode = [object isLoading];
     }
     else
     {
@@ -375,19 +390,40 @@ static const void *contentViewControllerContext;
         else
         {
             NSURL *url = self.artCodeTab.currentURL;
-            NSArray *pathComponents = [[[ArtCodeURL pathRelativeToProjectsDirectory:url] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] pathComponents];
-            if ([pathComponents count])
+            if ([url isArtCodeURL])
             {
-                NSMutableString *path = [NSMutableString stringWithString:[[pathComponents objectAtIndex:0] stringByDeletingPathExtension]];
-                NSInteger lastIndex = [pathComponents count] - 1;
-                [pathComponents enumerateObjectsUsingBlock:^(NSString *component, NSUInteger idx, BOOL *stop) {
-                    if (idx == 0 || idx == lastIndex)
-                        return;
-                    [path appendFormat:@"/%@", component];
-                }];
-                [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:path, [pathComponents lastObject], nil] selectedIndexes:nil];
+                ACProjectItem *item = self.artCodeTab.currentItem;
+                switch (item.type)
+                {
+                    case ACPRemote:
+                        url = [(ACProjectRemote *)item URL];
+                        break;
+                        
+                    case ACPFileBookmark:
+                        item = (ACProjectItem *)[(ACProjectFileBookmark *)item file];
+                        
+                    default:
+                    {
+                        // If project root set color and project name 
+                        if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
+                        {
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
+                        }
+                        // or path and file name for items
+                        else
+                        {
+                            NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
+                            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
+                        }
+                        // Mark url as handled
+                        url = nil;
+                        break;
+                    }
+                }
             }
-            else if (url.host)
+            
+            // If URL has not been handled jet
+            if (url)
             {
                 [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
             }
@@ -440,78 +476,85 @@ static const void *contentViewControllerContext;
     [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
 }
 
-- (UIViewController *)_routeViewControllerWithURL:(NSURL *)url
+- (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab
 {
+    NSURL *currentURL = tab.currentURL;
     UIViewController *result = nil;
-//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    __block BOOL currentURLIsEqualToProjectsDirectory = NO;
-    __block BOOL currentURLExists = NO;
-    __block BOOL currentURLIsDirectory = NO;
-#warning calling file coordinator from main thread deadlocks uidocument
-//    [fileCoordinator coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        currentURLIsEqualToProjectsDirectory = [url isEqual:[ArtCodeURL projectsDirectory]];
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        currentURLExists = [fileManager fileExistsAtPath:[url path] isDirectory:&currentURLIsDirectory];
-//    }];
-    if (currentURLIsEqualToProjectsDirectory)
+    
+    // ArtCode URLs routing
+    if ([currentURL isArtCodeURL])
     {
-        if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
-            result = self.contentViewController;
-        else
-            result = [[ProjectBrowserController alloc] init];
-        ProjectBrowserController *projectTableController = (ProjectBrowserController *)result;
-        projectTableController.projectsDirectory = url;
-    }
-    else if (currentURLExists)
-    {
-        if (currentURLIsDirectory)
+        // Projects list
+        if ([currentURL isArtCodeProjectsList])
         {
-            if ([url isRemotesVariant])
-            {
-                if ([self.contentViewController isKindOfClass:[RemotesListController class]])
-                    result = self.contentViewController;
-                else
-                    result = [RemotesListController new];
-            }
-            else if ([url isBookmarksVariant])
-            {
-                if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
-                    result = self.contentViewController;
-                else
-                    result = [BookmarkBrowserController new];
-            }
-            else
-            {
-                if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
-                    result = self.contentViewController;
-                else
-                    result = [[FileBrowserController alloc] init];
-                    
-                FileBrowserController *fileTableController = (FileBrowserController *)result;
-                [fileTableController setDirectory:url];
-            }
-        }
-        else
-        {
-            if ([self.contentViewController isKindOfClass:[CodeFileController class]])
+            if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
                 result = self.contentViewController;
             else
-                result = [[CodeFileController alloc] init];
-            CodeFileController *codeFileController = (CodeFileController *)result;
-            codeFileController.fileURL = url;
+                result = [ProjectBrowserController new];
         }
-    }
-    else if ([url isRemoteURL])
-    {
-        if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
-            result = self.contentViewController;
+        // Project's bookmarks list
+        else if ([currentURL isArtCodeProjectBookmarksList])
+        {
+            if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
+                result = self.contentViewController;
+            else
+                result = [BookmarkBrowserController new];
+        }
+        // Project's remotes list
+        else if ([currentURL isArtCodeProjectRemotesList])
+        {
+            if ([self.contentViewController isKindOfClass:[RemotesListController class]])
+                result = self.contentViewController;
+            else
+                result = [RemotesListController new];
+        }
+        // Project's item
         else
-            result = [RemoteBrowserController new];
-        [(RemoteBrowserController *)result setURL:url];
+        {
+            switch (tab.currentItem.type) {   
+                case ACPFile:
+                case ACPFileBookmark:
+                {
+                    if ([self.contentViewController isKindOfClass:[CodeFileController class]])
+                        result = self.contentViewController;
+                    else
+                        result = [CodeFileController new];
+                    break;
+                }
+                    
+                case ACPRemote:
+                {
+                    if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
+                        result = self.contentViewController;
+                    else
+                        result = [RemoteBrowserController new];
+                    break;
+                }
+                    
+                default:
+                {
+                    if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
+                        result = self.contentViewController;
+                    else
+                        result = [FileBrowserController new];
+                    break;
+                }
+            }
+        }
+        
+        // Set the tab explicitly since result might not have a parent view controller yet
+        result.artCodeTab = self.artCodeTab;
     }
+    else 
+    {
+        ASSERT(NO); // Unknown URL
+    }
+    
     // Update title if controller didn't change
     if (result == self.contentViewController)
+    {
         [self updateDefaultToolbarTitle];
+    }
     return result;
 }
 

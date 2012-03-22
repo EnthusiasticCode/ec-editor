@@ -37,11 +37,9 @@ static void *childViewControllerTitleContext;
 
 @interface TabController () {
     NSMutableArray *orderedChildViewControllers;
-    
+    CustomizableScrollView *_contentScrollView;
     BOOL keepCurrentPageCentered;
 }
-
-@property (nonatomic, readonly, strong) CustomizableScrollView *contentScrollView;
 
 - (void)layoutChildViews;
 - (void)loadSelectedAndAdiacentTabViews;
@@ -310,14 +308,14 @@ static void init(TabController *self)
 
 - (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
 {
-    ECASSERT(controllerIndex < [orderedChildViewControllers count]);
+    ASSERT(controllerIndex < [orderedChildViewControllers count]);
     [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }
 
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
-    ECASSERT(fromIndex < [orderedChildViewControllers count]);
-    ECASSERT(toIndex < [orderedChildViewControllers count]);
+    ASSERT(fromIndex < [orderedChildViewControllers count]);
+    ASSERT(toIndex < [orderedChildViewControllers count]);
     
     [self.tabBar moveTabAtIndex:fromIndex toIndex:toIndex animated:animated];
     
@@ -337,7 +335,7 @@ static void init(TabController *self)
     UIViewController *toViewController = nil;
     if (index != NSNotFound)
     {
-        ECASSERT(index < [orderedChildViewControllers count]);
+        ASSERT(index < [orderedChildViewControllers count]);
         toViewController = [orderedChildViewControllers objectAtIndex:index];
     }
     

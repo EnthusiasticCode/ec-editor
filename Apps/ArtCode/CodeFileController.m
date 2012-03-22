@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 #import "CodeFileSearchBarController.h"
 #import "QuickBrowsersContainerController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 #import "TopBarTitleControl.h"
 
 #import <QuartzCore/QuartzCore.h>
@@ -28,41 +28,25 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "CodeFile.h"
-#import "TMIndex.h"
+#import "CodeFile+Generation.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
 
 
-@interface CodeFileController () {
-    UIActionSheet *_toolsActionSheet;
-    CodeFileSearchBarController *_searchBarController;
-    UIPopoverController *_quickBrowsersPopover;
-    
-    NSTimer *_selectionChangeDebounceTimer;
-    TMSymbol *_currentSymbol;
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFile.h"
+#import "ACProjectFileBookmark.h"
 
-    CGRect _keyboardFrame;
-    CGRect _keyboardRotationFrame;
-    
-    /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
-    /// This button is supposed to have the same appearance of the underlying button and the same tag.
-    UIButton *_keyboardAccessoryItemPopoverButton;
-    
-    /// Actions associated to items in the accessory view.
-    NSArray *_keyboardAccessoryItemActions;
-    
-    /// The index of the accessory item action currently being performed.
-    NSInteger _keyboardAccessoryItemCurrentActionIndex;
-}
+
+@interface CodeFileController ()
 
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, strong, readwrite) CodeFile *codeFile;
-@property (nonatomic, strong) TMUnit *codeUnit;
+@property (nonatomic, strong) ACProjectFile *projectFile;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
@@ -71,6 +55,8 @@
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
 - (UIView *)_contentViewForEditingState:(BOOL)editingState;
 - (UIView *)_contentView;
+
+- (void)_setCodeViewAttributesForTheme:(TMTheme *)theme;
 
 /// Indicates if the current content view is the web preview.
 - (BOOL)_isWebPreview;
@@ -87,6 +73,8 @@
 
 - (void)_keyboardAccessoryItemSetupWithScope:(TMScope *)scope;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
+
+- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
 
 @end
 
@@ -113,12 +101,32 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 }
 
 
-@implementation CodeFileController
+@implementation CodeFileController {
+    UIActionSheet *_toolsActionSheet;
+    CodeFileSearchBarController *_searchBarController;
+    UIPopoverController *_quickBrowsersPopover;
+    
+    NSTimer *_selectionChangeDebounceTimer;
+    TMSymbol *_currentSymbol;
+    
+    CGRect _keyboardFrame;
+    CGRect _keyboardRotationFrame;
+    
+    /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
+    /// This button is supposed to have the same appearance of the underlying button and the same tag.
+    UIButton *_keyboardAccessoryItemPopoverButton;
+    
+    /// Actions associated to items in the accessory view.
+    NSArray *_keyboardAccessoryItemActions;
+    
+    /// The index of the accessory item action currently being performed.
+    NSInteger _keyboardAccessoryItemCurrentActionIndex;
+}
 
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize fileURL = _fileURL, codeFile = _codeFile, codeUnit = _codeUnit;
+@synthesize projectFile= _projectFile;
 @synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
@@ -128,25 +136,21 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         __weak CodeFileController *this = self;
         
         _codeView = [CodeView new];
-        _codeView.dataSource = self.codeFile;
+        _codeView.dataSource = self;
         _codeView.delegate = self;
         _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
         
-        _codeView.backgroundColor = [UIColor whiteColor];
-        _codeView.caretColor = [UIColor blackColor];
-        _codeView.selectionColor = [[UIColor blueColor] colorWithAlphaComponent:0.3];
-
         _codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
         _codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
         
         _codeView.lineNumbersEnabled = YES;
         _codeView.lineNumbersWidth = 30;
         _codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-        _codeView.lineNumbersColor = [UIColor colorWithWhite:0.62 alpha:1];
-        _codeView.lineNumbersBackgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
         
         _codeView.alwaysBounceVertical = YES;
         _codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
+        [self _setCodeViewAttributesForTheme:nil];
         
         UISwipeGestureRecognizer *undoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureUndo:)];
         undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
@@ -159,14 +163,15 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         [_codeView addGestureRecognizer:redoRecognizer];
         
         // Bookmark markers
-        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
-            {
-                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
-                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
-                drawStencilStar(NULL, context);
-            }
-        } underText:NO forKey:@"bookmarkMarkers"];
+#warning TODO NIK reimplement bookmarks
+//        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+//            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
+//            {
+//                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
+//                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
+//                drawStencilStar(NULL, context);
+//            }
+//        } underText:NO forKey:@"bookmarkMarkers"];
         
         // Accessory view
         CodeFileKeyboardAccessoryView *accessoryView = [CodeFileKeyboardAccessoryView new];
@@ -259,51 +264,24 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return _minimapView;
 }
 
-- (void)setFileURL:(NSURL *)fileURL
+- (void)setProjectFile:(ACProjectFile *)projectFile
 {
-    if (fileURL == _fileURL)
+    if (projectFile == _projectFile)
         return;
     
-    self.loading = YES;
-    
-    _fileURL = fileURL;
-    if (fileURL)
-        [CodeFile codeFileWithFileURL:fileURL completionHandler:^(CodeFile *codeFile) {
-            self.codeFile = codeFile;
-            self.loading = NO;
-        }];
-    else
-        self.codeFile = nil;
-}
-
-- (void)setCodeFile:(CodeFile *)codeFile
-{
-    if (codeFile == _codeFile)
-        return;
-    
-    [_codeFile removePresenter:self];
-    _codeUnit = nil;
-    _codeFile = codeFile;
-    _codeView.dataSource = _codeFile;
-    _codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:_codeFile rootScopeIdentifier:nil];
-    [_codeView updateAllText];
-    [_codeFile addPresenter:self];
-    
-    // Update CodeView environment settings
-    if (_codeFile)
-    {
-        UIColor *color = nil;
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
-        self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
-        self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
-        self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
-        self.codeView.caretColor = color ? color : [UIColor blackColor];
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
-        self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
-    }
-    
-    [self _loadWebPreviewContentAndTitle];
+    [_projectFile.codeFile removePresenter:self];
+    [_projectFile closeWithCompletionHandler:nil];
+    _projectFile = nil;
+    [projectFile openWithCompletionHandler:^(NSError *error) {
+        if (error) {
+            return;
+        }
+        _projectFile = projectFile;
+        [_projectFile.codeFile addPresenter:self];
+        [self _setCodeViewAttributesForTheme:_projectFile.codeFile.theme];
+        [_codeView updateAllText];
+        [self _loadWebPreviewContentAndTitle];
+    }];
 }
 
 - (CGFloat)minimapWidth
@@ -352,6 +330,16 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return NO;
 }
 
+#pragma mark - ArtCodeTab Category
+
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
+{
+    [super setArtCodeTab:artCodeTab];
+    
+    ASSERT(self.artCodeTab.currentItem.type == ACPFile);
+    self.projectFile = (ACProjectFile *)self.artCodeTab.currentItem;
+}
+
 #pragma mark - Single tab controller informal protocol
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
@@ -380,22 +368,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     if (_currentSymbol)
     {
-        NSMutableArray *components = [[[ArtCodeURL pathRelativeToProjectsDirectory:self.artCodeTab.currentURL] pathComponents] mutableCopy];
-        NSString *file = [components objectAtIndex:0];
-        [components removeObjectAtIndex:0];
-        if ([components count] > 0)
-        {
-            [components insertObject:[file stringByDeletingPathExtension] atIndex:0];
-            file = [components lastObject];
-            [components removeLastObject];
-        }
+        NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject];
         if (_currentSymbol.icon)
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         else
         {
-            [titleControl setTitleFragments:[NSArray arrayWithObjects:[components componentsJoinedByString:@"/"], file, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
         }
         return YES;
     }
@@ -454,6 +434,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 }
 
 #pragma mark - View lifecycle
+
+- (void)dealloc {
+    [_projectFile closeWithCompletionHandler:nil];
+}
 
 - (void)loadView
 {
@@ -554,7 +538,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (editing)
     {
         // Set keyboard for main scope
-        [self.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
+        [self.projectFile.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
             [self _keyboardAccessoryItemSetupWithScope:rootScope];
         }];
     }
@@ -646,6 +630,50 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [self.codeView updateTextFromStringRange:range toStringRange:range];
 }
 
+#pragma mark - Code View DataSource Methods
+
+- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
+{
+    return [self.projectFile.codeFile lengthWithGeneration:NULL];
+}
+
+- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+{
+#warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
+    CodeFileGeneration generation;
+    NSMutableAttributedString *attributedString = [[self.projectFile.codeFile attributedStringInRange:stringRange generation:&generation] mutableCopy];
+    if (attributedString.length) {
+        static NSRegularExpression *placeholderRegExp = nil;
+        if (!placeholderRegExp)
+            placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+        // Add placeholders styles
+        [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+            NSString *placeHolderName;
+            if (![self.projectFile.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
+                *stop = YES;
+                return;
+            }
+            [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
+        }];
+    }
+    return attributedString;
+}
+
+- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
+{
+    return [self.projectFile.codeFile.theme commonAttributes];
+}
+
+- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+{
+    [self.projectFile.codeFile replaceCharactersInRange:range withString:commitString];
+}
+
+- (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
+{
+    return [self.projectFile.codeFile attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+}
+
 #pragma mark - Code View Delegate Methods
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -666,26 +694,27 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
 {
-    NSArray *bookmarks = [self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:lineNumber];
-    if ([bookmarks count] == 0)
-    {
-        [self.artCodeTab.currentProject addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
-    }
-    else
-    {
-        for (ProjectBookmark *bookmark in bookmarks)
-        {
-            [self.artCodeTab.currentProject removeBookmark:bookmark];
-        }
-    }
-    [self.codeView setNeedsDisplay];
-    if (_minimapVisible)
-        [_minimapView setNeedsDisplay];
+    ASSERT(NO); // Need implementation
+//    NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
+//    if ([bookmarks count] == 0)
+//    {
+//        [(ACProjectFile *)self.artCodeTab.currentItem addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
+//    }
+//    else
+//    {
+//        for (ProjectBookmark *bookmark in bookmarks)
+//        {
+//            [self.artCodeTab.currentProject removeBookmark:bookmark];
+//        }
+//    }
+//    [self.codeView setNeedsDisplay];
+//    if (_minimapVisible)
+//        [_minimapView setNeedsDisplay];
 }
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
 {
-    ECASSERT(view && frame);
+    ASSERT(view && frame);
     
     if ([_keyboardAccessoryItemActions count] != 11)
         return NO;
@@ -825,7 +854,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
 {
-    ECASSERT(self._keyboardAccessoryView.superview);
+    ASSERT(self._keyboardAccessoryView.superview);
     
     self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
     if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
@@ -841,8 +870,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
-    // TODO better check for file type
-    if (editingState || ![[self.fileURL pathExtension] isEqualToString:@"html"])
+#warning TODO NIK better check for file type
+    if (editingState || ![[self.projectFile.name pathExtension] isEqualToString:@"html"])
     {
         return self.codeView;
     }
@@ -864,9 +893,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle
 {
-    if ([self _isWebPreview] && self.codeFile)
+    if ([self _isWebPreview] && self.projectFile)
     {
-        [self.webView loadHTMLString:[self.codeFile string] baseURL:self.fileURL];
+        [self.webView loadHTMLString:[self.projectFile.codeFile string] baseURL:nil];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     }
     else
@@ -956,7 +985,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return;
     
     _keyboardAccessoryItemActions = configuration;
-    ECASSERT([_keyboardAccessoryItemActions count] == 11);
+    ASSERT([_keyboardAccessoryItemActions count] == 11);
     
     CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
     
@@ -1015,6 +1044,103 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [[_keyboardAccessoryItemActions objectAtIndex:item.tag] executeActionOnTarget:self];
 }
 
+static CGFloat placeholderEndingsWidthCallback(void *refcon) {
+    if (refcon)
+    {
+        CGFloat height = CTFontGetXHeight(refcon);
+        return height / 2.0;
+    }
+    return 4.5;
+}
+
+static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
+    kCTRunDelegateVersion1,
+    NULL,
+    NULL,
+    NULL,
+    &placeholderEndingsWidthCallback
+};
+
+- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
+{
+    ASSERT(range.length > 4);
+    
+    static CGColorRef placeholderFillColor = NULL;
+    if (!placeholderFillColor)
+        placeholderFillColor = CGColorRetain([UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+    
+    static CGColorRef placeholderStrokeColor = NULL;
+    if (!placeholderStrokeColor)
+        placeholderStrokeColor = CGColorRetain([UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+    
+    static TextRendererRunBlock placeHolderBodyBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextAddRect(context, rect);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), rect.origin.y);
+        CGContextMoveToPoint(context, rect.origin.x, CGRectGetMaxY(rect));
+        CGContextAddLineToPoint(context, CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    static TextRendererRunBlock placeholderLeftBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rectMax.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rect.origin.x, rect.origin.y, rect.origin.x, rectMax.y, rectMax.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    static TextRendererRunBlock placeholderRightBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
+        rect.origin.y += 1;
+        rect.size.height -= baselineOffset;
+        CGPoint rectMax = CGPointMake(CGRectGetMaxX(rect), CGRectGetMaxY(rect));
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextClosePath(context);
+        CGContextSetFillColorWithColor(context, placeholderFillColor);
+        CGContextFillPath(context);
+        //
+        CGContextMoveToPoint(context, rect.origin.x, rect.origin.y);
+        CGContextAddCurveToPoint(context, rectMax.x, rect.origin.y, rectMax.x, rectMax.y, rect.origin.x, rectMax.y);
+        CGContextSetStrokeColorWithColor(context, placeholderStrokeColor);
+        CGContextStrokePath(context);
+    };
+    
+    // placeholder body style
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
+    
+    // Opening and Closing style
+    
+    //
+    CGFontRef font = (__bridge CGFontRef)[[TMTheme sharedAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
+    ASSERT(font);
+    CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
+    
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+    
+    CFRelease(delegateRef);
+    
+    // Placeholder behaviour
+    [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
+}
+
 #pragma mark Keyboard Actions Target Methods
 
 - (BOOL)keyboardAction:(TMKeyboardAction *)keyboardAction canPerformSelector:(SEL)selector
@@ -1023,7 +1149,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         return YES;
     if (selector == @selector(showCompletionsAtCursor))
         return YES;
-    ECASSERT(NO && "An action called a not supported selector");
+    ASSERT(NO && "An action called a not supported selector");
     return NO;
 }
 
@@ -1039,6 +1165,18 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (void)showCompletionsAtCursor
 {
     [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
+}
+
+- (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
+    UIColor *color = nil;
+    color = [theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+    self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+    self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
+    self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
+    color = [theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+    self.codeView.caretColor = color ? color : [UIColor blackColor];
+    color = [theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+    self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
 }
 
 @end

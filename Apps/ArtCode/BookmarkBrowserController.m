@@ -12,7 +12,11 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFile.h"
+#import "ACProjectFileBookmark.h"
 
 #import "HighlightTableViewCell.h"
 
@@ -20,19 +24,11 @@
 #import "NSString+PluralFormat.h"
 
 
-@interface BookmarkBrowserController (/*Private methods*/)
-
-- (void)_toolEditDeleteAction:(id)sender;
-
-@end
-
 
 @implementation BookmarkBrowserController {
 @protected
     NSArray *_filteredItems;
     NSArray *_filteredItemsHitMask;
-    
-    UIActionSheet *_toolEditItemDeleteActionSheet;
 }
 
 - (id)init
@@ -52,7 +48,7 @@
         if ([self.searchBar.text length])
         {
             NSArray *hitMasks = nil;
-            _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectBookmark *bookmark) {
+            _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileBookmark *bookmark) {
                 return [bookmark description];
             }];
             _filteredItemsHitMask = hitMasks;
@@ -92,7 +88,7 @@
     if ([self isMemberOfClass:[BookmarkBrowserController class]])
     {
         // Tool edit items
-        self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+        self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
         
         // Customize subviews
         self.searchBar.placeholder = @"Filter bookmarks";
@@ -108,11 +104,11 @@
 {
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
-    ProjectBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+    ACProjectFileBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
     
     cell.textLabel.text = [bookmark description];
     cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
-    cell.detailTextLabel.text = bookmark.note;
+//    cell.detailTextLabel.text = bookmark.note;
     cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
     
     return cell;
@@ -125,15 +121,16 @@
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
     }
+    [super tableView:table didSelectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet == _toolEditItemDeleteActionSheet)
+    if (actionSheet == _toolEditDeleteActionSheet)
     {
         if (buttonIndex == actionSheet.destructiveButtonIndex)
         {
@@ -142,7 +139,7 @@
             [self setEditing:NO animated:YES];
             for (NSIndexPath *indexPath in selectedRows)
             {
-                [self.artCodeTab.currentProject removeBookmark:[self.filteredItems objectAtIndex:indexPath.row]];
+                [[self.filteredItems objectAtIndex:indexPath.row] remove];
             }
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -150,18 +147,6 @@
             [self.tableView reloadData];
         }
     }
-}
-
-#pragma mark - Private methods
-
-- (void)_toolEditDeleteAction:(id)sender
-{
-    if (!_toolEditItemDeleteActionSheet)
-    {
-        _toolEditItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
-        _toolEditItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
-    }
-    [_toolEditItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 @end

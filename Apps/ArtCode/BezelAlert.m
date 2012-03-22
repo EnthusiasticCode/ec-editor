@@ -107,21 +107,21 @@ extern CGRect UIKeyboardFrame;
 
 - (void)presentFirstChildViewController
 {
-    ECASSERT([self.childViewControllers count] != 0);
+    ASSERT([self.childViewControllers count] != 0);
     
     UIViewController *viewController = [self.childViewControllers objectAtIndex:0];
     
     // Layout content view
     CGRect contentFrame = (CGRect){ CGPointMake(bezelCornerRadius, bezelCornerRadius), viewController.contentSizeForViewInPopover };
     // TODO check if size == Zero and use view size instead
-    ECASSERT(!CGSizeEqualToSize(contentFrame.size, CGSizeZero));
+    ASSERT(!CGSizeEqualToSize(contentFrame.size, CGSizeZero));
     viewController.view.frame = contentFrame;
     [self.view addSubview:viewController.view];
     
     // Get presenting view bounds
     if (presentingViewController == nil)
     {
-        ECASSERT([[UIApplication sharedApplication].windows count]);
+        ASSERT([[UIApplication sharedApplication].windows count]);
         presentingViewController = [[[UIApplication sharedApplication].windows objectAtIndex:0] rootViewController];
     }
     CGRect presentingBounds = presentingViewController.view.bounds;

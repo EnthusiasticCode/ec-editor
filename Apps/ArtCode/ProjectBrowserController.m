@@ -13,42 +13,25 @@
 #import "ColorSelectionControl.h"
 
 #import "ArtCodeAppDelegate.h"
-#import "ArtCodeProject.h"
+
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
+#import "ACProject.h"
 
 #import "SingleTabController.h"
-#import "NewProjectNavigationController.h"
 
 #import "NSURL+Utilities.h"
+#import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
 
-#import "DirectoryPresenter.h"
+#import "NSURL+Utilities.h"
 
-static void *_directoryObservingContext;
+@interface ProjectBrowserController ()
 
-#define STATIC_OBJECT(typ, nam, init) static typ *nam = nil; if (!nam) nam = init
-
-@interface ProjectBrowserController () {
-    UIPopoverController *_toolItemPopover;
-    
-    NSArray *_toolItemsNormal;
-    NSArray *_toolItemsEditing;
-
-    UIActionSheet *_toolItemDeleteActionSheet;
-    UIActionSheet *_toolItemExportActionSheet;
-    
-    UIImage *_cellNormalBackground;
-    UIImage *_cellSelectedBackground;
-    
-    NSInteger additionals;
-}
 @property (nonatomic, strong) GridView *gridView;
 
-/// Represent a directory's contents.
-@property (nonatomic, strong) DirectoryPresenter *directoryPresenter;
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -56,50 +39,40 @@ static void *_directoryObservingContext;
 
 @end
 
-#pragma mark - Implementation
 #pragma mark -
 
 @implementation ProjectBrowserController
-
-#pragma mark - Properties
+{
+    UIPopoverController *_toolItemPopover;
+    
+    NSArray *_toolItemsNormal;
+    NSArray *_toolItemsEditing;
+    
+    UIActionSheet *_toolItemDeleteActionSheet;
+    UIActionSheet *_toolItemExportActionSheet;
+    
+    UIImage *_cellNormalBackground;
+    UIImage *_cellSelectedBackground;
+    
+    NSArray *_projects;
+}
 
 @synthesize gridView = _gridView;
-@synthesize projectsDirectory = _projectsDirectory, directoryPresenter = _directoryPresenter;
 
-- (GridView *)gridView
++ (BOOL)automaticallyNotifiesObserversOfEditing
 {
-    if (!_gridView)
-    {
-        _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-        _gridView.allowMultipleSelectionDuringEditing = YES;
-        _gridView.dataSource = self;
-        _gridView.delegate = self;
-        _gridView.rowHeight = 120 + 15;
-        _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        _gridView.alwaysBounceVertical = YES;
-        _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
-        _gridView.backgroundView = [UIView new];
-        _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
-    }
-    return _gridView;
+    return NO;
 }
 
-- (void)setDirectoryPresenter:(DirectoryPresenter *)directoryPresenter
+#pragma mark - NSObject
+
+- (void)dealloc
 {
-    if (directoryPresenter == _directoryPresenter)
-        return;
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
 }
 
-- (void)setProjectsDirectory:(NSURL *)projectsDirectory
-{
-    if (projectsDirectory == _projectsDirectory)
-        return;
-    _projectsDirectory = projectsDirectory;
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:_projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-}
+#pragma mark - UIViewController
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
@@ -128,42 +101,10 @@ static void *_directoryObservingContext;
     [self didChangeValueForKey:@"editing"];
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfEditing
-{
-    return NO;
-}
-
-#pragma mark - Controller Methods
-
-- (void)dealloc
-{
-    self.directoryPresenter = nil; // this is so we stop observing
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context != &_directoryObservingContext)
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    NSKeyValueChange kind = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-    switch (kind) {
-        case NSKeyValueChangeInsertion:
-            [self.gridView insertCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
-            break;
-        case NSKeyValueChangeRemoval:
-            [self.gridView deleteCellsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] animated:YES];
-            break;
-        default:
-            ECASSERT(NO && "unhandled KVO change");
-            break;
-    }
-}
-
 - (NSString *)title
 {
     return @"ArtCode";
 }
-
-#pragma mark - View lifecycle
 
 - (void)loadView
 {
@@ -175,7 +116,9 @@ static void *_directoryObservingContext;
     // Preparing tool items array changed in set editing
     _toolItemsEditing = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
     
-    _toolItemsNormal = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+    UIBarButtonItem *addButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)];
+    addButtonItem.accessibilityLabel = L(@"Add");
+    _toolItemsNormal = [NSArray arrayWithObject:addButtonItem];
     self.toolbarItems = _toolItemsNormal;
 }
 
@@ -204,20 +147,32 @@ static void *_directoryObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.projectsDirectory options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidInsertProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        _projects = ACProject.projects;
+        NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+        [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }];
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        _projects = ACProject.projects;
+        NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+        [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }];
+    _projects = ACProject.projects;
+    [self.gridView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    self.directoryPresenter = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
+    _projects = nil;
 }
 
 #pragma mark - Grid View Data Source
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-//    return additionals;
-    return [self.directoryPresenter.fileURLs count];
+    return _projects.count;
 }
 
 - (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -229,6 +184,8 @@ static void *_directoryObservingContext;
     {
         cell = [ProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
         cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        cell.isAccessibilityElement = YES;
+        cell.accessibilityTraits = UIAccessibilityTraitButton;
         
         if (!_cellNormalBackground)
             _cellNormalBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
@@ -239,24 +196,24 @@ static void *_directoryObservingContext;
     }
     
     // Setup project title
-    NSString *projectName = [[[self.directoryPresenter.fileURLs objectAtIndex:cellIndex] lastPathComponent] stringByDeletingPathExtension];
-    ArtCodeProject *project = [ArtCodeProject projectWithName:projectName];
-    cell.title.text = projectName;
+    ACProject *project = [_projects objectAtIndex:cellIndex];
+    cell.title.text = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-
-//    cell.title.text = [NSString stringWithFormat:@"%d", cellIndex];
     
+    // Accessibility
+    cell.accessibilityLabel = project.name;
+    // TODO change hint according to project's kind (project or documentation..)
+    cell.accessibilityHint = L(@"Open the project");
+
     return cell;
 }
 
 #pragma mark - Grid View Delegate
 
-- (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex
-{
-    if (!self.isEditing)
-    {
-        [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:cellIndex]];
+- (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
+    if (!self.isEditing) {
+        [self.artCodeTab pushURL:[[_projects objectAtIndex:cellIndex] artCodeURL]];
     }
 }
 
@@ -269,8 +226,6 @@ static void *_directoryObservingContext;
             [(UIButton *)item.customView setEnabled:enable];
         }];
     }
-//    additionals--;
-//    [gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:cellIndex] animated:YES];
 }
 
 - (void)gridView:(GridView *)gridView didDeselectCellAtIndex:(NSInteger)cellIndex
@@ -279,71 +234,50 @@ static void *_directoryObservingContext;
     [self gridView:gridView didSelectCellAtIndex:cellIndex];
 }
 
-//- (void)textFieldDidEndEditing:(UITextField *)textField
-//{
-//    textField.text = [[[self.directoryPresenter.fileURLs objectAtIndex:textField.tag] lastPathComponent] stringByDeletingPathExtension];
-//}
-//
-//- (BOOL)textFieldShouldReturn:(UITextField *)textField
-//{
-//    if (![textField.text length])
-//        return NO;
-//    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:textField.tag];
-//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-//    [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForMoving error:NULL byAccessor:^(NSURL *newURL) {
-//        NSFileManager *fileManager = [[NSFileManager alloc] init];
-//        [fileManager moveItemAtURL:newURL toURL:[[[newURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:textField.text] URLByAppendingPathExtension:@"weakpkg"] error:NULL];
-//    }];
-//    [textField resignFirstResponder];
-//    [self.gridView reloadData];
-//    return YES;
-//}
-
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    ECASSERT(self.isEditing);
-    ECASSERT([self.gridView indexForSelectedCell] != -1);
+    ASSERT(self.isEditing);
+    ASSERT([self.gridView indexForSelectedCell] != -1);
     
-    if (actionSheet == _toolItemDeleteActionSheet)
-    {
-        if (buttonIndex == actionSheet.destructiveButtonIndex)
-        {
+    if (actionSheet == _toolItemDeleteActionSheet) {
+        if (buttonIndex == actionSheet.destructiveButtonIndex) {
             NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
             
-            // Remove files
-            NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+            // Remove projects
             [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-                NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
-                [fileCoordinator coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-                    [[NSFileManager new] removeItemAtURL:newURL error:NULL];
-                }];
+                [[_projects objectAtIndex:idx] remove];
             }];
-            
+
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
     }
     else if (actionSheet == _toolItemExportActionSheet)
     {
+#warning FIX
+ASSERT(NO);
         if (buttonIndex == 0) // export to iTunes
         {
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
             [self setEditing:NO animated:YES];
             
             self.loading = YES;
+            NSInteger cellsToExportCount = [cellsToExport count];
+            __block NSInteger progress = 0;
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-                ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-                if (!project)
-                    return;
-                
+                ACProject *project = [_projects objectAtIndex:idx];
+
                 NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-                [project compressProjectToURL:zipURL];
+                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
+                    if (++progress == cellsToExportCount) {
+                        self.loading = NO;
+                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                    }
+                }];
             }];
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:[cellsToExport count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }
         else if (buttonIndex == 1) // send mail
         {
@@ -358,62 +292,46 @@ static void *_directoryObservingContext;
             [self setEditing:NO animated:YES];
             
             NSMutableString *subject = [NSMutableString new];
+            NSInteger cellsToExportCount = [cellsToExport count];
+            __block NSInteger progress = 0;
+            NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
             [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-                NSURL *projectURL = [self.directoryPresenter.fileURLs objectAtIndex:idx];
+                ACProject *project = [_projects objectAtIndex:idx];
                 
                 // Generate mail subject
-                NSString *projectName = [ArtCodeURL projectNameFromURL:projectURL isProjectRoot:NULL];
-                if (projectName)
-                    [subject appendFormat:@"%@, ", projectName];
+                [subject appendFormat:@"%@, ", project.name];
                 
-                // Generate a working temporary directory to write attachments into
-                NSURL *tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory()];
-                __block NSURL *workingDirectory = nil;
-                __block BOOL workingDirectoryAlreadyExists = YES;
-                NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-                NSFileManager *fileManager = [[NSFileManager alloc] init];
-                do
-                {
-                    CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
-                    CFStringRef uuidString = CFUUIDCreateString(CFAllocatorGetDefault(), uuid);
-                    workingDirectory = [tempDirectory URLByAppendingPathComponent:(__bridge NSString *)uuidString];
-                    CFRelease(uuidString);
-                    CFRelease(uuid);
-                    [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
-                        workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[newURL path]];
-                        workingDirectory = newURL;
-                    }];
-                }
-                while (workingDirectoryAlreadyExists);
-                // Generate zip attachments
-                __block NSData *attachment = nil;
-                NSString *archiveName = [[[projectURL lastPathComponent] stringByDeletingPathExtension] stringByAppendingPathExtension:@"zip"];
-                [fileCoordinator coordinateReadingItemAtURL:projectURL options:0 writingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-                    NSURL *archiveURL = [newWritingURL URLByAppendingPathComponent:archiveName];
-                    [ArchiveUtilities compressDirectoryAtURL:newReadingURL toArchive:archiveURL];
-                    attachment = [NSData dataWithContentsOfURL:archiveURL];
-                }];
-                [mailComposer addAttachmentData:attachment mimeType:@"application/zip" fileName:archiveName];
-                // Remove attachments
-                [fileCoordinator coordinateWritingItemAtURL:workingDirectory options:0 error:NULL byAccessor:^(NSURL *newURL) {
-                    [fileManager removeItemAtURL:newURL error:NULL];
+                // Process project
+                NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
+                    // Add attachment
+                    [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+                    [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
+                    
+                    // Complete process
+                    if (++progress == cellsToExportCount) {
+                        // Add mail subject
+                        if ([subject length] > 2) {
+                            [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
+                            [mailComposer setSubject:subject];
+                        } else {
+                            [mailComposer setSubject:@"ArtCode exported project"];
+                        }
+                        
+                        // Add body
+                        if (cellsToExportCount == 1)
+                            [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+                        else
+                            [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
+                        
+                        // Present
+                        [self presentViewController:mailComposer animated:YES completion:nil];
+                        [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+                        self.loading = NO;
+                    }
                 }];
             }];
-            
-            if ([subject length] > 2)
-                [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:([cellsToExport count] == 1 ? @" project" : @" projects")];
-            else
-                subject = nil;
-            [mailComposer setSubject:(subject ? subject : @"ArtCode exported project")];
-            
-            if ([cellsToExport count] == 1)
-                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
-            else
-                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
-            
-            [self presentViewController:mailComposer animated:YES completion:nil];
-            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            self.loading = NO;
         }
     }
 }
@@ -429,18 +347,34 @@ static void *_directoryObservingContext;
 
 #pragma mark - Private Methods
 
+- (GridView *)gridView
+{
+    if (!_gridView)
+    {
+        _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        _gridView.allowMultipleSelectionDuringEditing = YES;
+        _gridView.dataSource = self;
+        _gridView.delegate = self;
+        _gridView.rowHeight = 120 + 15;
+        _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _gridView.alwaysBounceVertical = YES;
+        _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
+        _gridView.backgroundView = [UIView new];
+        _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
+        _gridView.accessibilityIdentifier = @"projects grid";
+    }
+    return _gridView;
+}
+
 - (void)_toolNormalAddAction:(id)sender
 {
-//    additionals++;
-//    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:(additionals - 1)] animated:YES];
     
     // Removing the lazy loading could cause the old popover to be overwritten by the new one causing a dealloc while popover is visible
     if (!_toolItemPopover)
     {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
-        NewProjectNavigationController *newProjectNavigationController = (NewProjectNavigationController *)[storyboard instantiateInitialViewController];
+        UINavigationController *newProjectNavigationController = (UINavigationController *)[storyboard instantiateInitialViewController];
         [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-        newProjectNavigationController.projectsDirectory = self.projectsDirectory;
         newProjectNavigationController.artCodeTab = self.artCodeTab;
         _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
@@ -469,33 +403,29 @@ static void *_directoryObservingContext;
     [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
-- (void)_toolEditDuplicateAction:(id)sender
-{
-    ECASSERT(self.isEditing);
-    ECASSERT([self.gridView indexForSelectedCell] != -1);
+- (void)_toolEditDuplicateAction:(id)sender {
+    ASSERT(self.isEditing);
+    ASSERT([self.gridView indexForSelectedCell] != -1);
     
     self.loading = YES;
-
     NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    
+    NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
+    __block NSInteger progress = 0;
     [self setEditing:NO animated:YES];
     
     [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        ArtCodeProject *project = [ArtCodeProject projectWithURL:[self.directoryPresenter.fileURLs objectAtIndex:idx]];
-        if (!project)
-            return;
-        
-        [coordinator coordinateReadingItemAtURL:project.URL options:0 writingItemAtURL:[ArtCodeProject projectURLFromName:[ArtCodeProject validNameForNewProjectName:project.name]] options:NSFileCoordinatorWritingForReplacing error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            [fileManager copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+        [[_projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+            [duplicate closeWithCompletionHandler:nil];
+            if (++progress == cellsToDuplicateCount) {
+                self.loading = NO;
+            }
         }];
     }];
-    self.loading = NO;
 }
 
 @end
 
+#pragma mark -
 
 @implementation ProjectCell
 

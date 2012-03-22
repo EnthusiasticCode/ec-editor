@@ -137,7 +137,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
-    ECASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
+    ASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
     TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
     childScope->_location = location;
     childScope->_parent = self;
@@ -161,9 +161,9 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (void)removeFromParent
 {
-    ECASSERT(_parent && _parent->_children && [_parent->_children containsObject:self]);
+    ASSERT(_parent && _parent->_children && [_parent->_children containsObject:self]);
     // We're only using it on span and content type scopes at the moment
-    ECASSERT(_type == TMScopeTypeContent || _type == TMScopeTypeSpan);
+    ASSERT(_type == TMScopeTypeContent || _type == TMScopeTypeSpan);
     if (_type == TMScopeTypeContent)
         _parent->_flags &= ~TMScopeHasContentScope;
     [_parent->_children removeObject:self];
@@ -173,7 +173,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options
 {
-    ECASSERT(!_parent);
+    ASSERT(!_parent);
     if (offset >= _length)
         return nil;
     NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
@@ -186,7 +186,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         TMScope *sentinel = [[TMScope alloc] init];
         sentinel->_location = offset;
         NSUInteger insertionIndex = [scope->_children indexOfObject:sentinel inSortedRange:childrenRange options:NSBinarySearchingInsertionIndex | NSBinarySearchingFirstEqual usingComparator:scopeComparator];
-        ECASSERT(insertionIndex != NSNotFound);
+        ASSERT(insertionIndex != NSNotFound);
         
         if (insertionIndex < childrenRange.length)
         {
@@ -220,12 +220,12 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 #pragma mark - Scope Tree Changes
 
-#define CHECK_IF_WITHIN_PARENT_BOUNDS(scope) ECASSERT(scope->_parent ? scope->_location >= scope->_parent->_location && scope->_location + scope->_length <= scope->_parent->_location + scope->_parent->_length : YES);
+#define CHECK_IF_WITHIN_PARENT_BOUNDS(scope) ASSERT(scope->_parent ? scope->_location >= scope->_parent->_location && scope->_location + scope->_length <= scope->_parent->_location + scope->_parent->_length : YES);
 
 - (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
 {
-    ECASSERT(oldRange.location == newRange.location);
-    ECASSERT(!_parent);
+    ASSERT(oldRange.location == newRange.location);
+    ASSERT(!_parent);
         
     // First of all remove all the child scopes in the old range.
     [self removeChildScopesInRange:oldRange];
@@ -271,7 +271,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (void)removeChildScopesInRange:(NSRange)range
 {
-    ECASSERT(!_parent);
+    ASSERT(!_parent);
         
     NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
     TMScope *scope = self;
@@ -283,7 +283,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
             BOOL recurse = NO;
             TMScope *childScope = [scope->_children objectAtIndex:childScopeIndex];
-            ECASSERT(childScope->_type == TMScopeTypeMatch || childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent || childScope->_type == TMScopeTypeBegin || childScope->_type == TMScopeTypeEnd);
+            ASSERT(childScope->_type == TMScopeTypeMatch || childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent || childScope->_type == TMScopeTypeBegin || childScope->_type == TMScopeTypeEnd);
             NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
             NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
             if (childScopeRange.location < range.location && childScopeEnd <= range.location)
@@ -312,8 +312,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             else if (childScopeRange.location >= range.location)
             {
                 // If the span child scope isn't contained in the range, but it's start is, clip off it's head, then recurse
-                ECASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
-                ECASSERT(rangeEnd > childScopeRange.location && childScopeRange.length >= rangeEnd - childScopeRange.location);
+                ASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
+                ASSERT(rangeEnd > childScopeRange.location && childScopeRange.length >= rangeEnd - childScopeRange.location);
                 if (childScope->_type & TMScopeTypeSpan)
                 {
                     if (childScope->_flags & TMScopeHasBeginScope)
@@ -333,8 +333,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             else if (childScopeEnd <= rangeEnd)
             {
                 // If the span child scope isn't contained in the range, but it's end is, clip off it's tail, then recurse
-                ECASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
-                ECASSERT(childScopeEnd >= range.location && childScopeRange.length >= childScopeEnd - range.location);
+                ASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
+                ASSERT(childScopeEnd >= range.location && childScopeRange.length >= childScopeEnd - range.location);
                 if (childScope->_type & TMScopeTypeSpan)
                 {
                     if (childScope->_flags & TMScopeHasEndScope)
@@ -353,8 +353,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             else
             {
                 // If we got here, it should mean the range is strictly contained by the span child scope, just recurse
-                ECASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
-                ECASSERT(childScopeRange.location < range.location && childScopeEnd > rangeEnd);
+                ASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
+                ASSERT(childScopeRange.location < range.location && childScopeEnd > rangeEnd);
                 if (childScope->_type & TMScopeTypeSpan)
                 {
                     if (childScope->_flags & TMScopeHasBeginScope)
@@ -389,7 +389,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             // Recurse on the child scope's children if needed
             if (recurse)
             {
-                ECASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
+                ASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
                 [childScopeIndexStack addObject:[NSNumber numberWithUnsignedInteger:childScopeIndex]];
                 childScopeIndex = 0;
                 scope = childScope;
@@ -403,13 +403,13 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         [childScopeIndexStack removeLastObject];
         ++childScopeIndex;
         scope = scope->_parent;
-        ECASSERT(scope);
+        ASSERT(scope);
     }
 }
 
 - (BOOL)attemptMergeAtOffset:(NSUInteger)offset
 {
-    ECASSERT(!_parent);
+    ASSERT(!_parent);
     if (offset >= _length)
         return NO;
     // We're looking for two scopes to merge, one ending at offset, one starting at offset
@@ -443,8 +443,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     if (!scopesMatch)
         return NO;
     
-    ECASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
-    ECASSERT(head->_location + head->_length == tail->_location);
+    ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
+    ASSERT(head->_location + head->_length == tail->_location);
     
     [head->_children addObjectsFromArray:tail->_children];
     [head->_parent->_children removeObject:tail];
@@ -542,7 +542,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         multiplier /= BASE;
     }
     // Return the result only if the whole search array has been evaluated
-    ECASSERT(result < INFINITY);
+    ASSERT(result < INFINITY);
     return currentSearch == nil ? result : 0;
 }
 
@@ -556,35 +556,35 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         return;
     
     // 0 length scopes should not exist in a consistent tree
-    ECASSERT(_length);
+    ASSERT(_length);
     
     // Scope must have a valid type
-    ECASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
+    ASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
     
     // If the scope isn't a root scope, it must have a parent scope. Additionally some types can only be children of others.
-    ECASSERT(_type == TMScopeTypeRoot || _parent);
-    ECASSERT(_type != TMScopeTypeContent || _parent->_type == TMScopeTypeSpan);
-    ECASSERT(_type != TMScopeTypeCapture || _parent->_type == TMScopeTypeMatch || _parent->_type == TMScopeTypeBegin || _parent->_type == TMScopeTypeEnd);
-    ECASSERT(_type != TMScopeTypeBegin || _parent->_type == TMScopeTypeSpan);
-    ECASSERT(_type != TMScopeTypeEnd || _parent->_type == TMScopeTypeSpan);
+    ASSERT(_type == TMScopeTypeRoot || _parent);
+    ASSERT(_type != TMScopeTypeContent || _parent->_type == TMScopeTypeSpan);
+    ASSERT(_type != TMScopeTypeCapture || _parent->_type == TMScopeTypeMatch || _parent->_type == TMScopeTypeBegin || _parent->_type == TMScopeTypeEnd);
+    ASSERT(_type != TMScopeTypeBegin || _parent->_type == TMScopeTypeSpan);
+    ASSERT(_type != TMScopeTypeEnd || _parent->_type == TMScopeTypeSpan);
     
     if (_type == TMScopeTypeSpan)
     {
-        ECASSERT(_flags & TMScopeHasBegin);
+        ASSERT(_flags & TMScopeHasBegin);
         if (_flags & TMScopeHasBeginScope)
         {
             TMScope *beginScope = [_children objectAtIndex:0];
-            ECASSERT(beginScope->_type == TMScopeTypeBegin);
+            ASSERT(beginScope->_type == TMScopeTypeBegin);
         }
         if (_flags & TMScopeHasEndScope)
         {
             TMScope *endScope = [_children lastObject];
-            ECASSERT(endScope->_type == TMScopeTypeEnd);
+            ASSERT(endScope->_type == TMScopeTypeEnd);
         }
         if (_flags & TMScopeHasContentScope)
         {
             TMScope *contentScope = [_children objectAtIndex:_flags & TMScopeHasBeginScope ? 1 : 0];
-            ECASSERT(contentScope->_type == TMScopeTypeContent);
+            ASSERT(contentScope->_type == TMScopeTypeContent);
         }
     }
     
@@ -595,12 +595,12 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     BOOL isFirstChild = YES;
     for (TMScope *childScope in _children)
     {
-        ECASSERT(childScope->_length);
-        ECASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
+        ASSERT(childScope->_length);
+        ASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
         if (!isFirstChild)
         {
-            ECASSERT(previousChildLocation < childScope->_location);
-            ECASSERT(previousChildEnd <= childScope->_location);
+            ASSERT(previousChildLocation < childScope->_location);
+            ASSERT(previousChildEnd <= childScope->_location);
         }
         else
         {

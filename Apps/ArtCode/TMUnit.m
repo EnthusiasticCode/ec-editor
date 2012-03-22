@@ -7,15 +7,16 @@
 //
 
 #import "TMUnit+Internal.h"
-#import "TMIndex+Internal.h"
+#import "TMIndex.h"
 #import "TMScope+Internal.h"
 #import "TMTheme.h"
 #import "TMBundle.h"
 #import "TMPreference.h"
 #import "TMSyntaxNode.h"
-#import "OnigRegexp.h"
-#import "CStringCachingString.h"
+#import <CocoaOniguruma/OnigRegexp.h>
+#import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
+#import "ACProjectFile.h"
 #import "CodeFile+Generation.h"
 #import <libkern/OSAtomic.h>
 
@@ -41,12 +42,19 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 @end
 
-@implementation Change
+@interface TMUnit () <CodeFilePresenter>
+
+- (void)_setHasPendingChanges;
+- (void)_generateScopes;
+- (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation;
+- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
+- (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
+- (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
+
 @end
 
-@interface TMUnit () <CodeFilePresenter>
-{
-    TMSyntaxNode *_syntax;
+@implementation TMUnit {
+    ACProjectFile *_projectFile;
     OSSpinLock _scopesLock;
     CodeFileGeneration _scopesGeneration;
     TMScope *_rootScope;
@@ -58,31 +66,20 @@ static OnigRegexp *_namedCapturesRegexp;
     NSMutableDictionary *_patternsIncludedByPattern;
     NSMutableDictionary *_extensions;
 }
-- (void)_setHasPendingChanges;
-- (void)_generateScopes;
-- (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation;
-- (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
-- (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation;
-- (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
-@end
 
-@implementation TMUnit
-
-@synthesize index = _index, codeFile = _codeFile, loading = _isLoading;
+@synthesize loading = _isLoading;
 
 #pragma mark - Internal Methods
 
-+ (void)initialize
-{
++ (void)initialize {
     if (self != [TMUnit class])
         return;
     _numberedCapturesRegexp = [OnigRegexp compile:@"\\\\([1-9])" options:OnigOptionCaptureGroup];
     _namedCapturesRegexp = [OnigRegexp compile:@"\\\\k<(.*?)>" options:OnigOptionCaptureGroup];
-    ECASSERT(_numberedCapturesRegexp && _namedCapturesRegexp);
+    ASSERT(_numberedCapturesRegexp && _namedCapturesRegexp);
 }
 
-+ (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key
-{
++ (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key {
     if (!_extensionClasses)
         _extensionClasses = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *extensionClassesForLanguage = [_extensionClasses objectForKey:languageIdentifier];
@@ -94,42 +91,30 @@ static OnigRegexp *_namedCapturesRegexp;
     [extensionClassesForLanguage setObject:extensionClass forKey:key];
 }
 
-- (id)initWithIndex:(TMIndex *)index codeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier
-{
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(index);
+- (id)initWithProjectFile:(ACProjectFile *)projectFile {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     self = [super init];
     if (!self)
         return nil;
     
-    _index = index;
-    _codeFile = codeFile;
-    [_codeFile addPresenter:self];
+    _projectFile = projectFile;
+    
+    [projectFile.codeFile addPresenter:self];
 
     _scopesLock = OS_SPINLOCK_INIT;
     
     _internalQueue = [[NSOperationQueue alloc] init];
     _internalQueue.maxConcurrentOperationCount = 1;
-    
-    __weak TMUnit *weakSelf = self;
-    [_internalQueue addOperationWithBlock:^{
-        TMUnit *strongSelf = weakSelf;
-        if (!strongSelf)
-            return;
-        if (rootScopeIdentifier)
-            strongSelf->_syntax = [TMSyntaxNode syntaxWithScopeIdentifier:rootScopeIdentifier];
-        else
-            strongSelf->_syntax = [TMSyntaxNode syntaxForCodeFile:codeFile];
-        OSSpinLockLock(&strongSelf->_scopesLock);
-        strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.scopeName syntaxNode:strongSelf->_syntax];
-        OSSpinLockUnlock(&strongSelf->_scopesLock);
-    }];
+
+    OSSpinLockLock(&_scopesLock);
+    _rootScope = [TMScope newRootScopeWithIdentifier:_projectFile.syntax.scopeName syntaxNode:_projectFile.syntax];
+    OSSpinLockUnlock(&_scopesLock);
     
     _pendingChangesLock = OS_SPINLOCK_INIT;
     Change *firstChange = [[Change alloc] init];
-    firstChange->generation = [_codeFile currentGeneration];
+    firstChange->generation = [projectFile.codeFile currentGeneration];
     firstChange->oldRange = NSMakeRange(0, 0);
-    firstChange->newRange = NSMakeRange(0, [_codeFile length]);
+    firstChange->newRange = NSMakeRange(0, [projectFile.codeFile length]);
     _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
     OSSpinLockLock(&_pendingChangesLock);
     [self _setHasPendingChanges];
@@ -139,14 +124,14 @@ static OnigRegexp *_namedCapturesRegexp;
     _patternsIncludedByPattern = [NSMutableDictionary dictionary];
     
     _extensions = [[NSMutableDictionary alloc] init];
-    [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        if (![rootScopeIdentifier isEqualToString:key])
+    [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
+        if (![_projectFile.syntaxIdentifier isEqualToString:extensionClassesSyntaxIdentifier])
             return;
-        [obj enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            id extension = [[obj alloc] initWithCodeUnit:self];
+        [extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassSyntaxIdentifier, Class extensionClass, BOOL *innerStop) {
+            id extension = [[extensionClass alloc] initWithCodeUnit:self];
             if (!extension)
                 return;
-            [_extensions setObject:extension forKey:key];
+            [_extensions setObject:extension forKey:extensionClassSyntaxIdentifier];
         }];
     }];
     
@@ -160,23 +145,13 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Public Methods
 
-- (TMIndex *)index
-{
-    return _index;
-}
-
-- (CodeFile *)codeFile
-{
-    return _codeFile;
-}
-
 - (void)rootScopeWithCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     BOOL generationsMatch = NO;
     if (OSSpinLockTry(&_scopesLock))
     {
-        generationsMatch = [_codeFile currentGeneration] == _scopesGeneration;
+        generationsMatch = [_projectFile.codeFile currentGeneration] == _scopesGeneration;
         TMScope *scopeCopy = nil;
         if (generationsMatch)
             scopeCopy = [_rootScope copy];
@@ -193,11 +168,11 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     BOOL generationsMatch = NO;
     if (OSSpinLockTry(&_scopesLock))
     {
-        generationsMatch = [_codeFile currentGeneration] == _scopesGeneration;
+        generationsMatch = [_projectFile.codeFile currentGeneration] == _scopesGeneration;
         TMScope *scopeCopy = nil;
         if (generationsMatch)
             scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
@@ -226,7 +201,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     Change *change = [[Change alloc] init];
     change->generation = [codeFile currentGeneration];
     change->oldRange = range;
@@ -241,8 +216,8 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_setHasPendingChanges
 {
-    ECASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    ECASSERT(!OSSpinLockTry(&_pendingChangesLock));
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (_hasPendingChanges)
         return;
     _hasPendingChanges = YES;
@@ -260,11 +235,11 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_generateScopes
 {
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT(!OSSpinLockTry(&_scopesLock));
+    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
 
     // This is going to be the reference generation, if it changes we break out immediately because we know we're about to be called again
-    CodeFileGeneration startingGeneration;
+    CodeFileGeneration startingGeneration = 0;
     
     // First of all, we apply all the pending changes to the scope tree, the unparsed ranges and the blank ranges
     OSSpinLockLock(&_pendingChangesLock);
@@ -279,7 +254,7 @@ static OnigRegexp *_namedCapturesRegexp;
         startingGeneration = currentChange->generation;
         NSRange oldRange = currentChange->oldRange;
         NSRange newRange = currentChange->newRange;
-        ECASSERT(oldRange.location == newRange.location);
+        ASSERT(oldRange.location == newRange.location);
         // Adjust the scope tree to account for the change
         [_rootScope shiftByReplacingRange:oldRange withRange:newRange];
         // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
@@ -293,7 +268,7 @@ static OnigRegexp *_namedCapturesRegexp;
     
     // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
     NSUInteger fileLength;
-    if (![_codeFile length:&fileLength expectedGeneration:startingGeneration])
+    if (![_projectFile.codeFile length:&fileLength expectedGeneration:startingGeneration])
     {
         OSSpinLockUnlock(&_pendingChangesLock);
         return;
@@ -311,7 +286,7 @@ static OnigRegexp *_namedCapturesRegexp;
     {
         // Get the first line range
         NSRange lineRange = NSMakeRange(nextRange.location, 0);
-        if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+        if (![_projectFile.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
             return;
         // Zero length line means end of file
         if (!lineRange.length)
@@ -336,7 +311,7 @@ static OnigRegexp *_namedCapturesRegexp;
             
             // Setup the line
             NSString *line;
-            if (![_codeFile string:&line inRange:lineRange expectedGeneration:startingGeneration])
+            if (![_projectFile.codeFile string:&line inRange:lineRange expectedGeneration:startingGeneration])
                 return;
             
             // Parse the line
@@ -359,7 +334,7 @@ static OnigRegexp *_namedCapturesRegexp;
             OSSpinLockUnlock(&_pendingChangesLock);
             // proceed to next line
             lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-            if (![_codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+            if (![_projectFile.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
                 return;
         }
         // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
@@ -387,7 +362,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack generation:(CodeFileGeneration)generation
 {
-    line = [CStringCachingString stringWithString:line];
+    line = [line stringByCachingCString];
     NSUInteger position = 0;
     NSUInteger previousTokenStart = lineRange.location;
     NSUInteger lineEnd = NSMaxRange(lineRange);
@@ -398,7 +373,7 @@ static OnigRegexp *_namedCapturesRegexp;
         if (scope.type == TMScopeTypeSpan && ! scope.flags & TMScopeHasContentScope && scope.syntaxNode.contentName)
         {
             TMScope *contentScope = [scope newChildScopeWithIdentifier:scope.syntaxNode.contentName syntaxNode:scope.syntaxNode location:lineRange.location type:TMScopeTypeContent];
-            ECASSERT(scope.endRegexp);
+            ASSERT(scope.endRegexp);
             contentScope.endRegexp = scope.endRegexp;
             scope.flags |= TMScopeHasContentScope;
             [scopeStack addObject:contentScope];
@@ -419,7 +394,7 @@ static OnigRegexp *_namedCapturesRegexp;
             OnigRegexp *patternRegexp = pattern.match;
             if (!patternRegexp)
                 patternRegexp = pattern.begin;
-            ECASSERT(patternRegexp);
+            ASSERT(patternRegexp);
             OnigResult *result = [patternRegexp search:line start:position];
             if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location))
                 continue;
@@ -430,7 +405,7 @@ static OnigRegexp *_namedCapturesRegexp;
         // Find the end match
         OnigResult *endResult = [scope.endRegexp search:line start:position];
         
-        ECASSERT(!firstSyntaxNode || firstResult);
+        ASSERT(!firstSyntaxNode || firstResult);
      
         // Handle the matches
         if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location ))
@@ -463,7 +438,7 @@ static OnigRegexp *_namedCapturesRegexp;
             scope.flags |= TMScopeHasEnd;
             if (!scope.length)
                 [scope removeFromParent];
-            ECASSERT([scopeStack count]);
+            ASSERT([scopeStack count]);
             [scopeStack removeLastObject];
             // We don't need to make sure position advances since we changed the stack
             // This could bite us if there's a begin and end regexp that match in the same position
@@ -520,7 +495,7 @@ static OnigRegexp *_namedCapturesRegexp;
                     return nil;
             }];
             spanScope.endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup];
-            ECASSERT(spanScope.endRegexp);
+            ASSERT(spanScope.endRegexp);
             if (![self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:spanScope generation:generation])
                 return NO;
             previousTokenStart = NSMaxRange(resultRange);
@@ -560,16 +535,16 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
-    ECASSERT(!OSSpinLockTry(&_scopesLock));
-    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
-    ECASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
-    ECASSERT(scope && result && [result bodyRange].length);
+    ASSERT(!OSSpinLockTry(&_scopesLock));
+    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
+    ASSERT(scope && result && [result bodyRange].length);
     if (!dictionary || !result)
         return YES;
     TMScope *capturesScope = scope;
     if (type != TMScopeTypeMatch)
     {
-        capturesScope = [scope newChildScopeWithIdentifier:[[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
+        capturesScope = [scope newChildScopeWithIdentifier:[(NSDictionary *)[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
         capturesScope.length = [result bodyRange].length;
         if (![self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope generation:generation])
             return NO;
@@ -587,7 +562,7 @@ static OnigRegexp *_namedCapturesRegexp;
             continue;
         while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length)
         {
-            ECASSERT([capturesScopesStack count]);
+            ASSERT([capturesScopesStack count]);
             [capturesScopesStack removeLastObject];
             capturesScope = [capturesScopesStack lastObject];
         }
@@ -603,15 +578,15 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
-    NSDictionary *attributes = [_codeFile.theme attributesForScope:scope];
+    NSDictionary *attributes = [_projectFile.codeFile.theme attributesForScope:scope];
     if (![attributes count])
         return YES;
-    return [_codeFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
+    return [_projectFile.codeFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
     NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
     if (includedPatterns)
         return includedPatterns;
@@ -634,8 +609,8 @@ static OnigRegexp *_namedCapturesRegexp;
             [includedPatterns removeObjectAtIndex:idx + offset];
             if ([dereferencedPatterns containsObject:containerPattern])
                 return;
-            ECASSERT(containerPattern.include || containerPattern.patterns);
-            ECASSERT(!containerPattern.include || !containerPattern.patterns);
+            ASSERT(containerPattern.include || containerPattern.patterns);
+            ASSERT(!containerPattern.include || !containerPattern.patterns);
             if (containerPattern.include)
             {
                 unichar firstCharacter = [containerPattern.include characterAtIndex:0];
@@ -646,10 +621,10 @@ static OnigRegexp *_namedCapturesRegexp;
                 }
                 else
                 {
-                    ECASSERT(firstCharacter != '$' || [containerPattern.include isEqualToString:@"$base"] || [containerPattern.include isEqualToString:@"$self"]);
+                    ASSERT(firstCharacter != '$' || [containerPattern.include isEqualToString:@"$base"] || [containerPattern.include isEqualToString:@"$self"]);
                     TMSyntaxNode *includedSyntax = nil;
                     if ([containerPattern.include isEqualToString:@"$base"])
-                        includedSyntax = _syntax;
+                        includedSyntax = _projectFile.syntax;
                     else if ([containerPattern.include isEqualToString:@"$self"])
                         includedSyntax = [containerPattern rootSyntax];
                     else
@@ -660,7 +635,7 @@ static OnigRegexp *_namedCapturesRegexp;
             else
             {
                 NSUInteger patternsCount = [containerPattern.patterns count];
-                ECASSERT(patternsCount);
+                ASSERT(patternsCount);
                 [includedPatterns insertObjects:containerPattern.patterns atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(idx + offset, patternsCount)]];
                 offset += patternsCount - 1;
             }
@@ -671,6 +646,10 @@ static OnigRegexp *_namedCapturesRegexp;
     [_patternsIncludedByPattern setObject:includedPatterns forKey:pattern];
     return includedPatterns;
 }
+
+@end
+
+@implementation Change
 
 @end
 

@@ -10,21 +10,22 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "NSTimer+BlockTimer.h"
+#import "NSArray+ScoreForAbbreviation.h"
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
 
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
 
-#import "SmartFilteredDirectoryPresenter.h"
 
 static void *_directoryObservingContext;
 
 @interface QuickFileBrowserController ()
-
-@property (nonatomic, strong) SmartFilteredDirectoryPresenter *directoryPresenter;
 
 - (void)_showBrowserInTabAction:(id)sender;
 - (void)_showProjectsInTabAction:(id)sender;
@@ -33,48 +34,42 @@ static void *_directoryObservingContext;
 
 
 @implementation QuickFileBrowserController {
-    NSString *_projectURLAbsoluteString;
+    NSArray *_filteredItems;
+    NSArray *_filteredItemsHitMasks;
 }
 
 #pragma mark - Properties
 
-@synthesize directoryPresenter = _directoryPresenter;
-
-- (DirectoryPresenter *)directoryPresenter
-{
-    if (!_directoryPresenter)
-    {
-        NSURL *projectURL = self.artCodeTab.currentProject.URL;
-        _directoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:projectURL options:NSDirectoryEnumerationSkipsHiddenFiles];
-        [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-        _projectURLAbsoluteString = [projectURL absoluteString];
-    }
-    return _directoryPresenter;
-}
-
-- (void)setDirectoryPresenter:(SmartFilteredDirectoryPresenter *)directoryPresenter
-{
-    if (directoryPresenter == _directoryPresenter)
-        return;
-    [_directoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
-    _directoryPresenter = directoryPresenter;
-    [_directoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-}
-
 - (NSArray *)filteredItems
 {
-    return self.directoryPresenter.fileURLs;
+    if (!_filteredItems)
+    {
+        if ([self.searchBar.text length])
+        {
+            NSArray *hitMasks = nil;
+            _filteredItems = [self.artCodeTab.currentProject.files sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
+                return element.name;
+            }];
+            _filteredItemsHitMasks = hitMasks;
+            if ([_filteredItems count] == 0)
+                self.infoLabel.text = @"Nothing found";
+            else
+                self.infoLabel.text = @"";
+        }
+        else
+        {
+            _filteredItems = nil;
+            _filteredItemsHitMasks = nil;
+            self.infoLabel.text = @"Type a file name to open.";
+        }
+    }
+    return _filteredItems;
 }
 
 - (void)invalidateFilteredItems
 {
-    self.directoryPresenter.filterString = self.searchBar.text;
-    if ([self.searchBar.text length] == 0)
-        self.infoLabel.text = @"Type a file name to open.";
-    else if ([self.filteredItems count] == 0)
-        self.infoLabel.text = @"Nothing found";
-    else
-        self.infoLabel.text = @"";
+    _filteredItems = nil;
+    _filteredItemsHitMasks = nil;
 }
 
 #pragma mark - Controller lifecycle
@@ -98,30 +93,6 @@ static void *_directoryObservingContext;
     return [self init];
 }
 
-- (void)dealloc
-{
-    self.directoryPresenter = nil; // this is so we stop observing
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    self.directoryPresenter = nil;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == &_directoryObservingContext)
-    {
-        // Do not try to be smart here and update the display of the table view, UITableView is too slow when updates affect a large number of rows
-        [self.tableView reloadData];
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -129,13 +100,6 @@ static void *_directoryObservingContext;
     [super viewDidLoad];
     self.searchBar.placeholder = @"Search for file";
     self.infoLabel.text = @"Type a file name to open.";
-}
-
-- (void)viewDidUnload
-{
-    self.directoryPresenter = nil;
-    
-    [super viewDidUnload];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -150,17 +114,15 @@ static void *_directoryObservingContext;
 {
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
     
-    NSURL *fileURL = [self.directoryPresenter.fileURLs objectAtIndex:indexPath.row];
-    BOOL isDirecotry = NO;
-    [[NSFileManager defaultManager] fileExistsAtPath:[fileURL path] isDirectory:&isDirecotry];
-    if (isDirecotry)
+    ACProjectFileSystemItem *fileItem = [self.filteredItems objectAtIndex:indexPath.row];
+    if (fileItem.type == ACPFolder)
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     else
-        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileURL pathExtension]];
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
     
-    cell.textLabel.text = [fileURL lastPathComponent];
-    cell.textLabelHighlightedCharacters = [self.directoryPresenter hitMaskForFileURL:fileURL];
-    cell.detailTextLabel.text = [fileURL prettyPathRelativeToProjectDirectory];
+    cell.textLabel.text = fileItem.name;
+    cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
+    cell.detailTextLabel.text = [[fileItem pathInProject] prettyPath];
     
     return cell;
 }
@@ -171,7 +133,7 @@ static void *_directoryObservingContext;
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[self.directoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
 }
 
 #pragma mark - Private methods
@@ -179,13 +141,13 @@ static void *_directoryObservingContext;
 - (void)_showBrowserInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[self.artCodeTab.currentProject URL]];
+    [self.artCodeTab pushURL:[self.artCodeTab.currentProject artCodeURL]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
     [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[ArtCodeURL projectsDirectory]];
+    [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath]];
 }
 
 @end

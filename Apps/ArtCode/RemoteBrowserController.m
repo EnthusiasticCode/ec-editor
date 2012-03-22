@@ -12,10 +12,15 @@
 #import "NSArray+ScoreForAbbreviation.h"
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "Keychain.h"
-#import "DirectoryBrowserController.h"
+#import "ProjectFolderBrowserController.h"
 #import "RemoteTransferController.h"
+
+#import "ArtCodeURL.h"
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectRemote.h"
 
 #import <Connection/CKConnectionRegistry.h>
 
@@ -28,7 +33,6 @@
 - (void)_changeToDirectory:(NSString *)directory;
 - (void)_closeConnection;
 
-- (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
 
 - (void)_modalNavigationControllerDownloadAction:(id)sender;
@@ -55,13 +59,13 @@
 @synthesize loginPassword = _loginPassword;
 @synthesize loginAlwaysAskPassword = _loginAlwaysAskPassword;
 
-- (id)initWithConnection:(id<CKConnection>)con url:(NSURL *)conUrl
+- (id)initWithConnection:(id<CKConnection>)con remoteURL:(NSURL *)conUrl
 {
     self = [super initWithTitle:nil searchBarStaticOnTop:NO];
     if (!self)
         return nil;
     _connection = con;
-    _URL = conUrl;
+    _remoteURL = conUrl;
     return self;
 }
 
@@ -77,14 +81,14 @@
     return _selectedItems;
 }
 
-@synthesize URL = _URL;
+@synthesize remoteURL = _remoteURL;
 
-- (void)setURL:(NSURL *)value
+- (void)setRemoteURL:(NSURL *)value
 {
-    if (value == _URL)
+    if (value == _remoteURL)
         return;
-    [self willChangeValueForKey:@"URL"];
-    if (_connection && [value.host isEqualToString:_URL.host])
+
+    if (_connection && [value.host isEqualToString:_remoteURL.host])
     {
         // If already connected to the host, just change directory
         [self _changeToDirectory:value.path];
@@ -98,8 +102,7 @@
     {
         [self _closeConnection];
     }
-    _URL = value;
-    [self didChangeValueForKey:@"URL"];
+    _remoteURL = value;
 }
 
 - (NSArray *)filteredItems
@@ -127,21 +130,36 @@
     _filteredItemsHitMasks = nil;
 }
 
+#pragma mark - ArtCodeTab Category
+
+- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
+{
+    [super setArtCodeTab:artCodeTab];
+    
+    ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
+    ASSERT(![((ACProjectRemote *)self.artCodeTab.currentItem).URL isArtCodeURL]);
+    self.remoteURL = [((ACProjectRemote *)self.artCodeTab.currentItem).URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
 {
     [super loadView];
     
+    // Load the bottom toolbar
+    if ([self isMemberOfClass:[RemoteBrowserController class]])
+        [[NSBundle mainBundle] loadNibNamed:@"RemoteBrowserBottomToolBar" owner:self options:nil];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
     self.searchBar.placeholder = @"Filter files in this remote folder";
     
     self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(refreshAction:)]];
     
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
-    
-    // Load the bottom toolbar
-    if ([self isMemberOfClass:[RemoteBrowserController class]])
-        [[NSBundle mainBundle] loadNibNamed:@"RemoteBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidUnload
@@ -157,7 +175,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    self.URL = nil;
+    self.remoteURL = nil;
     _directoryItems = nil;
     _loginCredential = nil;
     [super viewDidDisappear:animated];
@@ -205,7 +223,7 @@
         NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
         if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
         {
-            [self.artCodeTab pushURL:[self.URL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+            [self.artCodeTab pushURL:[self.artCodeTab.currentURL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
         }
         else
         {
@@ -243,16 +261,16 @@
     
     // Show login form to let the user log back in
     self.tableView.tableHeaderView = [[[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil] objectAtIndex:0];
-    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", self.URL.host];
+    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", self.remoteURL.host];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
     if (_keychainUsed)
     {
-        self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.URL.user];
+        self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.remoteURL.user];
         self.loginAlwaysAskPassword.on = NO;
     }
-    if (self.URL.user)
+    if (self.remoteURL.user)
     {
-        self.loginUser.text = self.URL.user;
+        self.loginUser.text = self.remoteURL.user;
         [self.loginPassword becomeFirstResponder];
     }
     else
@@ -276,12 +294,12 @@
     self.loading = YES;
     
     // Check for keychain password
-    if (!_loginCredential && !_keychainUsed && self.URL.user)
+    if (!_loginCredential && !_keychainUsed && self.remoteURL.user)
     {
-        NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.URL.user];
+        NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.remoteURL.user];
         if (password)
         {
-            _loginCredential = [NSURLCredential credentialWithUser:self.URL.user password:password persistence:NSURLCredentialPersistenceForSession];
+            _loginCredential = [NSURLCredential credentialWithUser:self.remoteURL.user password:password persistence:NSURLCredentialPersistenceForSession];
             _keychainUsed = YES;
         }
     }
@@ -297,7 +315,7 @@
         [self setLoginPassword:nil];
         [self setLoginAlwaysAskPassword:nil];
         // Set directory
-        [self _changeToDirectory:self.URL.path];
+        [self _changeToDirectory:self.remoteURL.path];
         return;
     }
     
@@ -391,11 +409,11 @@
     self.loading = YES;
     if (!self.loginAlwaysAskPassword.isOn)
     {
-        [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.URL.scheme host:self.URL.host port:[self.URL.port integerValue]] account:self.loginUser.text];
+        [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.loginUser.text];
     }
     // Create a temporary login credential and try to connect again
     _loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
-    [self _connectToURL:self.URL];
+    [self _connectToURL:self.remoteURL];
 }
 
 #pragma mark - Action Sheed Delegate
@@ -410,7 +428,7 @@
         RemoteTransferController *transferController = [RemoteTransferController new];
         transferController.navigationItem.rightBarButtonItem = nil;
         [self modalNavigationControllerPresentViewController:transferController];
-        [transferController deleteItems:self._selectedItems fromConnection:(id<CKConnection>)_connection url:self.URL completionHandler:^(id<CKConnection> connection, NSError *error) {
+        [transferController deleteConnectionItems:self._selectedItems fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
             self.loading = YES;
             [self setEditing:NO animated:YES];
             [_connection directoryContents];
@@ -425,7 +443,7 @@
 
 - (void)_connectToURL:(NSURL *)url
 {
-    ECASSERT(!_connection && "This should only be called once.");
+    ASSERT(!_connection && "This should only be called once.");
     self.loading = YES;
     _keychainUsed = NO;
     [self _closeConnection];
@@ -460,9 +478,9 @@
 
 - (IBAction)syncAction:(id)sender
 {
-    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
-    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 
 }
@@ -470,9 +488,9 @@
 - (void)_toolEditExportAction:(id)sender
 {
     // Show directory browser presenter to select where to download
-    DirectoryBrowserController *directoryBrowser = [DirectoryBrowserController new];
+    ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
     directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-    directoryBrowser.URL = self.artCodeTab.currentProject.URL;
+    directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
     [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 
@@ -509,8 +527,8 @@
 - (void)_modalNavigationControllerDownloadAction:(id)sender
 {
     // Retrieve URL to move to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *moveURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
     
     // Show conflit resolution controller
     RemoteTransferController *transferController = [RemoteTransferController new];
@@ -519,8 +537,8 @@
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
     
-    // Resolve conflicts and start downloading
-    [transferController downloadItems:([self._selectedItems count] ? self._selectedItems : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection url:self.URL toLocalURL:moveURL completion:^(id<CKConnection> connection, NSError *error) {
+    // Start download modal
+    [transferController downloadConnectionItems:([self._selectedItems count] ? [self._selectedItems copy] : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path toProjectFolder:moveFolder completion:^(id<CKConnection> connection, NSError *error) {
         [self setEditing:NO animated:YES];
         if (self.tableView.indexPathForSelectedRow)
             [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
@@ -531,8 +549,8 @@
 - (void)_modalNavigationControllerSyncAction:(id)sender
 {
     // Retrieve URL to sync to
-    DirectoryBrowserController *directoryBrowser = (DirectoryBrowserController *)_modalNavigationController.topViewController;
-    NSURL *localURL = directoryBrowser.selectedURL;
+    ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+    ACProjectFolder *localFolder = directoryBrowser.selectedFolder;
     
     // Show sync controller
     RemoteTransferController *transferController = [RemoteTransferController new];
@@ -540,9 +558,9 @@
     [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     transferController.navigationItem.leftBarButtonItem = cancelItem;
     [_modalNavigationController pushViewController:transferController animated:YES];
-    
+
     // Start sync
-    [transferController syncLocalDirectoryURL:localURL withConnection:(id<CKConnection>)_connection remoteURL:self.URL options:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:RemoteSyncDirectionRemoteToLocal], RemoteSyncOptionDirectionKey, nil] completion:^(id<CKConnection> connection, NSError *error) {
+    [transferController synchronizeLocalProjectFolder:localFolder withConnection:(id<CKConnection>)_connection path:self.remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
         [self modalNavigationControllerDismissAction:sender];
     }];
 }

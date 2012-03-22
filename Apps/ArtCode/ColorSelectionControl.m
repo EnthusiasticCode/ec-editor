@@ -54,7 +54,7 @@
     NSUInteger c = (location.x * columns / boundsSize.width);
     NSUInteger colorIndex = columns * r + c;
     
-    ECASSERT(colorIndex < [colors count]);
+    ASSERT(colorIndex < [colors count]);
     
     selectedColor = [colors objectAtIndex:colorIndex];
     

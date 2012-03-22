@@ -36,7 +36,7 @@
         bString = [string substringWithRange:NSMakeRange(3, 1)];
     }
     
-    ECASSERT(rString != nil);
+    ASSERT(rString != nil);
     
     unsigned int r, g, b, a = 255;
     [[NSScanner scannerWithString:rString] scanHexInt:&r];

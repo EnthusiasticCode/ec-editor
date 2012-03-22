@@ -38,6 +38,7 @@ static const void *editItemContext;
         [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Normal"] forState:UIControlStateNormal];
         [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Disabled"] forState:UIControlStateDisabled];
         backButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+        backButton.accessibilityLabel = L(@"Back");
     }
     return backButton;
 }
@@ -50,6 +51,7 @@ static const void *editItemContext;
         [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Normal"] forState:UIControlStateNormal];
         [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Disabled"] forState:UIControlStateDisabled];
         forwardButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+        forwardButton.accessibilityLabel = L(@"Forward");
     }
     return forwardButton;
 }
@@ -107,7 +109,7 @@ static const void *editItemContext;
         [UIView animateWithDuration:0.10 animations:^{
             // Layout title control
             [self layoutSubviews];
-        } completion:^(BOOL finished) {
+        } completion:^(BOOL outerAnimationfinished) {
             [UIView animateWithDuration:0.10 animations:^{
                 // Fade-out old items
                 for (UIBarButtonItem *item in oldItems) {
@@ -117,7 +119,7 @@ static const void *editItemContext;
                 for (UIBarButtonItem *item in toolItems) {
                     item.customView.alpha = 1;
                 }
-            } completion:^(BOOL finished) {
+            } completion:^(BOOL innerAnimationFinished) {
                 for (UIBarButtonItem *item in oldItems) {
                     [item.customView removeFromSuperview];
                 }
@@ -229,6 +231,9 @@ static void init(TopBarToolbar *self)
     [button setImage:item.image forState:UIControlStateNormal];
     if (item.target && item.action)
         [button addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
+    button.isAccessibilityElement = YES;
+    button.accessibilityLabel = item.accessibilityLabel;
+    
     item.customView = button;
 }
 

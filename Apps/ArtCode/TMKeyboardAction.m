@@ -63,7 +63,7 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
 
 - (void)executeActionOnTarget:(id<TMKeyboardActionTarget>)target
 {
-    ECASSERT(target);
+    ASSERT(target);
     
     for (NSDictionary *command in _commands)
     {
@@ -80,7 +80,7 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
     if (!systemKeyboardActions)
         systemKeyboardActions = [NSMutableDictionary new];
     NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL];
-    ECASSERT(plist != nil);
+    ASSERT(plist != nil);
     // Load actions
     for (NSDictionary *action in [plist objectForKey:@"keyboardActions"])
     {

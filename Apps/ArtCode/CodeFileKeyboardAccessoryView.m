@@ -218,7 +218,7 @@ static const void *itemContext;
 
 - (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _itemWidth[position] = width;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -226,13 +226,13 @@ static const void *itemContext;
 
 - (CGFloat)itemDefaultWidthForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _itemWidth[position];
 }
 
 - (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _contentIntets[position] = insets;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -240,13 +240,13 @@ static const void *itemContext;
 
 - (UIEdgeInsets)contentInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _contentIntets[position];
 }
 
 - (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _itemInsets[position] = insets;
     if ([self currentAccessoryPosition] == position)
         [self setNeedsLayout];
@@ -254,7 +254,7 @@ static const void *itemContext;
 
 - (UIEdgeInsets)itemInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _itemInsets[position];
 }
 
@@ -264,7 +264,7 @@ static const void *itemContext;
 
 - (void)presentPopoverForItemAtIndex:(NSUInteger)index permittedArrowDirection:(UIPopoverArrowDirection)direction animated:(BOOL)animated
 {
-    ECASSERT(index < [self.items count]);
+    ASSERT(index < [self.items count]);
     
     UIView *itemView = [[self.items objectAtIndex:index] customView];
     if (!itemView)
@@ -280,7 +280,8 @@ static const void *itemContext;
     // Set popover center
     UIEdgeInsets positioningInsets = self.itemPopoverView.positioningInsets;
     CGPoint center = itemView.center;
-    center.x = MAX(popoverSize_2.width + positioningInsets.left, MIN(self.frame.size.width - popoverSize_2.width - positioningInsets.right, center.x));
+    CGFloat minCenterX = MIN(self.frame.size.width - popoverSize_2.width - positioningInsets.right, center.x);
+    center.x = MAX(popoverSize_2.width + positioningInsets.left, minCenterX);
     if (direction & UIPopoverArrowDirectionUp)
     {
         self.itemPopoverView.arrowDirection = UIPopoverArrowDirectionUp;
@@ -301,7 +302,7 @@ static const void *itemContext;
     [self insertSubview:self.itemPopoverView belowSubview:itemView];
     [UIView animateWithDuration:shouldHidePopoverFirst ? 0.25 : 0 animations:^{
         self.itemPopoverView.alpha = 0;
-    } completion:^(BOOL finished) {
+    } completion:^(BOOL outerAnimationFinished) {
         // Setup view
         self.itemPopoverView.center = center;
         self.itemPopoverView.arrowPosition = itemView.center.x - self.itemPopoverView.frame.origin.x;
@@ -311,7 +312,7 @@ static const void *itemContext;
         // Present
         [UIView animateWithDuration:animated ? 0.25 : 0 animations:^{
             self.itemPopoverView.alpha = 1;
-        } completion:^(BOOL finished) {
+        } completion:^(BOOL innerAnimationFinished) {
             [self.window addGestureRecognizer:[self _itemPopoverViewDismissRecognizer]];
         }];
     }];    
@@ -343,13 +344,13 @@ static const void *itemContext;
 
 - (void)setWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     _widthForPosition[position] = width;
 }
 
 - (CGFloat)widthForAccessoryPosition:(KeyboardAccessoryPosition)position
 {
-    ECASSERT(position >= 0 && position < 3);
+    ASSERT(position >= 0 && position < 3);
     return _widthForPosition[position];
 }
 

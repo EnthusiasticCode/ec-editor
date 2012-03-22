@@ -7,13 +7,15 @@
 //
 
 #import "NewProjectImportController.h"
-#import "NewProjectNavigationController.h"
 
-#import "ArtCodeProject.h"
+#import "ACProject.h"
+
 #import "NSURL+Utilities.h"
+#import "UIViewController+Utilities.h"
+#import "NSString+PluralFormat.h"
 #import "DirectoryPresenter.h"
 #import "BezelAlert.h"
-#import "NSString+PluralFormat.h"
+
 
 static void *_directoryObservingContext;
 
@@ -30,10 +32,14 @@ static void *_directoryObservingContext;
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    self.tableView.userInteractionEnabled = YES;
+    [self stopRightBarButtonItemActivityIndicator];
+    
     _documentsDirectoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[NSURL applicationDocumentsDirectory] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
     [_documentsDirectoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
     if ([_documentsDirectoryPresenter.fileURLs count] != 0)
         [(UILabel *)self.tableView.tableFooterView setText:@"Swipe right on an item to delete it."];
+    
     [self.tableView reloadData];
 }
 
@@ -101,12 +107,36 @@ static void *_directoryObservingContext;
 
 #pragma mark - Table view delegate
 
+- (void)_createProjectFromZipAtURL:(NSURL *)zipURL attempt:(NSInteger)attemptNumber
+{
+    NSString *zipFileName = [[zipURL lastPathComponent] stringByDeletingPathExtension];
+    if (attemptNumber > 0)
+        zipFileName = [zipFileName stringByAppendingFormat:@" (%d)", attemptNumber];
+    
+    [self startRightBarButtonItemActivityIndicator];
+    self.tableView.userInteractionEnabled = NO;
+    [ACProject createProjectWithName:zipFileName importArchiveURL:zipURL completionHandler:^(ACProject *createdProject, NSError *error) {
+        if (createdProject)
+        {
+            [createdProject closeWithCompletionHandler:^(BOOL success) {
+                [self stopRightBarButtonItemActivityIndicator];
+                self.tableView.userInteractionEnabled = YES;
+                
+                [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            }];
+        }
+        else
+        {
+#warning FIX!!! this point is never reached, create for saving doesn't apparently check for existance
+            [self _createProjectFromZipAtURL:zipURL attempt:attemptNumber + 1];
+        }
+    }];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSURL *zipURL = [_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row];
-    [ArtCodeProject createProjectWithName:[[zipURL lastPathComponent] stringByDeletingPathExtension] fromArchiveURL:zipURL];
-    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    [self _createProjectFromZipAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] attempt:0];
 }
 
 @end

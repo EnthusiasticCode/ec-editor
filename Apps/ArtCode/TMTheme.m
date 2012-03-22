@@ -7,9 +7,7 @@
 //
 
 #import "TMTheme.h"
-#import <CoreText/CoreText.h>
 #import "UIColor+HexColor.h"
-#import "TextRenderer.h"
 #import "TMScope.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
@@ -90,7 +88,7 @@ static NSDictionary *_sharedAttributes = nil;
     _name = name;
     
     // Preprocess settings
-    NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plist objectForKey:_themeSettingsKey] count]];
+    NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)[plist objectForKey:_themeSettingsKey] count]];
     NSMutableDictionary *environmentAttributes = [NSMutableDictionary new];
     for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
     {
@@ -110,11 +108,11 @@ static NSDictionary *_sharedAttributes = nil;
             continue;
         }
         
-        NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[[plistSetting objectForKey:_themeSettingsKey] count]];
+        NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)[plistSetting objectForKey:_themeSettingsKey] count]];
         
         // Pre-map settings with Core Text attributes
         [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
-            ECASSERT([value isKindOfClass:[NSString class]]);
+            ASSERT([value isKindOfClass:[NSString class]]);
             
             if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
                 if ([value isEqualToString:@"italic"] && _sharedItalicFont) {
@@ -131,7 +129,8 @@ static NSDictionary *_sharedAttributes = nil;
                 [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
             }
             else if ([key isEqualToString:@"background"]) {
-                [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
+#warning TODO: adding this couples TMTheme with TextRenderer, a bit excessive
+                //[styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
             }
             else {
                 [styleSettings setObject:value forKey:key];

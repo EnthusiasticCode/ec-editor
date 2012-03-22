@@ -6,7 +6,9 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+// We need this for CGFloat
+#import <CoreText/CoreText.h>
 
 extern NSString * const TMThemeBackgroundColorEnvironmentAttributeKey;
 extern NSString * const TMThemeCaretColorEnvironmentAttributeKey;
@@ -16,6 +18,7 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 
 @class TMScope;
 
+#warning TODO: TMTheme isn't threadsafe, but it gets called from different threads, fix it
 @interface TMTheme : NSObject
 
 /// Initialize a theme with the URL of it's .tmbundle file.

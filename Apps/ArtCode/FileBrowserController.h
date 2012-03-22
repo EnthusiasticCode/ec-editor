@@ -10,14 +10,8 @@
 #import <MessageUI/MessageUI.h>
 #import "SearchableTableBrowserController.h"
 
-@class DirectoryPresenter, SmartFilteredDirectoryPresenter;
-
 
 @interface FileBrowserController : SearchableTableBrowserController <MFMailComposeViewControllerDelegate>
-
-@property (nonatomic, strong) NSURL *directory;
-@property (nonatomic, strong, readonly) DirectoryPresenter *directoryPresenter;
-@property (nonatomic, strong, readonly) SmartFilteredDirectoryPresenter *openQuicklyPresenter;
 
 #pragma mark - Synchronization UI
 

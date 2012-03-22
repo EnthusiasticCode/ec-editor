@@ -25,17 +25,17 @@
 - (NSURL *)selectedURL
 {
     if (self.tableView.indexPathForSelectedRow != nil)
-        return [self.URL URLByAppendingPathComponent:[[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
-    return self.URL;
+        return [self.remoteURL URLByAppendingPathComponent:[[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
+    return self.remoteURL;
 }
 
-- (void)setURL:(NSURL *)URL
+- (void)setRemoteURL:(NSURL *)URL
 {
     // Avoid disconnection when view did disapear.
     if (URL == nil)
         return;
     
-    [super setURL:URL];
+    [super setRemoteURL:URL];
     if ([URL.path length] == 0)
         self.navigationItem.title = URL.host;
     else
@@ -76,7 +76,7 @@
     [super viewWillAppear:animated];
     if ([self.connection delegate] != self)
     {
-        [self _changeToDirectory:self.URL.path];
+        [self _changeToDirectory:self.remoteURL.path];
     }
 }
 
@@ -94,8 +94,8 @@
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *item = [self.filteredItems objectAtIndex:indexPath.row];
-    RemoteDirectoryBrowserController *nextController = [[RemoteDirectoryBrowserController alloc] initWithConnection:self.connection url:self.URL];
-    [nextController setURL:[self.URL URLByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+    RemoteDirectoryBrowserController *nextController = [[RemoteDirectoryBrowserController alloc] initWithConnection:self.connection remoteURL:self.remoteURL];
+    [nextController setRemoteURL:[self.remoteURL URLByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
     nextController.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
     
     [self.navigationController pushViewController:nextController animated:YES];

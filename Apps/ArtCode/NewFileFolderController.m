@@ -7,10 +7,13 @@
 //
 
 #import "NewFileFolderController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
+#import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileSystemItem.h"
 #import "BezelAlert.h"
 
 
@@ -33,7 +36,7 @@
     [super viewDidAppear:animated];
     self.folderNameTextField.text = @"";
     [self.folderNameTextField becomeFirstResponder];
-    self.infoLabel.text = [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [self.artCodeTab.currentURL prettyPathRelativeToProjectDirectory]];
+    self.infoLabel.text = [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject] prettyPath]];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

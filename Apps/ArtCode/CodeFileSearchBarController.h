@@ -42,7 +42,7 @@ typedef NSUInteger CodeFileSearchHitMustOption;
 @property (nonatomic) NSRegularExpressionOptions regExpOptions;
 @property (nonatomic) CodeFileSearchHitMustOption hitMustOption;
 
-@property (readonly, copy) NSArray *searchFilterMatches;
+@property (nonatomic, readonly, copy) NSArray *searchFilterMatches;
 
 @end
 

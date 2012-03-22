@@ -24,7 +24,7 @@
 #import "SearchableTableBrowserController.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+
 #import "CodeFile.h"
 
 #import "TMScope.h"
@@ -126,6 +126,7 @@ CGRect UIKeyboardFrame;
         [self.tabController addChildViewController:singleTabController animated:YES];
     } forControlEvent:UIControlEventTouchUpInside];
     self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
+    self.tabController.contentScrollView.accessibilityIdentifier = @"tabs scrollview";
     
     ////////////////////////////////////////////////////////////////////////////
     // Setup window
@@ -205,7 +206,6 @@ CGRect UIKeyboardFrame;
 - (void)saveApplicationStateToDisk
 {
     [ArtCodeTab saveTabsToDisk];
-    [ArtCodeProject saveProjectsToDisk];
 }
 
 @end

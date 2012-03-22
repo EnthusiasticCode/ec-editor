@@ -7,111 +7,87 @@
 //
 
 #import "ArtCodeURL.h"
-#import "ArtCodeProject.h"
+
 #import "NSURL+Utilities.h"
+
+#import "ACProject.h"
+#import "ACProjectItem.h"
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
+static NSString * const artCodeURLScheme = @"artcode";
 
-@interface ArtCodeURL ()
+NSString * const artCodeURLProjectListPath = @"projects";
+NSString * const artCodeURLProjectBookmarkListPath = @"/bookmarks";
+NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
-+ (NSUInteger)_standardizedProjectsDirectoryLength;
-
-@end
 
 @implementation ArtCodeURL
 
-+ (NSURL *)projectsDirectory
++ (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path
 {
-    static NSURL *_projectsDirectory = nil;
-    if (!_projectsDirectory)
-        _projectsDirectory = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:ProjectsDirectoryName isDirectory:YES];
-    return _projectsDirectory;
-}
-
-+ (NSString *)pathRelativeToProjectsDirectory:(NSURL *)fileURL
-{
-    if (![fileURL isFileURL])
+    NSString *URLString = nil;
+    if (path && ![path hasPrefix:@"/"])
+        path = [@"/" stringByAppendingString:path];
+    if (item)
+    {
+        ASSERT(project);
+        ASSERT(item.project == project);
+        URLString = [NSString stringWithFormat:@"%@://%@-%@%@", artCodeURLScheme, [project UUID], [item UUID], path ? path : @""];
+    }
+    else if (project)
+    {
+        URLString = [NSString stringWithFormat:@"%@://%@%@", artCodeURLScheme, [project UUID], path ? path : @""];
+    }
+    else if (path)
+    {
+        URLString = [NSString stringWithFormat:@"%@:/%@", artCodeURLScheme, path];
+    }
+    else 
+    {
         return nil;
-    NSString *filePath = [[fileURL URLByStandardizingPath] absoluteString];
-    if ([filePath length] <= [self _standardizedProjectsDirectoryLength])
-        return nil;
-    return [[filePath substringFromIndex:[self _standardizedProjectsDirectoryLength]] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
-}
-
-+ (NSString *)projectNameFromURL:(NSURL *)url isProjectRoot:(BOOL *)isProjectRoot
-{
-    NSString *path = [self pathRelativeToProjectsDirectory:url];
-    if (!path)
-        return nil;
-    NSArray *components = [path pathComponents];
-    if (isProjectRoot)
-        *isProjectRoot = ([components count] == 1);
-    return [components count] >= 1 ? [[components objectAtIndex:0] stringByDeletingPathExtension] : nil;
-}
-
-#pragma mark - Private methods
-
-+ (NSUInteger)_standardizedProjectsDirectoryLength
-{
-    static NSUInteger __standardizedProjectsDirectoryLength = 0;
-    if (__standardizedProjectsDirectoryLength == 0)
-        __standardizedProjectsDirectoryLength = [[[[self projectsDirectory] URLByStandardizingPath] absoluteString] length];
-    return __standardizedProjectsDirectoryLength;
+    }
+    return [NSURL URLWithString:URLString];
 }
 
 @end
 
-@implementation NSString (ArtCodeURL)
-
-- (NSString *)prettyPath
-{
-    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
-}
-
-@end
+#pragma mark -
 
 @implementation NSURL (ArtCodeURL)
 
-- (BOOL)isBookmarksVariant
+- (BOOL)isArtCodeURL
 {
-    return [[self fragmentDictionary] objectForKey:@"bookmarks"] != nil;
+    return [self.scheme isEqualToString:artCodeURLScheme];
 }
 
-- (NSURL *)URLByAddingBookmarksVariant
+- (BOOL)isArtCodeProjectsList
 {
-    NSMutableDictionary *fragments = [[self fragmentDictionary] mutableCopy];
-    if ([fragments objectForKey:@"bookmarks"] != nil)
-        return [self copy];
-    if (fragments == nil)
-        fragments = [NSMutableDictionary new];
-    [fragments setObject:@"" forKey:@"bookmarks"];
-    return [self URLByAppendingFragmentDictionary:fragments];
+    return [self.host isEqualToString:artCodeURLProjectListPath];
 }
 
-- (BOOL)isRemotesVariant
+- (BOOL)isArtCodeProjectBookmarksList
 {
-    return [[self fragmentDictionary] objectForKey:@"remotes"] != nil;
+    return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectBookmarkListPath];
 }
 
-- (NSURL *)URLByAddingRemotesVariant
+- (BOOL)isArtCodeProjectRemotesList
 {
-    NSMutableDictionary *fragments = [[self fragmentDictionary] mutableCopy];
-    if ([fragments objectForKey:@"remotes"] != nil)
-        return [self copy];
-    if (fragments == nil)
-        fragments = [NSMutableDictionary new];
-    [fragments setObject:@"" forKey:@"remotes"];
-    return [self URLByAppendingFragmentDictionary:fragments];
+    return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectRemoteListPath];
 }
 
-- (BOOL)isRemoteURL
+- (NSArray *)artCodeUUIDs
 {
-    return [self.scheme isEqualToString:@"ftp"]
-    || [self.scheme isEqualToString:@"ssh"]
-    || [self.scheme isEqualToString:@"sftp"]
-    || [self.scheme isEqualToString:@"http"]
-    || [self.scheme isEqualToString:@"https"];
+    // TODO cache?
+    static NSRegularExpression *uuidRegExp = nil;
+    if (!uuidRegExp)
+        uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?" options:NSRegularExpressionCaseInsensitive error:NULL];
+    
+    NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
+    [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+        [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
+    }];
+    return [uuids copy];
 }
 
 - (NSString *)prettyPath
@@ -119,9 +95,15 @@ static NSString * const ProjectsDirectoryName = @"LocalProjects";
     return [[self path] prettyPath];
 }
 
-- (NSString *)prettyPathRelativeToProjectDirectory
+@end
+
+#pragma mark -
+
+@implementation NSString (ArtCodeURL)
+
+- (NSString *)prettyPath
 {
-    return [[[ArtCodeURL pathRelativeToProjectsDirectory:self] stringByReplacingOccurrencesOfString:@".weakpkg" withString:@""] prettyPath];
+    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
 }
 
 @end

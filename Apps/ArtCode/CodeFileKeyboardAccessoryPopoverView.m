@@ -209,7 +209,7 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
             break;
             
         default:
-            ECASSERT(NO && "Invalid arrow direction");
+            ASSERT(NO && "Invalid arrow direction");
             break;
     }
 }
@@ -238,7 +238,7 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
 
 - (CGSize)arrowSizeForMetaPosition:(PopoverViewArrowMetaPosition)metaPosition
 {
-    ECASSERT(abs(metaPosition) <= 1);
+    ASSERT(abs(metaPosition) <= 1);
     CGSize size = _arrowSizes[metaPosition + 1];
     if (metaPosition != PopoverViewArrowMetaPositionMiddle && CGSizeEqualToSize(CGSizeZero, size))
         size = _arrowSizes[1];
@@ -250,7 +250,7 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
 
 - (void)setArrowSize:(CGSize)arrowSize forMetaPosition:(PopoverViewArrowMetaPosition)metaPosition
 {
-    ECASSERT(abs(metaPosition) <= 1);
+    ASSERT(abs(metaPosition) <= 1);
     _arrowSizes[metaPosition + 1] = arrowSize;
     
     [self _setNeedsImageAndTransformForArrowView];
@@ -297,8 +297,8 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
 
 - (UIImage *)arrowImageForDirection:(UIPopoverArrowDirection)direction metaPosition:(PopoverViewArrowMetaPosition)metaPosition
 {
-    ECASSERT(direction == UIPopoverArrowDirectionUp || direction == UIPopoverArrowDirectionDown || direction == UIPopoverArrowDirectionLeft || direction == UIPopoverArrowDirectionRight);
-    ECASSERT(abs(metaPosition) <= 1);
+    ASSERT(direction == UIPopoverArrowDirectionUp || direction == UIPopoverArrowDirectionDown || direction == UIPopoverArrowDirectionLeft || direction == UIPopoverArrowDirectionRight);
+    ASSERT(abs(metaPosition) <= 1);
     
     if (!_arrowDirectionImages)
         return nil;
@@ -325,7 +325,7 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
 
 - (void)setArrowImage:(UIImage *)image forDirection:(UIPopoverArrowDirection)direction metaPosition:(PopoverViewArrowMetaPosition)metaPosition
 {
-    ECASSERT(abs(metaPosition) <= 1);
+    ASSERT(abs(metaPosition) <= 1);
     
     if (!_arrowDirectionImages)
         _arrowDirectionImages = [NSMutableArray arrayWithObjects:[NSNull null], [NSNull null], [NSNull null], [NSNull null], nil];

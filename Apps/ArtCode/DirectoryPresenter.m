@@ -36,7 +36,7 @@
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options
 {
-    ECASSERT(directoryURL);
+    ASSERT(directoryURL);
     self = [super init];
     if (!self)
         return nil;
@@ -142,7 +142,7 @@
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
     self.directoryURL = nil;
     [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
     completionHandler(nil);
@@ -150,13 +150,13 @@
 
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
     self.directoryURL = newURL;
 }
 
 - (void)presentedItemDidChange
 {
-    ECASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
     [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
 }
 

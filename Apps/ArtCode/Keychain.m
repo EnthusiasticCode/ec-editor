@@ -74,7 +74,7 @@
 
 + (NSString *)sharedKeychainServiceIdentifierWithSheme:(NSString *)scheme host:(NSString *)host port:(NSInteger)port
 {
-    ECASSERT(scheme && host);
+    ASSERT(scheme && host);
     return port ? [NSString stringWithFormat:@"%@://%@:%d", scheme, host, port] : [NSString stringWithFormat:@"%@://%@", scheme, host];
 }
 

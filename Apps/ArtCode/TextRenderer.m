@@ -16,8 +16,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 @class TextSegment;
 @class TextSegmentFrame;
 
-#pragma mark - TextRenderer Interface (Class extension)
-
 @interface TextRenderer () {
 @private
     NSMutableArray *textSegments;
@@ -175,7 +173,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 + (TextRendererLine *)textRendererLineWithCTLine:(CTLineRef)line font:(CTFontRef)font isTruncation:(BOOL)truncation
 {
-    ECASSERT(line != NULL);
+    ASSERT(line != NULL);
     
     TextRendererLine *result = [TextRendererLine new];
     result->CTLine = CFRetain(line);
@@ -302,7 +300,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (CGRect)boundsForSubstringInRange:(NSRange)stringRange
 {
-    ECASSERT(NSMaxRange(stringRange) <= CTLineGetStringRange(CTLine).length);
+    ASSERT(NSMaxRange(stringRange) <= CTLineGetStringRange(CTLine).length);
     
     CFRange lineStringRange = CTLineGetStringRange(CTLine);
     
@@ -336,7 +334,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (NSAttributedString *)string
 {
-    ECASSERT(_discardableContentCount  > 0);
+    ASSERT(_discardableContentCount  > 0);
     
     if (!_string)
     {
@@ -346,7 +344,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         
         stringLength = [_string length];
         
-        ECASSERT(_typesetter == NULL && "With typesetter there should be no way to reach this point");
+        ASSERT(_typesetter == NULL && "With typesetter there should be no way to reach this point");
     }
     
     return _string;
@@ -354,7 +352,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (CTTypesetterRef)typesetter
 {
-    ECASSERT(_discardableContentCount > 0);
+    ASSERT(_discardableContentCount > 0);
     
     if (!_typesetter)
     {
@@ -382,7 +380,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (NSArray *)renderedLines
 {
-    ECASSERT(_discardableContentCount > 0);
+    ASSERT(_discardableContentCount > 0);
     
     if (!_renderedLines)
     {
@@ -474,7 +472,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)endContentAccess
 {
-    ECASSERT(_discardableContentCount > 0);
+    ASSERT(_discardableContentCount > 0);
     
     --_discardableContentCount;
 }
@@ -486,7 +484,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)discardContentIfPossible
 {
-    ECASSERT(_discardableContentCount >= 0);
+    ASSERT(_discardableContentCount >= 0);
     
     if (_discardableContentCount > 0 || [self isContentDiscarded])
         return;
@@ -515,7 +513,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (id)initWithTextRenderer:(TextRenderer *)renderer
 {
-    ECASSERT(renderer != nil);
+    ASSERT(renderer != nil);
     
     if (!(self = [super init]))
         return nil;
@@ -533,7 +531,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(TextRendererLine *, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
-    ECASSERT(valid);
+    ASSERT(valid);
     
     if (CGRectIsNull(rect) || CGRectIsEmpty(rect)) 
     {
@@ -567,7 +565,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
 {
-    ECASSERT(valid);
+    ASSERT(valid);
     
     NSUInteger queryRangeEnd = NSUIntegerMax;
     if (queryRange.length > 0)
@@ -600,7 +598,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)enumerateLinesInRenderedLineIndexRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
 {
-    ECASSERT(valid);
+    ASSERT(valid);
     
     NSUInteger queryRangeEnd = NSUIntegerMax;
     if (queryRange.length > 0)
@@ -763,6 +761,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     // If the segment already has it's string length, it means that this request
     // has been done to refresh it. See updateTextFromStringRange:toStringRange:
     // to understand how this stringLenght is properly adjusted.
+#warning TODO BOTH rename in textRenderer:attributedStringInPreferredRange: to internally check for consistency to avoid race conditions
     NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
     stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
     NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];
@@ -984,7 +983,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)drawTextWithinRect:(CGRect)rect inContext:(CGContextRef)context
 {
-    ECASSERT(context != NULL);
+    ASSERT(context != NULL);
 
     // Setup rendering transformations
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
@@ -1270,7 +1269,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             affectedSegmentHeight = segment.renderSegmentHeight;
             
             // Skip untouched segmentse
-            ECASSERT(segmentRange.location <= fromRangeEnd);
+            ASSERT(segmentRange.location <= fromRangeEnd);
             if (segmentRangeEnd >= fromRange.location)
             {
                 // Will remove every segment after the current if changes are crossing multiple segments

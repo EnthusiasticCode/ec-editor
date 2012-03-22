@@ -7,35 +7,27 @@
 //
 
 #import "MoveConflictController.h"
-
-#import "AppStyle.h"
-
+#import "ArtCodeURL.h"
+#import "ACProject.h"
+#import "ACProjectFileSystemItem.h"
+#import "ACProjectFolder.h"
 #import "NSURL+Utilities.h"
-
+#import "UIImage+AppStyle.h"
 
 @implementation MoveConflictController {
-@private
-    NSURL *_destinationURL;
-    void (^_processingBlock)(NSURL *sourceURL, NSURL *destinationURL);
+    NSMutableArray *_resolvedItems;
+    NSMutableArray *_conflictItems;
+    void (^_processingBlock)(ACProjectFileSystemItem *);
     void (^_completionBlock)(void);
 }
 
 @synthesize toolbar;
+@synthesize conflictTableView;
+@synthesize progressView;
 
-@synthesize conflictTableView, progressView;
-@synthesize conflictURLs;
+#pragma mark - Object
 
-- (NSMutableArray *)conflictURLs
-{
-    if (!conflictURLs)
-        conflictURLs = [NSMutableArray new];
-    return conflictURLs;
-}
-
-#pragma mark - Controller lifecycle
-
-- (id)init
-{
+- (id)init {
     self = [super initWithNibName:@"MoveConflictController" bundle:nil];
     if (!self)
         return nil;
@@ -43,99 +35,91 @@
     return self;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     return [self init];
 }
 
-#pragma mark - View lifecycle
+#pragma mark - UIViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     
     [[self.toolbar.items objectAtIndex:0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [[self.toolbar.items objectAtIndex:1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 }
 
-- (void)viewDidUnload
-{
+- (void)viewDidUnload {
     [self setConflictTableView:nil];
     [self setProgressView:nil];
     [self setToolbar:nil];
-    conflictURLs = nil;
-    _destinationURL = nil;
+    _conflictItems = nil;
+    _resolvedItems = nil;
     _processingBlock = nil;
     _completionBlock = nil;
     [super viewDidUnload];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
 }
 
 #pragma mark - Table View Data Source
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return [self.conflictURLs count];
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [_conflictItems count];
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString * const cellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     }
     
-    cell.textLabel.text = [[self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]] lastPathComponent];
-    NSString *ext = [cell.textLabel.text pathExtension];
-    if ([ext length])
-        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:ext];
-    else
+    ACProjectFileSystemItem *item = [_conflictItems objectAtIndex:indexPath.row];
+    cell.textLabel.text = [item name];
+    if ([(ACProjectFileSystemItem *)item type] == ACPFolder)
         cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    else
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[item name] pathExtension]];
+    cell.detailTextLabel.text = [[item pathInProject] prettyPath];
     
     return cell;
 }
 
-#pragma mark - Public methods
+#pragma mark - Public Methods
 
-- (void)processItemURLs:(NSArray *)itemURLs toURL:(NSURL *)destinationURL usignProcessingBlock:(void (^)(NSURL *, NSURL *))processingBlock completion:(void (^)(void))completionBlock
-{
-    self.progressView.progress = 0;
-    [self.conflictURLs removeAllObjects];
-    
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    CGFloat itemCount = [itemURLs count];
-    [itemURLs enumerateObjectsUsingBlock:^(NSURL *url, NSUInteger idx, BOOL *stop) {
-        [coordinator coordinateReadingItemAtURL:url options:0 writingItemAtURL:destinationURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            newWritingURL = [newWritingURL URLByAppendingPathComponent:[newReadingURL lastPathComponent]];
-            if ([fileManager fileExistsAtPath:[newWritingURL path]])
-            {
-                [self.conflictURLs addObject:newReadingURL];
-            }
-            else
-            {
-                processingBlock(newReadingURL, newWritingURL);
-            }
-        }];
-        self.progressView.progress = (CGFloat)idx / itemCount;
-    }];
-    
-    if ([self.conflictURLs count] == 0)
-    {
-        completionBlock();
-        return;
-    }
-    
-    _destinationURL = destinationURL;
+- (void)moveItems:(NSArray *)items toFolder:(ACProjectFolder *)toFolder usingBlock:(void (^)(ACProjectFileSystemItem *))processingBlock completion:(void (^)(void))completionBlock {
+    _conflictItems = [NSMutableArray new];
+    _resolvedItems = [NSMutableArray arrayWithArray:items];
     _processingBlock = [processingBlock copy];
     _completionBlock = [completionBlock copy];
     
+    // Processing
+    ACProjectFileSystemItem *conflictItem;
+    for (ACProjectFileSystemItem *toItem in toFolder.children) {
+        conflictItem = nil;
+        // Check if current toItem has a conflict with a fromItem
+        for (ACProjectFileSystemItem *fromItem in _resolvedItems) {
+            if ([toItem.name isEqualToString:fromItem.name]) {
+                conflictItem = fromItem;
+                break;
+            }
+        }
+        // Put in conflict list if conflict spotted
+        if (conflictItem) {
+            [_resolvedItems removeObject:conflictItem];
+            [_conflictItems addObject:conflictItem];
+        }
+    }
+    
+    // If there are no conflict items we are done
+    if ([_conflictItems count] == 0) {
+        [self doneAction:nil];
+        return;
+    }
+    
+    // Prepare to show conflict resolution UI
     self.conflictTableView.hidden = NO;
     self.toolbar.hidden = NO;
     self.progressView.hidden = YES;
@@ -144,80 +128,49 @@
     self.navigationItem.title = @"Select files to replace";
 }
 
-- (void)doneAction:(id)sender
-{
-    [self replaceAction:self];
-    if ([self.conflictURLs count] == 0)
-        return;
-    [self selectAllAction:self];
-    [self keepOriginalAction:self];
+#pragma mark - Interface Actions and Outlets
+
+- (IBAction)doneAction:(id)sender {
+    // Show progress UI
+    self.conflictTableView.hidden = YES;
+    self.toolbar.hidden = YES;
+    self.progressView.hidden = NO;
+    self.progressView.progress = 0;
+    self.navigationItem.title = @"Replacing";
+    
+    // Adding selected items to list of resolved and removing from conflict table
+    NSMutableIndexSet *selectedIndexSet = [NSMutableIndexSet new];
+    for (NSIndexPath *selectedIndexPath in [self.conflictTableView indexPathsForSelectedRows]) {
+        [selectedIndexSet addIndex:selectedIndexPath.row];
+    }
+    [_resolvedItems addObjectsFromArray:[_conflictItems objectsAtIndexes:selectedIndexSet]];
+    [_conflictItems removeObjectsAtIndexes:selectedIndexSet];
+    [self.conflictTableView deleteRowsAtIndexPaths:[self.conflictTableView indexPathsForSelectedRows] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    // Processing
+    ASSERT(_processingBlock);
+    float resolvedCount = [_resolvedItems count];
+    [_resolvedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
+        _processingBlock(item);
+        self.progressView.progress = (float)(idx + 1) / resolvedCount;
+    }];
+    
+    // Run completion block
+    _completionBlock();
 }
 
-- (IBAction)selectAllAction:(id)sender
-{
-    NSInteger count = [self.conflictURLs count];
-    for (NSInteger i = 0; i < count; ++i)
-    {
+- (IBAction)selectAllAction:(id)sender {
+    NSInteger count = [_conflictItems count];
+    for (NSInteger i = 0; i < count; ++i) {
         [self.conflictTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
     }
 }
 
-- (IBAction)selectNoneAction:(id)sender
-{
-    NSInteger count = [self.conflictURLs count];
-    for (NSInteger i = 0; i < count; ++i)
-    {
+- (IBAction)selectNoneAction:(id)sender {
+    NSInteger count = [_conflictItems count];
+    for (NSInteger i = 0; i < count; ++i) {
         [self.conflictTableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES];
     }
-}
-
-- (IBAction)keepBothAction:(id)sender
-{
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    NSFileManager *fileManager = [NSFileManager new];
-    for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
-    {
-        NSURL *sourceURL = [self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
-        NSURL *destinationURL = [_destinationURL URLByAppendingPathComponent:[sourceURL lastPathComponent]];
-        // Get non conflicting destination URL
-        NSURL *newDestinationURL = nil;
-        NSUInteger count = 0;
-        do {
-            newDestinationURL = [destinationURL URLByAddingDuplicateNumber:++count];
-        } while ([fileManager fileExistsAtPath:[newDestinationURL path]]);
-        // Call processing
-        [coordinator coordinateReadingItemAtURL:sourceURL options:0 writingItemAtURL:_destinationURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            _processingBlock(sourceURL, newDestinationURL);
-        }];
-    }
-    [self keepOriginalAction:sender];
-}
-
-- (IBAction)replaceAction:(id)sender
-{
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows])
-    {
-        NSURL *sourceURL = [self.conflictURLs objectAtIndex:[indexPath indexAtPosition:1]];
-        NSURL *destinationURL = [_destinationURL URLByAppendingPathComponent:[sourceURL lastPathComponent]];
-        // Call processing
-        [coordinator coordinateReadingItemAtURL:sourceURL options:0 writingItemAtURL:_destinationURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-            _processingBlock(sourceURL, destinationURL);
-        }];
-    }
-    [self keepOriginalAction:sender];
-}
-
-- (IBAction)keepOriginalAction:(id)sender
-{
-    NSArray *selectedRows = [self.conflictTableView indexPathsForSelectedRows];
-    for (NSIndexPath *indexPath in [selectedRows reverseObjectEnumerator])
-    {
-        [self.conflictURLs removeObjectAtIndex:[indexPath indexAtPosition:1]];
-    }
-    [self.conflictTableView deleteRowsAtIndexPaths:selectedRows withRowAnimation:UITableViewRowAnimationAutomatic];
-    if ([self.conflictURLs count] == 0 && _completionBlock)
-        _completionBlock();
 }
 
 @end

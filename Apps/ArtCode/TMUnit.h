@@ -7,18 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Index.h"
-@class TMIndex, TMScope, CodeFile, UIImage;
+@class TMScope, UIImage;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface TMUnit : NSObject
-
-/// The code index that generated the code unit.
-@property (nonatomic, strong, readonly) TMIndex *index;
-
-/// The main source file the unit is interpreting.
-@property (nonatomic, strong, readonly) CodeFile *codeFile;
 
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 

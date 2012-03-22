@@ -11,6 +11,7 @@
 
 #import "CodeFileController.h"
 #import "CodeFile.h"
+#import "ACProjectFile.h"
 #import "NSTimer+BlockTimer.h"
 #import "CodeView.h"
 #import "TextRange.h"
@@ -198,7 +199,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (IBAction)closeBarAction:(id)sender
 {
-    ECASSERT(self.singleTabController.toolbarViewController == self);
+    ASSERT(self.singleTabController.toolbarViewController == self);
     [self.singleTabController setToolbarViewController:nil animated:YES];
 }
 
@@ -217,7 +218,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSString *replacementString = self.replaceTextField.text;
     if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
         replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
-    replacementString = [self.targetCodeFileController.codeFile replacementStringForResult:match offset:0 template:replacementString];
+    replacementString = [self.targetCodeFileController.projectFile.codeFile replacementStringForResult:match offset:0 template:replacementString];
     
     [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
     [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -252,9 +253,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSInteger offset = 0;
     for (NSTextCheckingResult *match in matches)
     {
-        originalString = [self.targetCodeFileController.codeFile stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
-        replacementRange = [self.targetCodeFileController.codeFile replaceMatch:match withTemplate:replacementString offset:offset];
-        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.codeFile] replaceCharactersInRange:replacementRange withString:originalString];
+        originalString = [self.targetCodeFileController.projectFile.codeFile stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
+        replacementRange = [self.targetCodeFileController.projectFile.codeFile replaceMatch:match withTemplate:replacementString offset:offset];
+        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.projectFile.codeFile] replaceCharactersInRange:replacementRange withString:originalString];
         offset += replacementRange.length - [originalString length];
     }
     
@@ -363,7 +364,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
         NSArray *matches = nil;
         if (filterRegExp != nil)
-            matches = [self.targetCodeFileController.codeFile matchesOfRegexp:filterRegExp options:0];
+            matches = [self.targetCodeFileController.projectFile.codeFile matchesOfRegexp:filterRegExp options:0];
         
 //        dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;

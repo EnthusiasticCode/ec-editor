@@ -7,13 +7,19 @@
 //
 
 #import "RemotesListController.h"
+#import "SingleTabController.h"
+
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
+#import "ACProject.h"
+#import "ACProjectRemote.h"
+
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"
 #import "ShapePopoverBackgroundView.h"
 #import "NewRemoteViewController.h"
-#import "UIViewController+PresentingPopoverController.h"
+#import "UIViewController+Utilities.h"
+#import "NSString+PluralFormat.h"
+#import "BezelAlert.h"
 
 @class SingleTabController, TopBarToolbar;
 
@@ -21,10 +27,9 @@ static void *_currentProjectRemotesContext;
 
 @interface RemotesListController ()
 
-@property (nonatomic, strong) ArtCodeProject *currentProject;
+@property (nonatomic, strong) ACProject *currentProject;
 
 - (void)_toolAddAction:(id)sender;
-- (void)_toolDeleteAction:(id)sender;
 
 @end
 
@@ -60,7 +65,7 @@ static void *_currentProjectRemotesContext;
 
 @synthesize currentProject;
 
-- (void)setCurrentProject:(ArtCodeProject *)value
+- (void)setCurrentProject:(ACProject *)value
 {
     if (value == currentProject)
         return;
@@ -71,7 +76,7 @@ static void *_currentProjectRemotesContext;
 }
 
 - (NSArray *)filteredItems
-{
+{ 
     if (!_filteredRemotes)
     {
         if ([self.searchBar.text length] == 0)
@@ -82,7 +87,7 @@ static void *_currentProjectRemotesContext;
         else
         {
             NSArray *hitMasks = nil;
-            _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ProjectRemote *element) {
+            _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectRemote *element) {
                 return element.name;
             }];
             _filteredRemotesHitMasks = hitMasks;
@@ -103,10 +108,6 @@ static void *_currentProjectRemotesContext;
 - (void)loadView
 {
     [super loadView];
-
-    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
-    
-    self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolDeleteAction:)]];
     
     // Load the bottom toolbar
     [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
@@ -115,6 +116,11 @@ static void *_currentProjectRemotesContext;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
+    
+    self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+    
     self.searchBar.placeholder = @"Filter remotes";
 }
 
@@ -148,11 +154,13 @@ static void *_currentProjectRemotesContext;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
-    ProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+    
+    ACProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
     cell.textLabel.text = remote.name;
     cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
     cell.detailTextLabel.text = [[remote URL] absoluteString];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
     return cell;
 }
 
@@ -162,7 +170,31 @@ static void *_currentProjectRemotesContext;
 {
     if (!self.isEditing)
     {
-        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] URL]];
+        [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
+    }
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+}
+
+#pragma mark - Action sheed delegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (actionSheet == _toolEditDeleteActionSheet)
+    {
+        if (buttonIndex == actionSheet.destructiveButtonIndex)
+        {
+            self.loading = YES;
+            NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
+            [self setEditing:NO animated:YES];
+            for (NSIndexPath *indexPath in selectedRows)
+            {
+                [[self.filteredItems objectAtIndex:indexPath.row] remove];
+            }
+            self.loading = NO;
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+            [self invalidateFilteredItems];
+            [self.tableView reloadData];
+        }
     }
 }
 

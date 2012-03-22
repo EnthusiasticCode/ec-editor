@@ -9,26 +9,16 @@
 #import "ArchiveUtilities.h"
 #import "archive.h"
 #import "archive_entry.h"
+#import "NSURL+Utilities.h"
 
 @implementation ArchiveUtilities
 
 + (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL
 {
-    ECASSERT(archiveURL && directoryURL);
+    ASSERT(archiveURL && directoryURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    NSURL *workingDirectory = nil;
-    BOOL workingDirectoryAlreadyExists = YES;
-    do
-    {
-        CFUUIDRef uuid = CFUUIDCreate(CFAllocatorGetDefault());
-        CFStringRef uuidString = CFUUIDCreateString(CFAllocatorGetDefault(), uuid);
-        workingDirectory = [directoryURL URLByAppendingPathComponent:[@"." stringByAppendingString:(__bridge NSString *)uuidString]];
-        CFRelease(uuidString);
-        CFRelease(uuid);
-        workingDirectoryAlreadyExists = [fileManager fileExistsAtPath:[workingDirectory path]];
-    }
-    while (workingDirectoryAlreadyExists);
+    NSURL *workingDirectory = [NSURL uniqueDirectoryInDirectory:directoryURL];
     if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
         return NO;
     NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
@@ -93,10 +83,10 @@
 
 + (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL
 {
-    ECASSERT(directoryURL && archiveURL);
+    ASSERT(directoryURL && archiveURL);
     
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    ECASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
+    ASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
     NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
     [fileManager changeCurrentDirectoryPath:[directoryURL path]];
     
@@ -139,7 +129,7 @@
                 // workaround for a bug in libarchive where an entry can have a path relative to the working directory before archive_read_disk_descend was called
                 if (!file)
                     file = fopen(strstr(archive_entry_sourcepath(entry), "/") + 1, "rb");
-                ECASSERT(file);
+                ASSERT(file);
                 char buff[8192];
                 size_t length = fread(buff, sizeof(char), sizeof(buff), file);
                 while (length > 0) {
