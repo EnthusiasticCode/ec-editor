@@ -8,7 +8,7 @@ Build
 *.pbxuser
 *.perspective
 *.perspectivev3
-*.xcworkspace
+project.xcworkspace/
 xcuserdata/
 
 /ThirdParty/libssh2-for-iOS/bin

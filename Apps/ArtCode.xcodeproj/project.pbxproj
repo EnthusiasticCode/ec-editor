@@ -212,6 +212,40 @@
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7EB5760151B5B930031C977 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
+		B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
+		B7EB5796151B9B7B0031C977 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
+		B7EB5797151B9B7B0031C977 /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
+		B7EB5798151B9B7B0031C977 /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
+		B7EB5799151B9B7B0031C977 /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
+		B7EB579A151B9B7B0031C977 /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
+		B7EB579B151B9B7B0031C977 /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
+		B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
+		B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
+		B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
+		B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
+		B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
+		B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
+		B7EB57A3151B9B7B0031C977 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
+		B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
+		B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
+		B7EB57A6151B9B7B0031C977 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
+		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
+		B7EB57A8151B9B7B0031C977 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
+		B7EB57A9151B9B7B0031C977 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
+		B7EB57AA151B9B7B0031C977 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
+		B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
+		B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
+		B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101451506E336006AF1FB /* SenTestingKit.framework */; };
+		B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
+		B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
+		B7EB57B1151B9B7B0031C977 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2B0113C0CD9D00B889EE /* CoreText.framework */; };
+		B7EB57B2151B9B7B0031C977 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */; };
+		B7EB57B3151B9B7B0031C977 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
+		B7EB57B4151B9B7B0031C977 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
+		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
+		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
+		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -643,6 +677,7 @@
 		B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntaxNode.h; sourceTree = "<group>"; };
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
 		B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileSystemItem+Internal.h"; sourceTree = "<group>"; };
+		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -935,6 +970,24 @@
 				B771014C1506E340006AF1FB /* Foundation.framework in Frameworks */,
 				B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */,
 				B771014E1506E340006AF1FB /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B7EB57AB151B9B7B0031C977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
+				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
+				B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */,
+				B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */,
+				B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */,
+				B7EB57B1151B9B7B0031C977 /* CoreText.framework in Frameworks */,
+				B7EB57B2151B9B7B0031C977 /* QuartzCore.framework in Frameworks */,
+				B7EB57B3151B9B7B0031C977 /* UIKit.framework in Frameworks */,
+				B7EB57B4151B9B7B0031C977 /* Foundation.framework in Frameworks */,
+				B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */,
+				B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1597,6 +1650,7 @@
 			children = (
 				CD7D2ADF13C0CD2600B889EE /* ArtCode.app */,
 				B77101211506E20F006AF1FB /* ArtCodeTests.octest */,
+				B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1983,6 +2037,24 @@
 			productReference = B77101211506E20F006AF1FB /* ArtCodeTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
+		B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B7EB57BA151B9B7B0031C977 /* Build configuration list for PBXNativeTarget "ArtCodeTests-RunOnBuild" */;
+			buildPhases = (
+				B7EB5794151B9B7B0031C977 /* Sources */,
+				B7EB57AB151B9B7B0031C977 /* Frameworks */,
+				B7EB57B7151B9B7B0031C977 /* Resources */,
+				B7EB57B9151B9B7B0031C977 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ArtCodeTests-RunOnBuild";
+			productName = "ArtCode Tests";
+			productReference = B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		CD7D2ADE13C0CD2600B889EE /* ArtCode */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD7D2AF713C0CD2600B889EE /* Build configuration list for PBXNativeTarget "ArtCode" */;
@@ -2029,6 +2101,7 @@
 			targets = (
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 				B77101201506E20F006AF1FB /* ArtCodeTests */,
+				B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */,
 			);
 		};
 /* End PBXProject section */
@@ -2049,6 +2122,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B7EB57B7151B9B7B0031C977 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2305,6 +2386,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
+		B7EB57B9151B9B7B0031C977 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2334,6 +2428,35 @@
 				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
 				B7EB5760151B5B930031C977 /* TMUnit.m in Sources */,
 				B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B7EB5794151B9B7B0031C977 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */,
+				B7EB5796151B9B7B0031C977 /* ACProjectItem.m in Sources */,
+				B7EB5797151B9B7B0031C977 /* ACProjectFileSystemItem.m in Sources */,
+				B7EB5798151B9B7B0031C977 /* ACProjectFile.m in Sources */,
+				B7EB5799151B9B7B0031C977 /* ACProjectFolder.m in Sources */,
+				B7EB579A151B9B7B0031C977 /* ACProjectFileBookmark.m in Sources */,
+				B7EB579B151B9B7B0031C977 /* ACProjectRemote.m in Sources */,
+				B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */,
+				B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */,
+				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
+				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
+				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
+				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
+				B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */,
+				B7EB57A3151B9B7B0031C977 /* TMTheme.m in Sources */,
+				B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */,
+				B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */,
+				B7EB57A6151B9B7B0031C977 /* TMBundle.m in Sources */,
+				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
+				B7EB57A8151B9B7B0031C977 /* TMSyntaxNode.m in Sources */,
+				B7EB57A9151B9B7B0031C977 /* TMUnit.m in Sources */,
+				B7EB57AA151B9B7B0031C977 /* TMScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2513,6 +2636,46 @@
 			};
 			name = Release;
 		};
+		B7EB57BB151B9B7B0031C977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TEST=1",
+					$inherited,
+				);
+				HEADER_SEARCH_PATHS = (
+					$HEADER_SEARCH_PATHS,
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+				);
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_NAME = $TARGET_NAME;
+				TEST_AFTER_BUILD = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		B7EB57BC151B9B7B0031C977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"TEST=1",
+					$inherited,
+				);
+				HEADER_SEARCH_PATHS = (
+					$HEADER_SEARCH_PATHS,
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+				);
+				OTHER_LDFLAGS = "-all_load";
+				PRODUCT_NAME = $TARGET_NAME;
+				TEST_AFTER_BUILD = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		CD7D2AF513C0CD2600B889EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2676,6 +2839,15 @@
 			buildConfigurations = (
 				B77101331506E20F006AF1FB /* Debug */,
 				B77101341506E20F006AF1FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B7EB57BA151B9B7B0031C977 /* Build configuration list for PBXNativeTarget "ArtCodeTests-RunOnBuild" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7EB57BB151B9B7B0031C977 /* Debug */,
+				B7EB57BC151B9B7B0031C977 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
