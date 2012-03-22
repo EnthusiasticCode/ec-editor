@@ -40,6 +40,10 @@
 /// Reorder tabs by moving them to the specified index.
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated;
 
+#pragma mark Accessing the content scroll view
+
+@property (nonatomic, readonly, strong) UIScrollView *contentScrollView;
+
 @end
 
 @interface UIViewController (TabController)

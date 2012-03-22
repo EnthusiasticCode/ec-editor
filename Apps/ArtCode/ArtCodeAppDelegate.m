@@ -126,6 +126,7 @@ CGRect UIKeyboardFrame;
         [self.tabController addChildViewController:singleTabController animated:YES];
     } forControlEvent:UIControlEventTouchUpInside];
     self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
+    self.tabController.contentScrollView.accessibilityIdentifier = @"tabs scrollview";
     
     ////////////////////////////////////////////////////////////////////////////
     // Setup window

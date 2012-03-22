@@ -38,6 +38,7 @@ static const void *editItemContext;
         [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Normal"] forState:UIControlStateNormal];
         [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Disabled"] forState:UIControlStateDisabled];
         backButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+        backButton.accessibilityLabel = L(@"Back");
     }
     return backButton;
 }
@@ -50,6 +51,7 @@ static const void *editItemContext;
         [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Normal"] forState:UIControlStateNormal];
         [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Disabled"] forState:UIControlStateDisabled];
         forwardButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+        forwardButton.accessibilityLabel = L(@"Forward");
     }
     return forwardButton;
 }
