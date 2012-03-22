@@ -129,6 +129,13 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     return NSUTF8StringEncoding;
 }
 
+- (NSString *)syntaxIdentifier {
+    if (_explicitSyntaxIdentifier) {
+        return _explicitSyntaxIdentifier;
+    }
+    return _syntax.scopeName;
+}
+
 #pragma mark - Accessing the content
 
 - (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
@@ -138,13 +145,22 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         return;
     }
     NSStringEncoding encoding = self.fileEncoding;
+    NSString *syntaxIdentifier = self.syntaxIdentifier;
+    NSString *fileName = self.name;
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:NULL];
         if (fileContents) {
+            TMSyntaxNode *syntax = nil;
+            if (syntaxIdentifier) {
+                syntax = [TMSyntaxNode syntaxWithScopeIdentifier:syntaxIdentifier];
+            }
+            if (!syntax) {
+                syntax = [TMSyntaxNode syntaxForFileName:fileName];
+            }
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 _codeFile = CodeFile.alloc.init;
                 [_codeFile replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
-                _syntax = [TMSyntaxNode syntaxForFileName:self.name];
+                _syntax = syntax;
                 if (!_syntax) {
                     NSRange firstLineRange = [_codeFile lineRangeForRange:NSMakeRange(0, 0)];
                     NSString *firstLine = [_codeFile stringInRange:firstLineRange];
@@ -157,6 +173,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
                 }
                 completionHandler(nil);
             }];
+        } else {
+            completionHandler(NSError.alloc.init);
         }
     }];
 }

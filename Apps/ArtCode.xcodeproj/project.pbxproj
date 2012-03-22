@@ -210,6 +210,8 @@
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
+		B7EB5760151B5B930031C977 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
+		B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
@@ -2330,6 +2332,8 @@
 				B72CEBFC151B468700757F94 /* TMBundle.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
+				B7EB5760151B5B930031C977 /* TMUnit.m in Sources */,
+				B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
