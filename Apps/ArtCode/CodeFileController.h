@@ -12,15 +12,13 @@
 #import "CodeFileMinimapView.h"
 #import "TMKeyboardAction.h"
 
-@class ArtCodeTab, TMUnit;
+@class ArtCodeTab, ACProjectFile;
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, CodeFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
 #pragma mark - Controller's location
 
-@property (nonatomic, strong, readonly) CodeFile *codeFile;
-
-@property (nonatomic, strong, readonly) TMUnit *codeUnit;
+@property (nonatomic, strong, readonly) ACProjectFile *projectFile;
 
 #pragma mark - Code viewing and editing
 

@@ -9,6 +9,8 @@
 #import "CodeFile+Generation.h"
 #import "TMTheme.h"
 #import "WeakArray.h"
+#import "ACProjectFile.h"
+#import "ACProject.h"
 #import <libkern/OSAtomic.h>
 
 static NSString * const _changeTypeKey = @"CodeFileChangeTypeKey";
@@ -22,8 +24,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 
 @interface CodeFile ()
-
-- (id)_initWithFileURL:(NSURL *)url;
 
 // Private content methods. All the following methods have to be called within a pending changes lock.
 - (void)_setHasPendingChanges;
@@ -46,11 +46,10 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 @synthesize theme = _theme;
 
-#pragma mark - UIDocument
+#pragma mark - NSObject
 
-- (id)initWithFileURL:(NSURL *)url {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    self = [super initWithFileURL:url];
+- (id)init {
+    self = [super init];
     if (!self) {
         return nil;
     }
@@ -62,18 +61,6 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
     _pendingChangesLock = OS_SPINLOCK_INIT;
     _hasPendingChanges = NO;
     return self;
-}
-
-- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
-    OSSpinLockLock(&_contentsLock);
-    NSData *contentsData = [[_contents string] dataUsingEncoding:NSUTF8StringEncoding];
-    OSSpinLockUnlock(&_contentsLock);
-    return contentsData;
-}
-
-- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
-    [self replaceCharactersInRange:NSMakeRange(0, [self length]) withString:[[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding]];
-    return YES;
 }
 
 #pragma mark - Public methods
@@ -279,7 +266,6 @@ while (0)
     OSSpinLockUnlock(&_contentsLock);
     
     OSSpinLockUnlock(&_pendingChangesLock);
-    [self updateChangeCount:UIDocumentChangeDone];
     for (id<CodeFilePresenter>presenter in [self presenters]) {
         if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)]) {
             [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
@@ -358,7 +344,7 @@ while (0)
 }
 
 #pragma mark - Find and replace functionality
-#warning TODO these need support for transactions, pending changes and be better integrated with the multithreaded content management system, but they have to be replaced by onigregexp anyway so I'm leaving them broken for the time being
+// TODO these need support for transactions, pending changes and be better integrated with the multithreaded content management system, but they have to be replaced by onigregexp anyway so I'm leaving them broken for the time being
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
     ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);

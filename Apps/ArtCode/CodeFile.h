@@ -18,7 +18,7 @@
 
 @end
 
-@interface CodeFile : UIDocument
+@interface CodeFile : NSObject
 
 @property (nonatomic, strong) TMTheme *theme;
 

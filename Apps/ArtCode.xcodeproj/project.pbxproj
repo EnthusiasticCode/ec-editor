@@ -652,7 +652,6 @@
 		B7FB79A714D602F10080A714 /* TMBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMBundle.m; sourceTree = "<group>"; };
 		B7FB79A814D602F10080A714 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
 		B7FB79A914D602F10080A714 /* TMIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMIndex.m; sourceTree = "<group>"; };
-		B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMIndex+Internal.h"; sourceTree = "<group>"; };
 		B7FB79AD14D602F10080A714 /* TMScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMScope.h; sourceTree = "<group>"; };
 		B7FB79AE14D602F10080A714 /* TMScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMScope.m; sourceTree = "<group>"; };
 		B7FB79B114D602F10080A714 /* TMUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMUnit.h; sourceTree = "<group>"; };
@@ -987,6 +986,7 @@
 			isa = PBXGroup;
 			children = (
 				B77100EC1506DAE6006AF1FB /* ACProject */,
+				B7FB79A514D602DB0080A714 /* TextMate */,
 				B7FB79CA14D605050080A714 /* Filesystem */,
 				B75F658214D868EB008B88C5 /* ArtCodeURL.h */,
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
@@ -1281,7 +1281,6 @@
 				CD49AA0E14E33D98006032F6 /* TMPreference.m */,
 				B7FB79A814D602F10080A714 /* TMIndex.h */,
 				B7FB79A914D602F10080A714 /* TMIndex.m */,
-				B7FB79AA14D602F10080A714 /* TMIndex+Internal.h */,
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B728590914E5971D00E3DE65 /* TMScope+Internal.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
@@ -1661,13 +1660,12 @@
 			children = (
 				CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */,
 				CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */,
-				B7FB799214D5FE680080A714 /* Additions */,
 				B732D00113DB2AD100637FBE /* Model */,
 				CD7D2B1613C0D39B00B889EE /* Navigation */,
 				CD7D2B1413C0D38A00B889EE /* Browsers */,
 				CD7D2B1813C0D3B100B889EE /* Editor */,
+				B7FB799214D5FE680080A714 /* Additions */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
-				B7FB79A514D602DB0080A714 /* TextMate */,
 			);
 			name = Classes;
 			sourceTree = "<group>";

@@ -9,25 +9,24 @@
 #import "CodeFileCompletionsController.h"
 #import "CodeFileCompletionCell.h"
 
-#import "TMIndex.h"
 #import "TMUnit.h"
+#import "Index.h"
 #import "TextRange.h"
 
 #import "CodeFileController.h"
 #import "CodeFile.h"
 #import "CodeFileKeyboardAccessoryView.h"
 
+#import "ACProjectFile.h"
+
 
 @interface CodeFileCompletionsController () {
     CGFloat _minimumTypeLabelSize;
 }
 
-@property (nonatomic, strong) TMIndex *_codeIndex;
-@property (nonatomic, strong) TMUnit *_codeUnit;
 @property (nonatomic, strong) id<TMCompletionResultSet> _completionResults;
 
 @end
-
 
 @implementation CodeFileCompletionsController
 
@@ -36,15 +35,8 @@
 @synthesize targetCodeFileController, targetKeyboardAccessoryView;
 @synthesize offsetInDocumentForCompletions;
 @synthesize completionCell;
-@synthesize _codeIndex, _codeUnit, _completionResults;
+@synthesize _completionResults;
 
-- (void)setTargetCodeFileController:(CodeFileController *)value
-{
-    if (value == targetCodeFileController)
-        return;
-    targetCodeFileController = value;
-    self._codeUnit = nil;
-}
 
 - (void)setOffsetInDocumentForCompletions:(NSUInteger)value
 {
@@ -56,28 +48,12 @@
     [self.tableView reloadData];
 }
 
-- (TMIndex *)_codeIndex
-{
-    if (!_codeIndex)
-        _codeIndex = [TMIndex new];
-    return _codeIndex;
-}
-
-- (TMUnit *)_codeUnit
-{
-    ASSERT(self.targetCodeFileController != nil);
-    
-    if (!_codeUnit)
-        _codeUnit = [self._codeIndex codeUnitForCodeFile:self.targetCodeFileController.codeFile rootScopeIdentifier:nil];
-    return _codeUnit;
-}
-
 - (id<TMCompletionResultSet>)_completionResults
 {
-    ASSERT(self.targetCodeFileController.codeFile.length > self.offsetInDocumentForCompletions);
-    
+    ASSERT(self.targetCodeFileController.projectFile.codeFile.length > self.offsetInDocumentForCompletions);
+
     if (!_completionResults)
-        _completionResults = [self._codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
+        _completionResults = [self.targetCodeFileController.projectFile.codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
     return _completionResults;
 }
 
@@ -99,8 +75,6 @@
 {
     [self setCompletionCell:nil];
     [super viewDidUnload];
-    self._codeUnit = nil;
-    self._codeIndex = nil;
     self._completionResults = nil;
 }
 
@@ -217,7 +191,7 @@
     NSMutableString *completionString = [NSMutableString new];
     for (id<TMCompletionChunk> chunk in [[result completionString] completionChunks])
     {
-//        NSLog(@"%d - %@", [chunk kind], [chunk text]);
+        NSLog(@"%d - %@", [chunk kind], [chunk text]);
         switch ([chunk kind]) {
             case CXCompletionChunk_Placeholder:
                 [completionString appendFormat:@"<#%@#>", [chunk text]];

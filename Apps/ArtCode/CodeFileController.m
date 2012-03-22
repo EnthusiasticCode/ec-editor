@@ -29,7 +29,6 @@
 
 #import "CodeFile.h"
 #import "CodeFile+Generation.h"
-#import "TMIndex.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
@@ -47,8 +46,7 @@
 
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, strong, readwrite) CodeFile *codeFile;
-@property (nonatomic, strong) TMUnit *codeUnit;
+@property (nonatomic, strong) ACProjectFile *projectFile;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
@@ -126,7 +124,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize codeFile = _codeFile, codeUnit = _codeUnit;
+@synthesize projectFile= _projectFile;
 @synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
@@ -268,29 +266,27 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     return _minimapView;
 }
 
-- (void)setCodeFile:(CodeFile *)codeFile
+- (void)setProjectFile:(ACProjectFile *)projectFile
 {
-    if (codeFile == _codeFile)
+    if (projectFile == _projectFile)
         return;
     
-    [_codeFile removePresenter:self];
-    _codeUnit = nil;
-    _codeFile = codeFile;
-    _codeUnit = [[[TMIndex alloc] init] codeUnitForCodeFile:_codeFile rootScopeIdentifier:nil];
+    [_projectFile.codeFile removePresenter:self];
+    _projectFile = projectFile;
+    [_projectFile.codeFile addPresenter:self];
     [_codeView updateAllText];
-    [_codeFile addPresenter:self];
     
     // Update CodeView environment settings
-    if (_codeFile)
+    if (_projectFile)
     {
         UIColor *color = nil;
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
         self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
         self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
         self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
         self.codeView.caretColor = color ? color : [UIColor blackColor];
-        color = [_codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+        color = [_projectFile.codeFile.theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
         self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
     }
     
@@ -350,9 +346,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [super setArtCodeTab:artCodeTab];
     
     ASSERT(self.artCodeTab.currentItem.type == ACPFile);
-    [(ACProjectFile *)self.artCodeTab.currentItem openCodeFileWithCompletionHandler:^(CodeFile *codeFile) {
-        self.codeFile = codeFile;
-    }];
+    self.projectFile = (ACProjectFile *)self.artCodeTab.currentItem;
 }
 
 #pragma mark - Single tab controller informal protocol
@@ -549,7 +543,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     if (editing)
     {
         // Set keyboard for main scope
-        [self.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
+        [self.projectFile.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
             [self _keyboardAccessoryItemSetupWithScope:rootScope];
         }];
     }
@@ -645,14 +639,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-    return [self.codeFile lengthWithGeneration:NULL];
+    return [self.projectFile.codeFile lengthWithGeneration:NULL];
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 #warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
     CodeFileGeneration generation;
-    NSMutableAttributedString *attributedString = [[self.codeFile attributedStringInRange:stringRange generation:&generation] mutableCopy];
+    NSMutableAttributedString *attributedString = [[self.projectFile.codeFile attributedStringInRange:stringRange generation:&generation] mutableCopy];
     if (attributedString.length) {
         static NSRegularExpression *placeholderRegExp = nil;
         if (!placeholderRegExp)
@@ -660,7 +654,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
         // Add placeholders styles
         [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
             NSString *placeHolderName;
-            if (![self.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
+            if (![self.projectFile.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
                 *stop = YES;
                 return;
             }
@@ -672,17 +666,17 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
 {
-    return [self.codeFile.theme commonAttributes];
+    return [self.projectFile.codeFile.theme commonAttributes];
 }
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-    [self.codeFile replaceCharactersInRange:range withString:commitString];
+    [self.projectFile.codeFile replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-    return [self.codeFile attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+    return [self.projectFile.codeFile attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -882,7 +876,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
 #warning TODO NIK better check for file type
-    if (editingState || ![[self.codeFile.fileURL pathExtension] isEqualToString:@"html"])
+    if (editingState || ![[self.projectFile.name pathExtension] isEqualToString:@"html"])
     {
         return self.codeView;
     }
@@ -904,9 +898,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle
 {
-    if ([self _isWebPreview] && self.codeFile)
+    if ([self _isWebPreview] && self.projectFile)
     {
-        [self.webView loadHTMLString:[self.codeFile string] baseURL:self.codeFile.fileURL];
+        [self.webView loadHTMLString:[self.projectFile.codeFile string] baseURL:nil];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     }
     else

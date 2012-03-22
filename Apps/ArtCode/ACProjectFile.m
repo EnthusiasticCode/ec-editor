@@ -42,24 +42,11 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark -
 
-/// Proxy for CodeFile
-@interface CodeFileProxy : NSObject
-+ (id)newProxyWithTarget:(CodeFile *)target owner:(ACProjectFile *)owner;
-@end
-
-@interface ACProjectFile ()
-- (void)_codeFileProxyDidDealloc;
-@end
-
 @implementation ACProjectFile {
-    NSMutableDictionary *_bookmarks;
-    
-    __weak CodeFileProxy *_codeFileProxy;
-    CodeFile *_codeFile;
-    NSMutableArray *_pendingCodeFileCompletionHandlers;
+    NSMutableDictionary *_bookmarks;    
 }
 
-@synthesize fileEncoding = _fileEncoding, codeFileExplicitSyntaxIdentifier = _codeFileExplicitSyntaxIdentifier, fileSize = _fileSize;
+@synthesize explicitFileEncoding = _explicitFileEncoding, fileEncoding = _fileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, codeFile = _codeFile, fileSize = _fileSize;
 
 #pragma mark - ACProjectItem
 
@@ -79,8 +66,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 - (NSDictionary *)propertyListDictionary {
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
     [plist setObject:[NSNumber numberWithUnsignedInteger:self.fileEncoding] forKey:_plistFileEncodingKey];
-    if (self.codeFileExplicitSyntaxIdentifier) {
-        [plist setObject:self.codeFileExplicitSyntaxIdentifier forKey:_plistExplicitSyntaxKey];
+    if (self.explicitSyntaxIdentifier) {
+        [plist setObject:self.explicitSyntaxIdentifier forKey:_plistExplicitSyntaxKey];
     }
     NSMutableDictionary *bookmarks = [[NSMutableDictionary alloc] init];
     [_bookmarks enumerateKeysAndObjectsUsingBlock:^(id point, ACProjectFileBookmark *bookmark, BOOL *stop) {
@@ -113,8 +100,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     NSNumber *fileSize = nil;
     [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
     _fileSize = [fileSize unsignedIntegerValue];
-    _fileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey] ? [[plistDictionary objectForKey:_plistFileEncodingKey] unsignedIntegerValue] : NSUTF8StringEncoding;
-    _codeFileExplicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
+    _explicitFileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey];
+    _fileEncoding = NSUTF8StringEncoding;
+    _explicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
     _bookmarks = [[NSMutableDictionary alloc] init];
     [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
         NSScanner *scanner = [NSScanner scannerWithString:point];
@@ -127,52 +115,34 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         [_bookmarks setObject:bookmark forKey:point];
         [project didAddBookmark:bookmark];
     }];
-    _pendingCodeFileCompletionHandlers = [[NSMutableArray alloc] init];
     return self;
+}
+
+#pragma mark - File metadata
+
+- (NSStringEncoding)fileEncoding {
+    if (_explicitFileEncoding) {
+        return [_explicitFileEncoding unsignedIntegerValue];
+    }
+    return NSUTF8StringEncoding;
 }
 
 #pragma mark - Accessing the content
 
-- (void)openCodeFileWithCompletionHandler:(void (^)(CodeFile *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    
-    // If we already have a proxy, 
-    if (_codeFileProxy && completionHandler) {
-        return completionHandler((CodeFile *)_codeFileProxy);
-    }
-    
-    // Queue up the completion handler so it gets executed even this method is called multiple times
-    if (completionHandler) {
-        [_pendingCodeFileCompletionHandlers addObject:completionHandler];
-    }
-    
-    // If we have a codeFile, but we don't have a proxy, it means there's an open OR close operation in flight
-    if (_codeFile) {
-        return;
-    }
-    
-    [self.project performAsynchronousFileAccessUsingBlock:^{
-        _codeFile = [[CodeFile alloc] initWithFileURL:self.fileURL];
-        [_codeFile openWithCompletionHandler:^(BOOL success) {
-            if (success) {
-                CodeFileProxy *proxy = [CodeFileProxy newProxyWithTarget:_codeFile owner:self];
-                _codeFileProxy = proxy;
+- (CodeFile *)codeFile {
+    if (!_codeFile) {
+        _codeFile = [[CodeFile alloc] init];
+        NSStringEncoding encoding = self.fileEncoding;
+        [self.project performAsynchronousFileAccessUsingBlock:^{
+            NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:NULL];
+            if (fileContents) {
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
-                        pendingCompletionHandler((CodeFile *)proxy);
+                    [_codeFile replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
                 }];
-                [_pendingCodeFileCompletionHandlers removeAllObjects];
-            } else {
-                // Open failed, passing nil to pending completion handlers
-                _codeFile = nil;
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    for (void(^pendingCompletionHandler)(CodeFile *) in _pendingCodeFileCompletionHandlers)
-                        pendingCompletionHandler(nil);
-                }];
-                [_pendingCodeFileCompletionHandlers removeAllObjects];
             }
         }];
-    }];
+    }
+    return _codeFile;
 }
 
 #pragma mark - Managing file bookmarks
@@ -195,53 +165,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
     [self.project didRemoveBookmark:bookmark];
     [self didChangeValueForKey:@"bookmarks"];
-}
-
-#pragma mark - Private Methods
-
-- (void)_codeFileProxyDidDealloc {
-    ASSERT(!_codeFileProxy && _codeFile);
-    [_codeFile closeWithCompletionHandler:^(BOOL success) {
-        _codeFile = nil;
-        if (_pendingCodeFileCompletionHandlers.count)
-            [self openCodeFileWithCompletionHandler:nil];
-    }];
-}
-
-@end
-
-#pragma mark -
-
-@implementation CodeFileProxy {
-    CodeFile *_target;
-    ACProjectFile *_owner;
-}
-
-+ (id)newProxyWithTarget:(CodeFile *)target owner:(ACProjectFile *)owner {
-    ASSERT(target && owner);
-    CodeFileProxy *proxy = [self alloc];
-    proxy->_target = target;
-    proxy->_owner = owner;
-    return proxy;
-}
-
-- (void)dealloc {
-    [_owner _codeFileProxyDidDealloc];
-}
-
-+ (BOOL)resolveClassMethod:(SEL)sel {
-    Method method = class_getClassMethod([CodeFile class], sel);
-    if (!method) {
-        return NO;
-    }
-    Class metaClass = objc_getMetaClass("CodeFileProxy");
-    class_addMethod(metaClass, sel, method_getImplementation(method), method_getTypeEncoding(method));
-    return YES;
-}
-
-- (id)forwardingTargetForSelector:(SEL)aSelector {
-    ASSERT(_target);
-    return _target;
 }
 
 @end

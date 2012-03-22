@@ -7,26 +7,37 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark, CodeFile;
+@class ACProjectFileBookmark, CodeFile, TMSyntaxNode, TMUnit;
 
 @interface ACProjectFile : ACProjectFileSystemItem
+
+#pragma mark File metadata
 
 /// The size of the file in bytes
 @property (nonatomic, readonly) NSUInteger fileSize;
 
-/// Default NSUTF8FileEncoding
-@property (nonatomic) NSStringEncoding fileEncoding;
+/// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read the file. If nil it will be autodetected
+@property (nonatomic, strong) NSNumber *explicitFileEncoding;
+
+/// The file encoding being used to read the file contents. Defaults to UTF8
+@property (nonatomic, readonly) NSStringEncoding fileEncoding;
+
+/// file syntax to be used for syntax highlight. If nill the system should use the most appropriate file type based on the file path
+@property (nonatomic, strong) NSString *explicitSyntaxIdentifier;
+
+/// Returns the explicit file syntax identifier or one derived from the file path or content
+@property (nonatomic, strong, readonly) NSString *syntaxIdentifier;
 
 #pragma mark Accessing the content
 
-/// file syntax to be used for syntax highlight. If nill the system should use the most appropriate file type based on the file path
-@property (nonatomic, strong) NSString *codeFileExplicitSyntaxIdentifier;
+/// This returns a code file with the project file's contents.
+@property (nonatomic, strong, readonly) CodeFile *codeFile;
 
-/// Returns the explicit file syntax identifier or one derived from the file path or content
-- (NSString *)codeFileSyntaxIdentifier;
+/// The syntax being used to create the code unit
+@property (nonatomic, strong, readonly) TMSyntaxNode *syntax;
 
-/// This returns an opened code file with the project file's contents. The returned code file MUST be released before releasing the associated project file 
-- (void)openCodeFileWithCompletionHandler:(void(^)(CodeFile *codeFile))completionHandler;
+/// The code unit for the file.
+@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 #pragma mark Managing file bookmarks
 

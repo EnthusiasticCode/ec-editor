@@ -7,13 +7,13 @@
 //
 
 #import "TMUnit.h"
-@class TMIndex;
+@class TMIndex, ACProjectFile;
 
 @interface TMUnit (Internal)
 
 + (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key;
 
-- (id)initWithIndex:(TMIndex *)index codeFile:(CodeFile *)codeFile rootScopeIdentifier:(NSString *)rootScopeIdentifier;
+- (id)initWithProjectFile:(ACProjectFile *)projectFile;
 
 - (id)extensionForKey:(id)key;
 
