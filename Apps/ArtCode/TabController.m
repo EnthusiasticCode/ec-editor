@@ -37,11 +37,9 @@ static void *childViewControllerTitleContext;
 
 @interface TabController () {
     NSMutableArray *orderedChildViewControllers;
-    
+    CustomizableScrollView *_contentScrollView;
     BOOL keepCurrentPageCentered;
 }
-
-@property (nonatomic, readonly, strong) CustomizableScrollView *contentScrollView;
 
 - (void)layoutChildViews;
 - (void)loadSelectedAndAdiacentTabViews;

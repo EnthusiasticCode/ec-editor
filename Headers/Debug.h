@@ -29,6 +29,9 @@ if ((a)==NULL) {\
 
 #define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
 
+// TODO move to a more appropriate header
+#define L(key) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+
 // ObjC Debug Macros
 #if DEBUG
 

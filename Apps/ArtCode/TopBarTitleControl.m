@@ -38,6 +38,7 @@
     if (!backgroundButton)
     {
         backgroundButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        backgroundButton.isAccessibilityElement = NO;
         [self insertSubview:backgroundButton atIndex:0];
     }
     return backgroundButton;
@@ -232,6 +233,32 @@
     ASSERT(0 && "Should not be called, use titleFragments instead");
 }
 
+#pragma mark - Accessibility
+
+- (BOOL)isAccessibilityElement {
+    return YES;
+}
+
+- (UIAccessibilityTraits)accessibilityTraits {
+    return UIAccessibilityTraitButton;
+}
+
+- (NSString *)accessibilityLabel {
+    if (!_currentViews)
+        [self _setupTitle];
+    NSMutableString *label = [NSMutableString new];
+    NSString *sep = nil;
+    for (UIView *view in _currentViews) {
+        if (sep)
+            [label appendString:sep];
+        if ([view respondsToSelector:@selector(text)]) {
+            [label appendString:[(UILabel *)view text]];
+            sep = @", ";
+        }
+    }
+    return [label copy];
+}
+
 #pragma mark - Private Methods
 
 - (void)_setupTitle
@@ -270,6 +297,7 @@
             label.shadowColor = [UIColor colorWithWhite:0.1 alpha:1];
             
             label.text = (NSString *)obj;
+            label.isAccessibilityElement = NO;
             [result addObject:label];
         }
         else if ([obj isKindOfClass:[UIImage class]])
@@ -278,6 +306,7 @@
         }
         else if ([obj isKindOfClass:[UIView class]])
         {
+            [(UIView *)obj setIsAccessibilityElement:NO];
             [result addObject:obj];
         }
         else return;

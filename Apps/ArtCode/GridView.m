@@ -594,6 +594,12 @@
     [self setNeedsLayout];
 }
 
+#pragma mark Accessibility
+
+- (BOOL)isAccessibilityElement {
+    return NO;
+}
+
 #pragma mark View Methods
 
 static void _init(GridView *self)
