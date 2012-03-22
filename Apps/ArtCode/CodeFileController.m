@@ -435,6 +435,10 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - View lifecycle
 
+- (void)dealloc {
+    [_projectFile closeWithCompletionHandler:nil];
+}
+
 - (void)loadView
 {
     [super loadView];
