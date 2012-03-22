@@ -231,6 +231,9 @@ static void init(TopBarToolbar *self)
     [button setImage:item.image forState:UIControlStateNormal];
     if (item.target && item.action)
         [button addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
+    button.isAccessibilityElement = YES;
+    button.accessibilityLabel = item.accessibilityLabel;
+    
     item.customView = button;
 }
 
