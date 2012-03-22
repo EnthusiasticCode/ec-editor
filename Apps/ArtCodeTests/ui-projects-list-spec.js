@@ -1,3 +1,5 @@
+var newProjectName = "NewProject";
+var importedProjectName = "ImportedProject";
 
 describe("Projects list", function() {
   
@@ -5,7 +7,7 @@ describe("Projects list", function() {
   var tabsScrollView = mainWindow.scrollViews()["tabs scrollview"];
 
   it("should exists", function() {
-    expect(tabsScrollView.elements()["projects grid"]).not.toBeNull();
+    expect(tabsScrollView.elements()["projects grid"].isValid()).toBeTruthy();
   });
   
   describe("default toolbar", function() {
@@ -19,15 +21,14 @@ describe("Projects list", function() {
     });
     
     it("should have an 'Add' button", function() {
-      expect(defaultToolbar.buttons()["Add"]).not.toBeNull();
+      expect(defaultToolbar.buttons()["Add"].isValid()).toBeTruthy();
     });
     
     it("should show a popover when tapping the 'Add' button", function() {
       defaultToolbar.buttons()["Add"].tap();
       target.delay(.5);
-      expect(mainWindow.popover()).not.toBeNull();
-      if (mainWindow.popover())
-        mainWindow.popover().dismiss();
+      expect(mainWindow.popover().isValid()).toBeTruthy();
+      mainWindow.popover().dismiss();
     });
     
     describe("new project popover", function() {
@@ -41,13 +42,13 @@ describe("Projects list", function() {
       });
       
       afterEach(function() {
-        popover.dismiss();
+        if (popover.checkIsValid())
+          popover.dismiss();
       });
       
-      it("should have 2 buttons (create and import)", function() {
-        expect(popover.buttons().length).toEqual(2);
-        expect(popover.buttons()["Create new project"]).not.toBeNull();
-        expect(popover.buttons()["Import from iTunes"]).not.toBeNull();
+      it("should have create and import buttons", function() {
+        expect(popover.buttons()["Create new project"].isValid()).toBeTruthy();
+        expect(popover.buttons()["Import from iTunes"].isValid()).toBeTruthy();
       });
       
       describe("create project", function() {
@@ -57,18 +58,59 @@ describe("Projects list", function() {
         });
         
         afterEach(function() {
-          if (popover.navigationBar().leftButton())
+          if (popover.navigationBar().leftButton().checkIsValid())
             popover.navigationBar().leftButton().tap();
         });
         
         it("should have a back and create button", function() {
-            expect(popover.navigationBar().leftButton()).not.toBeNull();
-            expect(popover.navigationBar().rightButton()).not.toBeNull();
+            expect(popover.navigationBar().leftButton().isValid()).toBeTruthy();
+            expect(popover.navigationBar().rightButton().isValid()).toBeTruthy();
         });
         
         it("should have a label color and text items", function() {
-          expect(popover.buttons()["Label color"]).not.toBeNull();
+          expect(popover.buttons()["Label color"].isValid()).toBeTruthy();
           expect(popover.textFields().length).toEqual(1);
+        });
+        
+        it("should be able to change label color", function() {
+          var labelColorButton = popover.buttons()["Label color"];
+          var originalColorLabel = labelColorButton.label();
+          labelColorButton.tap();
+          target.delay(.5);
+          var colorSelector = popover.elements()["color selector"];
+          expect(colorSelector).not.toBeNull();
+          expect(colorSelector.elements().length == 6).toBeTruthy();
+          colorSelector.elements()[0].tap();
+          target.delay(.5);
+          expect(popover.buttons()["Label color"].label() != originalColorLabel).toBeTruthy();
+        });
+        
+        it("should be able to add a new project named: " + newProjectName, function() {
+          popover.textFields()[0].setValue(newProjectName);
+          popover.navigationBar().rightButton().tap();
+          target.delay(2);
+          expect(backButton.isEnabled()).toBeTruthy();
+          backButton.tap();
+          target.delay(.3);
+          expect(backButton.isEnabled()).toBeFalsy();
+        });
+        
+      });
+      
+      describe("import project", function() {
+        
+        beforeEach(function() {
+          popover.buttons()["Import from iTunes"].tap();
+        });
+        
+        afterEach(function() {
+          if (popover.navigationBar().leftButton().checkIsValid())
+            popover.navigationBar().leftButton().tap();
+        });
+        
+        it("should have back button and import list", function() {
+          expect(popover.navigationBar().leftButton().isValid()).toBeTruthy();
+          expect(popover.tableViews().length > 0).toBeTruthy();
         });
         
       });
@@ -83,12 +125,12 @@ describe("Projects list", function() {
     
     describe("according to setup", function() {
       
-      it("should have 1 element", function() {
-        expect(projectsGrid.elements().length).toEqual(1);
+      it("should have 2 element", function() {
+        expect(projectsGrid.elements().length).toEqual(2);
       });
       
       it("should have the 'Test' element", function() {
-        expect(projectsGrid.elements()["Test"]).not.toBeNull();
+        expect(projectsGrid.elements()["Test"].isValid()).toBeTruthy();
       });
       
     });

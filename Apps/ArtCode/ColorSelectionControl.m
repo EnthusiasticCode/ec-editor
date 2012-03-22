@@ -28,9 +28,10 @@
         [self.layer.sublayers enumerateObjectsUsingBlock:^(CALayer *layer, NSUInteger idx, BOOL *stop) {
             UIAccessibilityElement *colorElement = [UIAccessibilityElement.alloc initWithAccessibilityContainer:self];
             colorElement.isAccessibilityElement = YES;
+            // TODO UIColor should return always a human readable description
             colorElement.accessibilityLabel = [[self.colors objectAtIndex:idx] description];
             colorElement.accessibilityTraits = UIAccessibilityTraitButton;
-            colorElement.accessibilityFrame = layer.frame;
+            colorElement.accessibilityFrame = [self convertRect:layer.frame toView:nil];
             [accessibilityColors addObject:colorElement];
         }];
         _accessibilityColors = [accessibilityColors copy];
