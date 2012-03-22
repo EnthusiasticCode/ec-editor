@@ -13,6 +13,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B757C00B1519D09500AE6AC3"
+               BuildableName = "libCocoaOniguruma.a"
+               BlueprintName = "CocoaTouchOniguruma"
+               ReferencedContainer = "container:ThirdParty/cocoaoniguruma/framework/CocoaOniguruma.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B7EB5793151B9B7B0031C977"
                BuildableName = "ArtCodeTests-RunOnBuild.octest"
                BlueprintName = "ArtCodeTests-RunOnBuild"
