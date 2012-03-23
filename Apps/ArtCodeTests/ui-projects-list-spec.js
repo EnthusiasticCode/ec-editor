@@ -89,10 +89,7 @@ describe("Projects list", function() {
           popover.textFields()[0].setValue(newProjectName);
           popover.navigationBar().rightButton().tap();
           target.delay(2);
-          expect(backButton.isEnabled()).toBeTruthy();
-          backButton.tap();
-          target.delay(.3);
-          expect(backButton.isEnabled()).toBeFalsy();
+          expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].checkIsValid()).toBeTruthy();
         });
         
       });
@@ -113,6 +110,13 @@ describe("Projects list", function() {
           expect(popover.tableViews().length > 0).toBeTruthy();
         });
         
+        it("should import a project (" + importedProjectName + ".zip)", function() {
+          expect(popover.tableViews()[0].elements()[importedProjectName + ".zip"].isValid()).toBeTruthy();
+          popover.tableViews()[0].elements()[importedProjectName + ".zip"].tap();
+          target.delay(2);
+          expect(tabsScrollView.elements()["projects grid"].elements()[importedProjectName].checkIsValid()).toBeTruthy();
+        });
+        
       });
       
     });
@@ -129,8 +133,9 @@ describe("Projects list", function() {
         expect(projectsGrid.elements().length).toEqual(2);
       });
       
-      it("should have the 'Test' element", function() {
-        expect(projectsGrid.elements()["Test"].isValid()).toBeTruthy();
+      it("should have the '" + newProjectName + "' and '" + importedProjectName + "' elements", function() {
+        expect(projectsGrid.elements()[newProjectName].isValid()).toBeTruthy();
+        expect(projectsGrid.elements()[importedProjectName].isValid()).toBeTruthy();
       });
       
     });

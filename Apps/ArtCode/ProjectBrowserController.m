@@ -184,8 +184,6 @@
     {
         cell = [ProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
         cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-        cell.isAccessibilityElement = YES;
-        cell.accessibilityTraits = UIAccessibilityTraitButton;
         
         if (!_cellNormalBackground)
             _cellNormalBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
@@ -202,6 +200,8 @@
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
     
     // Accessibility
+    cell.isAccessibilityElement = YES;
+    cell.accessibilityTraits = UIAccessibilityTraitButton;
     cell.accessibilityLabel = project.name;
     // TODO change hint according to project's kind (project or documentation..)
     cell.accessibilityHint = L(@"Open the project");
@@ -380,6 +380,7 @@ ASSERT(NO);
         _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
         newProjectNavigationController.presentingPopoverController = _toolItemPopover;
     }
+    [(UINavigationController *)_toolItemPopover.contentViewController popToRootViewControllerAnimated:NO];
     [_toolItemPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 

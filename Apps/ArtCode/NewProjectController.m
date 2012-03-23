@@ -105,11 +105,9 @@
         {
             if (projectColor)
                 createdProject.labelColor = projectColor;
-            NSURL *projectURL = createdProject.artCodeURL;
             [createdProject closeWithCompletionHandler:^(BOOL success) {
                 [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
                 [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-                [self.artCodeTab pushURL:projectURL];
             }];
         }
         else
