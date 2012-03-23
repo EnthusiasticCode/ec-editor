@@ -112,9 +112,16 @@
     
     self.editButtonItem.title = @"";
     self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+    self.editButtonItem.accessibilityLabel = L(@"Edit");
     
     // Preparing tool items array changed in set editing
-    _toolItemsEditing = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)], nil];
+    UIBarButtonItem *exportButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)];
+    exportButtonItem.accessibilityLabel = L(@"Export");
+    UIBarButtonItem *duplicateButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)];
+    duplicateButtonItem.accessibilityLabel = L(@"Duplicate");
+    UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)];
+    deleteButtonItem.accessibilityLabel = L(@"Delete");
+    _toolItemsEditing = [NSArray arrayWithObjects:exportButtonItem, duplicateButtonItem, deleteButtonItem, nil];
     
     UIBarButtonItem *addButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)];
     addButtonItem.accessibilityLabel = L(@"Add");

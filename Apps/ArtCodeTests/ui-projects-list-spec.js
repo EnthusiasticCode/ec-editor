@@ -88,7 +88,7 @@ describe("Projects list", function() {
         it("should be able to add a new project named: " + newProjectName, function() {
           popover.textFields()[0].setValue(newProjectName);
           popover.navigationBar().rightButton().tap();
-          target.delay(2);
+          target.delay(1);
           expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].checkIsValid()).toBeTruthy();
         });
         
@@ -113,10 +113,32 @@ describe("Projects list", function() {
         it("should import a project (" + importedProjectName + ".zip)", function() {
           expect(popover.tableViews()[0].elements()[importedProjectName + ".zip"].isValid()).toBeTruthy();
           popover.tableViews()[0].elements()[importedProjectName + ".zip"].tap();
-          target.delay(2);
+          target.delay(1);
           expect(tabsScrollView.elements()["projects grid"].elements()[importedProjectName].checkIsValid()).toBeTruthy();
         });
         
+      });
+            
+    });
+    
+    it("should have an 'edit' button", function() {
+      expect(defaultToolbar.buttons()["Edit"].isValid()).toBeTruthy();
+    });
+    
+    describe("when in edit mode", function() {
+      
+      beforeEach(function() {
+         defaultToolbar.buttons()["Edit"].tap();
+      });
+      
+      afterEach(function() {
+        defaultToolbar.buttons()["Edit"].tap();
+      });
+      
+      it("should enable editing buttons in edit mode", function() {
+        expect(defaultToolbar.buttons()["Export"].isValid()).toBeTruthy();
+        expect(defaultToolbar.buttons()["Duplicate"].isValid()).toBeTruthy();
+        expect(defaultToolbar.buttons()["Delete"].isValid()).toBeTruthy();
       });
       
     });
