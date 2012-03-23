@@ -30,6 +30,9 @@ static NSMutableSet *_projectUUIDs;
 
 /// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
 static NSMutableDictionary *_projectsList = nil;
+/// An array of ACProject instances that cannot be opened but can serve as reference for opened projects. 
+/// Used in projects, [ACProject createProjectWithName:importArchiveURL:completionHandler:].
+static NSMutableArray *_projectsSortedList = nil;
 
 static NSString * const _projectsFolderName = @"LocalProjects";
 static NSString * const _contentsFolderName = @"Contents";
@@ -227,11 +230,16 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Projects list
 
 + (NSArray *)projects {
-    NSMutableArray *projects = [[NSMutableArray alloc] init];
-    for (NSString *uuid in _projectsList.allKeys) {
-        [projects addObject:[[self alloc] _initWithUUID:uuid]];
+    if (!_projectsSortedList) {
+        _projectsSortedList = [NSMutableArray new];
+        [_projectsList enumerateKeysAndObjectsUsingBlock:^(NSString *uuidKey, id obj, BOOL *stop) {
+            [_projectsSortedList addObject:[[self alloc] _initWithUUID:uuidKey]];
+        }];
+        [_projectsSortedList sortUsingComparator:^NSComparisonResult(ACProject *obj1, ACProject *obj2) {
+            return [obj1.name caseInsensitiveCompare:obj2.name];
+        }];
     }
-    return projects;
+    return [_projectsSortedList copy];
 }
 
 + (ACProject *)projectWithUUID:(id)uuid {
@@ -249,13 +257,24 @@ static NSString * const _plistRemotesKey = @"remotes";
     [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
         if (success) {
             ASSERT(project->_lastError == nil);
-            // Post the creation of a new project to the notification center
-            NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:_projectsList.count] forKey:ACProjectNotificationIndexKey];
-            [notificationCenter postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
+            // Retrieve the index in which the new project will be added in the sorted project's array
+            __block NSUInteger insertionIndex = 0;
+            [[self projects] enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
+                if ([name caseInsensitiveCompare:p.name] == NSOrderedAscending) {
+                    insertionIndex = idx;
+                } else {
+                    *stop = YES;
+                }
+            }];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInteger:insertionIndex] forKey:ACProjectNotificationIndexKey];
+            
+            // Insert the project and notify via notification center
+            [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
             [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
+            ASSERT(_projectsSortedList);
+            [_projectsSortedList insertObject:[[self alloc] _initWithUUID:uuid] atIndex:insertionIndex];
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-            [notificationCenter postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
+            [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
             
             if (completionHandler) {
                 completionHandler(project, nil);
@@ -343,11 +362,20 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Project-wide operations
 
 - (void)remove {
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:[_projectsList.allKeys indexOfObject:self.UUID]] forKey:ACProjectNotificationIndexKey];
-    [notificationCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:[self class] userInfo:userInfo];
-    [_projectsList removeObjectForKey:self.UUID];
-    [notificationCenter postNotificationName:ACProjectDidRemoveProjectNotificationName object:[self class] userInfo:userInfo];
+    NSString *removeUUID = self.UUID;
+    __block NSUInteger removeIndex = NSNotFound;
+    [[[self class] projects] enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
+        if ([p.UUID isEqualToString:removeUUID]) {
+            removeIndex = idx;
+            *stop = YES;
+        }
+    }];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:removeIndex] forKey:ACProjectNotificationIndexKey]; 
+    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillRemoveProjectNotificationName object:[self class] userInfo:userInfo];
+    [_projectsList removeObjectForKey:removeUUID];
+    ASSERT(_projectsSortedList);
+    [_projectsSortedList removeObjectAtIndex:removeIndex];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:[self class] userInfo:userInfo];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [[[NSFileCoordinator alloc] init] coordinateWritingItemAtURL:self.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
             [[[NSFileManager alloc] init] removeItemAtURL:newURL error:NULL];
@@ -462,6 +490,7 @@ static NSString * const _plistRemotesKey = @"remotes";
         [fileManager removeItemAtURL:project error:NULL];
     }
     _projectsList = [[NSMutableDictionary alloc] init];
+    _projectsSortedList = nil;
     _projectUUIDs = [[NSMutableSet alloc] init];
 }
 

@@ -21,7 +21,9 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 #pragma mark Projects list
 
-/// Returns an array of all projects
+/// Returns an array of all projects.
+/// It is not safe to call [UIDocument openWithCompletionHandler:] on projects returned via this method.
+/// To get an instance of ACProject that can be safelly open use [ACProject projectWithUUID:].
 + (NSArray *)projects;
 
 /// Creates a new project by optionally decompressing the archive at the given URL, saves it and returns it.
