@@ -17,3 +17,5 @@ xcuserdata/
 /ThirdParty/libssh2-for-iOS/include
 /ThirdParty/libssh2-for-iOS/libssh2-*
 /ThirdParty/libssh2-for-iOS/openssl-*
+
+instrumentscli*.trace/
