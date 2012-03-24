@@ -273,6 +273,7 @@
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
+		CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */; };
 		CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
@@ -734,6 +735,7 @@
 		B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakDictionary.m; sourceTree = "<group>"; };
 		B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
 		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
+		CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_NewBadge.png; sourceTree = "<group>"; };
 		CD05149814F7FB3A003CED2F /* RemoteTransferController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteTransferController.h; sourceTree = "<group>"; };
 		CD05149914F7FB3A003CED2F /* RemoteTransferController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteTransferController.m; sourceTree = "<group>"; };
 		CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMKeyboardAction.h; sourceTree = "<group>"; };
@@ -1992,6 +1994,7 @@
 		CDEE0D7014BDA5790019FDEF /* Projects */ = {
 			isa = PBXGroup;
 			children = (
+				CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */,
 				CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */,
 				CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */,
 				CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */,
@@ -2367,6 +2370,7 @@
 				CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */,
 				CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */,
 				CD227E6E1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib in Resources */,
+				CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

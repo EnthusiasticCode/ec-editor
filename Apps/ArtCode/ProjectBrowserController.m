@@ -205,6 +205,7 @@
     cell.title.text = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+    cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
     
     // Accessibility
     cell.isAccessibilityElement = YES;
@@ -440,6 +441,7 @@ ASSERT(NO);
 @synthesize title;
 @synthesize label;
 @synthesize icon;
+@synthesize newlyCreatedBadge;
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
 
