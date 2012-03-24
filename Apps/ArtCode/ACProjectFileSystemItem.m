@@ -68,18 +68,43 @@
 
 #pragma mark - Item Contents
 
+- (void)publishContentsToURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+        NSError *error = nil;
+        if (![self writeToURL:url error:&error]) {
+            if (completionHandler) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(error);
+                }];
+            }
+        } else {
+            if (completionHandler) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(nil);
+                }];
+            }
+        }
+    }];
+}
+
 - (void)removeWithCompletionHandler:(void (^)(NSError *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSError *error = nil;
         if (![self removeSynchronouslyWithError:&error]) {
             ASSERT(error);
             if (completionHandler) {
-                completionHandler(error);
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(error);
+                }];
             }
         } else {
             [super remove];
             if (completionHandler) {
-                completionHandler(nil);
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(nil);
+                }];
             }
         }
     }];
@@ -126,12 +151,14 @@
     return self;
 }
 
-- (BOOL)writeToURL:(NSURL *)url {
+- (BOOL)writeToURL:(NSURL *)url error:(out NSError *__autoreleasing *)error {
     ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     if ([url isEqual:self.fileURL]) {
         return YES;
     } else {
-        return [[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:url error:NULL];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
+        [fileManager createDirectoryAtURL:[url URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
+        return [fileManager copyItemAtURL:self.fileURL toURL:url error:error];
     }
 }
 

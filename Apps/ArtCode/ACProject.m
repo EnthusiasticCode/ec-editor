@@ -224,7 +224,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     // If we're being saved to a new URL, we need to force a write of all contents
     if (_contentsFolder && saveOperation == UIDocumentSaveForCreating) {
         NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
-        if (![_contentsFolder writeToURL:contentsURL]) {
+        if (![_contentsFolder writeToURL:contentsURL error:outError]) {
             return NO;
         }
     }
