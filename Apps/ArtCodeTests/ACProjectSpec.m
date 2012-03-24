@@ -160,6 +160,23 @@ describe(@"An newly created ACProject", ^{
         });
     });
     
+    it(@"has a newly created flag", ^{
+        [[theValue(project.isNewlyCreated) should] beYes];
+    });
+    
+    it(@"has no newly created flag after being closed and reopened", ^{
+        __block BOOL isClosed = NO;
+        [project closeWithCompletionHandler:^(BOOL success) {
+            isClosed = success;
+        }];
+        [[expectFutureValue(theValue(isClosed)) shouldEventually] beYes];
+        project = [ACProject projectWithUUID:projectUUID];
+        [project openWithCompletionHandler:^(BOOL success) {
+            isClosed = !success;
+        }];
+        [[expectFutureValue(theValue(isClosed)) shouldEventually] beNo];
+        [[theValue(project.isNewlyCreated) should] beNo];
+    });
 });
 
 describe(@"A new opened ACProject", ^{

@@ -33,6 +33,15 @@ extern NSString * const ACProjectNotificationIndexKey;
 /// Returns the project with the given UUID, or nil if the project does not exist.
 + (ACProject *)projectWithUUID:(id)uuid;
 
+/// Set a metadata for the given project and key. The value of info must be encodable in a plist.
++ (void)setMeta:(id)info forProject:(ACProject *)project key:(NSString *)key;
+
+/// Removes a stored metadata for the given project and key.
++ (void)removeMetaForProject:(ACProject *)project key:(NSString *)key;
+
+/// Get a metadata for the given project and key.
++ (id)metaForProject:(ACProject *)project key:(NSString *)key;
+
 #pragma mark Project metadata
 /// Project metadata does not require projects to be accessed or set
 
@@ -45,6 +54,9 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
+
+/// A flag indicating if the project has been newly created and never opened.
+@property (nonatomic, readonly, getter = isNewlyCreated) BOOL newlyCreated;
 
 #pragma mark Project content
 /// Project content requires the projects to be open to be accessed or set

@@ -41,6 +41,7 @@ static NSString * const _contentsFolderName = @"Contents";
 static NSString * const _projectsListKey = @"ACProjectProjectsList";
 static NSString * const _plistNameKey = @"name";
 static NSString * const _plistLabelColorKey = @"labelColor";
+static NSString * const _plistIsNewlyCreatedKey = @"newlyCreated";
 
 // Content
 static NSString * const _projectPlistFileName = @".acproj";
@@ -61,6 +62,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 /// Designated initializer
 - (id)_initWithUUID:(NSString *)uuid;
+
+@property (nonatomic, readwrite, getter = isNewlyCreated) BOOL newlyCreated;
 
 @end
 
@@ -139,6 +142,15 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (NSString *)localizedName {
     UNIMPLEMENTED(); // Use name instead
+}
+
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
+    [super openWithCompletionHandler:^(BOOL success) {
+        if (success)
+            [[self class] removeMetaForProject:self key:_plistIsNewlyCreatedKey];
+        if (completionHandler)
+            completionHandler(success);
+    }];
 }
 
 - (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)outError {
@@ -270,7 +282,7 @@ static NSString * const _plistRemotesKey = @"remotes";
             
             // Insert the project and notify via notification center
             [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
-            [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, nil] forKey:uuid];
+            [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
             ASSERT(_projectsSortedList);
             [_projectsSortedList insertObject:[[self alloc] _initWithUUID:uuid] atIndex:insertionIndex];
             [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
@@ -286,6 +298,28 @@ static NSString * const _plistRemotesKey = @"remotes";
             }
         }
     }];
+}
+
++ (id)metaForProject:(ACProject *)project key:(NSString *)key {
+    ASSERT(project && [_projectsList objectForKey:project.UUID]);
+    return [(NSDictionary *)[_projectsList objectForKey:project.UUID] objectForKey:key];
+}
+
++ (void)setMeta:(id)info forProject:(ACProject *)project key:(NSString *)key {
+    ASSERT([info isKindOfClass:[NSString class]] || [info isKindOfClass:[NSArray class]] || [info isKindOfClass:[NSDictionary class]] || [info isKindOfClass:[NSNumber class]]);
+    ASSERT(project && [_projectsList objectForKey:project.UUID]);
+    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
+    [projectInfo setObject:info forKey:key];
+    [_projectsList setObject:projectInfo forKey:project.UUID];
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+}
+
++ (void)removeMetaForProject:(ACProject *)project key:(NSString *)key {
+    ASSERT(project && [_projectsList objectForKey:project.UUID]);
+    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
+    [projectInfo removeObjectForKey:key];
+    [_projectsList setObject:projectInfo forKey:project.UUID];
+    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
 }
 
 #pragma mark - Project metadata
@@ -315,6 +349,16 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (void)setLabelColor:(UIColor *)value {
     [[self class] _setLabelColor:value forProject:self];
+}
+
+- (BOOL)isNewlyCreated {
+    return [[[self class] metaForProject:self key:_plistIsNewlyCreatedKey] boolValue];
+}
+
+- (void)setNewlyCreated:(BOOL)newlyCreated {
+    [self willChangeValueForKey:@"newlyCreated"];
+    [[self class] setMeta:[NSNumber numberWithBool:newlyCreated] forProject:self key:_plistIsNewlyCreatedKey];
+    [self didChangeValueForKey:@"newlyCreated"];
 }
 
 #pragma mark - Project content
@@ -436,23 +480,17 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (NSString *)_nameForProject:(ACProject *)project {
-    ASSERT(project && [_projectsList objectForKey:project.UUID]);
-    return [(NSDictionary *)[_projectsList objectForKey:project.UUID] objectForKey:_plistNameKey];
+    return [self metaForProject:project key:_plistNameKey];
 }
 
 + (void)_setName:(NSString *)name forProject:(ACProject *)project {
-    ASSERT(name && project && [_projectsList objectForKey:project.UUID]);
     [project willChangeValueForKey:@"name"];
-    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];;
-    [projectInfo setObject:name forKey:_plistNameKey];
-    [_projectsList setObject:projectInfo forKey:project.UUID];
-    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    [self setMeta:name forProject:project key:_plistNameKey];
     [project didChangeValueForKey:@"name"];
 }
 
 + (UIColor *)_labelColorForProject:(ACProject *)project {
-    ASSERT(project && [_projectsList objectForKey:project.UUID]);
-    NSString *hexString = [(NSDictionary *)[_projectsList objectForKey:project.UUID] objectForKey:_plistLabelColorKey];
+    NSString *hexString = [self metaForProject:project key:_plistLabelColorKey];
     UIColor *labelColor = nil;
     if ([hexString length]) {
         labelColor = [UIColor colorWithHexString:hexString];
@@ -461,12 +499,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 + (void)_setLabelColor:(UIColor *)color forProject:(ACProject *)project {
-    ASSERT(color && project && [_projectsList objectForKey:project.UUID]);
     [project willChangeValueForKey:@"labelColor"];
-    NSMutableDictionary *projectInfo = [[_projectsList objectForKey:project.UUID] mutableCopy];
-    [projectInfo setObject:color.hexString forKey:_plistLabelColorKey];
-    [_projectsList setObject:projectInfo forKey:project.UUID];
-    [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+    [self setMeta:color.hexString forProject:project key:_plistLabelColorKey];
     [project didChangeValueForKey:@"labelColor"];
 }
 
