@@ -159,7 +159,7 @@
         NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
         [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }];
-    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidRemoveProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         _projects = ACProject.projects;
         NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
         [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
@@ -170,8 +170,8 @@
 
 - (void)viewDidDisappear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidRemoveProjectNotificationName object:[ACProject class]];
     _projects = nil;
 }
 
@@ -396,7 +396,7 @@ ASSERT(NO);
 {
     if (!_toolItemDeleteActionSheet)
     {
-        _toolItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+        _toolItemDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:L(@"Delete permanently") otherButtonTitles:nil];
         _toolItemDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolItemDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
@@ -406,7 +406,7 @@ ASSERT(NO);
 {
     if (!_toolItemExportActionSheet)
     {
-        _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+        _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
         _toolItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
     }
     [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];

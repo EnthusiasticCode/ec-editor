@@ -85,12 +85,21 @@
     [self.navigationController pushViewController:changeColorController animated:YES];
 }
 
-- (IBAction)createProjectAction:(id)sender
-{
+- (IBAction)createProjectAction:(id)sender {
     NSString *projectName = self.projectNameTextField.text;
-    if ([projectName length] == 0)
-    {
+    if ([projectName length] == 0) {
         self.descriptionLabel.text = L(@"A project name must be specified.");
+        return;
+    }
+    BOOL validName = YES;
+    for (ACProject *p in [ACProject projects]) {
+        if ([projectName isEqualToString:p.name]) {
+            validName = NO;
+            break;
+        }
+    }
+    if (!validName) {
+        self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
         return;
     }
     
@@ -112,7 +121,7 @@
         }
         else
         {
-            self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
+            // TODO never reaches this point
         }
     }];
 }

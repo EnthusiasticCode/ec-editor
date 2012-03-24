@@ -1,3 +1,4 @@
+//https://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html
 var newProjectName = "NewProject";
 var importedProjectName = "ImportedProject";
 
@@ -55,11 +56,7 @@ describe("Projects list", function() {
         
         beforeEach(function() {
           popover.buttons()["Create new project"].tap();
-        });
-        
-        afterEach(function() {
-          if (popover.navigationBar().leftButton().checkIsValid())
-            popover.navigationBar().leftButton().tap();
+          target.delay(.5);
         });
         
         it("should have a back and create button", function() {
@@ -90,6 +87,18 @@ describe("Projects list", function() {
           popover.navigationBar().rightButton().tap();
           target.delay(1);
           expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].checkIsValid()).toBeTruthy();
+        });
+        
+        it("should clear the name field", function() {
+          expect(popover.textFields()[0].value() != newProjectName).toBeTruthy();
+        });
+        
+        it("should not be able to add another project with the name: " + newProjectName, function() {
+          var originalElementsCount = tabsScrollView.elements()["projects grid"].elements().length;
+          popover.textFields()[0].setValue(newProjectName);
+          popover.navigationBar().rightButton().tap();
+          target.delay(1);
+          expect(tabsScrollView.elements()["projects grid"].elements().length == originalElementsCount).toBeTruthy();
         });
         
       });
@@ -128,17 +137,66 @@ describe("Projects list", function() {
     describe("when in edit mode", function() {
       
       beforeEach(function() {
-         defaultToolbar.buttons()["Edit"].tap();
+        defaultToolbar.buttons()["Edit"].tap();
+        target.delay(.5);
       });
       
       afterEach(function() {
         defaultToolbar.buttons()["Edit"].tap();
+        target.delay(.5);
       });
       
-      it("should enable editing buttons in edit mode", function() {
+      it("should show editing buttons in edit mode", function() {
         expect(defaultToolbar.buttons()["Export"].isValid()).toBeTruthy();
         expect(defaultToolbar.buttons()["Duplicate"].isValid()).toBeTruthy();
         expect(defaultToolbar.buttons()["Delete"].isValid()).toBeTruthy();
+      });
+      
+      it("should have editing buttons disabled with no slection", function() {
+        expect(defaultToolbar.buttons()["Export"].isEnabled()).toBeFalsy();
+        expect(defaultToolbar.buttons()["Duplicate"].isEnabled()).toBeFalsy();
+        expect(defaultToolbar.buttons()["Delete"].isEnabled()).toBeFalsy();
+      });
+      
+      it("should enable editing buttons with selection", function() {
+        tabsScrollView.elements()["projects grid"].elements()[newProjectName].tap();
+        target.delay(.5);
+        expect(defaultToolbar.buttons()["Export"].isEnabled()).toBeTruthy();
+        expect(defaultToolbar.buttons()["Duplicate"].isEnabled()).toBeTruthy();
+        expect(defaultToolbar.buttons()["Delete"].isEnabled()).toBeTruthy();
+      });
+      
+      describe("and a project selected", function() {
+        
+        beforeEach(function() {
+          tabsScrollView.elements()["projects grid"].elements()[newProjectName].tap();
+          target.delay(.5);
+        });
+        
+        it("should disable editing buttons when no selection", function() {
+          tabsScrollView.elements()["projects grid"].elements()[newProjectName].tap();
+          target.delay(.5);
+          expect(defaultToolbar.buttons()["Export"].isEnabled()).toBeFalsy();
+          expect(defaultToolbar.buttons()["Duplicate"].isEnabled()).toBeFalsy();
+          expect(defaultToolbar.buttons()["Delete"].isEnabled()).toBeFalsy();
+        });
+        
+        it("should show a confirmation popover when deleting", function() {
+          defaultToolbar.buttons()["Delete"].tap();
+          target.delay(.5);
+          expect(mainWindow.popover().isValid()).toBeTruthy();
+          expect(mainWindow.popover().actionSheet().buttons()["Delete permanently"].isValid()).toBeTruthy();
+          mainWindow.popover().dismiss();
+        });
+        
+        it("should be able to delete a project", function() {
+          defaultToolbar.buttons()["Delete"].tap();
+          target.delay(.5);
+          mainWindow.popover().actionSheet().buttons()["Delete permanently"].tap();
+          target.delay(.5);
+          expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].checkIsValid()).toBeFalsy();
+        });
+        
       });
       
     });
@@ -151,12 +209,8 @@ describe("Projects list", function() {
     
     describe("according to setup", function() {
       
-      it("should have 2 element", function() {
-        expect(projectsGrid.elements().length).toEqual(2);
-      });
-      
-      it("should have the '" + newProjectName + "' and '" + importedProjectName + "' elements", function() {
-        expect(projectsGrid.elements()[newProjectName].isValid()).toBeTruthy();
+      it("should have the '" + importedProjectName + "' element", function() {
+        // Do not relay on items count in the projectGrid, scroll bars are also added.
         expect(projectsGrid.elements()[importedProjectName].isValid()).toBeTruthy();
       });
       
