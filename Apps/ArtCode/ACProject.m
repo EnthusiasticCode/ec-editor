@@ -272,8 +272,8 @@ static NSString * const _plistRemotesKey = @"remotes";
             // Retrieve the index in which the new project will be added in the sorted project's array
             __block NSUInteger insertionIndex = 0;
             [[self projects] enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
-                if ([name caseInsensitiveCompare:p.name] == NSOrderedAscending) {
-                    insertionIndex = idx;
+                if ([p.name caseInsensitiveCompare:name] == NSOrderedAscending) {
+                    insertionIndex = idx + 1;
                 } else {
                     *stop = YES;
                 }
