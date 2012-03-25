@@ -99,6 +99,7 @@
         }
     }
     if (!validName) {
+        [self.projectNameTextField selectAll:nil];
         self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
         return;
     }
@@ -106,22 +107,17 @@
     [self startRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = NO;
     self.projectNameTextField.enabled = NO;
-    [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+    [ACProject createProjectWithName:projectName labelColor:projectColor importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
         [self stopRightBarButtonItemActivityIndicator];
         self.projectColorButton.enabled = YES;
         self.projectNameTextField.enabled = YES;
-        if (createdProject)
-        {
-            if (projectColor)
-                createdProject.labelColor = projectColor;
+        if (createdProject) {
             [createdProject closeWithCompletionHandler:^(BOOL success) {
                 [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
                 [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             }];
-        }
-        else
-        {
-            // TODO never reaches this point
+        } else {
+            ASSERT(NO); // TODO never reaches this point
         }
     }];
 }

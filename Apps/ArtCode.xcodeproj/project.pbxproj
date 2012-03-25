@@ -274,6 +274,10 @@
 		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
 		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */; };
+		CD01C295151F9AE900B3820B /* ArchiveUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */; };
+		CD01C296151F9BCA00B3820B /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB79F514D6086A0080A714 /* libarc.a */; };
+		CD01C297151F9BFC00B3820B /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
+		CD01C298151F9C2400B3820B /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
@@ -961,6 +965,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD01C296151F9BCA00B3820B /* libarc.a in Frameworks */,
+				CD01C297151F9BFC00B3820B /* libz.1.2.5.dylib in Frameworks */,
+				CD01C298151F9C2400B3820B /* libiconv.dylib in Frameworks */,
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
 				B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */,
@@ -2432,6 +2439,7 @@
 				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
 				B7EB5760151B5B930031C977 /* TMUnit.m in Sources */,
 				B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */,
+				CD01C295151F9AE900B3820B /* ArchiveUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2614,6 +2622,10 @@
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -2634,6 +2646,10 @@
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;

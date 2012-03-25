@@ -39,7 +39,7 @@ describe(@"An ACProject", ^{
     
     it(@"can be created", ^{
         __block ACProject *project = nil;
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+        [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
             [error shouldBeNil];
             project = createdProject;
         }];
@@ -71,7 +71,7 @@ describe(@"An ACProject", ^{
     
     it(@"can be duplicated", ^{
         __block ACProject *project = nil;
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+        [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
             [error shouldBeNil];
             project = createdProject;
         }];
@@ -97,7 +97,7 @@ describe(@"An newly created ACProject", ^{
     
     beforeEach(^{
         clearProjectsDirectory();
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+        [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
             [error shouldBeNil];
             project = createdProject;
         }];
@@ -186,7 +186,7 @@ describe(@"A new opened ACProject", ^{
     
     beforeEach(^{
         clearProjectsDirectory();
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+        [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
             [error shouldBeNil];
             project = createdProject;
         }];
@@ -817,7 +817,7 @@ describe(@"An existing ACProject", ^{
     beforeAll(^{
         clearProjectsDirectory();
         
-        [ACProject createProjectWithName:projectName importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+        [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:nil completionHandler:^(ACProject *createdProject, NSError *error) {
             [error shouldBeNil];
             project = createdProject;
         }];

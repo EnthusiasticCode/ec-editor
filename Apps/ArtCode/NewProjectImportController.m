@@ -107,36 +107,43 @@ static void *_directoryObservingContext;
 
 #pragma mark - Table view delegate
 
-- (void)_createProjectFromZipAtURL:(NSURL *)zipURL attempt:(NSInteger)attemptNumber
-{
+- (void)_createProjectFromZipAtURL:(NSURL *)zipURL {
+    // Generate a unique name for the project
     NSString *zipFileName = [[zipURL lastPathComponent] stringByDeletingPathExtension];
-    if (attemptNumber > 0)
-        zipFileName = [zipFileName stringByAppendingFormat:@" (%d)", attemptNumber];
+    NSString *projectName = zipFileName;
+    NSUInteger attempt = 0;
+    BOOL attemptAgain = NO;
+    do {
+        attemptAgain = NO;
+        for (ACProject *p in [ACProject projects]) {
+            if ([p.name isEqualToString:projectName]) {
+                projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
+                attemptAgain = YES;
+                break;
+            }
+        }
+    } while (attemptAgain);
     
+    // Import the project
     [self startRightBarButtonItemActivityIndicator];
     self.tableView.userInteractionEnabled = NO;
-    [ACProject createProjectWithName:zipFileName importArchiveURL:zipURL completionHandler:^(ACProject *createdProject, NSError *error) {
-        if (createdProject)
-        {
+    [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:zipURL completionHandler:^(ACProject *createdProject, NSError *error) {
+        if (createdProject) {
             [createdProject closeWithCompletionHandler:^(BOOL success) {
                 [self stopRightBarButtonItemActivityIndicator];
                 self.tableView.userInteractionEnabled = YES;
                 
                 [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Project imported" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             }];
-        }
-        else
-        {
-#warning FIX!!! this point is never reached, create for saving doesn't apparently check for existance
-            [self _createProjectFromZipAtURL:zipURL attempt:attemptNumber + 1];
+        } else {
+            ASSERT(NO); // TODO error handling
         }
     }];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [self _createProjectFromZipAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] attempt:0];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self _createProjectFromZipAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row]];
 }
 
 @end

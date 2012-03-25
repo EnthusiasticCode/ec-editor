@@ -263,7 +263,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     return [[self alloc] _initWithUUID:uuid];
 }
 
-+ (void)createProjectWithName:(NSString *)name importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
++ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
     ASSERT(completionHandler); // The returned project is open and it must be closed by caller
     NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
     ACProject *project = [[self alloc] _initWithUUID:uuid];
@@ -285,8 +285,11 @@ static NSString * const _plistRemotesKey = @"remotes";
             [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
             
             void (^insertProjectAndNotify)(void) = ^{
-                // Insert the project 
-                [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
+                // Insert the project
+                if (labelColor)
+                    [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, labelColor.hexString, _plistLabelColorKey, nil] forKey:uuid];
+                else
+                    [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
                 ASSERT(_projectsSortedList);
                 [_projectsSortedList insertObject:[[self alloc] _initWithUUID:uuid] atIndex:insertionIndex];
                 [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
