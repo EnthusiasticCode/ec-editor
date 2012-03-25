@@ -121,7 +121,9 @@ static void *_currentFolderContext;
             else
                 self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [_filteredItems count], [self.currentFolder.children count]];
         } else {
-            _filteredItems = self.currentFolder.children;
+            _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
+                return [obj1.name compare:obj2.name];
+            }];
             _filteredItemsHitMasks = nil;
             if ([_filteredItems count] == 0)
                 self.infoLabel.text = @"This folder has no items";

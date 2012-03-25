@@ -249,7 +249,7 @@ static NSString * const _plistRemotesKey = @"remotes";
             [_projectsSortedList addObject:[[self alloc] _initWithUUID:uuidKey]];
         }];
         [_projectsSortedList sortUsingComparator:^NSComparisonResult(ACProject *obj1, ACProject *obj2) {
-            return [obj1.name caseInsensitiveCompare:obj2.name];
+            return [obj1.name compare:obj2.name];
         }];
     }
     return [_projectsSortedList copy];
@@ -273,7 +273,7 @@ static NSString * const _plistRemotesKey = @"remotes";
             // Retrieve the index in which the new project will be added in the sorted project's array
             __block NSUInteger insertionIndex = 0;
             [[self projects] enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
-                if ([p.name caseInsensitiveCompare:name] == NSOrderedAscending) {
+                if ([p.name compare:name] == NSOrderedAscending) {
                     insertionIndex = idx + 1;
                 } else {
                     *stop = YES;
