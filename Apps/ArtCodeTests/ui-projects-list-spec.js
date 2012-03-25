@@ -1,11 +1,10 @@
 //https://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html
-var newProjectName = "NewProject";
-var importedProjectName = "ImportedProject";
-
 describe("Projects list", function() {
   
   var target = UIATarget.localTarget(), app = target.frontMostApp(), mainWindow = app.mainWindow();  
   var tabsScrollView = mainWindow.scrollViews()["tabs scrollview"];
+  var newProjectName = "NewProject";
+  var importedProjectName = "ImportedProject";
 
   it("should exists", function() {
     expect(tabsScrollView.elements()["projects grid"].isValid()).toBeTruthy();
@@ -142,8 +141,10 @@ describe("Projects list", function() {
       });
       
       afterEach(function() {
-        defaultToolbar.buttons()["Edit"].tap();
-        target.delay(.5);
+        if (defaultToolbar.buttons()["Delete"].isValid()) {
+          defaultToolbar.buttons()["Edit"].tap();
+          target.delay(.5);
+        }
       });
       
       it("should show editing buttons in edit mode", function() {
