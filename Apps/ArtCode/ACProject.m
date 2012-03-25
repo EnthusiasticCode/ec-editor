@@ -164,7 +164,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     
     // Read content folder
     NSURL *contentURL = [url URLByAppendingPathComponent:_contentsFolderName];
-    _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil fileURL:contentURL originalURL:contentURL];
+    _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil fileURL:contentURL];
     
     // Read remotes
     if ([plist objectForKey:_plistRemotesKey]) {
@@ -189,7 +189,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     // Create the contents folder if it doesn't exist
     if (!_contentsFolder) {
         NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
-        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL originalURL:contentsURL];
+        _contentsFolder = [[ACProjectFolder alloc] initWithProject:self propertyListDictionary:nil parent:nil fileURL:contentsURL];
         ASSERT(_contentsFolder);
     }
     

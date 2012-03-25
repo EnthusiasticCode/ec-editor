@@ -286,6 +286,31 @@ describe(@"A new opened ACProject", ^{
                 [[[subfolder should] have:1] children];
             });
             
+            it(@"can update by merging the contents of that URL", ^{
+                [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                    [error shouldBeNil];
+                    subfolder = newFolder;
+                }];
+                [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+                
+                __block ACProjectFolder *childSubfolder = nil;
+                [subfolder addNewFolderWithName:@"another subfolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+                    [error shouldBeNil];
+                    childSubfolder = newFolder;
+                }];
+                [[expectFutureValue(childSubfolder) shouldEventually] beNonNil];
+                
+                [[[subfolder should] have:1] children];
+                
+                __block BOOL updateComplete = NO;
+                [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(NSError *error) {
+                    [error shouldBeNil];
+                    updateComplete = YES;
+                }];
+                [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
+                [[[subfolder should] have:2] children];
+            });
+            
             it(@"can publish it's contents to that URL", ^{                
                 [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
                     [error shouldBeNil];
@@ -531,7 +556,7 @@ describe(@"A new opened ACProject", ^{
                     [error shouldBeNil];
                     updateComplete = YES;
                 }];
-                [[expectFutureValue(theValue(updateComplete)) should] beYes];
+                [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
                 [[theValue(file.fileSize) should] equal:temporaryFileSize];
             });
             
@@ -800,8 +825,10 @@ describe(@"An existing ACProject", ^{
         
         projectUUID = project.UUID;
         project.labelColor = projectLabelColor;
-
-        [[theValue([[[NSFileManager alloc] init] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
+        
+        NSError *createTemporaryDirectoryError = nil;
+        [[theValue([[[NSFileManager alloc] init] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:&createTemporaryDirectoryError]) should] beYes];
+        [createTemporaryDirectoryError shouldBeNil];
         
         __block ACProjectFolder *subfolder = nil;
         [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporaryDirectory completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
@@ -810,7 +837,9 @@ describe(@"An existing ACProject", ^{
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         
-        [[theValue([[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:originalURL atomically:YES]) should] beYes];
+        NSError *originalWritingError = nil;
+        [[theValue([[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:originalURL options:0 error:&originalWritingError]) should] beYes];
+        [originalWritingError shouldBeNil];
         
         __block ACProjectFile *file = nil;
         [subfolder addNewFileWithName:fileName originalURL:originalURL completionHandler:^(ACProjectFile *newFile, NSError *error) {

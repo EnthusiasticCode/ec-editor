@@ -12,6 +12,8 @@
 
 #import "ACProjectFolder.h"
 
+#import "NSURL+Utilities.h"
+
 
 @interface ACProject (FileSystemItems)
 
@@ -43,12 +45,11 @@
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil originalURL:nil];
+    return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil];
 }
 
 - (NSDictionary *)propertyListDictionary {
     NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
-    [plist setObject:self.name forKey:@"name"];
     return plist;
 }
 
@@ -68,46 +69,36 @@
 
 #pragma mark - Item Contents
 
+#define PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER(method_call) \
+ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+[self.project performAsynchronousFileAccessUsingBlock:^{\
+NSError *error = nil;\
+if (!method_call) {\
+if (completionHandler) {\
+[[NSOperationQueue mainQueue] addOperationWithBlock:^{\
+completionHandler(error);\
+}];\
+}\
+} else {\
+if (completionHandler) {\
+[[NSOperationQueue mainQueue] addOperationWithBlock:^{\
+completionHandler(nil);\
+}];\
+}\
+}\
+}]
+
+
+- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
+    PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self readFromURL:url error:&error]);
+}
+
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [self.project performAsynchronousFileAccessUsingBlock:^{
-        NSError *error = nil;
-        if (![self writeToURL:url error:&error]) {
-            if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    completionHandler(error);
-                }];
-            }
-        } else {
-            if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    completionHandler(nil);
-                }];
-            }
-        }
-    }];
+    PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self writeToURL:url error:&error]);
 }
 
 - (void)removeWithCompletionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-    [self.project performAsynchronousFileAccessUsingBlock:^{
-        NSError *error = nil;
-        if (![self removeSynchronouslyWithError:&error]) {
-            ASSERT(error);
-            if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    completionHandler(error);
-                }];
-            }
-        } else {
-            [super remove];
-            if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                    completionHandler(nil);
-                }];
-            }
-        }
-    }];
+    PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self removeSynchronouslyWithError:&error]);
 }
 
 #pragma mark - Internal Methods
@@ -122,33 +113,70 @@
     _fileURL = fileURL;
 }
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]); // All filesystem items need to be initialized in the project's file access coordination queue
-    if (!project || !fileURL || !originalURL || ![fileURL isFileURL] || ![originalURL isFileURL]) {
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+    // All filesystem items need to be initialized in the project's file access coordination queue
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    // If parameters aren't good, return nil
+    if (!project || !fileURL || ![fileURL isFileURL]) {
         return nil;
     }
+    
+    // Initialize the item
     self = [super initWithProject:project propertyListDictionary:plistDictionary];
     if (!self) {
         return nil;
     }
+    _parentFolder = parent;
+    _fileURL = fileURL;
+    
+    // Try to get the content modification date
     NSDate *contentModificationDate = nil;
-    [originalURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+    [fileURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
     if (!contentModificationDate) {
         contentModificationDate = [[NSDate alloc] init];
     }
+    _contentModificationDate = contentModificationDate;
     
-    if (![fileURL isEqual:originalURL]) {
+    return self;
+}
+
+- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    if ([url isEqual:self.fileURL]) {
+        return YES;
+    } else {
         NSFileManager *fileManager = [[NSFileManager alloc] init];
-        if (![fileManager copyItemAtURL:originalURL toURL:fileURL error:NULL]) {
-            [fileManager removeItemAtURL:fileURL error:NULL];
-            return nil;
+        if ([fileManager fileExistsAtPath:self.fileURL.path]) {
+            NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+            if (![fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:error]) {
+                ASSERT(error);
+                return NO;
+            }
+            NSURL *temporaryItem = [temporaryDirectory URLByAppendingPathComponent:[url lastPathComponent]];
+            if (![fileManager copyItemAtURL:url toURL:temporaryItem error:error]) {
+                ASSERT(error);
+                return NO;
+            }
+            if (![fileManager replaceItemAtURL:self.fileURL withItemAtURL:temporaryItem backupItemName:nil options:0 resultingItemURL:NULL error:error]) {
+                ASSERT(error);
+                return NO;
+            }
+            [fileManager removeItemAtURL:temporaryDirectory error:NULL];
+        } else {
+            [fileManager createDirectoryAtURL:[self.fileURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
+            if (![fileManager copyItemAtURL:url toURL:self.fileURL error:error]) {
+                ASSERT(error);
+                return NO;
+            }
+        }
+        NSDate *contentModificationDate = nil;
+        if([url getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL]) {
+            _contentModificationDate = contentModificationDate;
+        } else {
+            _contentModificationDate = [[NSDate alloc] init];
         }
     }
-    
-    _contentModificationDate = contentModificationDate;
-    _fileURL = fileURL;
-    _parentFolder = parent;
-    return self;
+    return YES;
 }
 
 - (BOOL)writeToURL:(NSURL *)url error:(out NSError *__autoreleasing *)error {

@@ -60,9 +60,8 @@ static NSMutableSet *_projectItemUUIDs;
     _UUID = [plistDictionary objectForKey:@"uuid"];
     if (!_UUID) {
         _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
-    } else {
-        [_projectItemUUIDs addObject:_UUID];
     }
+    [_projectItemUUIDs addObject:_UUID];
     return self;
 }
 

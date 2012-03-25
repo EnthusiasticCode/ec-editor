@@ -85,8 +85,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL {
-    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL originalURL:originalURL];
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+    self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
     if (!self) {
         return nil;
     }
@@ -118,6 +118,26 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         [project didAddBookmark:bookmark];
     }];
     return self;
+}
+
+- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
+    if (![super readFromURL:url error:error]) {
+        return NO;
+    }
+    // Make sure the file exists
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    if (![fileManager fileExistsAtPath:self.fileURL.path]) {
+        if (![@"" writeToURL:self.fileURL atomically:NO encoding:NSUTF8StringEncoding error:error]) {
+            return NO;
+        }
+    }
+    
+    NSNumber *fileSize = nil;
+    if (![self.fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:error]) {
+        return NO;
+    };
+    _fileSize = [fileSize unsignedIntegerValue];
+    return YES;
 }
 
 #pragma mark - File metadata
