@@ -22,7 +22,7 @@
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL originalURL:(NSURL *)originalURL ;
 
 /// Force a write to the specified URL. Must be called on the project's file access coordination queue
-- (BOOL)writeToURL:(NSURL *)url;
+- (BOOL)writeToURL:(NSURL *)url error:(out NSError **)error;
 
 /// Force the removal of the item. Must be called on the project's file access coordination queue. Called by -removeWithCompletionHandler:
 - (BOOL)removeSynchronouslyWithError:(out NSError **)error;
