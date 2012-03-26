@@ -159,14 +159,14 @@ static void *_currentFolderContext;
 {
     [super loadView];
     
+    self.tableView.accessibilityIdentifier = @"file browser";
+    
     // Load the bottom toolbar
     [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.tableView.accessibilityIdentifier = @"file browser";
     
     // Customize subviews
     self.searchBar.placeholder = L(@"Filter files in this folder");

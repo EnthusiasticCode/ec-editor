@@ -15,12 +15,10 @@ describe("File browser", function() {
     expect(tabsScrollView.tableViews()["file browser"].checkIsValid()).toBeTruthy();
   });
   
-  describe("when existing", function() {
-    
-    var fileBrowser = tabsScrollView.tableViews()["file browser"]
+  describe("table", function() {
     
     it("should have a number of cells", function() {
-      expect(fileBrowser.cells().length).not.toEqual(0);
+      expect(tabsScrollView.tableViews()["file browser"].cells().length).not.toEqual(0);
     });
     
   });

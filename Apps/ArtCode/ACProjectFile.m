@@ -202,12 +202,16 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 - (void)closeWithCompletionHandler:(void (^)(NSError *))completionHandler {
     ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
     if (!_openCount) {
-        completionHandler([[NSError alloc] init]);
+        if (completionHandler) {
+            completionHandler([[NSError alloc] init]);
+        }
         return;
     }
     --_openCount;
     if (_openCount) {
-        completionHandler(nil);
+        if (completionHandler) {
+            completionHandler(nil);
+        }
         return;
     }
     ASSERT(_codeFile);
@@ -220,7 +224,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
             _codeFile = nil;
             _syntax = nil;
             _codeUnit = nil;
-            completionHandler(error);
+            if (completionHandler) {
+                completionHandler(error);
+            }
         }];
     }];
 }
