@@ -133,15 +133,19 @@ typedef enum {
     
     id item = [_itemsConflicts objectAtIndex:indexPath.row];
     if ([item isKindOfClass:[NSDictionary class]]) {
-        cell.textLabel.text = [item objectForKey:cxFilenameKey];
+        cell.textLabel.text = [(NSDictionary *)item objectForKey:cxFilenameKey];
         cell.detailTextLabel.text = nil;
-        if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
+        if ([(NSDictionary *)item objectForKey:NSFileType] == NSFileTypeDirectory) {
             cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
         } else {
-            cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[item objectForKey:cxFilenameKey] pathExtension]];
+            cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[(NSDictionary *)item objectForKey:cxFilenameKey] pathExtension]];
         }
+    } else if ([item isKindOfClass:[NSString class]]) {
+        cell.textLabel.text = [item lastPathComponent];
+        cell.detailTextLabel.text = [item prettyPath];
+        cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[item pathExtension]];
     } else {
-        // Item is an ACProjectFileSystemItem
+        ASSERT([item isKindOfClass:[ACProjectFileSystemItem class]]);
         cell.textLabel.text = [item name];
         cell.detailTextLabel.text = [[item pathInProject] prettyPath];
         if ([(ACProjectFileSystemItem *)item type] == ACPFolder) {
@@ -323,6 +327,9 @@ typedef enum {
     
     // Handle error
     if (error) {
+#if DEBUG
+        NSLog(@"RemoteTransferController error: %@", [error localizedDescription]);
+#endif
         _transferError = error;
         [self cancelCurrentTransfer];
         return;
@@ -419,9 +426,9 @@ typedef enum {
     [self _setupInternalStateForOperation:RemoteTransferUploadOperation localFolder:nil connection:connection path:remotePath items:projectItems completion:completionHandler];
     
     for (ACProjectFileSystemItem *item in projectItems) {
-        [_transfers setObject:item forKey:[remotePath stringByAppendingPathComponent:[item name]]];
+        [_transfers setObject:item forKey:[_connectionPath stringByAppendingPathComponent:[item name]]];
     }
-    [connection changeToDirectory:remotePath];
+    [connection changeToDirectory:_connectionPath];
     [connection directoryContents];
 }
 
@@ -439,7 +446,7 @@ typedef enum {
         }
 
         // Add to transfers
-        NSString *itemPath = [remotePath stringByAppendingPathComponent:itemName];
+        NSString *itemPath = [_connectionPath stringByAppendingPathComponent:itemName];
         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
             [_transfers setObject:[self _localTemporaryDirectoryURL] forKey:itemPath];
         } else {
@@ -475,12 +482,12 @@ typedef enum {
     _syncUseFileSize = [[optionsDictionary objectForKey:RemoteSyncOptionChangeDeterminationKey] boolValue];
     
     // Populate transfers with items to synchronize 
-    [self _syncLocalProjectFolder:localProjectFolder toRemotePath:remotePath];
+    [self _syncLocalProjectFolder:localProjectFolder toRemotePath:_connectionPath];
     
     // If downloadin items initiate a single direcotry listing that will internally recurse on directories
     if (_syncIsFromRemote) {
         _transfersStarted++;
-        [_connection changeToDirectory:remotePath];
+        [_connection changeToDirectory:_connectionPath];
         [_connection directoryContents];
     }
 }
@@ -499,10 +506,10 @@ typedef enum {
         // Queue deletion
         if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
             _transfersStarted++;
-            [connection deleteFile:[remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+            [connection deleteFile:[_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
         } else {
             // Recursion
-            [connection changeToDirectory:[remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+            [connection changeToDirectory:[_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
             [connection directoryContents];
         }
     }
@@ -524,7 +531,7 @@ typedef enum {
         return;
     _transferCanceled = YES;
     [_connection cancelAll];
-    if (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0)
+    if (_transferError || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0))
         [self _callCompletionHandlerWithError:_transferError];
 }
 
@@ -647,6 +654,8 @@ typedef enum {
     _connection = connection;
     _connectionOriginalDelegate = [connection delegate];
     [connection setDelegate:self];
+    if ([remotePath hasPrefix:@"//"])
+        remotePath = [remotePath substringFromIndex:1];
     _connectionPath = remotePath;
     
     _items = items;
@@ -660,7 +669,7 @@ typedef enum {
     _transfersCompleted = 0;
     _transferCanceled = NO;
     _transferError = nil;
-    _transferOperation = RemoteTransferUploadOperation;
+    _transferOperation = operation;
 }
 
 - (NSURL *)_localTemporaryDirectoryURL {

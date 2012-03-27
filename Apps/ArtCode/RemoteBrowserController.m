@@ -138,6 +138,7 @@
     
     ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
     ASSERT(![((ACProjectRemote *)self.artCodeTab.currentItem).URL isArtCodeURL]);
+    // TODO a double // results from this operation between host and path
     self.remoteURL = [((ACProjectRemote *)self.artCodeTab.currentItem).URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
 }
 

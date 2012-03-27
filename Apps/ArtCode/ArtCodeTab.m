@@ -151,7 +151,7 @@ static NSMutableArray *_mutableTabs;
     _mutableHistoryURLs = [[NSMutableArray alloc] init];
     if (![_mutableDictionary objectForKey:_historyURLsKey])
         [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
-    if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
+    if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
         NSURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.absoluteString];
