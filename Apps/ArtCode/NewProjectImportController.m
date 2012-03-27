@@ -9,12 +9,14 @@
 #import "NewProjectImportController.h"
 
 #import "ACProject.h"
+#import "ACProjectFolder.h"
 
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "DirectoryPresenter.h"
 #import "BezelAlert.h"
+#import "ArchiveUtilities.h"
 
 
 static void *_directoryObservingContext;
@@ -127,8 +129,27 @@ static void *_directoryObservingContext;
     // Import the project
     [self startRightBarButtonItemActivityIndicator];
     self.tableView.userInteractionEnabled = NO;
-    [ACProject createProjectWithName:projectName labelColor:nil importArchiveURL:zipURL completionHandler:^(ACProject *createdProject, NSError *error) {
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
         if (createdProject) {
+            // Import the zip file
+            // Extract files if needed
+            NSFileManager *fileManager = [NSFileManager new];
+            if (zipURL && [fileManager fileExistsAtPath:zipURL.path]) {
+                __block NSError *err = nil;
+                NSURL *tempURL = [NSURL temporaryDirectory];
+                if ([fileManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:&err]) {
+                    // Extract into the temporary directory
+                    [ArchiveUtilities extractArchiveAtURL:zipURL toDirectory:tempURL];
+                    
+                    // Update project's content with extracted items
+                    [createdProject.contentsFolder updateWithContentsOfURL:tempURL completionHandler:^(NSError *perror) {
+                        [fileManager removeItemAtURL:tempURL error:&perror];
+                        err = perror;
+                    }];
+                }
+                // TODO error handling
+            }
+            // Close the project
             [createdProject closeWithCompletionHandler:^(BOOL success) {
                 [self stopRightBarButtonItemActivityIndicator];
                 self.tableView.userInteractionEnabled = YES;

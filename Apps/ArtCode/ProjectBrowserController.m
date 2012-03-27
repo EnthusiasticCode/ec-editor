@@ -17,6 +17,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
+#import "ACProjectFolder.h"
 
 #import "SingleTabController.h"
 
@@ -265,8 +266,6 @@
     }
     else if (actionSheet == _toolItemExportActionSheet)
     {
-#warning FIX
-ASSERT(NO);
         if (buttonIndex == 0) // export to iTunes
         {
             NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
@@ -277,12 +276,19 @@ ASSERT(NO);
             __block NSInteger progress = 0;
             [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
                 ACProject *project = [_projects objectAtIndex:idx];
-
-                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
+#warning FIX project should be open before calling publish
+                NSURL *publishURL = [NSURL temporaryDirectory];
+                [[NSFileManager defaultManager] createDirectoryAtURL:publishURL withIntermediateDirectories:YES attributes:nil error:NULL];
+                [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+                    if (!error) {
+                        NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                        [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+                    }
+                    [[NSFileManager defaultManager] removeItemAtURL:publishURL error:&error];
+                    // TODO error handling?
                     if (++progress == cellsToExportCount) {
                         self.loading = NO;
-                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project exported" plural:@"%u projects exported" count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+                        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
                     }
                 }];
             }];
@@ -312,11 +318,16 @@ ASSERT(NO);
                 
                 // Process project
                 NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-                [project exportToArchiveWithURL:zipURL completionHandler:^(BOOL success) {
-                    // Add attachment
-                    [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-                    [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
-                    
+                NSURL *publishURL = [NSURL temporaryDirectory];
+                [[NSFileManager defaultManager] createDirectoryAtURL:publishURL withIntermediateDirectories:YES attributes:nil error:NULL];
+                [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+                    if (!error) {
+                        [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+                        // Add attachment
+                        [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+                        [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
+                    }
+                    [[NSFileManager defaultManager] removeItemAtURL:publishURL error:&error];
                     // Complete process
                     if (++progress == cellsToExportCount) {
                         // Add mail subject

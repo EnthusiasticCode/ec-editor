@@ -20,7 +20,6 @@
 #import "NSString+Utilities.h"
 
 #import "ArtCodeURL.h"
-#import "ArchiveUtilities.h"
 
 NSString * const ACProjectWillInsertProjectNotificationName = @"ACProjectWillInsertProjectNotificationName";
 NSString * const ACProjectDidInsertProjectNotificationName = @"ACProjectDidInsertProjectNotificationName";
@@ -264,7 +263,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     return [[self alloc] _initWithUUID:uuid];
 }
 
-+ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor importArchiveURL:(NSURL *)archiveURL completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
++ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
     ASSERT(completionHandler); // The returned project is open and it must be closed by caller
     NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
     ACProject *project = [[self alloc] _initWithUUID:uuid];
@@ -285,44 +284,17 @@ static NSString * const _plistRemotesKey = @"remotes";
             // Notify start of operations via notification center
             [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillInsertProjectNotificationName object:self userInfo:userInfo];
             
-            void (^insertProjectAndNotify)(void) = ^{
-                // Insert the project
-                if (labelColor)
-                    [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, labelColor.hexString, _plistLabelColorKey, nil] forKey:uuid];
-                else
-                    [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
-                ASSERT(_projectsSortedList);
-                [_projectsSortedList insertObject:[[self alloc] _initWithUUID:uuid] atIndex:insertionIndex];
-                [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-                
-                // Notify finish
-                [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
-            };
+            // Insert the project
+            if (labelColor)
+                [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, labelColor.hexString, _plistLabelColorKey, nil] forKey:uuid];
+            else
+                [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
+            ASSERT(_projectsSortedList);
+            [_projectsSortedList insertObject:[[self alloc] _initWithUUID:uuid] atIndex:insertionIndex];
+            [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
             
-            // Extract files if needed
-            NSFileManager *fileManager = [NSFileManager new];
-            if (archiveURL && [fileManager fileExistsAtPath:archiveURL.path]) {
-                NSError *err = nil;
-                NSURL *tempURL = [NSURL temporaryDirectory];
-                if (![fileManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:&err]) {
-                    // TODO remove project?
-                    completionHandler(nil, err);
-                    return;
-                }
-                // Extract into the temporary directory
-                [ArchiveUtilities extractArchiveAtURL:archiveURL toDirectory:tempURL];
-                
-                // Update project's content with extracted items
-                [project.contentsFolder updateWithContentsOfURL:tempURL completionHandler:^(NSError *error) {
-                    [fileManager removeItemAtURL:tempURL error:&error];
-                    insertProjectAndNotify();
-                    completionHandler(project, project->_lastError ? project->_lastError : error);
-                }];
-                return;
-            }
-            
-            // If no content's to extract, just insert the project and notify
-            insertProjectAndNotify();
+            // Notify finish
+            [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
             completionHandler(project, nil);
         } else {
             ASSERT(project->_lastError);
