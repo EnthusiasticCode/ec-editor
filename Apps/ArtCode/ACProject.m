@@ -121,6 +121,10 @@ static NSString * const _plistRemotesKey = @"remotes";
     _projectUUIDs = [[NSMutableSet alloc] initWithArray:_projectsList.allKeys];
 }
 
+- (id)copy {
+    return [[ACProject alloc] _initWithUUID:self.UUID];
+}
+
 #pragma mark - UIDocument
 
 - (id)initWithFileURL:(NSURL *)url {
