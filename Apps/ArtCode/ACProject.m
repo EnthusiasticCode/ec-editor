@@ -17,6 +17,7 @@
 #import "NSURL+Utilities.h"
 #import "UIColor+HexColor.h"
 #import "NSString+UUID.h"
+#import "NSString+Utilities.h"
 
 #import "ArtCodeURL.h"
 #import "ArchiveUtilities.h"
@@ -212,7 +213,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     [[[NSFileManager alloc] init] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:NULL];
     
     // Apply attributes to document bundle
-    if (![url setResourceValues:additionalFileAttributes error:outError]) {
+    if (additionalFileAttributes && ![url setResourceValues:additionalFileAttributes error:outError]) {
         return NO;
     };
     
@@ -434,6 +435,62 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 #pragma mark - Project-wide operations
+
+- (void)duplicateWithCompletionHandler:(void (^)(ACProject *, NSError *))completionHandler {
+    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    [self performAsynchronousFileAccessUsingBlock:^{
+        NSError *error = nil;
+        
+        // Save the project
+        if (![self writeContents:nil andAttributes:nil safelyToURL:self.fileURL forSaveOperation:UIDocumentSaveForOverwriting error:&error]) {
+            ASSERT(error);
+            if (completionHandler) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(nil, error);
+                }];
+            }
+        }
+        
+        // Copy files to duplicate project
+        NSString *duplicateUUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
+        if (![[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:[self.class._projectsDirectory URLByAppendingPathComponent:duplicateUUID] error:&error]) {
+            ASSERT(error);
+            
+            if (completionHandler) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    completionHandler(nil, error);
+                }];
+            }
+        }
+        
+        // Add duplicate project to projects list
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            NSMutableDictionary *projectInfo = [[_projectsList objectForKey:self.UUID] mutableCopy];
+            NSString *name = [projectInfo objectForKey:_plistNameKey];
+            NSString *duplicateName = nil;
+            for (NSUInteger number = 1;;++number) {
+                duplicateName = [name stringByAddingDuplicateNumber:number];
+                __block BOOL isUnique = YES;
+                [_projectsList enumerateKeysAndObjectsUsingBlock:^(NSString *uuid, NSDictionary *info, BOOL *stop) {
+                    if (![duplicateName isEqualToString:[info objectForKey:_plistNameKey]]) {
+                        return;
+                    }
+                    isUnique = NO;
+                    *stop = YES;
+                }];
+                if (isUnique) {
+                    break;
+                }
+            }
+            [projectInfo setObject:duplicateName forKey:_plistNameKey];
+            [projectInfo setObject:[NSNumber numberWithBool:YES] forKey:_plistIsNewlyCreatedKey];
+            [_projectsList setObject:projectInfo forKey:duplicateUUID];
+            if (completionHandler) {
+                completionHandler([self.class.alloc _initWithUUID:duplicateUUID], nil);
+            }
+        }];
+    }];
+}
 
 - (void)remove {
     NSString *removeUUID = self.UUID;

@@ -103,6 +103,8 @@
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
+		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
+		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -2437,6 +2439,7 @@
 				B72CEBFC151B468700757F94 /* TMBundle.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
+				B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */,
 				B7EB5760151B5B930031C977 /* TMUnit.m in Sources */,
 				B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */,
 				CD01C295151F9AE900B3820B /* ArchiveUtilities.m in Sources */,
@@ -2465,6 +2468,7 @@
 				B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */,
 				B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */,
 				B7EB57A6151B9B7B0031C977 /* TMBundle.m in Sources */,
+				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
 				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
 				B7EB57A8151B9B7B0031C977 /* TMSyntaxNode.m in Sources */,
 				B7EB57A9151B9B7B0031C977 /* TMUnit.m in Sources */,
