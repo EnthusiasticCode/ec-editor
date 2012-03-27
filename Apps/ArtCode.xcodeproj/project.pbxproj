@@ -105,6 +105,7 @@
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
+		B78C15781521A79400C66DDC /* ArchiveUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -2462,6 +2463,7 @@
 				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
 				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
 				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
+				B78C15781521A79400C66DDC /* ArchiveUtilities.m in Sources */,
 				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
 				B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */,
 				B7EB57A3151B9B7B0031C977 /* TMTheme.m in Sources */,

@@ -78,9 +78,6 @@ extern NSString * const ACProjectNotificationIndexKey;
 /// The returned project is openes, it must be closed in the completion handler.
 - (void)duplicateWithCompletionHandler:(void(^)(ACProject *duplicate, NSError *error))completionHandler;
 
-/// Compress the entire project to the destination URL.
-- (void)exportToArchiveWithURL:(NSURL *)archiveURL completionHandler:(void(^)(BOOL success))completionHandler;
-
 /// Completelly remove the project and its files.
 - (void)remove;
 
