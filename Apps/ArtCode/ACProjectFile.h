@@ -7,7 +7,7 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark, CodeFile, TMSyntaxNode, TMUnit;
+@class ACProjectFileBookmark, CodeFile;
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
@@ -20,14 +20,8 @@
 /// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read the file. If nil it will be autodetected
 @property (nonatomic, strong) NSNumber *explicitFileEncoding;
 
-/// The file encoding being used to read the file contents. Defaults to UTF8
-@property (nonatomic, readonly) NSStringEncoding fileEncoding;
-
 /// file syntax to be used for syntax highlight. If nil it will be autodetected
 @property (nonatomic, strong) NSString *explicitSyntaxIdentifier;
-
-/// Returns the explicit file syntax identifier or one derived from the file path or content
-@property (nonatomic, strong, readonly) NSString *syntaxIdentifier;
 
 #pragma mark Accessing the content
 /// @name Accessing the content
@@ -42,12 +36,6 @@
 
 /// This returns a code file with the project file's contents.
 @property (nonatomic, strong, readonly) CodeFile *codeFile;
-
-/// The syntax being used to create the code unit
-@property (nonatomic, strong, readonly) TMSyntaxNode *syntax;
-
-/// The code unit for the file.
-@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 #pragma mark Managing file bookmarks
 /// @name Managing file bookmarks

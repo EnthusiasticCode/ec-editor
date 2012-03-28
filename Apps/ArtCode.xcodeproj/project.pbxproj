@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072B33150FF46D00580855 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
-		B7072B34150FF58200580855 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
 		B7072B35150FF58B00580855 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -17,10 +16,8 @@
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
-		B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
-		B72CEBFC151B468700757F94 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
@@ -212,8 +209,6 @@
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7EB5760151B5B930031C977 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
 		B7EB5796151B9B7B0031C977 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
 		B7EB5797151B9B7B0031C977 /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
@@ -228,14 +223,9 @@
 		B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
-		B7EB57A3151B9B7B0031C977 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
 		B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
-		B7EB57A6151B9B7B0031C977 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
-		B7EB57A8151B9B7B0031C977 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7EB57A9151B9B7B0031C977 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7EB57AA151B9B7B0031C977 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101451506E336006AF1FB /* SenTestingKit.framework */; };
@@ -2431,15 +2421,10 @@
 				CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */,
 				CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */,
 				B7072B33150FF46D00580855 /* CodeFile.m in Sources */,
-				B7072B34150FF58200580855 /* TMTheme.m in Sources */,
 				B7072B35150FF58B00580855 /* WeakArray.m in Sources */,
 				B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */,
-				B72CEBFC151B468700757F94 /* TMBundle.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
-				B72CEBBF151B41BA00757F94 /* TMSyntaxNode.m in Sources */,
 				B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */,
-				B7EB5760151B5B930031C977 /* TMUnit.m in Sources */,
-				B7EB5761151B5B9F0031C977 /* TMScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2461,15 +2446,10 @@
 				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
 				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
 				B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */,
-				B7EB57A3151B9B7B0031C977 /* TMTheme.m in Sources */,
 				B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */,
 				B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */,
-				B7EB57A6151B9B7B0031C977 /* TMBundle.m in Sources */,
 				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
 				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
-				B7EB57A8151B9B7B0031C977 /* TMSyntaxNode.m in Sources */,
-				B7EB57A9151B9B7B0031C977 /* TMUnit.m in Sources */,
-				B7EB57AA151B9B7B0031C977 /* TMScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
