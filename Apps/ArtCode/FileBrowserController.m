@@ -120,18 +120,18 @@ static void *_currentFolderContext;
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
-        self.infoLabel.text = @"No items in this folder match the filter";
+        self.infoLabel.text = L(@"No items in this folder match the filter");
       else
-        self.infoLabel.text = [NSString stringWithFormat:@"Showing %u filtered items out of %u", [_filteredItems count], [self.currentFolder.children count]];
+        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u"), [_filteredItems count], [self.currentFolder.children count]];
     } else {
       _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
         return [obj1.name compare:obj2.name];
       }];
       _filteredItemsHitMasks = nil;
       if ([_filteredItems count] == 0)
-        self.infoLabel.text = @"This folder has no items";
+        self.infoLabel.text = L(@"This folder has no items");
       else
-        self.infoLabel.text = [NSString stringWithFormatForSingular:@"One item in this folder" plural:@"%u items in this folder" count:[_filteredItems count]];
+        self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder") plural:L(@"%u items in this folder") count:[_filteredItems count]];
     }
   }
   return _filteredItems;
@@ -176,8 +176,12 @@ static void *_currentFolderContext;
   
   // Preparing tool items array changed in set editing
   self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
+  [[self.toolEditItems objectAtIndex:0] setAccessibilityLabel:L(@"Export")];
+  [[self.toolEditItems objectAtIndex:1] setAccessibilityLabel:L(@"Copy")];
+  [[self.toolEditItems objectAtIndex:2] setAccessibilityLabel:L(@"Delete")];
   
   self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+  [[self.toolNormalItems objectAtIndex:0] setAccessibilityLabel:L(@"Add file or folder")];
 }
 
 - (void)viewDidUnload
@@ -298,7 +302,7 @@ static void *_currentFolderContext;
       self.loading = YES;
       [_selectedItems makeObjectsPerformSelector:@selector(remove)];
       self.loading = NO;
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File deleted" plural:@"%u files deleted" count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       [self setEditing:NO animated:YES];
     }
   }
@@ -307,7 +311,7 @@ static void *_currentFolderContext;
     if (buttonIndex == 0) // Copy
     {
       ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
-      directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
+      directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
       directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
@@ -320,7 +324,7 @@ static void *_currentFolderContext;
         [item duplicateWithCompletionHandler:^(ACProjectFileSystemItem *duplicate, NSError *error) {
           if (++duplicated == selectedItemsCount) {
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File duplicated" plural:@"%u files duplicated" count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
           }
         }];
       }];
@@ -332,13 +336,13 @@ static void *_currentFolderContext;
     if (buttonIndex == 0) // Move
     {
       ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
-      directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Move" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
+      directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
       directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Upload
     {
-      [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:@"Upload" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)]];
+      [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:L(@"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)]];
     }
     else if (buttonIndex == 2) // iTunes
     {
@@ -349,7 +353,7 @@ static void *_currentFolderContext;
         [item publishContentsToURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:item.name] completionHandler:^(NSError *error) {
           if (++processed == selectedItemsCount) {
             self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"File exported" plural:@"%u files exported" count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
           }
         }];
       }];
@@ -364,7 +368,7 @@ static void *_currentFolderContext;
       NSInteger selectedItemsCount = [_selectedItems count];
       __block NSInteger processed = 0;
       // Create temporary directory to compress
-      NSURL *directoryToZipURL = [tempDirecotryURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ Files", self.artCodeTab.currentProject.name]];
+      NSURL *directoryToZipURL = [tempDirecotryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentProject.name]];
       [[NSFileManager defaultManager] createDirectoryAtURL:directoryToZipURL withIntermediateDirectories:YES attributes:nil error:NULL];
       // Add files to directory to zip
       [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
@@ -389,8 +393,8 @@ static void *_currentFolderContext;
                 [[NSFileManager defaultManager] removeItemAtURL:tempDirecotryURL error:NULL];
                 
                 // Add precompiled mail fields
-                [mailComposer setSubject:[NSString stringWithFormat:@"%@ exported files", self.artCodeTab.currentProject.name]];
-                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+                [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentProject.name]];
+                [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
                 
                 // Present mail composer
                 [self presentViewController:mailComposer animated:YES completion:nil];
@@ -410,7 +414,7 @@ static void *_currentFolderContext;
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
   if (result == MFMailComposeResultSent)
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -433,7 +437,7 @@ static void *_currentFolderContext;
 - (void)_toolEditExportAction:(id)sender {
   if (!_toolEditItemExportActionSheet)
   {
-    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Move to new location", @"Upload to remote", @"Export to iTunes", ([MFMailComposeViewController canSendMail] ? @"Send via E-Mail" : nil), nil];
+    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Move to new location"), L(@"Upload to remote"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
@@ -442,7 +446,7 @@ static void *_currentFolderContext;
 - (void)_toolEditDuplicateAction:(id)sender {
   if (!_toolEditItemDuplicateActionSheet)
   {
-    _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Copy to new location", @"Duplicate", nil];
+    _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Copy to new location"), L(@"Duplicate"), nil];
     _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolEditItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
@@ -469,7 +473,7 @@ static void *_currentFolderContext;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
-  UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
+  UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Cancel") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
   [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   conflictController.navigationItem.leftBarButtonItem = cancelItem;
   
