@@ -23,6 +23,8 @@
     UIPopoverController *_quickBrowsersPopover;
     NSTimer *_filterDebounceTimer;
     BOOL _isSearchBarStaticOnTop;
+    id _keyboardWillShowObserver;
+    id _keyboardWillHideObserver;
 }
 
 #pragma mark - Properties
@@ -187,17 +189,39 @@
     [super viewDidUnload];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    _keyboardWillShowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.size.height = [self.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
+        [UIView animateWithDuration:[[[note userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+            self.tableView.frame = tableViewFrame;
+        }];
+    }];
+    _keyboardWillHideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillHideNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+        CGRect tableViewFrame = self.view.bounds;
+        if (_isSearchBarStaticOnTop) {
+            tableViewFrame.origin.y = 44;
+            tableViewFrame.size.height -= 44;
+        }
+        if (self.bottomToolBar != nil) {
+            tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
+        }
+        [UIView animateWithDuration:[[[note userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+            self.tableView.frame = tableViewFrame;
+        }];
+    }];
+    
     self.toolbarItems = self.toolNormalItems;
     [self.tableView reloadData];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
+- (void)viewDidDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:_keyboardWillShowObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:_keyboardWillHideObserver];
     [self invalidateFilteredItems];
+    [super viewDidDisappear:animated];
 }
 
 #pragma mark - Single tab content controller protocol methods
