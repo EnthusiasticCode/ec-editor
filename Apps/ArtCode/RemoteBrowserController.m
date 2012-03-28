@@ -81,6 +81,21 @@
     return _selectedItems;
 }
 
+@synthesize remote = _remote;
+
+- (void)setRemote:(ACProjectRemote *)value {
+    if (value == _remote)
+        return;
+    
+    _remote = value;
+    if (self.artCodeTab) {
+        // TODO a double // results from this operation between host and path
+        self.remoteURL = [_remote.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
+    } else {
+        self.remoteURL = _remote.URL;
+    }
+}
+
 @synthesize remoteURL = _remoteURL;
 
 - (void)setRemoteURL:(NSURL *)value
@@ -138,8 +153,7 @@
     
     ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
     ASSERT(![((ACProjectRemote *)self.artCodeTab.currentItem).URL isArtCodeURL]);
-    // TODO a double // results from this operation between host and path
-    self.remoteURL = [((ACProjectRemote *)self.artCodeTab.currentItem).URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
+    self.remote = ((ACProjectRemote *)self.artCodeTab.currentItem);
 }
 
 #pragma mark - View lifecycle

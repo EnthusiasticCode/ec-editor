@@ -34,6 +34,7 @@
 #import "ACProjectItem.h"
 #import "ACProjectFileSystemItem.h"
 #import "ACProjectFolder.h"
+#import "ACProjectRemote.h"
 
 #import "UIViewController+Utilities.h"
 #import "NSArray+ScoreForAbbreviation.h"
@@ -345,7 +346,7 @@ static void *_currentFolderContext;
             {
                 // Show only remote in modal
                 RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
-                uploadController.artCodeTab = self.artCodeTab;
+                uploadController.remote = (ACProjectRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0];
                 uploadController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Upload" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)];
                 [self modalNavigationControllerPresentViewController:uploadController];
             }
@@ -533,7 +534,7 @@ static void *_currentFolderContext;
     if ([self.artCodeTab.currentProject.remotes count] == 1) {
         // Show only remote in modal
         RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-        syncController.artCodeTab = self.artCodeTab;
+        syncController.remote = (ACProjectRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0];
         syncController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserSyncAction:)];
         [self modalNavigationControllerPresentViewController:syncController];
     } else {

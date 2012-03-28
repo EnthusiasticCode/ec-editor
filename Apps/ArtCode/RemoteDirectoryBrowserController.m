@@ -25,7 +25,7 @@
 - (NSURL *)selectedURL
 {
     if (self.tableView.indexPathForSelectedRow != nil)
-        return [self.remoteURL URLByAppendingPathComponent:[[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
+        return [self.remoteURL URLByAppendingPathComponent:[(NSDictionary *)[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
     return self.remoteURL;
 }
 
