@@ -142,7 +142,7 @@
 
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
-    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalAccessQueue);
     self.directoryURL = nil;
     [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
     completionHandler(nil);
@@ -150,13 +150,13 @@
 
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
-    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalAccessQueue);
     self.directoryURL = newURL;
 }
 
 - (void)presentedItemDidChange
 {
-    ASSERT([NSOperationQueue currentQueue] == _internalAccessQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalAccessQueue);
     [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
 }
 

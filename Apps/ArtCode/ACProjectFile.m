@@ -159,7 +159,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark - Accessing the content
 
 - (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     if (_openCount) {
         completionHandler(nil);
         return;
@@ -177,7 +177,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
             if (!syntax) {
                 syntax = [TMSyntaxNode syntaxForFileName:fileName];
             }
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 _codeFile = CodeFile.alloc.init;
                 [_codeFile replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
                 _syntax = syntax;
@@ -200,7 +200,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (void)closeWithCompletionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     if (!_openCount) {
         if (completionHandler) {
             completionHandler([[NSError alloc] init]);
@@ -220,7 +220,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     __block NSError *error = nil;
     [self.project performAsynchronousFileAccessUsingBlock:^{
         [fileContents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
             _codeFile = nil;
             _syntax = nil;
             _codeUnit = nil;

@@ -20,7 +20,7 @@ static NSArray *_bundleURLs;
         return;
     // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
 #if ! TEST
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
     NSMutableArray *bundleURLs = [NSMutableArray array];
     NSFileManager *fileManager = [[NSFileManager alloc] init];

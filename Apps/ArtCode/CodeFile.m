@@ -95,7 +95,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 }
 
 - (CodeFileGeneration)currentGeneration {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     return _contentsGeneration;
 }
 
@@ -103,7 +103,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 #define CONTENT_GETTER(type, value) \
 do {\
-ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 type __value;\
 OSSpinLockLock(&_contentsLock);\
 __value = value;\
@@ -240,7 +240,7 @@ while (0)
 #pragma mark - String content writing methods
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     
     // replacing an empty range with an empty string, no change required
     if (!range.length && ![string length]) {
@@ -277,11 +277,11 @@ while (0)
 
 #define CONTENT_MODIFIER(...) \
 do {\
-ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 if (!range.length) {\
 return;\
 }\
-ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 OSSpinLockLock(&_pendingChangesLock);\
 [_pendingChanges addObject:__VA_ARGS__];\
 [self _processPendingChanges];\
@@ -291,7 +291,7 @@ while (0)
 
 #define CONTENT_MODIFIER_EXPECTED_GENERATION(...) \
 do {\
-ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);\
+ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);\
 if (!range.length) {\
 return YES;\
 }\
@@ -347,27 +347,27 @@ while (0)
 // TODO these need support for transactions, pending changes and be better integrated with the multithreaded content management system, but they have to be replaced by onigregexp anyway so I'm leaving them broken for the time being
 
 -(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     return [regexp numberOfMatchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     return [regexp matchesInString:[self string] options:options range:range];
 }
 
 - (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
 }
 
 - (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     return [result.regularExpression replacementStringForResult:result inString:[self string] offset:offset template:replacementTemplate];
 }
 
 - (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(match && replacementTemplate);
     
     NSRange replacementRange = match.range;
@@ -386,7 +386,7 @@ while (0)
     if (_hasPendingChanges)
         return;
     _hasPendingChanges = YES;
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+    [NSOperationQueue.mainQueue addOperationWithBlock:^{
         OSSpinLockLock(&_pendingChangesLock);
         [self _processPendingChanges];
         OSSpinLockUnlock(&_pendingChangesLock);
@@ -395,7 +395,7 @@ while (0)
 
 - (void)_processPendingChanges
 {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(!OSSpinLockTry(&_pendingChangesLock));
     
     if (!_hasPendingChanges) {

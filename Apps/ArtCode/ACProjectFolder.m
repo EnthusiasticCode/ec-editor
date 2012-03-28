@@ -161,7 +161,7 @@ static NSString * const _childrenKey = @"children";
 #pragma mark - Internal Methods
 
 - (void)didRemoveChild:(ACProjectFileSystemItem *)child {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     ASSERT([_children.allValues containsObject:child]);
     [_children removeObjectForKey:child.name];
 }
@@ -169,11 +169,11 @@ static NSString * const _childrenKey = @"children";
 #pragma mark - Private Methods
 
 - (void)_addNewChildItemWithClass:(Class)childClass name:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         if ([_children objectForKey:name]) {
             if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [NSOperationQueue.mainQueue addOperationWithBlock:^{
                     completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil]);
                 }];
             }
@@ -183,7 +183,7 @@ static NSString * const _childrenKey = @"children";
         ACProjectFileSystemItem *childItem = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
         if (!childItem) {
             if (completionHandler) {
-                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [NSOperationQueue.mainQueue addOperationWithBlock:^{
                     completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil]);
                 }];
             }
@@ -194,7 +194,7 @@ static NSString * const _childrenKey = @"children";
             if (![childItem readFromURL:originalURL error:&error]) {
                 ASSERT(error);
                 if (completionHandler) {
-                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [NSOperationQueue.mainQueue addOperationWithBlock:^{
                         completionHandler(nil, error);
                     }];
                 }
@@ -205,7 +205,7 @@ static NSString * const _childrenKey = @"children";
         [self.project didAddFileSystemItem:childItem];
         [self.project updateChangeCount:UIDocumentChangeDone];
         if (completionHandler) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 completionHandler(childItem, nil);
             }];
         }
@@ -213,7 +213,7 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (ACProjectFileSystemItem *)_addExistingItem:(ACProjectFileSystemItem *)item renameTo:(NSString *)newName error:(NSError *__autoreleasing *)error {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     if (item.parentFolder != self && [_children objectForKey:newName]) {
         if (error) {
             *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil];
@@ -235,7 +235,7 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (ACProjectFileSystemItem *)_addCopyOfExistingItem:(ACProjectFileSystemItem *)item renameIfNeeded:(BOOL)renameIfNeeded error:(NSError *__autoreleasing *)error {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     NSString *name = item.name;
     if (!renameIfNeeded) {
         if ([_children objectForKey:name]) {
@@ -266,7 +266,7 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (void)_didAddChild:(ACProjectFileSystemItem *)child {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     ASSERT(![_children.allValues containsObject:child]);
     [_children setObject:child forKey:child.name];
 }
@@ -276,14 +276,14 @@ static NSString * const _childrenKey = @"children";
 @implementation ACProjectFileSystemItem (RenamingMovingAndCopying)
 
 - (void)setName:(NSString *)name withCompletionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(name && ![name isEqualToString:self.name]);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSError *error = nil;
         [self.parentFolder _addExistingItem:self renameTo:name error:&error];
         ASSERT(error || [self.name isEqualToString:name]);
         if (completionHandler) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 completionHandler(error);
             }];
         }
@@ -291,14 +291,14 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void (^)(NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(newParent && newParent != self.parentFolder);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSError *error = nil;
         [newParent _addExistingItem:self renameTo:self.name error:&error];
         ASSERT(error || self.parentFolder == newParent);
         if (completionHandler) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 completionHandler(error);
             }];
         }
@@ -306,14 +306,14 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(copyParent && copyParent != self.parentFolder);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSError *error = nil;
         ACProjectFileSystemItem *copy = [copyParent _addCopyOfExistingItem:self renameIfNeeded:NO error:&error];
         ASSERT((copy || error) && !(copy && error));
         if (completionHandler) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 completionHandler(copy, error);
             }];
         }
@@ -321,13 +321,13 @@ static NSString * const _childrenKey = @"children";
 }
 
 - (void)duplicateWithCompletionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     [self.project performAsynchronousFileAccessUsingBlock:^{
         NSError *error = nil;
         ACProjectFileSystemItem *copy = [self.parentFolder _addCopyOfExistingItem:self renameIfNeeded:YES error:&error];
         ASSERT((copy || error) && !(copy && error));
         if (completionHandler) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [NSOperationQueue.mainQueue addOperationWithBlock:^{
                 completionHandler(copy, error);
             }];
         }

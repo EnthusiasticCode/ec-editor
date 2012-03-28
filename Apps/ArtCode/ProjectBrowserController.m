@@ -155,12 +155,12 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidInsertProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidInsertProjectNotificationName object:[ACProject class] queue:NSOperationQueue.currentQueue usingBlock:^(NSNotification *note) {
         _projects = ACProject.projects;
         NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
         [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }];
-    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidRemoveProjectNotificationName object:[ACProject class] queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+    [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidRemoveProjectNotificationName object:[ACProject class] queue:NSOperationQueue.currentQueue usingBlock:^(NSNotification *note) {
         _projects = ACProject.projects;
         NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
         [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];

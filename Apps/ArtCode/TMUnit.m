@@ -92,7 +92,7 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (id)initWithProjectFile:(ACProjectFile *)projectFile {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     self = [super init];
     if (!self)
         return nil;
@@ -147,7 +147,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)rootScopeWithCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     BOOL generationsMatch = NO;
     if (OSSpinLockTry(&_scopesLock))
     {
@@ -161,14 +161,14 @@ static OnigRegexp *_namedCapturesRegexp;
     }
     
     if (!generationsMatch)
-        [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
+        [NSOperationQueue.currentQueue performSelector:@selector(addOperationWithBlock:) withObject:^{
             [self rootScopeWithCompletionHandler:completionHandler];
         } afterDelay:0.2];
 }
 
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
 {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     BOOL generationsMatch = NO;
     if (OSSpinLockTry(&_scopesLock))
     {
@@ -182,7 +182,7 @@ static OnigRegexp *_namedCapturesRegexp;
     }
     
     if (!generationsMatch)
-        [[NSOperationQueue currentQueue] performSelector:@selector(addOperationWithBlock:) withObject:^{
+        [NSOperationQueue.currentQueue performSelector:@selector(addOperationWithBlock:) withObject:^{
             [self scopeAtOffset:offset withCompletionHandler:completionHandler];
         } afterDelay:0.2];
 }
@@ -201,7 +201,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     Change *change = [[Change alloc] init];
     change->generation = [codeFile currentGeneration];
     change->oldRange = range;
@@ -216,7 +216,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_setHasPendingChanges
 {
-    ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
     ASSERT(!OSSpinLockTry(&_pendingChangesLock));
     if (_hasPendingChanges)
         return;
@@ -236,7 +236,7 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_generateScopes
 {
     ASSERT(!OSSpinLockTry(&_scopesLock));
-    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalQueue);
 
     // This is going to be the reference generation, if it changes we break out immediately because we know we're about to be called again
     CodeFileGeneration startingGeneration = 0;
@@ -536,7 +536,7 @@ static OnigRegexp *_namedCapturesRegexp;
 - (BOOL)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
     ASSERT(!OSSpinLockTry(&_scopesLock));
-    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalQueue);
     ASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
     ASSERT(scope && result && [result bodyRange].length);
     if (!dictionary || !result)
@@ -586,7 +586,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
 {
-    ASSERT([NSOperationQueue currentQueue] == _internalQueue);
+    ASSERT(NSOperationQueue.currentQueue == _internalQueue);
     NSMutableArray *includedPatterns = [_patternsIncludedByPattern objectForKey:pattern];
     if (includedPatterns)
         return includedPatterns;

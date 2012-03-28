@@ -1814,7 +1814,7 @@ static void init(CodeView *self)
         }
         UIGraphicsEndImageContext();
         // Request rerendering
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^(void) {
+        [NSOperationQueue.mainQueue addOperationWithBlock:^(void) {
             [this setNeedsDisplay];
         }];
     });

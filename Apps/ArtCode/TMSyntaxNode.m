@@ -70,7 +70,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     }
     // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
 #if ! TEST
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
     _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
     _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];

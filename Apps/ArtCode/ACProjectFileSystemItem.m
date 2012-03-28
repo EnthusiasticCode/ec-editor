@@ -70,18 +70,18 @@
 #pragma mark - Item Contents
 
 #define PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER(method_call) \
-ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);\
+ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 [self.project performAsynchronousFileAccessUsingBlock:^{\
 NSError *error = nil;\
 if (!method_call) {\
 if (completionHandler) {\
-[[NSOperationQueue mainQueue] addOperationWithBlock:^{\
+[NSOperationQueue.mainQueue addOperationWithBlock:^{\
 completionHandler(error);\
 }];\
 }\
 } else {\
 if (completionHandler) {\
-[[NSOperationQueue mainQueue] addOperationWithBlock:^{\
+[NSOperationQueue.mainQueue addOperationWithBlock:^{\
 completionHandler(nil);\
 }];\
 }\
@@ -104,18 +104,18 @@ completionHandler(nil);\
 #pragma mark - Internal Methods
 
 - (NSURL *)fileURL {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     return _fileURL;
 }
 
 - (void)setFileURL:(NSURL *)fileURL {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     _fileURL = fileURL;
 }
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
     // All filesystem items need to be initialized in the project's file access coordination queue
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     // If parameters aren't good, return nil
     if (!project || !fileURL || ![fileURL isFileURL]) {
         return nil;
@@ -141,7 +141,7 @@ completionHandler(nil);\
 }
 
 - (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     if ([url isEqual:self.fileURL]) {
         return YES;
     } else {
@@ -180,7 +180,7 @@ completionHandler(nil);\
 }
 
 - (BOOL)writeToURL:(NSURL *)url error:(out NSError *__autoreleasing *)error {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     if ([url isEqual:self.fileURL]) {
         return YES;
     } else {
@@ -192,7 +192,7 @@ completionHandler(nil);\
 
 - (BOOL)removeSynchronouslyWithError:(NSError *__autoreleasing *)error
 {
-    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
     if (![[[NSFileManager alloc] init] removeItemAtURL:self.fileURL error:error]) {
         ASSERT(!error || *error);
         return NO;
