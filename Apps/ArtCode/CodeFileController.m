@@ -813,12 +813,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
     // Apply debounce to selection change
     [_selectionChangeDebounceTimer invalidate];
-//    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-//        // Retrieve the current scope
-//        [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
-//            // Set current symbol in title
+    _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+        // Retrieve the current scope
+        [self.projectFile.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
+            // Set current symbol in title
 //            TMSymbol *currentSymbol = nil;
-//            for (TMSymbol *symbol in [self.codeUnit symbolList])
+//            for (TMSymbol *symbol in [self.projectFile.codeUnit symbolList])
 //            {
 //                if (symbol.range.location > scope.location)
 //                    break;
@@ -829,11 +829,11 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 //                _currentSymbol = currentSymbol;
 //                [self.singleTabController updateDefaultToolbarTitle];
 //            }
-//            // Change accessory keyboard
-//            [self _keyboardAccessoryItemSetupWithScope:scope];
-//
-//        }];
-//    } repeats:NO];
+            // Change accessory keyboard
+            [self _keyboardAccessoryItemSetupWithScope:scope];
+
+        }];
+    } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods
