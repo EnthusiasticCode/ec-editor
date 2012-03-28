@@ -179,7 +179,7 @@ static NSString * const _plistRemotesKey = @"remotes";
                 [remotesFromPlist setObject:remote forKey:remote.UUID];
             }
         }
-        _remotes = [remotesFromPlist copy];
+        _remotes = remotesFromPlist;
     }
     return YES;
 }

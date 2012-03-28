@@ -311,6 +311,7 @@
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
+		CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */; };
 		CD6E416C14614A0C00A9CE7F /* CodeFileMinimapView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6E416B14614A0C00A9CE7F /* CodeFileMinimapView.m */; };
 		CD6E4DCA14EFE702009B8CF8 /* libclang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DB114EFE702009B8CF8 /* libclang.a */; };
 		CD6E4DCB14EFE702009B8CF8 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DB214EFE702009B8CF8 /* libclangAnalysis.a */; };
@@ -790,6 +791,8 @@
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
+		CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportRemotesListController.h; sourceTree = "<group>"; };
+		CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExportRemotesListController.m; sourceTree = "<group>"; };
 		CD6E416A14614A0C00A9CE7F /* CodeFileMinimapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileMinimapView.h; sourceTree = "<group>"; };
 		CD6E416B14614A0C00A9CE7F /* CodeFileMinimapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileMinimapView.m; sourceTree = "<group>"; };
 		CD6E4DB114EFE702009B8CF8 /* libclang.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclang.a; path = ../ThirdParty/libclang/lib/libclang.a; sourceTree = "<group>"; };
@@ -1539,6 +1542,8 @@
 				CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
 				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
+				CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */,
+				CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */,
 				CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */,
 				CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */,
 			);
@@ -2571,6 +2576,7 @@
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
+				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
