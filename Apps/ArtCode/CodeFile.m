@@ -276,6 +276,7 @@ return;\
 ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 OSSpinLockLock(&_pendingChangesLock);\
 [_pendingChanges addObject:__VA_ARGS__];\
+_hasPendingChanges = YES;\
 [self _processPendingChanges];\
 OSSpinLockUnlock(&_pendingChangesLock);\
 }\
