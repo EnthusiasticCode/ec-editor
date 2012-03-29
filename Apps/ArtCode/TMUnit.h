@@ -7,13 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-@class TMScope, UIImage;
+@class TMScope, UIImage, ACProjectFile;
 @protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface TMUnit : NSObject
 
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
+
+- (id)initWithProjectFile:(ACProjectFile *)projectFile;
 
 /// Returns an array of TMSymbol objects representing all the symbols in the file.
 - (void)symbolListWithCompletionHandler:(void(^)(NSArray *symbolList))completionHandler;

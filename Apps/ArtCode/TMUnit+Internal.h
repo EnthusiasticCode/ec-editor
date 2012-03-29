@@ -13,8 +13,6 @@
 
 + (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key;
 
-- (id)initWithProjectFile:(ACProjectFile *)projectFile;
-
 - (id)extensionForKey:(id)key;
 
 @end

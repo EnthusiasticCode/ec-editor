@@ -53,7 +53,7 @@
     ASSERT(self.targetCodeFileController.projectFile.codeFile.length > self.offsetInDocumentForCompletions);
 
     if (!_completionResults)
-        _completionResults = [self.targetCodeFileController.projectFile.codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
+        _completionResults = [self.targetCodeFileController.codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
     return _completionResults;
 }
 
