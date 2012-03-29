@@ -10,7 +10,7 @@
 
 @class FileBuffer;
 
-@protocol CodeFilePresenter <NSObject>
+@protocol FileBufferPresenter <NSObject>
 
 @optional
 - (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
@@ -22,8 +22,8 @@
 
 @property (nonatomic, strong) NSDictionary *defaultAttributes;
 
-- (void)addPresenter:(id<CodeFilePresenter>)presenter;
-- (void)removePresenter:(id<CodeFilePresenter>)presenter;
+- (void)addPresenter:(id<FileBufferPresenter>)presenter;
+- (void)removePresenter:(id<FileBufferPresenter>)presenter;
 - (NSArray *)presenters;
 
 #pragma mark String content reading methods

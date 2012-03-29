@@ -28,7 +28,6 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "FileBuffer.h"
-#import "FileBuffer+Generation.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
@@ -624,7 +623,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   return NO;
 }
 
-#pragma mark - CodeFilePresenter
+#pragma mark - FileBufferPresenter
 
 - (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
@@ -641,25 +640,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return [self.projectFile.fileBuffer lengthWithGeneration:NULL];
+  return self.projectFile.fileBuffer.length;
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 #warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  CodeFileGeneration generation;
-  NSMutableAttributedString *attributedString = [[self.projectFile.fileBuffer attributedStringInRange:stringRange generation:&generation] mutableCopy];
+  NSMutableAttributedString *attributedString = [[self.projectFile.fileBuffer attributedStringInRange:stringRange] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName;
-      if (![self.projectFile.fileBuffer string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
-        *stop = YES;
-        return;
-      }
+      NSString *placeHolderName = [self.projectFile.fileBuffer stringInRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }

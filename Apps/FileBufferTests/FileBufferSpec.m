@@ -61,7 +61,7 @@ describe(@"A FileBuffer", ^{
   });
   
   it(@"can have file presenters added", ^{
-    id mockFilePresenter = [KWMock mockForProtocol:@protocol(CodeFilePresenter)];
+    id mockFilePresenter = [KWMock mockForProtocol:@protocol(FileBufferPresenter)];
     [fileBuffer addPresenter:mockFilePresenter];
     [[theValue(fileBuffer.presenters.count) should] equal:theValue(1)];
     [[[fileBuffer.presenters objectAtIndex:0] should] equal:mockFilePresenter];
@@ -71,7 +71,7 @@ describe(@"A FileBuffer", ^{
     __block id mockFilePresenter;
     
     beforeEach(^{
-      mockFilePresenter = [KWMock mockForProtocol:@protocol(CodeFilePresenter)];
+      mockFilePresenter = [KWMock mockForProtocol:@protocol(FileBufferPresenter)];
       [mockFilePresenter stub:@selector(isEqual:) andReturn:theValue(YES)];
       [fileBuffer addPresenter:mockFilePresenter];
       [[theValue(fileBuffer.presenters.count) should] equal:theValue(1)];
