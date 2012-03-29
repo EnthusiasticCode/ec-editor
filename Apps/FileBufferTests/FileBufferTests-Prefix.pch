@@ -1,0 +1,11 @@
+//
+// Prefix header for all source files of the 'FileBufferTests' target in the 'FileBufferTests' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#include <Debug.h>
