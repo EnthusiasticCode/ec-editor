@@ -588,7 +588,7 @@
 		B78C160E15245F6000C66DDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B78C161115245F6000C66DDC /* FileBufferSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileBufferSpec.m; sourceTree = "<group>"; };
 		B78C161315245F6000C66DDC /* FileBufferTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileBufferTests-Prefix.pch"; sourceTree = "<group>"; };
-		B78C162415245FA800C66DDC /* FileBufferTests copy.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FileBufferTests copy.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FileBufferTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1723,7 +1723,7 @@
 				B77101211506E20F006AF1FB /* ArtCodeTests.octest */,
 				B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */,
 				B78C160315245F6000C66DDC /* FileBufferTests.octest */,
-				B78C162415245FA800C66DDC /* FileBufferTests copy.octest */,
+				B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2147,7 +2147,7 @@
 			);
 			name = "FileBufferTests-RunOnBuild";
 			productName = FileBufferTests;
-			productReference = B78C162415245FA800C66DDC /* FileBufferTests copy.octest */;
+			productReference = B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 		B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */ = {
@@ -2908,7 +2908,7 @@
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
-				INFOPLIST_FILE = "FileBufferTests copy-Info.plist";
+				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2916,7 +2916,7 @@
 					"\"$(SRCROOT)/../ThirdParty/Kiwi/build/Release-iphoneos\"",
 				);
 				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "FileBufferTests copy";
+				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
@@ -2939,7 +2939,7 @@
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
-				INFOPLIST_FILE = "FileBufferTests copy-Info.plist";
+				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2947,7 +2947,7 @@
 					"\"$(SRCROOT)/../ThirdParty/Kiwi/build/Release-iphoneos\"",
 				);
 				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "FileBufferTests copy";
+				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
@@ -2966,6 +2966,7 @@
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
+				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
@@ -2990,6 +2991,7 @@
 					$HEADER_SEARCH_PATHS,
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 				);
+				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
