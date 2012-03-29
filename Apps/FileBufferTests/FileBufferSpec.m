@@ -7,16 +7,16 @@
 //
 
 #import <Kiwi.h>
-#import "CodeFile.h"
+#import "FileBuffer.h"
 
 SPEC_BEGIN(FileBufferSpec)
 
 describe(@"A FileBuffer", ^{
   
-  __block CodeFile *fileBuffer;
+  __block FileBuffer *fileBuffer;
   
   beforeEach(^{
-    fileBuffer = CodeFile.alloc.init;
+    fileBuffer = FileBuffer.alloc.init;
   });
   
   afterEach(^{
@@ -88,15 +88,15 @@ describe(@"A FileBuffer", ^{
     });
     
     it(@"calls the replace callback", ^{
-      [mockFilePresenter stub:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)];
-      [[mockFilePresenter should] receive:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:) withCount:1];
+      [mockFilePresenter stub:@selector(fileBuffer:didReplaceCharactersInRange:withAttributedString:)];
+      [[mockFilePresenter should] receive:@selector(fileBuffer:didReplaceCharactersInRange:withAttributedString:) withCount:1];
       [fileBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
     });
     
     it(@"calls the attribute callback", ^{
-      [mockFilePresenter stub:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)];
-      [mockFilePresenter stub:@selector(codeFile:didChangeAttributesInRange:)];
-      [[mockFilePresenter should] receive:@selector(codeFile:didChangeAttributesInRange:) withCount:1];
+      [mockFilePresenter stub:@selector(fileBuffer:didReplaceCharactersInRange:withAttributedString:)];
+      [mockFilePresenter stub:@selector(fileBuffer:didChangeAttributesInRange:)];
+      [[mockFilePresenter should] receive:@selector(fileBuffer:didChangeAttributesInRange:) withCount:1];
       [fileBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
       [fileBuffer setAttributes:[NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttribute"] range:NSMakeRange(0, 5)];
     });

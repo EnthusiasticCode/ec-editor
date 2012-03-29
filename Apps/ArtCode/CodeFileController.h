@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CodeFile.h"
+#import "FileBuffer.h"
 #import "CodeView.h"
 #import "CodeFileMinimapView.h"
 #import "TMKeyboardAction.h"

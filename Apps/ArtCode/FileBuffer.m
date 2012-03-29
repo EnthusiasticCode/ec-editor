@@ -1,12 +1,12 @@
 //
-//  CodeFile.m
+//  FileBuffer.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 12/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "CodeFile+Generation.h"
+#import "FileBuffer+Generation.h"
 #import "WeakArray.h"
 #import "ACProjectFile.h"
 #import "ACProject.h"
@@ -22,7 +22,7 @@ static NSString * const _changeAttributesKey= @"CodeFileChangeAttributesKey";
 static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeNamesKey";
 
 
-@interface CodeFile ()
+@interface FileBuffer ()
 
 // Private content methods. All the following methods have to be called within a pending changes lock.
 - (void)_setHasPendingChanges;
@@ -31,7 +31,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 @end
 
 #pragma mark -
-@implementation CodeFile {
+@implementation FileBuffer {
   NSMutableAttributedString *_contents;
   CodeFileGeneration _contentsGeneration;
   OSSpinLock _contentsLock;
@@ -259,8 +259,8 @@ while (0)
   
   OSSpinLockUnlock(&_pendingChangesLock);
   for (id<CodeFilePresenter>presenter in [self presenters]) {
-    if ([presenter respondsToSelector:@selector(codeFile:didReplaceCharactersInRange:withAttributedString:)]) {
-      [presenter codeFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+    if ([presenter respondsToSelector:@selector(fileBuffer:didReplaceCharactersInRange:withAttributedString:)]) {
+      [presenter fileBuffer:self didReplaceCharactersInRange:range withAttributedString:attributedString];
     }
   }
 }
@@ -428,8 +428,8 @@ while (0)
     OSSpinLockUnlock(&_contentsLock);
     
     for (id<CodeFilePresenter> presenter in [self presenters]) {
-      if ([presenter respondsToSelector:@selector(codeFile:didChangeAttributesInRange:)]) {
-        [presenter codeFile:self didChangeAttributesInRange:range];
+      if ([presenter respondsToSelector:@selector(fileBuffer:didChangeAttributesInRange:)]) {
+        [presenter fileBuffer:self didChangeAttributesInRange:range];
       }
     }
     OSSpinLockLock(&_pendingChangesLock);

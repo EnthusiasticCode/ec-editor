@@ -8,20 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
-		B7072B33150FF46D00580855 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
+		B7072B33150FF46D00580855 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B7072B35150FF58B00580855 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
-		B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */; };
+		B7285A6D14EC2ACD00E3DE65 /* FileBuffer+Generation.h in Resources */ = {isa = PBXBuildFile; fileRef = B7285A6C14EC2ACC00E3DE65 /* FileBuffer+Generation.h */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B75B575D14B0B62D00053783 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
+		B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
@@ -110,8 +110,8 @@
 		B78C163F1524620400C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
 		B78C16401524620900C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
 		B78C16411524620E00C66DDC /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B78C16421524622200C66DDC /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
-		B78C16431524622D00C66DDC /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
+		B78C16421524622200C66DDC /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
+		B78C16431524622D00C66DDC /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B78C16441524628F00C66DDC /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160415245F6000C66DDC /* SenTestingKit.framework */; };
 		B78C16451524629800C66DDC /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B78C16461524629800C66DDC /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
@@ -248,7 +248,7 @@
 		B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
 		B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
-		B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* CodeFile.m */; };
+		B7EB57A2151B9B7B0031C977 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -507,15 +507,15 @@
 		B71A1DE51435112700672F65 /* NewFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
-		B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CodeFile+Generation.h"; sourceTree = "<group>"; };
+		B7285A6C14EC2ACC00E3DE65 /* FileBuffer+Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileBuffer+Generation.h"; sourceTree = "<group>"; };
 		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
-		B75B575B14B0B62D00053783 /* CodeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFile.h; sourceTree = "<group>"; };
-		B75B575C14B0B62D00053783 /* CodeFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFile.m; sourceTree = "<group>"; };
+		B75B575B14B0B62D00053783 /* FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = FileBuffer.h; sourceTree = "<group>"; };
+		B75B575C14B0B62D00053783 /* FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBuffer.m; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
 		B75F658314D868EB008B88C5 /* ArtCodeURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURL.m; sourceTree = "<group>"; };
 		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
@@ -1143,9 +1143,9 @@
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
-				B75B575B14B0B62D00053783 /* CodeFile.h */,
-				B7285A6C14EC2ACC00E3DE65 /* CodeFile+Generation.h */,
-				B75B575C14B0B62D00053783 /* CodeFile.m */,
+				B75B575B14B0B62D00053783 /* FileBuffer.h */,
+				B7285A6C14EC2ACC00E3DE65 /* FileBuffer+Generation.h */,
+				B75B575C14B0B62D00053783 /* FileBuffer.m */,
 				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
 				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 			);
@@ -2507,7 +2507,7 @@
 				CD78C1C814E15CFB00EBBBFF /* bezelAlert_okIcon.png in Resources */,
 				CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */,
 				CD27416A14E9C4120045ADFD /* itemIcon_Replace.png in Resources */,
-				B7285A6D14EC2ACD00E3DE65 /* CodeFile+Generation.h in Resources */,
+				B7285A6D14EC2ACD00E3DE65 /* FileBuffer+Generation.h in Resources */,
 				B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */,
 				B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */,
 				B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */,
@@ -2724,7 +2724,7 @@
 				CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */,
 				CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */,
 				CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */,
-				B7072B33150FF46D00580855 /* CodeFile.m in Sources */,
+				B7072B33150FF46D00580855 /* FileBuffer.m in Sources */,
 				B7072B35150FF58B00580855 /* WeakArray.m in Sources */,
 				B7072B36150FF58B00580855 /* WeakObjectWrapper.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
@@ -2738,7 +2738,7 @@
 			files = (
 				B78C16451524629800C66DDC /* WeakArray.m in Sources */,
 				B78C16461524629800C66DDC /* WeakObjectWrapper.m in Sources */,
-				B78C16431524622D00C66DDC /* CodeFile.m in Sources */,
+				B78C16431524622D00C66DDC /* FileBuffer.m in Sources */,
 				B78C161215245F6000C66DDC /* FileBufferSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2749,7 +2749,7 @@
 			files = (
 				B78C1648152462AA00C66DDC /* WeakArray.m in Sources */,
 				B78C1649152462AA00C66DDC /* WeakObjectWrapper.m in Sources */,
-				B78C16421524622200C66DDC /* CodeFile.m in Sources */,
+				B78C16421524622200C66DDC /* FileBuffer.m in Sources */,
 				B78C161915245FA800C66DDC /* FileBufferSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2787,7 +2787,7 @@
 				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
 				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
 				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
-				B7EB57A2151B9B7B0031C977 /* CodeFile.m in Sources */,
+				B7EB57A2151B9B7B0031C977 /* FileBuffer.m in Sources */,
 				B7EB57A4151B9B7B0031C977 /* WeakArray.m in Sources */,
 				B7EB57A5151B9B7B0031C977 /* WeakObjectWrapper.m in Sources */,
 				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
@@ -2823,7 +2823,7 @@
 				CDC1A079147E6EC300E01B7A /* CodeFileCompletionCell.m in Sources */,
 				CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */,
 				CDE80660147F949300C94BFD /* ShapePopoverBackgroundView.m in Sources */,
-				B75B575D14B0B62D00053783 /* CodeFile.m in Sources */,
+				B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */,
 				CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */,
 				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
 				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,

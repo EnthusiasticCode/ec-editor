@@ -25,7 +25,7 @@
 
 #import "ArtCodeTab.h"
 
-#import "CodeFile.h"
+#import "FileBuffer.h"
 
 #import "TMScope.h"
 

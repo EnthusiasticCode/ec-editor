@@ -17,7 +17,7 @@
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "ACProjectFile.h"
-#import "CodeFile+Generation.h"
+#import "FileBuffer+Generation.h"
 #import <libkern/OSAtomic.h>
 
 static NSMutableDictionary *_extensionClasses;
@@ -101,7 +101,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   _projectFile = projectFile;
   
-  [projectFile.codeFile addPresenter:self];
+  [projectFile.fileBuffer addPresenter:self];
   
   _scopesLock = OS_SPINLOCK_INIT;
   
@@ -121,9 +121,9 @@ static OnigRegexp *_namedCapturesRegexp;
   
   _pendingChangesLock = OS_SPINLOCK_INIT;
   Change *firstChange = [[Change alloc] init];
-  firstChange->generation = [projectFile.codeFile currentGeneration];
+  firstChange->generation = [projectFile.fileBuffer currentGeneration];
   firstChange->oldRange = NSMakeRange(0, 0);
-  firstChange->newRange = NSMakeRange(0, [projectFile.codeFile length]);
+  firstChange->newRange = NSMakeRange(0, [projectFile.fileBuffer length]);
   _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
   OSSpinLockLock(&_pendingChangesLock);
   [self _setHasPendingChanges];
@@ -160,7 +160,7 @@ static OnigRegexp *_namedCapturesRegexp;
   BOOL generationsMatch = NO;
   if (OSSpinLockTry(&_scopesLock))
   {
-    generationsMatch = [_projectFile.codeFile currentGeneration] == _scopesGeneration;
+    generationsMatch = [_projectFile.fileBuffer currentGeneration] == _scopesGeneration;
     TMScope *scopeCopy = nil;
     if (generationsMatch)
       scopeCopy = [_rootScope copy];
@@ -181,7 +181,7 @@ static OnigRegexp *_namedCapturesRegexp;
   BOOL generationsMatch = NO;
   if (OSSpinLockTry(&_scopesLock))
   {
-    generationsMatch = [_projectFile.codeFile currentGeneration] == _scopesGeneration;
+    generationsMatch = [_projectFile.fileBuffer currentGeneration] == _scopesGeneration;
     TMScope *scopeCopy = nil;
     if (generationsMatch)
       scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
@@ -208,11 +208,11 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - CodeFilePresenter
 
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
+- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   Change *change = [[Change alloc] init];
-  change->generation = [codeFile currentGeneration];
+  change->generation = [fileBuffer currentGeneration];
   change->oldRange = range;
   change->newRange = NSMakeRange(range.location, [string length]);
   OSSpinLockLock(&_pendingChangesLock);
@@ -277,7 +277,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
   NSUInteger fileLength;
-  if (![_projectFile.codeFile length:&fileLength expectedGeneration:startingGeneration])
+  if (![_projectFile.fileBuffer length:&fileLength expectedGeneration:startingGeneration])
   {
     OSSpinLockUnlock(&_pendingChangesLock);
     return;
@@ -295,7 +295,7 @@ static OnigRegexp *_namedCapturesRegexp;
   {
     // Get the first line range
     NSRange lineRange = NSMakeRange(nextRange.location, 0);
-    if (![_projectFile.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+    if (![_projectFile.fileBuffer lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
       return;
     // Zero length line means end of file
     if (!lineRange.length)
@@ -320,7 +320,7 @@ static OnigRegexp *_namedCapturesRegexp;
       
       // Setup the line
       NSString *line;
-      if (![_projectFile.codeFile string:&line inRange:lineRange expectedGeneration:startingGeneration])
+      if (![_projectFile.fileBuffer string:&line inRange:lineRange expectedGeneration:startingGeneration])
         return;
       
       // Parse the line
@@ -343,7 +343,7 @@ static OnigRegexp *_namedCapturesRegexp;
       OSSpinLockUnlock(&_pendingChangesLock);
       // proceed to next line
       lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-      if (![_projectFile.codeFile lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
+      if (![_projectFile.fileBuffer lineRange:&lineRange forRange:lineRange expectedGeneration:startingGeneration])
         return;
     }
     // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
@@ -588,10 +588,10 @@ static OnigRegexp *_namedCapturesRegexp;
 - (BOOL)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope generation:(CodeFileGeneration)generation
 {
 #warning URI TODO: queue up callbacks to call on main thread
-  //    NSDictionary *attributes = [_projectFile.codeFile.theme attributesForScope:scope];
+  //    NSDictionary *attributes = [_projectFile.fileBuffer.theme attributesForScope:scope];
   //    if (![attributes count])
   return YES;
-  //    return [_projectFile.codeFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
+  //    return [_projectFile.fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern

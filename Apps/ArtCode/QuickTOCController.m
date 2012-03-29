@@ -9,7 +9,7 @@
 #import "QuickTOCController.h"
 #import "QuickBrowsersContainerController.h"
 #import "CodeFileController.h"
-#import "CodeFile.h"
+#import "FileBuffer.h"
 #import "TMUnit.h"
 #import "CodeView.h"
 

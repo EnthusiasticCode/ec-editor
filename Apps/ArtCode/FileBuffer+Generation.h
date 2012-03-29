@@ -1,17 +1,17 @@
 //
-//  CodeFile.h
+//  FileBuffer.h
 //  ArtCode
 //
 //  Created by Uri Baghin on 12/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "CodeFile.h"
+#import "FileBuffer.h"
 
 typedef NSUInteger CodeFileGeneration;
 
-/// CodeFile transaction style atomic reading and writing
-@interface CodeFile (Generation)
+/// FileBuffer transaction style atomic reading and writing
+@interface FileBuffer (Generation)
 
 /// Get the current generation
 /// Because of the inherent race conditions of this method, it can only be called from main queue

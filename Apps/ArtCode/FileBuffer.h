@@ -1,5 +1,5 @@
 //
-//  CodeFile.h
+//  FileBuffer.h
 //  ArtCode
 //
 //  Created by Uri Baghin on 12/10/11.
@@ -8,17 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@class CodeFile;
+@class FileBuffer;
 
 @protocol CodeFilePresenter <NSObject>
 
 @optional
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
-- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range;
+- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+- (void)fileBuffer:(FileBuffer *)fileBuffer didChangeAttributesInRange:(NSRange)range;
 
 @end
 
-@interface CodeFile : NSObject
+@interface FileBuffer : NSObject
 
 @property (nonatomic, strong) NSDictionary *defaultAttributes;
 

@@ -14,7 +14,7 @@
 #import "TextRange.h"
 
 #import "CodeFileController.h"
-#import "CodeFile.h"
+#import "FileBuffer.h"
 #import "CodeFileKeyboardAccessoryView.h"
 
 #import "ACProjectFile.h"
@@ -50,7 +50,7 @@
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-    ASSERT(self.targetCodeFileController.projectFile.codeFile.length > self.offsetInDocumentForCompletions);
+    ASSERT(self.targetCodeFileController.projectFile.fileBuffer.length > self.offsetInDocumentForCompletions);
 
     if (!_completionResults)
         _completionResults = [self.targetCodeFileController.codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];

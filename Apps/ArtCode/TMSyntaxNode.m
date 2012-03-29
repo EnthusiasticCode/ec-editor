@@ -10,7 +10,7 @@
 #import "TMBundle.h"
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "ACProjectFile.h"
-#import "CodeFile.h"
+#import "FileBuffer.h"
 
 static NSString * const _syntaxDirectory = @"Syntaxes";
 

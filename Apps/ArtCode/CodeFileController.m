@@ -27,8 +27,8 @@
 
 #import "ShapePopoverBackgroundView.h"
 
-#import "CodeFile.h"
-#import "CodeFile+Generation.h"
+#import "FileBuffer.h"
+#import "FileBuffer+Generation.h"
 #import "TMUnit.h"
 #import "TMScope.h"
 #import "TMPreference.h"
@@ -276,7 +276,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (projectFile == _projectFile)
     return;
   
-  [_projectFile.codeFile removePresenter:self];
+  [_projectFile.fileBuffer removePresenter:self];
   [_projectFile closeWithCompletionHandler:nil];
   _projectFile = nil;
   [projectFile openWithCompletionHandler:^(NSError *error) {
@@ -284,7 +284,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
       return;
     }
     _projectFile = projectFile;
-    [_projectFile.codeFile addPresenter:self];
+    [_projectFile.fileBuffer addPresenter:self];
     [self _setCodeViewAttributesForTheme:self.theme];
     [_codeView updateAllText];
     [self _loadWebPreviewContentAndTitle];
@@ -626,12 +626,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - CodeFilePresenter
 
-- (void)codeFile:(CodeFile *)codeFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
+- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
 {
   [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
 }
 
-- (void)codeFile:(CodeFile *)codeFile didChangeAttributesInRange:(NSRange)range
+- (void)fileBuffer:(FileBuffer *)fileBuffer didChangeAttributesInRange:(NSRange)range
 {
 #warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit could pile up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
   [self.codeView updateTextFromStringRange:range toStringRange:range];
@@ -641,14 +641,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return [self.projectFile.codeFile lengthWithGeneration:NULL];
+  return [self.projectFile.fileBuffer lengthWithGeneration:NULL];
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 #warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
   CodeFileGeneration generation;
-  NSMutableAttributedString *attributedString = [[self.projectFile.codeFile attributedStringInRange:stringRange generation:&generation] mutableCopy];
+  NSMutableAttributedString *attributedString = [[self.projectFile.fileBuffer attributedStringInRange:stringRange generation:&generation] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
@@ -656,7 +656,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
       NSString *placeHolderName;
-      if (![self.projectFile.codeFile string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
+      if (![self.projectFile.fileBuffer string:&placeHolderName inRange:[result rangeAtIndex:1] expectedGeneration:generation]) {
         *stop = YES;
         return;
       }
@@ -673,12 +673,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-  [self.projectFile.codeFile replaceCharactersInRange:range withString:commitString];
+  [self.projectFile.fileBuffer replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-  return [self.projectFile.codeFile attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+  return [self.projectFile.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -902,7 +902,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
   if ([self _isWebPreview] && self.projectFile)
   {
-    [self.webView loadHTMLString:[self.projectFile.codeFile string] baseURL:nil];
+    [self.webView loadHTMLString:[self.projectFile.fileBuffer string] baseURL:nil];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else
