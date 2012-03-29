@@ -12,7 +12,7 @@
 #import "CodeFileMinimapView.h"
 #import "TMKeyboardAction.h"
 
-@class ArtCodeTab, ACProjectFile;
+@class ArtCodeTab, ACProjectFile, TMTheme, TMUnit;
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, CodeFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
@@ -22,8 +22,12 @@
 
 #pragma mark - Code viewing and editing
 
+@property (nonatomic, strong) TMTheme *theme;
+
 /// The code view used to display code.
 @property (nonatomic, strong, readonly) CodeView *codeView;
+
+@property (nonatomic, strong, readonly) TMUnit *codeUnit;
 
 /// The web view used for preview webpages.
 @property (nonatomic, strong, readonly) UIWebView *webView;

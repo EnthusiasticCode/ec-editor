@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class TMTheme, CodeFile;
+@class CodeFile;
 
 @protocol CodeFilePresenter <NSObject>
 
@@ -20,7 +20,7 @@
 
 @interface CodeFile : NSObject
 
-@property (nonatomic, strong) TMTheme *theme;
+@property (nonatomic, strong) NSDictionary *defaultAttributes;
 
 - (void)addPresenter:(id<CodeFilePresenter>)presenter;
 - (void)removePresenter:(id<CodeFilePresenter>)presenter;

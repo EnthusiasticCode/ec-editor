@@ -618,10 +618,6 @@ describe(@"A new opened ACProject", ^{
                 [[theValue(file.fileSize) should] equal:theValue(0)];
             });
             
-            it(@"has UTF8 encoding by default", ^{
-                [[theValue(file.fileEncoding) should] equal:theValue(NSUTF8StringEncoding)];
-            });
-            
             it(@"has no bookmarks", ^{
                 [[[file should] have:0] bookmarks];
             });
