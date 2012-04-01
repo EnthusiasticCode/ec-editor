@@ -22,8 +22,6 @@
 
 #pragma mark - Code viewing and editing
 
-@property (nonatomic, strong) TMTheme *theme;
-
 /// The code view used to display code.
 @property (nonatomic, strong, readonly) CodeView *codeView;
 

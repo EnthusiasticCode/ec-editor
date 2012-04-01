@@ -42,6 +42,9 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 /// Creates a theme from a name and bundle.
 + (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle;
 
+/// The default theme
++ (TMTheme *)defaultTheme;
+
 /// Returns a dictionary containing the default attributes of a string, common to every theme item.
 + (NSDictionary *)sharedAttributes;
 

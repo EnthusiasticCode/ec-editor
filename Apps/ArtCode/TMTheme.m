@@ -25,6 +25,7 @@ NSString * const TMThemeSelectionColorEnvironmentAttributeKey = @"selection";
 static CTFontRef _sharedFont = NULL;
 static CTFontRef _sharedItalicFont = NULL;
 static CTFontRef _sharedBoldFont = NULL;
+static TMTheme *_defaultTheme = nil;
 static NSDictionary *_sharedAttributes = nil;
 
 
@@ -176,6 +177,13 @@ static NSDictionary *_sharedAttributes = nil;
         bundle = [NSBundle bundleForClass:self];
     
     return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
+}
+
++ (TMTheme *)defaultTheme {
+  if (!_defaultTheme) {
+    _defaultTheme = [TMTheme themeWithName:@"Mac Classic" bundle:NSBundle.mainBundle];
+  }
+  return _defaultTheme;
 }
 
 + (NSDictionary *)sharedAttributes

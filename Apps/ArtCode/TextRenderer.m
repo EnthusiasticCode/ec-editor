@@ -793,8 +793,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     else if (inputStringLenght == NSMaxRange(stringRange))
     {
         NSMutableAttributedString *newLineString = [attributedString mutableCopy];
-        if ([dataSource respondsToSelector:@selector(defaultTextAttributedForTextRenderer:)])
-            [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[dataSource defaultTextAttributedForTextRenderer:self]]];
+        if ([dataSource respondsToSelector:@selector(defaultTextAttributesForTextRenderer:)])
+            [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[dataSource defaultTextAttributesForTextRenderer:self]]];
         else
             [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:stringLength ? [newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL] : nil]];
         attributedString = newLineString;

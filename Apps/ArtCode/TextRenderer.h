@@ -54,7 +54,7 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 @optional
 
 /// Returns the default attributes that the datasource applies to the returned text.
-- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender;
+- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender;
 
 @end
 

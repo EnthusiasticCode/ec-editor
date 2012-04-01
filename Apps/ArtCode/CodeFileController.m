@@ -123,16 +123,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - Properties
 
-@synthesize theme = _theme, codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
 @synthesize projectFile= _projectFile;
 @synthesize _keyboardAccessoryItemCompletionsController;
-
-- (TMTheme *)theme {
-  if (!_theme) {
-    _theme = [TMTheme themeWithName:@"Mac Classic" bundle:NSBundle.mainBundle];
-  }
-  return _theme;
-}
 
 - (CodeView *)codeView
 {
@@ -282,9 +275,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
       return;
     }
     _projectFile = projectFile;
-    _projectFile.codeBuffer.defaultAttributes = self.theme.commonAttributes;
+    _projectFile.codeBuffer.defaultAttributes = TMTheme.defaultTheme.commonAttributes;
     [_projectFile.codeBuffer addPresenter:self];
-    [self _setCodeViewAttributesForTheme:self.theme];
+    [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
     [_codeView updateAllText];
     [self _loadWebPreviewContentAndTitle];
   }];
@@ -660,9 +653,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   return attributedString;
 }
 
-- (NSDictionary *)defaultTextAttributedForTextRenderer:(TextRenderer *)sender
+- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender
 {
-  return [self.theme commonAttributes];
+  return TMTheme.defaultTheme.commonAttributes;
 }
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
@@ -1129,7 +1122,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   // Opening and Closing style
   
   //
-  CGFontRef font = (__bridge CGFontRef)[[TMTheme sharedAttributes] objectForKey:(__bridge id)kCTFontAttributeName];
+  CGFontRef font = (__bridge CGFontRef)[TMTheme.defaultTheme.commonAttributes objectForKey:(__bridge id)kCTFontAttributeName];
   ASSERT(font);
   CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
   
