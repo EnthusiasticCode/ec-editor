@@ -102,15 +102,25 @@ static OnigRegexp *_namedCapturesRegexp;
   
   _internalQueue = [[NSOperationQueue alloc] init];
   _internalQueue.maxConcurrentOperationCount = 1;
-  
-#warning TODO URI: add check on the first line too
+
   // Launch it on the background queue so we avoid initializing TMSyntaxNode on the main queue
   __weak TMUnit *weakSelf = self;
+  NSString *firstLine = nil;
+  if (fileBuffer) {
+    NSRange firstLineRange = [fileBuffer lineRangeForRange:NSMakeRange(0, 0)];
+    if (firstLineRange.length) {
+      firstLine = [fileBuffer stringInRange:firstLineRange];
+    }
+  }
   [_internalQueue addOperationWithBlock:^{
     TMSyntaxNode *syntax = nil;
-    if (fileURL) {
+    if (firstLine) {
+      syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
+    }
+    if (!syntax && fileURL) {
       syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-    } else {
+    }
+    if (!syntax) {
       syntax = TMSyntaxNode.defaultSyntax;
     }
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
