@@ -48,11 +48,19 @@ describe(@"A FileBuffer", ^{
     [[fileBuffer.defaultAttributes should] equal:attributes];
   });
   
-  it(@"applies default attributes to text", ^{
+  it(@"applies default attributes to new text", ^{
     NSString *testString = @"test";
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttributeName"];
     fileBuffer.defaultAttributes = attributes;
     [fileBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
+    [[fileBuffer.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:attributes]];
+  });
+  
+  it(@"applies default attributes to existing text", ^{
+    NSString *testString = @"test";
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttributeName"];
+    [fileBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
+    fileBuffer.defaultAttributes = attributes;
     [[fileBuffer.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:attributes]];
   });
   

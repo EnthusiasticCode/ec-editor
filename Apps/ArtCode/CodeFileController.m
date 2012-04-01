@@ -282,6 +282,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
       return;
     }
     _projectFile = projectFile;
+    _projectFile.codeBuffer.defaultAttributes = self.theme.commonAttributes;
     [_projectFile.codeBuffer addPresenter:self];
     [self _setCodeViewAttributesForTheme:self.theme];
     [_codeView updateAllText];

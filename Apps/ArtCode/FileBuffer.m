@@ -51,6 +51,20 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 
 #pragma mark - Public methods
 
+- (void)setDefaultAttributes:(NSDictionary *)defaultAttributes {
+  if (defaultAttributes == _defaultAttributes) {
+    return;
+  }
+  NSUInteger length = self.length;
+  if (length && _defaultAttributes.count) {
+    [self removeAttributes:_defaultAttributes.allKeys range:NSMakeRange(0, length)];
+  }
+  _defaultAttributes = defaultAttributes;
+  if (length && defaultAttributes.count) {
+    [self addAttributes:defaultAttributes range:NSMakeRange(0, length)];
+  }
+}
+
 - (id)initWithFileURL:(NSURL *)fileURL {
   self = [super init];
   if (!self) {
