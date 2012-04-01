@@ -26,28 +26,28 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
 + (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path
 {
-    NSString *URLString = nil;
-    if (path && ![path hasPrefix:@"/"])
-        path = [@"/" stringByAppendingString:path];
-    if (item)
-    {
-        ASSERT(project);
-        ASSERT(item.project == project);
-        URLString = [NSString stringWithFormat:@"%@://%@-%@%@", artCodeURLScheme, [project UUID], [item UUID], path ? path : @""];
-    }
-    else if (project)
-    {
-        URLString = [NSString stringWithFormat:@"%@://%@%@", artCodeURLScheme, [project UUID], path ? path : @""];
-    }
-    else if (path)
-    {
-        URLString = [NSString stringWithFormat:@"%@:/%@", artCodeURLScheme, path];
-    }
-    else 
-    {
-        return nil;
-    }
-    return [NSURL URLWithString:URLString];
+  NSString *URLString = nil;
+  if (path && ![path hasPrefix:@"/"])
+    path = [@"/" stringByAppendingString:path];
+  if (item)
+  {
+    ASSERT(project);
+    ASSERT(item.project == project);
+    URLString = [NSString stringWithFormat:@"%@://%@-%@%@", artCodeURLScheme, [project UUID], [item UUID], path ? path : @""];
+  }
+  else if (project)
+  {
+    URLString = [NSString stringWithFormat:@"%@://%@%@", artCodeURLScheme, [project UUID], path ? path : @""];
+  }
+  else if (path)
+  {
+    URLString = [NSString stringWithFormat:@"%@:/%@", artCodeURLScheme, path];
+  }
+  else 
+  {
+    return nil;
+  }
+  return [NSURL URLWithString:URLString];
 }
 
 @end
@@ -58,41 +58,41 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
 - (BOOL)isArtCodeURL
 {
-    return [self.scheme isEqualToString:artCodeURLScheme];
+  return [self.scheme isEqualToString:artCodeURLScheme];
 }
 
 - (BOOL)isArtCodeProjectsList
 {
-    return [self.host isEqualToString:artCodeURLProjectListPath];
+  return [self.host isEqualToString:artCodeURLProjectListPath];
 }
 
 - (BOOL)isArtCodeProjectBookmarksList
 {
-    return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectBookmarkListPath];
+  return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectBookmarkListPath];
 }
 
 - (BOOL)isArtCodeProjectRemotesList
 {
-    return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectRemoteListPath];
+  return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectRemoteListPath];
 }
 
 - (NSArray *)artCodeUUIDs
 {
-    // TODO cache?
-    static NSRegularExpression *uuidRegExp = nil;
-    if (!uuidRegExp)
-        uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?" options:NSRegularExpressionCaseInsensitive error:NULL];
-    
-    NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
-    [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-        [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
-    }];
-    return [uuids copy];
+  // TODO cache?
+  static NSRegularExpression *uuidRegExp = nil;
+  if (!uuidRegExp)
+    uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?" options:NSRegularExpressionCaseInsensitive error:NULL];
+  
+  NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
+  [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+    [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
+  }];
+  return [uuids copy];
 }
 
 - (NSString *)prettyPath
 {
-    return [[self path] prettyPath];
+  return [[self path] prettyPath];
 }
 
 @end
@@ -103,7 +103,7 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
 - (NSString *)prettyPath
 {
-    return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
+  return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
 }
 
 @end

@@ -21,7 +21,7 @@
 	NSArray *pairs = [encodedString componentsSeparatedByString:@"&"];
 	
 	for (NSString *kvp in pairs)
-    {
+  {
 		if ([kvp length] == 0)
 			continue;
 		
@@ -30,7 +30,7 @@
 		NSString *val = nil;
 		
 		if (pos.location == NSNotFound)
-        {
+    {
 			key = [kvp stringByUnescapingFromURLQuery];
 			val = @"";
 		} else {
@@ -52,8 +52,8 @@
 	NSMutableArray *arguments = [NSMutableArray arrayWithCapacity:[self count]];
 	[self enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop) {
 		[arguments addObject:[NSString stringWithFormat:@"%@=%@",
-							  [key stringByEscapingForURLQuery],
-							  [[object description] stringByEscapingForURLQuery]]];
+                          [key stringByEscapingForURLQuery],
+                          [[object description] stringByEscapingForURLQuery]]];
 	}];
 	
 	return [arguments componentsJoinedByString:@"&"];

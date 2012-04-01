@@ -10,11 +10,11 @@
 @class ACProject;
 
 typedef enum {
-    ACPUnknown = 0,
-    ACPFolder,
-    ACPFile,
-    ACPFileBookmark,
-    ACPRemote,
+  ACPUnknown = 0,
+  ACPFolder,
+  ACPFile,
+  ACPFileBookmark,
+  ACPRemote,
 } ACProjectItemType;
 
 @interface ACProjectItem : NSObject

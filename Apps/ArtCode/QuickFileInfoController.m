@@ -18,23 +18,23 @@
 
 + (id)new
 {
-    return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"];
+  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"];
 }
 
 #pragma mark - View lifecycle
 
 - (void)viewDidUnload
 {
-    [self setFileNameTextField:nil];
-    [self setFileSizeLabel:nil];
-    [self setFileLineCountLabel:nil];
-    [super viewDidUnload];
+  [self setFileNameTextField:nil];
+  [self setFileSizeLabel:nil];
+  [self setFileLineCountLabel:nil];
+  [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    self.fileNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
+  [super viewWillAppear:animated];
+  self.fileNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

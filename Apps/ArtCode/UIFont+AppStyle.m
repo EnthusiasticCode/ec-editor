@@ -12,16 +12,16 @@
 
 + (UIFont *)styleFontWithSize:(CGFloat)size
 {
-    static CGFloat lastSize = 0;
-    static UIFont *lastSizeFont = nil;
-    
-    if (size == lastSize)
-        return lastSizeFont;
-    
-    lastSize = size;
-    lastSizeFont = [UIFont fontWithName:@"Helvetica-Bold" size:size];
-    
+  static CGFloat lastSize = 0;
+  static UIFont *lastSizeFont = nil;
+  
+  if (size == lastSize)
     return lastSizeFont;
+  
+  lastSize = size;
+  lastSizeFont = [UIFont fontWithName:@"Helvetica-Bold" size:size];
+  
+  return lastSizeFont;
 }
 
 @end

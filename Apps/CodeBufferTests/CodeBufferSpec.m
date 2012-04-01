@@ -28,7 +28,7 @@ describe(@"A CodeBuffer", ^{
     afterEach(^{
       codeBuffer = nil;
     });
-
+    
     it(@"can be created", ^{
       [[codeBuffer should] beNonNil];
     });

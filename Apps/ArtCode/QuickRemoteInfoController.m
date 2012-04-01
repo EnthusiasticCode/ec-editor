@@ -16,20 +16,20 @@
 
 
 @implementation QuickRemoteInfoController {
-//    ProjectRemote *_remote;
+  //    ProjectRemote *_remote;
 }
 
 - (id)init
 {
 #warning FIX
-    ASSERT(NO);
-    
-    self = [super init];
-    if (!self)
-        return nil;
-    self.navigationItem.title = @"Remote Informations";
-    self.tabBarItem.title = @"Info";
-    return self;
+  ASSERT(NO);
+  
+  self = [super init];
+  if (!self)
+    return nil;
+  self.navigationItem.title = @"Remote Informations";
+  self.tabBarItem.title = @"Info";
+  return self;
 }
 
 //- (void)viewWillAppear:(BOOL)animated

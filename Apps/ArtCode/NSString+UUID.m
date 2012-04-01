@@ -12,34 +12,34 @@
 @implementation NSString (UUID)
 
 - (id)initWithGeneratedUUID {
-    CFUUIDRef uuid = CFUUIDCreate(NULL);
-    CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-    NSString *string = (__bridge NSString *)uuidString;
-    CFRelease(uuidString);
-    CFRelease(uuid);
-    return string;
+  CFUUIDRef uuid = CFUUIDCreate(NULL);
+  CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
+  NSString *string = (__bridge NSString *)uuidString;
+  CFRelease(uuidString);
+  CFRelease(uuid);
+  return string;
 }
 
 - (id)initWithGeneratedUUIDForUseAsKeyInDictionary:(NSDictionary *)dictionary {
-    NSString *string = nil;
-    for (;;) {
-        string = [self initWithGeneratedUUID];
-        if (![dictionary objectForKey:string]) {
-            break;
-        }
+  NSString *string = nil;
+  for (;;) {
+    string = [self initWithGeneratedUUID];
+    if (![dictionary objectForKey:string]) {
+      break;
     }
-    return string;
+  }
+  return string;
 }
 
 - (id)initWithGeneratedUUIDNotContainedInSet:(NSSet *)uuidSet {
-    NSString *string = nil;
-    for (;;) {
-        string = [self initWithGeneratedUUID];
-        if (![uuidSet containsObject:string]) {
-            break;
-        }
+  NSString *string = nil;
+  for (;;) {
+    string = [self initWithGeneratedUUID];
+    if (![uuidSet containsObject:string]) {
+      break;
     }
-    return string;
+  }
+  return string;
 }
 
 @end

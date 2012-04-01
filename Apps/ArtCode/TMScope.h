@@ -10,14 +10,14 @@
 
 typedef enum
 {
-    TMScopeTypeUnknown = 0,
-    TMScopeTypeMatch,
-    TMScopeTypeCapture,
-    TMScopeTypeSpan,
-    TMScopeTypeBegin,
-    TMScopeTypeEnd,
-    TMScopeTypeContent,
-    TMScopeTypeRoot,
+  TMScopeTypeUnknown = 0,
+  TMScopeTypeMatch,
+  TMScopeTypeCapture,
+  TMScopeTypeSpan,
+  TMScopeTypeBegin,
+  TMScopeTypeEnd,
+  TMScopeTypeContent,
+  TMScopeTypeRoot,
 } TMScopeType;
 
 @interface TMScope : NSObject <NSCopying>

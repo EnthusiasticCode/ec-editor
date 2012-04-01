@@ -65,91 +65,91 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 #pragma mark - NSObject
 
 + (void)initialize {
-    if (self != [TMSyntaxNode class]) {
-        return;
-    }
-    // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
+  if (self != [TMSyntaxNode class]) {
+    return;
+  }
+  // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
 #if ! TEST
-    ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
+  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
-    _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
+  _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
 #warning TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
-    _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *bundleURL in [TMBundle bundleURLs]) {
-        for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
-            NSData *plistData = [NSData dataWithContentsOfURL:syntaxURL options:NSDataReadingUncached error:NULL];
-            if (!plistData) {
-                continue;
-            }
-            NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
-            if (!plist) {
-                continue;
-            }
-            TMSyntaxNode *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
-            if (!syntax) {
-                continue;
-            }
-            if (syntax.identifier) {
-                [_syntaxesWithIdentifier setObject:syntax forKey:syntax.identifier];
-            } else {
-                [_syntaxesWithoutIdentifier addObject:syntax];
-            }
-        }
+  _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  for (NSURL *bundleURL in [TMBundle bundleURLs]) {
+    for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
+      NSData *plistData = [NSData dataWithContentsOfURL:syntaxURL options:NSDataReadingUncached error:NULL];
+      if (!plistData) {
+        continue;
+      }
+      NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
+      if (!plist) {
+        continue;
+      }
+      TMSyntaxNode *syntax = [[self alloc] _initWithDictionary:plist syntax:nil];
+      if (!syntax) {
+        continue;
+      }
+      if (syntax.identifier) {
+        [_syntaxesWithIdentifier setObject:syntax forKey:syntax.identifier];
+      } else {
+        [_syntaxesWithoutIdentifier addObject:syntax];
+      }
     }
-    _syntaxesWithIdentifier = [_syntaxesWithIdentifier copy];
+  }
+  _syntaxesWithIdentifier = [_syntaxesWithIdentifier copy];
 }
 
 - (NSUInteger)hash {
-    if (_identifier) {
-        return [_identifier hash];
-    }
-    else if (_include) {
-        return [_include hash];
-    }
-    else {
-        return [_patterns hash];
-    }
+  if (_identifier) {
+    return [_identifier hash];
+  }
+  else if (_include) {
+    return [_include hash];
+  }
+  else {
+    return [_patterns hash];
+  }
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    return self;
+  return self;
 }
 
 #pragma mark - Public Methods
 
 + (TMSyntaxNode *)syntaxWithScopeIdentifier:(NSString *)scopeIdentifier {
-    if (!scopeIdentifier) {
-        return nil;
-    }
-    return [_syntaxesWithIdentifier objectForKey:scopeIdentifier];
+  if (!scopeIdentifier) {
+    return nil;
+  }
+  return [_syntaxesWithIdentifier objectForKey:scopeIdentifier];
 }
 
 + (TMSyntaxNode *)syntaxForFileName:(NSString *)fileName {
-    NSString *fileExtension = fileName.pathExtension;
-    if (!fileExtension) {
-        return nil;
+  NSString *fileExtension = fileName.pathExtension;
+  if (!fileExtension) {
+    return nil;
+  }
+  return [self _syntaxWithPredicateBlock:^BOOL(TMSyntaxNode *syntax) {
+    for (NSString *fileType in syntax.fileTypes) {
+      if ([fileType isEqualToString:fileExtension]) {
+        return YES;
+      }
     }
-    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntaxNode *syntax) {
-        for (NSString *fileType in syntax.fileTypes) {
-            if ([fileType isEqualToString:fileExtension]) {
-                return YES;
-            }
-        }
-        return NO;
-    }];
+    return NO;
+  }];
 }
 
 + (TMSyntaxNode *)syntaxForFirstLine:(NSString *)firstLine {
-    if (!firstLine) {
-        return nil;
+  if (!firstLine) {
+    return nil;
+  }
+  return [self _syntaxWithPredicateBlock:^BOOL(TMSyntaxNode *syntax) {
+    if (firstLine && [syntax.firstLineMatch search:firstLine]) {
+      return YES;
     }
-    return [self _syntaxWithPredicateBlock:^BOOL(TMSyntaxNode *syntax) {
-        if (firstLine && [syntax.firstLineMatch search:firstLine]) {
-            return YES;
-        }
-        return NO;
-    }];
+    return NO;
+  }];
 }
 
 + (TMSyntaxNode *)defaultSyntax {
@@ -163,84 +163,84 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 #pragma mark - Private Methods
 
 + (TMSyntaxNode *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntaxNode *))predicateBlock {
-    for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator]) {
-        if (predicateBlock(syntax)) {
-            return syntax;
-        }
+  for (TMSyntaxNode *syntax in [_syntaxesWithIdentifier objectEnumerator]) {
+    if (predicateBlock(syntax)) {
+      return syntax;
     }
-    for (TMSyntaxNode *syntax in _syntaxesWithoutIdentifier) {
-        if (predicateBlock(syntax)) {
-            return syntax;
-        }
+  }
+  for (TMSyntaxNode *syntax in _syntaxesWithoutIdentifier) {
+    if (predicateBlock(syntax)) {
+      return syntax;
     }
-    return nil;
+  }
+  return nil;
 }
 
 
 #warning TODO URI: handle errors more gracefully here
 
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax {
-    ASSERT(dictionary);
-    self = [super init];
-    if (!self) {
-        return nil;
+  ASSERT(dictionary);
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
+  if (!syntax) {
+    syntax = self;
+  }
+  [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *propertyKey, id propertyValue, BOOL *outerStop) {
+    if ([propertyKey isEqualToString:_scopeIdentifierKey]) {
+      _identifier = propertyValue;
+    } else if ([propertyKey isEqualToString:_fileTypesKey] ||
+               [propertyKey isEqualToString:_endKey] ||
+               [propertyKey isEqualToString:_nameKey] ||
+               [propertyKey isEqualToString:_contentNameKey] ||
+               [propertyKey isEqualToString:_capturesKey] ||
+               [propertyKey isEqualToString:_beginCapturesKey] ||
+               [propertyKey isEqualToString:_endCapturesKey] ||
+               [propertyKey isEqualToString:_includeKey])
+    {
+      if (([propertyValue respondsToSelector:@selector(length)] && [propertyValue length]) || ([propertyValue respondsToSelector:@selector(count)] && [(NSArray *)propertyValue count]))
+        [self setValue:propertyValue forKey:propertyKey];
     }
-    if (!syntax) {
-        syntax = self;
+    else if ([propertyKey isEqualToString:_firstLineMatchKey] ||
+             [propertyKey isEqualToString:_foldingStartMarkerKey] ||
+             [propertyKey isEqualToString:_foldingStopMarkerKey] ||
+             [propertyKey isEqualToString:_matchKey] ||
+             [propertyKey isEqualToString:_beginKey])
+    {
+      if ([propertyValue length])
+        [self setValue:[OnigRegexp compile:propertyValue options:OnigOptionCaptureGroup] forKey:propertyKey];
     }
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *propertyKey, id propertyValue, BOOL *outerStop) {
-      if ([propertyKey isEqualToString:_scopeIdentifierKey]) {
-        _identifier = propertyValue;
-      } else if ([propertyKey isEqualToString:_fileTypesKey] ||
-            [propertyKey isEqualToString:_endKey] ||
-            [propertyKey isEqualToString:_nameKey] ||
-            [propertyKey isEqualToString:_contentNameKey] ||
-            [propertyKey isEqualToString:_capturesKey] ||
-            [propertyKey isEqualToString:_beginCapturesKey] ||
-            [propertyKey isEqualToString:_endCapturesKey] ||
-            [propertyKey isEqualToString:_includeKey])
-        {
-            if (([propertyValue respondsToSelector:@selector(length)] && [propertyValue length]) || ([propertyValue respondsToSelector:@selector(count)] && [(NSArray *)propertyValue count]))
-                [self setValue:propertyValue forKey:propertyKey];
-        }
-        else if ([propertyKey isEqualToString:_firstLineMatchKey] ||
-                 [propertyKey isEqualToString:_foldingStartMarkerKey] ||
-                 [propertyKey isEqualToString:_foldingStopMarkerKey] ||
-                 [propertyKey isEqualToString:_matchKey] ||
-                 [propertyKey isEqualToString:_beginKey])
-        {
-            if ([propertyValue length])
-                [self setValue:[OnigRegexp compile:propertyValue options:OnigOptionCaptureGroup] forKey:propertyKey];
-        }
-        else if ([propertyKey isEqualToString:_patternsKey])
-        {
-            NSMutableArray *patterns = [[NSMutableArray alloc] init];
-            for (NSDictionary *patternDictionary in propertyValue)
-                [patterns addObject:[[[self class] alloc] _initWithDictionary:patternDictionary syntax:syntax]];
-            if ([patterns count])
-                [self setValue:[patterns copy] forKey:propertyKey];
-        }
-        else if ([propertyKey isEqualToString:_repositoryKey])
-        {
-            NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
-            [propertyValue enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *innerStop) {
-                [repository setObject:[[[self class] alloc] _initWithDictionary:obj syntax:syntax] forKey:key];
-            }];
-            if ([repository count])
-                [self setValue:[repository copy] forKey:propertyKey];
-        }
-    }];
-    _rootSyntax = syntax;
-    if (_captures && !_beginCaptures) {
-        _beginCaptures = _captures;
+    else if ([propertyKey isEqualToString:_patternsKey])
+    {
+      NSMutableArray *patterns = [[NSMutableArray alloc] init];
+      for (NSDictionary *patternDictionary in propertyValue)
+        [patterns addObject:[[[self class] alloc] _initWithDictionary:patternDictionary syntax:syntax]];
+      if ([patterns count])
+        [self setValue:[patterns copy] forKey:propertyKey];
     }
-    if (_captures && !_endCaptures) {
-        _endCaptures = _captures;
+    else if ([propertyKey isEqualToString:_repositoryKey])
+    {
+      NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
+      [propertyValue enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *innerStop) {
+        [repository setObject:[[[self class] alloc] _initWithDictionary:obj syntax:syntax] forKey:key];
+      }];
+      if ([repository count])
+        [self setValue:[repository copy] forKey:propertyKey];
     }
-    if (_name && !_identifier && _rootSyntax) {
-        _identifier = _name;
-    }
-    return self;
+  }];
+  _rootSyntax = syntax;
+  if (_captures && !_beginCaptures) {
+    _beginCaptures = _captures;
+  }
+  if (_captures && !_endCaptures) {
+    _endCaptures = _captures;
+  }
+  if (_name && !_identifier && _rootSyntax) {
+    _identifier = _name;
+  }
+  return self;
 }
 
 @end

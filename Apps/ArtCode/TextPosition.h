@@ -11,7 +11,7 @@
 
 @interface TextPosition : UITextPosition <NSCopying> {
 @private
-    NSUInteger index;
+  NSUInteger index;
 }
 
 @property (nonatomic, readonly) NSUInteger index;

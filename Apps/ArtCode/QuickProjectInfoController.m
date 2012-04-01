@@ -36,35 +36,35 @@
 
 + (id)new
 {
-    return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
+  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
 }
 
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-
-    self.labelColorSelectionControl.rows = 1;
-    self.labelColorSelectionControl.columns = 6;
-    [self.labelColorSelectionControl addTarget:self action:@selector(_labelColorChangeAction:) forControlEvents:UIControlEventTouchUpInside];
+  [super viewDidLoad];
+  
+  self.labelColorSelectionControl.rows = 1;
+  self.labelColorSelectionControl.columns = 6;
+  [self.labelColorSelectionControl addTarget:self action:@selector(_labelColorChangeAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidUnload
 {
-    [self setProjectNameTextField:nil];
-    [self setLabelColorSelectionControl:nil];
-    [self setProjectFileCountLabel:nil];
-    [self setProjectSizeLabel:nil];
-    [super viewDidUnload];
+  [self setProjectNameTextField:nil];
+  [self setLabelColorSelectionControl:nil];
+  [self setProjectFileCountLabel:nil];
+  [self setProjectSizeLabel:nil];
+  [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
-    self.projectNameTextField.text = [self.artCodeTab.currentProject name];
-    // TODO add project files and size
+  [super viewWillAppear:animated];
+  
+  self.projectNameTextField.text = [self.artCodeTab.currentProject name];
+  // TODO add project files and size
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -76,19 +76,19 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    if ([textField.text length] == 0)
-        return;
-    
-    // TODO check that name is ok
-
-//    [self.artCodeTab.currentProject setName:textField.text];
+  if ([textField.text length] == 0)
+    return;
+  
+  // TODO check that name is ok
+  
+  //    [self.artCodeTab.currentProject setName:textField.text];
 }
 
 #pragma mark - Private Methods
 
 - (void)_labelColorChangeAction:(id)sender
 {
-    [self.artCodeTab.currentProject setLabelColor:[sender selectedColor]];
+  [self.artCodeTab.currentProject setLabelColor:[sender selectedColor]];
 }
 
 @end

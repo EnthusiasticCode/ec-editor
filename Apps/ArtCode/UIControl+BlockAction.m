@@ -15,15 +15,15 @@ static const char *actionBlockKey = "actionBlock";
 
 + (void)actionBlockAction:(id)sender
 {
-    void (^block)(id) = (void (^)(id))objc_getAssociatedObject(sender, actionBlockKey);
-    if (block)
-        block(sender);
+  void (^block)(id) = (void (^)(id))objc_getAssociatedObject(sender, actionBlockKey);
+  if (block)
+    block(sender);
 }
 
 - (void)setActionBlock:(void (^)(id))block forControlEvent:(UIControlEvents)controlEvent
 {
-    objc_setAssociatedObject(self, actionBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
-    [self addTarget:[UIControl class] action:@selector(actionBlockAction:) forControlEvents:controlEvent];
+  objc_setAssociatedObject(self, actionBlockKey, block, OBJC_ASSOCIATION_COPY_NONATOMIC);
+  [self addTarget:[UIControl class] action:@selector(actionBlockAction:) forControlEvents:controlEvent];
 }
 
 @end

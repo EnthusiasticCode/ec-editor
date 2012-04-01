@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 
 enum {
-    KeyboardAccessoryPositionPortrait,
-    KeyboardAccessoryPositionLandscape,
-    KeyboardAccessoryPositionFloating
+  KeyboardAccessoryPositionPortrait,
+  KeyboardAccessoryPositionLandscape,
+  KeyboardAccessoryPositionFloating
 };
 typedef NSInteger KeyboardAccessoryPosition;
 

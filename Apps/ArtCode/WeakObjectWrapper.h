@@ -10,8 +10,8 @@
 
 @interface WeakObjectWrapper : NSObject
 {
-    @package
-    __weak id object;
+  @package
+  __weak id object;
 }
 + (WeakObjectWrapper *)wrapperWithObject:(id)object;
 @end

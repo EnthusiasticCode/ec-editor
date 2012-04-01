@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 enum {
-    ControlStateLoading = 1 << 4
+  ControlStateLoading = 1 << 4
 };
 
 @interface TopBarTitleControl : UIView

@@ -10,8 +10,8 @@
 
 @interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate> {
 @protected
-    UINavigationController *_modalNavigationController;
-    UIActionSheet *_toolEditDeleteActionSheet;
+  UINavigationController *_modalNavigationController;
+  UIActionSheet *_toolEditDeleteActionSheet;
 }
 
 - (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop;

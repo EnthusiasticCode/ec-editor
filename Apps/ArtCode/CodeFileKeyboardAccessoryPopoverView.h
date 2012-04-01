@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 
 enum {
-    PopoverViewArrowMetaPositionFarLeft = -1,
-    PopoverViewArrowMetaPositionFarBottom = -1,
-    PopoverViewArrowMetaPositionMiddle = 0,
-    PopoverViewArrowMetaPositionFarRight = 1,
-    PopoverViewArrowMetaPositionFarTop = 1
+  PopoverViewArrowMetaPositionFarLeft = -1,
+  PopoverViewArrowMetaPositionFarBottom = -1,
+  PopoverViewArrowMetaPositionMiddle = 0,
+  PopoverViewArrowMetaPositionFarRight = 1,
+  PopoverViewArrowMetaPositionFarTop = 1
 };
 typedef NSInteger PopoverViewArrowMetaPosition;
 

@@ -12,10 +12,10 @@
 
 /// Options used to choose how to match the search phrase
 enum {
-    CodeFileSearchHitMustContain,
-    CodeFileSearchHitMustStartWith,
-    CodeFileSearchHitMustMatch,
-    CodeFileSearchHitMustEndWith
+  CodeFileSearchHitMustContain,
+  CodeFileSearchHitMustStartWith,
+  CodeFileSearchHitMustMatch,
+  CodeFileSearchHitMustEndWith
 };
 typedef NSUInteger CodeFileSearchHitMustOption;
 

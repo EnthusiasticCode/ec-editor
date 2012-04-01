@@ -12,75 +12,75 @@
 @implementation UIColor (AppStyle)
 
 #define RETURN_CACHED_COLOR(nam,clr)  \
-        static UIColor *_##nam = nil; \
-        if (!_##nam) _##nam = clr;    \
-        return _##nam
+static UIColor *_##nam = nil; \
+if (!_##nam) _##nam = clr;    \
+return _##nam
 
 + (UIColor *)styleBackgroundColor
 {
-    RETURN_CACHED_COLOR(styleBackgroundColor, 
-                        [UIColor colorWithWhite:0.90 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleBackgroundColor, 
+                      [UIColor colorWithWhite:0.90 alpha:1.0]);
 }
 
 + (UIColor *)styleBackgroundShadowColor
 {
-    RETURN_CACHED_COLOR(styleBackgroundShadowColor, 
-                        [UIColor whiteColor]);
+  RETURN_CACHED_COLOR(styleBackgroundShadowColor, 
+                      [UIColor whiteColor]);
 }
 
 + (UIColor *)styleHighlightColor
 {
-    RETURN_CACHED_COLOR(styleHighlightColor, 
-                        [UIColor colorWithWhite:0.70 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleHighlightColor, 
+                      [UIColor colorWithWhite:0.70 alpha:1.0]);
 }
 
 + (UIColor *)styleAlternateBackgroundColor
 {
-    RETURN_CACHED_COLOR(styleAlternateBackgroundColor, 
-                        [UIColor colorWithWhite:0.80 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleAlternateBackgroundColor, 
+                      [UIColor colorWithWhite:0.80 alpha:1.0]);
 }
 
 + (UIColor *)styleForegroundColor
 {
-    RETURN_CACHED_COLOR(styleForegroundColor, 
-                        [UIColor colorWithWhite:0.10 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleForegroundColor, 
+                      [UIColor colorWithWhite:0.10 alpha:1.0]);
 }
 
 + (UIColor *)styleForegroundShadowColor
 {
-    RETURN_CACHED_COLOR(styleForegroundShadowColor, 
-                        [UIColor colorWithWhite:1 alpha:0.3]);
+  RETURN_CACHED_COLOR(styleForegroundShadowColor, 
+                      [UIColor colorWithWhite:1 alpha:0.3]);
 }
 
 + (UIColor *)styleThemeColorOne
 {
-    RETURN_CACHED_COLOR(styleThemeColorOne, 
-                        [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleThemeColorOne, 
+                      [UIColor colorWithRed:98.0/255.0 green:157.0/255.0 blue:222.0/255.0 alpha:1.0]);
 }
 
 + (UIColor *)styleDeleteColor
 {
-    RETURN_CACHED_COLOR(styleDeleteColor, 
-                        [UIColor colorWithRed:200.0/255.0 green:8.0/255.0 blue:21.0/255.0 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleDeleteColor, 
+                      [UIColor colorWithRed:200.0/255.0 green:8.0/255.0 blue:21.0/255.0 alpha:1.0]);
 }
 
 + (UIColor *)styleMinimapCommentColor
 {
-    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
-                        [UIColor colorWithRed:110.0/255.0 green:220.0/255.0 blue:70.0/255.0 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+                      [UIColor colorWithRed:110.0/255.0 green:220.0/255.0 blue:70.0/255.0 alpha:1.0]);
 }
 
 + (UIColor *)styleMinimapPreprocessorColor
 {
-//    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
-//                        [UIColor colorWithRed:114.0/255.0 green:53.0/255.0 blue:32.0/255.0 alpha:1.0]);
-    return [UIColor orangeColor];
+  //    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+  //                        [UIColor colorWithRed:114.0/255.0 green:53.0/255.0 blue:32.0/255.0 alpha:1.0]);
+  return [UIColor orangeColor];
 }
 
 + (UIColor *)styleMinimapSymbolColor
 {
-    RETURN_CACHED_COLOR(styleSymbolColorBlue, 
-                        [UIColor colorWithRed:75.0/255.0 green:92.0/255.0 blue:179.0/255.0 alpha:1.0]);
+  RETURN_CACHED_COLOR(styleSymbolColorBlue, 
+                      [UIColor colorWithRed:75.0/255.0 green:92.0/255.0 blue:179.0/255.0 alpha:1.0]);
 }
 
 @end

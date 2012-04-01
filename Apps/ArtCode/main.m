@@ -12,9 +12,9 @@
 
 int main(int argc, char *argv[])
 {
-    int retVal = 0;
-    @autoreleasepool {
-        retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([ArtCodeAppDelegate class]));
-    }
-    return retVal;
+  int retVal = 0;
+  @autoreleasepool {
+    retVal = UIApplicationMain(argc, argv, nil, NSStringFromClass([ArtCodeAppDelegate class]));
+  }
+  return retVal;
 }

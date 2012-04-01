@@ -19,96 +19,96 @@
 
 
 @implementation RemoteDirectoryBrowserController {
-    NSArray *_itemsOnlyDirectories;
+  NSArray *_itemsOnlyDirectories;
 }
 
 - (NSURL *)selectedURL
 {
-    if (self.tableView.indexPathForSelectedRow != nil)
-        return [self.remoteURL URLByAppendingPathComponent:[(NSDictionary *)[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
-    return self.remoteURL;
+  if (self.tableView.indexPathForSelectedRow != nil)
+    return [self.remoteURL URLByAppendingPathComponent:[(NSDictionary *)[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row] objectForKey:cxFilenameKey]];
+  return self.remoteURL;
 }
 
 - (void)setRemoteURL:(NSURL *)URL
 {
-    // Avoid disconnection when view did disapear.
-    if (URL == nil)
-        return;
-    
-    [super setRemoteURL:URL];
-    if ([URL.path length] == 0)
-        self.navigationItem.title = URL.host;
-    else
-        self.navigationItem.title = [URL.path lastPathComponent];
+  // Avoid disconnection when view did disapear.
+  if (URL == nil)
+    return;
+  
+  [super setRemoteURL:URL];
+  if ([URL.path length] == 0)
+    self.navigationItem.title = URL.host;
+  else
+    self.navigationItem.title = [URL.path lastPathComponent];
 }
 
 - (NSArray *)filteredItems
 {
-    if (!_itemsOnlyDirectories)
+  if (!_itemsOnlyDirectories)
+  {
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity:[[super filteredItems] count]];
+    for (NSDictionary *item in [super filteredItems])
     {
-        NSMutableArray *items = [NSMutableArray arrayWithCapacity:[[super filteredItems] count]];
-        for (NSDictionary *item in [super filteredItems])
-        {
-            if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
-                [items addObject:item];
-        }
-        _itemsOnlyDirectories = [items copy];
+      if ([item objectForKey:NSFileType] == NSFileTypeDirectory)
+        [items addObject:item];
     }
-    return _itemsOnlyDirectories;
+    _itemsOnlyDirectories = [items copy];
+  }
+  return _itemsOnlyDirectories;
 }
 
 - (void)invalidateFilteredItems
 {
-    _itemsOnlyDirectories = nil;
-    [super invalidateFilteredItems];
+  _itemsOnlyDirectories = nil;
+  [super invalidateFilteredItems];
 }
 
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    self.tableView.tableHeaderView = nil;
+  [super viewDidLoad];
+  self.tableView.tableHeaderView = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    if ([self.connection delegate] != self)
-    {
-        [self _changeToDirectory:self.remoteURL.path];
-    }
+  [super viewWillAppear:animated];
+  if ([self.connection delegate] != self)
+  {
+    [self _changeToDirectory:self.remoteURL.path];
+  }
 }
 
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
-    cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-    return cell;
+  HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
+  cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+  return cell;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *item = [self.filteredItems objectAtIndex:indexPath.row];
-    RemoteDirectoryBrowserController *nextController = [[RemoteDirectoryBrowserController alloc] initWithConnection:self.connection remoteURL:self.remoteURL];
-    [nextController setRemoteURL:[self.remoteURL URLByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
-    nextController.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
-    
-    [self.navigationController pushViewController:nextController animated:YES];
+  NSDictionary *item = [self.filteredItems objectAtIndex:indexPath.row];
+  RemoteDirectoryBrowserController *nextController = [[RemoteDirectoryBrowserController alloc] initWithConnection:self.connection remoteURL:self.remoteURL];
+  [nextController setRemoteURL:[self.remoteURL URLByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+  nextController.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
+  
+  [self.navigationController pushViewController:nextController animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Do nothing
+  // Do nothing
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Do nothing
+  // Do nothing
 }
 
 @end

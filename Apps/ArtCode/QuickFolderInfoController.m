@@ -18,23 +18,23 @@
 
 + (id)new
 {
-    return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"];
+  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"];
 }
 
 #pragma mark - View lifecycle
 
 - (void)viewDidUnload
 {
-    [self setFolderNameTextField:nil];
-    [self setFolderFileCountLabel:nil];
-    [self setFolderSizeLabel:nil];
-    [super viewDidUnload];
+  [self setFolderNameTextField:nil];
+  [self setFolderFileCountLabel:nil];
+  [self setFolderSizeLabel:nil];
+  [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    self.folderNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
+  [super viewWillAppear:animated];
+  self.folderNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -46,7 +46,7 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    // TODO rename folder
+  // TODO rename folder
 }
 
 @end

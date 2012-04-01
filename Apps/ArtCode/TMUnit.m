@@ -102,7 +102,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   _internalQueue = [[NSOperationQueue alloc] init];
   _internalQueue.maxConcurrentOperationCount = 1;
-
+  
   // Launch it on the background queue so we avoid initializing TMSyntaxNode on the main queue
   __weak TMUnit *weakSelf = self;
   NSString *firstLine = nil;
@@ -559,10 +559,10 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope
 {
 #warning URI TODO: queue up callbacks to call on main thread
-//  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
-//  if (![attributes count])
-//    return;
-//  return [_fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
+  //  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
+  //  if (![attributes count])
+  //    return;
+  //  return [_fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern

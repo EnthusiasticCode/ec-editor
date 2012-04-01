@@ -19,46 +19,46 @@
 
 - (id)init
 {
-    self = [super initWithNibName:@"RemoteOptions" bundle:nil];
-    self.contentSizeForViewInPopover = CGSizeMake(400, 269);
-    return self;
+  self = [super initWithNibName:@"RemoteOptions" bundle:nil];
+  self.contentSizeForViewInPopover = CGSizeMake(400, 269);
+  return self;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    return [self init];
+  return [self init];
 }
 
 - (void)viewDidUnload
 {
-    [self setRemoteType:nil];
-    [self setRemoteHost:nil];
-    [self setRemotePort:nil];
-    [self setRemoteUser:nil];
-    [self setRemotePassword:nil];
-    [self setRemoteName:nil];
-    [super viewDidUnload];
+  [self setRemoteType:nil];
+  [self setRemoteHost:nil];
+  [self setRemotePort:nil];
+  [self setRemoteUser:nil];
+  [self setRemotePassword:nil];
+  [self setRemoteName:nil];
+  [super viewDidUnload];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+  return YES;
 }
 
 - (NSString *)remoteTypeString
 {
-    switch (self.remoteType.selectedSegmentIndex)
-    {
-        case 0:
-            return @"ftp";
-            
-        case 1:
-            return @"sftp";
-            
-        case 2:
-            return @"http";
-    }
-    return nil;
+  switch (self.remoteType.selectedSegmentIndex)
+  {
+    case 0:
+      return @"ftp";
+      
+    case 1:
+      return @"sftp";
+      
+    case 2:
+      return @"http";
+  }
+  return nil;
 }
 
 - (IBAction)remoteTypeChangedAction:(id)sender {
@@ -66,12 +66,12 @@
 
 - (void)setRemoteTypeString:(NSString *)remoteTypeString
 {
-    if ([remoteTypeString isEqualToString:@"ftp"])
-        self.remoteType.selectedSegmentIndex = 0;
-    else if ([remoteTypeString isEqualToString:@"sftp"])
-        self.remoteType.selectedSegmentIndex = 1;
-    else if ([remoteTypeString isEqualToString:@"http"])
-        self.remoteType.selectedSegmentIndex = 2;
+  if ([remoteTypeString isEqualToString:@"ftp"])
+    self.remoteType.selectedSegmentIndex = 0;
+  else if ([remoteTypeString isEqualToString:@"sftp"])
+    self.remoteType.selectedSegmentIndex = 1;
+  else if ([remoteTypeString isEqualToString:@"http"])
+    self.remoteType.selectedSegmentIndex = 2;
 }
 
 @end

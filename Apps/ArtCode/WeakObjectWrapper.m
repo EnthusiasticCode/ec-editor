@@ -12,9 +12,9 @@
 
 + (WeakObjectWrapper *)wrapperWithObject:(id)object
 {
-    WeakObjectWrapper *wrapper = [[self alloc] init];
-    wrapper->object = object;
-    return wrapper;
+  WeakObjectWrapper *wrapper = [[self alloc] init];
+  wrapper->object = object;
+  return wrapper;
 }
 
 @end

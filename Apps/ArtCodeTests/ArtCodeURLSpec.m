@@ -12,12 +12,12 @@
 SPEC_BEGIN(ArtCodeURLSpec)
 
 describe(@"The ArtCodeURL class", ^{
-    
-    it(@"should create a valid project list URL", ^{
-        NSURL *url = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
-        [[[url absoluteString] should] equal:@"artcode://projects"];
-    });
-    
+  
+  it(@"should create a valid project list URL", ^{
+    NSURL *url = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
+    [[[url absoluteString] should] equal:@"artcode://projects"];
+  });
+  
 });
 
 SPEC_END

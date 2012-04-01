@@ -25,29 +25,29 @@
 
 - (id)init
 {
-    self = [super init];
-    if (!self)
-        return nil;
-    self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:nil tag:0];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
-    self.navigationItem.title = @"Bookmarks";
-    return self;
+  self = [super init];
+  if (!self)
+    return nil;
+  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:nil tag:0];
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
+  self.navigationItem.title = @"Bookmarks";
+  return self;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [super tableView:table didSelectRowAtIndexPath:indexPath];
+  [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
+  [super tableView:table didSelectRowAtIndexPath:indexPath];
 }
 
 #pragma mark - Private methods
 
 - (void)_showBrowserInTabAction:(id)sender
 {
-    [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-    [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectBookmarkListPath]];
+  [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
+  [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject item:nil path:artCodeURLProjectBookmarkListPath]];
 }
 
 @end

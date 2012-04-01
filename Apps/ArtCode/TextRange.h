@@ -12,7 +12,7 @@
 
 @interface TextRange : UITextRange <NSCopying> {
 @protected
-    TextPosition *_start, *_end;
+  TextPosition *_start, *_end;
 }
 
 @property (nonatomic, readonly, weak) UITextPosition *start;

@@ -15,12 +15,12 @@ static const char *reuseIdentifierAssociatedObjectKey = "viewReuseIdentifier";
 
 - (void)setReuseIdentifier:(NSString *)reuseIdentifier
 {
-    objc_setAssociatedObject(self, reuseIdentifierAssociatedObjectKey, reuseIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, reuseIdentifierAssociatedObjectKey, reuseIdentifier, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSString *)reuseIdentifier
 {
-    return objc_getAssociatedObject(self, reuseIdentifierAssociatedObjectKey);
+  return objc_getAssociatedObject(self, reuseIdentifierAssociatedObjectKey);
 }
 
 @end

@@ -21,14 +21,14 @@ typedef void(^RemoteTransferCompletionBlock)(id<CKConnection> connection, NSErro
 
 /// Valid values for the RemoteSyncOptionDirectionKey option.
 enum RemoteSyncDirection {
-    RemoteSyncDirectionLocalToRemote,
-    RemoteSyncDirectionRemoteToLocal
+  RemoteSyncDirectionLocalToRemote,
+  RemoteSyncDirectionRemoteToLocal
 };
 
 /// Valid values for the RemoteSyncOptionChangeDeterminationKey option.
 enum RemoteSyncChangeDetermination {
-    RemoteSyncChangeDeterminationModificationTime,
-    RemoteSyncChangeDeterminationSize
+  RemoteSyncChangeDeterminationModificationTime,
+  RemoteSyncChangeDeterminationSize
 };
 
 /// Manages the transfer of items form a remote connection to a project folder.

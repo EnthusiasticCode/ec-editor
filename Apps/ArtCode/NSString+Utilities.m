@@ -11,16 +11,16 @@
 @implementation NSString (Utilities)
 
 - (NSString *)stringByAddingDuplicateNumber:(NSUInteger)number {
-    NSString *string = self;
-    NSString *pathExtension = string.pathExtension;
-    if (pathExtension) {
-        string = string.stringByDeletingPathExtension;
-    }
-    string = [string stringByAppendingFormat:@" (%u)", number];
-    if (pathExtension) {
-        string = [string stringByAppendingPathExtension:pathExtension];
-    }
-    return string;
+  NSString *string = self;
+  NSString *pathExtension = string.pathExtension;
+  if (pathExtension) {
+    string = string.stringByDeletingPathExtension;
+  }
+  string = [string stringByAppendingFormat:@" (%u)", number];
+  if (pathExtension) {
+    string = [string stringByAppendingPathExtension:pathExtension];
+  }
+  return string;
 }
 
 @end

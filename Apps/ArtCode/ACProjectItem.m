@@ -22,51 +22,51 @@ static NSMutableSet *_projectItemUUIDs;
 #pragma mark - NSObject
 
 + (void)initialize {
-    if (self != [ACProjectItem class]) {
-        return;
-    }
-    _projectItemUUIDs = [[NSMutableSet alloc] init];
+  if (self != [ACProjectItem class]) {
+    return;
+  }
+  _projectItemUUIDs = [[NSMutableSet alloc] init];
 }
 
 - (id)init {
-    UNIMPLEMENTED(); // The designed initalizer is initWithProject:
+  UNIMPLEMENTED(); // The designed initalizer is initWithProject:
 }
 
 #pragma mark - Public Methods
 
 - (NSURL *)artCodeURL {
-    if (!_artCodeURL)
-        _artCodeURL = [ArtCodeURL artCodeURLWithProject:self.project item:self path:nil];
-    return _artCodeURL;
+  if (!_artCodeURL)
+    _artCodeURL = [ArtCodeURL artCodeURLWithProject:self.project item:self path:nil];
+  return _artCodeURL;
 }
 
 - (ACProjectItemType)type {
-    return ACPUnknown;
+  return ACPUnknown;
 }
 
 - (void)remove {
-    [self.project updateChangeCount:UIDocumentChangeDone];
+  [self.project updateChangeCount:UIDocumentChangeDone];
 }
 
 #pragma mark - Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
-    ASSERT(project);
-    _project = project;
-    _UUID = [plistDictionary objectForKey:@"uuid"];
-    if (!_UUID) {
-        _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
-    }
-    [_projectItemUUIDs addObject:_UUID];
-    return self;
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
+  ASSERT(project);
+  _project = project;
+  _UUID = [plistDictionary objectForKey:@"uuid"];
+  if (!_UUID) {
+    _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
+  }
+  [_projectItemUUIDs addObject:_UUID];
+  return self;
 }
 
 - (NSDictionary *)propertyListDictionary {
-    return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
+  return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
 }
 
 @end

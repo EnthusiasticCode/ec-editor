@@ -10,9 +10,9 @@
 #import <UIKit/UIGeometry.h>
 
 enum {
-    BezelAlertAnimationNone = 0,
-    BezelAlertAnimationFade = 1 << 0,
-    BezelAlertAnimationPop  = 1 << 1
+  BezelAlertAnimationNone = 0,
+  BezelAlertAnimationFade = 1 << 0,
+  BezelAlertAnimationPop  = 1 << 1
 };
 typedef NSInteger BezelAlertAnimationType;
 

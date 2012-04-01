@@ -11,9 +11,9 @@
 @class CodeFileMinimapView, TextRenderer, TextRendererLine;
 
 enum {
-    CodeFileMinimapLineDecorationNone,
-    CodeFileMinimapLineDecorationDisc,
-    CodeFileMinimapLineDecorationSquare
+  CodeFileMinimapLineDecorationNone,
+  CodeFileMinimapLineDecorationDisc,
+  CodeFileMinimapLineDecorationSquare
 };
 
 typedef NSInteger CodeFileMinimapLineDecoration;

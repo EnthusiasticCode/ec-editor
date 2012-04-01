@@ -15,26 +15,26 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    UITouch *touch = [touches anyObject];
-    for (UIView *view in self.passTroughViews)
+  UITouch *touch = [touches anyObject];
+  for (UIView *view in self.passTroughViews)
+  {
+    if (CGRectContainsPoint(view.bounds, [touch locationInView:view]))
     {
-        if (CGRectContainsPoint(view.bounds, [touch locationInView:view]))
-        {
-            [self ignoreTouch:touch forEvent:event];
-            return;
-        }
+      [self ignoreTouch:touch forEvent:event];
+      return;
     }
-    self.state = UIGestureRecognizerStateRecognized;
+  }
+  self.state = UIGestureRecognizerStateRecognized;
 }
 
 - (BOOL)canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
 {
-    return YES;
+  return YES;
 }
 
 - (BOOL)canBePreventedByGestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer
 {
-    return NO;
+  return NO;
 }
 
 @end

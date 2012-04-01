@@ -11,10 +11,10 @@
 /// An immutable collection of CGRect
 @interface RectSet : NSObject <NSCopying, NSMutableCopying> {
 @protected
-    CGRect *buffer;
-    CGRect bounds;
-    NSUInteger count;
-    NSUInteger capacity;
+  CGRect *buffer;
+  CGRect bounds;
+  NSUInteger count;
+  NSUInteger capacity;
 }
 
 #pragma mark Create RectSets
