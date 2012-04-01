@@ -8,7 +8,7 @@
 
 #import "TMPreference.h"
 #import "TMBundle.h"
-#import "TMScope.h"
+#import "NSString+TextMateScopeSelectorMatching.h"
 #import <CocoaOniguruma/OnigRegexp.h>
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
@@ -115,19 +115,19 @@ static NSMutableDictionary *scopeToPreferenceCache;
     return systemTMPreferencesDictionary;
 }
 
-+ (id)preferenceValueForKey:(NSString *)preferenceKey scope:(TMScope *)scope
++ (id)preferenceValueForKey:(NSString *)preferenceKey qualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
     // Check per scope cache
     if (!scopeToPreferenceCache)
         scopeToPreferenceCache = [NSMutableDictionary new];
-    NSMutableDictionary *cachedPreferences = [scopeToPreferenceCache objectForKey:scope.qualifiedIdentifier];
+    NSMutableDictionary *cachedPreferences = [scopeToPreferenceCache objectForKey:qualifiedIdentifier];
     __block id value = [cachedPreferences objectForKey:preferenceKey];
     if (value)
         return value == [NSNull null] ? nil : value;
     
     // Get required preference value
     [[self allPreferences] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, TMPreference *preference, BOOL *stop) {
-        if ([scope scoreForScopeSelector:scopeSelector] > 0 && (value = [preference preferenceValueForKey:preferenceKey]))
+        if ([qualifiedIdentifier scoreForScopeSelector:scopeSelector] > 0 && (value = [preference preferenceValueForKey:preferenceKey]))
             *stop = YES;
     }];
     
@@ -135,7 +135,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
     if (!cachedPreferences)
     {
         cachedPreferences = [NSMutableDictionary new];
-        [scopeToPreferenceCache setObject:cachedPreferences forKey:scope.qualifiedIdentifier];
+        [scopeToPreferenceCache setObject:cachedPreferences forKey:qualifiedIdentifier];
     }
     [cachedPreferences setObject:value ? value : [NSNull null] forKey:preferenceKey];
     

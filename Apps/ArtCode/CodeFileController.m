@@ -30,6 +30,7 @@
 #import "CodeBuffer.h"
 #import "TMSymbol.h"
 #import "TMScope.h"
+#import "TMSyntaxNode.h"
 #import "TMPreference.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -69,7 +70,7 @@
 - (void)_keyboardWillHide:(NSNotification *)notification;
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
-- (void)_keyboardAccessoryItemSetupWithScope:(TMScope *)scope;
+- (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
 
 - (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range;
@@ -537,9 +538,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (editing)
   {
     // Set keyboard for main scope
-    [self.projectFile.codeBuffer rootScopeWithCompletionHandler:^(TMScope *rootScope) {
-      [self _keyboardAccessoryItemSetupWithScope:rootScope];
-    }];
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:_projectFile.codeBuffer.syntax.qualifiedIdentifier];
   }
   
   if (oldContentView != currentContentView)
@@ -811,20 +810,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     // Retrieve the current scope
     [self.projectFile.codeBuffer scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
       // Set current symbol in title
-      //            TMSymbol *currentSymbol = nil;
-      //            for (TMSymbol *symbol in [self.projectFile.codeUnit symbolList])
-      //            {
-      //                if (symbol.range.location > scope.location)
-      //                    break;
-      //                currentSymbol = symbol;
-      //            }
-      //            if (currentSymbol != _currentSymbol)
-      //            {
-      //                _currentSymbol = currentSymbol;
-      //                [self.singleTabController updateDefaultToolbarTitle];
-      //            }
+      TMSymbol *currentSymbol = nil;
+      for (TMSymbol *symbol in _projectFile.codeBuffer.symbolList)
+      {
+        if (symbol.range.location > scope.location)
+          break;
+        currentSymbol = symbol;
+      }
+      if (currentSymbol != _currentSymbol)
+      {
+        _currentSymbol = currentSymbol;
+        [self.singleTabController updateDefaultToolbarTitle];
+      }
       // Change accessory keyboard
-      [self _keyboardAccessoryItemSetupWithScope:scope];
+      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:scope.qualifiedIdentifier];
       
     }];
   } repeats:NO];
@@ -972,9 +971,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   return _keyboardAccessoryItemCompletionsController;
 }
 
-- (void)_keyboardAccessoryItemSetupWithScope:(TMScope *)scope
+- (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
-  NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForScope:scope];
+  NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:qualifiedIdentifier];
   if (_keyboardAccessoryItemActions == configuration)
     return;
   

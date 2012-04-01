@@ -30,6 +30,14 @@
   [_codeUnit setSyntax:syntax];
 }
 
+- (NSArray *)symbolList {
+  return nil;
+}
+
+- (NSArray *)diagnostics {
+  return nil;
+}
+
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index {
   self = [super initWithFileURL:fileURL];
   if (!self) {
@@ -37,6 +45,14 @@
   }
   _codeUnit = [TMUnit.alloc initWithFileBuffer:self fileURL:fileURL index:index];
   return self;
+}
+
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler {
+  completionHandler(nil);
+}
+
+- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
+  completionHandler(nil);
 }
 
 @end

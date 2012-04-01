@@ -21,7 +21,8 @@
 
 @property (nonatomic, weak, readonly) TMSyntaxNode *rootSyntax;
 
-@property (nonatomic, strong, readonly) NSString *scopeName;
+@property (nonatomic, strong, readonly) NSString *identifier;
+@property (nonatomic, strong, readonly) NSString *qualifiedIdentifier;
 @property (nonatomic, strong, readonly) NSArray *fileTypes;
 @property (nonatomic, strong, readonly) OnigRegexp *firstLineMatch;
 @property (nonatomic, strong, readonly) OnigRegexp *foldingStartMarker;

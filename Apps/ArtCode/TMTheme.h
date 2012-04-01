@@ -35,7 +35,7 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 - (NSDictionary *)commonAttributes;
 
 /// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope.
-- (NSDictionary *)attributesForScope:(TMScope *)scope;
+- (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
 #pragma mark Default styles
 

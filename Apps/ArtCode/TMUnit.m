@@ -129,7 +129,7 @@ static OnigRegexp *_namedCapturesRegexp;
   }];
   
   OSSpinLockLock(&_scopesLock);
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.scopeName syntaxNode:_syntax];
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
   OSSpinLockUnlock(&_scopesLock);
   
   _pendingChangesLock = OS_SPINLOCK_INIT;
@@ -146,7 +146,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   _extensions = [[NSMutableDictionary alloc] init];
   [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
-    if (![_syntax.scopeName isEqualToString:extensionClassesSyntaxIdentifier])
+    if (![_syntax.identifier isEqualToString:extensionClassesSyntaxIdentifier])
       return;
     [extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassSyntaxIdentifier, Class extensionClass, BOOL *innerStop) {
       id extension = [[extensionClass alloc] initWithCodeUnit:self];
@@ -443,7 +443,7 @@ static OnigRegexp *_namedCapturesRegexp;
       previousTokenStart = resultRange.location;
       if (resultRange.length)
       {
-        TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeMatch];
+        TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.identifier syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeMatch];
         matchScope.length = resultRange.length;
         [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:matchScope];
         previousTokenStart = NSMaxRange(resultRange);
@@ -462,7 +462,7 @@ static OnigRegexp *_namedCapturesRegexp;
       resultRange.location += lineRange.location;
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope];
       previousTokenStart = resultRange.location;
-      TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.scopeName syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeSpan];
+      TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.identifier syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeSpan];
       spanScope.flags |= TMScopeHasBegin;
       // Create the end regexp
       NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];

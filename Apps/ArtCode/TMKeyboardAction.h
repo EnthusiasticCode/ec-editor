@@ -48,7 +48,7 @@
 #pragma mark Actions grouping
 
 + (NSDictionary *)allKeyboardActionsConfigurations;
-+ (NSArray *)keyboardActionsConfigurationForScope:(TMScope *)scope;
++ (NSArray *)keyboardActionsConfigurationForQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
 @end
 

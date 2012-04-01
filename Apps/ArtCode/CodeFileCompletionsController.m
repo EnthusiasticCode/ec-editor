@@ -53,7 +53,9 @@
     ASSERT(self.targetCodeFileController.projectFile.codeBuffer.length > self.offsetInDocumentForCompletions);
 
     if (!_completionResults)
-        _completionResults = [self.targetCodeFileController.projectFile.codeBuffer completionsAtOffset:self.offsetInDocumentForCompletions];
+      [self.targetCodeFileController.projectFile.codeBuffer completionsAtOffset:self.offsetInDocumentForCompletions withCompletionHandler:^(id<TMCompletionResultSet> completions) {
+        self._completionResults = completions;
+      }];
     return _completionResults;
 }
 

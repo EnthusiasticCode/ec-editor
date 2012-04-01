@@ -27,8 +27,6 @@
 
 #import "FileBuffer.h"
 
-#import "TMScope.h"
-
 CGRect UIKeyboardFrame;
 
 
@@ -158,7 +156,7 @@ CGRect UIKeyboardFrame;
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
-    [TMScope prepareForBackground];
+  
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -45,7 +45,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 @implementation TMSyntaxNode
 
 @synthesize rootSyntax = _rootSyntax;
-@synthesize scopeName = _scopeName;
+@synthesize identifier = _identifier;
 @synthesize fileTypes = _fileTypes;
 @synthesize firstLineMatch = _firstLineMatch;
 @synthesize foldingStartMarker = _foldingStartMarker;
@@ -73,6 +73,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
     _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
+#warning TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
     _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     for (NSURL *bundleURL in [TMBundle bundleURLs]) {
@@ -89,8 +90,8 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
             if (!syntax) {
                 continue;
             }
-            if (syntax.scopeName) {
-                [_syntaxesWithIdentifier setObject:syntax forKey:syntax.scopeName];
+            if (syntax.identifier) {
+                [_syntaxesWithIdentifier setObject:syntax forKey:syntax.identifier];
             } else {
                 [_syntaxesWithoutIdentifier addObject:syntax];
             }
@@ -100,8 +101,8 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 }
 
 - (NSUInteger)hash {
-    if (_scopeName) {
-        return [_scopeName hash];
+    if (_identifier) {
+        return [_identifier hash];
     }
     else if (_include) {
         return [_include hash];
@@ -155,6 +156,10 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
   return [self syntaxWithScopeIdentifier:@"text.plain"];
 }
 
+- (NSString *)qualifiedIdentifier {
+  return self.identifier;
+}
+
 #pragma mark - Private Methods
 
 + (TMSyntaxNode *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntaxNode *))predicateBlock {
@@ -171,6 +176,9 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     return nil;
 }
 
+
+#warning TODO URI: handle errors more gracefully here
+
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax {
     ASSERT(dictionary);
     self = [super init];
@@ -181,8 +189,9 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
         syntax = self;
     }
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *propertyKey, id propertyValue, BOOL *outerStop) {
-        if ([propertyKey isEqualToString:_scopeIdentifierKey] ||
-            [propertyKey isEqualToString:_fileTypesKey] ||
+      if ([propertyKey isEqualToString:_scopeIdentifierKey]) {
+        _identifier = propertyValue;
+      } else if ([propertyKey isEqualToString:_fileTypesKey] ||
             [propertyKey isEqualToString:_endKey] ||
             [propertyKey isEqualToString:_nameKey] ||
             [propertyKey isEqualToString:_contentNameKey] ||
@@ -228,8 +237,8 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     if (_captures && !_endCaptures) {
         _endCaptures = _captures;
     }
-    if (_name && !_scopeName && _rootSyntax) {
-        _scopeName = _name;
+    if (_name && !_identifier && _rootSyntax) {
+        _identifier = _name;
     }
     return self;
 }

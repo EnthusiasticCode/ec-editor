@@ -8,7 +8,7 @@
 
 #import "TMKeyboardAction.h"
 #import "TMBundle.h"
-#import "TMScope.h"
+#import "NSString+TextMateScopeSelectorMatching.h"
 #import <objc/message.h>
 
 static NSMutableDictionary *systemKeyboardActions;
@@ -119,12 +119,12 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
     return systemKeyboardActionsConfigurations;
 }
 
-+ (NSArray *)keyboardActionsConfigurationForScope:(TMScope *)scope
++ (NSArray *)keyboardActionsConfigurationForQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
     // TODO handle "inherit" actions?
     __block NSArray *configuration = nil;
     [[self allKeyboardActionsConfigurations] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, NSArray *conf, BOOL *stop) {
-        if ([scope scoreForScopeSelector:scopeSelector] > 0)
+        if ([qualifiedIdentifier scoreForScopeSelector:scopeSelector] > 0)
         {
             configuration = conf;
             *stop = YES;

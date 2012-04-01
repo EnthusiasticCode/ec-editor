@@ -8,7 +8,7 @@
 
 #import "TMTheme.h"
 #import "UIColor+HexColor.h"
-#import "TMScope.h"
+#import "NSString+TextMateScopeSelectorMatching.h"
 
 static NSString * const _themeFileExtension = @"tmTheme";
 static NSString * const _themeNameKey = @"name";
@@ -146,15 +146,15 @@ static NSDictionary *_sharedAttributes = nil;
     return self;
 }
 
-- (NSDictionary *)attributesForScope:(TMScope *)scope
+- (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
     __block NSDictionary *resultAttributes = nil;
-    if ((resultAttributes = [_scopeAttribuesCache objectForKey:scope.qualifiedIdentifier]))
+    if ((resultAttributes = [_scopeAttribuesCache objectForKey:qualifiedIdentifier]))
         return (NSNull *)resultAttributes == [NSNull null] ? nil : resultAttributes;
     
     __block float maxScore = 0;
     [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
-        float score = [scope scoreForScopeSelector:settingScope];
+        float score = [qualifiedIdentifier scoreForScopeSelector:settingScope];
         if (score > maxScore)
         {
             resultAttributes = attributes;
@@ -163,9 +163,9 @@ static NSDictionary *_sharedAttributes = nil;
     }];
     
     if (resultAttributes)
-        [_scopeAttribuesCache setObject:resultAttributes forKey:scope.qualifiedIdentifier];
+        [_scopeAttribuesCache setObject:resultAttributes forKey:qualifiedIdentifier];
     else
-        [_scopeAttribuesCache setObject:[NSNull null] forKey:scope.qualifiedIdentifier];
+        [_scopeAttribuesCache setObject:[NSNull null] forKey:qualifiedIdentifier];
     return resultAttributes;
 }
 

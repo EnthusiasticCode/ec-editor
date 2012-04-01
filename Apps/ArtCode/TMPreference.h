@@ -46,7 +46,7 @@ extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 + (NSDictionary *)allPreferences;
 
 /// Returns the specified preference's value for the scope. 
-+ (id)preferenceValueForKey:(NSString *)preferenceKey scope:(TMScope *)scope;
++ (id)preferenceValueForKey:(NSString *)preferenceKey qualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
 // TODO
 + (void)preapareForBackground;
