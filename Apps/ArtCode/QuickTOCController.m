@@ -10,7 +10,7 @@
 #import "QuickBrowsersContainerController.h"
 #import "CodeFileController.h"
 #import "FileBuffer.h"
-#import "TMUnit.h"
+#import "TMSymbol.h"
 #import "CodeView.h"
 
 #import "NSArray+ScoreForAbbreviation.h"

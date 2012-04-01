@@ -7,7 +7,7 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark, FileBuffer;
+@class ACProjectFileBookmark, CodeBuffer;
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
@@ -35,7 +35,7 @@
 - (void)closeWithCompletionHandler:(void(^)(NSError *error))completionHandler;
 
 /// This returns a code file with the project file's contents.
-@property (nonatomic, strong, readonly) FileBuffer *fileBuffer;
+@property (nonatomic, strong, readonly) CodeBuffer *codeBuffer;
 
 #pragma mark Managing file bookmarks
 /// @name Managing file bookmarks

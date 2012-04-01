@@ -17,6 +17,8 @@
 
 + (TMSyntaxNode *)syntaxForFirstLine:(NSString *)firstLine;
 
++ (TMSyntaxNode *)defaultSyntax;
+
 @property (nonatomic, weak, readonly) TMSyntaxNode *rootSyntax;
 
 @property (nonatomic, strong, readonly) NSString *scopeName;

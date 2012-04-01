@@ -54,6 +54,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 - (void)_setSelectedTabControl:(UIControl *)tabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
+- (void)_moveTabAction:(UILongPressGestureRecognizer *)recognizer;
 /// Action attached to close button that willk remove the tab button
 - (void)_closeTabAction:(id)sender;
 
@@ -272,7 +273,7 @@ static void init(TabBar *self)
     [self addSubview:self->tabControlsContainerView];
     
     // Move recognizer
-    self->longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveTabAction:)];
+    self->longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_moveTabAction:)];
     [self->tabControlsContainerView addGestureRecognizer:self->longPressGestureRecognizer];
     
     // Create fade views
@@ -412,7 +413,7 @@ static void init(TabBar *self)
 
 #pragma mark -
 
-- (void)moveTabAction:(UILongPressGestureRecognizer *)recognizer
+- (void)_moveTabAction:(UILongPressGestureRecognizer *)recognizer
 {
     CGPoint locationInView = [recognizer locationInView:tabControlsContainerView];
     switch (recognizer.state)
@@ -623,11 +624,11 @@ static void init(TabBar *self)
         tabControl.layer.shouldRasterize = YES;
         [UIView animateWithDuration:.10 animations:^(void) {
             tabControl.alpha = 0;
-        } completion:^(BOOL finished) {
+        } completion:^(BOOL outerFinished) {
             tabControl.layer.shouldRasterize = NO;
             [UIView animateWithDuration:.15 animations:^(void) {
                 [tabControlsContainerView layoutSubviews];
-            } completion:^(BOOL finished) {
+            } completion:^(BOOL innerFinished) {
                 tabControl.alpha = 1;
                 [tabControl removeFromSuperview];
                 tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);

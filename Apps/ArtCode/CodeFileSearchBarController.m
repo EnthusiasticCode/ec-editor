@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 
 #import "CodeFileController.h"
-#import "FileBuffer.h"
+#import "CodeBuffer.h"
 #import "ACProjectFile.h"
 #import "NSTimer+BlockTimer.h"
 #import "CodeView.h"
@@ -29,7 +29,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     BOOL _isReplacing;
 }
 
-@property (readwrite, copy) NSArray *searchFilterMatches;
+@property (nonatomic, readwrite, copy) NSArray *searchFilterMatches;
 
 - (void)_addFindFilterCodeViewPass;
 - (void)_applyFindFilterAndFlash:(BOOL)shouldFlash;
@@ -179,7 +179,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleDownIcon"] displayImmediatly:YES];
         _searchFilterMatchesLocation = [searchFilterMatches count] - 1;
     }
-    else if (_searchFilterMatchesLocation >= [searchFilterMatches count])
+    else if (_searchFilterMatchesLocation >= (NSInteger)[searchFilterMatches count])
     {
         // TODO use image isntead
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleUpIcon"] displayImmediatly:YES];
@@ -218,7 +218,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSString *replacementString = self.replaceTextField.text;
     if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters)
         replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
-    replacementString = [self.targetCodeFileController.projectFile.fileBuffer replacementStringForResult:match offset:0 template:replacementString];
+    replacementString = [self.targetCodeFileController.projectFile.codeBuffer replacementStringForResult:match offset:0 template:replacementString];
     
     [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
     [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -253,9 +253,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSInteger offset = 0;
     for (NSTextCheckingResult *match in matches)
     {
-        originalString = [self.targetCodeFileController.projectFile.fileBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
-        replacementRange = [self.targetCodeFileController.projectFile.fileBuffer replaceMatch:match withTemplate:replacementString offset:offset];
-        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.projectFile.fileBuffer] replaceCharactersInRange:replacementRange withString:originalString];
+        originalString = [self.targetCodeFileController.projectFile.codeBuffer stringInRange:NSMakeRange(match.range.location + offset, match.range.length)];
+        replacementRange = [self.targetCodeFileController.projectFile.codeBuffer replaceMatch:match withTemplate:replacementString offset:offset];
+        [[self.targetCodeFileController.codeView.undoManager prepareWithInvocationTarget:self.targetCodeFileController.projectFile.codeBuffer] replaceCharactersInRange:replacementRange withString:originalString];
         offset += replacementRange.length - [originalString length];
     }
     
@@ -364,7 +364,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
         NSRegularExpression *filterRegExp = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
         NSArray *matches = nil;
         if (filterRegExp != nil)
-            matches = [self.targetCodeFileController.projectFile.fileBuffer matchesOfRegexp:filterRegExp options:0];
+            matches = [self.targetCodeFileController.projectFile.codeBuffer matchesOfRegexp:filterRegExp options:0];
         
 //        dispatch_async(dispatch_get_main_queue(), ^{
             self.searchFilterMatches = matches;

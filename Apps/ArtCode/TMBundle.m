@@ -24,7 +24,7 @@ static NSArray *_bundleURLs;
 #endif
     NSMutableArray *bundleURLs = [NSMutableArray array];
     NSFileManager *fileManager = [[NSFileManager alloc] init];
-    for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[[NSBundle mainBundle] bundleURL] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[[NSBundle bundleForClass:self] bundleURL] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
     {
         if (![[bundleURL pathExtension] isEqualToString:_bundleExtension])
             continue;

@@ -178,7 +178,7 @@ static NSMutableArray *_mutableTabs;
 {
     ASSERT(url);
     // Moving in case of no previous history
-    if (![[_mutableDictionary objectForKey:_historyURLsKey] count])
+    if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count])
     {
         [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
         [_mutableHistoryURLs addObject:url];

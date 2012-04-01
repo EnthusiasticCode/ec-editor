@@ -8,16 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface TMIndex : NSObject
-
-/// Extension support
-/// Register a class as an extension of CodeIndex.
-+ (void)registerExtension:(Class)extensionClass forKey:(id)key;
-
-- (id)extensionForKey:(id)key;
-
-@end
-
-@protocol TMIndexExtension <NSObject>
 
 @end

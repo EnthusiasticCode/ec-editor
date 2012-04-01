@@ -7,7 +7,7 @@
 //
 
 #import "TMUnit.h"
-@class TMIndex, ACProjectFile;
+
 
 @interface TMUnit (Internal)
 

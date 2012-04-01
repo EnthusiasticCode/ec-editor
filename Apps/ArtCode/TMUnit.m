@@ -11,12 +11,12 @@
 #import "TMScope+Internal.h"
 #import "TMTheme.h"
 #import "TMBundle.h"
+#import "TMSymbol.h"
 #import "TMPreference.h"
 #import "TMSyntaxNode.h"
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
-#import "ACProjectFile.h"
 #import <libkern/OSAtomic.h>
 #import "FileBuffer.h"
 
@@ -26,7 +26,7 @@ static NSString * const _captureName = @"name";
 static OnigRegexp *_numberedCapturesRegexp;
 static OnigRegexp *_namedCapturesRegexp;
 
-@interface TMSymbol ()
+@interface TMSymbol (Internal)
 
 @property (nonatomic, readwrite) BOOL separator;
 - (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
@@ -43,8 +43,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface TMUnit () <FileBufferPresenter>
 
-@property (nonatomic, strong) TMSyntaxNode *syntax;
-
 - (void)_setHasPendingChanges;
 - (void)_generateScopes;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
@@ -55,7 +53,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @end
 
 @implementation TMUnit {
-  ACProjectFile *_projectFile;
+  FileBuffer *_fileBuffer;
   OSSpinLock _scopesLock;
   TMScope *_rootScope;
   NSOperationQueue *_internalQueue;
@@ -67,7 +65,7 @@ static OnigRegexp *_namedCapturesRegexp;
   NSMutableDictionary *_extensions;
 }
 
-@synthesize loading = _isLoading, syntax = _syntax;
+@synthesize syntax = _syntax;
 
 #pragma mark - Internal Methods
 
@@ -91,15 +89,14 @@ static OnigRegexp *_namedCapturesRegexp;
   [extensionClassesForLanguage setObject:extensionClass forKey:key];
 }
 
-- (id)initWithProjectFile:(ACProjectFile *)projectFile {
+- (id)initWithFileBuffer:(FileBuffer *)fileBuffer fileURL:(NSURL *)fileURL index:(TMIndex *)index {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   self = [super init];
   if (!self)
     return nil;
   
-  _projectFile = projectFile;
-  
-  [projectFile.fileBuffer addPresenter:self];
+  _fileBuffer = fileBuffer;
+  [fileBuffer addPresenter:self];
   
   _scopesLock = OS_SPINLOCK_INIT;
   
@@ -107,11 +104,19 @@ static OnigRegexp *_namedCapturesRegexp;
   _internalQueue.maxConcurrentOperationCount = 1;
   
 #warning TODO URI: add check on the first line too
-  if (projectFile.explicitSyntaxIdentifier) {
-    _syntax = [TMSyntaxNode syntaxWithScopeIdentifier:projectFile.explicitSyntaxIdentifier];
-  } else {
-    _syntax = [TMSyntaxNode syntaxForFileName:projectFile.name];
-  }
+  // Launch it on the background queue so we avoid initializing TMSyntaxNode on the main queue
+  __weak TMUnit *weakSelf = self;
+  [_internalQueue addOperationWithBlock:^{
+    TMSyntaxNode *syntax = nil;
+    if (fileURL) {
+      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+    } else {
+      syntax = TMSyntaxNode.defaultSyntax;
+    }
+    [NSOperationQueue.mainQueue addOperationWithBlock:^{
+      weakSelf->_syntax = syntax;
+    }];
+  }];
   
   OSSpinLockLock(&_scopesLock);
   _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.scopeName syntaxNode:_syntax];
@@ -120,7 +125,7 @@ static OnigRegexp *_namedCapturesRegexp;
   _pendingChangesLock = OS_SPINLOCK_INIT;
   Change *firstChange = [[Change alloc] init];
   firstChange->oldRange = NSMakeRange(0, 0);
-  firstChange->newRange = NSMakeRange(0, [projectFile.fileBuffer length]);
+  firstChange->newRange = NSMakeRange(0, [fileBuffer length]);
   _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
   OSSpinLockLock(&_pendingChangesLock);
   [self _setHasPendingChanges];
@@ -216,7 +221,6 @@ static OnigRegexp *_namedCapturesRegexp;
   if (_hasPendingChanges)
     return;
   _hasPendingChanges = YES;
-  _isLoading = YES;
   __weak TMUnit *weakSelf = self;
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
@@ -258,7 +262,7 @@ static OnigRegexp *_namedCapturesRegexp;
   _hasPendingChanges = NO;
   
   // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
-  NSUInteger fileLength = _projectFile.fileBuffer.length;
+  NSUInteger fileLength = _fileBuffer.length;
   [_unparsedRanges removeIndexesInRange:NSMakeRange(fileLength, NSUIntegerMax - fileLength)];
   
   // Get the next unparsed range
@@ -272,7 +276,7 @@ static OnigRegexp *_namedCapturesRegexp;
   {
     // Get the first line range
     NSRange lineRange = NSMakeRange(nextRange.location, 0);
-    lineRange = [_projectFile.fileBuffer lineRangeForRange:lineRange];
+    lineRange = [_fileBuffer lineRangeForRange:lineRange];
     // Zero length line means end of file
     if (!lineRange.length)
       return;
@@ -295,7 +299,7 @@ static OnigRegexp *_namedCapturesRegexp;
       [_rootScope removeChildScopesInRange:lineRange];
       
       // Setup the line
-      NSString *line = [_projectFile.fileBuffer stringInRange:lineRange];
+      NSString *line = [_fileBuffer stringInRange:lineRange];
       
       // Parse the line
       [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
@@ -314,7 +318,7 @@ static OnigRegexp *_namedCapturesRegexp;
       OSSpinLockUnlock(&_pendingChangesLock);
       // proceed to next line
       lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-      lineRange = [_projectFile.fileBuffer lineRangeForRange:lineRange];
+      lineRange = [_fileBuffer lineRangeForRange:lineRange];
     }
     // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
     BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
@@ -545,10 +549,10 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope
 {
 #warning URI TODO: queue up callbacks to call on main thread
-//  NSDictionary *attributes = [_projectFile.fileBuffer.theme attributesForScope:scope];
+//  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
 //  if (![attributes count])
 //    return;
-//  return [_projectFile.fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
+//  return [_fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern
@@ -617,29 +621,5 @@ static OnigRegexp *_namedCapturesRegexp;
 @end
 
 @implementation Change
-
-@end
-
-@implementation TMSymbol
-
-@synthesize title = _title, icon = _icon, range = _range, indentation = _indentation, separator = _separator;
-
-- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range
-{
-  self = [super init];
-  if (!self)
-    return nil;
-  // Get indentation level and modify title
-  NSUInteger titleLength = [_title length];
-  for (; _indentation < titleLength; ++_indentation)
-  {
-    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[title characterAtIndex:_indentation]])
-      break;
-  }
-  _title = _indentation ? [title substringFromIndex:_indentation] : title;
-  _icon = icon;
-  _range = range;
-  return self;
-}
 
 @end

@@ -48,13 +48,13 @@ CGRect UIKeyboardFrame;
     // Generic text field
     id textFieldAppearance = [UITextField appearance];
     [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
-    [textFieldAppearance setFont:defaultFont];
+    [(UITextField *)textFieldAppearance setFont:defaultFont];
     
     ////////////////////////////////////////////////////////////////////////////
     // Generic popover
     id popoverAppearance = [ShapePopoverBackgroundView appearance];
 //    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
-    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:67.0/255.0 green:68.0/255.0 blue:72.0/255.0 alpha:1.0]];
+    [(ShapePopoverBackgroundView *)popoverAppearance setBackgroundColor:[UIColor colorWithRed:67.0/255.0 green:68.0/255.0 blue:72.0/255.0 alpha:1.0]];
     [(ShapePopoverBackgroundView *)popoverAppearance setStrokeColor:[UIColor colorWithWhite:0.34 alpha:1]];
     [popoverAppearance setShadowOpacity:0.7];
     [popoverAppearance setShadowRadius:4];
@@ -108,7 +108,7 @@ CGRect UIKeyboardFrame;
     
     ////////////////////////////////////////////////////////////////////////////
     // Code view elements
-    [[CodeFlashView appearance] setBackgroundColor:[UIColor yellowColor]];
+    [(CodeFlashView *)[CodeFlashView appearance] setBackgroundColor:[UIColor yellowColor]];
     
     ////////////////////////////////////////////////////////////////////////////
     // Creating main tab controllers

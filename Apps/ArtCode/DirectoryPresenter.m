@@ -86,7 +86,7 @@
     NSUInteger index = 0, newIndex = 0, count = [_mutableFileURLs count], newCount = [newFileURLs count];
     while (index < count && newIndex < newCount)
     {
-        NSComparisonResult result = [[_mutableFileURLs objectAtIndex:index] compare:[newFileURLs objectAtIndex:newIndex]];
+        NSComparisonResult result = [(NSURL *)[_mutableFileURLs objectAtIndex:index] compare:[newFileURLs objectAtIndex:newIndex]];
         if (result == NSOrderedAscending)
         {
             [indexesOfRemovedFileURLs addIndex:index];

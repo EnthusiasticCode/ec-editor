@@ -14,7 +14,7 @@
     NSUInteger index;
 }
 
-@property (readonly) NSUInteger index;
+@property (nonatomic, readonly) NSUInteger index;
 
 - (id)initWithIndex:(NSUInteger)idx;
 - (NSComparisonResult)compare:other;

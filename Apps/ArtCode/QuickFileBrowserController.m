@@ -23,8 +23,6 @@
 #import "HighlightTableViewCell.h"
 
 
-static void *_directoryObservingContext;
-
 @interface QuickFileBrowserController ()
 
 - (void)_showBrowserInTabAction:(id)sender;

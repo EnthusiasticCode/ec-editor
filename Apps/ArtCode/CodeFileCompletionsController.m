@@ -9,12 +9,12 @@
 #import "CodeFileCompletionsController.h"
 #import "CodeFileCompletionCell.h"
 
-#import "TMUnit.h"
+#import "TMCompletions.h"
 #import "Index.h"
 #import "TextRange.h"
 
 #import "CodeFileController.h"
-#import "FileBuffer.h"
+#import "CodeBuffer.h"
 #import "CodeFileKeyboardAccessoryView.h"
 
 #import "ACProjectFile.h"
@@ -50,10 +50,10 @@
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-    ASSERT(self.targetCodeFileController.projectFile.fileBuffer.length > self.offsetInDocumentForCompletions);
+    ASSERT(self.targetCodeFileController.projectFile.codeBuffer.length > self.offsetInDocumentForCompletions);
 
     if (!_completionResults)
-        _completionResults = [self.targetCodeFileController.codeUnit completionsAtOffset:self.offsetInDocumentForCompletions];
+        _completionResults = [self.targetCodeFileController.projectFile.codeBuffer completionsAtOffset:self.offsetInDocumentForCompletions];
     return _completionResults;
 }
 

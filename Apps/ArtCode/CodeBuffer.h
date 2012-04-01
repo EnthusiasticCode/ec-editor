@@ -1,23 +1,20 @@
 //
-//  TMUnit.h
-//  CodeIndexing
+//  CodeBuffer.h
+//  ArtCode
 //
-//  Created by Uri Baghin on 1/6/12.
+//  Created by Uri Baghin on 4/1/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-@class TMScope, UIImage, TMIndex, FileBuffer, TMSyntaxNode;
-@protocol TMCompletionResultSet, TMCompletionResult, TMCompletionString, TMCompletionChunk;
+#import "FileBuffer.h"
+@class TMIndex, TMSyntaxNode, TMScope;
+@protocol TMCompletionResultSet;
 
-/// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
-@interface TMUnit : NSObject
-
-@property (nonatomic, weak, readonly) TMIndex *index;
+@interface CodeBuffer : FileBuffer
 
 @property (nonatomic, strong) TMSyntaxNode *syntax;
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer fileURL:(NSURL *)fileURL index:(TMIndex *)index;
+- (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
 
 /// Returns an array of TMSymbol objects representing all the symbols in the file.
 - (void)symbolListWithCompletionHandler:(void(^)(NSArray *symbolList))completionHandler;

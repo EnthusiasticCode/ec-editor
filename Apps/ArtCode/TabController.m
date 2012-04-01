@@ -170,12 +170,12 @@ static void *childViewControllerTitleContext;
     return [orderedChildViewControllers objectAtIndex:selectedViewControllerIndex];
 }
 
-- (void)setSelectedViewControllerIndex:(NSInteger)index
+- (void)setSelectedViewControllerIndex:(NSUInteger)index
 {
     [self setSelectedViewControllerIndex:index animated:NO];
 }
 
-- (void)setSelectedViewControllerIndex:(NSInteger)index animated:(BOOL)animated
+- (void)setSelectedViewControllerIndex:(NSUInteger)index animated:(BOOL)animated
 { 
     [self.tabBar setSelectedTabIndex:index animated:animated];
 }
@@ -414,14 +414,14 @@ static void init(TabController *self)
     // Get current tab index
     CGRect pageBounds = self.contentScrollView.bounds;
     NSUInteger tabControllersCount = [orderedChildViewControllers count];
-    NSInteger currentTabIndex = (NSInteger)roundf(pageBounds.origin.x / pageBounds.size.width);
+    NSInteger currentTabIndex = (NSUInteger)roundf(pageBounds.origin.x / pageBounds.size.width);
     if (currentTabIndex < 0)
         currentTabIndex = 0;
-    else if (currentTabIndex >= tabControllersCount)
+    else if (currentTabIndex >= (NSInteger)tabControllersCount)
         currentTabIndex = tabControllersCount - 1;
     
     // Return if already on this tab
-    if (currentTabIndex == selectedViewControllerIndex)
+    if (currentTabIndex == (NSInteger)selectedViewControllerIndex)
         return;
     
     // Select tab button

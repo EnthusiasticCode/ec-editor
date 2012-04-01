@@ -27,13 +27,12 @@
 
 #import "ShapePopoverBackgroundView.h"
 
-#import "FileBuffer.h"
-#import "TMUnit.h"
+#import "CodeBuffer.h"
+#import "TMSymbol.h"
 #import "TMScope.h"
 #import "TMPreference.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-
 
 #import "ACProject.h"
 #import "ACProjectItem.h"
@@ -275,7 +274,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (projectFile == _projectFile)
     return;
   
-  [_projectFile.fileBuffer removePresenter:self];
+  [_projectFile.codeBuffer removePresenter:self];
   [_projectFile closeWithCompletionHandler:nil];
   _projectFile = nil;
   [projectFile openWithCompletionHandler:^(NSError *error) {
@@ -283,7 +282,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
       return;
     }
     _projectFile = projectFile;
-    [_projectFile.fileBuffer addPresenter:self];
+    [_projectFile.codeBuffer addPresenter:self];
     [self _setCodeViewAttributesForTheme:self.theme];
     [_codeView updateAllText];
     [self _loadWebPreviewContentAndTitle];
@@ -544,7 +543,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (editing)
   {
     // Set keyboard for main scope
-    [self.codeUnit rootScopeWithCompletionHandler:^(TMScope *rootScope) {
+    [self.projectFile.codeBuffer rootScopeWithCompletionHandler:^(TMScope *rootScope) {
       [self _keyboardAccessoryItemSetupWithScope:rootScope];
     }];
   }
@@ -640,20 +639,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return self.projectFile.fileBuffer.length;
+  return self.projectFile.codeBuffer.length;
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 #warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [[self.projectFile.fileBuffer attributedStringInRange:stringRange] mutableCopy];
+  NSMutableAttributedString *attributedString = [[self.projectFile.codeBuffer attributedStringInRange:stringRange] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.projectFile.fileBuffer stringInRange:[result rangeAtIndex:1]];
+      NSString *placeHolderName = [self.projectFile.codeBuffer stringInRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }
@@ -667,12 +666,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
-  [self.projectFile.fileBuffer replaceCharactersInRange:range withString:commitString];
+  [self.projectFile.codeBuffer replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-  return [self.projectFile.fileBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+  return [self.projectFile.codeBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -816,7 +815,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   [_selectionChangeDebounceTimer invalidate];
   _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
     // Retrieve the current scope
-    [self.codeUnit scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
+    [self.projectFile.codeBuffer scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
       // Set current symbol in title
       //            TMSymbol *currentSymbol = nil;
       //            for (TMSymbol *symbol in [self.projectFile.codeUnit symbolList])
@@ -896,7 +895,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
   if ([self _isWebPreview] && self.projectFile)
   {
-    [self.webView loadHTMLString:[self.projectFile.fileBuffer string] baseURL:nil];
+    [self.webView loadHTMLString:[self.projectFile.codeBuffer string] baseURL:nil];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else

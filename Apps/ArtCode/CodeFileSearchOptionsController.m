@@ -92,7 +92,7 @@ static void const * parentSearchBarControllerContext;
             return 3;
             
         case PREVIEW_SECTION:
-            return MAX([_searchFilterMatches count], 1);
+            return MAX([_searchFilterMatches count], 1U);
             
         default:
             return 0;

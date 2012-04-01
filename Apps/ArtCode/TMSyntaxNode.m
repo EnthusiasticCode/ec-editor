@@ -151,6 +151,10 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
     }];
 }
 
++ (TMSyntaxNode *)defaultSyntax {
+  return [self syntaxWithScopeIdentifier:@"text.plain"];
+}
+
 #pragma mark - Private Methods
 
 + (TMSyntaxNode *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntaxNode *))predicateBlock {

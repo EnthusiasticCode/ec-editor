@@ -87,7 +87,7 @@
 
 - (NSUInteger)columnNumber
 {
-    return MAX(1, columnNumber);
+    return MAX(1U, columnNumber);
 }
 
 - (void)setColumnNumber:(NSUInteger)value
@@ -764,10 +764,10 @@ static void _init(GridView *self)
     
     [UIView animateWithDuration:(self.isEditing ? 0.1 : 0) animations:^{
         [cell setTransform:CGAffineTransformMakeScale(0.95, 0.95)];
-    } completion:^(BOOL finished) {
+    } completion:^(BOOL outerFinished) {
         [UIView animateWithDuration:(self.isEditing ? 0.1 : 0) animations:^{
             [cell setTransform:CGAffineTransformIdentity];
-        } completion:^(BOOL finished) {
+        } completion:^(BOOL innerFinished) {
             // Set selection
             if (!(self.isEditing ? self.allowMultipleSelectionDuringEditing : self.allowMultipleSelection))
             {

@@ -300,7 +300,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (CGRect)boundsForSubstringInRange:(NSRange)stringRange
 {
-    ASSERT(NSMaxRange(stringRange) <= CTLineGetStringRange(CTLine).length);
+    ASSERT((CFIndex)NSMaxRange(stringRange) <= CTLineGetStringRange(CTLine).length);
     
     CFRange lineStringRange = CTLineGetStringRange(CTLine);
     
@@ -612,7 +612,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     BOOL stop = NO;
     for (TextRendererLine *line in self.renderedLines)
     {
-        if (lineIndex >= (CFIndex)queryRangeEnd) 
+        if ((CFIndex)lineIndex >= (CFIndex)queryRangeEnd) 
             return;
             
         stringRange = CTLineGetStringRange(line->CTLine);
@@ -1187,9 +1187,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
             result = position + offset;
             break;
         }
-
-        default:
-            break;
     }
     return result;
 }
@@ -1281,7 +1278,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
                 }
                 
                 // Will remove segment if modifying it will change it's string lenght too much
-                NSInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
+                ASSERT(segment.stringLength + (toRange.length - fromRange.length) >= 0);
+                NSUInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
                 if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
                     || (!segment.isLastSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
                 {

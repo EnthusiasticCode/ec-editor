@@ -7,7 +7,6 @@
 //
 
 #import "FileBuffer.h"
-#import "WeakArray.h"
 #import "ACProjectFile.h"
 #import "ACProject.h"
 #import <libkern/OSAtomic.h>
@@ -34,7 +33,7 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
 @implementation FileBuffer {
   NSMutableAttributedString *_contents;
   OSSpinLock _contentsLock;
-  WeakArray *_presenters;
+  NSMutableArray *_presenters;
   OSSpinLock _presentersLock;
   NSMutableArray *_pendingChanges;
   OSSpinLock _pendingChangesLock;
@@ -42,26 +41,30 @@ static NSString * const _changeAttributeNamesKey = @"CodeFileChangeAttributeName
   NSUInteger _pendingGenerationOffset;
 }
 
-@synthesize defaultAttributes = _defaultAttributes;
+@synthesize defaultAttributes = _defaultAttributes, fileURL = _fileURL;
 
 #pragma mark - NSObject
 
 - (id)init {
+  return [self initWithFileURL:nil];
+}
+
+#pragma mark - Public methods
+
+- (id)initWithFileURL:(NSURL *)fileURL {
   self = [super init];
   if (!self) {
     return nil;
   }
   _contents = [[NSMutableAttributedString alloc] init];
   _contentsLock = OS_SPINLOCK_INIT;
-  _presenters = [[WeakArray alloc] init];
+  _presenters = [[NSMutableArray alloc] init];
   _presentersLock = OS_SPINLOCK_INIT;
   _pendingChanges = [[NSMutableArray alloc] init];
   _pendingChangesLock = OS_SPINLOCK_INIT;
   _hasPendingChanges = NO;
   return self;
 }
-
-#pragma mark - Public methods
 
 - (void)addPresenter:(id<FileBufferPresenter>)presenter {
   ASSERT(![_presenters containsObject:presenter]);

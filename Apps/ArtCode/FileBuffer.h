@@ -21,7 +21,11 @@
 @interface FileBuffer : NSObject
 
 @property (nonatomic, strong) NSDictionary *defaultAttributes;
+@property (nonatomic, strong) NSURL *fileURL;
 
+- (id)initWithFileURL:(NSURL *)fileURL;
+
+/// Presenters are retained by the FileBuffer, so they must be removed to avoid retain cycles and leaks
 - (void)addPresenter:(id<FileBufferPresenter>)presenter;
 - (void)removePresenter:(id<FileBufferPresenter>)presenter;
 - (NSArray *)presenters;

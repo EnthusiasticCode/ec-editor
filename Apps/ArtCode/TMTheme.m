@@ -173,7 +173,7 @@ static NSDictionary *_sharedAttributes = nil;
 + (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle
 {
     if (bundle == nil)
-        bundle = [NSBundle mainBundle];
+        bundle = [NSBundle bundleForClass:self];
     
     return [[self alloc] initWithFileURL:[bundle URLForResource:name withExtension:_themeFileExtension]];
 }

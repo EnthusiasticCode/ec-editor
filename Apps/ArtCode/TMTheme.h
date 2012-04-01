@@ -18,7 +18,6 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 
 @class TMScope;
 
-#warning TODO: TMTheme isn't threadsafe, but it gets called from different threads, fix it
 @interface TMTheme : NSObject
 
 /// Initialize a theme with the URL of it's .tmbundle file.
