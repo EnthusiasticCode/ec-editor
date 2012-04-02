@@ -28,8 +28,6 @@
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
-/// If filterRange is not NULL, in output it will contain the file buffer string range that contains 
-/// the substring used for filtering.
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
 
 @end

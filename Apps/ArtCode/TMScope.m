@@ -155,7 +155,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 - (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options
 {
   ASSERT(!_parent);
-  if (offset >= _length)
+  if (offset > _length)
     return nil;
   NSMutableArray *scopeStack = [NSMutableArray arrayWithObject:self];
   for (;;)

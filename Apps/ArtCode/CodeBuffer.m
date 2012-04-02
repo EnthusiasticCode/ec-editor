@@ -9,9 +9,20 @@
 #import "CodeBuffer.h"
 #import "TMUnit.h"
 
+@interface CodeBuffer ()
 
-@implementation CodeBuffer {
-  TMUnit *_codeUnit;
+@property (nonatomic, strong) TMUnit *_codeUnit;
+
+@end
+
+@implementation CodeBuffer
+
+@synthesize _codeUnit = __codeUnit;
+
+#pragma mark - KVO
+
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+  return [NSSet setWithObject:[@"_codeUnit." stringByAppendingString:key]];
 }
 
 #pragma mark - FileBuffer
@@ -23,19 +34,19 @@
 #pragma mark - Public Methods
 
 - (TMSyntaxNode *)syntax {
-  return _codeUnit.syntax;
+  return __codeUnit.syntax;
 }
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
-  [_codeUnit setSyntax:syntax];
+  [__codeUnit setSyntax:syntax];
 }
 
 - (NSArray *)symbolList {
-  return nil;
+  return __codeUnit.symbolList;
 }
 
 - (NSArray *)diagnostics {
-  return nil;
+  return __codeUnit.diagnostics;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index {
@@ -43,16 +54,17 @@
   if (!self) {
     return nil;
   }
-  _codeUnit = [TMUnit.alloc initWithFileBuffer:self fileURL:fileURL index:index];
+  __codeUnit = [TMUnit.alloc initWithFileBuffer:self fileURL:fileURL index:index];
+  ASSERT(__codeUnit);
   return self;
 }
 
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler {
-  completionHandler(nil);
+  [__codeUnit scopeAtOffset:offset withCompletionHandler:completionHandler];
 }
 
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
-  completionHandler(nil);
+  [__codeUnit completionsAtOffset:offset withCompletionHandler:completionHandler];
 }
 
 @end

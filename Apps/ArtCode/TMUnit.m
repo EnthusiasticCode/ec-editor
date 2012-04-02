@@ -33,6 +33,8 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @end
 
+#pragma mark -
+
 @interface Change : NSObject
 {
   @package
@@ -41,8 +43,12 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 @end
 
+#pragma mark -
+
 @interface TMUnit () <FileBufferPresenter>
 
+- (BOOL)_isUpToDate;
+- (void)_queueBlockUntilUpToDate:(void(^)(void))block;
 - (void)_setHasPendingChanges;
 - (void)_generateScopes;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
@@ -52,99 +58,79 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @end
 
+#pragma mark -
+
 @implementation TMUnit {
   FileBuffer *_fileBuffer;
+  NSUInteger _fileBufferVersionIndex;
+  NSUInteger _scopesVersionIndex;
   OSSpinLock _scopesLock;
   TMScope *_rootScope;
   NSOperationQueue *_internalQueue;
   OSSpinLock _pendingChangesLock;
   NSMutableArray *_pendingChanges;
-  BOOL _hasPendingChanges;
   NSMutableIndexSet *_unparsedRanges;
   NSMutableDictionary *_patternsIncludedByPattern;
   NSMutableDictionary *_extensions;
 }
 
-@synthesize syntax = _syntax;
+@synthesize index = _index, syntax = _syntax;
 
-#pragma mark - Internal Methods
+#pragma mark - NSObject
 
 + (void)initialize {
-  if (self != [TMUnit class])
+  if (self != [TMUnit class]) {
     return;
+  }
   _numberedCapturesRegexp = [OnigRegexp compile:@"\\\\([1-9])" options:OnigOptionCaptureGroup];
   _namedCapturesRegexp = [OnigRegexp compile:@"\\\\k<(.*?)>" options:OnigOptionCaptureGroup];
   ASSERT(_numberedCapturesRegexp && _namedCapturesRegexp);
 }
 
-+ (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key {
-  if (!_extensionClasses)
-    _extensionClasses = [[NSMutableDictionary alloc] init];
-  NSMutableDictionary *extensionClassesForLanguage = [_extensionClasses objectForKey:languageIdentifier];
-  if (!extensionClassesForLanguage)
-  {
-    extensionClassesForLanguage = [[NSMutableDictionary alloc] init];
-    [_extensionClasses setObject:extensionClassesForLanguage forKey:languageIdentifier];
-  }
-  [extensionClassesForLanguage setObject:extensionClass forKey:key];
+#pragma mark - FileBufferPresenter
+
+- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  Change *change = [[Change alloc] init];
+  change->oldRange = range;
+  change->newRange = NSMakeRange(range.location, [string length]);
+  OSSpinLockLock(&_pendingChangesLock);
+  [_pendingChanges addObject:change];
+  [self _setHasPendingChanges];    
+  OSSpinLockUnlock(&_pendingChangesLock);
+}
+
+#pragma mark - Public Methods
+
+- (NSArray *)symbolList {
+  return NSArray.alloc.init;
+}
+
+- (NSArray *)diagnostics {
+  return NSArray.alloc.init;
 }
 
 - (id)initWithFileBuffer:(FileBuffer *)fileBuffer fileURL:(NSURL *)fileURL index:(TMIndex *)index {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   self = [super init];
-  if (!self)
+  if (!self) {
     return nil;
+  }
   
   _fileBuffer = fileBuffer;
   [fileBuffer addPresenter:self];
   
   _scopesLock = OS_SPINLOCK_INIT;
+  _pendingChangesLock = OS_SPINLOCK_INIT;
+  _pendingChanges = NSMutableArray.alloc.init;
   
-  _internalQueue = [[NSOperationQueue alloc] init];
+  _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
   
-  // Launch it on the background queue so we avoid initializing TMSyntaxNode on the main queue
-  __weak TMUnit *weakSelf = self;
-  NSString *firstLine = nil;
-  if (fileBuffer) {
-    NSRange firstLineRange = [fileBuffer lineRangeForRange:NSMakeRange(0, 0)];
-    if (firstLineRange.length) {
-      firstLine = [fileBuffer stringInRange:firstLineRange];
-    }
-  }
-  [_internalQueue addOperationWithBlock:^{
-    TMSyntaxNode *syntax = nil;
-    if (firstLine) {
-      syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
-    }
-    if (!syntax && fileURL) {
-      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-    }
-    if (!syntax) {
-      syntax = TMSyntaxNode.defaultSyntax;
-    }
-    [NSOperationQueue.mainQueue addOperationWithBlock:^{
-      weakSelf->_syntax = syntax;
-    }];
-  }];
-  
-  OSSpinLockLock(&_scopesLock);
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  OSSpinLockUnlock(&_scopesLock);
-  
-  _pendingChangesLock = OS_SPINLOCK_INIT;
-  Change *firstChange = [[Change alloc] init];
-  firstChange->oldRange = NSMakeRange(0, 0);
-  firstChange->newRange = NSMakeRange(0, [fileBuffer length]);
-  _pendingChanges = [NSMutableArray arrayWithObject:firstChange];
-  OSSpinLockLock(&_pendingChangesLock);
-  [self _setHasPendingChanges];
-  OSSpinLockUnlock(&_pendingChangesLock);
-  
-  _unparsedRanges = [[NSMutableIndexSet alloc] init];
-  _patternsIncludedByPattern = [NSMutableDictionary dictionary];
-  
-  _extensions = [[NSMutableDictionary alloc] init];
+  _unparsedRanges = NSMutableIndexSet.alloc.init;
+  _patternsIncludedByPattern = NSMutableDictionary.alloc.init;
+
+  _extensions = NSMutableDictionary.alloc.init;
   [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
     if (![_syntax.identifier isEqualToString:extensionClassesSyntaxIdentifier])
       return;
@@ -156,86 +142,122 @@ static OnigRegexp *_namedCapturesRegexp;
     }];
   }];
   
+  // Do the rest of the initialization on the background queue so we avoid initializing TMSyntaxNode on the main queue
+  __weak TMUnit *weakSelf = self;
+  NSString *firstLine = nil;
+  if (fileBuffer) {
+    NSRange firstLineRange = [fileBuffer lineRangeForRange:NSMakeRange(0, 0)];
+    if (firstLineRange.length) {
+      firstLine = [fileBuffer stringInRange:firstLineRange];
+    }
+  }
+  [_internalQueue addOperationWithBlock:^{
+    TMUnit *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    TMSyntaxNode *syntax = nil;
+    if (firstLine) {
+      syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
+    }
+    if (!syntax && fileURL) {
+      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+    }
+    if (!syntax) {
+      syntax = TMSyntaxNode.defaultSyntax;
+    }
+    [NSOperationQueue.mainQueue addOperationWithBlock:^{
+      strongSelf->_syntax = syntax;
+      OSSpinLockLock(&strongSelf->_scopesLock);
+      strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.identifier syntaxNode:strongSelf->_syntax];
+      ++strongSelf->_scopesVersionIndex;
+      OSSpinLockUnlock(&strongSelf->_scopesLock);
+      Change *firstChange = Change.alloc.init;
+      firstChange->oldRange = NSMakeRange(0, 0);
+      firstChange->newRange = NSMakeRange(0, fileBuffer.length);
+      [strongSelf->_pendingChanges addObject:firstChange];
+      OSSpinLockLock(&strongSelf->_pendingChangesLock);
+      [strongSelf _setHasPendingChanges];
+      OSSpinLockUnlock(&strongSelf->_pendingChangesLock);
+    }];
+  }];
+  
   return self;
 }
 
-- (id)extensionForKey:(id)key
-{
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  [self _queueBlockUntilUpToDate:^{
+    OSSpinLockLock(&_scopesLock);
+    TMScope *scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
+    OSSpinLockUnlock(&_scopesLock);
+    completionHandler(scopeCopy);
+  }];
+}
+
+- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  [self _queueBlockUntilUpToDate:^{
+    completionHandler((id<TMCompletionResultSet>)NSArray.alloc.init);
+  }];
+}
+
+#pragma mark - Internal Methods
+
++ (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key {
+  if (!_extensionClasses) {
+    _extensionClasses = NSMutableDictionary.alloc.init;
+  }
+  NSMutableDictionary *extensionClassesForLanguage = [_extensionClasses objectForKey:languageIdentifier];
+  if (!extensionClassesForLanguage) {
+    extensionClassesForLanguage = NSMutableDictionary.alloc.init;
+    [_extensionClasses setObject:extensionClassesForLanguage forKey:languageIdentifier];
+  }
+  [extensionClassesForLanguage setObject:extensionClass forKey:key];
+}
+
+- (id)extensionForKey:(id)key {
   return [_extensions objectForKey:key];
-}
-
-#pragma mark - Public Methods
-
-- (void)rootScopeWithCompletionHandler:(void (^)(TMScope *))completionHandler
-{
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (OSSpinLockTry(&_scopesLock))
-  {
-    TMScope *scopeCopy = nil;
-    scopeCopy = [_rootScope copy];
-    OSSpinLockUnlock(&_scopesLock);
-    completionHandler(scopeCopy);
-  }
-  
-  [NSOperationQueue.currentQueue performSelector:@selector(addOperationWithBlock:) withObject:^{
-    [self rootScopeWithCompletionHandler:completionHandler];
-  } afterDelay:0.2];
-}
-
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler
-{
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (OSSpinLockTry(&_scopesLock))
-  {
-    TMScope *scopeCopy = nil;
-    scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
-    OSSpinLockUnlock(&_scopesLock);
-    completionHandler(scopeCopy);
-  }
-  
-  [NSOperationQueue.currentQueue performSelector:@selector(addOperationWithBlock:) withObject:^{
-    [self scopeAtOffset:offset withCompletionHandler:completionHandler];
-  } afterDelay:0.2];
-}
-
-- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset
-{
-  return nil;
-}
-
-- (NSArray *)diagnostics
-{
-  return nil;
-}
-
-#pragma mark - FileBufferPresenter
-
-- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
-{
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  Change *change = [[Change alloc] init];
-  change->oldRange = range;
-  change->newRange = NSMakeRange(range.location, [string length]);
-  OSSpinLockLock(&_pendingChangesLock);
-  [_pendingChanges addObject:change];
-  [self _setHasPendingChanges];    
-  OSSpinLockUnlock(&_pendingChangesLock);
 }
 
 #pragma mark - Private Methods
 
-- (void)_setHasPendingChanges
-{
+- (BOOL)_isUpToDate {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  if (!_scopesVersionIndex) {
+    return NO;
+  }
+  if (!OSSpinLockTry(&_pendingChangesLock)) {
+    return NO;
+  }
+  if (_pendingChanges.count) {
+    OSSpinLockUnlock(&_pendingChangesLock);
+    return NO;
+  } else {
+    OSSpinLockUnlock(&_pendingChangesLock);
+  }
+  // TODO URI: compare the scopes version with filebuffer version
+  return YES;
+}
+
+- (void)_queueBlockUntilUpToDate:(void (^)(void))block {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  if ([self _isUpToDate]) {
+    block();
+  } else {
+    [self performSelector:@selector(_queueBlockUntilUpToDate:) withObject:block afterDelay:0.2];
+  }
+}
+
+- (void)_setHasPendingChanges {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(!OSSpinLockTry(&_pendingChangesLock));
-  if (_hasPendingChanges)
-    return;
-  _hasPendingChanges = YES;
   __weak TMUnit *weakSelf = self;
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
-    if (!strongSelf)
+    if (!strongSelf) {
       return;
+    }
     OSSpinLockLock(&strongSelf->_scopesLock);
     [strongSelf _generateScopes];
     OSSpinLockUnlock(&strongSelf->_scopesLock);
@@ -268,8 +290,6 @@ static OnigRegexp *_namedCapturesRegexp;
       [_unparsedRanges addIndex:newRange.location];
     OSSpinLockLock(&_pendingChangesLock);
   }
-  // We're done applying the current pending changes, reset the hasPendingChanges flag
-  _hasPendingChanges = NO;
   
   // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
   NSUInteger fileLength = _fileBuffer.length;
@@ -630,6 +650,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @end
 
-@implementation Change
+#pragma mark -
 
+@implementation Change
 @end
