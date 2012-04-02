@@ -216,42 +216,6 @@ while (0)
   CONTENT_MODIFIER([NSDictionary dictionaryWithObjectsAndKeys:[NSValue valueWithRange:range], _changeRangeKey, _changeTypeAttributeRemoveAll, _changeTypeKey, nil]);
 }
 
-#pragma mark - Find and replace functionality
-// TODO these need support for transactions, pending changes and be better integrated with the multithreaded content management system, but they have to be replaced by onigregexp anyway so I'm leaving them broken for the time being
-
--(NSUInteger)numberOfMatchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [regexp numberOfMatchesInString:[self string] options:options range:range];
-}
-
-- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options range:(NSRange)range {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [regexp matchesInString:[self string] options:options range:range];
-}
-
-- (NSArray *)matchesOfRegexp:(NSRegularExpression *)regexp options:(NSMatchingOptions)options {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [self matchesOfRegexp:regexp options:options range:NSMakeRange(0, [self length])];
-}
-
-- (NSString *)replacementStringForResult:(NSTextCheckingResult *)result offset:(NSInteger)offset template:(NSString *)replacementTemplate {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [result.regularExpression replacementStringForResult:result inString:[self string] offset:offset template:replacementTemplate];
-}
-
-- (NSRange)replaceMatch:(NSTextCheckingResult *)match withTemplate:(NSString *)replacementTemplate offset:(NSInteger)offset {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(match && replacementTemplate);
-  
-  NSRange replacementRange = match.range;
-  NSString *replacementString =  [self replacementStringForResult:match offset:offset template:replacementTemplate];
-  
-  replacementRange.location += offset;
-  [self replaceCharactersInRange:replacementRange withString:replacementString];
-  replacementRange.length = replacementString.length;
-  return replacementRange;
-}
-
 #pragma mark - Private Methods
 
 - (void)_setHasPendingChanges {
