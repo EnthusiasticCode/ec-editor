@@ -558,7 +558,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope
 {
-#warning URI TODO: queue up callbacks to call on main thread
+// TODO URI: queue up callbacks to call on main thread
   //  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
   //  if (![attributes count])
   //    return;

@@ -437,7 +437,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [[_projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+    [(ACProject *)[_projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
       [duplicate closeWithCompletionHandler:nil];
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;

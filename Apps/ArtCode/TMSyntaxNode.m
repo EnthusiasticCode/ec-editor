@@ -73,7 +73,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
   _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
-#warning TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
+// TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
   _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
   NSFileManager *fileManager = [[NSFileManager alloc] init];
   for (NSURL *bundleURL in [TMBundle bundleURLs]) {
@@ -177,7 +177,7 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 }
 
 
-#warning TODO URI: handle errors more gracefully here
+// TODO URI: handle errors more gracefully here
 
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax {
   ASSERT(dictionary);

@@ -162,7 +162,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [_codeView addGestureRecognizer:redoRecognizer];
     
     // Bookmark markers
-#warning TODO NIK reimplement bookmarks
+// TODO NIK reimplement bookmarks
     //        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
     //            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
     //            {
@@ -571,7 +571,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-#warning TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
+// TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
   /*    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
    {
    *decoration = CodeFileMinimapLineDecorationDisc;
@@ -637,7 +637,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-#warning TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
+// TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
   NSMutableAttributedString *attributedString = [[self.projectFile.codeBuffer attributedStringInRange:stringRange] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
@@ -863,7 +863,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
-#warning TODO NIK better check for file type
+// TODO NIK better check for file type
   if (editingState || ![[self.projectFile.name pathExtension] isEqualToString:@"html"])
   {
     return self.codeView;

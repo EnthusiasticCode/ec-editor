@@ -130,7 +130,7 @@ static NSDictionary *_sharedAttributes = nil;
         [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
       }
       else if ([key isEqualToString:@"background"]) {
-#warning TODO: adding this couples TMTheme with TextRenderer, a bit excessive
+// TODO: adding this couples TMTheme with TextRenderer, a bit excessive
         //[styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
       }
       else {
