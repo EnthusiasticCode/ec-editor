@@ -17,6 +17,8 @@
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */; };
+		B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
+		B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
@@ -2821,6 +2823,7 @@
 				B791F9C415286930000CD9DD /* TMBundle.m in Sources */,
 				B7728C5815286B53005EA98A /* NSIndexSet+StringRanges.m in Sources */,
 				B7728CC515289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
+				B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2837,6 +2840,7 @@
 				B791F9C515286930000CD9DD /* TMBundle.m in Sources */,
 				B7728C5915286B54005EA98A /* NSIndexSet+StringRanges.m in Sources */,
 				B7728CC615289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
+				B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

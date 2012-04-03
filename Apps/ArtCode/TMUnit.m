@@ -166,20 +166,18 @@ static OnigRegexp *_namedCapturesRegexp;
     if (!syntax) {
       syntax = TMSyntaxNode.defaultSyntax;
     }
-    [NSOperationQueue.mainQueue addOperationWithBlock:^{
-      strongSelf->_syntax = syntax;
-      OSSpinLockLock(&strongSelf->_scopesLock);
-      strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.identifier syntaxNode:strongSelf->_syntax];
-      ++strongSelf->_scopesVersionIndex;
-      OSSpinLockUnlock(&strongSelf->_scopesLock);
-      Change *firstChange = Change.alloc.init;
-      firstChange->oldRange = NSMakeRange(0, 0);
-      firstChange->newRange = NSMakeRange(0, fileBuffer.length);
-      [strongSelf->_pendingChanges addObject:firstChange];
-      OSSpinLockLock(&strongSelf->_pendingChangesLock);
-      [strongSelf _setHasPendingChanges];
-      OSSpinLockUnlock(&strongSelf->_pendingChangesLock);
-    }];
+    strongSelf->_syntax = syntax;
+    OSSpinLockLock(&strongSelf->_scopesLock);
+    strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.identifier syntaxNode:strongSelf->_syntax];
+    ++strongSelf->_scopesVersionIndex;
+    OSSpinLockUnlock(&strongSelf->_scopesLock);
+    Change *firstChange = Change.alloc.init;
+    firstChange->oldRange = NSMakeRange(0, 0);
+    firstChange->newRange = NSMakeRange(0, fileBuffer.length);
+    OSSpinLockLock(&strongSelf->_pendingChangesLock);
+    [strongSelf->_pendingChanges addObject:firstChange];
+    [strongSelf _setHasPendingChanges];
+    OSSpinLockUnlock(&strongSelf->_pendingChangesLock);
   }];
   
   return self;
@@ -250,7 +248,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_setHasPendingChanges {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(!OSSpinLockTry(&_pendingChangesLock));
   __weak TMUnit *weakSelf = self;
   [_internalQueue addOperationWithBlock:^{
@@ -271,8 +268,10 @@ static OnigRegexp *_namedCapturesRegexp;
   
   // First of all, we apply all the pending changes to the scope tree, the unparsed ranges and the blank ranges
   OSSpinLockLock(&_pendingChangesLock);
-  if (![_pendingChanges count])
+  if (![_pendingChanges count]) {
+    OSSpinLockUnlock(&_pendingChangesLock);
     return;
+  }
   while ([_pendingChanges count])
   {
     Change *currentChange = [_pendingChanges objectAtIndex:0];
@@ -347,8 +346,12 @@ static OnigRegexp *_namedCapturesRegexp;
       [_unparsedRanges removeIndexesInRange:lineRange];
       OSSpinLockUnlock(&_pendingChangesLock);
       // proceed to next line
+      NSRange oldLineRange = lineRange;
       lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
       lineRange = [_fileBuffer lineRangeForRange:lineRange];
+      if (lineRange.location == oldLineRange.location) {
+        break;
+      }
     }
     // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
     BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
@@ -382,7 +385,7 @@ static OnigRegexp *_namedCapturesRegexp;
   // Check for a span scope with a missing content scope
   {
     TMScope *scope = [scopeStack lastObject];
-    if (scope.type == TMScopeTypeSpan && ! scope.flags & TMScopeHasContentScope && scope.syntaxNode.contentName)
+    if (scope.type == TMScopeTypeSpan && !(scope.flags & TMScopeHasContentScope) && scope.syntaxNode.contentName)
     {
       TMScope *contentScope = [scope newChildScopeWithIdentifier:scope.syntaxNode.contentName syntaxNode:scope.syntaxNode location:lineRange.location type:TMScopeTypeContent];
       ASSERT(scope.endRegexp);
@@ -439,10 +442,12 @@ static OnigRegexp *_namedCapturesRegexp;
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:scope];
       previousTokenStart = NSMaxRange(resultRange);
       // Handle end captures
-      if (resultRange.length)
+      if (resultRange.length && syntaxNode.endCaptures)
       {
         [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope];
-        scope.flags |= TMScopeHasEndScope;
+        if ([(NSDictionary *)[syntaxNode.endCaptures objectForKey:@"0"] objectForKey:_captureName]) {
+          scope.flags |= TMScopeHasEndScope;
+        }
       }
       scope.length = NSMaxRange(resultRange) - scope.location;
       scope.flags |= TMScopeHasEnd;
@@ -506,10 +511,12 @@ static OnigRegexp *_namedCapturesRegexp;
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:spanScope];
       previousTokenStart = NSMaxRange(resultRange);
       // Handle begin captures
-      if (resultRange.length)
+      if (resultRange.length && firstSyntaxNode.beginCaptures)
       {
         [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult type:TMScopeTypeBegin offset:lineRange.location parentScope:spanScope];
-        spanScope.flags |= TMScopeHasBeginScope;
+        if ([(NSDictionary *)[firstSyntaxNode.beginCaptures objectForKey:@"0"] objectForKey:_captureName]) {
+          spanScope.flags |= TMScopeHasBeginScope;
+        }
       }
       [scopeStack addObject:spanScope];
       // Handle content name nested scope

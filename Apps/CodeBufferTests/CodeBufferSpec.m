@@ -40,13 +40,13 @@ describe(@"A CodeBuffer", ^{
       [[codeBuffer.syntax.name should] equal:@"Plain Text"];
     });
     
-    it(@"has a text.plain root scope", ^{
-      __block TMScope *rootScope = nil;
+    it(@"has a text.plain scope", ^{
+      __block TMScope *firstScope = nil;
       [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-        rootScope = scope;
+        firstScope = scope;
       }];
-      [[expectFutureValue(rootScope) shouldEventually] beNonNil];
-      [[rootScope.identifier should] equal:@"text.plain"];
+      [[expectFutureValue(firstScope) shouldEventually] beNonNil];
+      [[firstScope.identifier should] equal:@"text.plain"];
     });
     
     it(@"has a symbol list", ^{
@@ -57,6 +57,27 @@ describe(@"A CodeBuffer", ^{
     it(@"has a diagnostics list", ^{
       [[codeBuffer.diagnostics should] beNonNil];
       [[codeBuffer.symbolList should] haveCountOf:0];
+    });
+    
+    context(@"after inserting some text", ^{
+      NSString *someText = 
+      @"#import <stdio.h>\n\
+      int testFunction(void);\n\
+      <div id=\"testDIV\">blabla</div>";
+      
+      beforeEach(^{
+        [codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:someText];
+      });
+      
+      it(@"has a meta.paragraph.text scope", ^{
+        __block TMScope *firstScope = nil;
+        [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
+          firstScope = scope;
+        }];
+        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
+        [[firstScope.identifier should] equal:@"meta.paragraph.text"];
+      });
+      
     });
     
   });
