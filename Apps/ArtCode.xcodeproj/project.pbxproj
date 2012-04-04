@@ -173,6 +173,10 @@
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE6191152CADE10019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE6192152CADE60019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
+		B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
+		B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
+		B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
+		B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
 		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
 		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
@@ -1065,6 +1069,7 @@
 			files = (
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
+				B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */,
 				B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */,
 				B77101481506E340006AF1FB /* MessageUI.framework in Frameworks */,
@@ -1127,6 +1132,7 @@
 			files = (
 				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
 				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
+				B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */,
 				B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */,
 				B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */,
@@ -2808,6 +2814,7 @@
 				B7728C6315286EE9005EA98A /* TMScope.m in Sources */,
 				B7728C6515286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
+				B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2891,6 +2898,7 @@
 				B7728C6215286EE8005EA98A /* TMScope.m in Sources */,
 				B7728C6415286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
+				B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
