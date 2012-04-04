@@ -133,7 +133,6 @@ static OnigRegexp *_namedCapturesRegexp;
   _syntax = syntax;
   dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_FOREVER);
   _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  ++_scopesVersionIndex;
   dispatch_semaphore_signal(_scopesLock);
   Change *firstChange = Change.alloc.init;
   firstChange->oldRange = NSMakeRange(0, 0);
@@ -247,7 +246,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_isUpToDate {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (!_syntax) {
+  if (!_syntax && !_autodetectSyntaxOperation) {
     return YES;
   }
   return _scopesVersionIndex == _fileBufferVersionIndex;
@@ -266,6 +265,7 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   __weak TMUnit *weakSelf = self;
+  ++_fileBufferVersionIndex;
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
     if (!strongSelf) {

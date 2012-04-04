@@ -89,6 +89,15 @@ describe(@"A CodeBuffer", ^{
         [codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:someText];
       });
       
+      it(@"has a meta.paragraph.text scope", ^{
+        __block TMScope *firstScope = nil;
+        [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
+          firstScope = scope;
+        }];
+        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
+        [[firstScope.identifier should] equal:@"meta.paragraph.text"];
+      });
+      
     });
     
   });
