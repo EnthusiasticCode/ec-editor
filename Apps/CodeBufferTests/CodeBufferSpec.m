@@ -22,6 +22,7 @@ describe(@"A CodeBuffer", ^{
   
   context(@"without fileURL or index", ^{
     __block CodeBuffer *codeBuffer;
+    __block TMScope *testScope;
     
     beforeEach(^{
       codeBuffer = CodeBuffer.alloc.init;
@@ -29,6 +30,7 @@ describe(@"A CodeBuffer", ^{
     
     afterEach(^{
       codeBuffer = nil;
+      testScope = nil;
     });
     
     it(@"can be created", ^{
@@ -48,12 +50,11 @@ describe(@"A CodeBuffer", ^{
       });
       
       it(@"has a text.plain scope", ^{
-        __block TMScope *firstScope = nil;
         [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-          firstScope = scope;
+          testScope = scope;
         }];
-        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
-        [[firstScope.identifier should] equal:@"text.plain"];
+        [[expectFutureValue(testScope) shouldEventually] beNonNil];
+        [[testScope.identifier should] equal:@"text.plain"];
       });
       
       it(@"has a symbol list", ^{
@@ -71,12 +72,11 @@ describe(@"A CodeBuffer", ^{
     it(@"can change syntax", ^{
       codeBuffer.syntax = [TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"];
       [[codeBuffer.syntax.name should] equal:@"C"];
-      __block TMScope *firstScope = nil;
       [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-        firstScope = scope;
+        testScope = scope;
       }];
-      [[expectFutureValue(firstScope) shouldEventually] beNonNil];
-      [[firstScope.identifier should] equal:@"source.c"];
+      [[expectFutureValue(testScope) shouldEventually] beNonNil];
+      [[testScope.identifier should] equal:@"source.c"];
     });
     
     context(@"after inserting some text", ^{
@@ -90,12 +90,27 @@ describe(@"A CodeBuffer", ^{
       });
       
       it(@"has a meta.paragraph.text scope", ^{
-        __block TMScope *firstScope = nil;
         [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-          firstScope = scope;
+          testScope = scope;
         }];
-        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
-        [[firstScope.identifier should] equal:@"meta.paragraph.text"];
+        [[expectFutureValue(testScope) shouldEventually] beNonNil];
+        [[testScope.identifier should] equal:@"meta.paragraph.text"];
+      });
+      
+      context(@"and changing to C syntax", ^{
+        
+        beforeEach(^{
+          codeBuffer.syntax = [TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"];
+        });
+        
+        it(@"has a meta.preprocessor.c.include scope", ^{
+          [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.identifier should] equal:@"meta.preprocessor.c.include"];
+        });
+        
       });
       
     });

@@ -212,7 +212,15 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self _queueBlockUntilUpToDate:^{
     dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_FOREVER);
-    TMScope *scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
+    NSMutableArray *scopeStack = [_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight];
+    __block TMScope *scopeCopy = nil;
+    [scopeStack enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
+      if (!scope.identifier) {
+        return;
+      }
+      scopeCopy = scope.copy;
+      *stop = YES;
+    }];
     dispatch_semaphore_signal(_scopesLock);
     completionHandler(scopeCopy);
   }];
