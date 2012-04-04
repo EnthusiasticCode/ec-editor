@@ -692,11 +692,20 @@ static OnigRegexp *_namedCapturesRegexp;
   if (_firstLine) {
     syntax = [TMSyntaxNode syntaxForFirstLine:_firstLine];
   }
+  if (self.isCancelled) {
+    return;
+  }
   if (!syntax && _fileURL) {
     syntax = [TMSyntaxNode syntaxForFileName:_fileURL.lastPathComponent];
   }
+  if (self.isCancelled) {
+    return;
+  }
   if (!syntax) {
     syntax = TMSyntaxNode.defaultSyntax;
+  }
+  if (self.isCancelled) {
+    return;
   }
   @synchronized(self) {
     _syntax = syntax;
