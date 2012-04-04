@@ -19,6 +19,7 @@
 #import "NSIndexSet+StringRanges.h"
 #import "FileBuffer.h"
 #import "Operation.h"
+#import <libkern/OSAtomic.h>
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -84,8 +85,8 @@ static OnigRegexp *_namedCapturesRegexp;
   AutodetectSyntaxOperation *_autodetectSyntaxOperation;
   ReparseOperation *_reparseOperation;
   FileBuffer *_fileBuffer;
-  NSUInteger _fileBufferVersionIndex;
-  NSUInteger _scopesVersionIndex;
+  volatile int _fileBufferVersion;
+  volatile int _scopesVersion;
   dispatch_semaphore_t _scopesLock;
   TMScope *_rootScope;
   dispatch_semaphore_t _pendingChangesLock;
@@ -249,7 +250,7 @@ static OnigRegexp *_namedCapturesRegexp;
   if (!_syntax && !_autodetectSyntaxOperation) {
     return YES;
   }
-  return _scopesVersionIndex == _fileBufferVersionIndex;
+  return _scopesVersion == _fileBufferVersion;
 }
 
 - (void)_queueBlockUntilUpToDate:(void (^)(void))block {
@@ -265,7 +266,7 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   __weak TMUnit *weakSelf = self;
-  ++_fileBufferVersionIndex;
+  OSAtomicIncrement32(&_fileBufferVersion);
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
     if (!strongSelf) {
@@ -392,7 +393,7 @@ static OnigRegexp *_namedCapturesRegexp;
   [_rootScope performSelector:@selector(_checkConsistency)];
 #endif
   
-  _scopesVersionIndex = _fileBufferVersionIndex;
+  OSAtomicCompareAndSwap32(_scopesVersion, _fileBufferVersion, &_scopesVersion);
 }
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack
@@ -697,7 +698,9 @@ static OnigRegexp *_namedCapturesRegexp;
   if (!syntax) {
     syntax = TMSyntaxNode.defaultSyntax;
   }
-  _syntax = syntax;
+  @synchronized(self) {
+    _syntax = syntax;
+  }
 }
 
 - (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
@@ -706,7 +709,9 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (TMSyntaxNode *)syntax {
   ASSERT(self.isFinished);
-  return _syntax;
+  @synchronized(self) {
+    return _syntax;
+  }
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void (^)(BOOL))completionHandler {
