@@ -14,3 +14,6 @@
 [submodule "ThirdParty/jasmine"]
 	path = ThirdParty/jasmine
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/UIAutomation-jasmine-iphone.git
+[submodule "ThirdParty/MAKVONotificationCenter"]
+	path = ThirdParty/MAKVONotificationCenter
+	url = https://github.com/mikeash/MAKVONotificationCenter.git

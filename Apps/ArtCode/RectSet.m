@@ -88,31 +88,19 @@
   CGContextAddRects(context, buffer, count);
 }
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copy
 {
-  // TODO check if proper ARC
-  return [[RectSet alloc] initWithRects:self];
+  if ([self class] == [RectSet class]) {
+    return self;
+  } else {
+    return [[RectSet alloc] initWithRects:self];
+  }
 }
 
-- (id)mutableCopyWithZone:(NSZone *)zone
+- (id)mutableCopy
 {
-  // TODO check if proper ARC
   return [[MutableRectSet alloc] initWithRects:self];
 }
-
-//- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
-//{
-//    if (state->state >= count)
-//    {
-//        return 0;
-//    }
-//    
-//    state->itemsPtr = buffer;
-//    state->state = count;
-//    state->mutationsPtr = (unsigned long*)self;
-//    
-//    return count;
-//}
 
 + (id)rectSet
 {

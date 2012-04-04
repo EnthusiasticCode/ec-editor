@@ -19,6 +19,8 @@
 		B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */; };
 		B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
+		B75533E3152B5DB100C8FFE0 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
+		B75533E4152B5DC700C8FFE0 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
@@ -165,6 +167,12 @@
 		B7C7E6891528672D006AF8F6 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7C7E68C15286748006AF8F6 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7C7E68D15286749006AF8F6 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
+		B7CE615B152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
+		B7CE615C152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
+		B7CE615D152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
+		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
+		B7CE6191152CADE10019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
+		B7CE6192152CADE60019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
 		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
 		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
@@ -661,6 +669,9 @@
 		B7C7E67A15284DB7006AF8F6 /* CodeBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBuffer.h; sourceTree = "<group>"; };
 		B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeBuffer.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
+		B7CE6159152C86000019B2FC /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operation.h; sourceTree = "<group>"; };
+		B7CE615A152C86000019B2FC /* Operation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Operation.m; sourceTree = "<group>"; };
+		B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libMAKVONotificationCenter-iOS.a"; path = "../ThirdParty/MAKVONotificationCenter/build/Release-iphoneos/libMAKVONotificationCenter-iOS.a"; sourceTree = "<group>"; };
 		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
 		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
 		B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ANTLR.tmbundle; sourceTree = "<group>"; };
@@ -1094,6 +1105,7 @@
 				B78C1694152486B600C66DDC /* Foundation.framework in Frameworks */,
 				B78C16B31524877D00C66DDC /* libKiwi.a in Frameworks */,
 				B7C7E68615286723006AF8F6 /* libCocoaOniguruma.a in Frameworks */,
+				B7CE6191152CADE10019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1105,6 +1117,7 @@
 				B78C16A81524871500C66DDC /* Foundation.framework in Frameworks */,
 				B78C16B41524878200C66DDC /* libKiwi.a in Frameworks */,
 				B7C7E68715286724006AF8F6 /* libCocoaOniguruma.a in Frameworks */,
+				B7CE6192152CADE60019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,6 +1143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
@@ -1454,6 +1468,7 @@
 				B7FB79F214D607400080A714 /* Archive */,
 				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
 				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
+				B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
@@ -1552,6 +1567,8 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
+				B7CE6159152C86000019B2FC /* Operation.h */,
+				B7CE615A152C86000019B2FC /* Operation.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -2419,6 +2436,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B75533E3152B5DB100C8FFE0 /* C.tmbundle in Resources */,
 				B7728C5A15286CBC005EA98A /* Text.tmbundle in Resources */,
 				B78C169A152486B600C66DDC /* InfoPlist.strings in Resources */,
 			);
@@ -2428,6 +2446,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B75533E4152B5DC700C8FFE0 /* C.tmbundle in Resources */,
 				B7728C5B15286CC5005EA98A /* Text.tmbundle in Resources */,
 				B78C16AA1524871500C66DDC /* InfoPlist.strings in Resources */,
 			);
@@ -2824,6 +2843,7 @@
 				B7728C5815286B53005EA98A /* NSIndexSet+StringRanges.m in Sources */,
 				B7728CC515289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */,
+				B7CE615C152C86000019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2841,6 +2861,7 @@
 				B7728C5915286B54005EA98A /* NSIndexSet+StringRanges.m in Sources */,
 				B7728CC615289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */,
+				B7CE615D152C86000019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2981,6 +3002,7 @@
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */,
+				B7CE615B152C86000019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3049,15 +3071,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3073,15 +3087,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3097,15 +3103,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3121,15 +3119,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3145,15 +3135,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3170,15 +3152,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3195,15 +3169,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3219,15 +3185,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -3243,15 +3201,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3268,15 +3218,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3293,15 +3235,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3318,15 +3252,7 @@
 					"TEST=1",
 					$inherited,
 				);
-				HEADER_SEARCH_PATHS = (
-					$HEADER_SEARCH_PATHS,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -3379,11 +3305,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
 					../Headers,
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+					../ThirdParty,
+					$inherited,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+					$inherited,
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -3437,11 +3367,15 @@
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
 					../Headers,
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+					../ThirdParty,
+					$inherited,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
+					$inherited,
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
@@ -3462,7 +3396,6 @@
 		CD7D2AF813C0CD2600B889EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ARC_MIGRATION = donothing;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
@@ -3476,7 +3409,6 @@
 		CD7D2AF913C0CD2600B889EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ARC_MIGRATION = donothing;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;

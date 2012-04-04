@@ -18,6 +18,7 @@
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "FileBuffer.h"
+#import "Operation.h"
 
 static NSMutableDictionary *_extensionClasses;
 
@@ -29,6 +30,25 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @property (nonatomic, readwrite) BOOL separator;
 - (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
+
+@end
+
+#pragma mark -
+
+@interface AutodetectSyntaxOperation : Operation
+
+/// Only accessible after the operation is finished
+@property (atomic, strong, readonly) TMSyntaxNode *syntax;
+
+- (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void(^)(BOOL success))completionHandler;
+
+@end
+
+#pragma mark -
+
+@interface ReparseOperation : Operation
+
+- (id)initWithCodeUnit:(TMUnit *)codeUnit completionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
 
@@ -60,12 +80,14 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark -
 
 @implementation TMUnit {
+  NSOperationQueue *_internalQueue;
+  AutodetectSyntaxOperation *_autodetectSyntaxOperation;
+  ReparseOperation *_reparseOperation;
   FileBuffer *_fileBuffer;
   NSUInteger _fileBufferVersionIndex;
   NSUInteger _scopesVersionIndex;
   dispatch_semaphore_t _scopesLock;
   TMScope *_rootScope;
-  NSOperationQueue *_internalQueue;
   dispatch_semaphore_t _pendingChangesLock;
   NSMutableArray *_pendingChanges;
   NSMutableIndexSet *_unparsedRanges;
@@ -100,6 +122,27 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Public Methods
+
+- (void)setSyntax:(TMSyntaxNode *)syntax {
+  if (_autodetectSyntaxOperation) {
+    [_autodetectSyntaxOperation cancel];
+  }
+  if (syntax == _syntax) {
+    return;
+  }
+  _syntax = syntax;
+  dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_FOREVER);
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  ++_scopesVersionIndex;
+  dispatch_semaphore_signal(_scopesLock);
+  Change *firstChange = Change.alloc.init;
+  firstChange->oldRange = NSMakeRange(0, 0);
+  firstChange->newRange = NSMakeRange(0, _fileBuffer.length);
+  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
+  [_pendingChanges addObject:firstChange];
+  [self _setHasPendingChanges];
+  dispatch_semaphore_signal(_pendingChangesLock);
+}
 
 - (NSArray *)symbolList {
   return NSArray.alloc.init;
@@ -141,7 +184,7 @@ static OnigRegexp *_namedCapturesRegexp;
     }];
   }];
   
-  // Do the rest of the initialization on the background queue so we avoid initializing TMSyntaxNode on the main queue
+  // Detect the syntax on the background queue so we don't initialize TMSyntaxNode on the main queue
   __weak TMUnit *weakSelf = self;
   NSString *firstLine = nil;
   if (fileBuffer) {
@@ -150,35 +193,18 @@ static OnigRegexp *_namedCapturesRegexp;
       firstLine = [fileBuffer substringWithRange:firstLineRange];
     }
   }
-  [_internalQueue addOperationWithBlock:^{
+  _autodetectSyntaxOperation = [AutodetectSyntaxOperation.alloc initWithFileURL:fileURL firstLine:firstLine completionHandler:^(BOOL success) {
     TMUnit *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
-    TMSyntaxNode *syntax = nil;
-    if (firstLine) {
-      syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
+    if (success) {
+      strongSelf.syntax = strongSelf->_autodetectSyntaxOperation.syntax;
     }
-    if (!syntax && fileURL) {
-      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-    }
-    if (!syntax) {
-      syntax = TMSyntaxNode.defaultSyntax;
-    }
-    strongSelf->_syntax = syntax;
-    dispatch_semaphore_wait(strongSelf->_scopesLock, DISPATCH_TIME_FOREVER);
-    strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.identifier syntaxNode:strongSelf->_syntax];
-    ++strongSelf->_scopesVersionIndex;
-    dispatch_semaphore_signal(strongSelf->_scopesLock);
-    Change *firstChange = Change.alloc.init;
-    firstChange->oldRange = NSMakeRange(0, 0);
-    firstChange->newRange = NSMakeRange(0, fileBuffer.length);
-    dispatch_semaphore_wait(strongSelf->_pendingChangesLock, DISPATCH_TIME_FOREVER);
-    [strongSelf->_pendingChanges addObject:firstChange];
-    [strongSelf _setHasPendingChanges];
-    dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
+    strongSelf->_autodetectSyntaxOperation = nil;
   }];
-  
+  [_internalQueue addOperation:_autodetectSyntaxOperation];
+
   return self;
 }
 
@@ -221,20 +247,10 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (BOOL)_isUpToDate {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (!_scopesVersionIndex) {
-    return NO;
+  if (!_syntax) {
+    return YES;
   }
-  if (dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW)) {
-    return NO;
-  }
-  if (_pendingChanges.count) {
-    dispatch_semaphore_signal(_pendingChangesLock);
-    return NO;
-  } else {
-    dispatch_semaphore_signal(_pendingChangesLock);
-  }
-  // TODO URI: compare the scopes version with filebuffer version
-  return YES;
+  return _scopesVersionIndex == _fileBufferVersionIndex;
 }
 
 - (void)_queueBlockUntilUpToDate:(void (^)(void))block {
@@ -248,10 +264,14 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_setHasPendingChanges {
   ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   __weak TMUnit *weakSelf = self;
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
     if (!strongSelf) {
+      return;
+    }
+    if (!strongSelf->_syntax) {
       return;
     }
     dispatch_semaphore_wait(strongSelf->_scopesLock, DISPATCH_TIME_FOREVER);
@@ -372,6 +392,7 @@ static OnigRegexp *_namedCapturesRegexp;
   [_rootScope performSelector:@selector(_checkConsistency)];
 #endif
   
+  _scopesVersionIndex = _fileBufferVersionIndex;
 }
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack
@@ -653,6 +674,58 @@ static OnigRegexp *_namedCapturesRegexp;
   [_patternsIncludedByPattern setObject:includedPatterns forKey:pattern];
   return includedPatterns;
 }
+
+@end
+   
+#pragma mark -
+
+@implementation AutodetectSyntaxOperation {
+  NSURL *_fileURL;
+  NSString *_firstLine;
+}
+
+@synthesize syntax = _syntax;
+
+- (void)main {
+  TMSyntaxNode *syntax = nil;
+  if (_firstLine) {
+    syntax = [TMSyntaxNode syntaxForFirstLine:_firstLine];
+  }
+  if (!syntax && _fileURL) {
+    syntax = [TMSyntaxNode syntaxForFileName:_fileURL.lastPathComponent];
+  }
+  if (!syntax) {
+    syntax = TMSyntaxNode.defaultSyntax;
+  }
+  _syntax = syntax;
+}
+
+- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
+  return [self initWithFileURL:nil firstLine:nil completionHandler:completionHandler];
+}
+
+- (TMSyntaxNode *)syntax {
+  ASSERT(self.isFinished);
+  return _syntax;
+}
+
+- (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void (^)(BOOL))completionHandler {
+  self = [super initWithCompletionHandler:completionHandler];
+  if (!self) {
+    return nil;
+  }
+  self->_fileURL = fileURL;
+  self->_firstLine = firstLine;
+  return self;
+}
+
+@end
+
+#pragma mark -
+
+@implementation ReparseOperation
+
+
 
 @end
 

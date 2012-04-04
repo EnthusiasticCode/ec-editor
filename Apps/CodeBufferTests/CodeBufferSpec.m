@@ -40,23 +40,43 @@ describe(@"A CodeBuffer", ^{
       [[codeBuffer.syntax.name should] equal:@"Plain Text"];
     });
     
-    it(@"has a text.plain scope", ^{
+    context(@"with the default syntax", ^{
+      
+      beforeEach(^{
+        [[expectFutureValue(codeBuffer.syntax) shouldEventually] beNonNil];
+        [[codeBuffer.syntax.name should] equal:@"Plain Text"];
+      });
+      
+      it(@"has a text.plain scope", ^{
+        __block TMScope *firstScope = nil;
+        [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
+          firstScope = scope;
+        }];
+        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
+        [[firstScope.identifier should] equal:@"text.plain"];
+      });
+      
+      it(@"has a symbol list", ^{
+        [[codeBuffer.symbolList should] beNonNil];
+        [[codeBuffer.symbolList should] haveCountOf:0];
+      });
+      
+      it(@"has a diagnostics list", ^{
+        [[codeBuffer.diagnostics should] beNonNil];
+        [[codeBuffer.symbolList should] haveCountOf:0];
+      });
+      
+    });
+    
+    it(@"can change syntax", ^{
+      codeBuffer.syntax = [TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"];
+      [[codeBuffer.syntax.name should] equal:@"C"];
       __block TMScope *firstScope = nil;
       [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
         firstScope = scope;
       }];
       [[expectFutureValue(firstScope) shouldEventually] beNonNil];
-      [[firstScope.identifier should] equal:@"text.plain"];
-    });
-    
-    it(@"has a symbol list", ^{
-      [[codeBuffer.symbolList should] beNonNil];
-      [[codeBuffer.symbolList should] haveCountOf:0];
-    });
-    
-    it(@"has a diagnostics list", ^{
-      [[codeBuffer.diagnostics should] beNonNil];
-      [[codeBuffer.symbolList should] haveCountOf:0];
+      [[firstScope.identifier should] equal:@"source.c"];
     });
     
     context(@"after inserting some text", ^{
@@ -67,15 +87,6 @@ describe(@"A CodeBuffer", ^{
       
       beforeEach(^{
         [codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:someText];
-      });
-      
-      it(@"has a meta.paragraph.text scope", ^{
-        __block TMScope *firstScope = nil;
-        [codeBuffer scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-          firstScope = scope;
-        }];
-        [[expectFutureValue(firstScope) shouldEventually] beNonNil];
-        [[firstScope.identifier should] equal:@"meta.paragraph.text"];
       });
       
     });
