@@ -18,7 +18,7 @@
 
 @end
 
-@interface FileBuffer : NSObject
+@interface FileBuffer : NSMutableAttributedString
 
 @property (nonatomic, strong) NSDictionary *defaultAttributes;
 @property (nonatomic, strong) NSURL *fileURL;
@@ -33,23 +33,25 @@
 #pragma mark String content reading methods
 - (NSUInteger)length;
 - (NSString *)string;
-- (NSString *)stringInRange:(NSRange)range;
+- (NSString *)substringWithRange:(NSRange)range;
 - (NSRange)lineRangeForRange:(NSRange)range;
 
 #pragma mark Attributed string content reading methods
 - (NSAttributedString *)attributedString;
-- (NSAttributedString *)attributedStringInRange:(NSRange)range;
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange inRange:(NSRange)rangeLimit;
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)range;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
 
 #pragma mark String content writing methods
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
 
 #pragma mark Attributed string content writing methods
+- (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range;
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)removeAttributes:(NSArray *)attributeNames range:(NSRange)range;
+- (void)removeAttribute:(NSString *)name range:(NSRange)range;
 - (void)setAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)removeAllAttributesInRange:(NSRange)range;
 
 @end
 

@@ -2253,11 +2253,11 @@ static void init(CodeView *self)
   [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn | UIViewAnimationOptionAllowUserInteraction animations:^{
     self.alpha = 1;
     self.transform = CGAffineTransformMakeScale(1.7, 1.7);
-  } completion:^(BOOL finished) {
+  } completion:^(BOOL outerFinished) {
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction animations:^{
       self.alpha = 0;
       self.transform = CGAffineTransformIdentity;
-    } completion:^(BOOL finished) {
+    } completion:^(BOOL innerFinished) {
       [self removeFromSuperview];
     }];
   }];

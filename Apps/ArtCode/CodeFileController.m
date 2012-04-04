@@ -638,14 +638,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 // TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [[self.projectFile.codeBuffer attributedStringInRange:stringRange] mutableCopy];
+  NSMutableAttributedString *attributedString = [[self.projectFile.codeBuffer attributedSubstringFromRange:stringRange] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.projectFile.codeBuffer stringInRange:[result rangeAtIndex:1]];
+      NSString *placeHolderName = [self.projectFile.codeBuffer substringWithRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }
@@ -659,12 +659,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self.projectFile.codeBuffer replaceCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
-  return [self.projectFile.codeBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange];
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  return [self.projectFile.codeBuffer attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange inRange:NSMakeRange(0, self.projectFile.codeBuffer.length)];
 }
 
 #pragma mark - Code View Delegate Methods

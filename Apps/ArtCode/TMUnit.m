@@ -148,7 +148,7 @@ static OnigRegexp *_namedCapturesRegexp;
   if (fileBuffer) {
     NSRange firstLineRange = [fileBuffer lineRangeForRange:NSMakeRange(0, 0)];
     if (firstLineRange.length) {
-      firstLine = [fileBuffer stringInRange:firstLineRange];
+      firstLine = [fileBuffer substringWithRange:firstLineRange];
     }
   }
   [_internalQueue addOperationWithBlock:^{
@@ -328,7 +328,7 @@ static OnigRegexp *_namedCapturesRegexp;
       [_rootScope removeChildScopesInRange:lineRange];
       
       // Setup the line
-      NSString *line = [_fileBuffer stringInRange:lineRange];
+      NSString *line = [_fileBuffer substringWithRange:lineRange];
       
       // Parse the line
       [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
