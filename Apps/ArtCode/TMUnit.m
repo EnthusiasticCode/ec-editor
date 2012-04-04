@@ -17,7 +17,6 @@
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
-#import <libkern/OSAtomic.h>
 #import "FileBuffer.h"
 
 static NSMutableDictionary *_extensionClasses;
@@ -64,10 +63,10 @@ static OnigRegexp *_namedCapturesRegexp;
   FileBuffer *_fileBuffer;
   NSUInteger _fileBufferVersionIndex;
   NSUInteger _scopesVersionIndex;
-  OSSpinLock _scopesLock;
+  dispatch_semaphore_t _scopesLock;
   TMScope *_rootScope;
   NSOperationQueue *_internalQueue;
-  OSSpinLock _pendingChangesLock;
+  dispatch_semaphore_t _pendingChangesLock;
   NSMutableArray *_pendingChanges;
   NSMutableIndexSet *_unparsedRanges;
   NSMutableDictionary *_patternsIncludedByPattern;
@@ -94,10 +93,10 @@ static OnigRegexp *_namedCapturesRegexp;
   Change *change = [[Change alloc] init];
   change->oldRange = range;
   change->newRange = NSMakeRange(range.location, [string length]);
-  OSSpinLockLock(&_pendingChangesLock);
+  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
   [_pendingChanges addObject:change];
   [self _setHasPendingChanges];    
-  OSSpinLockUnlock(&_pendingChangesLock);
+  dispatch_semaphore_signal(_pendingChangesLock);
 }
 
 #pragma mark - Public Methods
@@ -120,8 +119,8 @@ static OnigRegexp *_namedCapturesRegexp;
   _fileBuffer = fileBuffer;
   [fileBuffer addPresenter:self];
   
-  _scopesLock = OS_SPINLOCK_INIT;
-  _pendingChangesLock = OS_SPINLOCK_INIT;
+  _scopesLock = dispatch_semaphore_create(1);
+  _pendingChangesLock = dispatch_semaphore_create(1);
   _pendingChanges = NSMutableArray.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
@@ -167,17 +166,17 @@ static OnigRegexp *_namedCapturesRegexp;
       syntax = TMSyntaxNode.defaultSyntax;
     }
     strongSelf->_syntax = syntax;
-    OSSpinLockLock(&strongSelf->_scopesLock);
+    dispatch_semaphore_wait(strongSelf->_scopesLock, DISPATCH_TIME_FOREVER);
     strongSelf->_rootScope = [TMScope newRootScopeWithIdentifier:strongSelf->_syntax.identifier syntaxNode:strongSelf->_syntax];
     ++strongSelf->_scopesVersionIndex;
-    OSSpinLockUnlock(&strongSelf->_scopesLock);
+    dispatch_semaphore_signal(strongSelf->_scopesLock);
     Change *firstChange = Change.alloc.init;
     firstChange->oldRange = NSMakeRange(0, 0);
     firstChange->newRange = NSMakeRange(0, fileBuffer.length);
-    OSSpinLockLock(&strongSelf->_pendingChangesLock);
+    dispatch_semaphore_wait(strongSelf->_pendingChangesLock, DISPATCH_TIME_FOREVER);
     [strongSelf->_pendingChanges addObject:firstChange];
     [strongSelf _setHasPendingChanges];
-    OSSpinLockUnlock(&strongSelf->_pendingChangesLock);
+    dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
   }];
   
   return self;
@@ -186,9 +185,9 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self _queueBlockUntilUpToDate:^{
-    OSSpinLockLock(&_scopesLock);
+    dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_FOREVER);
     TMScope *scopeCopy = [[[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] lastObject] copy];
-    OSSpinLockUnlock(&_scopesLock);
+    dispatch_semaphore_signal(_scopesLock);
     completionHandler(scopeCopy);
   }];
 }
@@ -225,14 +224,14 @@ static OnigRegexp *_namedCapturesRegexp;
   if (!_scopesVersionIndex) {
     return NO;
   }
-  if (!OSSpinLockTry(&_pendingChangesLock)) {
+  if (dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW)) {
     return NO;
   }
   if (_pendingChanges.count) {
-    OSSpinLockUnlock(&_pendingChangesLock);
+    dispatch_semaphore_signal(_pendingChangesLock);
     return NO;
   } else {
-    OSSpinLockUnlock(&_pendingChangesLock);
+    dispatch_semaphore_signal(_pendingChangesLock);
   }
   // TODO URI: compare the scopes version with filebuffer version
   return YES;
@@ -248,35 +247,35 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_setHasPendingChanges {
-  ASSERT(!OSSpinLockTry(&_pendingChangesLock));
+  ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   __weak TMUnit *weakSelf = self;
   [_internalQueue addOperationWithBlock:^{
     TMUnit *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
-    OSSpinLockLock(&strongSelf->_scopesLock);
+    dispatch_semaphore_wait(strongSelf->_scopesLock, DISPATCH_TIME_FOREVER);
     [strongSelf _generateScopes];
-    OSSpinLockUnlock(&strongSelf->_scopesLock);
+    dispatch_semaphore_signal(strongSelf->_scopesLock);
   }];
 }
 
 - (void)_generateScopes
 {
-  ASSERT(!OSSpinLockTry(&_scopesLock));
+  ASSERT(dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_NOW));
   ASSERT(NSOperationQueue.currentQueue == _internalQueue);
   
   // First of all, we apply all the pending changes to the scope tree, the unparsed ranges and the blank ranges
-  OSSpinLockLock(&_pendingChangesLock);
+  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
   if (![_pendingChanges count]) {
-    OSSpinLockUnlock(&_pendingChangesLock);
+    dispatch_semaphore_signal(_pendingChangesLock);
     return;
   }
   while ([_pendingChanges count])
   {
     Change *currentChange = [_pendingChanges objectAtIndex:0];
     [_pendingChanges removeObjectAtIndex:0];
-    OSSpinLockUnlock(&_pendingChangesLock);
+    dispatch_semaphore_signal(_pendingChangesLock);
     // Save the change's generation as our starting generation, because new changes might be queued at any time outside of the lock, and we'd apply them too late then
     NSRange oldRange = currentChange->oldRange;
     NSRange newRange = currentChange->newRange;
@@ -287,7 +286,7 @@ static OnigRegexp *_namedCapturesRegexp;
     [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
     if (!newRange.length)
       [_unparsedRanges addIndex:newRange.location];
-    OSSpinLockLock(&_pendingChangesLock);
+    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
   }
   
   // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
@@ -296,7 +295,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   // Get the next unparsed range
   NSRange nextRange = [_unparsedRanges firstRange];
-  OSSpinLockUnlock(&_pendingChangesLock);
+  dispatch_semaphore_signal(_pendingChangesLock);
   
   NSMutableArray *scopeStack = nil;
   
@@ -320,9 +319,9 @@ static OnigRegexp *_namedCapturesRegexp;
     while (lineRange.location < NSMaxRange(nextRange))
     {
       // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
-      OSSpinLockLock(&_pendingChangesLock);
+      dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
       [_unparsedRanges addIndexesInRange:lineRange];
-      OSSpinLockUnlock(&_pendingChangesLock);
+      dispatch_semaphore_signal(_pendingChangesLock);
       
       // Delete all scopes in the line
       [_rootScope removeChildScopesInRange:lineRange];
@@ -342,9 +341,9 @@ static OnigRegexp *_namedCapturesRegexp;
       }
       
       // Remove the line range from the unparsed ranges
-      OSSpinLockLock(&_pendingChangesLock);
+      dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
       [_unparsedRanges removeIndexesInRange:lineRange];
-      OSSpinLockUnlock(&_pendingChangesLock);
+      dispatch_semaphore_signal(_pendingChangesLock);
       // proceed to next line
       NSRange oldLineRange = lineRange;
       lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
@@ -357,12 +356,12 @@ static OnigRegexp *_namedCapturesRegexp;
     BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
     
     // If we need to reparse the line, we add it to the unparsed ranges
-    OSSpinLockLock(&_pendingChangesLock);
+    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
     if (!mergeSuccessful)
       [_unparsedRanges addIndex:lineRange.location];
     // Get the next unparsed range
     nextRange = [_unparsedRanges firstRange];
-    OSSpinLockUnlock(&_pendingChangesLock);
+    dispatch_semaphore_signal(_pendingChangesLock);
     
     // If we're reparsing the line, we can reuse the same scope stack, if not, we need to reset it to nil so the next cycle gets a new one
     if (mergeSuccessful)
@@ -545,7 +544,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope
 {
-  ASSERT(!OSSpinLockTry(&_scopesLock));
+  ASSERT(dispatch_semaphore_wait(_scopesLock, DISPATCH_TIME_NOW));
   ASSERT(NSOperationQueue.currentQueue == _internalQueue);
   ASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
   ASSERT(scope && result && [result bodyRange].length);
