@@ -156,6 +156,11 @@
     return;
   }
   
+  // a nil string can be passed to delete characters
+  if (!string) {
+    string = @"";
+  }
+  
   NSAttributedString *attributedString = [NSAttributedString.alloc initWithString:string attributes:self.defaultAttributes];
   
   @synchronized(_contents) {

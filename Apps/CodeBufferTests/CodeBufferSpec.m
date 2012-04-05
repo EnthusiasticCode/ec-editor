@@ -158,6 +158,33 @@ describe(@"A CodeBuffer", ^{
           testScope = nil;
         });
         
+        it(@"updates the scopes after deleting characters", ^{
+          [codeBuffer replaceCharactersInRange:NSMakeRange(8, 1) withString:nil];
+          [codeBuffer scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+        });
+        
+        it(@"updates the scopes after replacing characters", ^{
+          [codeBuffer replaceCharactersInRange:NSMakeRange(8, 1) withString:@"\""];
+          [codeBuffer scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.double.include.c punctuation.definition.string.begin.c"];
+        });
+        
+        it(@"updates the scopes after inserting characters", ^{
+          [codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:@"/*"];
+          [codeBuffer scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c comment.block.c"];
+        });
+        
       });
       
     });
