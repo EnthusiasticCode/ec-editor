@@ -94,7 +94,7 @@ describe(@"A CodeBuffer", ^{
           testScope = scope;
         }];
         [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.identifier should] equal:@"meta.paragraph.text"];
+        [[testScope.qualifiedIdentifier should] equal:@"text.plain meta.paragraph.text"];
       });
       
       context(@"and changing to C syntax", ^{
@@ -108,7 +108,54 @@ describe(@"A CodeBuffer", ^{
             testScope = scope;
           }];
           [[expectFutureValue(testScope) shouldEventually] beNonNil];
-          [[testScope.identifier should] equal:@"meta.preprocessor.c.include"];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+          testScope = nil;
+          [codeBuffer scopeAtOffset:7 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+        });
+        
+        it(@"has a keyword.control.import.include.c scope", ^{
+          [codeBuffer scopeAtOffset:1 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
+          testScope = nil;
+          [codeBuffer scopeAtOffset:6 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
+        });
+        
+        it(@"has a string.quote.other.lt-gt.include.c scope", ^{
+          [codeBuffer scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.begin.c"];
+          testScope = nil;
+          [codeBuffer scopeAtOffset:9 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
+          testScope = nil;
+          [codeBuffer scopeAtOffset:15 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
+          testScope = nil;
+          [codeBuffer scopeAtOffset:16 withCompletionHandler:^(TMScope *scope) {
+            testScope = scope;
+          }];
+          [[expectFutureValue(testScope) shouldEventually] beNonNil];
+          [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.end.c"];
+          testScope = nil;
         });
         
       });

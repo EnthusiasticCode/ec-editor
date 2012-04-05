@@ -49,7 +49,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface ReparseOperation : Operation
 
-- (id)initWithCodeUnit:(TMUnit *)codeUnit completionHandler:(void(^)(BOOL success))completionHandler;
+//- (id)initWithCodeUnit:(TMUnit *)codeUnit completionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
 
@@ -398,7 +398,10 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   
 #if DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
   [_rootScope performSelector:@selector(_checkConsistency)];
+#pragma clang diagnostic pop
 #endif
   
   OSAtomicCompareAndSwap32(_scopesVersion, _fileBufferVersion, &_scopesVersion);
