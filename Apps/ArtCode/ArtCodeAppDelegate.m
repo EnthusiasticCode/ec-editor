@@ -8,7 +8,6 @@
 
 #import "ArtCodeAppDelegate.h"
 
-#import "NSURL+Utilities.h"
 #import "CodeView.h"
 #import "UIControl+BlockAction.h"
 
@@ -25,7 +24,6 @@
 
 #import "ArtCodeTab.h"
 
-#import "FileBuffer.h"
 
 CGRect UIKeyboardFrame;
 

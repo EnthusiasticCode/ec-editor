@@ -27,7 +27,6 @@
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
 
-#import "NSURL+Utilities.h"
 
 @interface ProjectBrowserController ()
 

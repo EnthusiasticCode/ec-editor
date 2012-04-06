@@ -11,7 +11,6 @@
 #import "ACProject.h"
 #import "ACProjectFileSystemItem.h"
 #import "ACProjectFolder.h"
-#import "NSURL+Utilities.h"
 #import "UIImage+AppStyle.h"
 
 @implementation MoveConflictController {
