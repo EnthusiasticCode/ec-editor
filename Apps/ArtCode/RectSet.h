@@ -9,7 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 /// An immutable collection of CGRect
-@interface RectSet : NSObject <NSCopying, NSMutableCopying> {
+@interface RectSet : NSObject {
 @protected
   CGRect *buffer;
   CGRect bounds;

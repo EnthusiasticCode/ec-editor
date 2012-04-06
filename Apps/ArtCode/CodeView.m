@@ -1400,7 +1400,7 @@ static void init(CodeView *self)
     if (newSelection.length > 0)
     {
       NSRange placeholderRangeAtEnd;
-      id placeholderValue = [self.dataSource codeView:self attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd];
+      placeholderValue = [self.dataSource codeView:self attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd];
       if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
       {
         replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
