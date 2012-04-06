@@ -1195,8 +1195,6 @@
 				B75B575C14B0B62D00053783 /* FileBuffer.m */,
 				B7C7E67A15284DB7006AF8F6 /* CodeBuffer.h */,
 				B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */,
-				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
-				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1542,6 +1540,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
+				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
 				CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */,
 				B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */,

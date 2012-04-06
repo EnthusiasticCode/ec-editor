@@ -13,7 +13,7 @@
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 
-#import "NSURL+Utilities.h"
+#import "ArtCodeURL.h"
 
 
 @interface ACProjectFile (Bookmarks)
@@ -60,7 +60,7 @@
 
 - (NSURL *)artCodeURL
 {
-  return [self.file.artCodeURL URLByAppendingFragmentDictionary:[NSDictionary dictionaryWithObject:self.bookmarkPoint forKey:([self.bookmarkPoint isKindOfClass:[NSNumber class]] ? @"line" : @"symbol")]];
+  return [ArtCodeURL artCodeURLWithProject:self.project item:self path:nil];
 }
 
 - (ACProjectItemType)type
