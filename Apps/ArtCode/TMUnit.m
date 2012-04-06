@@ -388,78 +388,69 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_generateScopes {
   ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
   
-  // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
-  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  [self _processChanges];
-  dispatch_semaphore_signal(_pendingChangesLock);
-    
-  // Get the next unparsed range
-  NSRange nextRange = [_unparsedRanges firstRange];
-  
   NSMutableArray *scopeStack = nil;
-  
-  // Parse the next range
-  while (nextRange.location != NSNotFound)
-  {
+    
+  for (;;) {
+    // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
+    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
+    [self _processChanges];
+    dispatch_semaphore_signal(_pendingChangesLock);
+    
+    // Get the next unparsed range
+    NSRange unparsedRange = [_unparsedRanges firstRange];
+    
     // Get the first line range
-    NSRange lineRange = [_fileBuffer lineRangeForRange:NSMakeRange(nextRange.location, 0)];
-    // Check if we got a valid range
-    if (!lineRange.length || NSMaxRange(lineRange) == nextRange.location) {
-      return;
+    NSRange lineRange = [_fileBuffer lineRangeForRange:NSMakeRange(unparsedRange.location, 0)];
+    // Check if we got a valid range, if we didn't, we're done parsing
+    if (!lineRange.length || NSMaxRange(lineRange) == unparsedRange.location) {
+      break;
     }
     
     // Setup the scope stack
-    if (!scopeStack)
+    if (!scopeStack) {
       scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
-    if (!scopeStack)
-      scopeStack = [NSMutableArray arrayWithObject:_rootScope];
+      ASSERT(scopeStack);
+    }
     
-    // Parse the range
-    while (lineRange.location < NSMaxRange(nextRange))
+    // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
+    [_unparsedRanges addIndexesInRange:lineRange];
+    
+    // Delete all scopes in the line
+    [_rootScope removeChildScopesInRange:lineRange];
+    
+    // Setup the line
+    NSString *line = nil;
+    @try {
+      line = [_fileBuffer substringWithRange:lineRange];
+    } @catch (NSException *exception) {
+      // If we get an exception it's probably because the fileBuffer was changed, just restart the loop in that case
+      continue;
+    }
+    
+    // Parse the line
+    [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
+    
+    // Stretch all remaining scopes to cover to the end of the line
+    for (TMScope *scope in scopeStack)
     {
-      // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
-      [_unparsedRanges addIndexesInRange:lineRange];
-      
-      // Delete all scopes in the line
-      [_rootScope removeChildScopesInRange:lineRange];
-      
-      // Setup the line
-      NSString *line = [_fileBuffer substringWithRange:lineRange];
-      
-      // Parse the line
-      [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
-      
-      // Stretch all remaining scopes to cover to the end of the line
-      for (TMScope *scope in scopeStack)
-      {
-        NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
-        if (stretchedLength > scope.length)
-          scope.length = stretchedLength;
-      }
-      
-      // Remove the line range from the unparsed ranges
-      [_unparsedRanges removeIndexesInRange:lineRange];
-      
-      // proceed to next line, make se we actually get a line that's different from what we've just parsed
-      NSRange oldLineRange = lineRange;
-      lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-      lineRange = [_fileBuffer lineRangeForRange:lineRange];
-      if (lineRange.location == oldLineRange.location) {
-        break;
+      NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
+      if (stretchedLength > scope.length)
+        scope.length = stretchedLength;
+    }
+    
+    // Remove the line range from the unparsed ranges
+    [_unparsedRanges removeIndexesInRange:lineRange];
+    
+    // If we're at the end of the unparsed range attempt to merge the scopes with the subsequent parsed range.
+    NSUInteger lineEnd = NSMaxRange(lineRange);
+    if (lineEnd >= NSMaxRange(unparsedRange)) {
+      // If the merge is successful, reset the scope stack for the next unparsed range, otherwise add the end of the line to the unparsed ranges and continue from there
+      if ([_rootScope attemptMergeAtOffset:lineEnd]) {
+        scopeStack = nil;
+      } else {
+        [_unparsedRanges addIndex:lineEnd];
       }
     }
-    // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
-    BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
-    
-    // If we need to reparse the line, we add it to the unparsed ranges
-    if (!mergeSuccessful)
-      [_unparsedRanges addIndex:lineRange.location];
-    // Get the next unparsed range
-    nextRange = [_unparsedRanges firstRange];
-    
-    // If we're reparsing the line, we can reuse the same scope stack, if not, we need to reset it to nil so the next cycle gets a new one
-    if (mergeSuccessful)
-      scopeStack = nil;
   }
   
 #if DEBUG
@@ -720,46 +711,3 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @implementation Change
 @end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
