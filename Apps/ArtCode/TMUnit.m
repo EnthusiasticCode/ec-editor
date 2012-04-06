@@ -387,19 +387,12 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_generateScopes {
   ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
-
-  // Get the fileBuffer's length for later
-  NSUInteger fileLength = _fileBuffer.length;
   
   // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
   dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
   [self _processChanges];
   dispatch_semaphore_signal(_pendingChangesLock);
-  
-  // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
-  // We use the length we got before processing the changes so we avoid a race condition which would cause us to lose unparsed ranges if the file gets shorter between when we're done processing the changes and we get the file length
-  [_unparsedRanges removeIndexesInRange:NSMakeRange(fileLength, NSUIntegerMax - fileLength)];
-  
+    
   // Get the next unparsed range
   NSRange nextRange = [_unparsedRanges firstRange];
   
@@ -409,10 +402,9 @@ static OnigRegexp *_namedCapturesRegexp;
   while (nextRange.location != NSNotFound)
   {
     // Get the first line range
-    NSRange lineRange = NSMakeRange(nextRange.location, 0);
-    lineRange = [_fileBuffer lineRangeForRange:lineRange];
-    // Zero length line means end of file
-    if (!lineRange.length) {
+    NSRange lineRange = [_fileBuffer lineRangeForRange:NSMakeRange(nextRange.location, 0)];
+    // Check if we got a valid range
+    if (!lineRange.length || NSMaxRange(lineRange) == nextRange.location) {
       return;
     }
     
@@ -447,7 +439,8 @@ static OnigRegexp *_namedCapturesRegexp;
       
       // Remove the line range from the unparsed ranges
       [_unparsedRanges removeIndexesInRange:lineRange];
-      // proceed to next line
+      
+      // proceed to next line, make se we actually get a line that's different from what we've just parsed
       NSRange oldLineRange = lineRange;
       lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
       lineRange = [_fileBuffer lineRangeForRange:lineRange];
@@ -481,6 +474,8 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
   ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   
+  // Process the pending changes.
+  // Unlock / relock within the loop so we don't block the pending changes too long at the time and also get rapid subsequent changes i.e. when someone is typing.
   while ([_pendingChanges count]) {
     Change *currentChange = [_pendingChanges objectAtIndex:0];
     [_pendingChanges removeObjectAtIndex:0];
