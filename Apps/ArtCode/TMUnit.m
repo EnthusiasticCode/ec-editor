@@ -50,6 +50,8 @@ static OnigRegexp *_namedCapturesRegexp;
 @interface ReparseOperation : Operation
 
 - (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope rootScopeLock:(dispatch_semaphore_t)rootScopeLock pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
+- (void)_generateScopes;
+- (void)_processChanges;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope;
@@ -356,122 +358,11 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - NSOperation
 
-- (void)main {
+- (void)main {  
+  // The whole operation is wrapped in this lock. Remember to signal it if we return early from it.
+  // The root scope is inconsistent with the fileBuffer while we're running it, so the codeUnit should not be accessing it anyway.
   dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_FOREVER);
-  
-  // First of all, we apply all the pending changes to the scope tree, the unparsed ranges and the blank ranges
-  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  if (![_pendingChanges count]) {
-    dispatch_semaphore_signal(_pendingChangesLock);
-    dispatch_semaphore_signal(_rootScopeLock);
-    return;
-  }
-  while ([_pendingChanges count])
-  {
-    Change *currentChange = [_pendingChanges objectAtIndex:0];
-    [_pendingChanges removeObjectAtIndex:0];
-    dispatch_semaphore_signal(_pendingChangesLock);
-    // Save the change's generation as our starting generation, because new changes might be queued at any time outside of the lock, and we'd apply them too late then
-    NSRange oldRange = currentChange->oldRange;
-    NSRange newRange = currentChange->newRange;
-    ASSERT(oldRange.location == newRange.location);
-    // Adjust the scope tree to account for the change
-    [_rootScope shiftByReplacingRange:oldRange withRange:newRange];
-    // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
-    [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
-    if (!newRange.length)
-      [_unparsedRanges addIndex:newRange.location];
-    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  }
-  
-  // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
-  NSUInteger fileLength = _fileBuffer.length;
-  [_unparsedRanges removeIndexesInRange:NSMakeRange(fileLength, NSUIntegerMax - fileLength)];
-  
-  // Get the next unparsed range
-  NSRange nextRange = [_unparsedRanges firstRange];
-  dispatch_semaphore_signal(_pendingChangesLock);
-  
-  NSMutableArray *scopeStack = nil;
-  
-  // Parse the next range
-  while (nextRange.location != NSNotFound)
-  {
-    // Get the first line range
-    NSRange lineRange = NSMakeRange(nextRange.location, 0);
-    lineRange = [_fileBuffer lineRangeForRange:lineRange];
-    // Zero length line means end of file
-    if (!lineRange.length) {
-      dispatch_semaphore_signal(_rootScopeLock);
-      return;
-    }
-    
-    // Setup the scope stack
-    if (!scopeStack)
-      scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
-    if (!scopeStack)
-      scopeStack = [NSMutableArray arrayWithObject:_rootScope];
-    
-    // Parse the range
-    while (lineRange.location < NSMaxRange(nextRange))
-    {
-      // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
-      dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-      [_unparsedRanges addIndexesInRange:lineRange];
-      dispatch_semaphore_signal(_pendingChangesLock);
-      
-      // Delete all scopes in the line
-      [_rootScope removeChildScopesInRange:lineRange];
-      
-      // Setup the line
-      NSString *line = [_fileBuffer substringWithRange:lineRange];
-      
-      // Parse the line
-      [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
-      
-      // Stretch all remaining scopes to cover to the end of the line
-      for (TMScope *scope in scopeStack)
-      {
-        NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
-        if (stretchedLength > scope.length)
-          scope.length = stretchedLength;
-      }
-      
-      // Remove the line range from the unparsed ranges
-      dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-      [_unparsedRanges removeIndexesInRange:lineRange];
-      dispatch_semaphore_signal(_pendingChangesLock);
-      // proceed to next line
-      NSRange oldLineRange = lineRange;
-      lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
-      lineRange = [_fileBuffer lineRangeForRange:lineRange];
-      if (lineRange.location == oldLineRange.location) {
-        break;
-      }
-    }
-    // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
-    BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
-    
-    // If we need to reparse the line, we add it to the unparsed ranges
-    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-    if (!mergeSuccessful)
-      [_unparsedRanges addIndex:lineRange.location];
-    // Get the next unparsed range
-    nextRange = [_unparsedRanges firstRange];
-    dispatch_semaphore_signal(_pendingChangesLock);
-    
-    // If we're reparsing the line, we can reuse the same scope stack, if not, we need to reset it to nil so the next cycle gets a new one
-    if (mergeSuccessful)
-      scopeStack = nil;
-  }
-  
-#if DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-  [_rootScope performSelector:@selector(_checkConsistency)];
-#pragma clang diagnostic pop
-#endif
-  
+  [self _generateScopes];
   dispatch_semaphore_signal(_rootScopeLock);
 }
 
@@ -494,7 +385,124 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Private Methods
 
+- (void)_generateScopes {
+  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
+
+  // Get the fileBuffer's length for later
+  NSUInteger fileLength = _fileBuffer.length;
+  
+  // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
+  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
+  [self _processChanges];
+  dispatch_semaphore_signal(_pendingChangesLock);
+  
+  // Clip off unparsed ranges that are past the end of the file (it can happen because of placeholder ranges on deletion)
+  // We use the length we got before processing the changes so we avoid a race condition which would cause us to lose unparsed ranges if the file gets shorter between when we're done processing the changes and we get the file length
+  [_unparsedRanges removeIndexesInRange:NSMakeRange(fileLength, NSUIntegerMax - fileLength)];
+  
+  // Get the next unparsed range
+  NSRange nextRange = [_unparsedRanges firstRange];
+  
+  NSMutableArray *scopeStack = nil;
+  
+  // Parse the next range
+  while (nextRange.location != NSNotFound)
+  {
+    // Get the first line range
+    NSRange lineRange = NSMakeRange(nextRange.location, 0);
+    lineRange = [_fileBuffer lineRangeForRange:lineRange];
+    // Zero length line means end of file
+    if (!lineRange.length) {
+      return;
+    }
+    
+    // Setup the scope stack
+    if (!scopeStack)
+      scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
+    if (!scopeStack)
+      scopeStack = [NSMutableArray arrayWithObject:_rootScope];
+    
+    // Parse the range
+    while (lineRange.location < NSMaxRange(nextRange))
+    {
+      // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
+      [_unparsedRanges addIndexesInRange:lineRange];
+      
+      // Delete all scopes in the line
+      [_rootScope removeChildScopesInRange:lineRange];
+      
+      // Setup the line
+      NSString *line = [_fileBuffer substringWithRange:lineRange];
+      
+      // Parse the line
+      [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
+      
+      // Stretch all remaining scopes to cover to the end of the line
+      for (TMScope *scope in scopeStack)
+      {
+        NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
+        if (stretchedLength > scope.length)
+          scope.length = stretchedLength;
+      }
+      
+      // Remove the line range from the unparsed ranges
+      [_unparsedRanges removeIndexesInRange:lineRange];
+      // proceed to next line
+      NSRange oldLineRange = lineRange;
+      lineRange = NSMakeRange(NSMaxRange(lineRange), 0);
+      lineRange = [_fileBuffer lineRangeForRange:lineRange];
+      if (lineRange.location == oldLineRange.location) {
+        break;
+      }
+    }
+    // The lineRange now refers to the first line after the unparsed range we just finished parsing. Try to merge the scope tree at the start, if it fails, we'll have to parse the line manually
+    BOOL mergeSuccessful = [_rootScope attemptMergeAtOffset:lineRange.location];
+    
+    // If we need to reparse the line, we add it to the unparsed ranges
+    if (!mergeSuccessful)
+      [_unparsedRanges addIndex:lineRange.location];
+    // Get the next unparsed range
+    nextRange = [_unparsedRanges firstRange];
+    
+    // If we're reparsing the line, we can reuse the same scope stack, if not, we need to reset it to nil so the next cycle gets a new one
+    if (mergeSuccessful)
+      scopeStack = nil;
+  }
+  
+#if DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+  [_rootScope performSelector:@selector(_checkConsistency)];
+#pragma clang diagnostic pop
+#endif
+}
+
+- (void)_processChanges {
+  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
+  ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
+  
+  while ([_pendingChanges count]) {
+    Change *currentChange = [_pendingChanges objectAtIndex:0];
+    [_pendingChanges removeObjectAtIndex:0];
+    dispatch_semaphore_signal(_pendingChangesLock);
+    // Save the change's generation as our starting generation, because new changes might be queued at any time outside of the lock, and we'd apply them too late then
+    NSRange oldRange = currentChange->oldRange;
+    NSRange newRange = currentChange->newRange;
+    ASSERT(oldRange.location == newRange.location);
+    // Adjust the scope tree to account for the change
+    [_rootScope shiftByReplacingRange:oldRange withRange:newRange];
+    // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
+    [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
+    if (!newRange.length) {
+      [_unparsedRanges addIndex:newRange.location];
+    }
+    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
+  }
+}
+
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack {
+  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
+
   line = [line stringByCachingCString];
   NSUInteger position = 0;
   NSUInteger previousTokenStart = lineRange.location;
@@ -702,6 +710,8 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope
 {
+  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
+
   // TODO URI: queue up callbacks to call on main thread
   //  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
   //  if (![attributes count])
