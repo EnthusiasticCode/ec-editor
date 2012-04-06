@@ -34,6 +34,10 @@ static NSString * const _includeKey = @"include";
 static NSMutableDictionary *_syntaxesWithIdentifier;
 static NSMutableArray *_syntaxesWithoutIdentifier;
 
+static dispatch_semaphore_t _includedNodesCachesReadLock;
+static dispatch_semaphore_t _includedNodesCachesWriteLock;
+static NSMutableDictionary *_includedNodesCaches;
+
 @interface TMSyntaxNode ()
 
 + (TMSyntaxNode *)_syntaxWithPredicateBlock:(BOOL (^)(TMSyntaxNode *syntaxNode))predicateBlock;
@@ -72,10 +76,15 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 #if ! TEST
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
-  _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
+  
+  _includedNodesCachesReadLock = dispatch_semaphore_create(1);
+  _includedNodesCachesWriteLock = dispatch_semaphore_create(1);
+  _includedNodesCaches = NSMutableDictionary.alloc.init;
+  
+  _syntaxesWithIdentifier = NSMutableDictionary.alloc.init;
 // TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
-  _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  _syntaxesWithoutIdentifier = NSMutableArray.alloc.init;
+  NSFileManager *fileManager = NSFileManager.alloc.init;
   for (NSURL *bundleURL in [TMBundle bundleURLs]) {
     for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
       NSData *plistData = [NSData dataWithContentsOfURL:syntaxURL options:NSDataReadingUncached error:NULL];
@@ -102,13 +111,13 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 
 - (NSUInteger)hash {
   if (_identifier) {
-    return [_identifier hash];
+    return _identifier.hash;
   }
   else if (_include) {
-    return [_include hash];
+    return _include.hash;
   }
   else {
-    return [_patterns hash];
+    return _patterns.hash;
   }
 }
 
@@ -158,6 +167,79 @@ static NSMutableArray *_syntaxesWithoutIdentifier;
 
 - (NSString *)qualifiedIdentifier {
   return self.identifier;
+}
+
+- (NSArray *)includedNodesWithRootNode:(TMSyntaxNode *)rootNode
+{
+  ASSERT(!self.include); // This cannot be called on include nodes.
+  dispatch_semaphore_wait(_includedNodesCachesReadLock, DISPATCH_TIME_FOREVER);
+  NSMutableArray *includedNodes = [(NSMutableDictionary *)[_includedNodesCaches objectForKey:rootNode] objectForKey:self];
+  dispatch_semaphore_signal(_includedNodesCachesReadLock);
+  if (includedNodes)
+    return includedNodes;
+  if (!self.patterns)
+    return nil;
+  includedNodes = [NSMutableArray arrayWithArray:self.patterns];
+  NSMutableSet *dereferencedNodes = [NSMutableSet set];
+  NSMutableIndexSet *containerNodesIndexes = [NSMutableIndexSet indexSet];
+  do
+  {
+    [containerNodesIndexes removeAllIndexes];
+    [includedNodes enumerateObjectsUsingBlock:^(TMSyntaxNode *obj, NSUInteger idx, BOOL *stop) {
+      if ([obj match] || [obj begin])
+        return;
+      [containerNodesIndexes addIndex:idx];
+    }];
+    __block NSUInteger offset = 0;
+    [containerNodesIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+      TMSyntaxNode *containerNode = [includedNodes objectAtIndex:idx + offset];
+      [includedNodes removeObjectAtIndex:idx + offset];
+      if ([dereferencedNodes containsObject:containerNode])
+        return;
+      ASSERT(containerNode.include || containerNode.patterns);
+      ASSERT(!containerNode.include || !containerNode.patterns);
+      if (containerNode.include)
+      {
+        unichar firstCharacter = [containerNode.include characterAtIndex:0];
+        if (firstCharacter == '#')
+        {
+          [includedNodes insertObject:[[containerNode rootSyntax].repository objectForKey:[containerNode.include substringFromIndex:1]] atIndex:idx + offset];
+        }
+        else
+        {
+          ASSERT(firstCharacter != '$' || [containerNode.include isEqualToString:@"$base"] || [containerNode.include isEqualToString:@"$self"]);
+          TMSyntaxNode *includedSyntax = nil;
+          if ([containerNode.include isEqualToString:@"$base"])
+            includedSyntax = rootNode;
+          else if ([containerNode.include isEqualToString:@"$self"])
+            includedSyntax = [containerNode rootSyntax];
+          else
+            includedSyntax = [TMSyntaxNode syntaxWithScopeIdentifier:containerNode.include];
+          [includedNodes addObject:includedSyntax];
+        }
+      }
+      else
+      {
+        NSUInteger patternsCount = [containerNode.patterns count];
+        ASSERT(patternsCount);
+        [includedNodes insertObjects:containerNode.patterns atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(idx + offset, patternsCount)]];
+        offset += patternsCount - 1;
+      }
+      [dereferencedNodes addObject:containerNode];
+    }];
+  }
+  while ([containerNodesIndexes count]);
+  dispatch_semaphore_wait(_includedNodesCachesReadLock, DISPATCH_TIME_FOREVER);
+  dispatch_semaphore_wait(_includedNodesCachesWriteLock, DISPATCH_TIME_FOREVER);
+  NSMutableDictionary *includedNodesCache = [_includedNodesCaches objectForKey:rootNode];
+  if (!includedNodesCache) {
+    includedNodesCache = NSMutableDictionary.alloc.init;
+  }
+  [includedNodesCache setObject:includedNodes forKey:self];
+  [_includedNodesCaches setObject:includedNodesCache forKey:rootNode];
+  dispatch_semaphore_signal(_includedNodesCachesWriteLock);
+  dispatch_semaphore_signal(_includedNodesCachesReadLock);
+  return includedNodes;
 }
 
 #pragma mark - Private Methods

@@ -39,5 +39,6 @@
 @property (nonatomic, strong, readonly) NSDictionary *repository;
 @property (nonatomic, strong, readonly) NSString *include;
 
-@end
+- (NSArray *)includedNodesWithRootNode:(TMSyntaxNode *)rootNode;
 
+@end
