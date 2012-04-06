@@ -307,7 +307,6 @@
 		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
-		B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */; };
 		B7FB79A214D602C60080A714 /* NSString+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */; };
 		B7FB79A314D602C60080A714 /* NSTimer+BlockTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */; };
 		B7FB79B414D602F10080A714 /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
@@ -330,8 +329,6 @@
 		B7FB79F114D606740080A714 /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79F014D606740080A714 /* GridView.m */; };
 		B7FB79F614D6086A0080A714 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB79F514D6086A0080A714 /* libarc.a */; };
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
-		B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */; };
-		B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */; };
 		CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */; };
 		CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
@@ -358,11 +355,9 @@
 		CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */; };
-		CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */; };
 		CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */; };
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
-		CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */ = {isa = PBXBuildFile; fileRef = CD623AA814F50BAC00FEF5E9 /* WeakArray.m */; };
 		CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
@@ -786,8 +781,6 @@
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
 		B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ScoreForAbbreviation.m"; sourceTree = "<group>"; };
-		B7FB799814D602C60080A714 /* NSDictionary+URLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+URLAdditions.h"; sourceTree = "<group>"; };
-		B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+URLAdditions.m"; sourceTree = "<group>"; };
 		B7FB799A14D602C60080A714 /* NSString+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
 		B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ScoreForAbbreviation.m"; sourceTree = "<group>"; };
 		B7FB799C14D602C60080A714 /* NSTimer+BlockTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSTimer+BlockTimer.h"; sourceTree = "<group>"; };
@@ -834,10 +827,6 @@
 		B7FB79F514D6086A0080A714 /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarc.a; path = ../ThirdParty/libarchive/arc/build/libarc.a; sourceTree = "<group>"; };
 		B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ReuseIdentifier.h"; sourceTree = "<group>"; };
 		B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ReuseIdentifier.m"; sourceTree = "<group>"; };
-		B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakDictionary.h; sourceTree = "<group>"; };
-		B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakDictionary.m; sourceTree = "<group>"; };
-		B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjectWrapper.h; sourceTree = "<group>"; };
-		B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakObjectWrapper.m; sourceTree = "<group>"; };
 		CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_NewBadge.png; sourceTree = "<group>"; };
 		CD05149814F7FB3A003CED2F /* RemoteTransferController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteTransferController.h; sourceTree = "<group>"; };
 		CD05149914F7FB3A003CED2F /* RemoteTransferController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteTransferController.m; sourceTree = "<group>"; };
@@ -872,16 +861,12 @@
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstantGestureRecognizer.h; sourceTree = "<group>"; };
 		CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InstantGestureRecognizer.m; sourceTree = "<group>"; };
-		CD49925014D6F03F0046CD19 /* NSString+URLAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLAdditions.h"; sourceTree = "<group>"; };
-		CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLAdditions.m"; sourceTree = "<group>"; };
 		CD49925314D6F11E0046CD19 /* NSString+PluralFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+PluralFormat.h"; sourceTree = "<group>"; };
 		CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+PluralFormat.m"; sourceTree = "<group>"; };
 		CD49AA0D14E33D98006032F6 /* TMPreference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPreference.h; sourceTree = "<group>"; };
 		CD49AA0E14E33D98006032F6 /* TMPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPreference.m; sourceTree = "<group>"; };
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
-		CD623AA714F50BAC00FEF5E9 /* WeakArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakArray.h; sourceTree = "<group>"; };
-		CD623AA814F50BAC00FEF5E9 /* WeakArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeakArray.m; sourceTree = "<group>"; };
 		CD65F1D014F6C4A200E0C441 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		CD65F1D114F6C4A200E0C441 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
 		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
@@ -1499,16 +1484,12 @@
 				CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */,
 				B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */,
 				B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */,
-				B7FB799814D602C60080A714 /* NSDictionary+URLAdditions.h */,
-				B7FB799914D602C60080A714 /* NSDictionary+URLAdditions.m */,
 				B7FB799A14D602C60080A714 /* NSString+ScoreForAbbreviation.h */,
 				B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */,
 				B7072BBA15111A3000580855 /* NSString+UUID.h */,
 				B7072BBB15111A3000580855 /* NSString+UUID.m */,
 				B7072BD01511443E00580855 /* NSString+CStringCaching.h */,
 				B7072BD11511443E00580855 /* NSString+CStringCaching.m */,
-				CD49925014D6F03F0046CD19 /* NSString+URLAdditions.h */,
-				CD49925114D6F0410046CD19 /* NSString+URLAdditions.m */,
 				CD49925314D6F11E0046CD19 /* NSString+PluralFormat.h */,
 				CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */,
 				B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */,
@@ -1561,14 +1542,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				CD623AA714F50BAC00FEF5E9 /* WeakArray.h */,
-				CD623AA814F50BAC00FEF5E9 /* WeakArray.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
 				CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */,
-				B7FB7A2E14D60ED40080A714 /* WeakObjectWrapper.h */,
-				B7FB7A2F14D60ED40080A714 /* WeakObjectWrapper.m */,
-				B7FB7A2A14D60EB50080A714 /* WeakDictionary.h */,
-				B7FB7A2B14D60EB50080A714 /* WeakDictionary.m */,
 				B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */,
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
@@ -2943,7 +2918,6 @@
 				CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */,
 				B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */,
 				B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */,
-				B7FB79A114D602C60080A714 /* NSDictionary+URLAdditions.m in Sources */,
 				B7FB79A214D602C60080A714 /* NSString+ScoreForAbbreviation.m in Sources */,
 				B7FB79A314D602C60080A714 /* NSTimer+BlockTimer.m in Sources */,
 				B7FB79B414D602F10080A714 /* TMBundle.m in Sources */,
@@ -2965,10 +2939,7 @@
 				B7FB79ED14D6064C0080A714 /* TabController.m in Sources */,
 				B7FB79F114D606740080A714 /* GridView.m in Sources */,
 				B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */,
-				B7FB7A2D14D60EB50080A714 /* WeakDictionary.m in Sources */,
-				B7FB7A3014D60ED40080A714 /* WeakObjectWrapper.m in Sources */,
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
-				CD49925214D6F0430046CD19 /* NSString+URLAdditions.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
 				B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */,
 				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
@@ -2989,7 +2960,6 @@
 				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
 				CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */,
 				CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */,
-				CD623AA914F50BAC00FEF5E9 /* WeakArray.m in Sources */,
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
 				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,

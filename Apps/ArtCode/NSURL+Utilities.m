@@ -7,7 +7,6 @@
 //
 
 #import "NSURL+Utilities.h"
-#import "NSDictionary+URLAdditions.h"
 #import "NSString+UUID.h"
 #import "NSString+Utilities.h"
 
@@ -81,15 +80,6 @@
 
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number {
   return [self.URLByDeletingLastPathComponent URLByAppendingPathComponent:[self.lastPathComponent stringByAddingDuplicateNumber:number]];
-}
-
-- (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary {
-  // TODO build the URL in a better way
-  return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%@", [self absoluteString], [fragmentDictionary stringWithURLEncodedComponents]]];;
-}
-
-- (NSDictionary *)fragmentDictionary {
-  return [NSDictionary dictionaryWithURLEncodedString:self.fragment];
 }
 
 @end

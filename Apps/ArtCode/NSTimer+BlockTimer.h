@@ -6,7 +6,7 @@
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/NSTimer.h>
+#import <Foundation/Foundation.h>
 
 @interface NSTimer (BlockTimer)
 

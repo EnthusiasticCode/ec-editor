@@ -37,7 +37,4 @@
 /// /url/to/file.ext become /url/to/file (number).ext
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number;
 
-- (NSURL *)URLByAppendingFragmentDictionary:(NSDictionary *)fragmentDictionary;
-- (NSDictionary *)fragmentDictionary;
-
 @end
