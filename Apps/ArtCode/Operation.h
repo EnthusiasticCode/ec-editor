@@ -8,6 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+#define OPERATION_RETURN_IF_CANCELLED \
+do {\
+if (self.isCancelled) {\
+return;\
+}\
+} while(0)
+
+
 @interface Operation : NSOperation
 
 /// Designated initializer.

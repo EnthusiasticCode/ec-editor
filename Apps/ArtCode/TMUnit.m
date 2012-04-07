@@ -49,7 +49,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface ReparseOperation : Operation
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope rootScopeLock:(dispatch_semaphore_t)rootScopeLock pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
+- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
 - (void)_generateScopes;
 - (void)_processChanges;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
@@ -72,9 +72,13 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface TMUnit () <FileBufferPresenter>
 
-- (BOOL)_isUpToDate;
+@property (nonatomic, strong) AutodetectSyntaxOperation *autodetectSyntaxOperation;
+@property (nonatomic, strong) ReparseOperation *reparseOperation;
+@property (nonatomic, getter = isUpToDate) BOOL upToDate;
+
 - (void)_queueBlockUntilUpToDate:(void(^)(void))block;
 - (void)_setHasPendingChanges;
+- (void)_queueReparseOperation;
 - (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 
 @end
@@ -83,19 +87,15 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @implementation TMUnit {
   NSOperationQueue *_internalQueue;
-  AutodetectSyntaxOperation *_autodetectSyntaxOperation;
-  ReparseOperation *_reparseOperation;
-  
+
   FileBuffer *_fileBuffer;
   
-  volatile int _fileBufferVersion;
-  volatile int _scopesVersion;
-  
-  dispatch_semaphore_t _rootScopeLock;
   TMScope *_rootScope;
   
   dispatch_semaphore_t _pendingChangesLock;
   NSMutableArray *_pendingChanges;
+  
+  NSMutableArray *_queuedBlocks;
   
   NSMutableIndexSet *_unparsedRanges;
   
@@ -103,6 +103,7 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 @synthesize index = _index, syntax = _syntax;
+@synthesize autodetectSyntaxOperation = _autodetectSyntaxOperation, reparseOperation = _reparseOperation, upToDate = _upToDate;
 
 #pragma mark - NSObject
 
@@ -115,39 +116,53 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(_numberedCapturesRegexp && _namedCapturesRegexp);
 }
 
+- (id)init {
+  return [self initWithFileBuffer:nil fileURL:nil index:nil];
+}
+
+- (void)dealloc {
+  [_internalQueue cancelAllOperations];
+}
+
 #pragma mark - FileBufferPresenter
 
 - (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  Change *change = [[Change alloc] init];
+  Change *change = Change.alloc.init;
   change->oldRange = range;
-  change->newRange = NSMakeRange(range.location, [string length]);
+  change->newRange = NSMakeRange(range.location, string.length);
   dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
   [_pendingChanges addObject:change];
-  [self _setHasPendingChanges];    
   dispatch_semaphore_signal(_pendingChangesLock);
+  [self _setHasPendingChanges];    
 }
 
 #pragma mark - Public Methods
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
-  if (_autodetectSyntaxOperation) {
-    [_autodetectSyntaxOperation cancel];
-  }
-  if (syntax == _syntax) {
-    return;
-  }
+  [_internalQueue cancelAllOperations];
+  [_fileBuffer removePresenter:self];
+  _pendingChanges = nil;
+  _unparsedRanges = nil;
+  _rootScope = nil;
+  
   _syntax = syntax;
-  dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_FOREVER);
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  dispatch_semaphore_signal(_rootScopeLock);
-  Change *firstChange = Change.alloc.init;
-  firstChange->oldRange = NSMakeRange(0, 0);
-  firstChange->newRange = NSMakeRange(0, _fileBuffer.length);
-  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  [_pendingChanges addObject:firstChange];
-  [self _setHasPendingChanges];
-  dispatch_semaphore_signal(_pendingChangesLock);
+    
+  if (_syntax) {
+    _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  }
+  
+  if (_syntax) {
+    _pendingChanges = NSMutableArray.alloc.init;
+    _unparsedRanges = NSMutableIndexSet.alloc.init;
+    Change *firstChange = Change.alloc.init;
+    firstChange->oldRange = NSMakeRange(0, 0);
+    firstChange->newRange = NSMakeRange(0, _fileBuffer.length);
+    [_pendingChanges addObject:firstChange];
+    [self _queueReparseOperation];
+    [_fileBuffer addPresenter:self];
+  }
+  self.autodetectSyntaxOperation = nil;
 }
 
 - (NSArray *)symbolList {
@@ -160,23 +175,21 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (id)initWithFileBuffer:(FileBuffer *)fileBuffer fileURL:(NSURL *)fileURL index:(TMIndex *)index {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  ASSERT(fileBuffer || fileURL);
   self = [super init];
   if (!self) {
     return nil;
   }
   
   _fileBuffer = fileBuffer;
-  [fileBuffer addPresenter:self];
   
-  _rootScopeLock = dispatch_semaphore_create(1);
   _pendingChangesLock = dispatch_semaphore_create(1);
-  _pendingChanges = NSMutableArray.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
   
-  _unparsedRanges = NSMutableIndexSet.alloc.init;
-
+  _queuedBlocks = NSMutableArray.alloc.init;
+  
   _extensions = NSMutableDictionary.alloc.init;
   [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
     if (![_syntax.identifier isEqualToString:extensionClassesSyntaxIdentifier])
@@ -199,35 +212,26 @@ static OnigRegexp *_namedCapturesRegexp;
     }
   }
   _autodetectSyntaxOperation = [AutodetectSyntaxOperation.alloc initWithFileURL:fileURL firstLine:firstLine completionHandler:^(BOOL success) {
-    TMUnit *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
     if (success) {
-      strongSelf.syntax = strongSelf->_autodetectSyntaxOperation.syntax;
+      weakSelf.syntax = weakSelf.autodetectSyntaxOperation.syntax;
     }
-    strongSelf->_autodetectSyntaxOperation = nil;
+    weakSelf.autodetectSyntaxOperation = nil;
   }];
   [_internalQueue addOperation:_autodetectSyntaxOperation];
-
+  
   return self;
 }
 
 - (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self _queueBlockUntilUpToDate:^{
-    dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_FOREVER);
-    NSMutableArray *scopeStack = [_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight];
-    __block TMScope *scopeCopy = nil;
-    [scopeStack enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
+    [[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
       if (!scope.identifier) {
         return;
       }
-      scopeCopy = scope.copy;
+      completionHandler(scope.copy);
       *stop = YES;
     }];
-    dispatch_semaphore_signal(_rootScopeLock);
-    completionHandler(scopeCopy);
   }];
 }
 
@@ -258,32 +262,94 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Private Methods
 
-- (BOOL)_isUpToDate {
+- (void)setAutodetectSyntaxOperation:(AutodetectSyntaxOperation *)autodetectSyntaxOperation {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (!_syntax && !_autodetectSyntaxOperation) {
-    return YES;
+  if (autodetectSyntaxOperation == _autodetectSyntaxOperation) {
+    return;
   }
-  return _scopesVersion == _fileBufferVersion;
+  _autodetectSyntaxOperation = autodetectSyntaxOperation;
+  if (!_autodetectSyntaxOperation && !self.reparseOperation) {
+    self.upToDate = YES;
+  }
+}
+
+- (void)setReparseOperation:(ReparseOperation *)reparseOperation {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  if (reparseOperation == _reparseOperation) {
+    return;
+  }
+  _reparseOperation = reparseOperation;
+  if (!_reparseOperation && !self.autodetectSyntaxOperation) {
+    self.upToDate = YES;
+  }
+}
+
+- (void)setUpToDate:(BOOL)upToDate {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  if (upToDate == _upToDate) {
+    return;
+  }
+  _upToDate = upToDate;
+  if (_upToDate) {
+    for (void(^block)(void) in _queuedBlocks) {
+      block();
+    }
+  }
 }
 
 - (void)_queueBlockUntilUpToDate:(void (^)(void))block {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if ([self _isUpToDate]) {
+  if (self.isUpToDate) {
     block();
   } else {
-    [self performSelector:@selector(_queueBlockUntilUpToDate:) withObject:block afterDelay:0.2];
+    [_queuedBlocks addObject:block];
   }
 }
 
 - (void)_setHasPendingChanges {
-  ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ++_fileBufferVersion;
-  if (_rootScope) {
-    [_internalQueue addOperation:[ReparseOperation.alloc initWithFileBuffer:_fileBuffer rootScope:_rootScope rootScopeLock:_rootScopeLock pendingChanges:_pendingChanges pendingChangesLock:_pendingChangesLock unparsedRanges:_unparsedRanges completionHandler:^(BOOL success) {
-      _scopesVersion = _fileBufferVersion;
-    }]];
+  
+  // If we're not up to date an operation is already running
+  if (!self.isUpToDate) {
+    return;
   }
+  
+  // If we don't have a root scope it means we don't have a syntax, and we can't parse
+  if (!_rootScope) {
+    ASSERT(!_syntax);
+    return;
+  }
+  
+  [self _queueReparseOperation];
+}
+
+- (void)_queueReparseOperation {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+
+  TMUnit *weakSelf = self;
+  self.reparseOperation = [ReparseOperation.alloc initWithFileBuffer:_fileBuffer rootScope:_rootScope pendingChanges:_pendingChanges pendingChangesLock:_pendingChangesLock unparsedRanges:_unparsedRanges completionHandler:^(BOOL success) {
+    // If the operation was cancelled we don't need to do anything
+    if (!success) {
+      return;
+    }
+    
+    TMUnit *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    
+    // If we have pending changes, we need to rerun the operation
+    dispatch_semaphore_wait(strongSelf->_pendingChangesLock, DISPATCH_TIME_FOREVER);
+    if (strongSelf->_pendingChanges.count) {
+      [strongSelf _queueReparseOperation];
+      dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
+      return;
+    } else {
+      dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
+      strongSelf.reparseOperation = nil;
+    }
+  }];
+  [_internalQueue addOperation:self.reparseOperation];
 }
 
 @end
@@ -297,34 +363,34 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @synthesize syntax = _syntax;
 
+#pragma mark - NSOperation
+
 - (void)main {
   TMSyntaxNode *syntax = nil;
   if (_firstLine) {
     syntax = [TMSyntaxNode syntaxForFirstLine:_firstLine];
   }
-  if (self.isCancelled) {
-    return;
-  }
+  OPERATION_RETURN_IF_CANCELLED;
   if (!syntax && _fileURL) {
     syntax = [TMSyntaxNode syntaxForFileName:_fileURL.lastPathComponent];
   }
-  if (self.isCancelled) {
-    return;
-  }
+  OPERATION_RETURN_IF_CANCELLED;
   if (!syntax) {
     syntax = TMSyntaxNode.defaultSyntax;
   }
-  if (self.isCancelled) {
-    return;
-  }
+  OPERATION_RETURN_IF_CANCELLED;
   @synchronized(self) {
     _syntax = syntax;
   }
 }
 
+#pragma mark - Operation
+
 - (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
   return [self initWithFileURL:nil firstLine:nil completionHandler:completionHandler];
 }
+
+#pragma mark - Public Methods
 
 - (TMSyntaxNode *)syntax {
   ASSERT(self.isFinished);
@@ -349,7 +415,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @implementation ReparseOperation {
   FileBuffer *_fileBuffer;
-  dispatch_semaphore_t _rootScopeLock;
   TMScope *_rootScope;
   dispatch_semaphore_t _pendingChangesLock;
   NSMutableArray *_pendingChanges;
@@ -361,22 +426,25 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)main {  
   // The whole operation is wrapped in this lock. Remember to signal it if we return early from it.
   // The root scope is inconsistent with the fileBuffer while we're running it, so the codeUnit should not be accessing it anyway.
-  dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_FOREVER);
   [self _generateScopes];
-  dispatch_semaphore_signal(_rootScopeLock);
+}
+
+#pragma mark - Operation
+
+- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
+  return [self initWithFileBuffer:nil rootScope:nil pendingChanges:nil pendingChangesLock:NULL unparsedRanges:nil completionHandler:nil];
 }
 
 #pragma mark - Public Methods
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope rootScopeLock:(dispatch_semaphore_t)rootScopeLock pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(fileBuffer && rootScope && rootScopeLock && pendingChanges && pendingChangesLock && unparsedRanges);
+- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void (^)(BOOL))completionHandler {
+  ASSERT(fileBuffer && rootScope && pendingChanges && pendingChangesLock && unparsedRanges);
   self = [super initWithCompletionHandler:completionHandler];
   if (!self) {
     return nil;
   }
   _fileBuffer = fileBuffer;
   _rootScope = rootScope;
-  _rootScopeLock = rootScopeLock;
   _pendingChanges = pendingChanges;
   _pendingChangesLock = pendingChangesLock;
   _unparsedRanges = unparsedRanges;
@@ -386,15 +454,17 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark - Private Methods
 
 - (void)_generateScopes {
-  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
-  
   NSMutableArray *scopeStack = nil;
     
   for (;;) {
+    OPERATION_RETURN_IF_CANCELLED;
+
     // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
     dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
     [self _processChanges];
     dispatch_semaphore_signal(_pendingChangesLock);
+    
+    OPERATION_RETURN_IF_CANCELLED;
     
     // Get the next unparsed range
     NSRange unparsedRange = [_unparsedRanges firstRange];
@@ -406,17 +476,23 @@ static OnigRegexp *_namedCapturesRegexp;
       break;
     }
     
+    OPERATION_RETURN_IF_CANCELLED;
+    
     // Setup the scope stack
     if (!scopeStack) {
       scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
       ASSERT(scopeStack);
     }
     
+    OPERATION_RETURN_IF_CANCELLED;
+    
     // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
     [_unparsedRanges addIndexesInRange:lineRange];
     
     // Delete all scopes in the line
     [_rootScope removeChildScopesInRange:lineRange];
+    
+    OPERATION_RETURN_IF_CANCELLED;
     
     // Setup the line
     NSString *line = nil;
@@ -427,8 +503,12 @@ static OnigRegexp *_namedCapturesRegexp;
       continue;
     }
     
+    OPERATION_RETURN_IF_CANCELLED;
+    
     // Parse the line
     [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
+    
+    OPERATION_RETURN_IF_CANCELLED;
     
     // Stretch all remaining scopes to cover to the end of the line
     for (TMScope *scope in scopeStack)
@@ -438,6 +518,8 @@ static OnigRegexp *_namedCapturesRegexp;
         scope.length = stretchedLength;
     }
     
+    OPERATION_RETURN_IF_CANCELLED;
+
     // Remove the line range from the unparsed ranges
     [_unparsedRanges removeIndexesInRange:lineRange];
     
@@ -462,7 +544,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_processChanges {
-  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
   ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
   
   // Process the pending changes.
@@ -487,8 +568,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack {
-  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
-
   line = [line stringByCachingCString];
   NSUInteger position = 0;
   NSUInteger previousTokenStart = lineRange.location;
@@ -497,8 +576,7 @@ static OnigRegexp *_namedCapturesRegexp;
   // Check for a span scope with a missing content scope
   {
     TMScope *scope = [scopeStack lastObject];
-    if (scope.type == TMScopeTypeSpan && !(scope.flags & TMScopeHasContentScope) && scope.syntaxNode.contentName)
-    {
+    if (scope.type == TMScopeTypeSpan && !(scope.flags & TMScopeHasContentScope) && scope.syntaxNode.contentName) {
       TMScope *contentScope = [scope newChildScopeWithIdentifier:scope.syntaxNode.contentName syntaxNode:scope.syntaxNode location:lineRange.location type:TMScopeTypeContent];
       ASSERT(scope.endRegexp);
       contentScope.endRegexp = scope.endRegexp;
@@ -507,8 +585,7 @@ static OnigRegexp *_namedCapturesRegexp;
     }
   }
   
-  for (;;)
-  {
+  for (;;) {
     TMScope *scope = [scopeStack lastObject];
     TMSyntaxNode *syntaxNode = scope.syntaxNode;
     
@@ -516,15 +593,16 @@ static OnigRegexp *_namedCapturesRegexp;
     TMSyntaxNode *firstSyntaxNode = nil;
     OnigResult *firstResult = nil;
     NSArray *patterns = [syntaxNode includedNodesWithRootNode:_rootScope.syntaxNode];
-    for (TMSyntaxNode *pattern in patterns)
-    {
+    for (TMSyntaxNode *pattern in patterns) {
       OnigRegexp *patternRegexp = pattern.match;
-      if (!patternRegexp)
+      if (!patternRegexp) {
         patternRegexp = pattern.begin;
+      }
       ASSERT(patternRegexp);
       OnigResult *result = [patternRegexp search:line start:position];
-      if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location))
+      if (!result || (firstResult && [firstResult bodyRange].location <= [result bodyRange].location)) {
         continue;
+      }
       firstResult = result;
       firstSyntaxNode = pattern;
     }
@@ -535,27 +613,25 @@ static OnigRegexp *_namedCapturesRegexp;
     ASSERT(!firstSyntaxNode || firstResult);
     
     // Handle the matches
-    if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location ))
-    {
+    if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location )) {
       // Handle end result first
       NSRange resultRange = [endResult bodyRange];
       resultRange.location += lineRange.location;
       // Handle content name nested scope
-      if (scope.type == TMScopeTypeContent)
-      {
+      if (scope.type == TMScopeTypeContent) {
         [self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope];
         previousTokenStart = resultRange.location;
         scope.length = resultRange.location - scope.location;
-        if (!scope.length)
+        if (!scope.length) {
           [scope removeFromParent];
+        }
         [scopeStack removeLastObject];
         scope = [scopeStack lastObject];
       }
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:scope];
       previousTokenStart = NSMaxRange(resultRange);
       // Handle end captures
-      if (resultRange.length && syntaxNode.endCaptures)
-      {
+      if (resultRange.length && syntaxNode.endCaptures) {
         [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope];
         if ([(NSDictionary *)[syntaxNode.endCaptures objectForKey:@"0"] objectForKey:_captureName]) {
           scope.flags |= TMScopeHasEndScope;
@@ -563,23 +639,21 @@ static OnigRegexp *_namedCapturesRegexp;
       }
       scope.length = NSMaxRange(resultRange) - scope.location;
       scope.flags |= TMScopeHasEnd;
-      if (!scope.length)
+      if (!scope.length) {
         [scope removeFromParent];
+      }
       ASSERT([scopeStack count]);
       [scopeStack removeLastObject];
       // We don't need to make sure position advances since we changed the stack
       // This could bite us if there's a begin and end regexp that match in the same position
       position = NSMaxRange([endResult bodyRange]);
-    }
-    else if (firstSyntaxNode.match)
-    {
+    } else if (firstSyntaxNode.match) {
       // Handle a match pattern
       NSRange resultRange = [firstResult bodyRange];
       resultRange.location += lineRange.location;
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope];
       previousTokenStart = resultRange.location;
-      if (resultRange.length)
-      {
+      if (resultRange.length) {
         TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.identifier syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeMatch];
         matchScope.length = resultRange.length;
         [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:matchScope];
@@ -589,11 +663,10 @@ static OnigRegexp *_namedCapturesRegexp;
       }
       // We need to make sure position increases, or it would loop forever with a 0 width match
       position = NSMaxRange([firstResult bodyRange]);
-      if (!resultRange.length)
+      if (!resultRange.length) {
         ++position;
-    }
-    else if (firstSyntaxNode.begin)
-    {
+      }
+    } else if (firstSyntaxNode.begin) {
       // Handle a new span pattern
       NSRange resultRange = [firstResult bodyRange];
       resultRange.location += lineRange.location;
@@ -605,26 +678,27 @@ static OnigRegexp *_namedCapturesRegexp;
       NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
       [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
         int captureNumber = [[result stringAt:1] intValue];
-        if (captureNumber >= 0 && [firstResult count] > captureNumber)
+        if (captureNumber >= 0 && [firstResult count] > captureNumber) {
           return [firstResult stringAt:captureNumber];
-        else
+        } else {
           return nil;
+        }
       }];
       [_namedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
         NSString *captureName = [result stringAt:1];
         int captureNumber = [firstResult indexForName:captureName];
-        if (captureNumber >= 0 && [firstResult count] > captureNumber)
+        if (captureNumber >= 0 && [firstResult count] > captureNumber) {
           return [firstResult stringAt:captureNumber];
-        else
+        } else {
           return nil;
+        }
       }];
       spanScope.endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup];
       ASSERT(spanScope.endRegexp);
       [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:spanScope];
       previousTokenStart = NSMaxRange(resultRange);
       // Handle begin captures
-      if (resultRange.length && firstSyntaxNode.beginCaptures)
-      {
+      if (resultRange.length && firstSyntaxNode.beginCaptures) {
         [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult type:TMScopeTypeBegin offset:lineRange.location parentScope:spanScope];
         if ([(NSDictionary *)[firstSyntaxNode.beginCaptures objectForKey:@"0"] objectForKey:_captureName]) {
           spanScope.flags |= TMScopeHasBeginScope;
@@ -632,8 +706,7 @@ static OnigRegexp *_namedCapturesRegexp;
       }
       [scopeStack addObject:spanScope];
       // Handle content name nested scope
-      if (firstSyntaxNode.contentName)
-      {
+      if (firstSyntaxNode.contentName) {
         TMScope *contentScope = [spanScope newChildScopeWithIdentifier:firstSyntaxNode.contentName syntaxNode:firstSyntaxNode location:NSMaxRange(resultRange) type:TMScopeTypeContent];
         contentScope.endRegexp = spanScope.endRegexp;
         spanScope.flags |= TMScopeHasContentScope;
@@ -642,46 +715,43 @@ static OnigRegexp *_namedCapturesRegexp;
       // We don't need to make sure position advances since we changed the stack
       // This could bite us if there's a begin and end regexp that match in the same position
       position = NSMaxRange([firstResult bodyRange]);
-    }
-    else
-    {
+    } else {
       break;
     }
     
     // We need to break if we hit the end of the line, failing to do so not only runs another cycle that doesn't find anything 99% of the time, but also can cause problems with matches that include the newline which have to be the last match for the line in the remaining 1% of the cases
-    if (position >= lineRange.length)
+    if (position >= lineRange.length) {
       break;
+    }
   }
   [self _parsedTokenInRange:NSMakeRange(previousTokenStart, lineEnd - previousTokenStart) withScope:[scopeStack lastObject]];
 }
 
-- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope
-{
-  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
+- (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope {
   ASSERT(type == TMScopeTypeMatch || type == TMScopeTypeBegin || type == TMScopeTypeEnd);
   ASSERT(scope && result && [result bodyRange].length);
-  if (!dictionary || !result)
+  if (!dictionary || !result) {
     return;
+  }
   TMScope *capturesScope = scope;
-  if (type != TMScopeTypeMatch)
-  {
+  if (type != TMScopeTypeMatch) {
     capturesScope = [scope newChildScopeWithIdentifier:[(NSDictionary *)[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
     capturesScope.length = [result bodyRange].length;
     [self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope];
   }
   NSMutableArray *capturesScopesStack = [NSMutableArray arrayWithObject:capturesScope];
   NSUInteger numMatchRanges = [result count];
-  for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex)
-  {
+  for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex) {
     NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
     currentMatchRange.location += offset;
-    if (!currentMatchRange.length)
+    if (!currentMatchRange.length) {
       continue;
+    }
     NSString *currentCaptureName = [(NSDictionary *)[dictionary objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_captureName];
-    if (!currentCaptureName)
+    if (!currentCaptureName) {
       continue;
-    while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length)
-    {
+    }
+    while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length) {
       ASSERT([capturesScopesStack count]);
       [capturesScopesStack removeLastObject];
       capturesScope = [capturesScopesStack lastObject];
@@ -694,10 +764,7 @@ static OnigRegexp *_namedCapturesRegexp;
   }
 }
 
-- (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope
-{
-  ASSERT(dispatch_semaphore_wait(_rootScopeLock, DISPATCH_TIME_NOW));
-
+- (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
   // TODO URI: queue up callbacks to call on main thread
   //  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
   //  if (![attributes count])
