@@ -34,8 +34,7 @@ static NSString * const _includeKey = @"include";
 static NSMutableDictionary *_syntaxesWithIdentifier;
 static NSMutableArray *_syntaxesWithoutIdentifier;
 
-static dispatch_semaphore_t _includedNodesCachesReadLock;
-static dispatch_semaphore_t _includedNodesCachesWriteLock;
+static dispatch_semaphore_t _includedNodesCachesLock;
 static NSMutableDictionary *_includedNodesCaches;
 
 @interface TMSyntaxNode ()
@@ -77,8 +76,7 @@ static NSMutableDictionary *_includedNodesCaches;
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
   
-  _includedNodesCachesReadLock = dispatch_semaphore_create(1);
-  _includedNodesCachesWriteLock = dispatch_semaphore_create(1);
+  _includedNodesCachesLock = dispatch_semaphore_create(1);
   _includedNodesCaches = NSMutableDictionary.alloc.init;
   
   _syntaxesWithIdentifier = NSMutableDictionary.alloc.init;
@@ -172,9 +170,9 @@ static NSMutableDictionary *_includedNodesCaches;
 - (NSArray *)includedNodesWithRootNode:(TMSyntaxNode *)rootNode
 {
   ASSERT(!self.include); // This cannot be called on include nodes.
-  dispatch_semaphore_wait(_includedNodesCachesReadLock, DISPATCH_TIME_FOREVER);
+  dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
   NSMutableArray *includedNodes = [(NSMutableDictionary *)[_includedNodesCaches objectForKey:rootNode] objectForKey:self];
-  dispatch_semaphore_signal(_includedNodesCachesReadLock);
+  dispatch_semaphore_signal(_includedNodesCachesLock);
   if (includedNodes)
     return includedNodes;
   if (!self.patterns)
@@ -229,16 +227,14 @@ static NSMutableDictionary *_includedNodesCaches;
     }];
   }
   while ([containerNodesIndexes count]);
-  dispatch_semaphore_wait(_includedNodesCachesReadLock, DISPATCH_TIME_FOREVER);
-  dispatch_semaphore_wait(_includedNodesCachesWriteLock, DISPATCH_TIME_FOREVER);
+  dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
   NSMutableDictionary *includedNodesCache = [_includedNodesCaches objectForKey:rootNode];
   if (!includedNodesCache) {
     includedNodesCache = NSMutableDictionary.alloc.init;
   }
   [includedNodesCache setObject:includedNodes forKey:self];
   [_includedNodesCaches setObject:includedNodesCache forKey:rootNode];
-  dispatch_semaphore_signal(_includedNodesCachesWriteLock);
-  dispatch_semaphore_signal(_includedNodesCachesReadLock);
+  dispatch_semaphore_signal(_includedNodesCachesLock);
   return includedNodes;
 }
 

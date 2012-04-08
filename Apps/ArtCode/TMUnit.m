@@ -9,10 +9,7 @@
 #import "TMUnit+Internal.h"
 #import "TMIndex.h"
 #import "TMScope+Internal.h"
-#import "TMTheme.h"
-#import "TMBundle.h"
 #import "TMSymbol.h"
-#import "TMPreference.h"
 #import "TMSyntaxNode.h"
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
