@@ -6,7 +6,7 @@
 //  Copyright 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Kiwi.h>
+#import "ArtCodeTests.h"
 #import "ArtCodeURL.h"
 
 SPEC_BEGIN(ArtCodeURLSpec)

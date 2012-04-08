@@ -46,7 +46,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   NSUInteger _openCount;
 }
 
-@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, codeBuffer = _codeBuffer;
+@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier;
 
 #pragma mark - ACProjectItem
 
@@ -158,8 +158,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:&error];
     if (fileContents) {
       [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        _codeBuffer = CodeBuffer.alloc.init;
-        [_codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
+//        _codeBuffer = CodeBuffer.alloc.init;
+//        [_codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
         if (completionHandler) {
           completionHandler(nil);
         }
@@ -190,8 +190,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
     return;
   }
-  ASSERT(_codeBuffer);
-  NSString *fileContents = _codeBuffer.string;
+//  ASSERT(_codeBuffer);
+//  NSString *fileContents = _codeBuffer.string;
   NSStringEncoding encoding;
   if (_explicitFileEncoding) {
     encoding = [_explicitFileEncoding unsignedIntegerValue];
@@ -200,9 +200,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   __block NSError *error = nil;
   [self.project performAsynchronousFileAccessUsingBlock:^{
-    [fileContents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
+//    [fileContents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
-      _codeBuffer = nil;
+//      _codeBuffer = nil;
       if (completionHandler) {
         completionHandler(error);
       }

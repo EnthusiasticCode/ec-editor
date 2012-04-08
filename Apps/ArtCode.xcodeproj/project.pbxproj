@@ -17,13 +17,13 @@
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */; };
-		B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
-		B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
-		B75533E3152B5DB100C8FFE0 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
-		B75533E4152B5DC700C8FFE0 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
+		B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
+		B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
+		B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
+		B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
@@ -101,10 +101,6 @@
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
-		B7728C5815286B53005EA98A /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
-		B7728C5915286B54005EA98A /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
-		B7728C5A15286CBC005EA98A /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
-		B7728C5B15286CC5005EA98A /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
 		B7728C5C15286EC1005EA98A /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
 		B7728C5D15286EC2005EA98A /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
 		B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
@@ -119,35 +115,9 @@
 		B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
-		B7728CC515289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
-		B7728CC615289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B78C160F15245F6000C66DDC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78C160D15245F6000C66DDC /* InfoPlist.strings */; };
-		B78C161215245F6000C66DDC /* FileBufferSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B78C161115245F6000C66DDC /* FileBufferSpec.m */; };
-		B78C161915245FA800C66DDC /* FileBufferSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B78C161115245F6000C66DDC /* FileBufferSpec.m */; };
-		B78C161F15245FA800C66DDC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78C160D15245F6000C66DDC /* InfoPlist.strings */; };
-		B78C163E152461DB00C66DDC /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B78C163F1524620400C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
-		B78C16401524620900C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
-		B78C16411524620E00C66DDC /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B78C16421524622200C66DDC /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
-		B78C16431524622D00C66DDC /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
-		B78C16441524628F00C66DDC /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160415245F6000C66DDC /* SenTestingKit.framework */; };
-		B78C16471524629E00C66DDC /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160415245F6000C66DDC /* SenTestingKit.framework */; };
-		B78C1692152486B600C66DDC /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160415245F6000C66DDC /* SenTestingKit.framework */; };
-		B78C1694152486B600C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
-		B78C169A152486B600C66DDC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78C1698152486B600C66DDC /* InfoPlist.strings */; };
-		B78C169D152486B600C66DDC /* CodeBufferSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B78C169C152486B600C66DDC /* CodeBufferSpec.m */; };
-		B78C16A41524871500C66DDC /* CodeBufferSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B78C169C152486B600C66DDC /* CodeBufferSpec.m */; };
-		B78C16A61524871500C66DDC /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160415245F6000C66DDC /* SenTestingKit.framework */; };
-		B78C16A81524871500C66DDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B78C160815245F6000C66DDC /* Foundation.framework */; };
-		B78C16AA1524871500C66DDC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B78C1698152486B600C66DDC /* InfoPlist.strings */; };
-		B78C16B31524877D00C66DDC /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B78C16B41524878200C66DDC /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B791F9C415286930000CD9DD /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
-		B791F9C515286930000CD9DD /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -155,24 +125,8 @@
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
 		B7C7E67C15284DB7006AF8F6 /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
-		B7C7E67D15284DB7006AF8F6 /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
-		B7C7E67E15284DB7006AF8F6 /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
-		B7C7E67F15284E5A006AF8F6 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
-		B7C7E68315286080006AF8F6 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7C7E68415286081006AF8F6 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7C7E68515286096006AF8F6 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
-		B7C7E68615286723006AF8F6 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
-		B7C7E68715286724006AF8F6 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
-		B7C7E6881528672C006AF8F6 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
-		B7C7E6891528672D006AF8F6 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
-		B7C7E68C15286748006AF8F6 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7C7E68D15286749006AF8F6 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7CE615B152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
-		B7CE615C152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
-		B7CE615D152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
-		B7CE6191152CADE10019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
-		B7CE6192152CADE60019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
@@ -504,20 +458,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B78C162615245FBB00C66DDC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD7D2AD613C0CD2600B889EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B78C161715245FA800C66DDC;
-			remoteInfo = "FileBufferTests-RunOnBuild";
-		};
-		B78C16B11524875A00C66DDC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD7D2AD613C0CD2600B889EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B78C16A21524871500C66DDC;
-			remoteInfo = "CodeBufferTests-RunOnBuild";
-		};
 		CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
@@ -554,6 +494,9 @@
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
 		B75B575B14B0B62D00053783 /* FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileBuffer.h; sourceTree = "<group>"; };
 		B75B575C14B0B62D00053783 /* FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBuffer.m; sourceTree = "<group>"; };
+		B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileSpec.m; sourceTree = "<group>"; };
+		B75B5B431532423E00A576A9 /* ArtCodeTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTests.h; sourceTree = "<group>"; };
+		B75B5B441532423E00A576A9 /* ArtCodeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTests.m; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
 		B75F658314D868EB008B88C5 /* ArtCodeURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURL.m; sourceTree = "<group>"; };
 		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
@@ -641,21 +584,9 @@
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
 		B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextMateScopeSelectorMatching.m"; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
-		B78C160315245F6000C66DDC /* FileBufferTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FileBufferTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B78C160415245F6000C66DDC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160615245F6000C66DDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B78C160C15245F6000C66DDC /* FileBufferTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FileBufferTests-Info.plist"; sourceTree = "<group>"; };
-		B78C160E15245F6000C66DDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B78C161115245F6000C66DDC /* FileBufferSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FileBufferSpec.m; sourceTree = "<group>"; };
-		B78C161315245F6000C66DDC /* FileBufferTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileBufferTests-Prefix.pch"; sourceTree = "<group>"; };
-		B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FileBufferTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B78C1691152486B600C66DDC /* CodeBufferTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeBufferTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B78C1697152486B600C66DDC /* CodeBufferTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CodeBufferTests-Info.plist"; sourceTree = "<group>"; };
-		B78C1699152486B600C66DDC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B78C169C152486B600C66DDC /* CodeBufferSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeBufferSpec.m; sourceTree = "<group>"; };
-		B78C169E152486B600C66DDC /* CodeBufferTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CodeBufferTests-Prefix.pch"; sourceTree = "<group>"; };
-		B78C16AF1524871500C66DDC /* CodeBufferTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CodeBufferTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1067,50 +998,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B78C15FF15245F6000C66DDC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C163E152461DB00C66DDC /* libKiwi.a in Frameworks */,
-				B78C163F1524620400C66DDC /* Foundation.framework in Frameworks */,
-				B78C16441524628F00C66DDC /* SenTestingKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C161A15245FA800C66DDC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C16411524620E00C66DDC /* libKiwi.a in Frameworks */,
-				B78C16401524620900C66DDC /* Foundation.framework in Frameworks */,
-				B78C16471524629E00C66DDC /* SenTestingKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C168D152486B600C66DDC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C1692152486B600C66DDC /* SenTestingKit.framework in Frameworks */,
-				B78C1694152486B600C66DDC /* Foundation.framework in Frameworks */,
-				B78C16B31524877D00C66DDC /* libKiwi.a in Frameworks */,
-				B7C7E68615286723006AF8F6 /* libCocoaOniguruma.a in Frameworks */,
-				B7CE6191152CADE10019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C16A51524871500C66DDC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C16A61524871500C66DDC /* SenTestingKit.framework in Frameworks */,
-				B78C16A81524871500C66DDC /* Foundation.framework in Frameworks */,
-				B78C16B41524878200C66DDC /* libKiwi.a in Frameworks */,
-				B7C7E68715286724006AF8F6 /* libCocoaOniguruma.a in Frameworks */,
-				B7CE6192152CADE60019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B7EB57AB151B9B7B0031C977 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1394,7 +1281,10 @@
 		B77101281506E20F006AF1FB /* ArtCodeTests */ = {
 			isa = PBXGroup;
 			children = (
+				B75B5B431532423E00A576A9 /* ArtCodeTests.h */,
+				B75B5B441532423E00A576A9 /* ArtCodeTests.m */,
 				B771014F1506E40B006AF1FB /* ACProjectSpec.m */,
+				B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */,
 				CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */,
 				B77101291506E20F006AF1FB /* Supporting Files */,
 			);
@@ -1407,44 +1297,6 @@
 				B771012A1506E20F006AF1FB /* ArtCodeTests-Info.plist */,
 				B771012B1506E20F006AF1FB /* InfoPlist.strings */,
 				B77101311506E20F006AF1FB /* ArtCodeTests-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B78C160A15245F6000C66DDC /* FileBufferTests */ = {
-			isa = PBXGroup;
-			children = (
-				B78C161115245F6000C66DDC /* FileBufferSpec.m */,
-				B78C160B15245F6000C66DDC /* Supporting Files */,
-			);
-			path = FileBufferTests;
-			sourceTree = "<group>";
-		};
-		B78C160B15245F6000C66DDC /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B78C160C15245F6000C66DDC /* FileBufferTests-Info.plist */,
-				B78C160D15245F6000C66DDC /* InfoPlist.strings */,
-				B78C161315245F6000C66DDC /* FileBufferTests-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B78C1695152486B600C66DDC /* CodeBufferTests */ = {
-			isa = PBXGroup;
-			children = (
-				B78C169C152486B600C66DDC /* CodeBufferSpec.m */,
-				B78C1696152486B600C66DDC /* Supporting Files */,
-			);
-			path = CodeBufferTests;
-			sourceTree = "<group>";
-		};
-		B78C1696152486B600C66DDC /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B78C1697152486B600C66DDC /* CodeBufferTests-Info.plist */,
-				B78C1698152486B600C66DDC /* InfoPlist.strings */,
-				B78C169E152486B600C66DDC /* CodeBufferTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1823,8 +1675,6 @@
 			children = (
 				CD7D2AE913C0CD2600B889EE /* ArtCode */,
 				B77101281506E20F006AF1FB /* ArtCodeTests */,
-				B78C160A15245F6000C66DDC /* FileBufferTests */,
-				B78C1695152486B600C66DDC /* CodeBufferTests */,
 				CD7D2AE213C0CD2600B889EE /* Frameworks */,
 				CD7D2AE013C0CD2600B889EE /* Products */,
 			);
@@ -1836,10 +1686,6 @@
 				CD7D2ADF13C0CD2600B889EE /* ArtCode.app */,
 				B77101211506E20F006AF1FB /* ArtCodeTests.octest */,
 				B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */,
-				B78C160315245F6000C66DDC /* FileBufferTests.octest */,
-				B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */,
-				B78C1691152486B600C66DDC /* CodeBufferTests.octest */,
-				B78C16AF1524871500C66DDC /* CodeBufferTests-RunOnBuild.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2231,78 +2077,6 @@
 			productReference = B77101211506E20F006AF1FB /* ArtCodeTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		B78C160215245F6000C66DDC /* FileBufferTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B78C161415245F6100C66DDC /* Build configuration list for PBXNativeTarget "FileBufferTests" */;
-			buildPhases = (
-				B78C15FE15245F6000C66DDC /* Sources */,
-				B78C15FF15245F6000C66DDC /* Frameworks */,
-				B78C160015245F6000C66DDC /* Resources */,
-				B78C160115245F6000C66DDC /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FileBufferTests;
-			productName = FileBufferTests;
-			productReference = B78C160315245F6000C66DDC /* FileBufferTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
-		B78C161715245FA800C66DDC /* FileBufferTests-RunOnBuild */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B78C162115245FA800C66DDC /* Build configuration list for PBXNativeTarget "FileBufferTests-RunOnBuild" */;
-			buildPhases = (
-				B78C161815245FA800C66DDC /* Sources */,
-				B78C161A15245FA800C66DDC /* Frameworks */,
-				B78C161E15245FA800C66DDC /* Resources */,
-				B78C162015245FA800C66DDC /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "FileBufferTests-RunOnBuild";
-			productName = FileBufferTests;
-			productReference = B78C162415245FA800C66DDC /* FileBufferTests-RunOnBuild.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
-		B78C1690152486B600C66DDC /* CodeBufferTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B78C169F152486B600C66DDC /* Build configuration list for PBXNativeTarget "CodeBufferTests" */;
-			buildPhases = (
-				B78C168C152486B600C66DDC /* Sources */,
-				B78C168D152486B600C66DDC /* Frameworks */,
-				B78C168E152486B600C66DDC /* Resources */,
-				B78C168F152486B600C66DDC /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = CodeBufferTests;
-			productName = CodeBufferTests;
-			productReference = B78C1691152486B600C66DDC /* CodeBufferTests.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
-		B78C16A21524871500C66DDC /* CodeBufferTests-RunOnBuild */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B78C16AC1524871500C66DDC /* Build configuration list for PBXNativeTarget "CodeBufferTests-RunOnBuild" */;
-			buildPhases = (
-				B78C16A31524871500C66DDC /* Sources */,
-				B78C16A51524871500C66DDC /* Frameworks */,
-				B78C16A91524871500C66DDC /* Resources */,
-				B78C16AB1524871500C66DDC /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "CodeBufferTests-RunOnBuild";
-			productName = CodeBufferTests;
-			productReference = B78C16AF1524871500C66DDC /* CodeBufferTests-RunOnBuild.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 		B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B7EB57BA151B9B7B0031C977 /* Build configuration list for PBXNativeTarget "ArtCodeTests-RunOnBuild" */;
@@ -2315,8 +2089,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B78C16B21524875A00C66DDC /* PBXTargetDependency */,
-				B78C162715245FBB00C66DDC /* PBXTargetDependency */,
 			);
 			name = "ArtCodeTests-RunOnBuild";
 			productName = "ArtCode Tests";
@@ -2370,10 +2142,6 @@
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 				B77101201506E20F006AF1FB /* ArtCodeTests */,
 				B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */,
-				B78C160215245F6000C66DDC /* FileBufferTests */,
-				B78C161715245FA800C66DDC /* FileBufferTests-RunOnBuild */,
-				B78C1690152486B600C66DDC /* CodeBufferTests */,
-				B78C16A21524871500C66DDC /* CodeBufferTests-RunOnBuild */,
 			);
 		};
 /* End PBXProject section */
@@ -2394,42 +2162,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C160015245F6000C66DDC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C160F15245F6000C66DDC /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C161E15245FA800C66DDC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C161F15245FA800C66DDC /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C168E152486B600C66DDC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B75533E3152B5DB100C8FFE0 /* C.tmbundle in Resources */,
-				B7728C5A15286CBC005EA98A /* Text.tmbundle in Resources */,
-				B78C169A152486B600C66DDC /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C16A91524871500C66DDC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B75533E4152B5DC700C8FFE0 /* C.tmbundle in Resources */,
-				B7728C5B15286CC5005EA98A /* Text.tmbundle in Resources */,
-				B78C16AA1524871500C66DDC /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2695,58 +2427,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
-		B78C160115245F6000C66DDC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		B78C162015245FA800C66DDC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		B78C168F152486B600C66DDC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		B78C16AB1524871500C66DDC /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
 		B7EB57B9151B9B7B0031C977 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2790,60 +2470,8 @@
 				B7728C6515286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C15FE15245F6000C66DDC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C16431524622D00C66DDC /* FileBuffer.m in Sources */,
-				B78C161215245F6000C66DDC /* FileBufferSpec.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C161815245FA800C66DDC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C16421524622200C66DDC /* FileBuffer.m in Sources */,
-				B78C161915245FA800C66DDC /* FileBufferSpec.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C168C152486B600C66DDC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C169D152486B600C66DDC /* CodeBufferSpec.m in Sources */,
-				B7C7E67D15284DB7006AF8F6 /* CodeBuffer.m in Sources */,
-				B7C7E67F15284E5A006AF8F6 /* FileBuffer.m in Sources */,
-				B7C7E68315286080006AF8F6 /* TMUnit.m in Sources */,
-				B7C7E6881528672C006AF8F6 /* TMScope.m in Sources */,
-				B7C7E68D15286749006AF8F6 /* TMSyntaxNode.m in Sources */,
-				B791F9C415286930000CD9DD /* TMBundle.m in Sources */,
-				B7728C5815286B53005EA98A /* NSIndexSet+StringRanges.m in Sources */,
-				B7728CC515289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B75533C7152AE1B100C8FFE0 /* NSString+CStringCaching.m in Sources */,
-				B7CE615C152C86000019B2FC /* Operation.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B78C16A31524871500C66DDC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B78C16A41524871500C66DDC /* CodeBufferSpec.m in Sources */,
-				B7C7E67E15284DB7006AF8F6 /* CodeBuffer.m in Sources */,
-				B7C7E68515286096006AF8F6 /* FileBuffer.m in Sources */,
-				B7C7E68415286081006AF8F6 /* TMUnit.m in Sources */,
-				B7C7E6891528672D006AF8F6 /* TMScope.m in Sources */,
-				B7C7E68C15286748006AF8F6 /* TMSyntaxNode.m in Sources */,
-				B791F9C515286930000CD9DD /* TMBundle.m in Sources */,
-				B7728C5915286B54005EA98A /* NSIndexSet+StringRanges.m in Sources */,
-				B7728CC615289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B75533C8152AE1B200C8FFE0 /* NSString+CStringCaching.m in Sources */,
-				B7CE615D152C86000019B2FC /* Operation.m in Sources */,
+				B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
+				B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2874,6 +2502,8 @@
 				B7728C6415286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */,
+				B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
+				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2987,16 +2617,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B78C162715245FBB00C66DDC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B78C161715245FA800C66DDC /* FileBufferTests-RunOnBuild */;
-			targetProxy = B78C162615245FBB00C66DDC /* PBXContainerItemProxy */;
-		};
-		B78C16B21524875A00C66DDC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B78C16A21524871500C66DDC /* CodeBufferTests-RunOnBuild */;
-			targetProxy = B78C16B11524875A00C66DDC /* PBXContainerItemProxy */;
-		};
 		CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Connection;
@@ -3009,22 +2629,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				B771012C1506E20F006AF1FB /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B78C160D15245F6000C66DDC /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B78C160E15245F6000C66DDC /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B78C1698152486B600C66DDC /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B78C1699152486B600C66DDC /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -3068,138 +2672,6 @@
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		B78C161515245F6100C66DDC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FileBufferTests/FileBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		B78C161615245F6100C66DDC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FileBufferTests/FileBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		B78C162215245FA800C66DDC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FileBufferTests/FileBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		B78C162315245FA800C66DDC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "FileBufferTests/FileBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "FileBufferTests/FileBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		B78C16A0152486B600C66DDC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CodeBufferTests/CodeBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		B78C16A1152486B600C66DDC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CodeBufferTests/CodeBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
-		B78C16AD1524871500C66DDC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CodeBufferTests/CodeBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		B78C16AE1524871500C66DDC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CodeBufferTests/CodeBufferTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "CodeBufferTests/CodeBufferTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
@@ -3405,42 +2877,6 @@
 			buildConfigurations = (
 				B77101331506E20F006AF1FB /* Debug */,
 				B77101341506E20F006AF1FB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B78C161415245F6100C66DDC /* Build configuration list for PBXNativeTarget "FileBufferTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B78C161515245F6100C66DDC /* Debug */,
-				B78C161615245F6100C66DDC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B78C162115245FA800C66DDC /* Build configuration list for PBXNativeTarget "FileBufferTests-RunOnBuild" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B78C162215245FA800C66DDC /* Debug */,
-				B78C162315245FA800C66DDC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B78C169F152486B600C66DDC /* Build configuration list for PBXNativeTarget "CodeBufferTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B78C16A0152486B600C66DDC /* Debug */,
-				B78C16A1152486B600C66DDC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B78C16AC1524871500C66DDC /* Build configuration list for PBXNativeTarget "CodeBufferTests-RunOnBuild" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B78C16AD1524871500C66DDC /* Debug */,
-				B78C16AE1524871500C66DDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

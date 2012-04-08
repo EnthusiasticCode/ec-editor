@@ -6,7 +6,7 @@
 //  Copyright 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Kiwi.h>
+#import "ArtCodeTests.h"
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
@@ -14,12 +14,6 @@
 #import "ACProjectRemote.h"
 
 #import "NSURL+Utilities.h"
-
-static void clearProjectsDirectory(void);
-
-// Redefine the default timeout because my iMac is so slow
-#undef kKW_DEFAULT_PROBE_TIMEOUT
-#define kKW_DEFAULT_PROBE_TIMEOUT 10
 
 SPEC_BEGIN(ACProjectSpec)
 
@@ -900,11 +894,3 @@ describe(@"An existing ACProject", ^{
 });
 
 SPEC_END
-
-// this is just debug code so ignore the warnings
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-void clearProjectsDirectory(void) {
-  [ACProject performSelector:@selector(_removeAllProjects)];
-}
-#pragma clang diagnostic pop

@@ -7,9 +7,15 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark, CodeBuffer;
+@class ACProjectFileBookmark, CodeBuffer, TMSyntaxNode, TMScope, TMTheme;
+@protocol TMCompletionResultSet, ACProjectFilePresenter;
 
 @interface ACProjectFile : ACProjectFileSystemItem
+
+/// Presenters are retained by the receiver, so each add must be balanced by a remove to avoid retain cycles
+- (void)addPresenter:(id<ACProjectFilePresenter>)presenter;
+- (void)removePresenter:(id<ACProjectFilePresenter>)presenter;
+- (NSArray *)presenters;
 
 #pragma mark File metadata
 /// @name File metadata
@@ -34,8 +40,43 @@
 /// Closes the file.
 - (void)closeWithCompletionHandler:(void(^)(NSError *error))completionHandler;
 
-/// This returns a code file with the project file's contents.
-@property (nonatomic, strong, readonly) CodeBuffer *codeBuffer;
+- (NSUInteger)length;
+- (NSString *)string;
+- (NSString *)substringWithRange:(NSRange)range;
+- (NSAttributedString *)attributedString;
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)range;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
+
+- (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range;
+- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
+- (void)removeAttribute:(NSString *)name range:(NSRange)range;
+
+#pragma mark Managing semantic content
+
+/// The syntax used to interpret the file's contents.
+/// Will be autodetected if not set.
+@property (nonatomic, strong) TMSyntaxNode *syntax;
+
+/// The theme used to color the source code.
+/// The default theme will be used if not set.
+@property (nonatomic, strong) TMTheme *theme;
+
+/// An array of TMSymbol objects representing all the symbols in the file.
+@property (nonatomic, strong, readonly) NSArray *symbolList;
+
+/// Warnings, errors and other diagnostics in the file.
+@property (nonatomic, strong, readonly) NSArray *diagnostics;
+
+/// Returns a copy of the deepest scope at the specified offset
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
+
+/// Returns the possible completions at a given insertion point in the unit's main source file.
+- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
 
 #pragma mark Managing file bookmarks
 /// @name Managing file bookmarks
@@ -48,5 +89,13 @@
 
 /// Get a bookmark in this file with the given point if present.
 - (ACProjectFileBookmark *)bookmarkForPoint:(id)point;
+
+@end
+
+@protocol ACProjectFilePresenter <NSObject>
+
+@optional
+- (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+- (void)projectFile:(ACProjectFile *)projectFile didChangeAttributesInRange:(NSRange)range;
 
 @end
