@@ -15,7 +15,8 @@
 
 #import "ACProjectFileBookmark.h"
 
-#import "CodeBuffer.h"
+#import "TMUnit.h"
+#import "TMTheme.h"
 
 
 static NSString * const _plistFileEncodingKey = @"fileEncoding";
@@ -42,11 +43,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark -
 
 @implementation ACProjectFile {
+  NSMutableSet *_presenters;
   NSMutableDictionary *_bookmarks;
   NSUInteger _openCount;
+  NSMutableAttributedString *_contents;
+  TMUnit *_codeUnit;
 }
 
-@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier;
+@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
 
 #pragma mark - ACProjectItem
 
@@ -99,6 +103,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
   }
   
+  _presenters = NSMutableSet.alloc.init;
+  
   NSNumber *fileSize = nil;
   [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
   _fileSize = [fileSize unsignedIntegerValue];
@@ -139,6 +145,32 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return YES;
 }
 
+- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
+  NSString *contents = _contents.string;
+  NSStringEncoding encoding;
+  if (_explicitFileEncoding) {
+    encoding = [_explicitFileEncoding unsignedIntegerValue];
+  } else {
+    encoding = NSUTF8StringEncoding;
+  }
+  [contents writeToURL:url atomically:YES encoding:encoding error:error];
+  return [super writeToURL:url error:error];
+}
+
+#pragma mark - Public Methods
+
+- (void)addPresenter:(id<ACProjectFilePresenter>)presenter {
+  [_presenters addObject:presenter];
+}
+
+- (void)removePresenter:(id<ACProjectFilePresenter>)presenter {
+  [_presenters removeObject:presenter];
+}
+
+- (NSArray *)presenters {
+  return _presenters.allObjects;
+}
+
 #pragma mark - Accessing the content
 
 - (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
@@ -153,13 +185,20 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   } else {
     encoding = NSUTF8StringEncoding;
   }
+  __block TMTheme *theme = self.theme;
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
-    NSString *fileContents = [NSString stringWithContentsOfURL:self.fileURL encoding:encoding error:&error];
-    if (fileContents) {
+    if (!theme) {
+      theme = [TMTheme defaultTheme];
+    }
+    NSMutableAttributedString *contents = [NSMutableAttributedString.alloc initWithString:[NSString.alloc initWithContentsOfURL:self.fileURL encoding:encoding error:&error] attributes:theme.commonAttributes];
+    NSURL *fileURL = self.fileURL;
+    if (contents) {
       [NSOperationQueue.mainQueue addOperationWithBlock:^{
-//        _codeBuffer = CodeBuffer.alloc.init;
-//        [_codeBuffer replaceCharactersInRange:NSMakeRange(0, 0) withString:fileContents];
+        _contents = contents;
+        _theme = theme;
+        ++_openCount;
+        _codeUnit = [TMUnit.alloc initWithFileBuffer:(FileBuffer *)self fileURL:fileURL index:nil];
         if (completionHandler) {
           completionHandler(nil);
         }
@@ -190,8 +229,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
     return;
   }
-//  ASSERT(_codeBuffer);
-//  NSString *fileContents = _codeBuffer.string;
+  NSString *contents = _contents.string;
   NSStringEncoding encoding;
   if (_explicitFileEncoding) {
     encoding = [_explicitFileEncoding unsignedIntegerValue];
@@ -200,15 +238,119 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   __block NSError *error = nil;
   [self.project performAsynchronousFileAccessUsingBlock:^{
-//    [fileContents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
+    [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
-//      _codeBuffer = nil;
       if (completionHandler) {
         completionHandler(error);
       }
     }];
   }];
 }
+
+- (NSUInteger)length {
+  ASSERT(_openCount);
+  return _contents.length;
+}
+
+- (NSString *)string {
+  ASSERT(_openCount);
+  return _contents.string;
+}
+
+- (NSString *)substringWithRange:(NSRange)range {
+  ASSERT(_openCount);
+  return [_contents.string substringWithRange:range];
+}
+
+- (NSRange)lineRangeForRange:(NSRange)range {
+  ASSERT(_openCount);
+  return [_contents.string lineRangeForRange:range];
+}
+
+- (NSAttributedString *)attributedString {
+  ASSERT(_openCount);
+  return _contents.copy;
+}
+
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)range {
+  ASSERT(_openCount);
+  return [_contents attributedSubstringFromRange:range];
+}
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range {
+  ASSERT(_openCount);
+  return [_contents attribute:attrName atIndex:location effectiveRange:range];
+}
+
+- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit {
+  ASSERT(_openCount);
+  return [_contents attribute:attrName atIndex:location longestEffectiveRange:range inRange:rangeLimit];
+}
+
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range {
+  ASSERT(_openCount);
+  return [_contents attributesAtIndex:location effectiveRange:range];
+}
+
+- (NSDictionary *)attributesAtIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit {
+  ASSERT(_openCount);
+  return [_contents attributesAtIndex:location longestEffectiveRange:range inRange:rangeLimit];
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string {
+  ASSERT(_openCount);
+  NSAttributedString *attributedString = [NSAttributedString.alloc initWithString:string attributes:self.theme.commonAttributes];
+  [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+}
+
+- (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range {
+  ASSERT(_openCount);
+  [_contents addAttribute:name value:value range:range];
+}
+
+- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range {
+  ASSERT(_openCount);
+  [_contents addAttributes:attributes range:range];
+}
+
+- (void)removeAttribute:(NSString *)name range:(NSRange)range {
+  ASSERT(_openCount);
+  [_contents removeAttribute:name range:range];
+}
+
+#pragma mark - Managing semantic content
+
+- (TMSyntaxNode *)syntax {
+  ASSERT(_openCount);
+  return _codeUnit.syntax;
+}
+
+- (void)setSyntax:(TMSyntaxNode *)syntax {
+  ASSERT(_openCount);
+  [_codeUnit setSyntax:syntax];
+}
+
+- (void)setTheme:(TMTheme *)theme {
+  if (theme == _theme) {
+    return;
+  }
+  _theme = theme;
+  if (_openCount) {
+    [_contents setAttributes:theme.commonAttributes range:NSMakeRange(0, _contents.length)];
+  }
+}
+
+- (NSArray *)symbolList {
+  ASSERT(_openCount);
+  return _codeUnit.symbolList;
+}
+
+- (NSArray *)diagnostics {
+  ASSERT(_openCount);
+  return _codeUnit.diagnostics;
+}
+
+
 
 #pragma mark - Managing file bookmarks
 

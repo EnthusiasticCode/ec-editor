@@ -12,6 +12,8 @@
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
+		B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
+		B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
@@ -24,6 +26,16 @@
 		B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
 		B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
 		B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
+		B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
+		B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
+		B75B5B8E15337A4800A576A9 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
+		B75B5B8F15337A4800A576A9 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
+		B75B5B9015337A4800A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
+		B75B5B9115337A4800A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
+		B75B5B9215337A6400A576A9 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
+		B75B5B9315337A6400A576A9 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
+		B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
+		B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
@@ -2161,6 +2173,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B75B5B8E15337A4800A576A9 /* C.tmbundle in Resources */,
+				B75B5B8F15337A4800A576A9 /* HTML.tmbundle in Resources */,
+				B75B5B9015337A4800A576A9 /* Amy.tmTheme in Resources */,
+				B75B5B9115337A4800A576A9 /* Mac Classic.tmTheme in Resources */,
 				B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2169,6 +2185,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B75B5B9215337A6400A576A9 /* C.tmbundle in Resources */,
+				B75B5B9315337A6400A576A9 /* HTML.tmbundle in Resources */,
+				B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */,
+				B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */,
 				B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2472,6 +2492,8 @@
 				B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */,
 				B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */,
+				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
+				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2504,6 +2526,8 @@
 				B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */,
 				B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
+				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
+				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

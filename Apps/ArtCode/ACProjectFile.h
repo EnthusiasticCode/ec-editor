@@ -43,6 +43,7 @@
 - (NSUInteger)length;
 - (NSString *)string;
 - (NSString *)substringWithRange:(NSRange)range;
+- (NSRange)lineRangeForRange:(NSRange)range;
 - (NSAttributedString *)attributedString;
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)range;
 - (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;

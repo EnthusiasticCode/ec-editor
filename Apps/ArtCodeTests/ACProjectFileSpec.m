@@ -12,6 +12,7 @@
 #import "ACProjectFile.h"
 #import "TMSyntaxNode.h"
 #import "TMScope.h"
+#import "TMTheme.h"
 
 
 SPEC_BEGIN(ACProjectFileSpec)
@@ -44,11 +45,18 @@ describe(@"A new empty ACProjectFile", ^{
       file = newFile;
     }];
     [[expectFutureValue(file) shouldEventually] beNonNil];
+    __block BOOL open = NO;
+    [file openWithCompletionHandler:^(NSError *error) {
+      [error shouldBeNil];
+      open = YES;
+    }];
+    [[expectFutureValue(theValue(open)) shouldEventually] beYes];
   });
   
   afterEach(^{
+    [file closeWithCompletionHandler:nil];
     [file remove];
-    [[theValue(project.contentsFolder.children.count) should] beZero];
+    [[expectFutureValue(theValue(project.contentsFolder.children.count)) shouldEventually] beZero];
   });
   
   it(@"begins empty", ^{
@@ -62,31 +70,31 @@ describe(@"A new empty ACProjectFile", ^{
     [[file.attributedString.string should] equal:testString];
   });
   
-//  it(@"begins without default attributes", ^{
-//    [[theValue(file.defaultAttributes.count) should] beZero];
-//  });
-//  
-//  it(@"can change it's default attributes", ^{
-//    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttributeName"];
-//    file.defaultAttributes = attributes;
-//    [[file.defaultAttributes should] equal:attributes];
-//  });
-//  
-//  it(@"applies default attributes to new text", ^{
-//    NSString *testString = @"test";
-//    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttributeName"];
-//    file.defaultAttributes = attributes;
-//    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
-//    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:attributes]];
-//  });
-//  
-//  it(@"applies default attributes to existing text", ^{
-//    NSString *testString = @"test";
-//    NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttributeName"];
-//    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
-//    file.defaultAttributes = attributes;
-//    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:attributes]];
-//  });
+  it(@"begins with a default theme", ^{
+    [[theValue(file.theme) should] beNonNil];
+  });
+  
+  it(@"can change it's theme", ^{
+    TMTheme *newTheme = [TMTheme themeWithName:@"Amy" bundle:[NSBundle bundleForClass:[TMTheme class]]];
+    file.theme = newTheme;
+    [[file.theme should] equal:newTheme];
+  });
+  
+  it(@"applies common attributes to new text", ^{
+    TMTheme *newTheme = [TMTheme themeWithName:@"Amy" bundle:[NSBundle bundleForClass:[TMTheme class]]];
+    NSString *testString = @"test";
+    file.theme = newTheme;
+    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
+    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
+  });
+  
+  it(@"applies default attributes to existing text", ^{
+    TMTheme *newTheme = [TMTheme themeWithName:@"Amy" bundle:[NSBundle bundleForClass:[TMTheme class]]];
+    NSString *testString = @"test";
+    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
+    file.theme = newTheme;
+    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
+  });
   
   it(@"begins without file presenters", ^{
     [[theValue(file.presenters.count) should] beZero];
@@ -136,14 +144,14 @@ describe(@"A new empty ACProjectFile", ^{
   });
   
   it(@"has a plain text syntax by default", ^{
-    [[expectFutureValue(file.syntax) shouldEventually] beNonNil];
+    [[file.syntax should] beNonNil];
     [[file.syntax.name should] equal:@"Plain Text"];
   });
   
   context(@"with the default syntax", ^{
     
     beforeEach(^{
-      [[expectFutureValue(file.syntax) shouldEventually] beNonNil];
+      [[file.syntax should] beNonNil];
       [[file.syntax.name should] equal:@"Plain Text"];
     });
     
