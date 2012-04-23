@@ -127,15 +127,20 @@ describe(@"A new empty ACProjectFile", ^{
       [[theValue(file.presenters.count) should] beZero];
     });
     
-    it(@"calls the replace callback", ^{
+    it(@"calls the replace callbacks", ^{
+      [mockFilePresenter stub:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)];
       [mockFilePresenter stub:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)];
+      [[mockFilePresenter should] receive:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:) withCount:1];
       [[mockFilePresenter should] receive:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:) withCount:1];
       [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
     });
     
-    it(@"calls the attribute callback", ^{
+    it(@"calls the attribute callbacks", ^{
+      [mockFilePresenter stub:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)];
+      [mockFilePresenter stub:@selector(projectFile:willChangeAttributesInRange:)];
       [mockFilePresenter stub:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)];
       [mockFilePresenter stub:@selector(projectFile:didChangeAttributesInRange:)];
+      [[mockFilePresenter should] receive:@selector(projectFile:willChangeAttributesInRange:) withCount:1];
       [[mockFilePresenter should] receive:@selector(projectFile:didChangeAttributesInRange:) withCount:1];
       [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
       [file addAttributes:[NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttribute"] range:NSMakeRange(0, 5)];
