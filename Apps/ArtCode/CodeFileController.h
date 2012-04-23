@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FileBuffer.h"
 #import "CodeView.h"
 #import "CodeFileMinimapView.h"
+#import "ACProjectFile.h"
 #import "TMKeyboardAction.h"
 
-@class ArtCodeTab, ACProjectFile, TMTheme, TMUnit;
+@class ArtCodeTab, TMTheme, TMUnit;
 
-@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, FileBufferPresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
+@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, ACProjectFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
 #pragma mark - Controller's location
 

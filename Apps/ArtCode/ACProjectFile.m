@@ -198,7 +198,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         _contents = contents;
         _theme = theme;
         ++_openCount;
-        _codeUnit = [TMUnit.alloc initWithFileBuffer:self fileURL:fileURL index:nil];
+        _codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
         if (completionHandler) {
           completionHandler(nil);
         }

@@ -15,7 +15,6 @@
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "Operation.h"
-#import "ACProjectFile.h"
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -46,9 +45,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface ReparseOperation : Operation
 
-- (id)initWithFileBuffer:(ACProjectFile *)projectFile rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
-- (void)_generateScopes;
-- (void)_processChanges;
+- (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void(^)(BOOL success))completionHandler;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope;
@@ -57,17 +54,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark -
 
-@interface Change : NSObject
-{
-  @package
-  NSRange oldRange;
-  NSRange newRange;
-}
-@end
-
-#pragma mark -
-
-@interface TMUnit () <ACProjectFilePresenter>
+@interface TMUnit ()
 
 @property (nonatomic, strong) AutodetectSyntaxOperation *autodetectSyntaxOperation;
 @property (nonatomic, strong) ReparseOperation *reparseOperation;
@@ -84,17 +71,12 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @implementation TMUnit {
   NSOperationQueue *_internalQueue;
-
-  ACProjectFile *_projectFile;
+  
+  NSMutableString *_contents;
   
   TMScope *_rootScope;
   
-  dispatch_semaphore_t _pendingChangesLock;
-  NSMutableArray *_pendingChanges;
-  
   NSMutableArray *_queuedBlocks;
-  
-  NSMutableIndexSet *_unparsedRanges;
   
   NSMutableDictionary *_extensions;
 }
@@ -114,50 +96,27 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (id)init {
-  return [self initWithFileBuffer:nil fileURL:nil index:nil];
+  return [self initWithFileURL:nil index:nil];
 }
 
 - (void)dealloc {
   [_internalQueue cancelAllOperations];
 }
 
-#pragma mark - FileBufferPresenter
-
-- (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  Change *change = Change.alloc.init;
-  change->oldRange = range;
-  change->newRange = NSMakeRange(range.location, string.length);
-  dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  [_pendingChanges addObject:change];
-  dispatch_semaphore_signal(_pendingChangesLock);
-  [self _setHasPendingChanges];    
-}
-
 #pragma mark - Public Methods
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
   [_internalQueue cancelAllOperations];
-  [_projectFile removePresenter:self];
-  _pendingChanges = nil;
-  _unparsedRanges = nil;
   _rootScope = nil;
   
   _syntax = syntax;
-    
+  
   if (_syntax) {
     _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
   }
   
   if (_syntax) {
-    _pendingChanges = NSMutableArray.alloc.init;
-    _unparsedRanges = NSMutableIndexSet.alloc.init;
-    Change *firstChange = Change.alloc.init;
-    firstChange->oldRange = NSMakeRange(0, 0);
-    firstChange->newRange = NSMakeRange(0, _projectFile.length);
-    [_pendingChanges addObject:firstChange];
     [self _queueReparseOperation];
-    [_projectFile addPresenter:self];
   }
   self.autodetectSyntaxOperation = nil;
 }
@@ -170,17 +129,16 @@ static OnigRegexp *_namedCapturesRegexp;
   return NSArray.alloc.init;
 }
 
-- (id)initWithFileBuffer:(ACProjectFile *)projectFile fileURL:(NSURL *)fileURL index:(TMIndex *)index {
+- (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(projectFile || fileURL);
   self = [super init];
   if (!self) {
     return nil;
   }
   
-  _projectFile = projectFile;
+  // TODO URI load the contents from the file
   
-  _pendingChangesLock = dispatch_semaphore_create(1);
+  _contents = NSMutableString.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
@@ -201,13 +159,8 @@ static OnigRegexp *_namedCapturesRegexp;
   
   // Detect the syntax on the background queue so we don't initialize TMSyntaxNode on the main queue
   __weak TMUnit *weakSelf = self;
+  // TODO URI load the first line from the file
   NSString *firstLine = nil;
-  if (projectFile) {
-    NSRange firstLineRange = [projectFile lineRangeForRange:NSMakeRange(0, 0)];
-    if (firstLineRange.length) {
-      firstLine = [projectFile substringWithRange:firstLineRange];
-    }
-  }
   _autodetectSyntaxOperation = [AutodetectSyntaxOperation.alloc initWithFileURL:fileURL firstLine:firstLine completionHandler:^(BOOL success) {
     if (success) {
       weakSelf.syntax = weakSelf.autodetectSyntaxOperation.syntax;
@@ -322,35 +275,20 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_queueReparseOperation {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-
+  
   TMUnit *weakSelf = self;
-  self.reparseOperation = [ReparseOperation.alloc initWithFileBuffer:_projectFile rootScope:_rootScope pendingChanges:_pendingChanges pendingChangesLock:_pendingChangesLock unparsedRanges:_unparsedRanges completionHandler:^(BOOL success) {
+  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_contents.copy rootScope:_rootScope completionHandler:^(BOOL success) {
     // If the operation was cancelled we don't need to do anything
     if (!success) {
       return;
     }
-    
-    TMUnit *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    
-    // If we have pending changes, we need to rerun the operation
-    dispatch_semaphore_wait(strongSelf->_pendingChangesLock, DISPATCH_TIME_FOREVER);
-    if (strongSelf->_pendingChanges.count) {
-      [strongSelf _queueReparseOperation];
-      dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
-      return;
-    } else {
-      dispatch_semaphore_signal(strongSelf->_pendingChangesLock);
-      strongSelf.reparseOperation = nil;
-    }
+    weakSelf.reparseOperation = nil;
   }];
   [_internalQueue addOperation:self.reparseOperation];
 }
 
 @end
-   
+
 #pragma mark -
 
 @implementation AutodetectSyntaxOperation {
@@ -411,127 +349,24 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark -
 
 @implementation ReparseOperation {
-  ACProjectFile *_projectFile;
+  NSString *_contents;
   TMScope *_rootScope;
-  dispatch_semaphore_t _pendingChangesLock;
-  NSMutableArray *_pendingChanges;
-  NSMutableIndexSet *_unparsedRanges;
 }
 
 #pragma mark - NSOperation
 
 - (void)main {  
-  // The whole operation is wrapped in this lock. Remember to signal it if we return early from it.
-  // The root scope is inconsistent with the projectFile while we're running it, so the codeUnit should not be accessing it anyway.
-  [self _generateScopes];
-}
-
-#pragma mark - Operation
-
-- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  return [self initWithFileBuffer:nil rootScope:nil pendingChanges:nil pendingChangesLock:NULL unparsedRanges:nil completionHandler:nil];
-}
-
-#pragma mark - Public Methods
-
-- (id)initWithFileBuffer:(ACProjectFile *)projectFile rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(projectFile && rootScope && pendingChanges && pendingChangesLock && unparsedRanges);
-  self = [super initWithCompletionHandler:completionHandler];
-  if (!self) {
-    return nil;
-  }
-  _projectFile = projectFile;
-  _rootScope = rootScope;
-  _pendingChanges = pendingChanges;
-  _pendingChangesLock = pendingChangesLock;
-  _unparsedRanges = unparsedRanges;
-  return self;
-}
-
-#pragma mark - Private Methods
-
-- (void)_generateScopes {
-  NSMutableArray *scopeStack = nil;
-    
-  for (;;) {
+  NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
+  // Get the next unparsed range
+  NSRange lineRange = [_contents lineRangeForRange:NSMakeRange(0, 0)];
+  while (lineRange.length) {
+    OPERATION_RETURN_IF_CANCELLED;    
+    NSString *line = [_contents substringWithRange:lineRange];
     OPERATION_RETURN_IF_CANCELLED;
-
-    // First of all, we apply all the pending changes to the scope tree and the unparsed ranges
-    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-    [self _processChanges];
-    dispatch_semaphore_signal(_pendingChangesLock);
-    
-    OPERATION_RETURN_IF_CANCELLED;
-    
-    // Get the next unparsed range
-    NSRange unparsedRange = [_unparsedRanges firstRange];
-    
-    // Get the first line range
-    NSRange lineRange = [_projectFile lineRangeForRange:NSMakeRange(unparsedRange.location, 0)];
-    // Check if we got a valid range, if we didn't, we're done parsing
-    if (!lineRange.length || NSMaxRange(lineRange) == unparsedRange.location) {
-      break;
-    }
-    
-    OPERATION_RETURN_IF_CANCELLED;
-    
-    // Setup the scope stack
-    if (!scopeStack) {
-      scopeStack = [_rootScope scopeStackAtOffset:lineRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
-      ASSERT(scopeStack);
-    }
-    
-    OPERATION_RETURN_IF_CANCELLED;
-    
-    // Mark the whole line as unparsed so we don't miss parts of it if we get interrupted
-    [_unparsedRanges addIndexesInRange:lineRange];
-    
-    // Delete all scopes in the line
-    [_rootScope removeChildScopesInRange:lineRange];
-    
-    OPERATION_RETURN_IF_CANCELLED;
-    
-    // Setup the line
-    NSString *line = nil;
-    @try {
-      line = [_projectFile substringWithRange:lineRange];
-    } @catch (NSException *exception) {
-      // If we get an exception it's probably because the projectFile was changed, just restart the loop in that case
-      continue;
-    }
-    
-    OPERATION_RETURN_IF_CANCELLED;
-    
-    // Parse the line
     [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
-    
     OPERATION_RETURN_IF_CANCELLED;
-    
-    // Stretch all remaining scopes to cover to the end of the line
-    for (TMScope *scope in scopeStack)
-    {
-      NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
-      if (stretchedLength > scope.length)
-        scope.length = stretchedLength;
-    }
-    
-    OPERATION_RETURN_IF_CANCELLED;
-
-    // Remove the line range from the unparsed ranges
-    [_unparsedRanges removeIndexesInRange:lineRange];
-    
-    // If we're at the end of the unparsed range attempt to merge the scopes with the subsequent parsed range.
-    NSUInteger lineEnd = NSMaxRange(lineRange);
-    if (lineEnd >= NSMaxRange(unparsedRange)) {
-      // If the merge is successful, reset the scope stack for the next unparsed range, otherwise add the end of the line to the unparsed ranges and continue from there
-      if ([_rootScope attemptMergeAtOffset:lineEnd]) {
-        scopeStack = nil;
-      } else {
-        [_unparsedRanges addIndex:lineEnd];
-      }
-    }
+    lineRange = [_contents lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
   }
-  
 #if DEBUG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -540,29 +375,26 @@ static OnigRegexp *_namedCapturesRegexp;
 #endif
 }
 
-- (void)_processChanges {
-  ASSERT(dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_NOW));
-  
-  // Process the pending changes.
-  // Unlock / relock within the loop so we don't block the pending changes too long at the time and also get rapid subsequent changes i.e. when someone is typing.
-  while ([_pendingChanges count]) {
-    Change *currentChange = [_pendingChanges objectAtIndex:0];
-    [_pendingChanges removeObjectAtIndex:0];
-    dispatch_semaphore_signal(_pendingChangesLock);
-    // Save the change's generation as our starting generation, because new changes might be queued at any time outside of the lock, and we'd apply them too late then
-    NSRange oldRange = currentChange->oldRange;
-    NSRange newRange = currentChange->newRange;
-    ASSERT(oldRange.location == newRange.location);
-    // Adjust the scope tree to account for the change
-    [_rootScope shiftByReplacingRange:oldRange withRange:newRange];
-    // Replace the ranges in the unparsed ranges, add a placeholder if the change was a deletion so we know the part right after the deletion needs to be reparsed
-    [_unparsedRanges replaceIndexesInRange:oldRange withIndexesInRange:newRange];
-    if (!newRange.length) {
-      [_unparsedRanges addIndex:newRange.location];
-    }
-    dispatch_semaphore_wait(_pendingChangesLock, DISPATCH_TIME_FOREVER);
-  }
+#pragma mark - Operation
+
+- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
+  return [self initWithFileContents:nil rootScope:nil completionHandler:nil];
 }
+
+#pragma mark - Public Methods
+
+- (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void (^)(BOOL))completionHandler {
+  ASSERT(contents && rootScope);
+  self = [super initWithCompletionHandler:completionHandler];
+  if (!self) {
+    return nil;
+  }
+  _contents = contents;
+  _rootScope = rootScope;
+  return self;
+}
+
+#pragma mark - Private Methods
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack {
   line = [line stringByCachingCString];

@@ -10,7 +10,6 @@
 #import "SingleTabController.h"
 
 #import "CodeFileController.h"
-#import "CodeBuffer.h"
 #import "ACProjectFile.h"
 #import "NSTimer+BlockTimer.h"
 #import "CodeView.h"
@@ -20,7 +19,6 @@
 #import "CodeFileSearchOptionsController.h"
 
 #import <CocoaOniguruma/OnigRegexp.h>
-#import "OnigRegexp+FileBuffer.h"
 
 static NSString * findFilterPassBlockKey = @"findFilterPass";
 
@@ -238,7 +236,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
   }
   
-  NSUInteger replacementsCount = [self.searchFilter replaceMatchesInFileBuffer:self.targetCodeFileController.projectFile.codeBuffer withTemplate:replacementString];
+  // TODO URI implement OnigRegexp support in projectFile
+  NSUInteger replacementsCount = 0; //[self.searchFilter replaceMatchesInFileBuffer:self.targetCodeFileController.projectFile withTemplate:replacementString];
   
   [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
   
@@ -342,7 +341,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   self.searchFilter = [OnigRegexp compile:filterString options:0 error:NULL];
   NSArray *matches = nil;
   if (self.searchFilter != nil) {
-    matches = [self.searchFilter matchesInFileBuffer:self.targetCodeFileController.projectFile.codeBuffer];
+    // TODO URI implement OnigRegexp support in projectFile
+    matches = NSArray.alloc.init;// [self.searchFilter matchesInFileBuffer:self.targetCodeFileController.projectFile];
   }
   
   self.searchFilterMatches = matches;

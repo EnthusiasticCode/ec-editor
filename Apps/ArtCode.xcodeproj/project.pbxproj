@@ -17,7 +17,6 @@
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
-		B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
@@ -492,8 +491,6 @@
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
 		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
-		B755339D1529968E00C8FFE0 /* OnigRegexp+FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OnigRegexp+FileBuffer.h"; sourceTree = "<group>"; };
-		B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OnigRegexp+FileBuffer.m"; sourceTree = "<group>"; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
@@ -1318,8 +1315,6 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B755339D1529968E00C8FFE0 /* OnigRegexp+FileBuffer.h */,
-				B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
@@ -2613,7 +2608,6 @@
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */,
 				B7CE615B152C86000019B2FC /* Operation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
