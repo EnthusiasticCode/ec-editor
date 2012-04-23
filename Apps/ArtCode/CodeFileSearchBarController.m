@@ -206,9 +206,10 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   OnigResult *match = [self.searchFilterMatches objectAtIndex:_searchFilterMatchesLocation];
   NSString *replacementString = self.replaceTextField.text;
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
-    replacementString = [OnigRegexp escapedTemplateForString:replacementString];
+    // TODO URI use OnigRegExp instead
+    replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
   }
-  replacementString = [match replacementWithTemplate:replacementString];
+  replacementString = [match stringForReplacementTemplate:replacementString];
   
   [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
   [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -233,7 +234,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   
   NSString *replacementString = self.replaceTextField.text;
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
-    replacementString = [OnigRegexp escapedTemplateForString:replacementString];
+    // TODO URI use OnigRegExp instead
+    replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
   }
   
   NSUInteger replacementsCount = [self.searchFilter replaceMatchesInFileBuffer:self.targetCodeFileController.projectFile.codeBuffer withTemplate:replacementString];
@@ -322,7 +324,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSMutableString *modifiedFilterString = nil;
     if (options & NSRegularExpressionIgnoreMetacharacters) {
       options &= ~NSRegularExpressionIgnoreMetacharacters;
-      modifiedFilterString = [[OnigRegexp escapedExpressionForString:filterString] mutableCopy];
+      // TODO URI use OnigRegExp instead
+      modifiedFilterString = [[NSRegularExpression escapedPatternForString:filterString] mutableCopy];
     } else {
       modifiedFilterString = [filterString mutableCopy];
     }
