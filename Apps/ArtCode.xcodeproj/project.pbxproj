@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
-		B7072B33150FF46D00580855 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -21,7 +20,6 @@
 		B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B755339E1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
 		B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
 		B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
@@ -113,8 +111,6 @@
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
-		B7728C5C15286EC1005EA98A /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
-		B7728C5D15286EC2005EA98A /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
 		B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7728C5F15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7728C6015286EE3005EA98A /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
@@ -136,7 +132,6 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
-		B7C7E67C15284DB7006AF8F6 /* CodeBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */; };
 		B7CE615B152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
@@ -257,7 +252,6 @@
 		B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
 		B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
-		B7EB57A2151B9B7B0031C977 /* FileBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B575C14B0B62D00053783 /* FileBuffer.m */; };
 		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
@@ -504,8 +498,6 @@
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
-		B75B575B14B0B62D00053783 /* FileBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileBuffer.h; sourceTree = "<group>"; };
-		B75B575C14B0B62D00053783 /* FileBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileBuffer.m; sourceTree = "<group>"; };
 		B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileSpec.m; sourceTree = "<group>"; };
 		B75B5B431532423E00A576A9 /* ArtCodeTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTests.h; sourceTree = "<group>"; };
 		B75B5B441532423E00A576A9 /* ArtCodeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTests.m; sourceTree = "<group>"; };
@@ -608,8 +600,6 @@
 		B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
-		B7C7E67A15284DB7006AF8F6 /* CodeBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBuffer.h; sourceTree = "<group>"; };
-		B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeBuffer.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
 		B7CE6159152C86000019B2FC /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operation.h; sourceTree = "<group>"; };
 		B7CE615A152C86000019B2FC /* Operation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Operation.m; sourceTree = "<group>"; };
@@ -1090,10 +1080,6 @@
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
-				B75B575B14B0B62D00053783 /* FileBuffer.h */,
-				B75B575C14B0B62D00053783 /* FileBuffer.m */,
-				B7C7E67A15284DB7006AF8F6 /* CodeBuffer.h */,
-				B7C7E67B15284DB7006AF8F6 /* CodeBuffer.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -2480,10 +2466,8 @@
 				CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */,
 				CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */,
 				CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */,
-				B7072B33150FF46D00580855 /* FileBuffer.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 				B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */,
-				B7728C5D15286EC2005EA98A /* CodeBuffer.m in Sources */,
 				B7728C5F15286ED3005EA98A /* TMUnit.m in Sources */,
 				B7728C6115286EE4005EA98A /* TMSyntaxNode.m in Sources */,
 				B7728C6315286EE9005EA98A /* TMScope.m in Sources */,
@@ -2514,10 +2498,8 @@
 				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
 				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
 				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
-				B7EB57A2151B9B7B0031C977 /* FileBuffer.m in Sources */,
 				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
 				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
-				B7728C5C15286EC1005EA98A /* CodeBuffer.m in Sources */,
 				B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */,
 				B7728C6015286EE3005EA98A /* TMSyntaxNode.m in Sources */,
 				B7728C6215286EE8005EA98A /* TMScope.m in Sources */,
@@ -2559,7 +2541,6 @@
 				CDC1A079147E6EC300E01B7A /* CodeFileCompletionCell.m in Sources */,
 				CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */,
 				CDE80660147F949300C94BFD /* ShapePopoverBackgroundView.m in Sources */,
-				B75B575D14B0B62D00053783 /* FileBuffer.m in Sources */,
 				CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */,
 				CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */,
 				CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */,
@@ -2630,7 +2611,6 @@
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
-				B7C7E67C15284DB7006AF8F6 /* CodeBuffer.m in Sources */,
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B755339F1529968E00C8FFE0 /* OnigRegexp+FileBuffer.m in Sources */,

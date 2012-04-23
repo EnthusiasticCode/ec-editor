@@ -14,8 +14,8 @@
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
-#import "FileBuffer.h"
 #import "Operation.h"
+#import "ACProjectFile.h"
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -46,7 +46,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface ReparseOperation : Operation
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
+- (id)initWithFileBuffer:(ACProjectFile *)projectFile rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void(^)(BOOL success))completionHandler;
 - (void)_generateScopes;
 - (void)_processChanges;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
@@ -67,7 +67,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark -
 
-@interface TMUnit () <FileBufferPresenter>
+@interface TMUnit () <ACProjectFilePresenter>
 
 @property (nonatomic, strong) AutodetectSyntaxOperation *autodetectSyntaxOperation;
 @property (nonatomic, strong) ReparseOperation *reparseOperation;
@@ -85,7 +85,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @implementation TMUnit {
   NSOperationQueue *_internalQueue;
 
-  FileBuffer *_fileBuffer;
+  ACProjectFile *_projectFile;
   
   TMScope *_rootScope;
   
@@ -123,7 +123,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - FileBufferPresenter
 
-- (void)fileBuffer:(FileBuffer *)fileBuffer didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string {
+- (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   Change *change = Change.alloc.init;
   change->oldRange = range;
@@ -138,7 +138,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
   [_internalQueue cancelAllOperations];
-  [_fileBuffer removePresenter:self];
+  [_projectFile removePresenter:self];
   _pendingChanges = nil;
   _unparsedRanges = nil;
   _rootScope = nil;
@@ -154,10 +154,10 @@ static OnigRegexp *_namedCapturesRegexp;
     _unparsedRanges = NSMutableIndexSet.alloc.init;
     Change *firstChange = Change.alloc.init;
     firstChange->oldRange = NSMakeRange(0, 0);
-    firstChange->newRange = NSMakeRange(0, _fileBuffer.length);
+    firstChange->newRange = NSMakeRange(0, _projectFile.length);
     [_pendingChanges addObject:firstChange];
     [self _queueReparseOperation];
-    [_fileBuffer addPresenter:self];
+    [_projectFile addPresenter:self];
   }
   self.autodetectSyntaxOperation = nil;
 }
@@ -170,15 +170,15 @@ static OnigRegexp *_namedCapturesRegexp;
   return NSArray.alloc.init;
 }
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer fileURL:(NSURL *)fileURL index:(TMIndex *)index {
+- (id)initWithFileBuffer:(ACProjectFile *)projectFile fileURL:(NSURL *)fileURL index:(TMIndex *)index {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(fileBuffer || fileURL);
+  ASSERT(projectFile || fileURL);
   self = [super init];
   if (!self) {
     return nil;
   }
   
-  _fileBuffer = fileBuffer;
+  _projectFile = projectFile;
   
   _pendingChangesLock = dispatch_semaphore_create(1);
   
@@ -202,10 +202,10 @@ static OnigRegexp *_namedCapturesRegexp;
   // Detect the syntax on the background queue so we don't initialize TMSyntaxNode on the main queue
   __weak TMUnit *weakSelf = self;
   NSString *firstLine = nil;
-  if (fileBuffer) {
-    NSRange firstLineRange = [fileBuffer lineRangeForRange:NSMakeRange(0, 0)];
+  if (projectFile) {
+    NSRange firstLineRange = [projectFile lineRangeForRange:NSMakeRange(0, 0)];
     if (firstLineRange.length) {
-      firstLine = [fileBuffer substringWithRange:firstLineRange];
+      firstLine = [projectFile substringWithRange:firstLineRange];
     }
   }
   _autodetectSyntaxOperation = [AutodetectSyntaxOperation.alloc initWithFileURL:fileURL firstLine:firstLine completionHandler:^(BOOL success) {
@@ -324,7 +324,7 @@ static OnigRegexp *_namedCapturesRegexp;
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
 
   TMUnit *weakSelf = self;
-  self.reparseOperation = [ReparseOperation.alloc initWithFileBuffer:_fileBuffer rootScope:_rootScope pendingChanges:_pendingChanges pendingChangesLock:_pendingChangesLock unparsedRanges:_unparsedRanges completionHandler:^(BOOL success) {
+  self.reparseOperation = [ReparseOperation.alloc initWithFileBuffer:_projectFile rootScope:_rootScope pendingChanges:_pendingChanges pendingChangesLock:_pendingChangesLock unparsedRanges:_unparsedRanges completionHandler:^(BOOL success) {
     // If the operation was cancelled we don't need to do anything
     if (!success) {
       return;
@@ -411,7 +411,7 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark -
 
 @implementation ReparseOperation {
-  FileBuffer *_fileBuffer;
+  ACProjectFile *_projectFile;
   TMScope *_rootScope;
   dispatch_semaphore_t _pendingChangesLock;
   NSMutableArray *_pendingChanges;
@@ -422,7 +422,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)main {  
   // The whole operation is wrapped in this lock. Remember to signal it if we return early from it.
-  // The root scope is inconsistent with the fileBuffer while we're running it, so the codeUnit should not be accessing it anyway.
+  // The root scope is inconsistent with the projectFile while we're running it, so the codeUnit should not be accessing it anyway.
   [self _generateScopes];
 }
 
@@ -434,13 +434,13 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Public Methods
 
-- (id)initWithFileBuffer:(FileBuffer *)fileBuffer rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(fileBuffer && rootScope && pendingChanges && pendingChangesLock && unparsedRanges);
+- (id)initWithFileBuffer:(ACProjectFile *)projectFile rootScope:(TMScope *)rootScope pendingChanges:(NSMutableArray *)pendingChanges pendingChangesLock:(dispatch_semaphore_t)pendingChangesLock unparsedRanges:(NSMutableIndexSet *)unparsedRanges completionHandler:(void (^)(BOOL))completionHandler {
+  ASSERT(projectFile && rootScope && pendingChanges && pendingChangesLock && unparsedRanges);
   self = [super initWithCompletionHandler:completionHandler];
   if (!self) {
     return nil;
   }
-  _fileBuffer = fileBuffer;
+  _projectFile = projectFile;
   _rootScope = rootScope;
   _pendingChanges = pendingChanges;
   _pendingChangesLock = pendingChangesLock;
@@ -467,7 +467,7 @@ static OnigRegexp *_namedCapturesRegexp;
     NSRange unparsedRange = [_unparsedRanges firstRange];
     
     // Get the first line range
-    NSRange lineRange = [_fileBuffer lineRangeForRange:NSMakeRange(unparsedRange.location, 0)];
+    NSRange lineRange = [_projectFile lineRangeForRange:NSMakeRange(unparsedRange.location, 0)];
     // Check if we got a valid range, if we didn't, we're done parsing
     if (!lineRange.length || NSMaxRange(lineRange) == unparsedRange.location) {
       break;
@@ -494,9 +494,9 @@ static OnigRegexp *_namedCapturesRegexp;
     // Setup the line
     NSString *line = nil;
     @try {
-      line = [_fileBuffer substringWithRange:lineRange];
+      line = [_projectFile substringWithRange:lineRange];
     } @catch (NSException *exception) {
-      // If we get an exception it's probably because the fileBuffer was changed, just restart the loop in that case
+      // If we get an exception it's probably because the projectFile was changed, just restart the loop in that case
       continue;
     }
     
@@ -763,10 +763,10 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
   // TODO URI: queue up callbacks to call on main thread
-  //  NSDictionary *attributes = [_fileBuffer.theme attributesForScope:scope];
+  //  NSDictionary *attributes = [_projectFile.theme attributesForScope:scope];
   //  if (![attributes count])
   //    return;
-  //  return [_fileBuffer setAttributes:attributes range:tokenRange expectedGeneration:generation];
+  //  return [_projectFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
 @end

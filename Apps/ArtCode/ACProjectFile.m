@@ -198,7 +198,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         _contents = contents;
         _theme = theme;
         ++_openCount;
-        _codeUnit = [TMUnit.alloc initWithFileBuffer:(FileBuffer *)self fileURL:fileURL index:nil];
+        _codeUnit = [TMUnit.alloc initWithFileBuffer:self fileURL:fileURL index:nil];
         if (completionHandler) {
           completionHandler(nil);
         }
@@ -299,23 +299,79 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string {
   ASSERT(_openCount);
+  // replacing an empty range with an empty string, no change required
+  if (!range.length && !string.length) {
+    return;
+  }
+  // replacing a substring with an equal string, no change required
+  if ([string isEqualToString:[self substringWithRange:range]]) {
+    return;
+  }
+  // a nil string can be passed to delete characters
+  if (!string) {
+    string = @"";
+  }
   NSAttributedString *attributedString = [NSAttributedString.alloc initWithString:string attributes:self.theme.commonAttributes];
-  [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)]) {
+      [presenter projectFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+  }
+  if (attributedString.length) {
+    [_contents replaceCharactersInRange:range withAttributedString:attributedString];
+  } else {
+    [_contents deleteCharactersInRange:range];
+  }
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)]) {
+      [presenter projectFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
+    }
+  }
 }
 
 - (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range {
   ASSERT(_openCount);
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
+      [presenter projectFile:self willChangeAttributesInRange:range];
+    }
+  }
   [_contents addAttribute:name value:value range:range];
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
+      [presenter projectFile:self didChangeAttributesInRange:range];
+    }
+  }
 }
 
 - (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range {
   ASSERT(_openCount);
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
+      [presenter projectFile:self willChangeAttributesInRange:range];
+    }
+  }
   [_contents addAttributes:attributes range:range];
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
+      [presenter projectFile:self didChangeAttributesInRange:range];
+    }
+  }
 }
 
 - (void)removeAttribute:(NSString *)name range:(NSRange)range {
   ASSERT(_openCount);
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
+      [presenter projectFile:self willChangeAttributesInRange:range];
+    }
+  }
   [_contents removeAttribute:name range:range];
+  for (id<ACProjectFilePresenter>presenter in _presenters) {
+    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
+      [presenter projectFile:self didChangeAttributesInRange:range];
+    }
+  }
 }
 
 #pragma mark - Managing semantic content

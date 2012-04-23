@@ -96,7 +96,9 @@
 @protocol ACProjectFilePresenter <NSObject>
 
 @optional
+- (void)projectFile:(ACProjectFile *)projectFile willReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
 - (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
+- (void)projectFile:(ACProjectFile *)projectFile willChangeAttributesInRange:(NSRange)range;
 - (void)projectFile:(ACProjectFile *)projectFile didChangeAttributesInRange:(NSRange)range;
 
 @end

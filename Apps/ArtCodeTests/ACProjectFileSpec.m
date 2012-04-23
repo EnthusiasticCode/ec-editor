@@ -144,14 +144,14 @@ describe(@"A new empty ACProjectFile", ^{
   });
   
   it(@"has a plain text syntax by default", ^{
-    [[file.syntax should] beNonNil];
+    [[expectFutureValue(file.syntax) shouldEventually] beNonNil];
     [[file.syntax.name should] equal:@"Plain Text"];
   });
   
   context(@"with the default syntax", ^{
     
     beforeEach(^{
-      [[file.syntax should] beNonNil];
+      [[expectFutureValue(file.syntax) shouldEventually] beNonNil];
       [[file.syntax.name should] equal:@"Plain Text"];
     });
     
