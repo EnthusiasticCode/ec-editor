@@ -85,7 +85,7 @@ describe("Projects list", function() {
           popover.textFields()[0].setValue(newProjectName);
           popover.navigationBar().rightButton().tap();
           target.delay(1);
-          expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].checkIsValid()).toBeTruthy();
+          expect(tabsScrollView.elements()["projects grid"].elements()[newProjectName].isValid()).toBeTruthy();
         });
         
         it("should clear the name field", function() {

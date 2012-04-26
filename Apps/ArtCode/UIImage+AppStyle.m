@@ -717,4 +717,11 @@
   return _styleBackButtonBackgroundImage;
 }
 
++ (UIImage *)stylePopoverButtonBackgroundImage {
+  static UIImage *_stylePopoverButtonBackgroundImage = nil;
+  if (!_stylePopoverButtonBackgroundImage)
+    _stylePopoverButtonBackgroundImage = [[UIImage imageNamed:@"popover_Button"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+  return _stylePopoverButtonBackgroundImage;
+}
+
 @end
