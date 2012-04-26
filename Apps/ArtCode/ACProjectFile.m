@@ -358,6 +358,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
       [presenter projectFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
     }
   }
+  [_codeUnit reparseWithUnsavedContent:_contents.string];
 }
 
 - (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range {

@@ -25,7 +25,7 @@
 /// Returns warnings and errors in the unit.
 @property (nonatomic, strong, readonly) NSArray *diagnostics;
 
-/// Designated initializer. At least a projectFile or a fileURL must be specified.
+/// Designated initializer.
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
 
 /// Returns a copy of the deepest scope at the specified offset
@@ -33,5 +33,9 @@
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
+
+/// Reparses the source file and recreates the scope tree asynchronously.
+/// If the content string is non-nil, it will be used instead of the file's contents.
+- (void)reparseWithUnsavedContent:(NSString *)content;
 
 @end

@@ -56,6 +56,7 @@ describe(@"A new empty ACProjectFile", ^{
   afterEach(^{
     [file closeWithCompletionHandler:nil];
     [file remove];
+    file = nil;
     [[expectFutureValue(theValue(project.contentsFolder.children.count)) shouldEventually] beZero];
   });
   

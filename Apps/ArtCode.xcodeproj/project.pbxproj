@@ -15,6 +15,8 @@
 		B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		B715B3E2154965AF004DCD63 /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
 		B715B3E3154965BC004DCD63 /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
+		B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
+		B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
@@ -2477,6 +2479,7 @@
 				B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
+				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2509,6 +2512,7 @@
 				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
+				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

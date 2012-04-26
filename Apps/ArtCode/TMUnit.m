@@ -45,6 +45,9 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface ReparseOperation : Operation
 
+/// Only accessible after the operation is finished
+@property (atomic, strong, readonly) TMScope *rootScope;
+
 - (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void(^)(BOOL success))completionHandler;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
@@ -71,7 +74,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @implementation TMUnit {
   NSOperationQueue *_internalQueue;
   
-  NSMutableString *_contents;
+  NSString *_content;
   
   TMScope *_rootScope;
   
@@ -111,12 +114,9 @@ static OnigRegexp *_namedCapturesRegexp;
   _syntax = syntax;
   
   if (_syntax) {
-    _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  }
-  
-  if (_syntax) {
     [self _queueReparseOperation];
   }
+  
   self.autodetectSyntaxOperation = nil;
 }
 
@@ -136,8 +136,6 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   
   // TODO URI load the contents from the file
-  
-  _contents = NSMutableString.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
@@ -189,6 +187,15 @@ static OnigRegexp *_namedCapturesRegexp;
   [self _queueBlockUntilUpToDate:^{
     completionHandler((id<TMCompletionResultSet>)NSArray.alloc.init);
   }];
+}
+
+- (void)reparseWithUnsavedContent:(NSString *)content {
+  if (!content) {
+    // TODO URI: get the file's contents through the index's coordination mechanism
+    UNIMPLEMENTED_VOID();
+  }
+  _content = content;
+  [self _queueReparseOperation];
 }
 
 #pragma mark - Internal Methods
@@ -275,14 +282,25 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_queueReparseOperation {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   
+  if (!_content || !_syntax) {
+    return;
+  }
+  
   TMUnit *weakSelf = self;
-  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_contents.copy rootScope:_rootScope completionHandler:^(BOOL success) {
+  TMScope *rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content rootScope:rootScope completionHandler:^(BOOL success) {
     // If the operation was cancelled we don't need to do anything
     if (!success) {
       return;
     }
-    weakSelf.reparseOperation = nil;
+    TMUnit *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    strongSelf->_rootScope = strongSelf.reparseOperation.rootScope;
+    strongSelf.reparseOperation = nil;
   }];
+  
   [_internalQueue addOperation:self.reparseOperation];
 }
 
@@ -349,8 +367,9 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @implementation ReparseOperation {
   NSString *_contents;
-  TMScope *_rootScope;
 }
+
+@synthesize rootScope = _rootScope;
 
 #pragma mark - NSOperation
 
