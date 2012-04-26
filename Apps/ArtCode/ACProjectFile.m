@@ -23,6 +23,14 @@ static NSString * const _plistFileEncodingKey = @"fileEncoding";
 static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 static NSString * const _plistBookmarksKey = @"bookmarks";
 
+@interface ACProjectFile ()
+
+@property (nonatomic, strong) TMUnit *codeUnit;
+
+@end
+
+#pragma mark -
+
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
 
@@ -47,10 +55,24 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   NSMutableDictionary *_bookmarks;
   NSUInteger _openCount;
   NSMutableAttributedString *_contents;
-  TMUnit *_codeUnit;
 }
 
 @synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
+@synthesize codeUnit = _codeUnit;
+
+#pragma mark - KVO Overrides
+
++ (NSSet *)keyPathsForValuesAffectingSyntax {
+  return [NSSet setWithObject:@"codeUnit.syntax"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingSymbolList {
+  return [NSSet setWithObject:@"codeUnit.symbolList"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingDiagnostics {
+  return [NSSet setWithObject:@"codeUnit.diagnostics"];
+}
 
 #pragma mark - ACProjectItem
 
@@ -186,19 +208,28 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     encoding = NSUTF8StringEncoding;
   }
   __block TMTheme *theme = self.theme;
+  __weak ACProjectFile *weakSelf = self;
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
-    if (!theme) {
-      theme = [TMTheme defaultTheme];
+    NSMutableAttributedString *contents = nil;
+    NSURL *fileURL = nil;
+    ACProjectFile *outerStrongSelf = weakSelf;
+    if (outerStrongSelf) {
+      if (!theme) {
+        theme = [TMTheme defaultTheme];
+      }
+      contents = [NSMutableAttributedString.alloc initWithString:[NSString.alloc initWithContentsOfURL:outerStrongSelf.fileURL encoding:encoding error:&error] attributes:theme.commonAttributes];
+      fileURL = outerStrongSelf.fileURL;
     }
-    NSMutableAttributedString *contents = [NSMutableAttributedString.alloc initWithString:[NSString.alloc initWithContentsOfURL:self.fileURL encoding:encoding error:&error] attributes:theme.commonAttributes];
-    NSURL *fileURL = self.fileURL;
     if (contents) {
       [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        _contents = contents;
-        _theme = theme;
-        ++_openCount;
-        _codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+        ACProjectFile *innerStrongSelf = weakSelf;
+        if (innerStrongSelf) {
+          innerStrongSelf->_contents = contents;
+          innerStrongSelf->_theme = theme;
+          ++innerStrongSelf->_openCount;
+          innerStrongSelf.codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+        }
         if (completionHandler) {
           completionHandler(nil);
         }
@@ -383,7 +414,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
   ASSERT(_openCount);
-  [_codeUnit setSyntax:syntax];
+  _codeUnit.syntax = syntax;
 }
 
 - (void)setTheme:(TMTheme *)theme {
@@ -406,7 +437,13 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return _codeUnit.diagnostics;
 }
 
+- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
+  [_codeUnit scopeAtOffset:offset withCompletionHandler:completionHandler];
+}
 
+- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
+  [_codeUnit completionsAtOffset:offset withCompletionHandler:completionHandler];
+}
 
 #pragma mark - Managing file bookmarks
 
@@ -419,6 +456,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   [_bookmarks setObject:bookmark forKey:point];
   [self.project didAddBookmark:bookmark];
   [self.project updateChangeCount:UIDocumentChangeDone];
+}
+
+- (ACProjectFileBookmark *)bookmarkForPoint:(id)point {
+  return [_bookmarks objectForKey:point];
 }
 
 #pragma mark - Internal Methods

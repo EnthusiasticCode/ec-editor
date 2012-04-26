@@ -63,7 +63,6 @@ static OnigRegexp *_namedCapturesRegexp;
 - (void)_queueBlockUntilUpToDate:(void(^)(void))block;
 - (void)_setHasPendingChanges;
 - (void)_queueReparseOperation;
-- (NSArray *)_patternsIncludedByPattern:(TMSyntaxNode *)pattern;
 
 @end
 
@@ -601,9 +600,4 @@ static OnigRegexp *_namedCapturesRegexp;
   //  return [_projectFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
 }
 
-@end
-
-#pragma mark -
-
-@implementation Change
 @end
