@@ -162,8 +162,12 @@ static NSMutableArray *_mutableTabs;
     for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
       [_mutableHistoryURLs addObject:[NSURL URLWithString:string]];
   }
-  if (![_mutableDictionary objectForKey:_currentHistoryPositionKey])
+
+  // Set the history point
+  if (![_mutableDictionary objectForKey:_currentHistoryPositionKey]) {
     [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:0] forKey:_currentHistoryPositionKey];
+  }
+  
   ASSERT(_mutableDictionary == dictionary);
   ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
   return self;
@@ -222,6 +226,10 @@ static NSMutableArray *_mutableTabs;
   [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1] completionHandler:^(BOOL success) {
     self.currentHistoryPosition = historyPositionBeforeMove + 1;
   }];
+}
+
+- (void)reloadCurrentStatusWithCompletionHandler:(void (^)(BOOL))completionHandler {
+  [self _moveFromURL:nil toURL:self.currentURL completionHandler:completionHandler];
 }
 
 #pragma mark - Private Methods

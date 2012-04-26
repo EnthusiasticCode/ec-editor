@@ -52,6 +52,9 @@
 /// KVO attached to currentURL will be notified after this method is called.
 - (void)moveForwardInHistory;
 
+/// Reloads current project and item from the current position in history
+- (void)reloadCurrentStatusWithCompletionHandler:(void(^)(BOOL success))completionHandler;
+
 @end
 
 

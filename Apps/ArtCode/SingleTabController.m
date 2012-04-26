@@ -301,6 +301,8 @@ static const void *loadingObservingContext;
   if (tab == self.artCodeTab)
     return;
   
+  self.loading = YES;
+  
   if (self.artCodeTab)
   {
     [self.artCodeTab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
@@ -312,6 +314,12 @@ static const void *loadingObservingContext;
   
   [self.artCodeTab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
   [self.artCodeTab addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&loadingObservingContext];
+  
+  // The artcodetab in this controller will be set when the app starts, this method makes sure that the project is loaded
+  [tab reloadCurrentStatusWithCompletionHandler:^(BOOL success) {
+    [self updateDefaultToolbarTitle];
+    self.loading = NO;
+  }];
 }
 
 #pragma mark - Controller methods
