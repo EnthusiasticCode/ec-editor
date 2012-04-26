@@ -331,9 +331,7 @@ static OnigRegexp *_namedCapturesRegexp;
     syntax = TMSyntaxNode.defaultSyntax;
   }
   OPERATION_RETURN_IF_CANCELLED;
-  @synchronized(self) {
-    _syntax = syntax;
-  }
+  _syntax = syntax;
 }
 
 #pragma mark - Operation
@@ -346,9 +344,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (TMSyntaxNode *)syntax {
   ASSERT(self.isFinished);
-  @synchronized(self) {
-    return _syntax;
-  }
+  return _syntax;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void (^)(BOOL))completionHandler {
@@ -373,7 +369,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - NSOperation
 
-- (void)main {  
+- (void)main {
   NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
   // Get the next unparsed range
   NSRange lineRange = [_contents lineRangeForRange:NSMakeRange(0, 0)];
@@ -383,8 +379,22 @@ static OnigRegexp *_namedCapturesRegexp;
     OPERATION_RETURN_IF_CANCELLED;
     [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
     OPERATION_RETURN_IF_CANCELLED;
+    // Stretch all remaining scopes to cover to the end of the line
+    for (TMScope *scope in scopeStack)
+    {
+      NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
+      if (stretchedLength > scope.length)
+        scope.length = stretchedLength;
+    }
+    OPERATION_RETURN_IF_CANCELLED;
+    // Check that we actually advance. It will get stuck here if the file ends without a newline.
+    NSRange oldLineRange = lineRange;
     lineRange = [_contents lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
+    if (lineRange.location == oldLineRange.location) {
+      break;
+    }
   }
+  
 #if DEBUG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -400,6 +410,11 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Public Methods
+
+- (TMScope *)rootScope {
+  ASSERT(self.isFinished);
+  return _rootScope;
+}
 
 - (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(contents && rootScope);
