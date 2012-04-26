@@ -136,6 +136,7 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   
   // TODO URI load the contents from the file
+  _content = NSString.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
@@ -285,7 +286,8 @@ static OnigRegexp *_namedCapturesRegexp;
   if (!_content || !_syntax) {
     return;
   }
-  
+
+  self.upToDate = NO;
   TMUnit *weakSelf = self;
   TMScope *rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
   self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content rootScope:rootScope completionHandler:^(BOOL success) {
@@ -297,8 +299,12 @@ static OnigRegexp *_namedCapturesRegexp;
     if (!strongSelf) {
       return;
     }
+    if (!strongSelf.reparseOperation.isFinished) {
+      return;
+    }
     strongSelf->_rootScope = strongSelf.reparseOperation.rootScope;
     strongSelf.reparseOperation = nil;
+    strongSelf.upToDate = YES;
   }];
   
   [_internalQueue addOperation:self.reparseOperation];
