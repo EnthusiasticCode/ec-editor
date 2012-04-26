@@ -72,4 +72,7 @@
 /// Image for a back button.
 + (UIImage *)styleBackButtonBackgroundImage;
 
+/// Image for the background of a button in a popover
++ (UIImage *)stylePopoverButtonBackgroundImage;
+
 @end

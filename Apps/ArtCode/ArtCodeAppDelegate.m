@@ -57,6 +57,10 @@ CGRect UIKeyboardFrame;
   [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 1)];
   
   ////////////////////////////////////////////////////////////////////////////
+  // Button in generic navigation controller
+  [[UIButton appearanceWhenContainedIn:[UINavigationController class], nil] setBackgroundImage:[UIImage stylePopoverButtonBackgroundImage] forState:UIControlStateNormal];
+  
+  ////////////////////////////////////////////////////////////////////////////
   // UI Bars
   [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
   [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, [UIColor blackColor], UITextAttributeTextShadowColor, [NSValue valueWithUIOffset:UIOffsetMake(0, -1)], UITextAttributeTextShadowOffset, nil]];

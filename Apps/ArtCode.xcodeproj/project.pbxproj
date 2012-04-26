@@ -358,6 +358,7 @@
 		CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */; };
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
+		CD4B0797154963AC000CFF6D /* popover_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4B0796154963AC000CFF6D /* popover_Button.png */; };
 		CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
@@ -867,6 +868,7 @@
 		CD49AA0E14E33D98006032F6 /* TMPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPreference.m; sourceTree = "<group>"; };
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
+		CD4B0796154963AC000CFF6D /* popover_Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popover_Button.png; sourceTree = "<group>"; };
 		CD65F1D014F6C4A200E0C441 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		CD65F1D114F6C4A200E0C441 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
 		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
@@ -1677,6 +1679,14 @@
 			name = Completion;
 			sourceTree = "<group>";
 		};
+		CD4B079515496393000CFF6D /* Popover */ = {
+			isa = PBXGroup;
+			children = (
+				CD4B0796154963AC000CFF6D /* popover_Button.png */,
+			);
+			name = Popover;
+			sourceTree = "<group>";
+		};
 		CD6580C514157B300079412F /* Find & Replace Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1950,6 +1960,7 @@
 				CDC2828E14508D250054358D /* Top Bar */,
 				CDC1333114602F430028423F /* Search Bar */,
 				CDEE0D7014BDA5790019FDEF /* Projects */,
+				CD4B079515496393000CFF6D /* Popover */,
 				CD9ED8DC1466BE5000A517A5 /* Accessory View */,
 				CDFF3DF613C0DA1100108DE2 /* Icons */,
 				CD78C1BE14E15CDA00EBBBFF /* Bezel Alert */,
@@ -2676,6 +2687,7 @@
 				CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */,
 				CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */,
 				CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */,
+				CD4B0797154963AC000CFF6D /* popover_Button.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
