@@ -283,6 +283,7 @@ static OnigRegexp *_namedCapturesRegexp;
   self.upToDate = NO;
   TMUnit *weakSelf = self;
   TMScope *rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  [self.reparseOperation cancel];
   self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content rootScope:rootScope completionHandler:^(BOOL success) {
     // If the operation was cancelled we don't need to do anything
     if (!success) {
@@ -292,9 +293,10 @@ static OnigRegexp *_namedCapturesRegexp;
     if (!strongSelf) {
       return;
     }
-    if (!strongSelf.reparseOperation.isFinished) {
-      return;
-    }
+    // Keep these asserts separate because they're triggered during multithreading, so debugging won't give the same results
+    ASSERT(strongSelf.reparseOperation.isFinished);
+    ASSERT(strongSelf.reparseOperation.rootScope);
+    ASSERT(strongSelf.reparseOperation.attributedContent);
     strongSelf->_rootScope = strongSelf.reparseOperation.rootScope;
     strongSelf->_attributedContent = strongSelf.reparseOperation.attributedContent;
     strongSelf.reparseOperation = nil;

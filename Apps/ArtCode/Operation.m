@@ -29,6 +29,7 @@
         completionHandler(!self.isCancelled);
       } else {
         [homeQueue addOperationWithBlock:^{
+          ASSERT(self.isFinished);
           completionHandler(!self.isCancelled);
         }];
       }

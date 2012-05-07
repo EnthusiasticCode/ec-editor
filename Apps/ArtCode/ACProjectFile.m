@@ -229,6 +229,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
           innerStrongSelf->_theme = theme;
           ++innerStrongSelf->_openCount;
           innerStrongSelf.codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+          [innerStrongSelf.codeUnit enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:NSMakeRange(0, contents.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
+            [self addAttributes:[self.theme attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
+          }];
         }
         if (completionHandler) {
           completionHandler(nil);
@@ -249,7 +252,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   if (!_openCount) {
     if (completionHandler) {
-      completionHandler([[NSError alloc] init]);
+      completionHandler(NSError.alloc.init);
     }
     return;
   }
