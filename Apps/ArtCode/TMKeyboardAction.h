@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @protocol TMKeyboardActionTarget;
-@class TMScope;
 
 
 /// Represent keyboard actions and give access to keyboard actions configurations

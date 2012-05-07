@@ -438,8 +438,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return _codeUnit.diagnostics;
 }
 
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
-  [_codeUnit scopeAtOffset:offset withCompletionHandler:completionHandler];
+- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
+  [_codeUnit qualifiedScopeIdentifierAtOffset:offset withCompletionHandler:completionHandler];
 }
 
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class TMScope, TMIndex, TMSyntaxNode;
+@class TMIndex, TMSyntaxNode;
 @protocol TMCompletionResultSet;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
@@ -28,8 +28,8 @@
 /// Designated initializer.
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
 
-/// Returns a copy of the deepest scope at the specified offset
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
+/// Returns the qualified identifier of the deepest scope at the specified offset
+- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;

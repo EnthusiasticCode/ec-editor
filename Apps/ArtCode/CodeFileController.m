@@ -28,7 +28,6 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "TMSymbol.h"
-#import "TMScope.h"
 #import "TMSyntaxNode.h"
 #import "TMPreference.h"
 #import "ArtCodeURL.h"

@@ -16,7 +16,6 @@ extern NSString * const TMThemeForegroundColorEnvironmentAttributeKey;
 extern NSString * const TMThemeLineHighlightColorEnvironmentAttributeKey;
 extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 
-@class TMScope;
 
 @interface TMTheme : NSObject
 

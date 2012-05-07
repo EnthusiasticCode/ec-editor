@@ -170,14 +170,14 @@ static OnigRegexp *_namedCapturesRegexp;
   return self;
 }
 
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(TMScope *))completionHandler {
+- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self _queueBlockUntilUpToDate:^{
     [[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
       if (!scope.identifier) {
         return;
       }
-      completionHandler(scope.copy);
+      completionHandler(scope.qualifiedIdentifier);
       *stop = YES;
     }];
   }];

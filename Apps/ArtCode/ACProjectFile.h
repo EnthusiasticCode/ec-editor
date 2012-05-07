@@ -7,7 +7,7 @@
 //
 
 #import "ACProjectFileSystemItem.h"
-@class ACProjectFileBookmark, CodeBuffer, TMSyntaxNode, TMScope, TMTheme;
+@class ACProjectFileBookmark, CodeBuffer, TMSyntaxNode, TMTheme;
 @protocol TMCompletionResultSet, ACProjectFilePresenter;
 
 @interface ACProjectFile : ACProjectFileSystemItem
@@ -73,8 +73,8 @@
 /// Warnings, errors and other diagnostics in the file.
 @property (nonatomic, strong, readonly) NSArray *diagnostics;
 
-/// Returns a copy of the deepest scope at the specified offset
-- (void)scopeAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(TMScope *scope))completionHandler;
+/// Returns the qualified identifier of the deepest scope at the specified offset
+- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;

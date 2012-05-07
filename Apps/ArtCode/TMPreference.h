@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class TMScope;
 
 /// Indicates if the scope should be shown in the symbol list. This value returns an NSValue with a bool. The bool is true even if this key is not found but TMPreferenceSymbolTransformationKey is set for the same selector.
 extern NSString * const TMPreferenceShowInSymbolListKey;

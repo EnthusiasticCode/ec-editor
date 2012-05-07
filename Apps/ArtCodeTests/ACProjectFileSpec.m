@@ -11,7 +11,6 @@
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 #import "TMSyntaxNode.h"
-#import "TMScope.h"
 #import "TMTheme.h"
 
 
@@ -24,7 +23,7 @@ describe(@"A new empty ACProjectFile", ^{
   NSString *fileName = @"Test File";
   __block ACProjectFile *file = nil;
   
-  __block TMScope *testScope = nil;
+  __block NSString *testQualifiedScopeIdentifier = nil;
   
   beforeAll(^{
     clearProjectsDirectory();
@@ -162,11 +161,11 @@ describe(@"A new empty ACProjectFile", ^{
     });
     
     it(@"has a text.plain scope", ^{
-      [file scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-        testScope = scope;
+      [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+        testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
       }];
-      [[expectFutureValue(testScope) shouldEventually] beNonNil];
-      [[testScope.identifier should] equal:@"text.plain"];
+      [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+      [[testQualifiedScopeIdentifier should] equal:@"text.plain"];
     });
     
     it(@"has a symbol list", ^{
@@ -184,11 +183,11 @@ describe(@"A new empty ACProjectFile", ^{
   it(@"can change syntax", ^{
     file.syntax = [TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"];
     [[file.syntax.name should] equal:@"C"];
-    [file scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-      testScope = scope;
+    [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+      testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
     }];
-    [[expectFutureValue(testScope) shouldEventually] beNonNil];
-    [[testScope.identifier should] equal:@"source.c"];
+    [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+    [[testQualifiedScopeIdentifier should] equal:@"source.c"];
   });
   
   context(@"after inserting some text", ^{
@@ -202,11 +201,11 @@ describe(@"A new empty ACProjectFile", ^{
     });
     
     it(@"has a meta.paragraph.text scope", ^{
-      [file scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-        testScope = scope;
+      [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+        testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
       }];
-      [[expectFutureValue(testScope) shouldEventually] beNonNil];
-      [[testScope.qualifiedIdentifier should] equal:@"text.plain meta.paragraph.text"];
+      [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+      [[testQualifiedScopeIdentifier should] equal:@"text.plain meta.paragraph.text"];
     });
     
     context(@"and changing to C syntax", ^{
@@ -216,85 +215,85 @@ describe(@"A new empty ACProjectFile", ^{
       });
       
       it(@"has a meta.preprocessor.c.include scope", ^{
-        [file scopeAtOffset:0 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
-        testScope = nil;
-        [file scopeAtOffset:7 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+        testQualifiedScopeIdentifier = nil;
+        [file qualifiedScopeIdentifierAtOffset:7 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
       });
       
       it(@"has a keyword.control.import.include.c scope", ^{
-        [file scopeAtOffset:1 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:1 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
-        testScope = nil;
-        [file scopeAtOffset:6 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
+        testQualifiedScopeIdentifier = nil;
+        [file qualifiedScopeIdentifierAtOffset:6 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
       });
       
       it(@"has a string.quote.other.lt-gt.include.c scope", ^{
-        [file scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.begin.c"];
-        testScope = nil;
-        [file scopeAtOffset:9 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.begin.c"];
+        testQualifiedScopeIdentifier = nil;
+        [file qualifiedScopeIdentifierAtOffset:9 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
-        testScope = nil;
-        [file scopeAtOffset:15 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
+        testQualifiedScopeIdentifier = nil;
+        [file qualifiedScopeIdentifierAtOffset:15 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
-        testScope = nil;
-        [file scopeAtOffset:16 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
+        testQualifiedScopeIdentifier = nil;
+        [file qualifiedScopeIdentifierAtOffset:16 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.end.c"];
-        testScope = nil;
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.end.c"];
+        testQualifiedScopeIdentifier = nil;
       });
       
       it(@"updates the scopes after deleting characters", ^{
         [file replaceCharactersInRange:NSMakeRange(8, 1) withString:nil];
-        [file scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
       });
       
       it(@"updates the scopes after replacing characters", ^{
         [file replaceCharactersInRange:NSMakeRange(8, 1) withString:@"\""];
-        [file scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.double.include.c punctuation.definition.string.begin.c"];
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.double.include.c punctuation.definition.string.begin.c"];
       });
       
       it(@"updates the scopes after inserting characters", ^{
         [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"/*"];
-        [file scopeAtOffset:8 withCompletionHandler:^(TMScope *scope) {
-          testScope = scope;
+        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
         }];
-        [[expectFutureValue(testScope) shouldEventually] beNonNil];
-        [[testScope.qualifiedIdentifier should] equal:@"source.c comment.block.c"];
+        [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
+        [[testQualifiedScopeIdentifier should] equal:@"source.c comment.block.c"];
       });
       
     });
