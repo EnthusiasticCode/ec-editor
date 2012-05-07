@@ -183,6 +183,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   
+  completionHandler = [completionHandler copy];
+  
   // Increase the open counter
   ++_openCount;
   
@@ -675,10 +677,12 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [super openWithCompletionHandler:^(BOOL success) {
-    if (success)
+    if (success) {
       [ACProject removeMetaForProject:_project key:_plistIsNewlyCreatedKey];
-    if (completionHandler)
+    }
+    if (completionHandler) {
       completionHandler(success);
+    }
   }];
 }
 

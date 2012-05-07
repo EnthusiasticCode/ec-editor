@@ -269,7 +269,7 @@ static OnigRegexp *_namedCapturesRegexp;
   if (self.isUpToDate) {
     block();
   } else {
-    [_queuedBlocks addObject:block];
+    [_queuedBlocks addObject:[block copy]];
   }
 }
 
