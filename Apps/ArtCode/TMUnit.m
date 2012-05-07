@@ -49,6 +49,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 /// Only accessible after the operation is finished
 @property (atomic, strong, readonly) TMScope *rootScope;
+@property (atomic, strong, readonly) NSAttributedString *attributedContent;
 
 - (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void(^)(BOOL success))completionHandler;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
@@ -295,6 +296,7 @@ static OnigRegexp *_namedCapturesRegexp;
       return;
     }
     strongSelf->_rootScope = strongSelf.reparseOperation.rootScope;
+    strongSelf->_attributedContent = strongSelf.reparseOperation.attributedContent;
     strongSelf.reparseOperation = nil;
     strongSelf.upToDate = YES;
   }];
@@ -363,7 +365,7 @@ static OnigRegexp *_namedCapturesRegexp;
   NSString *_contents;
 }
 
-@synthesize rootScope = _rootScope;
+@synthesize rootScope = _rootScope, attributedContent = _attributedContent;
 
 #pragma mark - NSOperation
 
@@ -409,20 +411,29 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Public Methods
 
+#if DEBUG
+
 - (TMScope *)rootScope {
   ASSERT(self.isFinished);
   return _rootScope;
 }
 
+- (NSAttributedString *)attributedContent {
+  ASSERT(self.isFinished);
+  return _attributedContent;
+}
+
+#endif
+
 - (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(contents && rootScope);
-  NSLog(@"reparse operation with \"%@\"", contents);
   self = [super initWithCompletionHandler:completionHandler];
   if (!self) {
     return nil;
   }
   _contents = contents;
   _rootScope = rootScope;
+  _attributedContent = [NSMutableAttributedString.alloc initWithString:contents];
   return self;
 }
 
@@ -626,11 +637,7 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
-  // TODO URI: queue up callbacks to call on main thread
-  //  NSDictionary *attributes = [_projectFile.theme attributesForScope:scope];
-  //  if (![attributes count])
-  //    return;
-  //  return [_projectFile setAttributes:attributes range:tokenRange expectedGeneration:generation];
+  [(NSMutableAttributedString *)_attributedContent addAttribute:_qualifiedIdentifierAttributeName value:scope.qualifiedIdentifier range:tokenRange];
 }
 
 @end
