@@ -507,9 +507,7 @@ static OnigRegexp *_namedCapturesRegexp;
       // Handle end captures
       if (resultRange.length && syntaxNode.endCaptures) {
         [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope];
-        if ([(NSDictionary *)[syntaxNode.endCaptures objectForKey:@"0"] objectForKey:_captureName]) {
-          scope.flags |= TMScopeHasEndScope;
-        }
+        scope.flags |= TMScopeHasEndScope;
       }
       scope.length = NSMaxRange(resultRange) - scope.location;
       scope.flags |= TMScopeHasEnd;
@@ -574,9 +572,7 @@ static OnigRegexp *_namedCapturesRegexp;
       // Handle begin captures
       if (resultRange.length && firstSyntaxNode.beginCaptures) {
         [self _generateScopesWithCaptures:firstSyntaxNode.beginCaptures result:firstResult type:TMScopeTypeBegin offset:lineRange.location parentScope:spanScope];
-        if ([(NSDictionary *)[firstSyntaxNode.beginCaptures objectForKey:@"0"] objectForKey:_captureName]) {
-          spanScope.flags |= TMScopeHasBeginScope;
-        }
+        spanScope.flags |= TMScopeHasBeginScope;
       }
       [scopeStack addObject:spanScope];
       // Handle content name nested scope
