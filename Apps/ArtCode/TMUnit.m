@@ -19,6 +19,8 @@
 
 static NSMutableDictionary *_extensionClasses;
 
+static NSString * const _qualifiedIdentifierAttributeName = @"TMUnitQualifiedIdentifierAttributeName";
+
 static NSString * const _captureName = @"name";
 static OnigRegexp *_numberedCapturesRegexp;
 static OnigRegexp *_namedCapturesRegexp;
@@ -64,8 +66,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @property (nonatomic, getter = isUpToDate) BOOL upToDate;
 
 - (void)_queueBlockUntilUpToDate:(void(^)(void))block;
-- (void)_setHasPendingChanges;
-- (void)_queueReparseOperation;
+- (void)_queueReparseOperationWithContent:(NSString *)content;
 
 @end
 
@@ -74,7 +75,7 @@ static OnigRegexp *_namedCapturesRegexp;
 @implementation TMUnit {
   NSOperationQueue *_internalQueue;
   
-  NSString *_content;
+  NSAttributedString *_content;
   
   TMScope *_rootScope;
   
@@ -114,7 +115,7 @@ static OnigRegexp *_namedCapturesRegexp;
   _syntax = syntax;
   
   if (_syntax) {
-    [self _queueReparseOperation];
+    [self _queueReparseOperationWithContent:_content.string];
   }
   
   self.autodetectSyntaxOperation = nil;
@@ -136,7 +137,7 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   
   // TODO URI load the contents from the file
-  _content = NSString.alloc.init;
+  _content = NSAttributedString.alloc.init;
   
   _internalQueue = NSOperationQueue.alloc.init;
   _internalQueue.maxConcurrentOperationCount = 1;
@@ -170,6 +171,13 @@ static OnigRegexp *_namedCapturesRegexp;
   return self;
 }
 
+- (void)enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block {
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  [self _queueBlockUntilUpToDate:^{
+    [_content enumerateAttribute:_qualifiedIdentifierAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:block];
+  }];
+}
+
 - (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   [self _queueBlockUntilUpToDate:^{
@@ -195,8 +203,8 @@ static OnigRegexp *_namedCapturesRegexp;
     // TODO URI: get the file's contents through the index's coordination mechanism
     UNIMPLEMENTED_VOID();
   }
-  _content = content;
-  [self _queueReparseOperation];
+  _content = [NSAttributedString.alloc initWithString:content];
+  [self _queueReparseOperationWithContent:content];
 }
 
 #pragma mark - Internal Methods
@@ -263,24 +271,7 @@ static OnigRegexp *_namedCapturesRegexp;
   }
 }
 
-- (void)_setHasPendingChanges {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  
-  // If we're not up to date an operation is already running
-  if (!self.isUpToDate) {
-    return;
-  }
-  
-  // If we don't have a root scope it means we don't have a syntax, and we can't parse
-  if (!_rootScope) {
-    ASSERT(!_syntax);
-    return;
-  }
-  
-  [self _queueReparseOperation];
-}
-
-- (void)_queueReparseOperation {
+- (void)_queueReparseOperationWithContent:(NSString *)content {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   
   if (!_content || !_syntax) {
@@ -290,7 +281,7 @@ static OnigRegexp *_namedCapturesRegexp;
   self.upToDate = NO;
   TMUnit *weakSelf = self;
   TMScope *rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content rootScope:rootScope completionHandler:^(BOOL success) {
+  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content.string rootScope:rootScope completionHandler:^(BOOL success) {
     // If the operation was cancelled we don't need to do anything
     if (!success) {
       return;

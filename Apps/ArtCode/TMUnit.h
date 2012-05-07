@@ -28,6 +28,9 @@
 /// Designated initializer.
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
 
+/// Enumerates the qualified identifiers of the scopes in the given range
+- (void)enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block;
+
 /// Returns the qualified identifier of the deepest scope at the specified offset
 - (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
 
