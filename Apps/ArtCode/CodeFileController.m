@@ -803,26 +803,26 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)selectionDidChangeForCodeView:(CodeView *)codeView
 {
+  // Set current symbol in title
+  TMSymbol *currentSymbol = nil;
+  for (TMSymbol *symbol in _projectFile.symbolList)
+  {
+    if (symbol.range.location > codeView.selectionRange.location)
+      break;
+    currentSymbol = symbol;
+  }
+  if (currentSymbol != _currentSymbol)
+  {
+    _currentSymbol = currentSymbol;
+    [self.singleTabController updateDefaultToolbarTitle];
+  }
   // Apply debounce to selection change
   [_selectionChangeDebounceTimer invalidate];
   _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
     // Retrieve the current scope
-    [self.projectFile scopeAtOffset:codeView.selectionRange.location withCompletionHandler:^(TMScope *scope) {
-      // Set current symbol in title
-      TMSymbol *currentSymbol = nil;
-      for (TMSymbol *symbol in _projectFile.symbolList)
-      {
-        if (symbol.range.location > scope.location)
-          break;
-        currentSymbol = symbol;
-      }
-      if (currentSymbol != _currentSymbol)
-      {
-        _currentSymbol = currentSymbol;
-        [self.singleTabController updateDefaultToolbarTitle];
-      }
+    [self.projectFile qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
       // Change accessory keyboard
-      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:scope.qualifiedIdentifier];
+      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
       
     }];
   } repeats:NO];
