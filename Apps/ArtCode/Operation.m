@@ -20,7 +20,8 @@
   }
   if (completionHandler) {
     NSOperationQueue *homeQueue = NSOperationQueue.currentQueue;
-    [self observeTarget:self keyPath:@"isFinished" options:NSKeyValueObservingOptionNew block:^(MAKVONotification *notification) {
+    completionHandler = [completionHandler copy];
+    [self observeTarget:self keyPath:@"isFinished" options:NSKeyValueObservingOptionNew block:[^(MAKVONotification *notification) {
       if (!self.isFinished) {
         return;
       }
@@ -33,7 +34,7 @@
           completionHandler(!self.isCancelled);
         }];
       }
-    }];
+    } copy]];
   }
   return self;
 }

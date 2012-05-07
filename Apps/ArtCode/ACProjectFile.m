@@ -209,6 +209,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   __block TMTheme *theme = self.theme;
   __weak ACProjectFile *weakSelf = self;
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     NSMutableAttributedString *contents = nil;
@@ -275,6 +276,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     encoding = NSUTF8StringEncoding;
   }
   __block NSError *error = nil;
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
     [NSOperationQueue.mainQueue addOperationWithBlock:^{

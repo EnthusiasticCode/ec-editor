@@ -170,6 +170,7 @@ static NSString * const _childrenKey = @"children";
 
 - (void)_addNewChildItemWithClass:(Class)childClass name:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     if ([_children objectForKey:name]) {
       if (completionHandler) {
@@ -278,6 +279,7 @@ static NSString * const _childrenKey = @"children";
 - (void)setName:(NSString *)name withCompletionHandler:(void (^)(NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(name && ![name isEqualToString:self.name]);
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     [self.parentFolder _addExistingItem:self renameTo:name error:&error];
@@ -293,6 +295,7 @@ static NSString * const _childrenKey = @"children";
 - (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void (^)(NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(newParent && newParent != self.parentFolder);
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     [newParent _addExistingItem:self renameTo:self.name error:&error];
@@ -308,6 +311,7 @@ static NSString * const _childrenKey = @"children";
 - (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(copyParent && copyParent != self.parentFolder);
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     ACProjectFileSystemItem *copy = [copyParent _addCopyOfExistingItem:self renameIfNeeded:NO error:&error];
@@ -322,6 +326,7 @@ static NSString * const _childrenKey = @"children";
 
 - (void)duplicateWithCompletionHandler:(void (^)(ACProjectFileSystemItem *, NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     ACProjectFileSystemItem *copy = [self.parentFolder _addCopyOfExistingItem:self renameIfNeeded:YES error:&error];

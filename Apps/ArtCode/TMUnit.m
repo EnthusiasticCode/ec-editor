@@ -175,6 +175,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  block = [block copy];
   [self _queueBlockUntilUpToDate:^{
     [_attributedContent enumerateAttribute:_qualifiedIdentifierAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:block];
   }];
@@ -182,6 +183,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  completionHandler = [completionHandler copy];
   [self _queueBlockUntilUpToDate:^{
     [[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
       if (!scope.identifier) {
@@ -195,6 +197,7 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  completionHandler = [completionHandler copy];
   [self _queueBlockUntilUpToDate:^{
     completionHandler((id<TMCompletionResultSet>)NSArray.alloc.init);
   }];

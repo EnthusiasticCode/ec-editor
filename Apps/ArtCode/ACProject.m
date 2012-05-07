@@ -183,15 +183,13 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   
-  completionHandler = [completionHandler copy];
-  
   // Increase the open counter
   ++_openCount;
   
   // If there are pending open, append the completionHandler
   if (_pendingOpenCompletionHandlers) {
     if (completionHandler) {
-      [_pendingOpenCompletionHandlers addObject:completionHandler];
+      [_pendingOpenCompletionHandlers addObject:[completionHandler copy]];
     }
     return;
   }
@@ -199,13 +197,14 @@ static NSString * const _plistRemotesKey = @"remotes";
   // If there are pending close, queue the open after the close completes
   if (_pendingCloseCompletionHandlers) {
     __weak ACProject *weakSelf = self;
-    [_pendingCloseCompletionHandlers addObject:^{
+    void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
+    [_pendingCloseCompletionHandlers addObject:[^{
       ACProject *strongSelf = weakSelf;
       if (!strongSelf) {
         return;
       }
-      [strongSelf openWithCompletionHandler:completionHandler];
-    }];
+      [strongSelf openWithCompletionHandler:completionHandlerCopy];
+    } copy]];
     return;
   }
   
@@ -221,7 +220,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   _document = [ACProjectDocument.alloc initWithFileURL:self.fileURL project:self];
   _pendingOpenCompletionHandlers = NSMutableArray.alloc.init;
   if (completionHandler) {
-    [_pendingOpenCompletionHandlers addObject:completionHandler];
+    [_pendingOpenCompletionHandlers addObject:[completionHandler copy]];
   }
   [_document openWithCompletionHandler:^(BOOL success) {
     for (void(^pendingOpenCompletionHandler)(BOOL) in _pendingOpenCompletionHandlers) {
@@ -249,7 +248,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   // If there are pending close, append the completionHandler
   if (_pendingCloseCompletionHandlers) {
     if (completionHandler) {
-      [_pendingCloseCompletionHandlers addObject:completionHandler];
+      [_pendingCloseCompletionHandlers addObject:[completionHandler copy]];
     }
     return;
   }
@@ -257,12 +256,13 @@ static NSString * const _plistRemotesKey = @"remotes";
   // If there are pending open, queue the close after the open completes
   if (_pendingOpenCompletionHandlers) {
     __weak ACProject *weakSelf = self;
+    void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
     [_pendingOpenCompletionHandlers addObject:^{
       ACProject *strongSelf = weakSelf;
       if (!strongSelf) {
         return;
       }
-      [strongSelf closeWithCompletionHandler:completionHandler];
+      [strongSelf closeWithCompletionHandler:completionHandlerCopy];
     }];
     return;
   }
@@ -270,7 +270,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   // Close the document, enquing the completionHandler
   _pendingCloseCompletionHandlers = NSMutableArray.alloc.init;
   if (completionHandler) {
-    [_pendingCloseCompletionHandlers addObject:completionHandler];
+    [_pendingCloseCompletionHandlers addObject:[completionHandler copy]];
   }
   [_document closeWithCompletionHandler:^(BOOL success) {
     for (void(^pendingCloseCompletionHandler)(BOOL) in _pendingCloseCompletionHandlers) {
@@ -462,6 +462,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (void)duplicateWithCompletionHandler:(void (^)(ACProject *, NSError *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  completionHandler = [completionHandler copy];
   [self performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
     
