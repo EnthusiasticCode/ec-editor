@@ -17,3 +17,6 @@
 [submodule "ThirdParty/MAKVONotificationCenter"]
 	path = ThirdParty/MAKVONotificationCenter
 	url = https://github.com/mikeash/MAKVONotificationCenter.git
+[submodule "ThirdParty/ReactiveCocoa"]
+	path = ThirdParty/ReactiveCocoa
+	url = https://github.com/github/ReactiveCocoa.git

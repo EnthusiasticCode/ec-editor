@@ -321,6 +321,7 @@
 		CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */; };
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
+		CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
 		CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
@@ -801,6 +802,7 @@
 		CD49AA0E14E33D98006032F6 /* TMPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPreference.m; sourceTree = "<group>"; };
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
+		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
 		CD65F1D014F6C4A200E0C441 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		CD65F1D114F6C4A200E0C441 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
 		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
@@ -1024,6 +1026,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
 				B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
@@ -1303,6 +1306,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */,
 				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
@@ -2855,6 +2859,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					../Headers,
+					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
+					../ThirdParty,
+					$inherited,
+					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
+				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

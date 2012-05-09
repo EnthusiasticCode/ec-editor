@@ -18,10 +18,11 @@
 #import "ArtCodeURL.h"
 #import "ACProject.h"
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
+
 
 @implementation SearchableTableBrowserController {
   UIPopoverController *_quickBrowsersPopover;
-  NSTimer *_filterDebounceTimer;
   BOOL _isSearchBarStaticOnTop;
   id _keyboardWillShowObserver;
   id _keyboardWillHideObserver;
@@ -30,6 +31,14 @@
 #pragma mark - Properties
 
 @synthesize tableView = _tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
+@synthesize searchBarTextSubject = _searchBarTextSubject;
+
+- (RACSubject *)searchBarTextSubject {
+  if (!_searchBarTextSubject) {
+    _searchBarTextSubject = [RACSubject subject];
+  }
+  return _searchBarTextSubject;
+}
 
 - (UISearchBar *)searchBar {
   if (!searchBar && self.isViewLoaded) {
@@ -84,8 +93,16 @@
   self = [super initWithNibName:nil bundle:nil];
   if (!self)
     return nil;
+  
   self.title = title;
   _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
+  
+  // Reload the table data when the search bar text changes
+  [[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
+    [self invalidateFilteredItems];
+    [self.tableView reloadData];
+  }];
+  
   return self;
 }
 
@@ -252,21 +269,7 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-  [_filterDebounceTimer invalidate];
-  
-  if ([searchText length] == 0)
-  {
-    _filterDebounceTimer = nil;
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
-    return;
-  }
-  
-  // Apply filter to filterController with .3 second debounce
-  _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
-  } repeats:NO];
+  [self.searchBarTextSubject sendNext:searchText];
 }
 
 #pragma mark - Table view data source

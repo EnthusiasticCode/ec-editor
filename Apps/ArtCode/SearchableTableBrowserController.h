@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class RACSubject;
+
 @interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate> {
 @protected
   UINavigationController *_modalNavigationController;
@@ -62,6 +64,11 @@
 - (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController completion:(void(^)())completion;
 - (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController;
 - (void)modalNavigationControllerDismissAction:(id)sender;
+
+#pragma mark Reactive subjects
+
+/// A subject that pushes the search bar text when it's updated.
+@property (readonly, nonatomic) RACSubject *searchBarTextSubject;
 
 @end
 
