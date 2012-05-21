@@ -31,9 +31,6 @@ extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 /// Get the preference value fot the given key.
 - (id)preferenceValueForKey:(NSString *)key;
 
-/// The count of preference values.
-- (NSUInteger)count;
-
 #pragma mark Creating a new preference
 
 - (id)initWithScopeSelector:(NSString *)scope settingsDictionary:(NSDictionary *)settingsDict;
@@ -47,7 +44,12 @@ extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 /// Returns the specified preference's value for the scope. 
 + (id)preferenceValueForKey:(NSString *)preferenceKey qualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
-// TODO
-+ (void)preapareForBackground;
+@end
+
+
+@interface TMPreference (Forwarding)
+
+/// The count of preference values.
+- (NSUInteger)count;
 
 @end
