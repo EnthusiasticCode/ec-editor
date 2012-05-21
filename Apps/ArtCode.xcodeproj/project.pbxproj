@@ -2768,6 +2768,7 @@
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 					../ThirdParty,
 					$inherited,
+					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -2830,6 +2831,7 @@
 					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 					../ThirdParty,
 					$inherited,
+					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -2859,14 +2861,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				GCC_STRICT_ALIASING = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					../Headers,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
-					../ThirdParty,
-					$inherited,
-					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
-				);
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
