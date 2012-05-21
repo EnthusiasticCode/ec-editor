@@ -318,6 +318,7 @@ static const void *loadingObservingContext;
   // The artcodetab in this controller will be set when the app starts, this method makes sure that the project is loaded
   [tab reloadCurrentStatusWithCompletionHandler:^(BOOL success) {
     [self updateDefaultToolbarTitle];
+    self.contentViewController.artCodeTab = self.artCodeTab;
     self.loading = NO;
   }];
 }

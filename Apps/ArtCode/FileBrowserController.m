@@ -150,10 +150,7 @@ static void *_currentFolderContext;
   [super setArtCodeTab:artCodeTab];
   
   ASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
-  if (self.artCodeTab.currentItem)
-    self.currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  else
-    self.currentFolder = self.artCodeTab.currentProject.contentsFolder;
+  self.currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
 }
 
 #pragma mark - View lifecycle

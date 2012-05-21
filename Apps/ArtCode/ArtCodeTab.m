@@ -39,6 +39,14 @@ static NSMutableArray *_mutableTabs;
 
 @synthesize loading = _loading, currentProject = _currentProject, currentItem = _currentItem;
 
+- (ACProjectItem *)currentItem {
+  if (_currentItem)
+    return _currentItem;
+  if (_currentProject)
+    return (ACProjectItem *)_currentProject.contentsFolder;
+  return nil;
+}
+
 #pragma mark - Class methods
 
 + (void)initialize

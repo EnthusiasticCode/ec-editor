@@ -31,7 +31,8 @@
 /// The current project for the tab's URL.
 @property (nonatomic, strong, readonly) ACProject *currentProject;
 
-/// The current project item for the tab's URL.
+/// The current project item for the tab's URL. If no item has been selected by
+/// the URL, the root item of the current project will be returned.
 @property (nonatomic, strong, readonly) ACProjectItem *currentItem;
 
 /// A value indicating if calling moveBackInHistory will have any effect.
