@@ -86,6 +86,7 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 @interface ACProject (RACExtensions)
 
+/// Returns a subscribable that sends NSNotification on ACProjectDidInsertProjectNotificationName and ACProjectDidRemoveProjectNotificationName notifications.
 + (RACSubscribable *)rac_projects;
 
 @end

@@ -155,18 +155,17 @@ static NSMutableArray *_mutableTabs;
   self = [super init];
   if (!self)
     return nil;
+  
   _mutableDictionary = dictionary;
   _mutableHistoryURLs = [[NSMutableArray alloc] init];
   if (![_mutableDictionary objectForKey:_historyURLsKey])
     [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
-  if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count])
-  {
+  
+  if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count]) {
     NSURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.absoluteString];
     [_mutableHistoryURLs addObject:projectsURL];
-  }
-  else
-  {
+  } else {
     for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
       [_mutableHistoryURLs addObject:[NSURL URLWithString:string]];
   }
@@ -178,6 +177,12 @@ static NSMutableArray *_mutableTabs;
   
   ASSERT(_mutableDictionary == dictionary);
   ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
+  
+  // Force the population of currentProject and currentItem.
+  [self _moveFromURL:nil toURL:self.currentURL completionHandler:^(BOOL success) {
+    ASSERT(success);
+  }];
+  
   return self;
 }
 
@@ -236,10 +241,6 @@ static NSMutableArray *_mutableTabs;
   }];
 }
 
-- (void)reloadCurrentStatusWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  [self _moveFromURL:nil toURL:self.currentURL completionHandler:completionHandler];
-}
-
 #pragma mark - Private Methods
 
 - (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler
@@ -263,13 +264,13 @@ static NSMutableArray *_mutableTabs;
     self.loading = YES;
     [toProject openWithCompletionHandler:^(BOOL success) {
       [self.currentProject closeWithCompletionHandler:nil];
-      self.currentProject = nil;
-      self.currentItem = nil;
-      if (success)
-      {
+      if (success) {
         self.currentProject = toProject;
         if ([toUUIDs count] > 1)
           self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+      } else {
+        self.currentProject = nil;
+        self.currentItem = nil;
       }
       completionHandler(success);
       self.loading = NO;
@@ -278,9 +279,11 @@ static NSMutableArray *_mutableTabs;
   else
   {
     // If we're here, the project is the same
-    self.currentItem = nil;
-    if ([toUUIDs count] > 1)
+    if ([toUUIDs count] > 1) {
       self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+    } else {
+      self.currentItem = nil;
+    }
     completionHandler(YES);
   }
 }

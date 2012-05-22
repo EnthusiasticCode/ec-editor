@@ -276,30 +276,6 @@
   return [NSSet setWithObject:@"contentViewController.editing"];
 }
 
-#pragma mark Tab
-
-- (void)setArtCodeTab:(ArtCodeTab *)tab
-{
-  if (tab == self.artCodeTab)
-    return;
-  
-  self.loading = YES;
-  
-  if (self.artCodeTab)
-  {
-    [ArtCodeTab removeTab:self.artCodeTab];
-  }
-  
-  [super setArtCodeTab:tab];
-   
-  // The artcodetab in this controller will be set when the app starts, this method makes sure that the project is loaded
-  [tab reloadCurrentStatusWithCompletionHandler:^(BOOL success) {
-    [self updateDefaultToolbarTitle];
-    self.contentViewController.artCodeTab = self.artCodeTab;
-    self.loading = NO;
-  }];
-}
-
 #pragma mark - Controller methods
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -307,18 +283,22 @@
   if (!self)
     return nil;
   
+  // Loading mode react to tab loading signal
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)]];
+
   // Back and forward buttons to tab history
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
   
   // Changing current tab URL re-route the content view controller
-  [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
-    [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
+  [[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject), RAC_KEYPATH_SELF(self.artCodeTab.currentItem), RAC_KEYPATH_SELF(self.artCodeTab.currentURL), nil] reduce:^id(RACTuple *xs) {
+    return self.artCodeTab;
+  }] where:^BOOL(id x) {
+    return x != nil;
+  }] subscribeNext:^(id x) {
+    [self setContentViewController:[self _routeViewControllerForTab:x] animated:YES];
   }];
-  
-  // Loading mode react to tab loading signal
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)]];
-  
+    
   // Content view controller binds
   [RACAbleSelf(self.contentViewController.editing) subscribeNext:^(id x) {
     [(UIButton *)self.defaultToolbar.editItem.customView setSelected:[x boolValue]];
