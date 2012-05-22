@@ -73,6 +73,35 @@
 
 #pragma mark - UIViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (!self)
+    return nil;
+  
+  RACSubscribable *projects = [ACProject rac_projects];
+  
+  // Update hint view display
+  [[[RACSubscribable return:nil] merge:projects] subscribeNext:^(id x) {
+    if (ACProject.projects.count > 0) {
+      [_hintView removeFromSuperview];
+    } else {
+      [self.view addSubview:self.hintView];
+    }
+  }];
+  
+  // Update gird view
+  [projects subscribeNext:^(NSNotification *note) {
+    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+    if (note.name == ACProjectDidInsertProjectNotificationName) {
+      [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    } else {
+      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }
+  }];
+  
+  return self;
+}
+
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
   if (editing == self.isEditing)
@@ -137,27 +166,6 @@
   [super viewDidLoad];
   
   [self setEditing:NO animated:NO];
-  
-  RACSubscribable *projects = [ACProject rac_projects];
-  
-  // Update hint view display
-  [[[RACSubscribable return:nil] merge:projects] subscribeNext:^(id x) {
-    if (ACProject.projects.count > 0) {
-      [_hintView removeFromSuperview];
-    } else {
-      [self.view addSubview:self.hintView];
-    }
-  }];
-  
-  // Update gird view
-  [projects subscribeNext:^(NSNotification *note) {
-    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
-    if (note.name == ACProjectDidInsertProjectNotificationName) {
-      [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-    } else {
-      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-    }
-  }];
 }
 
 - (void)viewDidUnload

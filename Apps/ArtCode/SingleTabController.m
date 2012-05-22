@@ -11,6 +11,7 @@
 #import "TopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -30,9 +31,6 @@
 #import "UIImage+AppStyle.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
-static const void *tabCurrentURLObservingContext;
-static const void *contentViewControllerContext;
-static const void *loadingObservingContext;
 
 @interface SingleTabController ()
 
@@ -115,6 +113,8 @@ static const void *loadingObservingContext;
   if (contentViewController == _contentViewController)
     return;
   
+  [self willChangeValueForKey:@"contentViewController"];
+  
   [_contentViewController willMoveToParentViewController:nil];
   [_contentViewController removeFromParentViewController];
   if (contentViewController)
@@ -149,28 +149,10 @@ static const void *loadingObservingContext;
       [_contentViewController.view removeFromSuperview];
     }
   }
-  
-  // Remove old view controller
-  if (_contentViewController)
-  {
-    [_contentViewController removeObserver:self forKeyPath:@"toolbarItems" context:&contentViewControllerContext];
-    [_contentViewController removeObserver:self forKeyPath:@"title" context:&contentViewControllerContext];
-    [_contentViewController removeObserver:self forKeyPath:@"editing" context:&contentViewControllerContext];
-    
-    [_contentViewController removeObserver:self forKeyPath:@"loading" context:&loadingObservingContext];
-  }
-  
-  // Setup new controller
-  if ((_contentViewController = contentViewController))
-  {
-    [_contentViewController addObserver:self forKeyPath:@"toolbarItems" options:NSKeyValueObservingOptionNew context:&contentViewControllerContext];
-    [_contentViewController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
-    [_contentViewController addObserver:self forKeyPath:@"editing" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&contentViewControllerContext];
-    
-    [_contentViewController addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&loadingObservingContext];
-  }
-  
-  [self _setupDefaultToolbarItemsAnimated:animated];
+
+  _contentViewController = contentViewController;
+
+  [self didChangeValueForKey:@"contentViewController"];
 }
 
 - (UIView *)currentToolbarView
@@ -305,16 +287,11 @@ static const void *loadingObservingContext;
   
   if (self.artCodeTab)
   {
-    [self.artCodeTab removeObserver:self forKeyPath:@"currentURL" context:&tabCurrentURLObservingContext];
-    [self.artCodeTab removeObserver:self forKeyPath:@"loading" context:&loadingObservingContext];
     [ArtCodeTab removeTab:self.artCodeTab];
   }
   
   [super setArtCodeTab:tab];
-  
-  [self.artCodeTab addObserver:self forKeyPath:@"currentURL" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&tabCurrentURLObservingContext];
-  [self.artCodeTab addObserver:self forKeyPath:@"loading" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&loadingObservingContext];
-  
+   
   // The artcodetab in this controller will be set when the app starts, this method makes sure that the project is loaded
   [tab reloadCurrentStatusWithCompletionHandler:^(BOOL success) {
     [self updateDefaultToolbarTitle];
@@ -325,42 +302,42 @@ static const void *loadingObservingContext;
 
 #pragma mark - Controller methods
 
-- (void)dealloc
-{
-  self.artCodeTab = nil;
-  self.contentViewController = nil;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (!self)
+    return nil;
+  
+  // Back and forward buttons to tab history
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
+  
+  // Changing current tab URL re-route the content view controller
+  [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
+    [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
+  }];
+  
+  // Loading mode react to tab loading signal
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)]];
+  
+  // Content view controller binds
+  [RACAbleSelf(self.contentViewController.editing) subscribeNext:^(id x) {
+    [(UIButton *)self.defaultToolbar.editItem.customView setSelected:[x boolValue]];
+  }];
+  
+  [RACAbleSelf(self.contentViewController.toolbarItems) subscribeNext:^(id x) {
+    [self _setupDefaultToolbarItemsAnimated:YES];
+  }];
+  
+  [RACAbleSelf(self.contentViewController.title) subscribeNext:^(id x) {
+    [self updateDefaultToolbarTitle];
+  }];
+  
+  return self;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
   return YES;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &tabCurrentURLObservingContext)
-  {
-    self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
-    self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
-    [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
-  }
-  else if (context == &contentViewControllerContext)
-  {
-    if ([keyPath isEqualToString:@"editing"])
-      [(UIButton *)self.defaultToolbar.editItem.customView setSelected:_contentViewController.isEditing];
-    else if ([keyPath isEqualToString:@"toolbarItems"])
-      [self _setupDefaultToolbarItemsAnimated:YES];
-    else if ([keyPath isEqualToString:@"title"])
-      [self updateDefaultToolbarTitle];
-  }
-  else if (context == &loadingObservingContext)
-  {
-    self.defaultToolbar.titleControl.loadingMode = [object isLoading];
-  }
-  else
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
 }
 
 #pragma mark - View lifecycle
@@ -389,12 +366,12 @@ static const void *loadingObservingContext;
 
 - (void)updateDefaultToolbarTitle
 {
-  if (![_contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
-      || ![(UIViewController<SingleTabContentController> *)_contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
+  if (![self.contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
+      || ![(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
   {
-    if ([_contentViewController.title length] > 0)
+    if ([self.contentViewController.title length] > 0)
     {
-      [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:_contentViewController.title] selectedIndexes:nil];
+      [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:self.contentViewController.title] selectedIndexes:nil];
     }
     else
     {
@@ -439,7 +416,7 @@ static const void *loadingObservingContext;
     }
   }
   
-  self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<SingleTabContentController> *)_contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
+  self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
 }
 
 #pragma mark - Private methods
@@ -481,8 +458,8 @@ static const void *loadingObservingContext;
   if (!self._isViewVisible)
     return;
   
-  self.defaultToolbar.editItem = _contentViewController.editButtonItem;
-  [self.defaultToolbar setToolItems:_contentViewController.toolbarItems animated:animated];
+  self.defaultToolbar.editItem = self.contentViewController.editButtonItem;
+  [self.defaultToolbar setToolItems:self.contentViewController.toolbarItems animated:animated];
 }
 
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab

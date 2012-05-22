@@ -287,6 +287,7 @@ static NSMutableArray *_mutableTabs;
 
 @end
 
+#pragma mark
 
 @implementation UIViewController (ArtCodeTab)
 
