@@ -54,8 +54,6 @@
   
   UIImage *_cellNormalBackground;
   UIImage *_cellSelectedBackground;
-  
-  NSArray *_projects;
 }
 
 @synthesize gridView = _gridView, hintView = _hintView;
@@ -71,14 +69,6 @@
 + (BOOL)automaticallyNotifiesObserversOfEditing
 {
   return NO;
-}
-
-#pragma mark - NSObject
-
-- (void)dealloc
-{
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectWillRemoveProjectNotificationName object:[ACProject class]];
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
 }
 
 #pragma mark - UIViewController
@@ -147,6 +137,27 @@
   [super viewDidLoad];
   
   [self setEditing:NO animated:NO];
+  
+  RACSubscribable *projects = [ACProject rac_projects];
+  
+  // Update hint view display
+  [[[RACSubscribable return:nil] merge:projects] subscribeNext:^(id x) {
+    if (ACProject.projects.count > 0) {
+      [_hintView removeFromSuperview];
+    } else {
+      [self.view addSubview:self.hintView];
+    }
+  }];
+  
+  // Update gird view
+  [projects subscribeNext:^(NSNotification *note) {
+    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
+    if (note.name == ACProjectDidInsertProjectNotificationName) {
+      [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    } else {
+      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }
+  }];
 }
 
 - (void)viewDidUnload
@@ -167,45 +178,15 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-  [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidInsertProjectNotificationName object:[ACProject class] queue:NSOperationQueue.currentQueue usingBlock:^(NSNotification *note) {
-    _projects = ACProject.projects;
-    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
-    [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-    if ([_projects count] > 0) {
-      [_hintView removeFromSuperview];
-    }
-  }];
-  [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidRemoveProjectNotificationName object:[ACProject class] queue:NSOperationQueue.currentQueue usingBlock:^(NSNotification *note) {
-    _projects = ACProject.projects;
-    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
-    [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-    if ([_projects count] == 0) {
-      [self.view addSubview:self.hintView];
-    }
-  }];
-  _projects = ACProject.projects;
+  [super viewWillAppear:animated];
   [self.gridView reloadData];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  if ([_projects count] == 0) {
-    [self.view addSubview:self.hintView];
-  }
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidInsertProjectNotificationName object:[ACProject class]];
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:ACProjectDidRemoveProjectNotificationName object:[ACProject class]];
-  _projects = nil;
 }
 
 #pragma mark - Grid View Data Source
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-  return _projects.count;
+  return ACProject.projects.count;
 }
 
 - (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -227,7 +208,7 @@
   }
   
   // Setup project title
-  ACProject *project = [_projects objectAtIndex:cellIndex];
+  ACProject *project = [ACProject.projects objectAtIndex:cellIndex];
   cell.title.text = project.name;
   cell.label.text = @"";
   cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
@@ -247,7 +228,7 @@
 
 - (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
   if (!self.isEditing) {
-    [self.artCodeTab pushURL:[[_projects objectAtIndex:cellIndex] artCodeURL]];
+    [self.artCodeTab pushURL:[[ACProject.projects objectAtIndex:cellIndex] artCodeURL]];
   }
 }
 
@@ -282,7 +263,7 @@
       
       // Remove projects
       [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-        [[_projects objectAtIndex:idx] remove];
+        [[ACProject.projects objectAtIndex:idx] remove];
       }];
       
       // Show bezel alert
@@ -300,7 +281,7 @@
       NSInteger cellsToExportCount = [cellsToExport count];
       __block NSInteger progress = 0;
       [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-        ACProject *project = [[_projects objectAtIndex:idx] copy];
+        ACProject *project = [[ACProject.projects objectAtIndex:idx] copy];
         [project openWithCompletionHandler:^(BOOL success) {
           NSURL *publishURL = [NSURL temporaryDirectory];
           [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(NSError *error) {
@@ -337,7 +318,7 @@
       NSURL *temporaryDirectory = [NSURL temporaryDirectory];
       [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
       [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        ACProject *project = [[_projects objectAtIndex:idx] copy];
+        ACProject *project = [[ACProject.projects objectAtIndex:idx] copy];
         
         // Generate mail subject
         [subject appendFormat:@"%@, ", project.name];
@@ -462,7 +443,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ACProject *)[_projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+    [(ACProject *)[ACProject.projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
       [duplicate closeWithCompletionHandler:nil];
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;

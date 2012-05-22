@@ -647,6 +647,21 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark
 
+@implementation ACProject (RACExtensions)
+
++ (RACSubscribable *)rac_projects {
+  static RACSubscribable *_rac_projects = nil;
+  if (!_rac_projects) {
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    _rac_projects = [RACSubscribable merge:[NSArray arrayWithObjects:[notificationCenter rac_addObserverForName:ACProjectDidInsertProjectNotificationName object:self], [notificationCenter rac_addObserverForName:ACProjectDidRemoveProjectNotificationName object:self], nil]];
+  }
+  return _rac_projects;
+}
+
+@end
+
+#pragma mark
+
 @implementation ACProjectDocument {
   __weak ACProject *_project;
   BOOL _isDirty;

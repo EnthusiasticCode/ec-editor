@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 @class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote;
 
@@ -80,5 +81,11 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 /// Completelly remove the project and its files.
 - (void)remove;
+
+@end
+
+@interface ACProject (RACExtensions)
+
++ (RACSubscribable *)rac_projects;
 
 @end
