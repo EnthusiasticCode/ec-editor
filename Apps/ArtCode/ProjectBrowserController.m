@@ -31,6 +31,7 @@
 @interface ProjectBrowserController ()
 
 @property (nonatomic, strong) GridView *gridView;
+@property (nonatomic, strong) UIView *hintView;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -57,7 +58,15 @@
   NSArray *_projects;
 }
 
-@synthesize gridView = _gridView;
+@synthesize gridView = _gridView, hintView = _hintView;
+
+- (UIView *)hintView {
+  if (!_hintView) {
+    _hintView = [[[NSBundle mainBundle] loadNibNamed:@"ProjectsHintsView" owner:nil options:nil] objectAtIndex:0];
+    _hintView.frame = self.view.bounds;
+  }
+  return _hintView;
+}
 
 + (BOOL)automaticallyNotifiesObserversOfEditing
 {
@@ -108,7 +117,11 @@
 
 - (void)loadView
 {
-  self.view = self.gridView;
+  [super loadView];
+  
+  [self.view addSubview:self.gridView];
+  self.gridView.frame = self.view.bounds;
+  self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
@@ -158,14 +171,27 @@
     _projects = ACProject.projects;
     NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
     [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    if ([_projects count] > 0) {
+      [_hintView removeFromSuperview];
+    }
   }];
   [[NSNotificationCenter defaultCenter] addObserverForName:ACProjectDidRemoveProjectNotificationName object:[ACProject class] queue:NSOperationQueue.currentQueue usingBlock:^(NSNotification *note) {
     _projects = ACProject.projects;
     NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
     [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    if ([_projects count] == 0) {
+      [self.view addSubview:self.hintView];
+    }
   }];
   _projects = ACProject.projects;
   [self.gridView reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  if ([_projects count] == 0) {
+    [self.view addSubview:self.hintView];
+  }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
