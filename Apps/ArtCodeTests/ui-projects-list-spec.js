@@ -216,6 +216,38 @@ describe("Projects list", function() {
       });
       
     });
+
+		it("should disable navigation buttons when removing the project next in history", function() {
+			var defaultToolbar = tabsScrollView.elements()["default toolbar"]
+			defaultToolbar.buttons()["Add"].tap();
+      target.delay(.5);
+
+      var popover = mainWindow.popover();
+			popover.buttons()["Create new project"].tap();
+      target.delay(.5);
+
+			var projectName = "History Test";
+			popover.textFields()[0].setValue(projectName);
+      popover.navigationBar().rightButton().tap();
+      target.delay(1);
+
+			var projectCell = tabsScrollView.elements()["projects grid"].elements()[projectName];
+			projectCell.tap();
+			target.delay(.5);
+			defaultToolbar.buttons()["Back"].tap();
+			target.delay(.5);
+			
+			defaultToolbar.buttons()["Edit"].tap();
+      target.delay(.5);
+			tabsScrollView.elements()["projects grid"].elements()[projectName].tap();
+      target.delay(.5);
+			defaultToolbar.buttons()["Delete"].tap();
+      target.delay(.5);
+			mainWindow.popover().actionSheet().buttons()["Delete permanently"].tap();
+      target.delay(.5);
+
+			expect(defaultToolbar.buttons()["Forward"].isEnabled()).toBeFalsy();
+		});
     
   });
   
