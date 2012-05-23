@@ -33,6 +33,9 @@ static NSMutableArray *_mutableTabs;
 /// Moves the current URL for the tab and populate current project and item if neccessary.
 - (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void(^)(BOOL success))completionHandler;
 
+/// Removes hisotry entries with an URL containing the given UUID and updates properties.
+- (void)_removeHistoryEntriesContainingUUID:(id)uuid;
+
 @end
 
 @implementation ArtCodeTab
@@ -58,18 +61,38 @@ static NSMutableArray *_mutableTabs;
 {
   if (self != [ArtCodeTab class])
     return;
+  
+  // Load persitent history
   _plistURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_plistFileName];
   NSData *plistData = [NSData dataWithContentsOfURL:_plistURL options:NSDataReadingUncached error:NULL];
-  if (plistData)
+  if (plistData) {
     _mutableTabDictionaries = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListMutableContainersAndLeaves format:0 error:NULL];
-  if (!_mutableTabDictionaries)
+  }
+  if (!_mutableTabDictionaries) {
     _mutableTabDictionaries = [[NSMutableArray alloc] init];
+  }
+  
+  // Create tabs
   _mutableTabs = [[NSMutableArray alloc] init];
-  if (![_mutableTabDictionaries count])
+  if (![_mutableTabDictionaries count]) {
     [self blankTab]; // no need to do anything with the return value, it will be automatically added to the class arrays
-  else
-    for (NSMutableDictionary *dictionary in _mutableTabDictionaries)
+  } else {
+    for (NSMutableDictionary *dictionary in _mutableTabDictionaries) {
       [_mutableTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
+    }
+  }
+  
+  // React to remove history items from tab's history when a project is eliminated
+  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class]] subscribeNext:^(NSNotification *note) {
+    ACProject *project = [[ACProject projects] objectAtIndex:[[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue]];
+    if (!project)
+      return;
+    
+    id projectUUID = project.UUID;
+    for (ArtCodeTab *tab in _mutableTabs) {
+      [tab _removeHistoryEntriesContainingUUID:projectUUID];
+    }
+  }];
 }
 
 + (NSArray *)allTabs
@@ -119,8 +142,7 @@ static NSMutableArray *_mutableTabs;
   return [[_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue];
 }
 
-- (void)setCurrentHistoryPosition:(NSUInteger)currentHistoryPosition
-{
+- (void)setCurrentHistoryPosition:(NSUInteger)currentHistoryPosition {
   [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
 }
 
@@ -302,6 +324,29 @@ static NSMutableArray *_mutableTabs;
       [self _loadFirstValidProjectItem];
     }
   }];
+}
+
+- (void)_removeHistoryEntriesContainingUUID:(id)uuid {
+  // Get the indexes of history entries to remove
+  NSMutableIndexSet *removeIndexed = NSMutableIndexSet.new;
+  [(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] enumerateObjectsUsingBlock:^(NSString *URLString, NSUInteger idx, BOOL *stop) {
+    if ([URLString rangeOfString:uuid].location != NSNotFound) {
+      [removeIndexed addIndex:idx];
+    }
+  }];
+  // Exit if nothing done
+  if (removeIndexed.count == 0)
+    return;
+  // Remove history entries
+  [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsAtIndexes:removeIndexed];
+  [_mutableHistoryURLs removeObjectsAtIndexes:removeIndexed];
+  // Adjust current history position
+  NSUInteger newHistoryPosition = self.currentHistoryPosition;
+  while ([removeIndexed containsIndex:newHistoryPosition]) {
+    ASSERT(newHistoryPosition); // FIX not safe if current history position is 0
+    newHistoryPosition--;
+  }
+  self.currentHistoryPosition = newHistoryPosition;
 }
 
 @end

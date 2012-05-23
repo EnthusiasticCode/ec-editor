@@ -7,10 +7,6 @@ describe("Main window", function() {
     expect(mainWindow.scrollViews()["tabs scrollview"]).not.toBeNull();
   });
   
-  it("should have a tab content consisting of 2 elements", function() {
-    expect(mainWindow.scrollViews()["tabs scrollview"].elements().length).toEqual(2);
-  });
-  
   describe("tab content", function() {
     
     var tabsScrollView = mainWindow.scrollViews()["tabs scrollview"];
