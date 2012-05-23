@@ -14,7 +14,7 @@
 
 @class ArtCodeTab, TMTheme, TMUnit;
 
-@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, ACProjectFilePresenter, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
+@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
 #pragma mark - Controller's location
 

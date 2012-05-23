@@ -103,7 +103,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
-  NSTimer *_selectionChangeDebounceTimer;
   TMSymbol *_currentSymbol;
   
   CGRect _keyboardFrame;
@@ -123,7 +122,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize projectFile= _projectFile;
+@synthesize projectFile = _projectFile;
 @synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
@@ -266,7 +265,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (projectFile == _projectFile)
     return;
   
-  [_projectFile removePresenter:self];
   [_projectFile closeWithCompletionHandler:nil];
   _projectFile = nil;
   [projectFile openWithCompletionHandler:^(NSError *error) {
@@ -274,10 +272,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
       return;
     }
     _projectFile = projectFile;
-    [_projectFile addPresenter:self];
     [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
     [_codeView updateAllText];
     [self _loadWebPreviewContentAndTitle];
+    [RACAbleSelf(projectFile.attributedContent) subscribeNext:^(id x) {
+      [self.codeView updateAllText];
+    }];
   }];
 }
 
@@ -477,15 +477,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   [self _layoutChildViews];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-  [super viewWillDisappear:animated];
-  
-  // Stop the timer started in selectionDidChangeForCodeview:
-  [_selectionChangeDebounceTimer invalidate];
-  _selectionChangeDebounceTimer = nil;
-}
-
 #pragma mark - Controller Methods
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -612,37 +603,24 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   return NO;
 }
 
-#pragma mark - ACProjectFilePresenter
-
-- (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string
-{
-  [self.codeView updateTextFromStringRange:range toStringRange:NSMakeRange(range.location, [string length])];
-}
-
-- (void)projectFile:(ACProjectFile *)projectFile didChangeAttributesInRange:(NSRange)range
-{
-#warning KNOWN ISSUE: this callback tells the codeview to update when attributes are changed, at the moment the callback is too slow, so TMUnit could pile up changes much faster than the renderer can process them. Once the renderer is optimized we can enable this again, for now the codeview won't update properly without this, but it will update when the text is changed
-  [self.codeView updateTextFromStringRange:range toStringRange:range];
-}
-
 #pragma mark - Code View DataSource Methods
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return self.projectFile.length;
+  return self.projectFile.attributedContent.length;
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 // TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [[self.projectFile attributedSubstringFromRange:stringRange] mutableCopy];
+  NSMutableAttributedString *attributedString = [[self.projectFile.attributedContent attributedSubstringFromRange:stringRange] mutableCopy];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.projectFile substringWithRange:[result rangeAtIndex:1]];
+      NSString *placeHolderName = [self.projectFile.attributedContent.string substringWithRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }
@@ -657,13 +635,13 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  [self.projectFile replaceCharactersInRange:range withString:commitString];
+  self.projectFile.content =  [self.projectFile.content stringByReplacingCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [self.projectFile attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange inRange:NSMakeRange(0, self.projectFile.length)];
+  return [self.projectFile.attributedContent attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange inRange:NSMakeRange(0, self.projectFile.attributedContent.length)];
 }
 
 #pragma mark - Code View Delegate Methods
@@ -804,28 +782,29 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (void)selectionDidChangeForCodeView:(CodeView *)codeView
 {
   // Set current symbol in title
-  TMSymbol *currentSymbol = nil;
-  for (TMSymbol *symbol in _projectFile.symbolList)
-  {
-    if (symbol.range.location > codeView.selectionRange.location)
-      break;
-    currentSymbol = symbol;
-  }
-  if (currentSymbol != _currentSymbol)
-  {
-    _currentSymbol = currentSymbol;
-    [self.singleTabController updateDefaultToolbarTitle];
-  }
-  // Apply debounce to selection change
-  [_selectionChangeDebounceTimer invalidate];
-  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-    // Retrieve the current scope
-    [self.projectFile qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-      // Change accessory keyboard
-      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
-      
-    }];
-  } repeats:NO];
+  // TODO: change this to RAC
+//  TMSymbol *currentSymbol = nil;
+//  for (TMSymbol *symbol in _projectFile.symbolList)
+//  {
+//    if (symbol.range.location > codeView.selectionRange.location)
+//      break;
+//    currentSymbol = symbol;
+//  }
+//  if (currentSymbol != _currentSymbol)
+//  {
+//    _currentSymbol = currentSymbol;
+//    [self.singleTabController updateDefaultToolbarTitle];
+//  }
+//  // Apply debounce to selection change
+//  [_selectionChangeDebounceTimer invalidate];
+//  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+//    // Retrieve the current scope
+//    [self.projectFile qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+//      // Change accessory keyboard
+//      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
+//      
+//    }];
+//  } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods
@@ -887,7 +866,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 {
   if ([self _isWebPreview] && self.projectFile)
   {
-    [self.webView loadHTMLString:[self.projectFile string] baseURL:nil];
+    [self.webView loadHTMLString:self.projectFile.content baseURL:nil];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else

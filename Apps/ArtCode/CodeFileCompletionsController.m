@@ -49,12 +49,13 @@
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-  ASSERT(self.targetCodeFileController.projectFile.length > self.offsetInDocumentForCompletions);
-  
-  if (!_completionResults)
-    [self.targetCodeFileController.projectFile completionsAtOffset:self.offsetInDocumentForCompletions withCompletionHandler:^(id<TMCompletionResultSet> completions) {
-      self._completionResults = completions;
-    }];
+  ASSERT(self.targetCodeFileController.projectFile.content.length > self.offsetInDocumentForCompletions);
+
+  // TODO: change to RAC
+//  if (!_completionResults)
+//    [self.targetCodeFileController.projectFile completionsAtOffset:self.offsetInDocumentForCompletions withCompletionHandler:^(id<TMCompletionResultSet> completions) {
+//      self._completionResults = completions;
+//    }];
   return _completionResults;
 }
 

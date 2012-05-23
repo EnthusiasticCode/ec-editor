@@ -214,7 +214,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
           RACSubscribable *content = RACAble(innerStrongSelf, content);
           RACDisposable *disposable = [[content select:^id(id x) {
             return [NSAttributedString.alloc initWithString:x attributes:innerStrongSelf.theme.commonAttributes];
-          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
+          }] subscribeNext:^(id x) {
+            innerStrongSelf.attributedContent = x;
+          }];
+//          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
           [innerStrongSelf->_contentDisposables addObject:disposable];
           disposable = [content subscribeNext:^(id x) {
             [innerStrongSelf.codeUnit reparseWithUnsavedContent:x];
