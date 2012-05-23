@@ -24,8 +24,6 @@
 @implementation SearchableTableBrowserController {
   UIPopoverController *_quickBrowsersPopover;
   BOOL _isSearchBarStaticOnTop;
-  id _keyboardWillShowObserver;
-  id _keyboardWillHideObserver;
 }
 
 #pragma mark - Properties
@@ -103,6 +101,27 @@
     [self.tableView reloadData];
   }];
   
+  // Account for keyboard and resize table accordingly
+  [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
+    if (note.name == UIKeyboardDidShowNotification) {
+      CGRect tableViewFrame = self.tableView.frame;
+      tableViewFrame.size.height = [self.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
+      self.tableView.frame = tableViewFrame;
+    } else {
+      CGRect tableViewFrame = self.view.bounds;
+      CGRect contentRect = self.tableView.bounds;
+      if (_isSearchBarStaticOnTop) {
+        tableViewFrame.origin.y = 44;
+        tableViewFrame.size.height -= 44;
+      }
+      if (self.bottomToolBar != nil) {
+        tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
+      }
+      self.tableView.frame = tableViewFrame;
+      [self.tableView scrollRectToVisible:contentRect animated:NO];
+    }
+  }];
+      
   return self;
 }
 
@@ -209,32 +228,11 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  _keyboardWillShowObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardDidShowNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
-    CGRect tableViewFrame = self.tableView.frame;
-    tableViewFrame.size.height = [self.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
-      self.tableView.frame = tableViewFrame;
-  }];
-  _keyboardWillHideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillHideNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
-    CGRect tableViewFrame = self.view.bounds;
-    CGPoint contentOffset = self.tableView.contentOffset;
-    if (_isSearchBarStaticOnTop) {
-      tableViewFrame.origin.y = 44;
-      tableViewFrame.size.height -= 44;
-    }
-    if (self.bottomToolBar != nil) {
-      tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
-    }
-    self.tableView.frame = tableViewFrame;
-    self.tableView.contentOffset = contentOffset;
-  }];
-  
   self.toolbarItems = self.toolNormalItems;
   [self.tableView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-  [[NSNotificationCenter defaultCenter] removeObserver:_keyboardWillShowObserver];
-  [[NSNotificationCenter defaultCenter] removeObserver:_keyboardWillHideObserver];
   [self invalidateFilteredItems];
   [super viewDidDisappear:animated];
 }

@@ -27,6 +27,10 @@ static NSMutableArray *_mutableTabs;
 @property (nonatomic, strong) ACProjectItem *currentItem;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
+
+- (void)_loadFirstValidProjectItem;
+
+/// Moves the current URL for the tab and populate current project and item if neccessary.
 - (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
@@ -34,6 +38,7 @@ static NSMutableArray *_mutableTabs;
 @implementation ArtCodeTab
 {
   NSMutableDictionary *_mutableDictionary;
+  // This array is maintained in parallel with _mutableDictionary's _historyURLsKey key to have NSURLs instead of strings
   NSMutableArray *_mutableHistoryURLs;
 }
 
@@ -179,9 +184,7 @@ static NSMutableArray *_mutableTabs;
   ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
   
   // Force the population of currentProject and currentItem.
-  [self _moveFromURL:nil toURL:self.currentURL completionHandler:^(BOOL success) {
-    ASSERT(success);
-  }];
+  [self _loadFirstValidProjectItem];
   
   return self;
 }
@@ -284,8 +287,21 @@ static NSMutableArray *_mutableTabs;
     } else {
       self.currentItem = nil;
     }
-    completionHandler(YES);
+    // Return success if the porject did't need to be changed or there was an UUID but no project.
+    completionHandler(!changeProjects || !((BOOL)toProject ^ toUUIDs.count));
   }
+}
+
+- (void)_loadFirstValidProjectItem {
+  [self _moveFromURL:nil toURL:self.currentURL completionHandler:^(BOOL success) {
+    if (!success) {
+      // In case the project couldn't be opened, remove the current history element and try to load the last one
+      [[_mutableDictionary objectForKey:_historyURLsKey] removeLastObject];
+      [_mutableHistoryURLs removeLastObject];
+      self.currentHistoryPosition = self.currentHistoryPosition - 1;
+      [self _loadFirstValidProjectItem];
+    }
+  }];
 }
 
 @end

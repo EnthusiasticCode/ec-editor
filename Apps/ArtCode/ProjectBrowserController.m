@@ -81,7 +81,7 @@
   RACSubscribable *projects = [ACProject rac_projects];
   
   // Update hint view display
-  [[[RACSubscribable return:nil] merge:projects] subscribeNext:^(id x) {
+  [[projects startWith:nil] subscribeNext:^(id x) {
     if (ACProject.projects.count > 0) {
       [_hintView removeFromSuperview];
     } else {
