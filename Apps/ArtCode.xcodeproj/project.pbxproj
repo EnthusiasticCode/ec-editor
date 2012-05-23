@@ -140,10 +140,7 @@
 		B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
-		B7CE615B152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
-		B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
-		B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
@@ -612,8 +609,6 @@
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
 		B7CB6BBD156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
 		B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
-		B7CE6159152C86000019B2FC /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operation.h; sourceTree = "<group>"; };
-		B7CE615A152C86000019B2FC /* Operation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Operation.m; sourceTree = "<group>"; };
 		B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libMAKVONotificationCenter-iOS.a"; path = "../ThirdParty/MAKVONotificationCenter/build/Release-iphoneos/libMAKVONotificationCenter-iOS.a"; sourceTree = "<group>"; };
 		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
 		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
@@ -1416,8 +1411,6 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
-				B7CE6159152C86000019B2FC /* Operation.h */,
-				B7CE615A152C86000019B2FC /* Operation.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -2497,7 +2490,6 @@
 				B7728C6315286EE9005EA98A /* TMScope.m in Sources */,
 				B7728C6515286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B7CE61D1152CC6E60019B2FC /* Operation.m in Sources */,
 				B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
@@ -2531,7 +2523,6 @@
 				B7728C6215286EE8005EA98A /* TMScope.m in Sources */,
 				B7728C6415286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */,
 				B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
@@ -2641,7 +2632,6 @@
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B7CE615B152C86000019B2FC /* Operation.m in Sources */,
 				B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -327,11 +327,11 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 }
 
 - (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
-  [_codeUnit qualifiedScopeIdentifierAtOffset:offset withCompletionHandler:completionHandler];
+  completionHandler([_codeUnit qualifiedScopeIdentifierAtOffset:offset]);
 }
 
 - (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
-  [_codeUnit completionsAtOffset:offset withCompletionHandler:completionHandler];
+  completionHandler([_codeUnit completionsAtOffset:offset]);
 }
 
 #pragma mark - Managing file bookmarks

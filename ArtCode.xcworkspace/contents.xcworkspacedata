@@ -11,9 +11,6 @@
       location = "group:ThirdParty/cocoaoniguruma/framework/CocoaOniguruma.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ThirdParty/MAKVONotificationCenter/MAKVONotificationCenter.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj">
    </FileRef>
 </Workspace>

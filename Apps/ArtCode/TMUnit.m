@@ -14,7 +14,6 @@
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
-#import "Operation.h"
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -34,24 +33,9 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark -
 
-@interface AutodetectSyntaxOperation : Operation
+@interface TMUnit ()
 
-/// Only accessible after the operation is finished
-@property (atomic, strong, readonly) TMSyntaxNode *syntax;
-
-- (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void(^)(BOOL success))completionHandler;
-
-@end
-
-#pragma mark -
-
-@interface ReparseOperation : Operation
-
-/// Only accessible after the operation is finished
-@property (atomic, strong, readonly) TMScope *rootScope;
-@property (atomic, strong, readonly) NSAttributedString *attributedContent;
-
-- (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void(^)(BOOL success))completionHandler;
+- (void)_reparse;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope;
@@ -60,34 +44,16 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark -
 
-@interface TMUnit ()
-
-@property (nonatomic, strong) AutodetectSyntaxOperation *autodetectSyntaxOperation;
-@property (nonatomic, strong) ReparseOperation *reparseOperation;
-@property (nonatomic, getter = isUpToDate) BOOL upToDate;
-
-- (void)_queueBlockUntilUpToDate:(void(^)(void))block;
-- (void)_queueReparseOperation;
-
-@end
-
-#pragma mark -
-
 @implementation TMUnit {
-  NSOperationQueue *_internalQueue;
-  
   NSString *_content;
-  NSAttributedString *_attributedContent;
+  NSMutableAttributedString *_attributedContent;
   
   TMScope *_rootScope;
-  
-  NSMutableArray *_queuedBlocks;
   
   NSMutableDictionary *_extensions;
 }
 
 @synthesize index = _index, syntax = _syntax;
-@synthesize autodetectSyntaxOperation = _autodetectSyntaxOperation, reparseOperation = _reparseOperation, upToDate = _upToDate;
 
 #pragma mark - NSObject
 
@@ -104,23 +70,16 @@ static OnigRegexp *_namedCapturesRegexp;
   return [self initWithFileURL:nil index:nil];
 }
 
-- (void)dealloc {
-  [_internalQueue cancelAllOperations];
-}
-
 #pragma mark - Public Methods
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
-  [_internalQueue cancelAllOperations];
   _rootScope = nil;
   
   _syntax = syntax;
   
   if (_syntax) {
-    [self _queueReparseOperation];
+    [self _reparse];
   }
-  
-  self.autodetectSyntaxOperation = nil;
 }
 
 - (NSArray *)symbolList {
@@ -132,7 +91,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   self = [super init];
   if (!self) {
     return nil;
@@ -140,11 +98,6 @@ static OnigRegexp *_namedCapturesRegexp;
   
   // TODO URI load the contents from the file
   _content = NSString.alloc.init;
-  
-  _internalQueue = NSOperationQueue.alloc.init;
-  _internalQueue.maxConcurrentOperationCount = 1;
-  
-  _queuedBlocks = NSMutableArray.alloc.init;
   
   _extensions = NSMutableDictionary.alloc.init;
   [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
@@ -158,49 +111,40 @@ static OnigRegexp *_namedCapturesRegexp;
     }];
   }];
   
-  // Detect the syntax on the background queue so we don't initialize TMSyntaxNode on the main queue
-  __weak TMUnit *weakSelf = self;
   // TODO URI load the first line from the file
   NSString *firstLine = nil;
-  _autodetectSyntaxOperation = [AutodetectSyntaxOperation.alloc initWithFileURL:fileURL firstLine:firstLine completionHandler:^(BOOL success) {
-    if (success) {
-      weakSelf.syntax = weakSelf.autodetectSyntaxOperation.syntax;
-    }
-    weakSelf.autodetectSyntaxOperation = nil;
-  }];
-  [_internalQueue addOperation:_autodetectSyntaxOperation];
+  TMSyntaxNode *syntax = nil;
+  if (firstLine) {
+    syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
+  }
+  if (!syntax && fileURL) {
+    syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+  }
+  if (!syntax) {
+    syntax = TMSyntaxNode.defaultSyntax;
+  }
+  _syntax = syntax;
+  
+  [self _reparse];
   
   return self;
 }
 
-- (void)enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  block = [block copy];
-  [self _queueBlockUntilUpToDate:^{
-    [_attributedContent enumerateAttribute:_qualifiedIdentifierAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:block];
-  }];
+- (void)enumerateQualifiedScopeIdentifiersInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block {
+  [_attributedContent enumerateAttribute:_qualifiedIdentifierAttributeName inRange:range options:NSAttributedStringEnumerationLongestEffectiveRangeNotRequired usingBlock:block];
 }
 
-- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  completionHandler = [completionHandler copy];
-  [self _queueBlockUntilUpToDate:^{
-    [[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
-      if (!scope.identifier) {
-        return;
-      }
-      completionHandler(scope.qualifiedIdentifier);
-      *stop = YES;
-    }];
+- (NSString *)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset {
+  __block NSString *qualifiedScopeIdentifier = nil;
+  [[_rootScope scopeStackAtOffset:offset options:TMScopeQueryRight] enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *scope, NSUInteger depth, BOOL *stop) {
+    qualifiedScopeIdentifier = scope.qualifiedIdentifier;
+    *stop = YES;
   }];
+  return qualifiedScopeIdentifier;
 }
 
-- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  completionHandler = [completionHandler copy];
-  [self _queueBlockUntilUpToDate:^{
-    completionHandler((id<TMCompletionResultSet>)NSArray.alloc.init);
-  }];
+- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset {
+  return (id<TMCompletionResultSet>)NSArray.alloc.init;
 }
 
 - (void)reparseWithUnsavedContent:(NSString *)content {
@@ -209,7 +153,7 @@ static OnigRegexp *_namedCapturesRegexp;
     UNIMPLEMENTED_VOID();
   }
   _content = content.copy;
-  [self _queueReparseOperation];
+  [self _reparse];
 }
 
 #pragma mark - Internal Methods
@@ -232,158 +176,15 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark - Private Methods
 
-- (void)setAutodetectSyntaxOperation:(AutodetectSyntaxOperation *)autodetectSyntaxOperation {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (autodetectSyntaxOperation == _autodetectSyntaxOperation) {
-    return;
-  }
-  _autodetectSyntaxOperation = autodetectSyntaxOperation;
-  if (!_autodetectSyntaxOperation && !self.reparseOperation) {
-    self.upToDate = YES;
-  }
-}
-
-- (void)setReparseOperation:(ReparseOperation *)reparseOperation {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (reparseOperation == _reparseOperation) {
-    return;
-  }
-  _reparseOperation = reparseOperation;
-  if (!_reparseOperation && !self.autodetectSyntaxOperation) {
-    self.upToDate = YES;
-  }
-}
-
-- (void)setUpToDate:(BOOL)upToDate {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (upToDate == _upToDate) {
-    return;
-  }
-  _upToDate = upToDate;
-  if (_upToDate) {
-    for (void(^block)(void) in _queuedBlocks) {
-      block();
-    }
-  }
-}
-
-- (void)_queueBlockUntilUpToDate:(void (^)(void))block {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (self.isUpToDate) {
-    block();
-  } else {
-    [_queuedBlocks addObject:[block copy]];
-  }
-}
-
-- (void)_queueReparseOperation {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  
-  if (!_content || !_syntax) {
-    return;
-  }
-
-  self.upToDate = NO;
-  TMUnit *weakSelf = self;
-  TMScope *rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  [self.reparseOperation cancel];
-  self.reparseOperation = [ReparseOperation.alloc initWithFileContents:_content rootScope:rootScope completionHandler:^(BOOL success) {
-    // If the operation was cancelled we don't need to do anything
-    if (!success) {
-      return;
-    }
-    TMUnit *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    // Keep these asserts separate because they're triggered during multithreading, so debugging won't give the same results
-    ASSERT(strongSelf.reparseOperation.isFinished);
-    ASSERT(strongSelf.reparseOperation.rootScope);
-    ASSERT(strongSelf.reparseOperation.attributedContent);
-    strongSelf->_rootScope = strongSelf.reparseOperation.rootScope;
-    strongSelf->_attributedContent = strongSelf.reparseOperation.attributedContent;
-    strongSelf.reparseOperation = nil;
-    strongSelf.upToDate = YES;
-  }];
-  
-  [_internalQueue addOperation:self.reparseOperation];
-}
-
-@end
-
-#pragma mark -
-
-@implementation AutodetectSyntaxOperation {
-  NSURL *_fileURL;
-  NSString *_firstLine;
-}
-
-@synthesize syntax = _syntax;
-
-#pragma mark - NSOperation
-
-- (void)main {
-  TMSyntaxNode *syntax = nil;
-  if (_firstLine) {
-    syntax = [TMSyntaxNode syntaxForFirstLine:_firstLine];
-  }
-  OPERATION_RETURN_IF_CANCELLED;
-  if (!syntax && _fileURL) {
-    syntax = [TMSyntaxNode syntaxForFileName:_fileURL.lastPathComponent];
-  }
-  OPERATION_RETURN_IF_CANCELLED;
-  if (!syntax) {
-    syntax = TMSyntaxNode.defaultSyntax;
-  }
-  OPERATION_RETURN_IF_CANCELLED;
-  _syntax = syntax;
-}
-
-#pragma mark - Operation
-
-- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  return [self initWithFileURL:nil firstLine:nil completionHandler:completionHandler];
-}
-
-#pragma mark - Public Methods
-
-- (TMSyntaxNode *)syntax {
-  ASSERT(self.isFinished);
-  return _syntax;
-}
-
-- (id)initWithFileURL:(NSURL *)fileURL firstLine:(NSString *)firstLine completionHandler:(void (^)(BOOL))completionHandler {
-  self = [super initWithCompletionHandler:completionHandler];
-  if (!self) {
-    return nil;
-  }
-  self->_fileURL = fileURL;
-  self->_firstLine = firstLine;
-  return self;
-}
-
-@end
-
-#pragma mark -
-
-@implementation ReparseOperation {
-  NSString *_contents;
-}
-
-@synthesize rootScope = _rootScope, attributedContent = _attributedContent;
-
-#pragma mark - NSOperation
-
-- (void)main {
+- (void)_reparse {
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  _attributedContent = [NSMutableAttributedString.alloc initWithString:_content];
   NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
   // Get the next unparsed range
-  NSRange lineRange = [_contents lineRangeForRange:NSMakeRange(0, 0)];
+  NSRange lineRange = [_content lineRangeForRange:NSMakeRange(0, 0)];
   while (lineRange.length) {
-    OPERATION_RETURN_IF_CANCELLED;    
-    NSString *line = [_contents substringWithRange:lineRange];
-    OPERATION_RETURN_IF_CANCELLED;
+    NSString *line = [_content substringWithRange:lineRange];
     [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
-    OPERATION_RETURN_IF_CANCELLED;
     // Stretch all remaining scopes to cover to the end of the line
     for (TMScope *scope in scopeStack)
     {
@@ -391,10 +192,9 @@ static OnigRegexp *_namedCapturesRegexp;
       if (stretchedLength > scope.length)
         scope.length = stretchedLength;
     }
-    OPERATION_RETURN_IF_CANCELLED;
     // Check that we actually advance. It will get stuck here if the file ends without a newline.
     NSRange oldLineRange = lineRange;
-    lineRange = [_contents lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
+    lineRange = [_content lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
     if (lineRange.location == oldLineRange.location) {
       break;
     }
@@ -407,42 +207,6 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma clang diagnostic pop
 #endif
 }
-
-#pragma mark - Operation
-
-- (id)initWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  return [self initWithFileContents:nil rootScope:nil completionHandler:nil];
-}
-
-#pragma mark - Public Methods
-
-#if DEBUG
-
-- (TMScope *)rootScope {
-  ASSERT(self.isFinished);
-  return _rootScope;
-}
-
-- (NSAttributedString *)attributedContent {
-  ASSERT(self.isFinished);
-  return _attributedContent;
-}
-
-#endif
-
-- (id)initWithFileContents:(NSString *)contents rootScope:(TMScope *)rootScope completionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(contents && rootScope);
-  self = [super initWithCompletionHandler:completionHandler];
-  if (!self) {
-    return nil;
-  }
-  _contents = contents;
-  _rootScope = rootScope;
-  _attributedContent = [NSMutableAttributedString.alloc initWithString:contents];
-  return self;
-}
-
-#pragma mark - Private Methods
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack {
   line = [line stringByCachingCString];
@@ -638,7 +402,7 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
-  [(NSMutableAttributedString *)_attributedContent addAttribute:_qualifiedIdentifierAttributeName value:scope.qualifiedIdentifier range:tokenRange];
+  [_attributedContent addAttribute:_qualifiedIdentifierAttributeName value:scope.qualifiedIdentifier range:tokenRange];
 }
 
 @end

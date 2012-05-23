@@ -29,13 +29,13 @@
 - (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
 
 /// Enumerates the qualified identifiers of the scopes in the given range
-- (void)enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block;
+- (void)enumerateQualifiedScopeIdentifiersInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block;
 
 /// Returns the qualified identifier of the deepest scope at the specified offset
-- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
+- (NSString *)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset;
 
 /// Returns the possible completions at a given insertion point in the unit's main source file.
-- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
+- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset;
 
 /// Reparses the source file and recreates the scope tree asynchronously.
 /// If the content string is non-nil, it will be used instead of the file's contents.
