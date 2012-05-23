@@ -60,14 +60,14 @@ describe(@"A new empty ACProjectFile", ^{
   });
   
   it(@"begins empty", ^{
-    [[theValue(file.length) should] beZero];
+    [[theValue(file.content.length) should] beZero];
   });
   
   it(@"can be changed", ^{
     NSString *testString = @"test";
-    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
-    [[file.string should] equal:testString];
-    [[file.attributedString.string should] equal:testString];
+    file.content = testString;
+    [[file.content should] equal:testString];
+    [[file.attributedContent.string should] equal:testString];
   });
   
   it(@"begins with a default theme", ^{
@@ -84,68 +84,16 @@ describe(@"A new empty ACProjectFile", ^{
     TMTheme *newTheme = [TMTheme themeWithName:@"Amy" bundle:[NSBundle bundleForClass:[TMTheme class]]];
     NSString *testString = @"test";
     file.theme = newTheme;
-    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
-    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
+    file.content = testString;
+    [[file.attributedContent should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
   });
   
   it(@"applies default attributes to existing text", ^{
     TMTheme *newTheme = [TMTheme themeWithName:@"Amy" bundle:[NSBundle bundleForClass:[TMTheme class]]];
     NSString *testString = @"test";
-    [file replaceCharactersInRange:NSMakeRange(0, 0) withString:testString];
+    file.content = testString;
     file.theme = newTheme;
-    [[file.attributedString should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
-  });
-  
-  it(@"begins without file presenters", ^{
-    [[theValue(file.presenters.count) should] beZero];
-  });
-  
-  it(@"can have file presenters added", ^{
-    id mockFilePresenter = [KWMock mockForProtocol:@protocol(ACProjectFilePresenter)];
-    [file addPresenter:mockFilePresenter];
-    [[theValue(file.presenters.count) should] equal:theValue(1)];
-    [[[file.presenters objectAtIndex:0] should] equal:mockFilePresenter];
-  });
-  
-  context(@"with a file presenter", ^{
-    __block id mockFilePresenter;
-    
-    beforeEach(^{
-      mockFilePresenter = [KWMock mockForProtocol:@protocol(ACProjectFilePresenter)];
-      [mockFilePresenter stub:@selector(isEqual:) andReturn:theValue(YES)];
-      [file addPresenter:mockFilePresenter];
-      [[theValue(file.presenters.count) should] equal:theValue(1)];
-      [[[file.presenters objectAtIndex:0] should] equal:mockFilePresenter];
-    });
-    
-    afterEach(^{
-      mockFilePresenter = nil;
-    });
-    
-    it(@"can have it removed", ^{
-      [file removePresenter:mockFilePresenter];
-      [[theValue(file.presenters.count) should] beZero];
-    });
-    
-    it(@"calls the replace callbacks", ^{
-      [mockFilePresenter stub:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)];
-      [mockFilePresenter stub:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)];
-      [[mockFilePresenter should] receive:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:) withCount:1];
-      [[mockFilePresenter should] receive:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:) withCount:1];
-      [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
-    });
-    
-    it(@"calls the attribute callbacks", ^{
-      [mockFilePresenter stub:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)];
-      [mockFilePresenter stub:@selector(projectFile:willChangeAttributesInRange:)];
-      [mockFilePresenter stub:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)];
-      [mockFilePresenter stub:@selector(projectFile:didChangeAttributesInRange:)];
-      [[mockFilePresenter should] receive:@selector(projectFile:willChangeAttributesInRange:) withCount:1];
-      [[mockFilePresenter should] receive:@selector(projectFile:didChangeAttributesInRange:) withCount:1];
-      [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"test string"];
-      [file addAttributes:[NSDictionary dictionaryWithObject:@"testValue" forKey:@"testAttribute"] range:NSMakeRange(0, 5)];
-    });
-    
+    [[file.attributedContent should] equal:[NSAttributedString.alloc initWithString:testString attributes:newTheme.commonAttributes]];
   });
   
   it(@"has a plain text syntax by default", ^{
@@ -161,8 +109,8 @@ describe(@"A new empty ACProjectFile", ^{
     });
     
     it(@"has a text.plain scope", ^{
-      [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-        testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+      [[file rac_qualifiedScopeIdentifierAtOffset:0] subscribeNext:^(id x) {
+        testQualifiedScopeIdentifier = x;
       }];
       [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
       [[testQualifiedScopeIdentifier should] equal:@"text.plain"];
@@ -183,8 +131,8 @@ describe(@"A new empty ACProjectFile", ^{
   it(@"can change syntax", ^{
     file.syntax = [TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"];
     [[file.syntax.name should] equal:@"C"];
-    [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-      testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+    [[file rac_qualifiedScopeIdentifierAtOffset:0] subscribeNext:^(id x) {
+      testQualifiedScopeIdentifier = x;
     }];
     [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
     [[testQualifiedScopeIdentifier should] equal:@"source.c"];
@@ -197,12 +145,12 @@ describe(@"A new empty ACProjectFile", ^{
     <div id=\"testDIV\">blabla</div>";
     
     beforeEach(^{
-      [file replaceCharactersInRange:NSMakeRange(0, 0) withString:someText];
+      file.content = someText;
     });
     
     it(@"has a meta.paragraph.text scope", ^{
-      [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-        testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+      [[file rac_qualifiedScopeIdentifierAtOffset:0] subscribeNext:^(id x) {
+        testQualifiedScopeIdentifier = x;
       }];
       [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
       [[testQualifiedScopeIdentifier should] equal:@"text.plain meta.paragraph.text"];
@@ -215,54 +163,54 @@ describe(@"A new empty ACProjectFile", ^{
       });
       
       it(@"has a meta.preprocessor.c.include scope", ^{
-        [file qualifiedScopeIdentifierAtOffset:0 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:0] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
         testQualifiedScopeIdentifier = nil;
-        [file qualifiedScopeIdentifierAtOffset:7 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:7] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
       });
       
       it(@"has a keyword.control.import.include.c scope", ^{
-        [file qualifiedScopeIdentifierAtOffset:1 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:1] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
         testQualifiedScopeIdentifier = nil;
-        [file qualifiedScopeIdentifierAtOffset:6 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:6] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include keyword.control.import.include.c"];
       });
       
       it(@"has a string.quote.other.lt-gt.include.c scope", ^{
-        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:8] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.begin.c"];
         testQualifiedScopeIdentifier = nil;
-        [file qualifiedScopeIdentifierAtOffset:9 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:9] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
         testQualifiedScopeIdentifier = nil;
-        [file qualifiedScopeIdentifierAtOffset:15 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:15] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c"];
         testQualifiedScopeIdentifier = nil;
-        [file qualifiedScopeIdentifierAtOffset:16 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        [[file rac_qualifiedScopeIdentifierAtOffset:16] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.other.lt-gt.include.c punctuation.definition.string.end.c"];
@@ -270,27 +218,29 @@ describe(@"A new empty ACProjectFile", ^{
       });
       
       it(@"updates the scopes after deleting characters", ^{
-        [file replaceCharactersInRange:NSMakeRange(8, 1) withString:nil];
-        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        NSMutableString *newContent = file.content.mutableCopy;
+        [newContent deleteCharactersInRange:NSMakeRange(8, 1)];
+        file.content = newContent;
+        [[file rac_qualifiedScopeIdentifierAtOffset:8] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include"];
       });
       
       it(@"updates the scopes after replacing characters", ^{
-        [file replaceCharactersInRange:NSMakeRange(8, 1) withString:@"\""];
-        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        file.content = [file.content stringByReplacingCharactersInRange:NSMakeRange(8, 1) withString:@"\""];
+        [[file rac_qualifiedScopeIdentifierAtOffset:8] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c meta.preprocessor.c.include string.quoted.double.include.c punctuation.definition.string.begin.c"];
       });
       
       it(@"updates the scopes after inserting characters", ^{
-        [file replaceCharactersInRange:NSMakeRange(0, 0) withString:@"/*"];
-        [file qualifiedScopeIdentifierAtOffset:8 withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-          testQualifiedScopeIdentifier = qualifiedScopeIdentifier;
+        file.content = [file.content stringByReplacingCharactersInRange:NSMakeRange(0, 0) withString:@"/*"];
+        [[file rac_qualifiedScopeIdentifierAtOffset:8] subscribeNext:^(id x) {
+          testQualifiedScopeIdentifier = x;
         }];
         [[expectFutureValue(testQualifiedScopeIdentifier) shouldEventually] beNonNil];
         [[testQualifiedScopeIdentifier should] equal:@"source.c comment.block.c"];

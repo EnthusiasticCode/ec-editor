@@ -7,6 +7,7 @@
 //
 
 #import <Kiwi.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 void clearProjectsDirectory(void);
 

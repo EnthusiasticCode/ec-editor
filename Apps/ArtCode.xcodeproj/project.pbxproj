@@ -135,6 +135,11 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
+		B7CB6BBB156CE19000AB2233 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
+		B7CB6BBC156CE19500AB2233 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
+		B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
+		B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
+		B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7CE615B152C86000019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61D0152CC6E50019B2FC /* Operation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CE615A152C86000019B2FC /* Operation.m */; };
@@ -605,6 +610,8 @@
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
+		B7CB6BBD156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
+		B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
 		B7CE6159152C86000019B2FC /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operation.h; sourceTree = "<group>"; };
 		B7CE615A152C86000019B2FC /* Operation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Operation.m; sourceTree = "<group>"; };
 		B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libMAKVONotificationCenter-iOS.a"; path = "../ThirdParty/MAKVONotificationCenter/build/Release-iphoneos/libMAKVONotificationCenter-iOS.a"; sourceTree = "<group>"; };
@@ -992,6 +999,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7CB6BBB156CE19000AB2233 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
 				B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
@@ -1011,6 +1019,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B7CB6BBC156CE19500AB2233 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
 				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
 				B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
@@ -1352,6 +1361,8 @@
 				B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */,
 				B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */,
 				B7FB799C14D602C60080A714 /* NSTimer+BlockTimer.h */,
+				B7CB6BBD156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.h */,
+				B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */,
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
@@ -2492,6 +2503,7 @@
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
+				B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2525,6 +2537,7 @@
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
+				B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2629,6 +2642,7 @@
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B7CE615B152C86000019B2FC /* Operation.m in Sources */,
+				B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

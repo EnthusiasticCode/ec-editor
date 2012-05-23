@@ -18,6 +18,9 @@
 #import "TMUnit.h"
 #import "TMTheme.h"
 
+#import <ReactiveCocoa/ReactiveCocoa.h>
+#import "NSAttributedString+PersistentDataStructures.h"
+
 
 static NSString * const _plistFileEncodingKey = @"fileEncoding";
 static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
@@ -25,7 +28,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 @interface ACProjectFile ()
 
+@property (nonatomic, copy) NSAttributedString *attributedContent;
 @property (nonatomic, strong) TMUnit *codeUnit;
+
+/// Returns the qualified identifier of the deepest scope at the specified offset
+- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
+
+/// Returns the possible completions at a given insertion point in the unit's main source file.
+- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
 
 @end
 
@@ -51,13 +61,13 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 #pragma mark -
 
 @implementation ACProjectFile {
-  NSMutableSet *_presenters;
   NSMutableDictionary *_bookmarks;
   NSUInteger _openCount;
-  NSMutableAttributedString *_contents;
+  NSMutableArray *_contentDisposables;
 }
 
 @synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
+@synthesize content = _content, attributedContent = _attributedContent;
 @synthesize codeUnit = _codeUnit;
 
 #pragma mark - KVO Overrides
@@ -125,8 +135,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
   }
   
-  _presenters = NSMutableSet.alloc.init;
-  
   NSNumber *fileSize = nil;
   [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
   _fileSize = [fileSize unsignedIntegerValue];
@@ -144,6 +152,9 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     [_bookmarks setObject:bookmark forKey:point];
     [project didAddBookmark:bookmark];
   }];
+  
+  _contentDisposables = NSMutableArray.alloc.init;
+  
   return self;
 }
 
@@ -167,32 +178,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return YES;
 }
 
-- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  NSString *contents = _contents.string;
-  NSStringEncoding encoding;
-  if (_explicitFileEncoding) {
-    encoding = [_explicitFileEncoding unsignedIntegerValue];
-  } else {
-    encoding = NSUTF8StringEncoding;
-  }
-  [contents writeToURL:url atomically:YES encoding:encoding error:error];
-  return [super writeToURL:url error:error];
-}
-
-#pragma mark - Public Methods
-
-- (void)addPresenter:(id<ACProjectFilePresenter>)presenter {
-  [_presenters addObject:presenter];
-}
-
-- (void)removePresenter:(id<ACProjectFilePresenter>)presenter {
-  [_presenters removeObject:presenter];
-}
-
-- (NSArray *)presenters {
-  return _presenters.allObjects;
-}
-
 #pragma mark - Accessing the content
 
 - (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
@@ -212,31 +197,34 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     NSError *error = nil;
-    NSMutableAttributedString *contents = nil;
+    NSString *contents = nil;
     NSURL *fileURL = nil;
     ACProjectFile *outerStrongSelf = weakSelf;
     if (outerStrongSelf) {
       if (!theme) {
         theme = [TMTheme defaultTheme];
       }
-      contents = [NSMutableAttributedString.alloc initWithString:[NSString.alloc initWithContentsOfURL:outerStrongSelf.fileURL encoding:encoding error:&error] attributes:theme.commonAttributes];
+      contents = [NSString.alloc initWithContentsOfURL:outerStrongSelf.fileURL encoding:encoding error:&error];
       fileURL = outerStrongSelf.fileURL;
     }
     if (contents) {
       [NSOperationQueue.mainQueue addOperationWithBlock:^{
         ACProjectFile *innerStrongSelf = weakSelf;
         if (innerStrongSelf) {
-          innerStrongSelf->_contents = contents;
+          RACSubscribable *content = RACAble(innerStrongSelf, content);
+          RACDisposable *disposable = [[content select:^id(id x) {
+            return [NSAttributedString.alloc initWithString:x attributes:innerStrongSelf.theme.commonAttributes];
+          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
+          [innerStrongSelf->_contentDisposables addObject:disposable];
+          disposable = [content subscribeNext:^(id x) {
+            [innerStrongSelf.codeUnit reparseWithUnsavedContent:x];
+          }];
+          [innerStrongSelf->_contentDisposables addObject:disposable];
           innerStrongSelf->_theme = theme;
           ++innerStrongSelf->_openCount;
+          innerStrongSelf.content = contents;
           innerStrongSelf.codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
-          [innerStrongSelf.codeUnit reparseWithUnsavedContent:contents.string];
-          [innerStrongSelf.codeUnit enumerateQualifiedScopeIdentifiersAsynchronouslyInRange:NSMakeRange(0, contents.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
-            NSDictionary *attributes = [self.theme attributesForQualifiedIdentifier:qualifiedScopeIdentifier];
-            if (attributes) {
-              [self addAttributes:attributes range:range];
-            }
-          }];
+          [innerStrongSelf.codeUnit reparseWithUnsavedContent:contents];
         }
         if (completionHandler) {
           completionHandler(nil);
@@ -268,13 +256,19 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
     return;
   }
-  NSString *contents = _contents.string;
+  NSString *contents = self.content;
   NSStringEncoding encoding;
   if (_explicitFileEncoding) {
     encoding = [_explicitFileEncoding unsignedIntegerValue];
   } else {
     encoding = NSUTF8StringEncoding;
   }
+  
+  for (RACDisposable *disposable in _contentDisposables) {
+    [disposable dispose];
+  }
+  [_contentDisposables removeAllObjects];
+  
   __block NSError *error = nil;
   completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
@@ -287,132 +281,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }];
 }
 
-- (NSUInteger)length {
+- (void)setContent:(NSString *)content {
   ASSERT(_openCount);
-  return _contents.length;
+  _content = content;
 }
 
-- (NSString *)string {
+- (void)setAttributedContent:(NSAttributedString *)attributedContent {
   ASSERT(_openCount);
-  return _contents.string;
-}
-
-- (NSString *)substringWithRange:(NSRange)range {
-  ASSERT(_openCount);
-  return [_contents.string substringWithRange:range];
-}
-
-- (NSRange)lineRangeForRange:(NSRange)range {
-  ASSERT(_openCount);
-  return [_contents.string lineRangeForRange:range];
-}
-
-- (NSAttributedString *)attributedString {
-  ASSERT(_openCount);
-  return _contents.copy;
-}
-
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)range {
-  ASSERT(_openCount);
-  return [_contents attributedSubstringFromRange:range];
-}
-
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range {
-  ASSERT(_openCount);
-  return [_contents attribute:attrName atIndex:location effectiveRange:range];
-}
-
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit {
-  ASSERT(_openCount);
-  return [_contents attribute:attrName atIndex:location longestEffectiveRange:range inRange:rangeLimit];
-}
-
-- (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range {
-  ASSERT(_openCount);
-  return [_contents attributesAtIndex:location effectiveRange:range];
-}
-
-- (NSDictionary *)attributesAtIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit {
-  ASSERT(_openCount);
-  return [_contents attributesAtIndex:location longestEffectiveRange:range inRange:rangeLimit];
-}
-
-- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string {
-  ASSERT(_openCount);
-  // replacing an empty range with an empty string, no change required
-  if (!range.length && !string.length) {
-    return;
-  }
-  // replacing a substring with an equal string, no change required
-  if ([string isEqualToString:[self substringWithRange:range]]) {
-    return;
-  }
-  // a nil string can be passed to delete characters
-  if (!string) {
-    string = @"";
-  }
-  NSAttributedString *attributedString = [NSAttributedString.alloc initWithString:string attributes:self.theme.commonAttributes];
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:willReplaceCharactersInRange:withAttributedString:)]) {
-      [presenter projectFile:self willReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
-  }
-  if (attributedString.length) {
-    [_contents replaceCharactersInRange:range withAttributedString:attributedString];
-  } else {
-    [_contents deleteCharactersInRange:range];
-  }
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:didReplaceCharactersInRange:withAttributedString:)]) {
-      [presenter projectFile:self didReplaceCharactersInRange:range withAttributedString:attributedString];
-    }
-  }
-  [_codeUnit reparseWithUnsavedContent:_contents.string];
-}
-
-- (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range {
-  ASSERT(_openCount);
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
-      [presenter projectFile:self willChangeAttributesInRange:range];
-    }
-  }
-  [_contents addAttribute:name value:value range:range];
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
-      [presenter projectFile:self didChangeAttributesInRange:range];
-    }
-  }
-}
-
-- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range {
-  ASSERT(_openCount);
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
-      [presenter projectFile:self willChangeAttributesInRange:range];
-    }
-  }
-  [_contents addAttributes:attributes range:range];
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
-      [presenter projectFile:self didChangeAttributesInRange:range];
-    }
-  }
-}
-
-- (void)removeAttribute:(NSString *)name range:(NSRange)range {
-  ASSERT(_openCount);
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:willChangeAttributesInRange:)]) {
-      [presenter projectFile:self willChangeAttributesInRange:range];
-    }
-  }
-  [_contents removeAttribute:name range:range];
-  for (id<ACProjectFilePresenter>presenter in _presenters) {
-    if ([presenter respondsToSelector:@selector(projectFile:didChangeAttributesInRange:)]) {
-      [presenter projectFile:self didChangeAttributesInRange:range];
-    }
-  }
+  _attributedContent = attributedContent;
 }
 
 #pragma mark - Managing semantic content
@@ -433,7 +309,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   _theme = theme;
   if (_openCount) {
-    [_contents setAttributes:theme.commonAttributes range:NSMakeRange(0, _contents.length)];
+    self.attributedContent = [self.attributedContent attributedStringBySettingAttributes:theme.commonAttributes range:NSMakeRange(0, self.attributedContent.length)];
   }
 }
 
@@ -479,6 +355,38 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
   [self.project didRemoveBookmark:bookmark];
   [self didChangeValueForKey:@"bookmarks"];
+}
+
+@end
+
+#pragma mark -
+
+@implementation ACProjectFile (RACExtensions)
+
+- (RACSubscribable *)rac_qualifiedScopeIdentifierAtOffset:(NSUInteger)offset {
+  RACAsyncSubject *subject = RACAsyncSubject.subject;
+  [self qualifiedScopeIdentifierAtOffset:offset withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+    if (!qualifiedScopeIdentifier) {
+      [subject sendError:NSError.alloc.init];
+    } else {
+      [subject sendNext:qualifiedScopeIdentifier];
+      [subject sendCompleted];
+    }
+  }];
+  return subject;
+}
+
+- (RACSubscribable *)rac_completionsAtOffset:(NSUInteger)offset {
+  RACAsyncSubject *subject = RACAsyncSubject.subject;
+  [self completionsAtOffset:offset withCompletionHandler:^(id<TMCompletionResultSet> completions) {
+    if (!completions) {
+      [subject sendError:NSError.alloc.init];
+    } else {
+      [subject sendNext:completions];
+      [subject sendCompleted];
+    }
+  }];
+  return subject;
 }
 
 @end

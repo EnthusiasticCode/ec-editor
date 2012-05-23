@@ -12,11 +12,6 @@
 
 @interface ACProjectFile : ACProjectFileSystemItem
 
-/// Presenters are retained by the receiver, so each add must be balanced by a remove to avoid retain cycles
-- (void)addPresenter:(id<ACProjectFilePresenter>)presenter;
-- (void)removePresenter:(id<ACProjectFilePresenter>)presenter;
-- (NSArray *)presenters;
-
 #pragma mark File metadata
 /// @name File metadata
 
@@ -40,22 +35,11 @@
 /// Closes the file.
 - (void)closeWithCompletionHandler:(void(^)(NSError *error))completionHandler;
 
-- (NSUInteger)length;
-- (NSString *)string;
-- (NSString *)substringWithRange:(NSRange)range;
-- (NSRange)lineRangeForRange:(NSRange)range;
-- (NSAttributedString *)attributedString;
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)range;
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
-- (id)attribute:(NSString *)attrName atIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
-- (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
-- (NSDictionary *)attributesAtIndex:(NSUInteger)location longestEffectiveRange:(NSRangePointer)range inRange:(NSRange)rangeLimit;
+/// Unattributed content of the file
+@property (nonatomic, copy) NSString *content;
 
-- (void)replaceCharactersInRange:(NSRange)range withString:(NSString *)string;
-
-- (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range;
-- (void)addAttributes:(NSDictionary *)attributes range:(NSRange)range;
-- (void)removeAttribute:(NSString *)name range:(NSRange)range;
+/// Attributed content of the file
+@property (nonatomic, copy, readonly) NSAttributedString *attributedContent;
 
 #pragma mark Managing semantic content
 
@@ -73,12 +57,6 @@
 /// Warnings, errors and other diagnostics in the file.
 @property (nonatomic, strong, readonly) NSArray *diagnostics;
 
-/// Returns the qualified identifier of the deepest scope at the specified offset
-- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
-
-/// Returns the possible completions at a given insertion point in the unit's main source file.
-- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
-
 #pragma mark Managing file bookmarks
 /// @name Managing file bookmarks
 
@@ -93,12 +71,11 @@
 
 @end
 
-@protocol ACProjectFilePresenter <NSObject>
+@class RACSubscribable;
 
-@optional
-- (void)projectFile:(ACProjectFile *)projectFile willReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
-- (void)projectFile:(ACProjectFile *)projectFile didReplaceCharactersInRange:(NSRange)range withAttributedString:(NSAttributedString *)string;
-- (void)projectFile:(ACProjectFile *)projectFile willChangeAttributesInRange:(NSRange)range;
-- (void)projectFile:(ACProjectFile *)projectFile didChangeAttributesInRange:(NSRange)range;
+@interface ACProjectFile (RACExtensions)
+
+- (RACSubscribable *)rac_qualifiedScopeIdentifierAtOffset:(NSUInteger)offset;
+- (RACSubscribable *)rac_completionsAtOffset:(NSUInteger)offset;
 
 @end
