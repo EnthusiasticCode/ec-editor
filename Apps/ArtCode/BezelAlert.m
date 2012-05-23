@@ -8,8 +8,11 @@
 
 #import "BezelAlert.h"
 #import <QuartzCore/QuartzCore.h>
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "UIImage+BlockDrawing.h"
+
+static CGRect UIKeyboardFrame;
 
 NSString * const BezelAlertOkIcon = @"bezelAlert_okIcon";
 NSString * const BezelAlertCancelIcon = @"bezelAlert_cancelIcon";
@@ -18,6 +21,20 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 @implementation BezelAlert {
   NSTimer *alertTimer;
   UIViewAutoresizing autoresizingMask;
+}
+
++ (void)initialize {
+  if (self != [BezelAlert class])
+    return;
+  
+  UIKeyboardFrame = CGRectNull;
+  [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
+    if (note.name == UIKeyboardDidShowNotification) {
+      UIKeyboardFrame = [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    } else {
+      UIKeyboardFrame = CGRectNull;
+    }
+  }];
 }
 
 #pragma mark - Properties
@@ -102,8 +119,6 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 }
 
 #pragma mark - Internal Allerting Methods
-
-extern CGRect UIKeyboardFrame;
 
 - (void)presentFirstChildViewController
 {
