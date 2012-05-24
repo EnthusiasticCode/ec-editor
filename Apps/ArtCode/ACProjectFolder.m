@@ -163,7 +163,9 @@ static NSString * const _childrenKey = @"children";
 - (void)didRemoveChild:(ACProjectFileSystemItem *)child {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
   ASSERT([_children.allValues containsObject:child]);
+  [self willChangeValueForKey:@"children"];
   [_children removeObjectForKey:child.name];
+  [self didChangeValueForKey:@"children"];
 }
 
 #pragma mark - Private Methods
@@ -269,7 +271,9 @@ static NSString * const _childrenKey = @"children";
 - (void)_didAddChild:(ACProjectFileSystemItem *)child {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
   ASSERT(![_children.allValues containsObject:child]);
+  [self willChangeValueForKey:@"children"];
   [_children setObject:child forKey:child.name];
+  [self didChangeValueForKey:@"children"];
 }
 
 @end

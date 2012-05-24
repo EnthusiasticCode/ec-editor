@@ -118,7 +118,8 @@
         tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
       }
       self.tableView.frame = tableViewFrame;
-      [self.tableView scrollRectToVisible:contentRect animated:NO];
+//      [self.tableView scrollRectToVisible:contentRect animated:NO];
+      self.tableView.contentOffset = contentRect.origin;
     }
   }];
       
