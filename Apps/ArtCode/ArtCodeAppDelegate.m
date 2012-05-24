@@ -21,6 +21,7 @@
 #import "TopBarTitleControl.h"
 #import "CodeFileSearchBarController.h"
 #import "SearchableTableBrowserController.h"
+#import "PopoverButton.h"
 
 #import "ArtCodeTab.h"
 
@@ -52,7 +53,7 @@
   
   ////////////////////////////////////////////////////////////////////////////
   // Button in generic navigation controller
-  [[UIButton appearanceWhenContainedIn:[UINavigationController class], nil] setBackgroundImage:[UIImage stylePopoverButtonBackgroundImage] forState:UIControlStateNormal];
+  [[PopoverButton appearance] setBackgroundImage:[UIImage stylePopoverButtonBackgroundImage] forState:UIControlStateNormal];
   
   ////////////////////////////////////////////////////////////////////////////
   // UI Bars

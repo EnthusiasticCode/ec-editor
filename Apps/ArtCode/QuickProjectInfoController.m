@@ -16,13 +16,7 @@
 #import "ACProject.h"
 
 #import "ColorSelectionControl.h"
-
-
-@interface QuickProjectInfoController ()
-
-- (void)_labelColorChangeAction:(id)sender;
-
-@end
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 
 @implementation QuickProjectInfoController
@@ -30,7 +24,6 @@
 @synthesize projectNameTextField;
 @synthesize labelColorSelectionControl;
 @synthesize projectFileCountLabel;
-@synthesize projectSizeLabel;
 
 #pragma mark - Controller lifecycle
 
@@ -39,15 +32,33 @@
   return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self)
+    return nil;
+  
+  // Project name will change when text field does
+  [[[[[RACAbleSelf(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(id x) {
+    return x != nil;
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
+  
+  // Project label color will change when selecting a new color
+  [[[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] where:^BOOL(id x) {
+    return x != nil;
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
+  
+  return self;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  
+
+  // Send the selected color to the current project's label color
   self.labelColorSelectionControl.rows = 1;
   self.labelColorSelectionControl.columns = 6;
-  [self.labelColorSelectionControl addTarget:self action:@selector(_labelColorChangeAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewDidUnload
@@ -55,7 +66,6 @@
   [self setProjectNameTextField:nil];
   [self setLabelColorSelectionControl:nil];
   [self setProjectFileCountLabel:nil];
-  [self setProjectSizeLabel:nil];
   [super viewDidUnload];
 }
 
@@ -63,32 +73,13 @@
 {
   [super viewWillAppear:animated];
   
-  self.projectNameTextField.text = [self.artCodeTab.currentProject name];
-  // TODO add project files and size
+  self.projectNameTextField.text = self.artCodeTab.currentProject.name;
+  self.projectFileCountLabel.text = [NSString stringWithFormat:@"%u", self.artCodeTab.currentProject.files.count];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
-}
-
-#pragma mark - UITextField Delegate
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-  if ([textField.text length] == 0)
-    return;
-  
-  // TODO check that name is ok
-  
-  //    [self.artCodeTab.currentProject setName:textField.text];
-}
-
-#pragma mark - Private Methods
-
-- (void)_labelColorChangeAction:(id)sender
-{
-  [self.artCodeTab.currentProject setLabelColor:[sender selectedColor]];
 }
 
 @end

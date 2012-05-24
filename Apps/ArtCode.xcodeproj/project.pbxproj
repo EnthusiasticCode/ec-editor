@@ -135,11 +135,6 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
-		B7CB6BBB156CE19000AB2233 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
-		B7CB6BBC156CE19500AB2233 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
-		B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
-		B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
-		B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
@@ -270,9 +265,14 @@
 		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
-		B7F3A809156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
-		B7F3A80A156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
-		B7F3A80B156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
+		B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
+		B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
+		B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
+		B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
+		B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
+		B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
+		B7F3A82F156EAF6800954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
+		B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A214D602C60080A714 /* NSString+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */; };
@@ -423,6 +423,7 @@
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
+		CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */; };
 		CDB5DB6514C6F56A003DFD1F /* ProjectFolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
@@ -610,8 +611,6 @@
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
-		B7CB6BBD156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
-		B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
 		B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libMAKVONotificationCenter-iOS.a"; path = "../ThirdParty/MAKVONotificationCenter/build/Release-iphoneos/libMAKVONotificationCenter-iOS.a"; sourceTree = "<group>"; };
 		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
 		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
@@ -719,8 +718,10 @@
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
 		B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileSystemItem+Internal.h"; sourceTree = "<group>"; };
 		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7F3A807156E831E00954D48 /* DocumentWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWrapper.h; sourceTree = "<group>"; };
-		B7F3A808156E831E00954D48 /* DocumentWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentWrapper.m; sourceTree = "<group>"; };
+		B7F3A825156EAE5700954D48 /* DocumentWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWrapper.h; sourceTree = "<group>"; };
+		B7F3A826156EAE5700954D48 /* DocumentWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentWrapper.m; sourceTree = "<group>"; };
+		B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
+		B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -934,6 +935,8 @@
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA9B66E1524A0620063D76F /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CDA9B66F1524A0620063D76F /* ipad_icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ipad_icon@2.png"; sourceTree = "<group>"; };
+		CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverButton.h; sourceTree = "<group>"; };
+		CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverButton.m; sourceTree = "<group>"; };
 		CDB5DB6314C6F56A003DFD1F /* ProjectFolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectFolderBrowserController.h; sourceTree = "<group>"; };
 		CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectFolderBrowserController.m; sourceTree = "<group>"; };
 		CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveConflictController.h; sourceTree = "<group>"; };
@@ -999,7 +1002,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7CB6BBB156CE19000AB2233 /* libReactiveCocoa-iOS.a in Frameworks */,
+				B7F3A82F156EAF6800954D48 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
 				B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
@@ -1019,7 +1022,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7CB6BBC156CE19500AB2233 /* libReactiveCocoa-iOS.a in Frameworks */,
+				B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
 				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
 				B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
@@ -1336,6 +1339,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */,
+				B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
@@ -1361,8 +1366,6 @@
 				B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */,
 				B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */,
 				B7FB799C14D602C60080A714 /* NSTimer+BlockTimer.h */,
-				B7CB6BBD156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.h */,
-				B7CB6BBE156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m */,
 				B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */,
 				B7FB799314D5FF580080A714 /* NSURL+Utilities.h */,
 				B7FB799414D5FF580080A714 /* NSURL+Utilities.m */,
@@ -1408,8 +1411,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				B7F3A807156E831E00954D48 /* DocumentWrapper.h */,
-				B7F3A808156E831E00954D48 /* DocumentWrapper.m */,
+				B7F3A825156EAE5700954D48 /* DocumentWrapper.h */,
+				B7F3A826156EAE5700954D48 /* DocumentWrapper.m */,
 				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
 				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
@@ -1901,6 +1904,8 @@
 				CD8108D413E31A28000E1941 /* ColorSelectionControl.m */,
 				CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */,
 				CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */,
+				CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */,
+				CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */,
 			);
 			name = "Views and Controls";
 			sourceTree = "<group>";
@@ -2502,8 +2507,8 @@
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
-				B7F3A80A156E831E00954D48 /* DocumentWrapper.m in Sources */,
+				B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */,
+				B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2536,8 +2541,8 @@
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
-				B7F3A80B156E831E00954D48 /* DocumentWrapper.m in Sources */,
+				B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */,
+				B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2641,8 +2646,9 @@
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
-				B7F3A809156E831E00954D48 /* DocumentWrapper.m in Sources */,
+				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
+				B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */,
+				B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2686,6 +2692,10 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -2702,6 +2712,10 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -2718,6 +2732,10 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -2735,6 +2753,10 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;

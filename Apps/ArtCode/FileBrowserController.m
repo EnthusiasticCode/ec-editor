@@ -40,13 +40,8 @@
 #import "UIViewController+Utilities.h"
 #import "NSArray+ScoreForAbbreviation.h"
 
-static void *_currentProjectContext;
-static void *_currentFolderContext;
-
 
 @interface FileBrowserController () {
-  ACProject *_currentObservedProject;
-  
   NSArray *_filteredItems;
   NSArray *_filteredItemsHitMasks;
   
@@ -81,6 +76,25 @@ static void *_currentFolderContext;
   self = [super initWithTitle:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
+  
+  // Update current folder with current tab item
+  [[RACAbleSelf(self.artCodeTab.currentItem) where:^BOOL(id x) {
+    return [x isKindOfClass:[ACProjectFolder class]];
+  }] toProperty:RAC_KEYPATH_SELF(self.currentFolder) onObject:self];
+  
+  // Update table view when current folder's children change
+  [RACAbleSelf(self.currentFolder.children) subscribeNext:^(id x) {
+    [self invalidateFilteredItems];
+    [self.tableView reloadData];
+  }];
+  
+//  // Update tool bar title when project changes
+//  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), nil] reduce:^id(RACTuple *xs) {
+//    return xs;
+//  }] subscribeNext:^(id x) {
+//    [self.singleTabController updateDefaultToolbarTitle];
+//  }];
+  
   return self;
 }
 
@@ -89,27 +103,6 @@ static void *_currentFolderContext;
 @synthesize currentFolder = _currentFolder;
 @synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
 
-- (void)setCurrentFolder:(ACProjectFolder *)value
-{
-  if (value == _currentFolder)
-    return;
-  
-  [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-  [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
-  _currentObservedProject = nil;
-  
-  [_currentFolder removeObserver:self forKeyPath:@"children" context:&_currentFolderContext];
-  _currentFolder = value;
-  [_currentFolder addObserver:self forKeyPath:@"children" options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew context:&_currentFolderContext];
-  
-  // Add observer for project to update tile if we are showing the root folder
-  if (_currentFolder.parentFolder == nil)
-  {
-    _currentObservedProject = self.artCodeTab.currentProject;
-    [_currentObservedProject addObserver:self forKeyPath:@"labelColor" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-    [_currentObservedProject addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:&_currentProjectContext];
-  }
-}
 
 - (NSArray *)filteredItems {
   if (!_filteredItems) {
@@ -141,16 +134,6 @@ static void *_currentFolderContext;
 {
   _filteredItems = nil;
   _filteredItemsHitMasks = nil;
-}
-
-#pragma mark - ArtCodeTab Category
-
-- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
-{
-  [super setArtCodeTab:artCodeTab];
-  
-  ASSERT(self.artCodeTab.currentItem.type == ACPFolder || !self.artCodeTab.currentItem);
-  self.currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
 }
 
 #pragma mark - View lifecycle
@@ -214,29 +197,6 @@ static void *_currentFolderContext;
 {
   [_selectedItems removeAllObjects];
   [super setEditing:editing animated:animated];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &_currentProjectContext)
-  {
-    [self.singleTabController updateDefaultToolbarTitle];
-  }
-  else if (context == &_currentFolderContext)
-  {
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
-  }
-  else
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
-}
-
-- (void)dealloc
-{
-  [_currentObservedProject removeObserver:self forKeyPath:@"labelColor" context:&_currentProjectContext];
-  [_currentObservedProject removeObserver:self forKeyPath:@"name" context:&_currentProjectContext];
 }
 
 #pragma mark - Table view data source
@@ -470,9 +430,7 @@ static void *_currentFolderContext;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
-  UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Cancel") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserDismissAction:)];
-  [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-  conflictController.navigationItem.leftBarButtonItem = cancelItem;
+  [self modalNavigationControllerPresentViewController:conflictController];
   
   // Start copy
   [conflictController moveItems:[_selectedItems copy] toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
