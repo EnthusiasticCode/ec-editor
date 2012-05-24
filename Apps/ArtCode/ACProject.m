@@ -19,6 +19,8 @@
 #import "NSString+UUID.h"
 #import "NSString+Utilities.h"
 
+#import "DocumentWrapper.h"
+
 #import "ArtCodeURL.h"
 
 #import <objc/runtime.h>
@@ -92,9 +94,6 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 @implementation ACProject {
   NSURL *_fileURL;
-  NSUInteger _openCount;
-  NSMutableArray *_pendingOpenCompletionHandlers;
-  NSMutableArray *_pendingCloseCompletionHandlers;
   ACProjectDocument *_document;
   NSMutableDictionary *_filesCache;
   NSMutableDictionary *_bookmarksCache;
@@ -181,122 +180,6 @@ static NSString * const _plistRemotesKey = @"remotes";
     return UIDocumentStateClosed;
   }
   return _document.documentState;
-}
-
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  
-  // Increase the open counter
-  ++_openCount;
-  
-  // If there are pending open, append the completionHandler
-  if (_pendingOpenCompletionHandlers) {
-    if (completionHandler) {
-      [_pendingOpenCompletionHandlers addObject:[completionHandler copy]];
-    }
-    return;
-  }
-  
-  // If there are pending close, queue the open after the close completes
-  if (_pendingCloseCompletionHandlers) {
-    __weak ACProject *weakSelf = self;
-    void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
-    [_pendingCloseCompletionHandlers addObject:[^{
-      ACProject *strongSelf = weakSelf;
-      if (!strongSelf) {
-        return;
-      }
-      [strongSelf openWithCompletionHandler:completionHandlerCopy];
-    } copy]];
-    return;
-  }
-  
-  // If there is a document, and there were no pending open, the document is already opened
-  if (_document) {
-    if (completionHandler) {
-      completionHandler(YES);
-    }
-    return;
-  }
-  
-  // Create the document and open it, enquing the completionHandler
-  _document = [ACProjectDocument.alloc initWithFileURL:self.fileURL project:self];
-  _pendingOpenCompletionHandlers = NSMutableArray.alloc.init;
-  if (completionHandler) {
-    [_pendingOpenCompletionHandlers addObject:[completionHandler copy]];
-  }
-  [_document openWithCompletionHandler:^(BOOL success) {
-    for (void(^pendingOpenCompletionHandler)(BOOL) in _pendingOpenCompletionHandlers) {
-      pendingOpenCompletionHandler(success);
-    }
-  }];
-}
-
-- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(_openCount); // Must be called after -open...
-  ASSERT(_document);
-  
-  // Decrease the open counter
-  --_openCount;
-  
-  // If the open counter is still not zero, someone else is using the project
-  if (_openCount) {
-    if (completionHandler) {
-      completionHandler(YES);
-    }
-    return;
-  }
-  
-  // If there are pending close, append the completionHandler
-  if (_pendingCloseCompletionHandlers) {
-    if (completionHandler) {
-      [_pendingCloseCompletionHandlers addObject:[completionHandler copy]];
-    }
-    return;
-  }
-  
-  // If there are pending open, queue the close after the open completes
-  if (_pendingOpenCompletionHandlers) {
-    __weak ACProject *weakSelf = self;
-    void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
-    [_pendingOpenCompletionHandlers addObject:^{
-      ACProject *strongSelf = weakSelf;
-      if (!strongSelf) {
-        return;
-      }
-      [strongSelf closeWithCompletionHandler:completionHandlerCopy];
-    }];
-    return;
-  }
-  
-  // Close the document, enquing the completionHandler
-  _pendingCloseCompletionHandlers = NSMutableArray.alloc.init;
-  if (completionHandler) {
-    [_pendingCloseCompletionHandlers addObject:[completionHandler copy]];
-  }
-  [_document closeWithCompletionHandler:^(BOOL success) {
-    for (void(^pendingCloseCompletionHandler)(BOOL) in _pendingCloseCompletionHandlers) {
-      pendingCloseCompletionHandler(success);
-    }
-    if (!_openCount) {
-      _document = nil;
-    }
-  }];
-}
-
-- (void)saveToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation completionHandler:(void (^)(BOOL))completionHandler {
-  NSUInteger openCountIncrease = 0;
-  if (!_document) {
-    _document = [ACProjectDocument.alloc initWithFileURL:self.fileURL project:self];
-    ++openCountIncrease;
-  }
-  [_document saveToURL:url forSaveOperation:saveOperation completionHandler:^(BOOL success) {
-    if (success) {
-      _openCount += openCountIncrease;
-    }
-    completionHandler(success);
-  }];
 }
 
 #pragma mark - Projects list
@@ -628,6 +511,14 @@ static NSString * const _plistRemotesKey = @"remotes";
   _filesCache = NSMutableDictionary.alloc.init;
   _bookmarksCache = NSMutableDictionary.alloc.init;
   _remotes = NSMutableDictionary.alloc.init;
+  __weak ACProject *weakSelf = self;
+  _document = [DocumentWrapper wrapperWithBlock:^UIDocument *{
+    ACProject *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return nil;
+    }
+    return [ACProjectDocument.alloc initWithFileURL:strongSelf.fileURL project:strongSelf];
+  }];
   return self;
 }
 

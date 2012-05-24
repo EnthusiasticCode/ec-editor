@@ -270,6 +270,9 @@
 		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
+		B7F3A809156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
+		B7F3A80A156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
+		B7F3A80B156E831E00954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A808156E831E00954D48 /* DocumentWrapper.m */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A214D602C60080A714 /* NSString+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */; };
@@ -716,6 +719,8 @@
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
 		B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileSystemItem+Internal.h"; sourceTree = "<group>"; };
 		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B7F3A807156E831E00954D48 /* DocumentWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWrapper.h; sourceTree = "<group>"; };
+		B7F3A808156E831E00954D48 /* DocumentWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentWrapper.m; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -1403,6 +1408,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				B7F3A807156E831E00954D48 /* DocumentWrapper.h */,
+				B7F3A808156E831E00954D48 /* DocumentWrapper.m */,
 				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
 				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
@@ -2496,6 +2503,7 @@
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 				B7CB6BC0156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				B7F3A80A156E831E00954D48 /* DocumentWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2529,6 +2537,7 @@
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 				B7CB6BC1156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				B7F3A80B156E831E00954D48 /* DocumentWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2633,6 +2642,7 @@
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B7CB6BBF156CE50500AB2233 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				B7F3A809156E831E00954D48 /* DocumentWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
