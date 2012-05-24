@@ -15,6 +15,5 @@
 @property (strong, nonatomic) IBOutlet UITextField *projectNameTextField;
 @property (strong, nonatomic) IBOutlet ColorSelectionControl *labelColorSelectionControl;
 @property (strong, nonatomic) IBOutlet UILabel *projectFileCountLabel;
-@property (strong, nonatomic) IBOutlet UILabel *projectSizeLabel;
 
 @end

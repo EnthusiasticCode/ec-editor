@@ -24,7 +24,6 @@
 @synthesize projectNameTextField;
 @synthesize labelColorSelectionControl;
 @synthesize projectFileCountLabel;
-@synthesize projectSizeLabel;
 
 #pragma mark - Controller lifecycle
 
@@ -38,10 +37,12 @@
   if (!self)
     return nil;
   
+  // Project name will change when text field does
   [[[[[RACAbleSelf(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(id x) {
     return x != nil;
   }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
   
+  // Project label color will change when selecting a new color
   [[[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] where:^BOOL(id x) {
     return x != nil;
   }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
@@ -65,7 +66,6 @@
   [self setProjectNameTextField:nil];
   [self setLabelColorSelectionControl:nil];
   [self setProjectFileCountLabel:nil];
-  [self setProjectSizeLabel:nil];
   [super viewDidUnload];
 }
 
@@ -73,8 +73,8 @@
 {
   [super viewWillAppear:animated];
   
-  self.projectNameTextField.text = [self.artCodeTab.currentProject name];
-  // TODO add project files and size
+  self.projectNameTextField.text = self.artCodeTab.currentProject.name;
+  self.projectFileCountLabel.text = [NSString stringWithFormat:@"%u", self.artCodeTab.currentProject.files.count];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
