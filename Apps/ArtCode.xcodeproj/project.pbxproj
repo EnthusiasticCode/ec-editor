@@ -418,6 +418,7 @@
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
+		CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */; };
 		CDB5DB6514C6F56A003DFD1F /* ProjectFolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
@@ -927,6 +928,8 @@
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA9B66E1524A0620063D76F /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
 		CDA9B66F1524A0620063D76F /* ipad_icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ipad_icon@2.png"; sourceTree = "<group>"; };
+		CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverButton.h; sourceTree = "<group>"; };
+		CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverButton.m; sourceTree = "<group>"; };
 		CDB5DB6314C6F56A003DFD1F /* ProjectFolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectFolderBrowserController.h; sourceTree = "<group>"; };
 		CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectFolderBrowserController.m; sourceTree = "<group>"; };
 		CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveConflictController.h; sourceTree = "<group>"; };
@@ -1890,6 +1893,8 @@
 				CD8108D413E31A28000E1941 /* ColorSelectionControl.m */,
 				CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */,
 				CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */,
+				CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */,
+				CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */,
 			);
 			name = "Views and Controls";
 			sourceTree = "<group>";
@@ -2629,6 +2634,7 @@
 				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				B7CE615B152C86000019B2FC /* Operation.m in Sources */,
+				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
