@@ -103,7 +103,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Create New Folder" id="7wa-Ym-wKF">
                         <barButtonItem key="backBarButtonItem" title="Back" id="zDf-hJ-wre"/>
-                        <barButtonItem key="rightBarButtonItem" title="Create" style="done" id="5PT-z8-DLU">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Create" style="done" id="5PT-z8-DLU">
                             <connections>
                                 <action selector="createAction:" destination="No5-2i-ONL" id="hJb-Jc-NgJ"/>
                             </connections>

@@ -27,22 +27,27 @@
   if (!self)
     return nil;
   
-  // Subscribable to get the latest filename with extension
-  RACSubscribable *userInputFileNameSubscribable = [[[[RACAbleSelf(self.fileNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+  // Subscribable to get the latest filename with extension and activate 'create' button
+  [[[[[[[RACAbleSelf(self.fileNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+    if (fileName.length == 0)
+      return nil;
+    
     if ([[fileName pathExtension] length] == 0)
-      return [fileName stringByAppendingPathExtension:@"txt"];
-    return fileName;
-  }];
-  
-  // Validate file name and set the create button to enable
-  [[[userInputFileNameSubscribable select:^id(id x) {
-    return [NSNumber numberWithBool:[x length] && [(ACProjectFolder *)self.artCodeTab.currentItem childWithName:x] == nil];
+      fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    
+    if ([(ACProjectFolder *)self.artCodeTab.currentItem childWithName:fileName] == nil) {
+      return fileName;
+    } else {
+      return nil;
+    }
   }] doNext:^(id x) {
-    if ([x boolValue]) {
+    if (x) {
       self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
     } else {
       self.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
+  }] select:^id(id x) {
+    return [NSNumber numberWithBool:x != nil];
   }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
   
   return self;

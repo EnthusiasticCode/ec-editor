@@ -14,6 +14,7 @@
 #import "ACProject.h"
 #import "ACProjectItem.h"
 #import "ACProjectFileSystemItem.h"
+#import "ACProjectFolder.h"
 #import "BezelAlert.h"
 
 
@@ -23,6 +24,27 @@
 @synthesize infoLabel;
 
 #pragma mark - View lifecycle
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self)
+    return nil;
+  
+  // Subscribable to get the latest folder name or nil if the name is not valid
+  [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
+    if (x.length && [(ACProjectFolder *)self.artCodeTab.currentItem childWithName:x] == nil) {
+      return x;
+    } else {
+      return nil;
+    }
+  }] doNext:^(id x) {
+    self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject] prettyPath]] : @"The speficied folder name already exists or is invalid.";
+  }] select:^id(id x) {
+    return [NSNumber numberWithBool:x != nil];
+  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+  
+  return self;
+}
 
 - (void)viewDidUnload
 {
@@ -36,7 +58,7 @@
   [super viewDidAppear:animated];
   self.folderNameTextField.text = @"";
   [self.folderNameTextField becomeFirstResponder];
-  self.infoLabel.text = [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject] prettyPath]];
+  self.infoLabel.text = @"A new empty folder will be created in";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -57,35 +79,14 @@
 
 - (IBAction)createAction:(id)sender
 {
-  NSString *folderName = self.folderNameTextField.text;
-  if ([folderName length] == 0)
-  {
-    self.infoLabel.text = @"A folder name must be specified.";
-    [self.folderNameTextField becomeFirstResponder];
-    return;
-  }
-  // Check for directory validity
-  NSFileManager *fileManager = [NSFileManager new];
-  NSURL *folderURL = [self.artCodeTab.currentURL URLByAppendingPathComponent:folderName];
-  if ([fileManager fileExistsAtPath:[folderURL path]])
-  {
-    self.infoLabel.text = [NSString stringWithFormat:@"The speficied folder name (%@) already exists.", folderName];
-    [self.folderNameTextField becomeFirstResponder];
-    [self.folderNameTextField selectAll:nil];
-    return;
-  }
-  // File creation
-  __block NSError *err = nil;
-  [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:folderURL options:NSFileCoordinatorWritingForReplacing error:&err byAccessor:^(NSURL *newURL) {
-    [fileManager createDirectoryAtPath:[newURL path] withIntermediateDirectories:NO attributes:nil error:&err];
+  ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
+  [currentFolder addNewFolderWithName:self.folderNameTextField.text originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+    if (!error) {
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    } else {
+      self.infoLabel.text = error.localizedDescription;
+    }
   }];
-  if (err)
-  {
-    self.infoLabel.text = [err localizedDescription];
-    [self.folderNameTextField becomeFirstResponder];
-    return;
-  }
-  [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-  [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
 }
 @end
