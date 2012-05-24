@@ -19,13 +19,6 @@
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
 
-@interface QuickProjectInfoController ()
-
-- (void)_labelColorChangeAction:(id)sender;
-
-@end
-
-
 @implementation QuickProjectInfoController
 
 @synthesize projectNameTextField;
@@ -40,19 +33,31 @@
   return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self)
+    return nil;
+  
+  [[[[[RACAbleSelf(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(id x) {
+    return x != nil;
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
+  
+  [[[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] where:^BOOL(id x) {
+    return x != nil;
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
+  
+  return self;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  
-  // Changes the current project name with the one entered
-  [[[self.projectNameTextField.rac_textSubscribable throttle:0.3] distinctUntilChanged] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
-  
+
   // Send the selected color to the current project's label color
   self.labelColorSelectionControl.rows = 1;
   self.labelColorSelectionControl.columns = 6;
-  [[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
 }
 
 - (void)viewDidUnload

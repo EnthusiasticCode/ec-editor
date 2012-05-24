@@ -13,11 +13,12 @@
 @interface ColorSelectionControl ()
 
 @property (nonatomic, readonly, strong) NSArray *accessibilityColors;
-@property (nonatomic, readwrite, strong) UIColor *selectedColor;
 
 @end
 
-@implementation ColorSelectionControl
+@implementation ColorSelectionControl {
+  UITapGestureRecognizer *_tapGestureRecognizer;
+}
 
 @synthesize colors, colorCellsMargin, columns, rows, selectedColor, userInfo;
 @synthesize accessibilityColors = _accessibilityColors;
@@ -72,8 +73,7 @@
   }];
 }
 
-- (void)sendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
   CGPoint location = [[[event touchesForView:self] anyObject] locationInView:self];
   CGSize boundsSize = self.bounds.size;
   
@@ -85,7 +85,7 @@
   
   self.selectedColor = [colors objectAtIndex:colorIndex];
   
-  [super sendAction:action to:target forEvent:event];
+  [self sendActionsForControlEvents:UIControlEventTouchUpInside];
 }
 
 static void _init(ColorSelectionControl *self)
