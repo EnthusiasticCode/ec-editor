@@ -202,23 +202,26 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
       fileURL = outerStrongSelf.fileURL;
     }
     if (contents) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
+      [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
+        TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+        [codeUnit reparseWithUnsavedContent:contents];
+        return codeUnit;
+      }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
         ACProjectFile *innerStrongSelf = weakSelf;
         if (innerStrongSelf) {
           RACSubscribable *content = RACAble(innerStrongSelf, content);
-          RACDisposable *disposable = [[content select:^id(id x) {
-            return [NSAttributedString.alloc initWithString:x attributes:innerStrongSelf.theme.commonAttributes];
+          RACDisposable *disposable = [[content select:^id(id newContent) {
+            return [NSAttributedString.alloc initWithString:newContent attributes:innerStrongSelf.theme.commonAttributes];
           }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
           [innerStrongSelf->_contentDisposables addObject:disposable];
-          disposable = [content subscribeNext:^(id x) {
-            [innerStrongSelf.codeUnit reparseWithUnsavedContent:x];
+          disposable = [content subscribeNext:^(id newContent) {
+            [innerStrongSelf.codeUnit reparseWithUnsavedContent:newContent];
           }];
           [innerStrongSelf->_contentDisposables addObject:disposable];
           innerStrongSelf->_theme = theme;
           ++innerStrongSelf->_openCount;
           innerStrongSelf.content = contents;
-          innerStrongSelf.codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
-          [innerStrongSelf.codeUnit reparseWithUnsavedContent:contents];
+          innerStrongSelf.codeUnit = x;
         }
         if (completionHandler) {
           completionHandler(nil);

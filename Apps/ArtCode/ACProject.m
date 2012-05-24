@@ -103,6 +103,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   NSMutableDictionary *_remotes;
   NSError *_lastError;
   
+  dispatch_once_t _codeIndexingSchedulerToken;
   RACScheduler *_codeIndexingScheduler;
 }
 
@@ -652,11 +653,11 @@ static NSString * const _plistRemotesKey = @"remotes";
 @implementation ACProject (RACExtensions)
 
 - (RACScheduler *)codeIndexingScheduler {
-  if (!_codeIndexingScheduler) {
+  dispatch_once(&_codeIndexingSchedulerToken, ^{
     NSOperationQueue *operationQueue = NSOperationQueue.alloc.init;
     operationQueue.maxConcurrentOperationCount = 1;
     _codeIndexingScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
-  }
+  });
   return _codeIndexingScheduler;
 }
 
