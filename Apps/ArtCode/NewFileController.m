@@ -10,6 +10,8 @@
 #import "UIViewController+Utilities.h"
 
 #import "ArtCodeTab.h"
+#import "ACProject.h"
+#import "ACProjectFolder.h"
 #import "BezelAlert.h"
 
 @implementation NewFileController
@@ -19,6 +21,32 @@
 @synthesize templateDirectoryURL;
 
 #pragma mark - View lifecycle
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self)
+    return nil;
+  
+  // Subscribable to get the latest filename with extension
+  RACSubscribable *userInputFileNameSubscribable = [[[[RACAbleSelf(self.fileNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+    if ([[fileName pathExtension] length] == 0)
+      return [fileName stringByAppendingPathExtension:@"txt"];
+    return fileName;
+  }];
+  
+  // Validate file name and set the create button to enable
+  [[[userInputFileNameSubscribable select:^id(id x) {
+    return [NSNumber numberWithBool:[x length] && [(ACProjectFolder *)self.artCodeTab.currentItem childWithName:x] == nil];
+  }] doNext:^(id x) {
+    if ([x boolValue]) {
+      self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
+    } else {
+      self.infoLabel.text = @"The speficied file already exists or is invalid.";
+    }
+  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+  
+  return self;
+}
 
 - (void)viewDidUnload {
   [self setFileNameTextField:nil];
@@ -53,39 +81,23 @@
 
 - (IBAction)createAction:(id)sender
 {
+  [self startRightBarButtonItemActivityIndicator];
+  
   NSString *fileName = self.fileNameTextField.text;
-  if ([fileName length] == 0)
-  {
-    self.infoLabel.text = @"A file name must be specified.";
-    [self.fileNameTextField becomeFirstResponder];
-    return;
-  }
   // TODO use ArtCodeTemplate here
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
-  // TODO the current url should have methods to retrieve the normalized, plain url ensuring that it's a folder
-  NSFileManager *fileManager = [NSFileManager new];
-  NSURL *fileURL = [self.artCodeTab.currentURL URLByAppendingPathComponent:fileName];
-  if ([fileManager fileExistsAtPath:[fileURL path]])
-  {
-    self.infoLabel.text = [NSString stringWithFormat:@"The speficied file name (%@) already exists.", fileName];
-    [self.fileNameTextField becomeFirstResponder];
-    [self.fileNameTextField selectAll:nil];
-    return;
-  }
-  // File creation
-  NSError *err = nil;
-  [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:fileURL options:NSFileCoordinatorWritingForReplacing error:&err byAccessor:^(NSURL *newURL) {
-    [fileManager createFileAtPath:[newURL path] contents:nil attributes:nil];
+  
+  ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
+  [currentFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+    [self stopRightBarButtonItemActivityIndicator];
+    if (!error) {
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    } else {
+      self.infoLabel.text = [error localizedDescription];
+    }
   }];
-  if (err)
-  {
-    self.infoLabel.text = [err localizedDescription];
-    [self.fileNameTextField becomeFirstResponder];
-    return;
-  }
-  [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-  [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
 }
 
 @end

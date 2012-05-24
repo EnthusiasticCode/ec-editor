@@ -151,7 +151,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Create New File" id="wes-66-o31">
                         <barButtonItem key="backBarButtonItem" title="Back" id="GpX-zA-uz6"/>
-                        <barButtonItem key="rightBarButtonItem" title="Create" style="done" id="PAp-PS-L4F">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Create" style="done" id="PAp-PS-L4F">
                             <connections>
                                 <action selector="createAction:" destination="T3c-cE-H0w" id="ja5-yO-hqB"/>
                             </connections>
