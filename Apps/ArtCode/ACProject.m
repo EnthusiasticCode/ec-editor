@@ -278,9 +278,9 @@ static NSString * const _plistRemotesKey = @"remotes";
   [_document closeWithCompletionHandler:^(BOOL success) {
     for (void(^pendingCloseCompletionHandler)(BOOL) in _pendingCloseCompletionHandlers) {
       pendingCloseCompletionHandler(success);
-      if (!_openCount) {
-        _document = nil;
-      }
+    }
+    if (!_openCount) {
+      _document = nil;
     }
   }];
 }
