@@ -16,6 +16,7 @@
 #import "ACProject.h"
 
 #import "ColorSelectionControl.h"
+#import <ReactiveCocoa/ReactiveCocoa.h>
 
 
 @interface QuickProjectInfoController ()
@@ -45,9 +46,13 @@
 {
   [super viewDidLoad];
   
+  // Changes the current project name with the one entered
+  [[[self.projectNameTextField.rac_textSubscribable throttle:0.3] distinctUntilChanged] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
+  
+  // Send the selected color to the current project's label color
   self.labelColorSelectionControl.rows = 1;
   self.labelColorSelectionControl.columns = 6;
-  [self.labelColorSelectionControl addTarget:self action:@selector(_labelColorChangeAction:) forControlEvents:UIControlEventTouchUpInside];
+  [[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
 }
 
 - (void)viewDidUnload
@@ -70,25 +75,6 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
-}
-
-#pragma mark - UITextField Delegate
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-  if ([textField.text length] == 0)
-    return;
-  
-  // TODO check that name is ok
-  
-  //    [self.artCodeTab.currentProject setName:textField.text];
-}
-
-#pragma mark - Private Methods
-
-- (void)_labelColorChangeAction:(id)sender
-{
-  [self.artCodeTab.currentProject setLabelColor:[sender selectedColor]];
 }
 
 @end

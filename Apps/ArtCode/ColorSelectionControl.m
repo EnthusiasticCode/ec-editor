@@ -13,6 +13,7 @@
 @interface ColorSelectionControl ()
 
 @property (nonatomic, readonly, strong) NSArray *accessibilityColors;
+@property (nonatomic, readwrite, strong) UIColor *selectedColor;
 
 @end
 
@@ -82,7 +83,7 @@
   
   ASSERT(colorIndex < [colors count]);
   
-  selectedColor = [colors objectAtIndex:colorIndex];
+  self.selectedColor = [colors objectAtIndex:colorIndex];
   
   [super sendAction:action to:target forEvent:event];
 }

@@ -10,7 +10,7 @@
 
 @class ArtCodeTab, ColorSelectionControl;
 
-@interface QuickProjectInfoController : UITableViewController <UITextFieldDelegate>
+@interface QuickProjectInfoController : UITableViewController
 
 @property (strong, nonatomic) IBOutlet UITextField *projectNameTextField;
 @property (strong, nonatomic) IBOutlet ColorSelectionControl *labelColorSelectionControl;
