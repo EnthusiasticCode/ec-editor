@@ -102,6 +102,8 @@ static NSString * const _plistRemotesKey = @"remotes";
   ACProjectFolder *_contentsFolder;
   NSMutableDictionary *_remotes;
   NSError *_lastError;
+  
+  RACScheduler *_codeIndexingScheduler;
 }
 
 @synthesize UUID = _UUID, artCodeURL = _artCodeURL;
@@ -648,6 +650,15 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark
 
 @implementation ACProject (RACExtensions)
+
+- (RACScheduler *)codeIndexingScheduler {
+  if (!_codeIndexingScheduler) {
+    NSOperationQueue *operationQueue = NSOperationQueue.alloc.init;
+    operationQueue.maxConcurrentOperationCount = 1;
+    _codeIndexingScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
+  }
+  return _codeIndexingScheduler;
+}
 
 + (RACSubscribable *)rac_projects {
   static RACSubscribable *_rac_projects = nil;

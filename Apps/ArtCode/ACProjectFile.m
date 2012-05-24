@@ -29,13 +29,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 @interface ACProjectFile ()
 
 @property (nonatomic, copy) NSAttributedString *attributedContent;
-@property (nonatomic, strong) TMUnit *codeUnit;
-
-/// Returns the qualified identifier of the deepest scope at the specified offset
-- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(NSString *qualifiedScopeIdentifier))completionHandler;
-
-/// Returns the possible completions at a given insertion point in the unit's main source file.
-- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void(^)(id<TMCompletionResultSet>completions))completionHandler;
+@property (atomic, strong) TMUnit *codeUnit;
 
 @end
 
@@ -214,10 +208,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
           RACSubscribable *content = RACAble(innerStrongSelf, content);
           RACDisposable *disposable = [[content select:^id(id x) {
             return [NSAttributedString.alloc initWithString:x attributes:innerStrongSelf.theme.commonAttributes];
-          }] subscribeNext:^(id x) {
-            innerStrongSelf.attributedContent = x;
-          }];
-//          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
+          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
           [innerStrongSelf->_contentDisposables addObject:disposable];
           disposable = [content subscribeNext:^(id x) {
             [innerStrongSelf.codeUnit reparseWithUnsavedContent:x];
@@ -326,14 +317,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return _codeUnit.diagnostics;
 }
 
-- (void)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(NSString *))completionHandler {
-  completionHandler([_codeUnit qualifiedScopeIdentifierAtOffset:offset]);
-}
-
-- (void)completionsAtOffset:(NSUInteger)offset withCompletionHandler:(void (^)(id<TMCompletionResultSet>))completionHandler {
-  completionHandler([_codeUnit completionsAtOffset:offset]);
-}
-
 #pragma mark - Managing file bookmarks
 
 - (NSArray *)bookmarks {
@@ -367,29 +350,15 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 @implementation ACProjectFile (RACExtensions)
 
 - (RACSubscribable *)rac_qualifiedScopeIdentifierAtOffset:(NSUInteger)offset {
-  RACAsyncSubject *subject = RACAsyncSubject.subject;
-  [self qualifiedScopeIdentifierAtOffset:offset withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-    if (!qualifiedScopeIdentifier) {
-      [subject sendError:NSError.alloc.init];
-    } else {
-      [subject sendNext:qualifiedScopeIdentifier];
-      [subject sendCompleted];
-    }
-  }];
-  return subject;
+  return [[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
+    return [self.codeUnit qualifiedScopeIdentifierAtOffset:offset];
+  }] deliverOn:[RACScheduler mainQueueScheduler]];
 }
 
 - (RACSubscribable *)rac_completionsAtOffset:(NSUInteger)offset {
-  RACAsyncSubject *subject = RACAsyncSubject.subject;
-  [self completionsAtOffset:offset withCompletionHandler:^(id<TMCompletionResultSet> completions) {
-    if (!completions) {
-      [subject sendError:NSError.alloc.init];
-    } else {
-      [subject sendNext:completions];
-      [subject sendCompleted];
-    }
-  }];
-  return subject;
+  return [[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
+    return [self.codeUnit qualifiedScopeIdentifierAtOffset:offset];
+  }] deliverOn:[RACScheduler mainQueueScheduler]];
 }
 
 @end
