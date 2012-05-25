@@ -217,8 +217,8 @@ static NSString * const _childrenKey = @"children";
 
 - (ACProjectFileSystemItem *)_addExistingItem:(ACProjectFileSystemItem *)item renameTo:(NSString *)newName error:(NSError *__autoreleasing *)error {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  // Error if trying to move on the same folder
-  if (item.parentFolder == self) {
+  // Error if trying to move on the same folder with the same name
+  if (item.parentFolder == self && (!newName || [newName isEqualToString:item.name])) {
     if (error) {
       *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil];
     }

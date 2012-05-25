@@ -2692,10 +2692,6 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -2712,10 +2708,6 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -2732,10 +2724,6 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;
@@ -2753,10 +2741,6 @@
 					$inherited,
 				);
 				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos\"",
-				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = $TARGET_NAME;
 				TEST_AFTER_BUILD = YES;

@@ -18,7 +18,7 @@
 /// The content modification date should be updated whenever the file system item's in memory representation is changed
 @property (nonatomic, strong) NSDate *contentModificationDate;
 
-/// Designated initializer, both fileURL and originalURL must be specified, even if they're the same
+/// Designated initializer, fileURL must be specified, and refers to the location where the item will be read from / written to
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL;
 
 /// Force a read from the specified URL. Must be called on the project's file access coordination queue

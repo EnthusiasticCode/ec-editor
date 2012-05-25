@@ -345,6 +345,12 @@ describe(@"A new opened ACProject", ^{
         }];
         [[expectFutureValue(subfolder2) shouldEventually] beNonNil];
         subfolder2UUID = subfolder2.UUID;
+        __block ACProjectFolder *testContent = nil;
+        [subfolder2 addNewFolderWithName:@"just some content to test" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+          [error shouldBeNil];
+          testContent = newFolder;
+        }];
+        [[expectFutureValue(testContent) shouldEventually] beNonNil];
       });
       
       afterEach(^{
@@ -371,6 +377,7 @@ describe(@"A new opened ACProject", ^{
           [error shouldBeNil];
         }];
         [[expectFutureValue(subfolder.name) shouldEventually] equal:newSubfolderName];
+        [[[subfolder2 should] have:1] children];
       });
       
       it(@"can be moved", ^{
@@ -382,6 +389,7 @@ describe(@"A new opened ACProject", ^{
         [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:1] children];
+        [[[subfolder2 should] have:1] children];
       });
       
       it(@"can be copied", ^{
@@ -393,6 +401,7 @@ describe(@"A new opened ACProject", ^{
         [[expectFutureValue(subfolder2Copy) shouldEventually] beNonNil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:2] children];
+        [[[subfolder2Copy should] have:1] children];
       });
       
       it(@"can be retrieved by UUID", ^{
@@ -575,16 +584,31 @@ describe(@"A new opened ACProject", ^{
     context(@"when created", ^{
       
       __block ACProjectFile *file = nil;
-      
+      NSString *testContent = @"some test content";
+
       beforeEach(^{
         [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
           [error shouldBeNil];
           file = newFile;
         }];
         [[expectFutureValue(file) shouldEventually] beNonNil];
+        __block BOOL isOpened = NO;
+        [file openWithCompletionHandler:^(NSError *error) {
+          [error shouldBeNil];
+          isOpened = YES;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        file.content = testContent;
+        [[file.content should] equal:testContent];
       });
       
       afterEach(^{
+        __block BOOL isClosed = NO;
+        [file closeWithCompletionHandler:^(NSError *error) {
+          [error shouldBeNil];
+          isClosed = YES;
+        }];
+        [[expectFutureValue(theValue(isClosed)) shouldEventually] beYes];
         file = nil;
       });
       
@@ -610,6 +634,63 @@ describe(@"A new opened ACProject", ^{
       
       it(@"has a size", ^{
         [[theValue(file.fileSize) should] equal:theValue(0)];
+      });
+      
+      it(@"can be renamed", ^{
+        NSString *newFileName = @"newFileName.txt";
+        [file setName:newFileName withCompletionHandler:^(NSError *error) {
+          [error shouldBeNil];
+        }];
+        [[expectFutureValue(file.name) shouldEventually] equal:newFileName];
+        [[file.content should] equal:testContent];
+      });
+      
+      it(@"can be moved", ^{
+        __block ACProjectFolder *subfolder = nil;
+        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+          subfolder = newFolder;
+          [error shouldBeNil];
+        }];
+        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        [[[project.contentsFolder should] have:2] children];
+        __block BOOL moveComplete = NO;
+        [file moveToFolder:subfolder completionHandler:^(NSError *error) {
+          [error shouldBeNil];
+          moveComplete = YES;
+        }];
+        [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
+        [[[subfolder should] have:1] children];
+        [[[project.contentsFolder should] have:1] children];
+        [[file.parentFolder should] equal:subfolder];
+        [[file.content should] equal:testContent];
+      });
+      
+      it(@"can be copied", ^{
+        __block ACProjectFolder *subfolder = nil;
+        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+          subfolder = newFolder;
+          [error shouldBeNil];
+        }];
+        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        [[[project.contentsFolder should] have:2] children];
+        __block ACProjectFile *fileCopy = nil;
+        [file copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy, NSError *error) {
+          [error shouldBeNil];
+          fileCopy = (ACProjectFile *)copy;
+        }];
+        [[expectFutureValue(fileCopy) shouldEventually] beNonNil];
+        [[[subfolder should] have:1] children];
+        [[[project.contentsFolder should] have:2] children];
+        [[file.parentFolder should] equal:project.contentsFolder];
+        [[fileCopy.parentFolder should] equal:subfolder];
+        [[file.content should] equal:testContent];
+        __block BOOL isOpened = NO;
+        [fileCopy openWithCompletionHandler:^(NSError *error) {
+          [error shouldBeNil];
+          isOpened = YES;
+        }];
+        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        [[fileCopy.content should] equal:testContent];
       });
       
       it(@"has no bookmarks", ^{
