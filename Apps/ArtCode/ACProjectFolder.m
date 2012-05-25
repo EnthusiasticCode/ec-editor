@@ -217,18 +217,27 @@ static NSString * const _childrenKey = @"children";
 
 - (ACProjectFileSystemItem *)_addExistingItem:(ACProjectFileSystemItem *)item renameTo:(NSString *)newName error:(NSError *__autoreleasing *)error {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  if (item.parentFolder != self && [_children objectForKey:newName]) {
+  // Error if trying to move on the same folder
+  if (item.parentFolder == self) {
     if (error) {
       *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil];
     }
     return nil;
   }
+  // Remove destination item if already existing
   NSURL *newItemURL = [self.fileURL URLByAppendingPathComponent:newName];
+  if ([_children objectForKey:newName]) {
+    if ([[[NSFileManager alloc] init] removeItemAtURL:newItemURL error:nil]) {
+      [_children removeObjectForKey:newName];
+    }
+  }
+  // Moving
   if (![[[NSFileManager alloc] init] moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
     ASSERT(!error || *error);
     return nil;
   }
   
+  // Inform of movement
   [item.parentFolder didRemoveChild:item];
   item.fileURL = newItemURL;
   item.parentFolder = self;

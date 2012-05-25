@@ -452,12 +452,21 @@
   [self modalNavigationControllerPresentViewController:conflictController];
   
   // Start moving
-  [conflictController moveItems:[_selectedItems copy] toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item moveToFolder:moveFolder completionHandler:nil];
+  NSArray *items = [_selectedItems copy];
+  __block NSError *err = nil;
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
+    [item moveToFolder:moveFolder completionHandler:^(NSError *error) {
+      if (error && !err) {
+        err = error;
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+      }
+    }];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    if (items.count) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    }
   }];
 }
 
