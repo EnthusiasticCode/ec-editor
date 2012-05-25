@@ -67,6 +67,7 @@
     self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
     self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
     self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
+    self.defaultToolbar.titleControl.accessibilityIdentifier = @"title control";
   }
   return _defaultToolbar;
 }

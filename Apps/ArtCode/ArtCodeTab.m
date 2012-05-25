@@ -327,11 +327,15 @@ static NSMutableArray *_mutableTabs;
 }
 
 - (void)_removeHistoryEntriesContainingUUID:(id)uuid {
-  // Get the indexes of history entries to remove
+  // Get the indexes of history entries to remove, also removes identical URLs adjiacent to one another
   NSMutableIndexSet *removeIndexed = NSMutableIndexSet.new;
+  __block NSString *lastURLString = nil;
   [(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] enumerateObjectsUsingBlock:^(NSString *URLString, NSUInteger idx, BOOL *stop) {
-    if ([URLString rangeOfString:uuid].location != NSNotFound) {
+    if ([URLString rangeOfString:uuid].location != NSNotFound
+        || [lastURLString isEqualToString:URLString]) {
       [removeIndexed addIndex:idx];
+    } else {
+      lastURLString = URLString;
     }
   }];
   // Exit if nothing done
@@ -342,7 +346,7 @@ static NSMutableArray *_mutableTabs;
   [_mutableHistoryURLs removeObjectsAtIndexes:removeIndexed];
   // Adjust current history position
   NSUInteger newHistoryPosition = self.currentHistoryPosition;
-  while ([removeIndexed containsIndex:newHistoryPosition]) {
+  while (newHistoryPosition >= _mutableHistoryURLs.count || [removeIndexed containsIndex:newHistoryPosition]) {
     ASSERT(newHistoryPosition); // FIX not safe if current history position is 0
     newHistoryPosition--;
   }

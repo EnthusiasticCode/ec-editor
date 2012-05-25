@@ -438,6 +438,7 @@
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files copied" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }];
 }
 
@@ -456,6 +457,7 @@
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }];
 }
 

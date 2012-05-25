@@ -207,6 +207,31 @@ describe("Projects list", function() {
   describe("when existing", function() {
     
     var projectsGrid = tabsScrollView.elements()["projects grid"];
+		var defaultToolbar = tabsScrollView.elements()["default toolbar"];
+		var createProject = function(projectName) {
+			defaultToolbar.buttons()["Add"].tap();
+      target.delay(.5);
+
+      var popover = mainWindow.popover();
+			popover.buttons()["Create new project"].tap();
+      target.delay(.5);
+
+			popover.textFields()[0].setValue(projectName);
+      popover.navigationBar().rightButton().tap();
+      target.delay(1);
+
+			return tabsScrollView.elements()["projects grid"].elements()[projectName];
+		};
+		var deleteProject = function(projectName) {
+			defaultToolbar.buttons()["Edit"].tap();
+      target.delay(.5);
+			tabsScrollView.elements()["projects grid"].elements()[projectName].tap();
+      target.delay(.5);
+			defaultToolbar.buttons()["Delete"].tap();
+      target.delay(.5);
+			mainWindow.popover().actionSheet().buttons()["Delete permanently"].tap();
+      target.delay(.5);
+		};
     
     describe("according to setup", function() {
       
@@ -218,35 +243,34 @@ describe("Projects list", function() {
     });
 
 		it("should disable navigation buttons when removing the project next in history", function() {
-			var defaultToolbar = tabsScrollView.elements()["default toolbar"]
-			defaultToolbar.buttons()["Add"].tap();
-      target.delay(.5);
-
-      var popover = mainWindow.popover();
-			popover.buttons()["Create new project"].tap();
-      target.delay(.5);
-
 			var projectName = "History Test";
-			popover.textFields()[0].setValue(projectName);
-      popover.navigationBar().rightButton().tap();
-      target.delay(1);
-
-			var projectCell = tabsScrollView.elements()["projects grid"].elements()[projectName];
+			var projectCell = createProject(projectName);
 			projectCell.tap();
 			target.delay(.5);
 			defaultToolbar.buttons()["Back"].tap();
 			target.delay(.5);
 			
-			defaultToolbar.buttons()["Edit"].tap();
-      target.delay(.5);
-			tabsScrollView.elements()["projects grid"].elements()[projectName].tap();
-      target.delay(.5);
-			defaultToolbar.buttons()["Delete"].tap();
-      target.delay(.5);
-			mainWindow.popover().actionSheet().buttons()["Delete permanently"].tap();
-      target.delay(.5);
-
+			deleteProject(projectName);
 			expect(defaultToolbar.buttons()["Forward"].isEnabled()).toBeFalsy();
+		});
+		
+		it("should disable navigation buttons when removig the project back in history", function() {
+			var projectName = "History Test 2";
+			var projectCell = createProject(projectName);
+			projectCell.tap();
+			target.delay(.5);
+			
+			var titleControl = defaultToolbar.elements()["title control"];
+			titleControl.tap();
+			target.delay(.5);
+			
+			var popover = mainWindow.popover();
+			popover.tabBar().buttons()["Files"].tap();
+			popover.navigationBar().leftButton().tap();
+			target.delay(.5);
+			
+			deleteProject(projectName);
+			expect(defaultToolbar.buttons()["Back"].isEnabled()).toBeFalsy();
 		});
     
   });
