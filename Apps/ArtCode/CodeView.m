@@ -732,6 +732,7 @@ static void init(CodeView *self)
   }
   
   [self setNeedsLayout];
+  [_selectionView update];
   
   // TODO call delegate's endediting
   
@@ -1507,9 +1508,9 @@ static void init(CodeView *self)
   {
     UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
     
-    // Adding custom menu
-    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
-    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
+//    // Adding custom menu
+//    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
+//    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
     
     // Show context menu
     [sharedMenuController setTargetRect:_selectionView.frame inView:self];
