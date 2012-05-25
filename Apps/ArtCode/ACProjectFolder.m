@@ -225,14 +225,15 @@ static NSString * const _childrenKey = @"children";
     return nil;
   }
   // Remove destination item if already existing
+  NSFileManager *fileManager = NSFileManager.alloc.init;
   NSURL *newItemURL = [self.fileURL URLByAppendingPathComponent:newName];
   if ([_children objectForKey:newName]) {
-    if ([[[NSFileManager alloc] init] removeItemAtURL:newItemURL error:nil]) {
+    if ([fileManager removeItemAtURL:newItemURL error:nil]) {
       [_children removeObjectForKey:newName];
     }
   }
   // Moving
-  if (![[[NSFileManager alloc] init] moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
+  if (![fileManager moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
     ASSERT(!error || *error);
     return nil;
   }
@@ -242,35 +243,39 @@ static NSString * const _childrenKey = @"children";
   item.fileURL = newItemURL;
   item.parentFolder = self;
   [self _didAddChild:item];
-  
   return item;
 }
 
 - (ACProjectFileSystemItem *)_addCopyOfExistingItem:(ACProjectFileSystemItem *)item renameIfNeeded:(BOOL)renameIfNeeded error:(NSError *__autoreleasing *)error {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
+  // Get name of destination item
   NSString *name = item.name;
-  if (!renameIfNeeded) {
-    if ([_children objectForKey:name]) {
-      if (error) {
-        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil];
-      }
-      return nil;
-    }
-  } else {
+  if (renameIfNeeded) {
     NSInteger currentNumber = 1;
     while ([_children objectForKey:name]) {
       name = [item.name stringByAddingDuplicateNumber:currentNumber];
       ++currentNumber;
     }
   }
+  
+  // Remove destination item if already existing
   NSURL *childURL = [self.fileURL URLByAppendingPathComponent:name];
-  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
+  if ([_children objectForKey:name]) {
+    if ([NSFileManager.alloc.init removeItemAtURL:childURL error:nil]) {
+      [_children removeObjectForKey:name];
+    }
+  }
+  
+  // Copy
+  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:item.fileURL];
   if (!childItem) {
     if (error) {
       *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil];
     }
     return nil;
-  }    
+  }
+  
+  // Inform of copy
   [self _didAddChild:childItem];
   [self.project didAddFileSystemItem:childItem];
   [self.project updateChangeCount:UIDocumentChangeDone];
