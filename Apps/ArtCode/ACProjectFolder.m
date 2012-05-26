@@ -267,12 +267,16 @@ static NSString * const _childrenKey = @"children";
   }
   
   // Copy
-  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:item.fileURL];
+  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
   if (!childItem) {
     if (error) {
       *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil];
     }
     return nil;
+  } else {
+    if (![childItem readFromURL:item.fileURL error:error]) {
+      return nil;
+    };
   }
   
   // Inform of copy
