@@ -468,6 +468,9 @@
 		CDEE0D7214BDA59B0019FDEF /* projectsTable_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */; };
 		CDEE0D7514BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */; };
 		CDEE0D7614BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */; };
+		CDEFDE351570E6E500DBB528 /* UITabBar_info.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEFDE341570E6E500DBB528 /* UITabBar_info.png */; };
+		CDEFDE371570E7D200DBB528 /* UITabBar_star.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEFDE361570E7D200DBB528 /* UITabBar_star.png */; };
+		CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEFDE381570E9BC00DBB528 /* UITabBar_symbol.png */; };
 		CDF1D46D14150C4900EFEC21 /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */; };
 		CDF4C011144F2C7900475F6B /* TopBarTitleControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C00E144F2C7900475F6B /* TopBarTitleControl.m */; };
 		CDF4C012144F2C7900475F6B /* TopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* TopBarToolbar.m */; };
@@ -987,6 +990,9 @@
 		CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTable_Background.png; sourceTree = "<group>"; };
 		CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundNormal.png; sourceTree = "<group>"; };
 		CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundSelected.png; sourceTree = "<group>"; };
+		CDEFDE341570E6E500DBB528 /* UITabBar_info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UITabBar_info.png; sourceTree = "<group>"; };
+		CDEFDE361570E7D200DBB528 /* UITabBar_star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UITabBar_star.png; sourceTree = "<group>"; };
+		CDEFDE381570E9BC00DBB528 /* UITabBar_symbol.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UITabBar_symbol.png; sourceTree = "<group>"; };
 		CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
 		CDF4C00D144F2C7900475F6B /* TopBarTitleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopBarTitleControl.h; sourceTree = "<group>"; };
 		CDF4C00E144F2C7900475F6B /* TopBarTitleControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopBarTitleControl.m; sourceTree = "<group>"; };
@@ -2031,6 +2037,7 @@
 		CDC2A6B81459D9C600978008 /* Tab Bar */ = {
 			isa = PBXGroup;
 			children = (
+				CDEFDE331570E6CE00DBB528 /* UITabBar */,
 				CDA0B9E514A4B30200714F74 /* topBar_BackButton_Disabled.png */,
 				CDA0B9E614A4B30200714F74 /* topBar_ForwardButton_Disabled.png */,
 				CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */,
@@ -2060,6 +2067,16 @@
 				CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */,
 			);
 			name = Projects;
+			sourceTree = "<group>";
+		};
+		CDEFDE331570E6CE00DBB528 /* UITabBar */ = {
+			isa = PBXGroup;
+			children = (
+				CDEFDE381570E9BC00DBB528 /* UITabBar_symbol.png */,
+				CDEFDE361570E7D200DBB528 /* UITabBar_star.png */,
+				CDEFDE341570E6E500DBB528 /* UITabBar_info.png */,
+			);
+			name = UITabBar;
 			sourceTree = "<group>";
 		};
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
@@ -2443,6 +2460,9 @@
 				CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */,
 				CD711AD0156B9A1500F30964 /* helpArrowUp.png in Resources */,
 				CD711AD2156B9D1F00F30964 /* ProjectsHintsView.xib in Resources */,
+				CDEFDE351570E6E500DBB528 /* UITabBar_info.png in Resources */,
+				CDEFDE371570E7D200DBB528 /* UITabBar_star.png in Resources */,
+				CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

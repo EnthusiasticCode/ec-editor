@@ -22,7 +22,7 @@
             </objects>
             <point key="canvasLocation" x="-1197" y="-374"/>
         </scene>
-        <!--View Controller-->
+        <!--View Controller - Create New Item-->
         <scene sceneID="WeF-1Y-JvN">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="siY-Wz-dyC" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -64,7 +64,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="NLf-R0-xhv"/>
+                    <navigationItem key="navigationItem" title="Create New Item" id="NLf-R0-xhv"/>
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="150"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </viewController>
@@ -168,6 +168,27 @@
             <point key="canvasLocation" x="310" y="-166"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="NewFileController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewFileController.h"/>
+            <relationships>
+                <relationship kind="action" name="createAction:"/>
+                <relationship kind="outlet" name="fileNameTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="infoLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="NewFileFolderController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewFileFolderController.h"/>
+            <relationships>
+                <relationship kind="action" name="createAction:"/>
+                <relationship kind="outlet" name="folderNameTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="infoLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="PopoverButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PopoverButton.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

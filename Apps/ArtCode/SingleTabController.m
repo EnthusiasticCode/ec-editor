@@ -313,6 +313,13 @@
     [self updateDefaultToolbarTitle];
   }];
   
+  // Update tool bar title when project changes
+  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), nil] reduce:^id(RACTuple *xs) {
+    return xs;
+  }] subscribeNext:^(id x) {
+    [self updateDefaultToolbarTitle];
+  }];
+  
   return self;
 }
 

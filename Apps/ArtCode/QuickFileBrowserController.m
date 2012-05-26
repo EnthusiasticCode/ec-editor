@@ -77,7 +77,8 @@
   self = [super initWithTitle:@"Open quickly" searchBarStaticOnTop:YES];
   if (!self)
     return nil;
-  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:nil tag:0];
+  float iconSize = UIScreen.mainScreen.scale * 26;
+  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:[UIImage styleDocumentImageWithSize:CGSizeMake(iconSize, iconSize) color:[UIColor whiteColor] text:nil] tag:0];
   self.navigationItem.title = @"Open quickly";
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
   UIBarButtonItem *backToProjectsItem = [[UIBarButtonItem alloc] initWithTitle:@"Projects" style:UIBarButtonItemStylePlain target:self action:@selector(_showProjectsInTabAction:)];

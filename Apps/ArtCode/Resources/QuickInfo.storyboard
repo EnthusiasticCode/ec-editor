@@ -74,7 +74,7 @@
                                             <rect key="frame" x="31" y="0.0" width="478" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Files" lineBreakMode="tailTruncation" minimumFontSize="10" id="IPz-gj-DtK">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Items" lineBreakMode="tailTruncation" minimumFontSize="10" id="IPz-gj-DtK">
                                                     <rect key="frame" x="20" y="11" width="128" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -101,7 +101,7 @@
                             <outlet property="delegate" destination="EPX-9c-3lG" id="TwM-Ju-Vr0"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Info" id="6qV-sK-vkf"/>
+                    <tabBarItem key="tabBarItem" title="Info" image="UITabBar_info.png" id="6qV-sK-vkf"/>
                     <navigationItem key="navigationItem" title="Project Information" id="WAa-aP-XLE"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -155,13 +155,13 @@
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="GrR-BZ-4l6">
-                                        <rect key="frame" x="0.0" y="75" width="540" height="44"/>
+                                        <rect key="frame" x="0.0" y="75" width="540" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="31" y="0.0" width="478" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Files" lineBreakMode="tailTruncation" minimumFontSize="10" id="NJb-aM-63d">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Items" lineBreakMode="tailTruncation" minimumFontSize="10" id="NJb-aM-63d">
                                                     <rect key="frame" x="20" y="11" width="128" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -169,32 +169,6 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="uAX-3x-uwa">
-                                                    <rect key="frame" x="102" y="11" width="356" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                    <color key="textColor" white="0.35200352820000003" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="PWy-WQ-tSJ">
-                                        <rect key="frame" x="0.0" y="119" width="540" height="45"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="31" y="0.0" width="478" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Size" lineBreakMode="tailTruncation" minimumFontSize="10" id="Geb-ck-Bg4">
-                                                    <rect key="frame" x="20" y="11" width="128" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="0.35200352820000003" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0 MB" textAlignment="right" lineBreakMode="tailTruncation" minimumFontSize="10" id="4nn-ia-JyA">
                                                     <rect key="frame" x="102" y="11" width="356" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -214,14 +188,13 @@
                             <outlet property="delegate" destination="BdH-UZ-hp4" id="B3c-fE-mQo"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Info" id="RVZ-Xi-83j"/>
+                    <tabBarItem key="tabBarItem" title="Info" image="UITabBar_info.png" id="RVZ-Xi-83j"/>
                     <navigationItem key="navigationItem" title="Folder Information" id="5f4-5T-BgH"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="folderFileCountLabel" destination="uAX-3x-uwa" id="aia-xk-5Gx"/>
                         <outlet property="folderNameTextField" destination="EW9-Uf-vZP" id="3vM-T5-AEr"/>
-                        <outlet property="folderSizeLabel" destination="4nn-ia-JyA" id="5ds-lf-SuA"/>
                     </connections>
                 </tableViewController>
             </objects>
@@ -271,7 +244,7 @@
                                         <rect key="frame" x="0.0" y="75" width="540" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="31" y="1" width="478" height="43"/>
+                                            <rect key="frame" x="31" y="0.0" width="478" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Size" lineBreakMode="tailTruncation" minimumFontSize="10" id="7Lm-8U-1Hv">
@@ -297,7 +270,7 @@
                                         <rect key="frame" x="0.0" y="119" width="540" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="31" y="1" width="478" height="43"/>
+                                            <rect key="frame" x="31" y="0.0" width="478" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Lines" lineBreakMode="tailTruncation" minimumFontSize="10" id="eab-US-F2g">
@@ -323,7 +296,7 @@
                                         <rect key="frame" x="0.0" y="163" width="540" height="45"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="31" y="1" width="458" height="43"/>
+                                            <rect key="frame" x="31" y="0.0" width="458" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Highlight as" lineBreakMode="tailTruncation" minimumFontSize="10" id="nHu-gM-c1v">
@@ -356,7 +329,7 @@
                             <outlet property="delegate" destination="bgu-hU-XJb" id="dW1-8K-Sb9"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Info" id="Q6H-qD-eyp"/>
+                    <tabBarItem key="tabBarItem" title="Info" image="UITabBar_info.png" id="Q6H-qD-eyp"/>
                     <navigationItem key="navigationItem" title="File Information" id="d01-Uq-RSA"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -402,6 +375,38 @@
             <point key="canvasLocation" x="2014" y="-724"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="UITabBar_info.png" width="26" height="26"/>
+    </resources>
+    <classes>
+        <class className="ColorSelectionControl" superclassName="UIControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ColorSelectionControl.h"/>
+        </class>
+        <class className="QuickFileInfoController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickFileInfoController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="fileLineCountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fileNameTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="fileSizeLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="QuickFolderInfoController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickFolderInfoController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="folderFileCountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="folderNameTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="folderSizeLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="QuickProjectInfoController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickProjectInfoController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="labelColorSelectionControl" candidateClass="ColorSelectionControl"/>
+                <relationship kind="outlet" name="projectFileCountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

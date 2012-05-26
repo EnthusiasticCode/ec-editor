@@ -28,7 +28,7 @@
   self = [super init];
   if (!self)
     return nil;
-  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:nil tag:0];
+  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Bookmarks" image:[UIImage imageNamed:@"UITabBar_star"] tag:0];
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
   self.navigationItem.title = @"Bookmarks";
   return self;

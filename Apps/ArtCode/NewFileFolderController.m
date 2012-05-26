@@ -58,7 +58,7 @@
   [super viewDidAppear:animated];
   self.folderNameTextField.text = @"";
   [self.folderNameTextField becomeFirstResponder];
-  self.infoLabel.text = @"A new empty folder will be created in";
+  self.infoLabel.text = @"A new empty folder will be created.";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

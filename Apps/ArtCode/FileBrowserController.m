@@ -88,13 +88,6 @@
     [self.tableView reloadData];
   }];
   
-//  // Update tool bar title when project changes
-//  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), nil] reduce:^id(RACTuple *xs) {
-//    return xs;
-//  }] subscribeNext:^(id x) {
-//    [self.singleTabController updateDefaultToolbarTitle];
-//  }];
-  
   return self;
 }
 
@@ -388,6 +381,7 @@
     _toolNormalAddPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
     popoverViewController.presentingPopoverController = _toolNormalAddPopover;
   }
+  [(UINavigationController *)_toolNormalAddPopover.contentViewController popToRootViewControllerAnimated:NO];
   [_toolNormalAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 

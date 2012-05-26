@@ -62,7 +62,7 @@
   self = [super initWithTitle:@"Symbol list" searchBarStaticOnTop:YES];
   if (!self)
     return nil;
-  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:nil tag:0];
+  self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:[UIImage imageNamed:@"UITabBar_symbol"] tag:0];
   self.navigationItem.title = @"Table of Content";
   return self;
 }
