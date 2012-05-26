@@ -109,7 +109,6 @@
       self.tableView.frame = tableViewFrame;
     } else {
       CGRect tableViewFrame = self.view.bounds;
-      CGRect contentRect = self.tableView.bounds;
       if (_isSearchBarStaticOnTop) {
         tableViewFrame.origin.y = 44;
         tableViewFrame.size.height -= 44;
@@ -118,8 +117,6 @@
         tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
       }
       self.tableView.frame = tableViewFrame;
-//      [self.tableView scrollRectToVisible:contentRect animated:NO];
-      self.tableView.contentOffset = contentRect.origin;
     }
   }];
       
