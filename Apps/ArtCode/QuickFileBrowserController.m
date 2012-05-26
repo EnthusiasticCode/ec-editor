@@ -50,7 +50,7 @@
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
-        self.infoLabel.text = @"Nothing found";
+        self.infoLabel.text = L(@"Nothing found.");
       else
         self.infoLabel.text = @"";
     }
@@ -58,7 +58,7 @@
     {
       _filteredItems = nil;
       _filteredItemsHitMasks = nil;
-      self.infoLabel.text = @"Type a file name to open.";
+      self.infoLabel.text = L(@"Type a file name to open.");
     }
   }
   return _filteredItems;
@@ -74,14 +74,14 @@
 
 - (id)init
 {
-  self = [super initWithTitle:@"Open quickly" searchBarStaticOnTop:YES];
+  self = [super initWithTitle:L(@"Open quickly") searchBarStaticOnTop:YES];
   if (!self)
     return nil;
   float iconSize = UIScreen.mainScreen.scale * 26;
   self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:[UIImage styleDocumentImageWithSize:CGSizeMake(iconSize, iconSize) color:[UIColor whiteColor] text:nil] tag:0];
-  self.navigationItem.title = @"Open quickly";
-  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Show" style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
-  UIBarButtonItem *backToProjectsItem = [[UIBarButtonItem alloc] initWithTitle:@"Projects" style:UIBarButtonItemStylePlain target:self action:@selector(_showProjectsInTabAction:)];
+  self.navigationItem.title = L(@"Open quickly");
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Show") style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
+  UIBarButtonItem *backToProjectsItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Projects") style:UIBarButtonItemStylePlain target:self action:@selector(_showProjectsInTabAction:)];
   [backToProjectsItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   self.navigationItem.leftBarButtonItem = backToProjectsItem;
   return self;
@@ -97,8 +97,8 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  self.searchBar.placeholder = @"Search for file";
-  self.infoLabel.text = @"Type a file name to open.";
+  self.searchBar.placeholder = L(@"Search for file");
+  self.infoLabel.text = L(@"Type a file name to open.");
 }
 
 - (void)viewDidAppear:(BOOL)animated
