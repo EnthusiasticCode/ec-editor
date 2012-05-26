@@ -135,9 +135,6 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
-		B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
-		B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
-		B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
 		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
 		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
@@ -318,6 +315,7 @@
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
+		CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D77F31570EFD000E51933 /* popover_Button.png */; };
 		CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
 		CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
 		CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
@@ -614,7 +612,6 @@
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
-		B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libMAKVONotificationCenter-iOS.a"; path = "../ThirdParty/MAKVONotificationCenter/build/Release-iphoneos/libMAKVONotificationCenter-iOS.a"; sourceTree = "<group>"; };
 		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
 		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
 		B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ANTLR.tmbundle; sourceTree = "<group>"; };
@@ -805,6 +802,7 @@
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
 		CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectImportController.m; sourceTree = "<group>"; };
 		CD3D69E014C45B9300325970 /* topBar_BackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton.png; sourceTree = "<group>"; };
+		CD3D77F31570EFD000E51933 /* popover_Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popover_Button.png; sourceTree = "<group>"; };
 		CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURLSpec.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstantGestureRecognizer.h; sourceTree = "<group>"; };
@@ -1011,7 +1009,6 @@
 				B7F3A82F156EAF6800954D48 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */,
 				B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */,
-				B7CE61EA152CC74D0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */,
 				B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */,
 				B77101481506E340006AF1FB /* MessageUI.framework in Frameworks */,
@@ -1031,7 +1028,6 @@
 				B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */,
 				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
 				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
-				B7CE61EB152CC7510019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */,
 				B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */,
 				B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */,
@@ -1049,7 +1045,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
-				B7CE6190152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
@@ -1334,7 +1329,6 @@
 				B7FB79F214D607400080A714 /* Archive */,
 				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
 				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
-				B7CE618F152CAD0B0019B2FC /* libMAKVONotificationCenter-iOS.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
@@ -1817,6 +1811,7 @@
 		CD7D2B0A13C0CEFF00B889EE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				CD3D77F31570EFD000E51933 /* popover_Button.png */,
 				CDDC95061462E23F00E2B96C /* minimap_Background.png */,
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
@@ -2463,6 +2458,7 @@
 				CDEFDE351570E6E500DBB528 /* UITabBar_info.png in Resources */,
 				CDEFDE371570E7D200DBB528 /* UITabBar_star.png in Resources */,
 				CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */,
+				CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
