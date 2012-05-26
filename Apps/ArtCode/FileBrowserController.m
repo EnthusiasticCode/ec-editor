@@ -106,18 +106,18 @@
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
-        self.infoLabel.text = L(@"No items in this folder match the filter");
+        self.infoLabel.text = L(@"No items in this folder match the filter.");
       else
-        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u"), [_filteredItems count], [self.currentFolder.children count]];
+        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.currentFolder.children count]];
     } else {
       _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
         return [obj1.name compare:obj2.name];
       }];
       _filteredItemsHitMasks = nil;
       if ([_filteredItems count] == 0)
-        self.infoLabel.text = L(@"This folder has no items");
+        self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
       else
-        self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder") plural:L(@"%u items in this folder") count:[_filteredItems count]];
+        self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:[_filteredItems count]];
     }
   }
   return _filteredItems;

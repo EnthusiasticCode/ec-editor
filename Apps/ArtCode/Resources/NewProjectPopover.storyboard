@@ -120,7 +120,7 @@
             </objects>
             <point key="canvasLocation" x="2157" y="-503"/>
         </scene>
-        <!--View Controller - Add project-->
+        <!--View Controller - Add New Item-->
         <scene sceneID="See-7B-c1I">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OBE-ll-855" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -162,7 +162,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Add project" id="I37-8D-B2H"/>
+                    <navigationItem key="navigationItem" title="Add New Item" id="I37-8D-B2H"/>
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="200"/>
                 </viewController>
             </objects>
@@ -185,6 +185,24 @@
             <point key="canvasLocation" x="698" y="-836"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="NewProjectController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectController.h"/>
+            <relationships>
+                <relationship kind="action" name="changeColorAction:"/>
+                <relationship kind="action" name="createProjectAction:"/>
+                <relationship kind="outlet" name="descriptionLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="projectColorButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="NewProjectImportController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectImportController.h"/>
+        </class>
+        <class className="PopoverButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PopoverButton.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
