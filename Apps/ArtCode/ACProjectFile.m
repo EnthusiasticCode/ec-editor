@@ -171,6 +171,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   // Make sure the file exists
   NSFileManager *fileManager = [[NSFileManager alloc] init];
   if (![fileManager fileExistsAtPath:url.path]) {
+    [fileManager createDirectoryAtURL:[url URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
     if (![@"" writeToURL:url atomically:NO encoding:NSUTF8StringEncoding error:error]) {
       return NO;
     }

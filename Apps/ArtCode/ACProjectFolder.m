@@ -233,6 +233,7 @@ static NSString * const _childrenKey = @"children";
     }
     return nil;
   }
+  
   // Remove destination item if already existing
   NSFileManager *fileManager = NSFileManager.alloc.init;
   NSURL *newItemURL = [self.fileURL URLByAppendingPathComponent:newName];
@@ -242,6 +243,9 @@ static NSString * const _childrenKey = @"children";
     }
   }
   // Moving
+  if (![item writeToURL:item.fileURL error:error]) {
+    return nil;
+  }
   if ([fileManager fileExistsAtPath:newItemURL.path] && ![fileManager moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
     ASSERT(!error || *error);
     return nil;
@@ -283,6 +287,9 @@ static NSString * const _childrenKey = @"children";
     }
     return nil;
   } else {
+    if (![item writeToURL:item.fileURL error:error]) {
+      return nil;
+    }
     if (![childItem readFromURL:item.fileURL error:error]) {
       return nil;
     };
