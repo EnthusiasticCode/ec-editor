@@ -87,16 +87,8 @@
 
 - (id)initWithProject:(ACProject *)project name:(NSString *)name URL:(NSURL *)remoteURL
 {
-  self = [super initWithProject:project propertyListDictionary:nil];
-  if (!self)
-    return nil;
-  _URL = remoteURL;
-  if (!_URL)
-    return nil;
-  _name = name;
-  if (![_name length])
-    _name = _URL.host;
-  return self;
+  ASSERT(name && remoteURL);
+  return [self initWithProject:project propertyListDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[remoteURL absoluteString], @"url", name, @"name", nil]];
 }
 
 #pragma mark - Plist Internal Methods
@@ -106,6 +98,9 @@
   self = [super initWithProject:project propertyListDictionary:plistDictionary];
   if (!self)
     return nil;
+  
+  [self setPropertyListDictionary:plistDictionary];
+  
   _URL = [NSURL URLWithString:[plistDictionary objectForKey:@"url"]];
   if (!_URL)
     return nil;

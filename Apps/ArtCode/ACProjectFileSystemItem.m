@@ -8,7 +8,7 @@
 
 #import "ACProjectFileSystemItem+Internal.h"
 #import "ACProjectItem+Internal.h"
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 
 #import "ACProjectFolder.h"
 
@@ -45,12 +45,15 @@
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-  return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil fileURL:nil];
+  return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil name:nil];
 }
 
 - (NSDictionary *)propertyListDictionary {
-  NSMutableDictionary *plist = [[super propertyListDictionary] mutableCopy];
-  return plist;
+  return [super propertyListDictionary];
+}
+
+- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
+  [super setPropertyListDictionary:propertyListDictionary];
 }
 
 #pragma mark - Item Properties
@@ -114,87 +117,48 @@ completionHandler(nil);\
   _fileURL = fileURL;
 }
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
   // All filesystem items need to be initialized in the project's file access coordination queue
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  // If parameters aren't good, return nil
-  if (!project || !fileURL || ![fileURL isFileURL]) {
-    return nil;
-  }
-  
+  ASSERT(project);
+
   // Initialize the item
   self = [super initWithProject:project propertyListDictionary:plistDictionary];
   if (!self) {
     return nil;
   }
-  _parentFolder = parent;
-  _fileURL = fileURL;
   
-  // Try to get the content modification date
-  NSDate *contentModificationDate = nil;
-  [fileURL getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
-  if (!contentModificationDate) {
-    contentModificationDate = [[NSDate alloc] init];
+  _parentFolder = parent;
+  if (parent) {
+    _fileURL = [parent.fileURL URLByAppendingPathComponent:name];
+  } else {
+    _fileURL = project.contentsFolderURL;
   }
-  _contentModificationDate = contentModificationDate;
   
   return self;
 }
 
 - (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  if ([url isEqual:self.fileURL]) {
-    return YES;
-  } else {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    if ([fileManager fileExistsAtPath:self.fileURL.path]) {
-      NSURL *temporaryDirectory = [NSURL temporaryDirectory];
-      if (![fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:error]) {
-        ASSERT(error);
-        return NO;
-      }
-      NSURL *temporaryItem = [temporaryDirectory URLByAppendingPathComponent:[url lastPathComponent]];
-      if (![fileManager copyItemAtURL:url toURL:temporaryItem error:error]) {
-        ASSERT(error);
-        return NO;
-      }
-      if (![fileManager replaceItemAtURL:self.fileURL withItemAtURL:temporaryItem backupItemName:nil options:0 resultingItemURL:NULL error:error]) {
-        ASSERT(error);
-        return NO;
-      }
-      [fileManager removeItemAtURL:temporaryDirectory error:NULL];
-    } else {
-      [fileManager createDirectoryAtURL:[self.fileURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
-      if (![fileManager copyItemAtURL:url toURL:self.fileURL error:error]) {
-        ASSERT(error);
-        return NO;
-      }
-    }
-    NSDate *contentModificationDate = nil;
-    if([url getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL]) {
-      _contentModificationDate = contentModificationDate;
-    } else {
-      _contentModificationDate = [[NSDate alloc] init];
-    }
+  // Try to get the content modification date
+  NSDate *contentModificationDate = nil;
+  [url getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
+  if (!contentModificationDate) {
+    contentModificationDate = [[NSDate alloc] init];
   }
+  _contentModificationDate = contentModificationDate;
+  
   return YES;
 }
 
 - (BOOL)writeToURL:(NSURL *)url error:(out NSError *__autoreleasing *)error {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  if ([url isEqual:self.fileURL]) {
-    return YES;
-  } else {
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    [fileManager createDirectoryAtURL:[url URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
-    return [fileManager copyItemAtURL:self.fileURL toURL:url error:error];
-  }
+  return YES;
 }
 
 - (BOOL)removeSynchronouslyWithError:(NSError *__autoreleasing *)error
 {
   ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  if (![[[NSFileManager alloc] init] removeItemAtURL:self.fileURL error:error]) {
+  NSFileManager *fileManager = NSFileManager.alloc.init;
+  if ([fileManager fileExistsAtPath:self.fileURL.path] && ![fileManager removeItemAtURL:self.fileURL error:error]) {
     ASSERT(!error || *error);
     return NO;
   } else {

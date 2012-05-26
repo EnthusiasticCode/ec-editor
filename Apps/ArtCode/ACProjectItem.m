@@ -51,22 +51,25 @@ static NSMutableSet *_projectItemUUIDs;
 #pragma mark - Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
+  ASSERT(project);
   self = [super init];
   if (!self) {
     return nil;
   }
-  ASSERT(project);
   _project = project;
-  _UUID = [plistDictionary objectForKey:@"uuid"];
-  if (!_UUID) {
-    _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
-  }
-  [_projectItemUUIDs addObject:_UUID];
   return self;
 }
 
 - (NSDictionary *)propertyListDictionary {
   return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
+}
+
+- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
+  _UUID = [propertyListDictionary objectForKey:@"uuid"];
+  if (!_UUID) {
+    _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
+  }
+  [_projectItemUUIDs addObject:_UUID];
 }
 
 @end

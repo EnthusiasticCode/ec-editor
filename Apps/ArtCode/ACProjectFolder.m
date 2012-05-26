@@ -62,38 +62,30 @@ static NSString * const _childrenKey = @"children";
   return plist;
 }
 
+- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
+  [super setPropertyListDictionary:propertyListDictionary];
+  NSDictionary *childrenPlists = [propertyListDictionary objectForKey:_childrenKey];
+  for (ACProjectFileSystemItem *child in _children.allValues) {
+    [child setPropertyListDictionary:[childrenPlists objectForKey:child.name]];
+  }
+}
+
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
-  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
+  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent name:name];
   if (!self) {
     return nil;
   }
   
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  // Make sure the directory exists
-  if (![fileManager fileExistsAtPath:[fileURL path]]) {
-    if (![fileManager createDirectoryAtURL:fileURL withIntermediateDirectories:YES attributes:nil error:NULL]) {
-      return nil;
-    }
+  _children = NSMutableDictionary.alloc.init;
+  
+  if (![self readFromURL:self.fileURL error:NULL]) {
+    return nil;
   }
   
-  // Create children
-  _children = [[NSMutableDictionary alloc] init];
-  NSDictionary *childrenPlists = [plistDictionary objectForKey:_childrenKey];
-  for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:fileURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
-    NSNumber *isDirectory = nil;
-    if (![childURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
-      continue;
-    }
-    Class childClass = [isDirectory boolValue] ? [ACProjectFolder class] : [ACProjectFile class];
-    NSString *childName = childURL.lastPathComponent;
-    ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:project propertyListDictionary:[childrenPlists objectForKey:childName] parent:self fileURL:childURL];
-    if (child) {
-      [_children setObject:child forKey:childName];
-      [self.project didAddFileSystemItem:child];
-    }
-  }
+  [self setPropertyListDictionary:plistDictionary];
+  
   return self;
 }
 
@@ -101,15 +93,10 @@ static NSString * const _childrenKey = @"children";
   if (![super readFromURL:url error:error]) {
     return NO;
   }
-  // Make sure the directory exists
-  NSFileManager *fileManager = [[NSFileManager alloc] init];    
-  if (![fileManager fileExistsAtPath:[self.fileURL path]]) {
-    if (![fileManager createDirectoryAtURL:self.fileURL withIntermediateDirectories:YES attributes:nil error:error]) {
-      return NO;
-    }
-  }
+
   // Read children
-  for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:self.fileURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
+  NSFileManager *fileManager = [[NSFileManager alloc] init];    
+  for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:url includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
     if ([_children objectForKey:[childURL lastPathComponent]]) {
       continue;
     }
@@ -119,13 +106,36 @@ static NSString * const _childrenKey = @"children";
     }
     Class childClass = [isDirectory boolValue] ? [ACProjectFolder class] : [ACProjectFile class];
     NSString *childName = childURL.lastPathComponent;
-    ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
+    ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:childName];
     if (child) {
       [_children setObject:child forKey:childName];
       [self.project didAddFileSystemItem:child];
     }
     
   }
+  return YES;
+}
+
+- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
+  if (![super writeToURL:url error:error]) {
+    return NO;
+  }
+  
+  // Make sure the directory exists
+  NSFileManager *fileManager = [[NSFileManager alloc] init];    
+  if (![fileManager fileExistsAtPath:[url path]]) {
+    if (![fileManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:error]) {
+      return NO;
+    }
+  }
+  
+  // Write children
+  for (ACProjectFileSystemItem *child in _children.allValues) {
+    if (![child writeToURL:[url URLByAppendingPathComponent:child.name] error:error]) {
+      return NO;
+    }
+  }
+  
   return YES;
 }
 
@@ -182,8 +192,7 @@ static NSString * const _childrenKey = @"children";
       }
       return;
     }
-    NSURL *childURL = [self.fileURL URLByAppendingPathComponent:name];
-    ACProjectFileSystemItem *childItem = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
+    ACProjectFileSystemItem *childItem = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:name];
     if (!childItem) {
       if (completionHandler) {
         [NSOperationQueue.mainQueue addOperationWithBlock:^{
@@ -233,7 +242,7 @@ static NSString * const _childrenKey = @"children";
     }
   }
   // Moving
-  if (![fileManager moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
+  if ([fileManager fileExistsAtPath:newItemURL.path] && ![fileManager moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
     ASSERT(!error || *error);
     return nil;
   }
@@ -267,7 +276,7 @@ static NSString * const _childrenKey = @"children";
   }
   
   // Copy
-  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self fileURL:childURL];
+  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:name];
   if (!childItem) {
     if (error) {
       *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil];

@@ -217,6 +217,7 @@ describe(@"A new opened ACProject", ^{
         subfolder = newFolder;
       }];
       [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+      [[[project.contentsFolder should] have:1] children];
     });
     
     it(@"can be retrieved with no error", ^{
@@ -226,9 +227,9 @@ describe(@"A new opened ACProject", ^{
         subfolder = newFolder;
       }];
       [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+      [[[project.contentsFolder should] have:1] children];
       
       // Retrieve
-      [[[project.contentsFolder should] have:1] children];
       id item = [project.contentsFolder.children objectAtIndex:0];
       [[item should] beMemberOfClass:[ACProjectFolder class]];
       [[item should] equal:subfolder];

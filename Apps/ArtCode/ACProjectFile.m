@@ -113,42 +113,42 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   return plist;
 }
 
-#pragma mark - ACProjectFileSystemItem Internal
-
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent fileURL:(NSURL *)fileURL {
-  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent fileURL:fileURL];
-  if (!self) {
-    return nil;
-  }
+- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
+  [super setPropertyListDictionary:propertyListDictionary];
   
-  // Make sure the file exists
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  if (![fileManager fileExistsAtPath:fileURL.path]) {
-    if (![@"" writeToURL:fileURL atomically:NO encoding:NSUTF8StringEncoding error:NULL]) {
-      return nil;
-    }
-  }
-  
-  NSNumber *fileSize = nil;
-  [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
-  _fileSize = [fileSize unsignedIntegerValue];
-  _explicitFileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey];
-  _explicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
-  _bookmarks = [[NSMutableDictionary alloc] init];
-  [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
+  _explicitFileEncoding = [propertyListDictionary objectForKey:_plistFileEncodingKey];
+  _explicitSyntaxIdentifier = [propertyListDictionary objectForKey:_plistExplicitSyntaxKey];
+  [_bookmarks removeAllObjects];
+  [[propertyListDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
     NSScanner *scanner = [NSScanner scannerWithString:point];
     NSInteger line;
     if ([scanner scanInteger:&line])
       point = [NSNumber numberWithInteger:line];
-    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
     if (!bookmark)
       return;
     [_bookmarks setObject:bookmark forKey:point];
-    [project didAddBookmark:bookmark];
+    [self.project didAddBookmark:bookmark];
   }];
+}
+
+#pragma mark - ACProjectFileSystemItem Internal
+
+- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
+  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent name:name];
+  if (!self) {
+    return nil;
+  }
   
+  _bookmarks = NSMutableDictionary.alloc.init;
   _contentDisposables = NSMutableArray.alloc.init;
   
+  if (![self readFromURL:self.fileURL error:NULL]) {
+    return nil;
+  }
+  
+  [self setPropertyListDictionary:plistDictionary];
+    
   return self;
 }
 
@@ -156,19 +156,26 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   if (![super readFromURL:url error:error]) {
     return NO;
   }
+
+  NSNumber *fileSize = nil;
+  [url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
+  _fileSize = [fileSize unsignedIntegerValue];
+  return YES;
+}
+
+- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
+  if (![super writeToURL:url error:error]) {
+    return NO;
+  }
+  
   // Make sure the file exists
   NSFileManager *fileManager = [[NSFileManager alloc] init];
-  if (![fileManager fileExistsAtPath:self.fileURL.path]) {
-    if (![@"" writeToURL:self.fileURL atomically:NO encoding:NSUTF8StringEncoding error:error]) {
+  if (![fileManager fileExistsAtPath:url.path]) {
+    if (![@"" writeToURL:url atomically:NO encoding:NSUTF8StringEncoding error:error]) {
       return NO;
     }
   }
   
-  NSNumber *fileSize = nil;
-  if (![self.fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:error]) {
-    return NO;
-  };
-  _fileSize = [fileSize unsignedIntegerValue];
   return YES;
 }
 
@@ -201,40 +208,34 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
       contents = [NSString.alloc initWithContentsOfURL:outerStrongSelf.fileURL encoding:encoding error:&error];
       fileURL = outerStrongSelf.fileURL;
     }
-    if (contents) {
-      [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
-        TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
-        [codeUnit reparseWithUnsavedContent:contents];
-        return codeUnit;
-      }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
-        ACProjectFile *innerStrongSelf = weakSelf;
-        if (innerStrongSelf) {
-          RACSubscribable *content = RACAble(innerStrongSelf, content);
-          RACDisposable *disposable = [[content select:^id(id newContent) {
-            return [NSAttributedString.alloc initWithString:newContent attributes:innerStrongSelf.theme.commonAttributes];
-          }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
-          [innerStrongSelf->_contentDisposables addObject:disposable];
-          disposable = [content subscribeNext:^(id newContent) {
-            [innerStrongSelf.codeUnit reparseWithUnsavedContent:newContent];
-          }];
-          [innerStrongSelf->_contentDisposables addObject:disposable];
-          innerStrongSelf->_theme = theme;
-          ++innerStrongSelf->_openCount;
-          innerStrongSelf.content = contents;
-          innerStrongSelf.codeUnit = x;
-        }
-        if (completionHandler) {
-          completionHandler(nil);
-        }
-      }];
-    } else {
-      ASSERT(error);
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(error);
-        }];
-      }
+    if (!contents) {
+      contents = @"";
     }
+    [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
+      TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+      [codeUnit reparseWithUnsavedContent:contents];
+      return codeUnit;
+    }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
+      ACProjectFile *innerStrongSelf = weakSelf;
+      if (innerStrongSelf) {
+        RACSubscribable *content = RACAble(innerStrongSelf, content);
+        RACDisposable *disposable = [[content select:^id(id newContent) {
+          return [NSAttributedString.alloc initWithString:newContent attributes:innerStrongSelf.theme.commonAttributes];
+        }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
+        [innerStrongSelf->_contentDisposables addObject:disposable];
+        disposable = [content subscribeNext:^(id newContent) {
+          [innerStrongSelf.codeUnit reparseWithUnsavedContent:newContent];
+        }];
+        [innerStrongSelf->_contentDisposables addObject:disposable];
+        innerStrongSelf->_theme = theme;
+        ++innerStrongSelf->_openCount;
+        innerStrongSelf.content = contents;
+        innerStrongSelf.codeUnit = x;
+      }
+      if (completionHandler) {
+        completionHandler(nil);
+      }
+    }];
   }];
 }
 

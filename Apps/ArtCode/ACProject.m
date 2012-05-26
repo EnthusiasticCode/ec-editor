@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProject.h"
+#import "ACProject+Internal.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
 #import "ACProjectRemote.h"
@@ -467,6 +467,13 @@ static NSString * const _plistRemotesKey = @"remotes";
   [self didChangeValueForKey:@"files"];
 }
 
+#pragma mark - Internal Methods
+
+- (NSURL *)contentsFolderURL {
+  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
+  return [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
+}
+
 #pragma mark - Private Methods
 
 + (NSURL *)_projectsDirectory {
@@ -615,8 +622,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:outError];
   
   // Read content folder
-  NSURL *contentURL = [url URLByAppendingPathComponent:_contentsFolderName];
-  _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil fileURL:contentURL];
+  _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil name:nil];
   
   // Read remotes
   if ([plist objectForKey:_plistRemotesKey]) {
@@ -638,11 +644,16 @@ static NSString * const _plistRemotesKey = @"remotes";
   // Create project plist
   NSMutableDictionary *plist = NSMutableDictionary.alloc.init;
   
-  // Create the contents folder if it doesn't exist
+  // Create the contents folder if it doesn't exist, otherwise just save it
   if (!_project->_contentsFolder) {
-    NSURL *contentsURL = [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
-    _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:nil parent:nil fileURL:contentsURL];
+    _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:nil parent:nil name:nil];
     ASSERT(_project->_contentsFolder);
+  } else {
+    ASSERT(_project->_contentsFolder);
+    NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
+    if (![_project->_contentsFolder writeToURL:contentsURL error:outError]) {
+      return NO;
+    }
   }
   
   // Get content plist
@@ -672,15 +683,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
   if (![[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError] writeToURL:plistURL atomically:YES]) {
     return NO;
-  }
-  
-  // If we're being saved to a new URL, we need to force a write of all contents
-  if (saveOperation == UIDocumentSaveForCreating) {
-    ASSERT(_project->_contentsFolder);
-    NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
-    if (![_project->_contentsFolder writeToURL:contentsURL error:outError]) {
-      return NO;
-    }
   }
   
   return YES;
