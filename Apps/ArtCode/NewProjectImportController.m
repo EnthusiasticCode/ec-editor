@@ -40,7 +40,7 @@ static void *_directoryObservingContext;
   _documentsDirectoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[NSURL applicationDocumentsDirectory] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
   [_documentsDirectoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
   if ([_documentsDirectoryPresenter.fileURLs count] != 0)
-    [(UILabel *)self.tableView.tableFooterView setText:@"Swipe right on an item to delete it."];
+    [(UILabel *)self.tableView.tableFooterView setText:L(@"Swipe on an item to delete it.")];
   
   [self.tableView reloadData];
 }
@@ -56,9 +56,9 @@ static void *_directoryObservingContext;
   if (context == &_directoryObservingContext)
   {
     if ([_documentsDirectoryPresenter.fileURLs count] != 0)
-      [(UILabel *)self.tableView.tableFooterView setText:@"Swipe right on an item to delete it."];
+      [(UILabel *)self.tableView.tableFooterView setText:L(@"Swipe on an item to delete it.")];
     else
-      [(UILabel *)self.tableView.tableFooterView setText:@"Add files from iTunes to populate this list."];
+      [(UILabel *)self.tableView.tableFooterView setText:L(@"Add files from iTunes to populate this list.")];
     [self.tableView reloadData];
   }
   else
