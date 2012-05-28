@@ -18,8 +18,11 @@
 /// The size of the file in bytes
 @property (nonatomic, readonly) NSUInteger fileSize;
 
-/// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read the file. If nil it will be autodetected
-@property (nonatomic, strong) NSNumber *explicitFileEncoding;
+/// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read and write the file. If nil it will be autodetected
+@property (atomic, strong) NSNumber *explicitFileEncoding;
+
+/// The encoding used to read and write the file. Derived from explicitFileEncoding or autodetected.
+@property (nonatomic, readonly) NSStringEncoding fileEncoding;
 
 /// file syntax to be used for syntax highlight. If nil it will be autodetected
 @property (nonatomic, strong) NSString *explicitSyntaxIdentifier;

@@ -160,6 +160,24 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   NSNumber *fileSize = nil;
   [url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
   _fileSize = [fileSize unsignedIntegerValue];
+  
+//  // Read the contents if the file is open, otherwise just copy it over
+//  if (_openCount) {
+//    NSString *content = [NSString stringWithContentsOfURL:url encoding:self.fileEncoding error:NULL];
+//    if (!content) {
+//      _content = @"";
+//    } else {
+//      _content = content;
+//    }
+//  } else if (![url isEqual:self.fileURL]) {
+//    NSFileManager *fileManager = NSFileManager.alloc.init;
+//    if ([fileManager fileExistsAtPath:self.fileURL.path]) {
+//      return [fileManager replaceItemAtURL:self.fileURL withItemAtURL:url backupItemName:nil options:0 resultingItemURL:NULL error:error];
+//    } else {
+//      return [fileManager copyItemAtURL:url toURL:self.fileURL error:error];
+//    }
+//  }
+  
   return YES;
 }
 
@@ -177,7 +195,23 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     }
   }
   
+  // Write the contents if the file is open
+  if (_content) {
+    [_content writeToURL:url atomically:YES encoding:self.fileEncoding error:NULL];
+  }
+  
   return YES;
+}
+
+#pragma mark - File metadata
+
+- (NSStringEncoding)fileEncoding {
+  NSNumber *explicitEncoding = self.explicitFileEncoding;
+  if (!explicitEncoding) {
+    return NSUTF8StringEncoding;
+  } else {
+    return [explicitEncoding unsignedIntegerValue];
+  }
 }
 
 #pragma mark - Accessing the content
@@ -271,7 +305,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   __block NSError *error = nil;
   completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
+    // TODO: clean up this silly hack
+    ++_openCount;
     [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
+    --_openCount;
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
       if (completionHandler) {
         completionHandler(error);
