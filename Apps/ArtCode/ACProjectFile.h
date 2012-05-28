@@ -19,7 +19,7 @@
 @property (nonatomic, readonly) NSUInteger fileSize;
 
 /// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read and write the file. If nil it will be autodetected
-@property (atomic, strong) NSNumber *explicitFileEncoding;
+@property (nonatomic, strong) NSNumber *explicitFileEncoding;
 
 /// The encoding used to read and write the file. Derived from explicitFileEncoding or autodetected.
 @property (nonatomic, readonly) NSStringEncoding fileEncoding;

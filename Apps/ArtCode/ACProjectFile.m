@@ -218,124 +218,107 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (_openCount) {
-    completionHandler(YES);
-    return;
-  }
-  NSStringEncoding encoding;
-  if (_explicitFileEncoding) {
-    encoding = [_explicitFileEncoding unsignedIntegerValue];
-  } else {
-    encoding = NSUTF8StringEncoding;
-  }
+  
+  NSStringEncoding encoding = self.fileEncoding;
+  __block NSString *content = self.content;
   __block TMTheme *theme = self.theme;
   __weak ACProjectFile *weakSelf = self;
   completionHandler = [completionHandler copy];
+  
   [self.project performAsynchronousFileAccessUsingBlock:^{
-    NSError *error = nil;
-    NSString *contents = nil;
+    __block __strong ACProjectFile *strongSelf = weakSelf;
     NSURL *fileURL = nil;
-    ACProjectFile *outerStrongSelf = weakSelf;
-    if (outerStrongSelf) {
+    if (!strongSelf || strongSelf->_openCount) {
+      if (strongSelf) {
+        ++strongSelf->_openCount;
+      }
+      if (completionHandler) {
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+          completionHandler(YES);
+        }];
+      }
+    } else {
+      fileURL = strongSelf.fileURL;
       if (!theme) {
         theme = [TMTheme defaultTheme];
       }
-      contents = [NSString.alloc initWithContentsOfURL:outerStrongSelf.fileURL encoding:encoding error:&error];
-      fileURL = outerStrongSelf.fileURL;
-    }
-    if (!contents) {
-      contents = @"";
-    }
-    [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
-      TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
-      [codeUnit reparseWithUnsavedContent:contents];
-      return codeUnit;
-    }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
-      ACProjectFile *innerStrongSelf = weakSelf;
-      if (innerStrongSelf) {
-        RACSubscribable *content = RACAble(innerStrongSelf, content);
-        RACDisposable *disposable = [[content select:^id(id newContent) {
-          return [NSAttributedString.alloc initWithString:newContent attributes:innerStrongSelf.theme.commonAttributes];
-        }] toProperty:RAC_KEYPATH(innerStrongSelf, attributedContent) onObject:innerStrongSelf];
-        [innerStrongSelf->_contentDisposables addObject:disposable];
-        disposable = [content subscribeNext:^(id newContent) {
-          [innerStrongSelf.codeUnit reparseWithUnsavedContent:newContent];
-        }];
-        [innerStrongSelf->_contentDisposables addObject:disposable];
-        innerStrongSelf->_theme = theme;
-        ++innerStrongSelf->_openCount;
-        innerStrongSelf.content = contents;
-        innerStrongSelf.codeUnit = x;
+      if (!content) {
+        content = [NSString.alloc initWithContentsOfURL:fileURL encoding:encoding error:NULL];
       }
-      if (completionHandler) {
-        completionHandler(YES);
+      if (!content) {
+        content = @"";
       }
-    }];
+      strongSelf = nil;
+      [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
+        TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
+        [codeUnit reparseWithUnsavedContent:content];
+        return codeUnit;
+      }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
+        strongSelf = weakSelf;
+        if (strongSelf) {
+          strongSelf.theme = theme;
+          RACSubscribable *subscribableContent = RACAble(strongSelf, content);
+          RACDisposable *disposable = [[subscribableContent select:^id(id newContent) {
+            return [NSAttributedString.alloc initWithString:newContent attributes:strongSelf.theme.commonAttributes];
+          }] toProperty:RAC_KEYPATH(strongSelf, attributedContent) onObject:strongSelf];
+          [strongSelf->_contentDisposables addObject:disposable];
+          disposable = [subscribableContent subscribeNext:^(id newContent) {
+            [strongSelf.codeUnit reparseWithUnsavedContent:newContent];
+          }];
+          [strongSelf->_contentDisposables addObject:disposable];
+          ++strongSelf->_openCount;
+          strongSelf.content = content;
+          strongSelf.codeUnit = x;
+        }
+        if (completionHandler) {
+          completionHandler(YES);
+        }
+      }];
+    }
   }];
 }
 
 - (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  if (!_openCount) {
-    if (completionHandler) {
-      completionHandler(YES);
-    }
-    return;
-  }
-  --_openCount;
-  if (_openCount) {
-    if (completionHandler) {
-      completionHandler(YES);
-    }
-    return;
-  }
-  NSString *contents = self.content;
-  NSStringEncoding encoding;
-  if (_explicitFileEncoding) {
-    encoding = [_explicitFileEncoding unsignedIntegerValue];
-  } else {
-    encoding = NSUTF8StringEncoding;
-  }
+
+  //  NSStringEncoding encoding = self.fileEncoding;
+//  NSString *contents = self.content;
+  __weak ACProjectFile *weakSelf = self;
+  completionHandler = [completionHandler copy];
   
-  for (RACDisposable *disposable in _contentDisposables) {
-    [disposable dispose];
-  }
-  [_contentDisposables removeAllObjects];
-  
-  if (contents) {
-    completionHandler = [completionHandler copy];
-    [self.project performAsynchronousFileAccessUsingBlock:^{
-      BOOL success = [self writeToURL:self.fileURL error:NULL];
+  [self.project performAsynchronousFileAccessUsingBlock:^{
+    __block __strong ACProjectFile *strongSelf = weakSelf;
+    if (!strongSelf || strongSelf->_openCount != 1) {
+      if (strongSelf && strongSelf->_openCount) {
+        --strongSelf->_openCount;
+      }
       if (completionHandler) {
         [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(success);
+          completionHandler(YES);
         }];
       }
-    }];
-  } else {
-    completionHandler(YES);
-  }
-}
-
-- (void)setContent:(NSString *)content {
-  ASSERT(_openCount);
-  _content = content;
-}
-
-- (void)setAttributedContent:(NSAttributedString *)attributedContent {
-  ASSERT(_openCount);
-  _attributedContent = attributedContent;
+    } else {
+      BOOL success = [self writeToURL:self.fileURL error:NULL];
+      [NSOperationQueue.mainQueue addOperationWithBlock:^{
+        for (RACDisposable *disposable in _contentDisposables) {
+          [disposable dispose];
+        }
+        [_contentDisposables removeAllObjects];
+        if (completionHandler) {
+          completionHandler(success);
+        }
+      }];    
+    }
+  }];
 }
 
 #pragma mark - Managing semantic content
 
 - (TMSyntaxNode *)syntax {
-  ASSERT(_openCount);
   return _codeUnit.syntax;
 }
 
 - (void)setSyntax:(TMSyntaxNode *)syntax {
-  ASSERT(_openCount);
   _codeUnit.syntax = syntax;
 }
 
@@ -344,18 +327,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     return;
   }
   _theme = theme;
-  if (_openCount) {
-    self.attributedContent = [self.attributedContent attributedStringBySettingAttributes:theme.commonAttributes range:NSMakeRange(0, self.attributedContent.length)];
-  }
+  self.attributedContent = [self.attributedContent attributedStringBySettingAttributes:theme.commonAttributes range:NSMakeRange(0, self.attributedContent.length)];
 }
 
 - (NSArray *)symbolList {
-  ASSERT(_openCount);
   return _codeUnit.symbolList;
 }
 
 - (NSArray *)diagnostics {
-  ASSERT(_openCount);
   return _codeUnit.diagnostics;
 }
 
