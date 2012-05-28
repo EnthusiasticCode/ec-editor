@@ -302,18 +302,19 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   [_contentDisposables removeAllObjects];
   
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    // TODO: clean up this silly hack
-    ++_openCount;
-    BOOL success = [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:NULL];
-    --_openCount;
-    [NSOperationQueue.mainQueue addOperationWithBlock:^{
+  if (contents) {
+    completionHandler = [completionHandler copy];
+    [self.project performAsynchronousFileAccessUsingBlock:^{
+      BOOL success = [self writeToURL:self.fileURL error:NULL];
       if (completionHandler) {
-        completionHandler(success);
+        [NSOperationQueue.mainQueue addOperationWithBlock:^{
+          completionHandler(success);
+        }];
       }
     }];
-  }];
+  } else {
+    completionHandler(YES);
+  }
 }
 
 - (void)setContent:(NSString *)content {
