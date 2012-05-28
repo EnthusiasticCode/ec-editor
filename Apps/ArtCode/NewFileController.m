@@ -94,13 +94,11 @@
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
   ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  [currentFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
+  [currentFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
     [self stopRightBarButtonItemActivityIndicator];
-    if (!error) {
+    if (newFile) {
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    } else {
-      self.infoLabel.text = [error localizedDescription];
     }
   }];
 }

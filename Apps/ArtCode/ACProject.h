@@ -29,7 +29,7 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 /// Creates a new project by optionally decompressing the archive at the given URL, saves it and returns it.
 /// The returned project is openes, it must be closed in the completion handler
-+ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void(^)(ACProject *createdProject, NSError *error))completionHandler;
++ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void(^)(ACProject *createdProject))completionHandler;
 
 /// Returns the project with the given UUID, or nil if the project does not exist.
 + (ACProject *)projectWithUUID:(id)uuid;
@@ -77,7 +77,7 @@ extern NSString * const ACProjectNotificationIndexKey;
 
 /// Duplicate the entire project.
 /// The returned project is openes, it must be closed in the completion handler.
-- (void)duplicateWithCompletionHandler:(void(^)(ACProject *duplicate, NSError *error))completionHandler;
+- (void)duplicateWithCompletionHandler:(void(^)(ACProject *duplicate))completionHandler;
 
 /// Completelly remove the project and its files.
 - (void)remove;

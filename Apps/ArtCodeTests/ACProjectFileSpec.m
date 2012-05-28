@@ -27,8 +27,7 @@ describe(@"A new empty ACProjectFile", ^{
   
   beforeAll(^{
     clearProjectsDirectory();
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -39,14 +38,13 @@ describe(@"A new empty ACProjectFile", ^{
   });
   
   beforeEach(^{
-    [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-      [error shouldBeNil];
+    [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
       file = newFile;
     }];
     [[expectFutureValue(file) shouldEventually] beNonNil];
     __block BOOL open = NO;
-    [file openWithCompletionHandler:^(NSError *error) {
-      [error shouldBeNil];
+    [file openWithCompletionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
       open = YES;
     }];
     [[expectFutureValue(theValue(open)) shouldEventually] beYes];

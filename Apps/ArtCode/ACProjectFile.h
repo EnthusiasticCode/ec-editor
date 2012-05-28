@@ -33,10 +33,10 @@
 /// Attempts to read the contents of the file.
 /// 
 /// Must be balanced by a call to closeWithCompletionHandler:
-- (void)openWithCompletionHandler:(void(^)(NSError *error))completionHandler;
+- (void)openWithCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Closes the file.
-- (void)closeWithCompletionHandler:(void(^)(NSError *error))completionHandler;
+- (void)closeWithCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Unattributed content of the file
 @property (nonatomic, copy) NSString *content;

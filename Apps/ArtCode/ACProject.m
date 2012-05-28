@@ -205,7 +205,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   return [self.alloc _initWithUUID:uuid];
 }
 
-+ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ACProject *, NSError *))completionHandler {
++ (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ACProject *))completionHandler {
   ASSERT(completionHandler); // The returned project is open and it must be closed by caller
   NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
   ACProject *project = [[self alloc] _initWithUUID:uuid];
@@ -237,10 +237,10 @@ static NSString * const _plistRemotesKey = @"remotes";
       
       // Notify finish
       [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
-      completionHandler(project, nil);
+      completionHandler(project);
     } else {
       ASSERT(project->_lastError);
-      completionHandler(nil, project->_lastError);
+      completionHandler(nil);
     }
   }];
 }
@@ -346,7 +346,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Project-wide operations
 
-- (void)duplicateWithCompletionHandler:(void (^)(ACProject *, NSError *))completionHandler {
+- (void)duplicateWithCompletionHandler:(void (^)(ACProject *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   completionHandler = [completionHandler copy];
   [self performAsynchronousFileAccessUsingBlock:^{
@@ -357,7 +357,7 @@ static NSString * const _plistRemotesKey = @"remotes";
       ASSERT(error);
       if (completionHandler) {
         [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil, error);
+          completionHandler(nil);
         }];
       }
     }
@@ -369,7 +369,7 @@ static NSString * const _plistRemotesKey = @"remotes";
       
       if (completionHandler) {
         [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil, error);
+          completionHandler(nil);
         }];
       }
     }
@@ -397,7 +397,7 @@ static NSString * const _plistRemotesKey = @"remotes";
       [projectInfo setObject:[NSNumber numberWithBool:YES] forKey:_plistIsNewlyCreatedKey];
       [_projectsList setObject:projectInfo forKey:duplicateUUID];
       if (completionHandler) {
-        completionHandler([self.class.alloc _initWithUUID:duplicateUUID], nil);
+        completionHandler([self.class.alloc _initWithUUID:duplicateUUID]);
       }
     }];
   }];

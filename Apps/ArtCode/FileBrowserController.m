@@ -271,7 +271,7 @@
       NSInteger selectedItemsCount = [_selectedItems count];
       __block NSInteger duplicated = 0;
       [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item duplicateWithCompletionHandler:^(ACProjectFileSystemItem *duplicate, NSError *error) {
+        [item duplicateWithCompletionHandler:^(ACProjectFileSystemItem *duplicate) {
           if (++duplicated == selectedItemsCount) {
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -300,7 +300,7 @@
       NSInteger selectedItemsCount = [_selectedItems count];
       __block NSInteger processed = 0;
       [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item publishContentsToURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:item.name] completionHandler:^(NSError *error) {
+        [item publishContentsToURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:item.name] completionHandler:^(BOOL success) {
           if (++processed == selectedItemsCount) {
             self.loading = NO;
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -322,7 +322,7 @@
       [[NSFileManager defaultManager] createDirectoryAtURL:directoryToZipURL withIntermediateDirectories:YES attributes:nil error:NULL];
       // Add files to directory to zip
       [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item publishContentsToURL:[directoryToZipURL URLByAppendingPathComponent:item.name] completionHandler:^(NSError *error) {
+        [item publishContentsToURL:[directoryToZipURL URLByAppendingPathComponent:item.name] completionHandler:^(BOOL success) {
           if (++processed == selectedItemsCount) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
               // Compress directory
@@ -428,11 +428,9 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  __block NSError *err = nil;
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item copyToFolder:moveFolder completionHandler:^(ACProjectFileSystemItem *copy, NSError *error) {
-      if (error && !err) {
-        err = error;
+    [item copyToFolder:moveFolder completionHandler:^(ACProjectFileSystemItem *copy) {
+      if (!copy) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
       }
     }];
@@ -456,11 +454,9 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  __block NSError *err = nil;
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item moveToFolder:moveFolder completionHandler:^(NSError *error) {
-      if (error && !err) {
-        err = error;
+    [item moveToFolder:moveFolder completionHandler:^(BOOL success) {
+      if (!item) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
       }
     }];

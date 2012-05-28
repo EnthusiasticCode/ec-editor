@@ -386,7 +386,7 @@ typedef enum {
     // For both download and sync from remote, once finished downloading the local folder will be updated with the temporary directory 
     self.navigationItem.title = @"Finishing";
     self.progressView.progress = 0;
-    [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(NSError *blockerror) {
+    [_localFolder updateWithContentsOfURL:[self _localTemporaryDirectoryURL] completionHandler:^(BOOL success) {
       [self.progressView setProgress:1 animated:YES];
       [self _callCompletionHandlerWithError:nil];
     }];
@@ -726,7 +726,7 @@ typedef enum {
     }
   } else {
     NSURL *publishURL = [[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[remotePath substringFromIndex:[_connectionPath length]]];
-    [item publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+    [item publishContentsToURL:publishURL completionHandler:^(BOOL success) {
       [connection uploadFileAtURL:publishURL toPath:remotePath posixPermissions:nil];
     }];
   }

@@ -80,12 +80,10 @@
 - (IBAction)createAction:(id)sender
 {
   ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  [currentFolder addNewFolderWithName:self.folderNameTextField.text originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-    if (!error) {
+  [currentFolder addNewFolderWithName:self.folderNameTextField.text originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
+    if (newFolder) {
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    } else {
-      self.infoLabel.text = error.localizedDescription;
     }
   }];
 }

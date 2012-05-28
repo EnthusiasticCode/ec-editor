@@ -290,14 +290,14 @@
       __block NSInteger progress = 0;
       [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
         ACProject *project = [[ACProject.projects objectAtIndex:idx] copy];
-        [project openWithCompletionHandler:^(BOOL success) {
+        [project openWithCompletionHandler:^(BOOL openSuccess) {
           NSURL *publishURL = [NSURL temporaryDirectory];
-          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(NSError *error) {
-            if (!error) {
+          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
+            if (publishSuccess) {
               NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
               [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
             }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:&error];
+            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
             [project closeWithCompletionHandler:nil];
             // TODO error handling?
             if (++progress == cellsToExportCount) {
@@ -332,17 +332,17 @@
         [subject appendFormat:@"%@, ", project.name];
         
         // Process project
-        [project openWithCompletionHandler:^(BOOL success) {
+        [project openWithCompletionHandler:^(BOOL openSuccess) {
           NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
           NSURL *publishURL = [NSURL temporaryDirectory];
-          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(NSError *error) {
-            if (!error) {
+          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
+            if (publishSuccess) {
               [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
               // Add attachment
               [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
               [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
             }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:&error];
+            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
             [project closeWithCompletionHandler:nil];
             // Complete process
             if (++progress == cellsToExportCount) {
@@ -451,7 +451,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ACProject *)[ACProject.projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
+    [(ACProject *)[ACProject.projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate) {
       [duplicate closeWithCompletionHandler:nil];
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;

@@ -76,33 +76,25 @@
 ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
 completionHandler = [completionHandler copy];\
 [self.project performAsynchronousFileAccessUsingBlock:^{\
-NSError *error = nil;\
-if (!method_call) {\
+BOOL success = method_call;\
 if (completionHandler) {\
 [NSOperationQueue.mainQueue addOperationWithBlock:^{\
-completionHandler(error);\
+completionHandler(success);\
 }];\
-}\
-} else {\
-if (completionHandler) {\
-[NSOperationQueue.mainQueue addOperationWithBlock:^{\
-completionHandler(nil);\
-}];\
-}\
 }\
 }]
 
 
-- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self readFromURL:url error:&error]);
+- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void (^)(BOOL))completionHandler {
+  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self readFromURL:url error:NULL]);
 }
 
-- (void)publishContentsToURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self writeToURL:url error:&error]);
+- (void)publishContentsToURL:(NSURL *)url completionHandler:(void (^)(BOOL))completionHandler {
+  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self writeToURL:url error:NULL]);
 }
 
-- (void)removeWithCompletionHandler:(void (^)(NSError *))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self removeSynchronouslyWithError:&error]);
+- (void)removeWithCompletionHandler:(void (^)(BOOL))completionHandler {
+  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self removeSynchronouslyWithError:NULL]);
 }
 
 #pragma mark - Internal Methods

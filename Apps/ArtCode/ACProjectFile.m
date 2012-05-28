@@ -216,10 +216,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 #pragma mark - Accessing the content
 
-- (void)openWithCompletionHandler:(void (^)(NSError *))completionHandler {
+- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   if (_openCount) {
-    completionHandler(nil);
+    completionHandler(YES);
     return;
   }
   NSStringEncoding encoding;
@@ -268,24 +268,24 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
         innerStrongSelf.codeUnit = x;
       }
       if (completionHandler) {
-        completionHandler(nil);
+        completionHandler(YES);
       }
     }];
   }];
 }
 
-- (void)closeWithCompletionHandler:(void (^)(NSError *))completionHandler {
+- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   if (!_openCount) {
     if (completionHandler) {
-      completionHandler(NSError.alloc.init);
+      completionHandler(YES);
     }
     return;
   }
   --_openCount;
   if (_openCount) {
     if (completionHandler) {
-      completionHandler(nil);
+      completionHandler(YES);
     }
     return;
   }
@@ -302,16 +302,15 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   [_contentDisposables removeAllObjects];
   
-  __block NSError *error = nil;
   completionHandler = [completionHandler copy];
   [self.project performAsynchronousFileAccessUsingBlock:^{
     // TODO: clean up this silly hack
     ++_openCount;
-    [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:&error];
+    BOOL success = [contents writeToURL:self.fileURL atomically:YES encoding:encoding error:NULL];
     --_openCount;
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
       if (completionHandler) {
-        completionHandler(error);
+        completionHandler(success);
       }
     }];
   }];

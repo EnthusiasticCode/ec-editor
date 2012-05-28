@@ -33,8 +33,7 @@ describe(@"An ACProject", ^{
   
   it(@"can be created", ^{
     __block ACProject *project = nil;
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -65,14 +64,12 @@ describe(@"An ACProject", ^{
   
   it(@"can be duplicated", ^{
     __block ACProject *project = nil;
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
     __block ACProject *duplicateProject = nil;
-    [project duplicateWithCompletionHandler:^(ACProject *duplicate, NSError *error) {
-      [error shouldBeNil];
+    [project duplicateWithCompletionHandler:^(ACProject *duplicate) {
       duplicateProject = duplicate;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -91,8 +88,7 @@ describe(@"An newly created ACProject", ^{
   
   beforeEach(^{
     clearProjectsDirectory();
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -180,8 +176,7 @@ describe(@"A new opened ACProject", ^{
   
   beforeEach(^{
     clearProjectsDirectory();
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -212,8 +207,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be created with no error", ^{
       __block ACProjectFolder *subfolder = nil;
-      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-        [error shouldBeNil];
+      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
         subfolder = newFolder;
       }];
       [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -222,8 +216,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be retrieved with no error", ^{
       __block ACProjectFolder *subfolder = nil;
-      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-        [error shouldBeNil];
+      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
         subfolder = newFolder;
       }];
       [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -255,8 +248,7 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be created with the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -264,8 +256,7 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be updated with the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -273,8 +264,8 @@ describe(@"A new opened ACProject", ^{
         [[[subfolder should] have:0] children];
         
         __block BOOL updateComplete = NO;
-        [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
         [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
@@ -282,15 +273,13 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can update by merging the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         
         __block ACProjectFolder *childSubfolder = nil;
-        [subfolder addNewFolderWithName:@"another subfolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [subfolder addNewFolderWithName:@"another subfolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           childSubfolder = newFolder;
         }];
         [[expectFutureValue(childSubfolder) shouldEventually] beNonNil];
@@ -298,8 +287,8 @@ describe(@"A new opened ACProject", ^{
         [[[subfolder should] have:1] children];
         
         __block BOOL updateComplete = NO;
-        [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
         [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
@@ -307,16 +296,15 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can publish it's contents to that URL", ^{                
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         [[[subfolder should] have:1] children];
         
         __block BOOL publishComplete = NO;
-        [subfolder publishContentsToURL:temporaryDirectory2 completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder publishContentsToURL:temporaryDirectory2 completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           publishComplete = YES;
         }];
         [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
@@ -334,21 +322,18 @@ describe(@"A new opened ACProject", ^{
       NSString *newSubfolderName = @"newsubfoldername";
       
       beforeEach(^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         subfolderUUID = subfolder.UUID;
-        [project.contentsFolder addNewFolderWithName:subfolder2Name originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolder2Name originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder2 = newFolder;
         }];
         [[expectFutureValue(subfolder2) shouldEventually] beNonNil];
         subfolder2UUID = subfolder2.UUID;
         __block ACProjectFolder *testContent = nil;
-        [subfolder2 addNewFolderWithName:@"just some content to test" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 addNewFolderWithName:@"just some content to test" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           testContent = newFolder;
         }];
         [[expectFutureValue(testContent) shouldEventually] beNonNil];
@@ -363,19 +348,19 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be deleted with no error", ^{
         // Remove
-        [subfolder removeWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder removeWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
         }];
         [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:1] ;
-        [subfolder2 removeWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 removeWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
         }];
         [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:0];
       });
       
       it(@"can be renamed", ^{
-        [subfolder setName:newSubfolderName withCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder setName:newSubfolderName withCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
         }];
         [[expectFutureValue(subfolder.name) shouldEventually] equal:newSubfolderName];
         [[[subfolder2 should] have:1] children];
@@ -383,8 +368,8 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be moved", ^{
         __block BOOL moveComplete = NO;
-        [subfolder2 moveToFolder:subfolder completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 moveToFolder:subfolder completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           moveComplete = YES;
         }];
         [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
@@ -395,8 +380,7 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be copied", ^{
         __block ACProjectFolder *subfolder2Copy = nil;
-        [subfolder2 copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy, NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy) {
           subfolder2Copy = (ACProjectFolder *)copy;
         }];
         [[expectFutureValue(subfolder2Copy) shouldEventually] beNonNil];
@@ -411,8 +395,8 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be retrieved by UUID after being moved", ^{
         __block BOOL moveComplete = NO;
-        [subfolder2 moveToFolder:subfolder completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 moveToFolder:subfolder completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           moveComplete = YES;
         }];
         [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
@@ -420,8 +404,8 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"cannot be retrieved by UUID after being deleted", ^{
-        [subfolder2 removeWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [subfolder2 removeWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
         }];
         [[expectFutureValue([project itemWithUUID:subfolder2UUID]) shouldEventually] beNil];
       });
@@ -437,8 +421,7 @@ describe(@"A new opened ACProject", ^{
       __block ACProjectFolder *subfolder = nil;
       
       beforeEach(^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -468,8 +451,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be created with no error", ^{
       __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-        [error shouldBeNil];
+      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
         file = newFile;
       }];
       [[expectFutureValue(file) shouldEventually] beNonNil];
@@ -477,8 +459,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be created and retrieved with no error", ^{
       __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-        [error shouldBeNil];
+      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
         file = newFile;
       }];
       [[expectFutureValue(file) shouldEventually] beNonNil];
@@ -491,8 +472,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be created, retrieved and deleted with no error", ^{
       __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-        [error shouldBeNil];
+      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
         file = newFile;
       }];
       [[expectFutureValue(file) shouldEventually] beNonNil];
@@ -503,8 +483,8 @@ describe(@"A new opened ACProject", ^{
       [[item should] beMemberOfClass:[ACProjectFile class]];
       
       // Delete
-      [item removeWithCompletionHandler:^(NSError *error) {
-        [error shouldBeNil];
+      [item removeWithCompletionHandler:^(BOOL success) {
+        [[theValue(success) should] beYes];
       }];
       [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:0];
     });
@@ -539,8 +519,7 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be created with the contents of that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile) {
           file = newFile;
         }];
         [[expectFutureValue(file) shouldEventually] beNonNil];
@@ -548,16 +527,15 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be updated with the contents of that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
           file = newFile;
         }];
         [[expectFutureValue(file) shouldEventually] beNonNil];
         [[theValue(file.fileSize) should] beZero];
         
         __block BOOL updateComplete = NO;
-        [file updateWithContentsOfURL:temporaryFile completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file updateWithContentsOfURL:temporaryFile completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
         [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
@@ -565,16 +543,15 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can publish it's contents to that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile) {
           file = newFile;
         }];
         [[expectFutureValue(file) shouldEventually] beNonNil];
         [[theValue(file.fileSize) should] equal:temporaryFileSize];
         
         __block BOOL publishComplete = NO;
-        [file publishContentsToURL:[temporaryDirectory2 URLByAppendingPathComponent:file.name] completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file publishContentsToURL:[temporaryDirectory2 URLByAppendingPathComponent:file.name] completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           publishComplete = YES;
         }];
         [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
@@ -588,14 +565,13 @@ describe(@"A new opened ACProject", ^{
       NSString *testContent = @"some test content";
 
       beforeEach(^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-          [error shouldBeNil];
+        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
           file = newFile;
         }];
         [[expectFutureValue(file) shouldEventually] beNonNil];
         __block BOOL isOpened = NO;
-        [file openWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file openWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           isOpened = YES;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
@@ -605,8 +581,8 @@ describe(@"A new opened ACProject", ^{
       
       afterEach(^{
         __block BOOL isClosed = NO;
-        [file closeWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file closeWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           isClosed = YES;
         }];
         [[expectFutureValue(theValue(isClosed)) shouldEventually] beYes];
@@ -639,8 +615,8 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be renamed", ^{
         NSString *newFileName = @"newFileName.txt";
-        [file setName:newFileName withCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file setName:newFileName withCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
         }];
         [[expectFutureValue(file.name) shouldEventually] equal:newFileName];
         [[file.content should] equal:testContent];
@@ -648,15 +624,14 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be moved", ^{
         __block ACProjectFolder *subfolder = nil;
-        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
-          [error shouldBeNil];
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         [[[project.contentsFolder should] have:2] children];
         __block BOOL moveComplete = NO;
-        [file moveToFolder:subfolder completionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [file moveToFolder:subfolder completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           moveComplete = YES;
         }];
         [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
@@ -668,15 +643,13 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be copied", ^{
         __block ACProjectFolder *subfolder = nil;
-        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
+        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
           subfolder = newFolder;
-          [error shouldBeNil];
         }];
         [[expectFutureValue(subfolder) shouldEventually] beNonNil];
         [[[project.contentsFolder should] have:2] children];
         __block ACProjectFile *fileCopy = nil;
-        [file copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy, NSError *error) {
-          [error shouldBeNil];
+        [file copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy) {
           fileCopy = (ACProjectFile *)copy;
         }];
         [[expectFutureValue(fileCopy) shouldEventually] beNonNil];
@@ -686,8 +659,8 @@ describe(@"A new opened ACProject", ^{
         [[fileCopy.parentFolder should] equal:subfolder];
         [[file.content should] equal:testContent];
         __block BOOL isOpened = NO;
-        [fileCopy openWithCompletionHandler:^(NSError *error) {
-          [error shouldBeNil];
+        [fileCopy openWithCompletionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
           isOpened = YES;
         }];
         [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
@@ -819,35 +792,32 @@ describe(@"A new opened ACProject", ^{
     [[[project should] have:0] files];
     
     __block ACProjectFolder *testFolder = nil;
-    [project.contentsFolder addNewFolderWithName:@"test folder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-      [error shouldBeNil];
+    [project.contentsFolder addNewFolderWithName:@"test folder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
       testFolder = newFolder;
     }];
     [[expectFutureValue(testFolder) shouldEventually] beNonNil];
     [[[project should] have:1] files];
     
     __block ACProjectFile *testFile1 = nil;
-    [testFolder addNewFileWithName:@"test file 1" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-      [error shouldBeNil];
+    [testFolder addNewFileWithName:@"test file 1" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
       testFile1 = newFile;
     }];
     [[expectFutureValue(testFile1) shouldEventually] beNonNil];
     [[[project should] have:2] files];
     
     __block ACProjectFile *testFile2 = nil;
-    [testFolder addNewFileWithName:@"test file 2" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-      [error shouldBeNil];
+    [testFolder addNewFileWithName:@"test file 2" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
       testFile2 = newFile;
     }];
     [[expectFutureValue(testFile2) shouldEventually] beNonNil];
     
     [[[project should] have:3] files];
-    [testFile2 removeWithCompletionHandler:^(NSError *error) {
-      [error shouldBeNil];
+    [testFile2 removeWithCompletionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
     }];
     [[expectFutureValue(project.files) shouldEventually] haveCountOf:2];
-    [testFolder removeWithCompletionHandler:^(NSError *error) {
-      [error shouldBeNil];
+    [testFolder removeWithCompletionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
     }];
     [[expectFutureValue(project.files) shouldEventually] haveCountOf:0];
   });
@@ -856,8 +826,7 @@ describe(@"A new opened ACProject", ^{
     [[[project should] have:0] bookmarks];
     
     __block ACProjectFile *testFile = nil;
-    [project.contentsFolder addNewFileWithName:@"test file" originalURL:nil completionHandler:^(ACProjectFile *newFile, NSError *error) {
-      [error shouldBeNil];
+    [project.contentsFolder addNewFileWithName:@"test file" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
       testFile = newFile;
     }];
     [[expectFutureValue(testFile) shouldEventually] beNonNil];
@@ -889,8 +858,7 @@ describe(@"An existing ACProject", ^{
   beforeAll(^{
     clearProjectsDirectory();
     
-    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
-      [error shouldBeNil];
+    [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
@@ -903,8 +871,7 @@ describe(@"An existing ACProject", ^{
     [createTemporaryDirectoryError shouldBeNil];
     
     __block ACProjectFolder *subfolder = nil;
-    [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporaryDirectory completionHandler:^(ACProjectFolder *newFolder, NSError *error) {
-      [error shouldBeNil];
+    [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporaryDirectory completionHandler:^(ACProjectFolder *newFolder) {
       subfolder = newFolder;
     }];
     [[expectFutureValue(subfolder) shouldEventually] beNonNil];
@@ -914,8 +881,7 @@ describe(@"An existing ACProject", ^{
     [originalWritingError shouldBeNil];
     
     __block ACProjectFile *file = nil;
-    [subfolder addNewFileWithName:fileName originalURL:originalURL completionHandler:^(ACProjectFile *newFile, NSError *error) {
-      [error shouldBeNil];
+    [subfolder addNewFileWithName:fileName originalURL:originalURL completionHandler:^(ACProjectFile *newFile) {
       file = newFile;
     }];
     [[expectFutureValue(file) shouldEventually] beNonNil];

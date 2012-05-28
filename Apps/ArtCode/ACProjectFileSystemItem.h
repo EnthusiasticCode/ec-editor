@@ -29,13 +29,13 @@
 #pragma mark Item Contents
 
 /// Recursively updates the contents of the receiver by adding or replacing items. Does not delete items 
-- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
+- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Recusivly publishes the contents of the receiver to the specified URL. Replaces items at destination.
-- (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
+- (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Delete contents from disk. Called by -remove
-- (void)removeWithCompletionHandler:(void(^)(NSError *error))completionHandler;
+- (void)removeWithCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
 
@@ -44,15 +44,15 @@
 #pragma mark Renaming, Moving and Copying
 
 /// Rename an item
-- (void)setName:(NSString *)name withCompletionHandler:(void(^)(NSError *error))completionHandler;
+- (void)setName:(NSString *)name withCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Move the item to a new folder.
-- (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void(^)(NSError *error))completionHandler;
+- (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void(^)(BOOL success))completionHandler;
 
 /// Copy the item to a new folder.
-- (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void(^)(ACProjectFileSystemItem *copy, NSError *error))completionHandler;
+- (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void(^)(ACProjectFileSystemItem *copy))completionHandler;
 
 // Duplicate the receiver and changes its name accordingly.
-- (void)duplicateWithCompletionHandler:(void(^)(ACProjectFileSystemItem *duplicate, NSError *error))completionHandler;
+- (void)duplicateWithCompletionHandler:(void(^)(ACProjectFileSystemItem *duplicate))completionHandler;
 
 @end

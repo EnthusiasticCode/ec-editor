@@ -129,22 +129,20 @@ static void *_directoryObservingContext;
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject, NSError *error) {
+  [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed
       NSFileManager *fileManager = [NSFileManager new];
       if (zipURL && [fileManager fileExistsAtPath:zipURL.path]) {
-        __block NSError *err = nil;
         NSURL *tempURL = [NSURL temporaryDirectory];
-        if ([fileManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:&err]) {
+        if ([fileManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:NULL]) {
           // Extract into the temporary directory
           [ArchiveUtilities extractArchiveAtURL:zipURL toDirectory:tempURL];
           
           // Update project's content with extracted items
-          [createdProject.contentsFolder updateWithContentsOfURL:tempURL completionHandler:^(NSError *perror) {
-            [fileManager removeItemAtURL:tempURL error:&perror];
-            err = perror;
+          [createdProject.contentsFolder updateWithContentsOfURL:tempURL completionHandler:^(BOOL success) {
+            [fileManager removeItemAtURL:tempURL error:NULL];
           }];
         }
         // TODO error handling

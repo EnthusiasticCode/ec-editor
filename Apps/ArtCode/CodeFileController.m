@@ -267,8 +267,8 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   
   [_projectFile closeWithCompletionHandler:nil];
   _projectFile = nil;
-  [projectFile openWithCompletionHandler:^(NSError *error) {
-    if (error) {
+  [projectFile openWithCompletionHandler:^(BOOL success) {
+    if (!success) {
       return;
     }
     _projectFile = projectFile;
