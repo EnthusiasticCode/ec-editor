@@ -136,7 +136,7 @@
     singleTabController.artCodeTab = tab;
     [self.tabController addChildViewController:singleTabController];
   }
-  [self.tabController setTabBarVisible:NO];
+//  [self.tabController setTabBarVisible:NO];
   
   // Start the application
   [self.window makeKeyAndVisible];

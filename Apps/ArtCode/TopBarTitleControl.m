@@ -148,6 +148,19 @@
   [self setNeedsLayout];
 }
 
+- (NSString *)title {
+  NSIndexSet *selected = selectedTitleFragments ?: [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
+  NSMutableString *result = NSMutableString.alloc.init;
+  [self.titleFragments enumerateObjectsAtIndexes:selected options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    if ([obj isKindOfClass:[NSString class]]) {
+      [result appendFormat:@"%@ ", obj];
+    } else if ([obj isKindOfClass:[UILabel class]]) {
+      [result appendFormat:@"%@ ", [(UILabel *)obj text]];
+    }
+  }];
+  return [result copy];
+}
+
 #pragma mark - View Methods
 
 - (void)layoutSubviews

@@ -43,10 +43,13 @@ enum {
 @property (nonatomic, strong) UIFont *selectedFragmentFont UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIFont *secondaryFragmentFont UI_APPEARANCE_SELECTOR;
 
-#pragma mark Additional Modes
+#pragma mark Additional Modes and Utilities
 
 /// Indicates if the title control should show a loading animated background.
 @property (nonatomic, getter = isLoadingMode) BOOL loadingMode;
+
+/// Returns the title string formed by strings in the selected title fragments.
+- (NSString *)title;
 
 @end
 

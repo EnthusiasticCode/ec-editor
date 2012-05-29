@@ -252,7 +252,7 @@
 
 - (NSString *)title
 {
-  return self.contentViewController.title;
+  return self.contentViewController.title ?: self.defaultToolbar.titleControl.title;
 }
 
 - (void)setTitle:(NSString *)title
@@ -262,7 +262,7 @@
 
 + (NSSet *)keyPathsForValuesAffectingTitle
 {
-  return [NSSet setWithObject:@"contentViewController.title"];
+  return [NSSet setWithObjects:@"contentViewController.title", @"defaultToolbar.titleControl.titleFragments", nil];
 }
 
 #pragma mark Editing
@@ -525,10 +525,10 @@
   }
   
   // Update title if controller didn't change
-  if (result == self.contentViewController)
-  {
-    [self updateDefaultToolbarTitle];
-  }
+//  if (result == self.contentViewController)
+//  {
+//    [self updateDefaultToolbarTitle];
+//  }
   return result;
 }
 
