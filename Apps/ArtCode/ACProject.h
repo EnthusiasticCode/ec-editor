@@ -34,6 +34,9 @@ extern NSString * const ACProjectNotificationIndexKey;
 /// Returns the project with the given UUID, or nil if the project does not exist.
 + (ACProject *)projectWithUUID:(id)uuid;
 
+/// Completely remove the project with the given uuid.
++ (void)removeProjectWithUUID:(id)uuid;
+
 /// Set a metadata for the given project and key. The value of info must be encodable in a plist.
 + (void)setMeta:(id)info forProject:(ACProject *)project key:(NSString *)key;
 
@@ -73,14 +76,14 @@ extern NSString * const ACProjectNotificationIndexKey;
 /// Adds a remote to the project with a full remote url <scheme>://user@host:port
 - (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;
 
+/// Removes a remote from the project
+- (void)removeRemote:(ACProjectRemote *)remote;
+
 #pragma mark Project-wide operations
 
 /// Duplicate the entire project.
-/// The returned project is openes, it must be closed in the completion handler.
+/// The returned project is opened, it must be closed in the completion handler if not needed anymore.
 - (void)duplicateWithCompletionHandler:(void(^)(ACProject *duplicate))completionHandler;
-
-/// Completelly remove the project and its files.
-- (void)remove;
 
 @end
 

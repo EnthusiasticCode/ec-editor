@@ -10,13 +10,11 @@
 
 @interface ACProjectItem (Internal)
 
+/// A plist encodable dictionary representing the item's metadata
+@property (nonatomic, strong) NSDictionary *propertyListDictionary;
+
 /// Designed initalizer. Initialize the item from a property list dictionary.
 /// Subclasses must override this and call [self setPropertyListDictionary:plistDictionary] within it.
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary;
-
-/// Encode the item in a property list dictionary.
-- (NSDictionary *)propertyListDictionary;
-/// Decode and load the item's metadata from a property list dictionary.
-- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary;
 
 @end

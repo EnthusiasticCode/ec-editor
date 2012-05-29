@@ -130,12 +130,6 @@
   return ACPRemote;
 }
 
-- (void)remove
-{
-  [self.project didRemoveRemote:self];
-  [super remove];
-}
-
 #pragma mark - Private Methods
 
 - (NSURL *)_URLWithScheme:(NSString *)scheme host:(NSString *)host port:(NSNumber *)port user:(NSString *)user

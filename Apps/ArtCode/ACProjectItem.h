@@ -29,7 +29,4 @@ typedef enum {
 /// Item type, see enum
 @property (nonatomic, readonly) ACProjectItemType type;
 
-/// Delete the item
-- (void)remove;
-
 @end

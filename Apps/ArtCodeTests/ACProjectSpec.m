@@ -58,7 +58,7 @@ describe(@"An ACProject", ^{
       }
     }
     [[project should] beNonNil];
-    [project remove];
+    [ACProject removeProjectWithUUID:project.UUID];
     [[[ACProject projects] should] haveCountOf:0];
   });
   
@@ -133,7 +133,7 @@ describe(@"An newly created ACProject", ^{
   });
   
   it(@"can be deleted and not retrieved by UUID", ^{
-    [project remove];
+    [ACProject removeProjectWithUUID:project.UUID];
     [[ACProject projectWithUUID:projectUUID] shouldBeNil];
   });
   
@@ -206,20 +206,13 @@ describe(@"A new opened ACProject", ^{
     NSString *subfolderName = @"testsubfolder";
     
     it(@"can be created with no error", ^{
-      __block ACProjectFolder *subfolder = nil;
-      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-        subfolder = newFolder;
-      }];
-      [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+      ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
       [[[project.contentsFolder should] have:1] children];
+      [[[project.contentsFolder.children objectAtIndex:0] should] equal:subfolder];
     });
     
     it(@"can be retrieved with no error", ^{
-      __block ACProjectFolder *subfolder = nil;
-      [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-        subfolder = newFolder;
-      }];
-      [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+      ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
       [[[project.contentsFolder should] have:1] children];
       
       // Retrieve
@@ -247,19 +240,9 @@ describe(@"A new opened ACProject", ^{
         [fileManager removeItemAtURL:temporaryDirectory2 error:NULL];
       });
       
-      it(@"can be created with the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
-        [[[subfolder should] have:1] children];
-      });
-      
       it(@"can be updated with the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+        [[subfolder should] beNonNil];
         
         [[[subfolder should] have:0] children];
         
@@ -268,21 +251,16 @@ describe(@"A new opened ACProject", ^{
           [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
-        [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
+        [[theValue(updateComplete) should] beYes];
         [[[subfolder should] have:1] children];
       });
       
       it(@"can update by merging the contents of that URL", ^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+        [[subfolder should] beNonNil];
         
-        __block ACProjectFolder *childSubfolder = nil;
-        [subfolder addNewFolderWithName:@"another subfolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          childSubfolder = newFolder;
-        }];
-        [[expectFutureValue(childSubfolder) shouldEventually] beNonNil];
+        ACProjectFolder *childSubfolder = [subfolder newChildFolderWithName:@"another subfolder"];
+        [[childSubfolder should] beNonNil];
         
         [[[subfolder should] have:1] children];
         
@@ -291,15 +269,13 @@ describe(@"A new opened ACProject", ^{
           [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
-        [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
+        [[theValue(updateComplete) should] beYes];
         [[[subfolder should] have:2] children];
       });
       
-      it(@"can publish it's contents to that URL", ^{                
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporarySubfolder completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+      it(@"can publish it's contents to that URL", ^{
+        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+        [[subfolder should] beNonNil];
         [[[subfolder should] have:1] children];
         
         __block BOOL publishComplete = NO;
@@ -307,7 +283,7 @@ describe(@"A new opened ACProject", ^{
           [[theValue(success) should] beYes];
           publishComplete = YES;
         }];
-        [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
+        [[theValue(publishComplete) should] beYes];
         [[theValue([fileManager fileExistsAtPath:[[temporaryDirectory2 URLByAppendingPathComponent:@"test"] path]]) should] beYes];
       });
     });
@@ -322,21 +298,15 @@ describe(@"A new opened ACProject", ^{
       NSString *newSubfolderName = @"newsubfoldername";
       
       beforeEach(^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+        [[subfolder should] beNonNil];
         subfolderUUID = subfolder.UUID;
-        [project.contentsFolder addNewFolderWithName:subfolder2Name originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder2 = newFolder;
-        }];
-        [[expectFutureValue(subfolder2) shouldEventually] beNonNil];
+        subfolder2 = [project.contentsFolder newChildFolderWithName:subfolder2Name];
+        [[subfolder2 should] beNonNil];
         subfolder2UUID = subfolder2.UUID;
         __block ACProjectFolder *testContent = nil;
-        [subfolder2 addNewFolderWithName:@"just some content to test" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          testContent = newFolder;
-        }];
-        [[expectFutureValue(testContent) shouldEventually] beNonNil];
+        testContent = [subfolder2 newChildFolderWithName:@"just some content to test"];
+        [[testContent should] beNonNil];
       });
       
       afterEach(^{
@@ -348,42 +318,27 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be deleted with no error", ^{
         // Remove
-        [subfolder removeWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-        }];
-        [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:1] ;
-        [subfolder2 removeWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-        }];
-        [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:0];
+        [project.contentsFolder removeChildItem:subfolder];
+        [[[project.contentsFolder should] have:1] children];
+        [project.contentsFolder removeChildItem:subfolder2];
+        [[[project.contentsFolder should] have:0] children];
       });
       
       it(@"can be renamed", ^{
-        [subfolder setName:newSubfolderName withCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-        }];
-        [[expectFutureValue(subfolder.name) shouldEventually] equal:newSubfolderName];
+        subfolder.name = newSubfolderName;
+        [[subfolder.name should] equal:newSubfolderName];
         [[[subfolder2 should] have:1] children];
       });
       
       it(@"can be moved", ^{
-        __block BOOL moveComplete = NO;
-        [subfolder2 moveToFolder:subfolder completionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          moveComplete = YES;
-        }];
-        [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
+        [subfolder2 moveToFolder:subfolder renameTo:nil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:1] children];
         [[[subfolder2 should] have:1] children];
       });
       
       it(@"can be copied", ^{
-        __block ACProjectFolder *subfolder2Copy = nil;
-        [subfolder2 copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy) {
-          subfolder2Copy = (ACProjectFolder *)copy;
-        }];
-        [[expectFutureValue(subfolder2Copy) shouldEventually] beNonNil];
+        ACProjectFolder *subfolder2Copy = (ACProjectFolder *)[subfolder2 copyToFolder:subfolder renameTo:nil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:2] children];
         [[[subfolder2Copy should] have:1] children];
@@ -394,24 +349,13 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be retrieved by UUID after being moved", ^{
-        __block BOOL moveComplete = NO;
-        [subfolder2 moveToFolder:subfolder completionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          moveComplete = YES;
-        }];
-        [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
+        [subfolder2 moveToFolder:subfolder renameTo:nil];
         [[[project itemWithUUID:subfolder2UUID] should] equal:[subfolder.children objectAtIndex:0]];
       });
       
       it(@"cannot be retrieved by UUID after being deleted", ^{
-        [subfolder2 removeWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-        }];
-        [[expectFutureValue([project itemWithUUID:subfolder2UUID]) shouldEventually] beNil];
-      });
-      
-      it(@"has a last modified date", ^{
-        [[[subfolder contentModificationDate] should] beNonNil];
+        [project.contentsFolder removeChildItem:subfolder2];
+        [[project itemWithUUID:subfolder2UUID] shouldBeNil];
       });
       
     });
@@ -421,10 +365,8 @@ describe(@"A new opened ACProject", ^{
       __block ACProjectFolder *subfolder = nil;
       
       beforeEach(^{
-        [project.contentsFolder addNewFolderWithName:subfolderName originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+        [[subfolder should] beNonNil];
       });
       
       afterEach(^{
@@ -436,7 +378,7 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"has a consistent name", ^{
-        [[[subfolder name] should] equal:subfolderName];
+        [[subfolder.name should] equal:subfolderName];
       });
       
       it(@"has no children", ^{
@@ -450,19 +392,13 @@ describe(@"A new opened ACProject", ^{
     NSString *fileName = @"testfile.txt";
     
     it(@"can be created with no error", ^{
-      __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-        file = newFile;
-      }];
-      [[expectFutureValue(file) shouldEventually] beNonNil];
+      ACProjectFile *file = [project.contentsFolder newChildFileWithName:fileName];
+      [[file should] beNonNil];
     });
     
     it(@"can be created and retrieved with no error", ^{
-      __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-        file = newFile;
-      }];
-      [[expectFutureValue(file) shouldEventually] beNonNil];
+      ACProjectFile *file = [project.contentsFolder newChildFileWithName:fileName];
+      [[file should] beNonNil];
       
       // Retrieve
       [[[project.contentsFolder should] have:1] children];
@@ -471,11 +407,8 @@ describe(@"A new opened ACProject", ^{
     });
     
     it(@"can be created, retrieved and deleted with no error", ^{
-      __block ACProjectFile *file = nil;
-      [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-        file = newFile;
-      }];
-      [[expectFutureValue(file) shouldEventually] beNonNil];
+      ACProjectFile *file = [project.contentsFolder newChildFileWithName:fileName];
+      [[file should] beNonNil];
       
       // Retrieve
       [[[project.contentsFolder should] have:1] children];
@@ -483,10 +416,8 @@ describe(@"A new opened ACProject", ^{
       [[item should] beMemberOfClass:[ACProjectFile class]];
       
       // Delete
-      [item removeWithCompletionHandler:^(BOOL success) {
-        [[theValue(success) should] beYes];
-      }];
-      [[expectFutureValue(project.contentsFolder.children) shouldEventually] haveCountOf:0];
+      [project.contentsFolder removeChildItem:item];
+      [[project.contentsFolder.children should] haveCountOf:0];
     });
     
     context(@"given a URL", ^{
@@ -496,7 +427,6 @@ describe(@"A new opened ACProject", ^{
       NSFileManager *fileManager = [[NSFileManager alloc] init];
       NSURL *temporaryFile = [temporaryDirectory URLByAppendingPathComponent:@"temporaryFile"];
       NSString *testContents = @"test contents";
-      __block NSNumber *temporaryFileSize = nil;
       __block ACProjectFile *file = nil;
       
       beforeEach(^{
@@ -504,34 +434,19 @@ describe(@"A new opened ACProject", ^{
         [[theValue([fileManager createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL]) should] beYes];
         
         // Create temporary file
-        [[theValue([testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:NULL]) should] beYes];
-        
-        // Get temporary file size
-        [[theValue([temporaryFile getResourceValue:&temporaryFileSize forKey:NSURLFileSizeKey error:NULL]) should] beYes];
-        [[temporaryFileSize should] beNonNil];
+        [[theValue([testContents writeToURL:temporaryFile atomically:YES encoding:NSUTF8StringEncoding error:NULL]) should] beYes];        
       });
       
       afterEach(^{
-        temporaryFileSize = nil;
         file = nil;
         [fileManager removeItemAtURL:temporaryDirectory error:NULL];
         [fileManager removeItemAtURL:temporaryDirectory2 error:NULL];
       });
       
-      it(@"can be created with the contents of that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile) {
-          file = newFile;
-        }];
-        [[expectFutureValue(file) shouldEventually] beNonNil];
-        [[theValue(file.fileSize) should] equal:temporaryFileSize];
-      });
-      
       it(@"can be updated with the contents of that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-          file = newFile;
-        }];
-        [[expectFutureValue(file) shouldEventually] beNonNil];
-        [[theValue(file.fileSize) should] beZero];
+        file = [project.contentsFolder newChildFileWithName:fileName];
+        [[file should] beNonNil];
+        [[theValue(file.content.length) should] beZero];
         
         __block BOOL updateComplete = NO;
         [file updateWithContentsOfURL:temporaryFile completionHandler:^(BOOL success) {
@@ -539,15 +454,19 @@ describe(@"A new opened ACProject", ^{
           updateComplete = YES;
         }];
         [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
-        [[theValue(file.fileSize) should] equal:temporaryFileSize];
+        [[[NSString stringWithContentsOfURL:temporaryFile usedEncoding:NULL error:NULL] should] equal:file.content];
       });
       
       it(@"can publish it's contents to that URL", ^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:temporaryFile completionHandler:^(ACProjectFile *newFile) {
-          file = newFile;
+        file = [project.contentsFolder newChildFileWithName:fileName];
+        __block BOOL updateComplete = NO;
+        [file updateWithContentsOfURL:temporaryFile completionHandler:^(BOOL success) {
+          [[theValue(success) should] beYes];
+          updateComplete = YES;
         }];
-        [[expectFutureValue(file) shouldEventually] beNonNil];
-        [[theValue(file.fileSize) should] equal:temporaryFileSize];
+        [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
+        [[file should] beNonNil];
+        [[[NSString stringWithContentsOfURL:temporaryFile usedEncoding:NULL error:NULL] should] equal:file.content];
         
         __block BOOL publishComplete = NO;
         [file publishContentsToURL:[temporaryDirectory2 URLByAppendingPathComponent:file.name] completionHandler:^(BOOL success) {
@@ -556,6 +475,7 @@ describe(@"A new opened ACProject", ^{
         }];
         [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
         [[theValue([fileManager fileExistsAtPath:[[temporaryDirectory2 URLByAppendingPathComponent:file.name] path]]) should] beYes];
+        [[[NSString stringWithContentsOfURL:[temporaryDirectory2 URLByAppendingPathComponent:file.name] usedEncoding:NULL error:NULL] should] equal:file.content];
       });
     });
     
@@ -565,27 +485,13 @@ describe(@"A new opened ACProject", ^{
       NSString *testContent = @"some test content";
 
       beforeEach(^{
-        [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-          file = newFile;
-        }];
-        [[expectFutureValue(file) shouldEventually] beNonNil];
-        __block BOOL isOpened = NO;
-        [file openWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          isOpened = YES;
-        }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
+        file = [project.contentsFolder newChildFileWithName:fileName];
+        [[file should] beNonNil];
         file.content = testContent;
         [[file.content should] equal:testContent];
       });
       
       afterEach(^{
-        __block BOOL isClosed = NO;
-        [file closeWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          isClosed = YES;
-        }];
-        [[expectFutureValue(theValue(isClosed)) shouldEventually] beYes];
         file = nil;
       });
       
@@ -602,39 +508,21 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"has a consistent name", ^{
-        [[[file name] should] equal:fileName];
-      });
-      
-      it(@"has a last modified date", ^{
-        [[[file contentModificationDate] should] beNonNil];
-      });
-      
-      it(@"has a size", ^{
-        [[theValue(file.fileSize) should] equal:theValue(0)];
+        [[file.name should] equal:fileName];
       });
       
       it(@"can be renamed", ^{
         NSString *newFileName = @"newFileName.txt";
-        [file setName:newFileName withCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-        }];
-        [[expectFutureValue(file.name) shouldEventually] equal:newFileName];
+        file.name = newFileName;
+        [[file.name should] equal:newFileName];
         [[file.content should] equal:testContent];
       });
       
       it(@"can be moved", ^{
-        __block ACProjectFolder *subfolder = nil;
-        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:@"testFolder"];
+        [[subfolder should] beNonNil];
         [[[project.contentsFolder should] have:2] children];
-        __block BOOL moveComplete = NO;
-        [file moveToFolder:subfolder completionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          moveComplete = YES;
-        }];
-        [[expectFutureValue(theValue(moveComplete)) shouldEventually] beYes];
+        [file moveToFolder:subfolder renameTo:nil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:1] children];
         [[file.parentFolder should] equal:subfolder];
@@ -642,28 +530,16 @@ describe(@"A new opened ACProject", ^{
       });
       
       it(@"can be copied", ^{
-        __block ACProjectFolder *subfolder = nil;
-        [project.contentsFolder addNewFolderWithName:@"testFolder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-          subfolder = newFolder;
-        }];
-        [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+        ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:@"testFolder"];
+        [[subfolder should] beNonNil];
         [[[project.contentsFolder should] have:2] children];
-        __block ACProjectFile *fileCopy = nil;
-        [file copyToFolder:subfolder completionHandler:^(ACProjectFileSystemItem *copy) {
-          fileCopy = (ACProjectFile *)copy;
-        }];
-        [[expectFutureValue(fileCopy) shouldEventually] beNonNil];
+        ACProjectFile *fileCopy = (ACProjectFile *)[file copyToFolder:subfolder renameTo:nil];
+        [[fileCopy should] beNonNil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:2] children];
         [[file.parentFolder should] equal:project.contentsFolder];
         [[fileCopy.parentFolder should] equal:subfolder];
         [[file.content should] equal:testContent];
-        __block BOOL isOpened = NO;
-        [fileCopy openWithCompletionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          isOpened = YES;
-        }];
-        [[expectFutureValue(theValue(isOpened)) shouldEventually] beYes];
         [[fileCopy.content should] equal:testContent];
       });
       
@@ -691,7 +567,7 @@ describe(@"A new opened ACProject", ^{
         id item = [file.bookmarks objectAtIndex:0];
         [[item should] beMemberOfClass:[ACProjectFileBookmark class]];
         
-        [item remove];
+        [file removeBookmark:item];
         [[[file should] have:0] bookmarks];
       });
       
@@ -706,7 +582,7 @@ describe(@"A new opened ACProject", ^{
         });
         
         afterEach(^{
-          [bookmark remove];
+          [file removeBookmark:bookmark];
         });
         
         it(@"is of correct type", ^{
@@ -753,7 +629,7 @@ describe(@"A new opened ACProject", ^{
       id item = [project.remotes objectAtIndex:0];
       [[item should] beMemberOfClass:[ACProjectRemote class]];
       
-      [item remove];
+      [project removeRemote:item];
       [[[project should] have:0] remotes];
     });
     
@@ -767,7 +643,7 @@ describe(@"A new opened ACProject", ^{
       });
       
       afterEach(^{
-        [remote remove];
+        [project removeRemote:remote];
       });
       
       it(@"is of correct type", ^{
@@ -791,53 +667,36 @@ describe(@"A new opened ACProject", ^{
   it(@"has a list of files", ^{
     [[[project should] have:0] files];
     
-    __block ACProjectFolder *testFolder = nil;
-    [project.contentsFolder addNewFolderWithName:@"test folder" originalURL:nil completionHandler:^(ACProjectFolder *newFolder) {
-      testFolder = newFolder;
-    }];
-    [[expectFutureValue(testFolder) shouldEventually] beNonNil];
+    ACProjectFolder *testFolder = [project.contentsFolder newChildFolderWithName:@"test folder"];
     [[[project should] have:1] files];
     
-    __block ACProjectFile *testFile1 = nil;
-    [testFolder addNewFileWithName:@"test file 1" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-      testFile1 = newFile;
-    }];
-    [[expectFutureValue(testFile1) shouldEventually] beNonNil];
+    ACProjectFile *testFile1 = [testFolder newChildFileWithName:@"test file 1"];
+    [[testFile1 should] beNonNil];
     [[[project should] have:2] files];
     
-    __block ACProjectFile *testFile2 = nil;
-    [testFolder addNewFileWithName:@"test file 2" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-      testFile2 = newFile;
-    }];
-    [[expectFutureValue(testFile2) shouldEventually] beNonNil];
+    ACProjectFile *testFile2 = [testFolder newChildFileWithName:@"test file 2"];
+    [[testFile2 should] beNonNil];
     
     [[[project should] have:3] files];
-    [testFile2 removeWithCompletionHandler:^(BOOL success) {
-      [[theValue(success) should] beYes];
-    }];
-    [[expectFutureValue(project.files) shouldEventually] haveCountOf:2];
-    [testFolder removeWithCompletionHandler:^(BOOL success) {
-      [[theValue(success) should] beYes];
-    }];
-    [[expectFutureValue(project.files) shouldEventually] haveCountOf:0];
+    [testFolder removeChildItem:testFile2];
+    [[project.files should] haveCountOf:2];
+    [project.contentsFolder removeChildItem:testFolder];
+    [[project.files should] haveCountOf:0];
   });
   
   it(@"has a list of bookmarks", ^{
     [[[project should] have:0] bookmarks];
     
-    __block ACProjectFile *testFile = nil;
-    [project.contentsFolder addNewFileWithName:@"test file" originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-      testFile = newFile;
-    }];
-    [[expectFutureValue(testFile) shouldEventually] beNonNil];
+    ACProjectFile *testFile = [project.contentsFolder newChildFileWithName:@"test file"];
+    [[testFile should] beNonNil];
     
     [testFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:0]];
     [[[project should] have:1] bookmarks];
     [testFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:1]];
     [[[project should] have:2] bookmarks];
-    [[[testFile bookmarks] objectAtIndex:0] remove];
+    [testFile removeBookmark:[testFile.bookmarks objectAtIndex:0]];
     [[[project should] have:1] bookmarks];
-    [testFile remove];
+    [project.contentsFolder removeChildItem:testFile];
     [[[project should] have:0] bookmarks];
   });
   
@@ -870,21 +729,26 @@ describe(@"An existing ACProject", ^{
     [[theValue([[[NSFileManager alloc] init] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:&createTemporaryDirectoryError]) should] beYes];
     [createTemporaryDirectoryError shouldBeNil];
     
-    __block ACProjectFolder *subfolder = nil;
-    [project.contentsFolder addNewFolderWithName:subfolderName originalURL:temporaryDirectory completionHandler:^(ACProjectFolder *newFolder) {
-      subfolder = newFolder;
+    ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+    [[subfolder should] beNonNil];
+    __block BOOL subfolderUpdated = NO;
+    [subfolder updateWithContentsOfURL:temporaryDirectory completionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
+      subfolderUpdated = YES;
     }];
-    [[expectFutureValue(subfolder) shouldEventually] beNonNil];
+    [[expectFutureValue(theValue(subfolderUpdated)) shouldEventually] beYes];
     
     NSError *originalWritingError = nil;
     [[theValue([[@"test\nfile" dataUsingEncoding:NSUTF8StringEncoding] writeToURL:originalURL options:0 error:&originalWritingError]) should] beYes];
     [originalWritingError shouldBeNil];
     
-    __block ACProjectFile *file = nil;
-    [subfolder addNewFileWithName:fileName originalURL:originalURL completionHandler:^(ACProjectFile *newFile) {
-      file = newFile;
+    ACProjectFile *file = [subfolder newChildFileWithName:fileName];
+    [[file should] beNonNil];
+    __block BOOL fileUpdated = NO;
+    [file updateWithContentsOfURL:originalURL completionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
     }];
-    [[expectFutureValue(file) shouldEventually] beNonNil];
+    [[expectFutureValue(theValue(fileUpdated)) shouldEventually] beYes];
     
     [file addBookmarkWithPoint:bookmarkPoint];
     

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ACProject+Internal.h"
+#import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFileBookmark.h"
 #import "ACProjectRemote.h"
@@ -205,6 +205,29 @@ static NSString * const _plistRemotesKey = @"remotes";
   return [self.alloc _initWithUUID:uuid];
 }
 
++ (void)removeProjectWithUUID:(id)uuid {
+  __block NSUInteger removeIndex = NSNotFound;
+  __block ACProject *project = nil;
+  [self.class.projects enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
+    if ([p.UUID isEqualToString:uuid]) {
+      removeIndex = idx;
+      project = p;
+      *stop = YES;
+    }
+  }];
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:removeIndex] forKey:ACProjectNotificationIndexKey]; 
+  [NSNotificationCenter.defaultCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:self.class userInfo:userInfo];
+  [_projectsList removeObjectForKey:uuid];
+  ASSERT(_projectsSortedList);
+  [_projectsSortedList removeObjectAtIndex:removeIndex];
+  [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:self.class userInfo:userInfo];
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    [NSFileCoordinator.alloc.init coordinateWritingItemAtURL:project.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
+      [NSFileManager.alloc.init removeItemAtURL:newURL error:NULL];
+    }];
+  });
+}
+
 + (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ACProject *))completionHandler {
   ASSERT(completionHandler); // The returned project is open and it must be closed by caller
   NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
@@ -401,28 +424,6 @@ static NSString * const _plistRemotesKey = @"remotes";
       }
     }];
   }];
-}
-
-- (void)remove {
-  NSString *removeUUID = self.UUID;
-  __block NSUInteger removeIndex = NSNotFound;
-  [self.class.projects enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
-    if ([p.UUID isEqualToString:removeUUID]) {
-      removeIndex = idx;
-      *stop = YES;
-    }
-  }];
-  NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:removeIndex] forKey:ACProjectNotificationIndexKey]; 
-  [NSNotificationCenter.defaultCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:self.class userInfo:userInfo];
-  [_projectsList removeObjectForKey:removeUUID];
-  ASSERT(_projectsSortedList);
-  [_projectsSortedList removeObjectAtIndex:removeIndex];
-  [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:self.class userInfo:userInfo];
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-    [NSFileCoordinator.alloc.init coordinateWritingItemAtURL:self.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-      [NSFileManager.alloc.init removeItemAtURL:newURL error:NULL];
-    }];
-  });
 }
 
 #pragma mark - Internal Remotes Methods

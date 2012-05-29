@@ -15,9 +15,6 @@
 #pragma mark File metadata
 /// @name File metadata
 
-/// The size of the file in bytes
-@property (nonatomic, readonly) NSUInteger fileSize;
-
 /// A value of type NSStringEncoding wrapped in an NSNumber indicating what encoding should be used to read and write the file. If nil it will be autodetected
 @property (nonatomic, strong) NSNumber *explicitFileEncoding;
 
@@ -27,16 +24,7 @@
 /// file syntax to be used for syntax highlight. If nil it will be autodetected
 @property (nonatomic, strong) NSString *explicitSyntaxIdentifier;
 
-#pragma mark Accessing the content
-/// @name Accessing the content
-
-/// Attempts to read the contents of the file.
-/// 
-/// Must be balanced by a call to closeWithCompletionHandler:
-- (void)openWithCompletionHandler:(void(^)(BOOL success))completionHandler;
-
-/// Closes the file.
-- (void)closeWithCompletionHandler:(void(^)(BOOL success))completionHandler;
+#pragma mark File content
 
 /// Unattributed content of the file
 @property (nonatomic, copy) NSString *content;
@@ -71,6 +59,9 @@
 
 /// Get a bookmark in this file with the given point if present.
 - (ACProjectFileBookmark *)bookmarkForPoint:(id)point;
+
+/// Remove a bookmark
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark;
 
 @end
 

@@ -12,23 +12,10 @@
 
 @property (nonatomic, weak) ACProjectFolder *parentFolder;
 
-/// File URL of the file system item. Must be accessed from the project's file access coordination queue
-@property (nonatomic, strong) NSURL *fileURL;
-
-/// The content modification date should be updated whenever the file system item's in memory representation is changed
-@property (nonatomic, strong) NSDate *contentModificationDate;
+/// A fileWrapper of the file system item's content
+@property (nonatomic, strong, readonly) NSFileWrapper *fileWrapper;
 
 /// Designated initializer.
-/// Subclasses must override it and call [self readFromURL:self.fileURL] within it.
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name;
-
-/// Force a read from the specified URL. Must be called on the project's file access coordination queue
-- (BOOL)readFromURL:(NSURL *)url error:(out NSError **)error;
-
-/// Force a write to the specified URL. Must be called on the project's file access coordination queue
-- (BOOL)writeToURL:(NSURL *)url error:(out NSError **)error;
-
-/// Force the removal of the item. Must be called on the project's file access coordination queue. Called by -removeWithCompletionHandler:
-- (BOOL)removeSynchronouslyWithError:(out NSError **)error;
+- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary;
 
 @end

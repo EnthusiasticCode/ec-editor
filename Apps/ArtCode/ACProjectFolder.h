@@ -21,10 +21,12 @@
 /// Gets the child with the given name if it exists, nil otherwise.
 - (ACProjectFileSystemItem *)childWithName:(NSString *)name;
 
-#pragma mark Creating new folders and files
+#pragma mark Creating and deleting folders and files
 
-- (void)addNewFolderWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFolder *newFolder))completionHandler;
+- (ACProjectFolder *)newChildFolderWithName:(NSString *)name;
 
-- (void)addNewFileWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void(^)(ACProjectFile *newFile))completionHandler;
+- (ACProjectFile *)newChildFileWithName:(NSString *)name;
+
+- (void)removeChildItem:(ACProjectFileSystemItem *)childItem;
 
 @end

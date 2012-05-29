@@ -271,7 +271,7 @@
       
       // Remove projects
       [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-        [[ACProject.projects objectAtIndex:idx] remove];
+        [ACProject removeProjectWithUUID:[[ACProject.projects objectAtIndex:idx] UUID]];
       }];
       
       // Show bezel alert

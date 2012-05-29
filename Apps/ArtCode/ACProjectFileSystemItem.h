@@ -17,25 +17,19 @@
 /// A reference to the folder that contain this item. nil if the item is a root one.
 @property (nonatomic, weak, readonly) ACProjectFolder *parentFolder;
 
-/// The name of the item corresponding to its filesystem path component.
-@property (nonatomic, strong, readonly) NSString *name;
-
-/// The last modified date
-@property (nonatomic, strong, readonly) NSDate *contentModificationDate;
+/// Name of the file system item
+@property (nonatomic, copy) NSString *name;
 
 /// Returns a string containing the path relative to the project and starting with the project name.
 - (NSString *)pathInProject;
 
 #pragma mark Item Contents
 
-/// Recursively updates the contents of the receiver by adding or replacing items. Does not delete items 
+/// Replaces the contents of the receiver with those at the given URL.
 - (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(BOOL success))completionHandler;
 
-/// Recusivly publishes the contents of the receiver to the specified URL. Replaces items at destination.
+/// Publishes the contents of the receiver to the specified URL. Replaces items at destination.
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(BOOL success))completionHandler;
-
-/// Delete contents from disk. Called by -remove
-- (void)removeWithCompletionHandler:(void(^)(BOOL success))completionHandler;
 
 @end
 
@@ -43,16 +37,10 @@
 
 #pragma mark Renaming, Moving and Copying
 
-/// Rename an item
-- (void)setName:(NSString *)name withCompletionHandler:(void(^)(BOOL success))completionHandler;
+/// Move the item to a given folder. Optionally rename the item.
+- (void)moveToFolder:(ACProjectFolder *)newParent renameTo:(NSString *)newName;
 
-/// Move the item to a new folder.
-- (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void(^)(BOOL success))completionHandler;
-
-/// Copy the item to a new folder.
-- (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void(^)(ACProjectFileSystemItem *copy))completionHandler;
-
-// Duplicate the receiver and changes its name accordingly.
-- (void)duplicateWithCompletionHandler:(void(^)(ACProjectFileSystemItem *duplicate))completionHandler;
+/// Copy the item to a given folder. Optionally rename the item. Returns the copy.
+- (ACProjectFileSystemItem *)copyToFolder:(ACProjectFolder *)copyParent renameTo:(NSString *)newName;
 
 @end

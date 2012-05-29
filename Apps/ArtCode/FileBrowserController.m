@@ -102,7 +102,7 @@
     if ([self.searchBar.text length]) {
       NSArray *hitMasks = nil;
       _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
-        return element.name;
+        return element.fileWrapper.filename;
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
@@ -111,7 +111,7 @@
         self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.currentFolder.children count]];
     } else {
       _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
-        return [obj1.name compare:obj2.name];
+        return [obj1.fileWrapper.filename compare:obj2.fileWrapper.filename];
       }];
       _filteredItemsHitMasks = nil;
       if ([_filteredItems count] == 0)
@@ -205,11 +205,11 @@
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.fileWrapper.filename pathExtension]];
     cell.accessoryType = UITableViewCellAccessoryNone;
   }
   
-  cell.textLabel.text = fileItem.name;
+  cell.textLabel.text = fileItem.fileWrapper.filename;
   cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
   
   // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
