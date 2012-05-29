@@ -310,9 +310,9 @@ static void init(TabController *self)
   [childController didMoveToParentViewController:self];
 }
 
-- (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
-{
-  ASSERT(controllerIndex < [_orderedChildViewControllers count]);
+- (void)removeChildViewController:(UIViewController *)childController animated:(BOOL)animated {
+  NSUInteger controllerIndex = [_orderedChildViewControllers indexOfObject:childController];
+  ASSERT(controllerIndex != NSNotFound);
   [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }
 

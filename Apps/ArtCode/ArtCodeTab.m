@@ -90,6 +90,7 @@ static NSMutableArray *_mutableTabs;
     
     id projectUUID = project.UUID;
     for (ArtCodeTab *tab in _mutableTabs) {
+      // TODO NIK sanity check for tabs with no history, remove them
       [tab _removeHistoryEntriesContainingUUID:projectUUID];
     }
   }];
@@ -111,7 +112,7 @@ static NSMutableArray *_mutableTabs;
 
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
 {
-  NSMutableDictionary *dictionary = [tab->_mutableDictionary mutableCopy];
+  NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] lastObject]], _historyURLsKey, nil];
   [_mutableTabDictionaries addObject:dictionary];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
   [_mutableTabs addObject:newTab];
@@ -229,6 +230,8 @@ static NSMutableArray *_mutableTabs;
     }];
     return;
   }
+  
+  [self willChangeValueForKey:@"historyURLs"];
   // Adding path to history and move forward
   NSUInteger lastPosition = [self.historyURLs count] - 1;
   if (self.currentHistoryPosition < lastPosition)
@@ -239,6 +242,8 @@ static NSMutableArray *_mutableTabs;
   }
   [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
   [_mutableHistoryURLs addObject:url];
+  [self didChangeValueForKey:@"historyURLs"];
+  
   [self moveForwardInHistory];
 }
 
@@ -341,16 +346,27 @@ static NSMutableArray *_mutableTabs;
   // Exit if nothing done
   if (removeIndexed.count == 0)
     return;
+  
+  [self willChangeValueForKey:@"historyURLs"];
   // Remove history entries
   [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsAtIndexes:removeIndexed];
   [_mutableHistoryURLs removeObjectsAtIndexes:removeIndexed];
   // Adjust current history position
-  NSUInteger newHistoryPosition = self.currentHistoryPosition;
-  while (newHistoryPosition >= _mutableHistoryURLs.count || [removeIndexed containsIndex:newHistoryPosition]) {
-    ASSERT(newHistoryPosition); // FIX not safe if current history position is 0
+  NSInteger newHistoryPosition = (NSInteger)self.currentHistoryPosition;
+  NSInteger hisotryCount = (NSInteger)_mutableHistoryURLs.count;
+  while (newHistoryPosition >= hisotryCount || [removeIndexed containsIndex:newHistoryPosition]) {
     newHistoryPosition--;
   }
-  self.currentHistoryPosition = newHistoryPosition;
+  // We may not find a new position, in which case the history is completely erased and the tab considered not valid anymore
+  if (newHistoryPosition < 0) {
+    newHistoryPosition = NSNotFound;
+    [_mutableHistoryURLs removeAllObjects];
+    [[_mutableDictionary objectForKey:_historyURLsKey] removeAllObjects];
+    [ArtCodeTab removeTab:self];
+  } else {
+    self.currentHistoryPosition = newHistoryPosition;
+  }
+  [self didChangeValueForKey:@"historyURLs"];
 }
 
 @end

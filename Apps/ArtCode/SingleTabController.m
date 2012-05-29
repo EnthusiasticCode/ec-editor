@@ -7,11 +7,11 @@
 //
 
 #import "SingleTabController.h"
+#import "TabController.h"
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
-#import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -318,6 +318,13 @@
     return xs;
   }] subscribeNext:^(id x) {
     [self updateDefaultToolbarTitle];
+  }];
+  
+  // TODO NIK self.tabCollectionController remove self if self.artCodeTab history is empty
+  [RACAbleSelf(self.artCodeTab.historyURLs) subscribeNext:^(NSArray *urls) {
+    if ([urls count] == 0) {
+      [self.tabCollectionController removeChildViewController:self animated:YES];
+    }
   }];
   
   return self;
