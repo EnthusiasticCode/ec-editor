@@ -109,7 +109,7 @@
   // Creating main tab controllers
   self.tabController = [[TabController alloc] init];
   self.tabController.tabBar.backgroundColor = [UIColor blackColor];
-  self.tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(3, 3, 0, 3);
+  self.tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(2, 3, 0, 3);
   self.tabController.definesPresentationContext = YES;
   // Add tab button
   UIButton *addTabButton = [UIButton new];

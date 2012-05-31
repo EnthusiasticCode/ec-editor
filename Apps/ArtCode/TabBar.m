@@ -49,7 +49,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   } delegateFlags;
 }
 
-@property (nonatomic, readonly, strong) NSArray *tabControls;
 @property (nonatomic, weak) UIControl *selectedTabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
@@ -303,11 +302,6 @@ static void init(TabBar *self)
 }
 
 #pragma mark - Managing Tabs
-
-- (NSUInteger)tabCount
-{
-  return [tabControls count];
-}
 
 - (NSUInteger)selectedTabIndex
 {
@@ -694,7 +688,7 @@ static void init(TabBar *self)
     [RACAble(tabButton, selected) subscribeNext:^(id x) {
       if ([x boolValue]) {
         [tabButton addSubview:tabCloseButton];
-        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 44, 0, 0);
+        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 38, 0, 0);
       } else {
         [tabCloseButton removeFromSuperview];
         tabButton.titleEdgeInsets = UIEdgeInsetsZero;

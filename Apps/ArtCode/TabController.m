@@ -9,6 +9,7 @@
 
 #import "TabController.h"
 #import "UIView+ReuseIdentifier.h"
+#import "BezelAlert.h"
 
 #define TABBAR_HEIGHT 40
 
@@ -361,16 +362,28 @@ static void init(TabController *self)
 }
 
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
-{ 
+{
+  // If only one tab is open, don't allow it to be closed
+  if (tabBar.tabControls.count <= 1) {
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Tab cannot be closed" image:nil displayImmediatly:YES];
+    return NO;
+  }
+  
   UIViewController *controller = [_orderedChildViewControllers objectAtIndex:tabIndex];
-  // TODO move this somewhere more consisten
-  //    [controller removeObserver:self forKeyPath:@"title"];
   [controller willMoveToParentViewController:nil];
   
   // Remove from tab controller
   [_orderedChildViewControllers removeObject:controller];
   [controller removeFromParentViewController];
   
+  // Remove view if loaded
+  if (controller.isViewLoaded)
+    [controller.view removeFromSuperview];
+  
+  return YES;
+}
+
+- (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
   // Change selection if needed
   if (_selectedViewControllerIndex == tabIndex)
   {
@@ -386,12 +399,6 @@ static void init(TabController *self)
   {
     [self _scrollToSelectedViewControllerAnimated:YES];
   }
-  
-  // Remove view if loaded
-  if (controller.isViewLoaded)
-    [controller.view removeFromSuperview];
-  
-  return YES;
 }
 
 - (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
