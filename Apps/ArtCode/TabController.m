@@ -302,11 +302,7 @@ static void init(TabController *self)
   }];
   
   // Set selection
-  if (_selectedViewControllerIndex == NSNotFound)
-    [self setSelectedViewControllerIndex:([_orderedChildViewControllers count] - 1) animated:animated];
-  // Or load adiacent views
-  else if (abs(_selectedViewControllerIndex - ([_orderedChildViewControllers count] - 1)) <= 1)
-    [self _loadSelectedAndAdiacentTabViews];
+  [self setSelectedViewControllerIndex:([_orderedChildViewControllers count] - 1) animated:animated];
   
   [childController didMoveToParentViewController:self];
 }

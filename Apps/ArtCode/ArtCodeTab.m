@@ -112,7 +112,7 @@ static NSMutableArray *_mutableTabs;
 
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
 {
-  NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] lastObject]], _historyURLsKey, nil];
+  NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] objectAtIndex:[[tab->_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue]]], _historyURLsKey, nil];
   [_mutableTabDictionaries addObject:dictionary];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
   [_mutableTabs addObject:newTab];
