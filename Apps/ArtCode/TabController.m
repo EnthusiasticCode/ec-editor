@@ -344,19 +344,10 @@ static void init(TabController *self)
     toViewController = [_orderedChildViewControllers objectAtIndex:index];
   }
   
-  if (abs(_selectedViewControllerIndex - (NSInteger)index) <= 1)
-  {
-    // Scroll if adiacent tab
-    _selectedViewControllerIndex = index;
-    [self _scrollToSelectedViewControllerAnimated:YES];
-  }
-  else
-  {
-    // Crossfade if non adiacent
-    _selectedViewControllerIndex = index;
-    [self _scrollToSelectedViewControllerAnimated:NO];
-    [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
-  }
+  // Crossfade if non adiacent
+  _selectedViewControllerIndex = index;
+  [self _scrollToSelectedViewControllerAnimated:NO];
+  [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
   
   return YES;
 }
