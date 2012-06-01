@@ -312,6 +312,7 @@
 		CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416714E9C4120045ADFD /* itemIcon_Accept.png */; };
 		CD27416A14E9C4120045ADFD /* itemIcon_Replace.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416814E9C4120045ADFD /* itemIcon_Replace.png */; };
 		CD2BA05A14CFF65700031E78 /* QuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */; };
+		CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD2DB5FE1578C506009E4026 /* CoreData.framework */; };
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
@@ -443,6 +444,8 @@
 		CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */; };
 		CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */; };
 		CDBD3FA415015E080050B10C /* QuickRemoteInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD3FA315015E080050B10C /* QuickRemoteInfoController.m */; };
+		CDBF0B401577B77C003F169C /* DocSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBF0B3D1577B77C003F169C /* DocSet.m */; };
+		CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBF0B3F1577B77C003F169C /* DocSetDownloadManager.m */; };
 		CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */; };
 		CDC13330145FFE390028423F /* CodeFileSearchOptionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1332F145FFE390028423F /* CodeFileSearchOptionsController.m */; };
 		CDC1333614602F5E0028423F /* searchBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333214602F5E0028423F /* searchBar_Background.png */; };
@@ -798,6 +801,7 @@
 		CD27416814E9C4120045ADFD /* itemIcon_Replace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Replace.png; sourceTree = "<group>"; };
 		CD2BA05814CFF65700031E78 /* QuickBookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickBookmarkBrowserController.h; sourceTree = "<group>"; };
 		CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickBookmarkBrowserController.m; sourceTree = "<group>"; };
+		CD2DB5FE1578C506009E4026 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CD3045B014E1B3B900F216BB /* UIColor+Contrast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Contrast.h"; sourceTree = "<group>"; };
 		CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Contrast.m"; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
@@ -957,6 +961,10 @@
 		CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Selected.png; sourceTree = "<group>"; };
 		CDBD3FA215015E080050B10C /* QuickRemoteInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickRemoteInfoController.h; sourceTree = "<group>"; };
 		CDBD3FA315015E080050B10C /* QuickRemoteInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickRemoteInfoController.m; sourceTree = "<group>"; };
+		CDBF0B3C1577B77C003F169C /* DocSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSet.h; sourceTree = "<group>"; };
+		CDBF0B3D1577B77C003F169C /* DocSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSet.m; sourceTree = "<group>"; };
+		CDBF0B3E1577B77C003F169C /* DocSetDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetDownloadManager.h; sourceTree = "<group>"; };
+		CDBF0B3F1577B77C003F169C /* DocSetDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetDownloadManager.m; sourceTree = "<group>"; };
 		CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkBrowserController.h; sourceTree = "<group>"; };
 		CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkBrowserController.m; sourceTree = "<group>"; };
 		CDC1332E145FFE390028423F /* CodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchOptionsController.h; sourceTree = "<group>"; };
@@ -1045,6 +1053,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */,
 				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
 				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
@@ -1098,6 +1107,7 @@
 				B77100EC1506DAE6006AF1FB /* ACProject */,
 				B7FB79A514D602DB0080A714 /* TextMate */,
 				B7FB79CA14D605050080A714 /* Filesystem */,
+				CDBF0B3B1577B761003F169C /* DocSet */,
 				B75F658214D868EB008B88C5 /* ArtCodeURL.h */,
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
@@ -1748,6 +1758,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD2DB5FE1578C506009E4026 /* CoreData.framework */,
 				B77101451506E336006AF1FB /* SenTestingKit.framework */,
 				B7DD437214E098BE0057DDB4 /* CFNetwork.framework */,
 				CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */,
@@ -2000,6 +2011,17 @@
 				CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */,
 			);
 			name = "Bottom Browser Toolbar";
+			sourceTree = "<group>";
+		};
+		CDBF0B3B1577B761003F169C /* DocSet */ = {
+			isa = PBXGroup;
+			children = (
+				CDBF0B3C1577B77C003F169C /* DocSet.h */,
+				CDBF0B3D1577B77C003F169C /* DocSet.m */,
+				CDBF0B3E1577B77C003F169C /* DocSetDownloadManager.h */,
+				CDBF0B3F1577B77C003F169C /* DocSetDownloadManager.m */,
+			);
+			name = DocSet;
 			sourceTree = "<group>";
 		};
 		CDC1333114602F430028423F /* Search Bar */ = {
@@ -2667,6 +2689,8 @@
 				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
 				B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				CDBF0B401577B77C003F169C /* DocSet.m in Sources */,
+				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
