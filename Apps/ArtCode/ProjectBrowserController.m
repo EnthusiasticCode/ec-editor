@@ -19,6 +19,9 @@
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 
+#import "DocSetDownloadManager.h"
+#import "DocSet.h"
+
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
@@ -30,6 +33,7 @@
 
 @interface ProjectBrowserController ()
 
+@property (nonatomic, strong, readonly) NSArray *gridElements;
 @property (nonatomic, strong) GridView *gridView;
 @property (nonatomic, strong) UIView *hintView;
 
@@ -42,8 +46,7 @@
 
 #pragma mark -
 
-@implementation ProjectBrowserController
-{
+@implementation ProjectBrowserController {
   UIPopoverController *_toolItemPopover;
   
   NSArray *_toolItemsNormal;
@@ -56,7 +59,21 @@
   UIImage *_cellSelectedBackground;
 }
 
-@synthesize gridView = _gridView, hintView = _hintView;
+@synthesize gridElements=_gridElements, gridView = _gridView, hintView = _hintView;
+
+- (NSArray *)gridElements {
+  if (!_gridElements) {
+    NSMutableArray *elements = [NSMutableArray arrayWithArray:ACProject.projects];
+    [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
+    [_gridElements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+      NSString *str1 = [obj1 isKindOfClass:[ACProject class]] ? [obj1 name] : [obj1 title];
+      NSString *str2 = [obj2 isKindOfClass:[ACProject class]] ? [obj2 name] : [obj2 title];
+      return [str1 compare:str2];
+    }];
+    _gridElements = [elements copy];
+  }
+  return _gridElements;
+}
 
 - (UIView *)hintView {
   if (!_hintView) {
@@ -91,6 +108,7 @@
   
   // Update gird view
   [projects subscribeNext:^(NSNotification *note) {
+    ASSERT(NO); // TODO FIX index should take count of gridElements
     NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
     if (note.name == ACProjectDidInsertProjectNotificationName) {
       [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
@@ -194,7 +212,7 @@
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-  return ACProject.projects.count;
+  return self.gridElements.count;
 }
 
 - (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -215,19 +233,25 @@
     [(UIImageView *)cell.selectedBackgroundView setImage:_cellSelectedBackground];
   }
   
-  // Setup project title
-  ACProject *project = [ACProject.projects objectAtIndex:cellIndex];
-  cell.title.text = project.name;
-  cell.label.text = @"";
-  cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-  cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
+  // Setup cell
+  id element = [self.gridElements objectAtIndex:cellIndex];
+  if ([element isKindOfClass:[ACProject class]]) {
+    ACProject *project = (ACProject *)element;
+    cell.title.text = cell.accessibilityLabel = project.name;
+    cell.label.text = @"";
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+    cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
+    cell.accessibilityHint = L(@"Open the project");
+  } else if ([element isKindOfClass:[DocSet class]]) {
+    DocSet *docSet = (DocSet *)element;
+    cell.title.text = cell.accessibilityLabel = docSet.title;
+    cell.label.text = @"";
+    cell.accessibilityHint = L(@"Open the documentation");
+  }
   
   // Accessibility
   cell.isAccessibilityElement = YES;
   cell.accessibilityTraits = UIAccessibilityTraitButton;
-  cell.accessibilityLabel = project.name;
-  // TODO change hint according to project's kind (project or documentation..)
-  cell.accessibilityHint = L(@"Open the project");
   
   return cell;
 }
@@ -236,7 +260,12 @@
 
 - (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
   if (!self.isEditing) {
-    [self.artCodeTab pushURL:[[ACProject.projects objectAtIndex:cellIndex] artCodeURL]];
+    id element = [self.gridElements objectAtIndex:cellIndex];
+    if ([element isKindOfClass:[ACProject class]]) {
+      [self.artCodeTab pushURL:[element artCodeURL]];
+    } else if ([element isKindOfClass:[DocSet class]]) {
+      [self.artCodeTab pushURL:[NSURL URLWithString:[NSString stringWithFormat:@"docset://%@", [[(DocSet *)element title] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
+    }
   }
 }
 

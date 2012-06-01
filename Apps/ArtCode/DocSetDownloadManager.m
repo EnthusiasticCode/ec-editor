@@ -192,6 +192,8 @@
 			[[NSFileManager defaultManager] moveItemAtURL:fullURL toURL:targetURL error:NULL];
 		}
 	}
+  
+  // TODO bezel alert here
 	
 	[self reloadDownloadedDocSets];
 	

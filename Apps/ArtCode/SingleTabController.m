@@ -525,17 +525,12 @@
     
     // Set the tab explicitly since result might not have a parent view controller yet
     result.artCodeTab = self.artCodeTab;
-  }
-  else 
-  {
+//  } else if ([currentURL.scheme isEqualToString:@"docset"]) {
+    
+  } else {
     ASSERT(NO); // Unknown URL
   }
-  
-  // Update title if controller didn't change
-//  if (result == self.contentViewController)
-//  {
-//    [self updateDefaultToolbarTitle];
-//  }
+
   return result;
 }
 

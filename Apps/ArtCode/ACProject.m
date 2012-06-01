@@ -185,6 +185,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 #pragma mark - Projects list
 
 + (NSArray *)projects {
+  // TODO there is no need to have this sorted
   if (!_projectsSortedList) {
     _projectsSortedList = NSMutableArray.new;
     [_projectsList enumerateKeysAndObjectsUsingBlock:^(NSString *uuidKey, id obj, BOOL *stop) {
