@@ -313,6 +313,8 @@
 		CD27416A14E9C4120045ADFD /* itemIcon_Replace.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416814E9C4120045ADFD /* itemIcon_Replace.png */; };
 		CD2BA05A14CFF65700031E78 /* QuickBookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */; };
 		CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD2DB5FE1578C506009E4026 /* CoreData.framework */; };
+		CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2DB6011578CCA8009E4026 /* DocSetDownloadController.m */; };
+		CD2DB6041578E7C6009E4026 /* AvailableDocSets.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */; };
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
@@ -802,6 +804,9 @@
 		CD2BA05814CFF65700031E78 /* QuickBookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickBookmarkBrowserController.h; sourceTree = "<group>"; };
 		CD2BA05914CFF65700031E78 /* QuickBookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickBookmarkBrowserController.m; sourceTree = "<group>"; };
 		CD2DB5FE1578C506009E4026 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CD2DB6001578CCA7009E4026 /* DocSetDownloadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetDownloadController.h; sourceTree = "<group>"; };
+		CD2DB6011578CCA8009E4026 /* DocSetDownloadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetDownloadController.m; sourceTree = "<group>"; };
+		CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableDocSets.plist; sourceTree = "<group>"; };
 		CD3045B014E1B3B900F216BB /* UIColor+Contrast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Contrast.h"; sourceTree = "<group>"; };
 		CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Contrast.m"; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
@@ -1545,6 +1550,8 @@
 				B7AC174214216D1C009E9205 /* NewProjectController.m */,
 				CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */,
 				CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */,
+				CD2DB6001578CCA7009E4026 /* DocSetDownloadController.h */,
+				CD2DB6011578CCA8009E4026 /* DocSetDownloadController.m */,
 			);
 			name = "New Project";
 			sourceTree = "<group>";
@@ -1775,6 +1782,7 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */,
 				CDA9B66E1524A0620063D76F /* ipad_icon.png */,
 				CDA9B66F1524A0620063D76F /* ipad_icon@2.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
@@ -2483,6 +2491,7 @@
 				CDEFDE371570E7D200DBB528 /* UITabBar_star.png in Resources */,
 				CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */,
 				CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */,
+				CD2DB6041578E7C6009E4026 /* AvailableDocSets.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2691,6 +2700,7 @@
 				B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				CDBF0B401577B77C003F169C /* DocSet.m in Sources */,
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
+				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
