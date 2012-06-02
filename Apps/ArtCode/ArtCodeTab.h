@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application, ACProject, ACProjectItem;
+@class Application, ACProject, ACProjectItem, DocSet;
 
 @interface ArtCodeTab : NSObject
 
@@ -22,6 +22,8 @@
 
 @property (nonatomic, strong, readonly) NSArray *historyURLs;
 
+#pragma mark Current state
+
 @property (nonatomic) NSUInteger currentHistoryPosition;
 
 /// The current URL the tab history is pointing at. This property is read only.
@@ -34,6 +36,11 @@
 /// The current project item for the tab's URL. If no item has been selected by
 /// the URL, the root item of the current project will be returned.
 @property (nonatomic, strong, readonly) ACProjectItem *currentItem;
+
+/// Access to the current URL docset if any.
+@property (nonatomic, strong, readonly) DocSet *currentDocSet;
+
+#pragma mark Hisotry management
 
 /// A value indicating if calling moveBackInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBackInHistory;

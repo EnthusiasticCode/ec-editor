@@ -285,7 +285,9 @@
     return nil;
   
   // Loading mode react to tab loading signal
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)]];
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)] where:^BOOL(id x) {
+    return x != nil;
+  }]];
 
   // Back and forward buttons to tab history
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
@@ -525,7 +527,7 @@
     
     // Set the tab explicitly since result might not have a parent view controller yet
     result.artCodeTab = self.artCodeTab;
-//  } else if ([currentURL.scheme isEqualToString:@"docset"]) {
+  } else if ([currentURL.scheme isEqualToString:@"docset"]) {
     
   } else {
     ASSERT(NO); // Unknown URL

@@ -315,6 +315,7 @@
 		CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD2DB5FE1578C506009E4026 /* CoreData.framework */; };
 		CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2DB6011578CCA8009E4026 /* DocSetDownloadController.m */; };
 		CD2DB6041578E7C6009E4026 /* AvailableDocSets.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */; };
+		CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2DB607157934FF009E4026 /* DocSetBrowserController.m */; };
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
@@ -807,6 +808,8 @@
 		CD2DB6001578CCA7009E4026 /* DocSetDownloadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetDownloadController.h; sourceTree = "<group>"; };
 		CD2DB6011578CCA8009E4026 /* DocSetDownloadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetDownloadController.m; sourceTree = "<group>"; };
 		CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableDocSets.plist; sourceTree = "<group>"; };
+		CD2DB606157934FF009E4026 /* DocSetBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetBrowserController.h; sourceTree = "<group>"; };
+		CD2DB607157934FF009E4026 /* DocSetBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetBrowserController.m; sourceTree = "<group>"; };
 		CD3045B014E1B3B900F216BB /* UIColor+Contrast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Contrast.h"; sourceTree = "<group>"; };
 		CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Contrast.m"; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
@@ -1543,6 +1546,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CD2DB6051579342B009E4026 /* DocSet Browser */ = {
+			isa = PBXGroup;
+			children = (
+				CD2DB606157934FF009E4026 /* DocSetBrowserController.h */,
+				CD2DB607157934FF009E4026 /* DocSetBrowserController.m */,
+			);
+			name = "DocSet Browser";
+			sourceTree = "<group>";
+		};
 		CD333CF914C033BD00E0EEE2 /* New Project */ = {
 			isa = PBXGroup;
 			children = (
@@ -1855,6 +1867,7 @@
 				CD69C8FB14F1634D00FCC987 /* Projects Browser */,
 				CD69C8FD14F1636600FCC987 /* File Browser */,
 				CD69C8FF14F163C100FCC987 /* Remotes Browsers */,
+				CD2DB6051579342B009E4026 /* DocSet Browser */,
 				CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */,
 				CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */,
 				CD7B434E14CEC9E900090CAE /* Quick Browsers */,
@@ -2701,6 +2714,7 @@
 				CDBF0B401577B77C003F169C /* DocSet.m in Sources */,
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
 				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,
+				CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
