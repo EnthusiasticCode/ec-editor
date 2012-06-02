@@ -52,20 +52,17 @@ static NSMutableSet *_projectItemUUIDs;
   if (!self) {
     return nil;
   }
+  _UUID = [plistDictionary objectForKey:@"uuid"];
+  if (!_UUID) {
+    _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
+  }
+  [_projectItemUUIDs addObject:_UUID];
   _project = project;
   return self;
 }
 
 - (NSDictionary *)propertyListDictionary {
   return [NSDictionary dictionaryWithObjectsAndKeys:_UUID, @"uuid", nil];
-}
-
-- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
-  _UUID = [propertyListDictionary objectForKey:@"uuid"];
-  if (!_UUID) {
-    _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
-  }
-  [_projectItemUUIDs addObject:_UUID];
 }
 
 - (void)prepareForRemoval {

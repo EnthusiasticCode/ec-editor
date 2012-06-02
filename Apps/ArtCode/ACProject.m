@@ -234,6 +234,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 + (void)createProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ACProject *))completionHandler {
   ASSERT(completionHandler); // The returned project is open and it must be closed by caller
   NSString *uuid = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
+  [_projectUUIDs addObject:uuid];
   ACProject *project = [[self alloc] _initWithUUID:uuid];
   [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
     if (success) {
@@ -390,6 +391,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   completionHandler = [completionHandler copy];
   NSString *duplicateUUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
+  [_projectUUIDs addObject:duplicateUUID];
   NSURL *duplicateURL = [self.class._projectsDirectory URLByAppendingPathComponent:duplicateUUID];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSFileCoordinator *fileCoordinator = NSFileCoordinator.alloc.init;
@@ -628,7 +630,7 @@ static NSString * const _plistRemotesKey = @"remotes";
     plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
   
   // Read content folder
-  _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project parent:nil fileWrapper:[fileWrapper.fileWrappers objectForKey:_contentsFolderName] propertyListDictionary:[plist objectForKey:_plistContentsKey]];
+  _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project fileWrapper:[fileWrapper.fileWrappers objectForKey:_contentsFolderName] propertyListDictionary:[plist objectForKey:_plistContentsKey]];
   
   ASSERT(_project.contentsFolder);
   
@@ -657,7 +659,7 @@ static NSString * const _plistRemotesKey = @"remotes";
   if (!_project.contentsFolder) {
     NSFileWrapper *contentsFileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
     contentsFileWrapper.preferredFilename = _contentsFolderName;
-    _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project parent:nil fileWrapper:contentsFileWrapper propertyListDictionary:nil];
+    _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project fileWrapper:contentsFileWrapper propertyListDictionary:nil];
   }
   NSDictionary *contentsPlist = _project.contentsFolder.propertyListDictionary;
   if (contentsPlist) {

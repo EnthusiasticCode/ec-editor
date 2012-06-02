@@ -16,6 +16,6 @@
 @property (nonatomic, strong) NSFileWrapper *fileWrapper;
 
 /// Designated initializer.
-- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary;
+- (id)initWithProject:(ACProject *)project fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary;
 
 @end

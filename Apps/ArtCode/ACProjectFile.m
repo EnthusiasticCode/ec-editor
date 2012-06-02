@@ -88,6 +88,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (NSDictionary *)propertyListDictionary {
   NSMutableDictionary *plist = super.propertyListDictionary.mutableCopy;
+  
   if (_explicitFileEncoding) {
     [plist setObject:_explicitFileEncoding forKey:_plistFileEncodingKey];
   }
@@ -104,26 +105,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }];
   [plist setObject:bookmarks forKey:_plistBookmarksKey];
   return plist;
-}
-
-- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
-  [super setPropertyListDictionary:propertyListDictionary];
-  
-  _explicitFileEncoding = [propertyListDictionary objectForKey:_plistFileEncodingKey];
-  _explicitSyntaxIdentifier = [propertyListDictionary objectForKey:_plistExplicitSyntaxKey];
-  [_bookmarks removeAllObjects];
-  [[propertyListDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
-    NSScanner *scanner = [NSScanner scannerWithString:point];
-    NSInteger line;
-    if ([scanner scanInteger:&line])
-      point = [NSNumber numberWithInteger:line];
-    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
-    if (!bookmark)
-      return;
-    [self.project addBookmark:bookmark withBlock:^{
-      [_bookmarks setObject:bookmark forKey:point];
-    }];
-  }];
 }
 
 - (void)prepareForRemoval {
@@ -144,8 +125,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   self.content = [NSString.alloc initWithData:fileWrapper.regularFileContents encoding:self.fileEncoding];
 }
 
-- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
-  self = [super initWithProject:project parent:parent fileWrapper:fileWrapper propertyListDictionary:plistDictionary];
+- (id)initWithProject:(ACProject *)project fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
+  self = [super initWithProject:project fileWrapper:fileWrapper propertyListDictionary:plistDictionary];
   if (!self) {
     return nil;
   }
@@ -153,9 +134,23 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   _bookmarks = NSMutableDictionary.alloc.init;
   _contentDisposables = NSMutableArray.alloc.init;
   
-  self.fileWrapper = fileWrapper;
-  self.propertyListDictionary = plistDictionary;
+  _explicitFileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey];
+  _explicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
+  [[plistDictionary objectForKey:_plistBookmarksKey] enumerateKeysAndObjectsUsingBlock:^(id point, NSDictionary *bookmarkPlist, BOOL *stop) {
+    NSScanner *scanner = [NSScanner scannerWithString:point];
+    NSInteger line;
+    if ([scanner scanInteger:&line])
+      point = [NSNumber numberWithInteger:line];
+    ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
+    if (!bookmark)
+      return;
+    [self.project addBookmark:bookmark withBlock:^{
+      [_bookmarks setObject:bookmark forKey:point];
+    }];
+  }];
     
+  self.fileWrapper = fileWrapper;
+  
   return self;
 }
 

@@ -44,9 +44,7 @@
   
   if (!file || file.type != ACPFile || !bookmarkPoint)
     return nil;
-  
-  [self setPropertyListDictionary:plistDictionary];
-  
+    
   _file = file;
   _bookmarkPoint = bookmarkPoint;
   

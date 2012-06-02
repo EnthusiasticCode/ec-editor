@@ -93,8 +93,6 @@
   if (!self)
     return nil;
   
-  [self setPropertyListDictionary:plistDictionary];
-  
   _URL = [NSURL URLWithString:[plistDictionary objectForKey:@"url"]];
   if (!_URL)
     return nil;

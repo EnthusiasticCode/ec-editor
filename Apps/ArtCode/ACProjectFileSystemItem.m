@@ -30,15 +30,7 @@
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-  return [self initWithProject:project parent:nil fileWrapper:nil propertyListDictionary:plistDictionary];
-}
-
-- (NSDictionary *)propertyListDictionary {
-  return [super propertyListDictionary];
-}
-
-- (void)setPropertyListDictionary:(NSDictionary *)propertyListDictionary {
-  [super setPropertyListDictionary:propertyListDictionary];
+  return [self initWithProject:project fileWrapper:nil propertyListDictionary:plistDictionary];
 }
 
 #pragma mark - Item Properties
@@ -98,7 +90,7 @@
   UNIMPLEMENTED_VOID();
 }
 
-- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
+- (id)initWithProject:(ACProject *)project fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
   // All filesystem items need to be initialized in the project's file access coordination queue
   ASSERT(project);
 
@@ -110,7 +102,6 @@
   
   _name = fileWrapper.preferredFilename;
   
-  _parentFolder = parent;
   return self;
 }
 

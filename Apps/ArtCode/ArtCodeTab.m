@@ -359,7 +359,6 @@ static NSMutableArray *_mutableTabs;
   }
   // We may not find a new position, in which case the history is completely erased and the tab considered not valid anymore
   if (newHistoryPosition < 0) {
-    newHistoryPosition = NSNotFound;
     [_mutableHistoryURLs removeAllObjects];
     [[_mutableDictionary objectForKey:_historyURLsKey] removeAllObjects];
     [ArtCodeTab removeTab:self];
