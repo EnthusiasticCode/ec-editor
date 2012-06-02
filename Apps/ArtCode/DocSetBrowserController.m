@@ -14,6 +14,9 @@
 /// The web view to show the docset content
 @property (nonatomic, strong) UIWebView *webView;
 
+/// Opens the popover with the docset contents controller
+- (void)_toolNormalContentsAction:(id)sender;
+
 @end
 
 @implementation DocSetBrowserController
@@ -23,6 +26,11 @@
 @synthesize docSetURL = _docSetURL;
 @synthesize webView = _webView;
 
+- (UIBarButtonItem *)editButtonItem {
+  // To not show the edit button
+  return nil;
+}
+
 #pragma mark - Controller's lifecycle
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -30,6 +38,10 @@
   if (!self)
     return nil;
   
+  // Add tool buttons
+  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"O" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
+  
+  // Update on docset changes
   [RACAbleSelf(self.artCodeTab.currentDocSet) subscribeNext:^(DocSet *docSet) {
     if (docSet != nil) {
       

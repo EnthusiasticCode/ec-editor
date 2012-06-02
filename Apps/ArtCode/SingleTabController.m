@@ -28,6 +28,8 @@
 #import "CodeFileController.h"
 #import "RemotesListController.h"
 #import "RemoteBrowserController.h"
+#import "DocSetBrowserController.h"
+
 #import "UIImage+AppStyle.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -528,7 +530,10 @@
     // Set the tab explicitly since result might not have a parent view controller yet
     result.artCodeTab = self.artCodeTab;
   } else if ([currentURL.scheme isEqualToString:@"docset"]) {
-    
+    if ([self.contentViewController isKindOfClass:[DocSetBrowserController class]])
+      result = self.contentViewController;
+    else
+      result = [DocSetBrowserController new];
   } else {
     ASSERT(NO); // Unknown URL
   }
