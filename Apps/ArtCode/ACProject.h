@@ -96,8 +96,6 @@ extern NSString * const ACProjectNotificationItemKey;
 
 @interface ACProject (RACExtensions)
 
-@property (atomic, readonly) RACScheduler *codeIndexingScheduler;
-
 /// Returns a subscribable that sends NSNotification on ACProjectDidInsertProjectNotificationName and ACProjectDidRemoveProjectNotificationName notifications.
 + (RACSubscribable *)rac_projects;
 
