@@ -18,12 +18,6 @@
 
 @end
 
-@interface ACProject (Remotes)
-
-- (void)didRemoveRemote:(ACProjectRemote *)remote;
-
-@end
-
 @implementation ACProjectRemote {
   NSURL *_URL;
 }

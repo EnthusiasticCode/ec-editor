@@ -139,7 +139,8 @@
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows)
       {
-        [[self.filteredItems objectAtIndex:indexPath.row] remove];
+        ACProjectFileBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+        [bookmark.file removeBookmark:bookmark];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

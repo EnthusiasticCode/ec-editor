@@ -18,6 +18,13 @@ extern NSString * const ACProjectWillRemoveProjectNotificationName;
 extern NSString * const ACProjectDidRemoveProjectNotificationName;
 extern NSString * const ACProjectNotificationIndexKey;
 
+/// Other notifications
+extern NSString * const ACProjectWillAddItem;
+extern NSString * const ACProjectDidAddItem;
+extern NSString * const ACProjectWillRemoveItem;
+extern NSString * const ACProjectDidRemoveItem;
+extern NSString * const ACProjectNotificationItemKey;
+
 @interface ACProject : UIDocument
 
 #pragma mark Projects list
@@ -66,9 +73,9 @@ extern NSString * const ACProjectNotificationIndexKey;
 /// Project content requires the projects to be open to be accessed or set
 
 @property (nonatomic, strong, readonly) ACProjectFolder *contentsFolder;
-@property (nonatomic, strong, readonly) NSArray *files;
-@property (nonatomic, strong, readonly) NSArray *bookmarks;
-@property (nonatomic, strong, readonly) NSArray *remotes;
+@property (nonatomic, copy, readonly) NSArray *files;
+@property (nonatomic, copy, readonly) NSArray *bookmarks;
+@property (nonatomic, copy, readonly) NSArray *remotes;
 
 /// Retrieve an item (file, folder, bookmark or remote) that has the given uuid.
 - (ACProjectItem *)itemWithUUID:(id)uuid;

@@ -38,8 +38,8 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
 
-- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark;
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark;
+- (void)addBookmark:(ACProjectFileBookmark *)bookmark withBlock:(void(^)(void))block;
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark withBlock:(void(^)(void))block;
 
 @end
 
@@ -60,7 +60,7 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   NSMutableArray *_contentDisposables;
 }
 
-@synthesize fileSize = _fileSize, explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
+@synthesize explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
 @synthesize content = _content, attributedContent = _attributedContent;
 @synthesize codeUnit = _codeUnit;
 
@@ -82,13 +82,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (ACProjectItemType)type {
   return ACPFile;
-}
-
-- (void)remove {
-  for (ACProjectFileBookmark *bookmark in _bookmarks.allValues) {
-    [bookmark remove];
-  }
-  [super remove];
 }
 
 #pragma mark - ACProjectItem Internal
@@ -127,15 +120,32 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
     ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:bookmarkPlist file:self bookmarkPoint:point];
     if (!bookmark)
       return;
-    [_bookmarks setObject:bookmark forKey:point];
-    [self.project didAddBookmark:bookmark];
+    [self.project addBookmark:bookmark withBlock:^{
+      [_bookmarks setObject:bookmark forKey:point];
+    }];
   }];
+}
+
+- (void)prepareForRemoval {
+  for (ACProjectFileBookmark *bookmark in _bookmarks.allValues) {
+    [self removeBookmark:bookmark];
+  }
 }
 
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
-  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent name:name];
+- (NSFileWrapper *)fileWrapper {
+  NSFileWrapper *fileWrapper = [NSFileWrapper.alloc initRegularFileWithContents:[self.content dataUsingEncoding:self.fileEncoding]];
+  fileWrapper.preferredFilename = self.name;
+  return fileWrapper;
+}
+
+- (void)setFileWrapper:(NSFileWrapper *)fileWrapper {
+  self.content = [NSString.alloc initWithData:fileWrapper.regularFileContents encoding:self.fileEncoding];
+}
+
+- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
+  self = [super initWithProject:project parent:parent fileWrapper:fileWrapper propertyListDictionary:plistDictionary];
   if (!self) {
     return nil;
   }
@@ -143,64 +153,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   _bookmarks = NSMutableDictionary.alloc.init;
   _contentDisposables = NSMutableArray.alloc.init;
   
-  if (![self readFromURL:self.fileURL error:NULL]) {
-    return nil;
-  }
-  
-  [self setPropertyListDictionary:plistDictionary];
+  self.fileWrapper = fileWrapper;
+  self.propertyListDictionary = plistDictionary;
     
   return self;
-}
-
-- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  if (![super readFromURL:url error:error]) {
-    return NO;
-  }
-
-  NSNumber *fileSize = nil;
-  [url getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
-  _fileSize = [fileSize unsignedIntegerValue];
-  
-//  // Read the contents if the file is open, otherwise just copy it over
-//  if (_openCount) {
-//    NSString *content = [NSString stringWithContentsOfURL:url encoding:self.fileEncoding error:NULL];
-//    if (!content) {
-//      _content = @"";
-//    } else {
-//      _content = content;
-//    }
-//  } else if (![url isEqual:self.fileURL]) {
-//    NSFileManager *fileManager = NSFileManager.alloc.init;
-//    if ([fileManager fileExistsAtPath:self.fileURL.path]) {
-//      return [fileManager replaceItemAtURL:self.fileURL withItemAtURL:url backupItemName:nil options:0 resultingItemURL:NULL error:error];
-//    } else {
-//      return [fileManager copyItemAtURL:url toURL:self.fileURL error:error];
-//    }
-//  }
-  
-  return YES;
-}
-
-- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  if (![super writeToURL:url error:error]) {
-    return NO;
-  }
-  
-  // Make sure the file exists
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  if (![fileManager fileExistsAtPath:url.path]) {
-    [fileManager createDirectoryAtURL:[url URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:NULL];
-    if (![@"" writeToURL:url atomically:NO encoding:NSUTF8StringEncoding error:error]) {
-      return NO;
-    }
-  }
-  
-  // Write the contents if the file is open
-  if (_content) {
-    [_content writeToURL:url atomically:YES encoding:self.fileEncoding error:NULL];
-  }
-  
-  return YES;
 }
 
 #pragma mark - File metadata
@@ -212,104 +168,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   } else {
     return [explicitEncoding unsignedIntegerValue];
   }
-}
-
-#pragma mark - Accessing the content
-
-- (void)openWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  
-  NSStringEncoding encoding = self.fileEncoding;
-  __block NSString *content = self.content;
-  __block TMTheme *theme = self.theme;
-  __weak ACProjectFile *weakSelf = self;
-  completionHandler = [completionHandler copy];
-  
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    __block __strong ACProjectFile *strongSelf = weakSelf;
-    NSURL *fileURL = nil;
-    if (!strongSelf || strongSelf->_openCount) {
-      if (strongSelf) {
-        ++strongSelf->_openCount;
-      }
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(YES);
-        }];
-      }
-    } else {
-      fileURL = strongSelf.fileURL;
-      if (!theme) {
-        theme = [TMTheme defaultTheme];
-      }
-      if (!content) {
-        content = [NSString.alloc initWithContentsOfURL:fileURL encoding:encoding error:NULL];
-      }
-      if (!content) {
-        content = @"";
-      }
-      strongSelf = nil;
-      [[[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *racError) {
-        TMUnit *codeUnit = [TMUnit.alloc initWithFileURL:fileURL index:nil];
-        [codeUnit reparseWithUnsavedContent:content];
-        return codeUnit;
-      }] deliverOn:RACScheduler.mainQueueScheduler] subscribeNext:^(id x) {
-        strongSelf = weakSelf;
-        if (strongSelf) {
-          strongSelf.theme = theme;
-          RACSubscribable *subscribableContent = RACAble(strongSelf, content);
-          RACDisposable *disposable = [[subscribableContent select:^id(id newContent) {
-            return [NSAttributedString.alloc initWithString:newContent attributes:strongSelf.theme.commonAttributes];
-          }] toProperty:RAC_KEYPATH(strongSelf, attributedContent) onObject:strongSelf];
-          [strongSelf->_contentDisposables addObject:disposable];
-          disposable = [subscribableContent subscribeNext:^(id newContent) {
-            [strongSelf.codeUnit reparseWithUnsavedContent:newContent];
-          }];
-          [strongSelf->_contentDisposables addObject:disposable];
-          ++strongSelf->_openCount;
-          strongSelf.content = content;
-          strongSelf.codeUnit = x;
-        }
-        if (completionHandler) {
-          completionHandler(YES);
-        }
-      }];
-    }
-  }];
-}
-
-- (void)closeWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-
-  //  NSStringEncoding encoding = self.fileEncoding;
-//  NSString *contents = self.content;
-  __weak ACProjectFile *weakSelf = self;
-  completionHandler = [completionHandler copy];
-  
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    __block __strong ACProjectFile *strongSelf = weakSelf;
-    if (!strongSelf || strongSelf->_openCount != 1) {
-      if (strongSelf && strongSelf->_openCount) {
-        --strongSelf->_openCount;
-      }
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(YES);
-        }];
-      }
-    } else {
-      BOOL success = [self writeToURL:self.fileURL error:NULL];
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        for (RACDisposable *disposable in _contentDisposables) {
-          [disposable dispose];
-        }
-        [_contentDisposables removeAllObjects];
-        if (completionHandler) {
-          completionHandler(success);
-        }
-      }];    
-    }
-  }];
 }
 
 #pragma mark - Managing semantic content
@@ -346,22 +204,26 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (void)addBookmarkWithPoint:(id)point {
   ACProjectFileBookmark *bookmark = [[ACProjectFileBookmark alloc] initWithProject:self.project propertyListDictionary:nil file:self bookmarkPoint:point];
-  [_bookmarks setObject:bookmark forKey:point];
-  [self.project didAddBookmark:bookmark];
-  [self.project updateChangeCount:UIDocumentChangeDone];
+  [self willChangeValueForKey:@"bookmarks"];
+  [self.project addBookmark:bookmark withBlock:^{
+    [_bookmarks setObject:bookmark forKey:point];
+    [self.project updateChangeCount:UIDocumentChangeDone];
+  }];
+  [self didChangeValueForKey:@"bookmarks"];
+}
+
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark {
+  [self willChangeValueForKey:@"bookmarks"];
+  [self.project removeBookmark:bookmark withBlock:^{
+    [bookmark prepareForRemoval];
+    [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
+    [self.project updateChangeCount:UIDocumentChangeDone];
+  }];
+  [self didChangeValueForKey:@"bookmarks"];
 }
 
 - (ACProjectFileBookmark *)bookmarkForPoint:(id)point {
   return [_bookmarks objectForKey:point];
-}
-
-#pragma mark - Internal Methods
-
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark {
-  [self willChangeValueForKey:@"bookmarks"];
-  [_bookmarks removeObjectForKey:bookmark.bookmarkPoint];
-  [self.project didRemoveBookmark:bookmark];
-  [self didChangeValueForKey:@"bookmarks"];
 }
 
 @end

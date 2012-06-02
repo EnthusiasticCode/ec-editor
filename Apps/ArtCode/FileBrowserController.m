@@ -102,7 +102,7 @@
     if ([self.searchBar.text length]) {
       NSArray *hitMasks = nil;
       _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
-        return element.fileWrapper.filename;
+        return element.name;
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
@@ -111,7 +111,7 @@
         self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.currentFolder.children count]];
     } else {
       _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
-        return [obj1.fileWrapper.filename compare:obj2.fileWrapper.filename];
+        return [obj1.name compare:obj2.name];
       }];
       _filteredItemsHitMasks = nil;
       if ([_filteredItems count] == 0)
@@ -205,11 +205,11 @@
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.fileWrapper.filename pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
     cell.accessoryType = UITableViewCellAccessoryNone;
   }
   
-  cell.textLabel.text = fileItem.fileWrapper.filename;
+  cell.textLabel.text = fileItem.name;
   cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
   
   // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
@@ -249,9 +249,9 @@
   {
     if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
     {
-      self.loading = YES;
-      [_selectedItems makeObjectsPerformSelector:@selector(remove)];
-      self.loading = NO;
+      for (ACProjectFileSystemItem *item in _selectedItems) {
+        [item.parentFolder removeChildItem:item];
+      }
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       [self setEditing:NO animated:YES];
     }
@@ -269,15 +269,10 @@
     {
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
-      __block NSInteger duplicated = 0;
       [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item duplicateWithCompletionHandler:^(ACProjectFileSystemItem *duplicate) {
-          if (++duplicated == selectedItemsCount) {
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-          }
-        }];
+        [item copyToFolder:item.parentFolder renameTo:nil];
       }];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       [self setEditing:NO animated:YES];
     }
   }
@@ -429,11 +424,10 @@
   // Start copy
   NSArray *items = [_selectedItems copy];
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item copyToFolder:moveFolder completionHandler:^(ACProjectFileSystemItem *copy) {
-      if (!copy) {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-      }
-    }];
+    ACProjectFileSystemItem *copy = [item copyToFolder:moveFolder renameTo:nil];
+    if (!copy) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    };
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -455,11 +449,7 @@
   // Start moving
   NSArray *items = [_selectedItems copy];
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item moveToFolder:moveFolder completionHandler:^(BOOL success) {
-      if (!item) {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-      }
-    }];
+    [item moveToFolder:moveFolder renameTo:nil];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];

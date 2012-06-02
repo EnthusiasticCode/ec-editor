@@ -30,8 +30,8 @@
 - (NSString *)description
 {
   if ([_bookmarkPoint isKindOfClass:[NSNumber class]])
-    return [NSString stringWithFormat:@"%@: Line %u", _file.fileWrapper.filename, [_bookmarkPoint unsignedIntValue]];
-  return [NSString stringWithFormat:@"%@: %@", _file.fileWrapper.filename, _bookmarkPoint];
+    return [NSString stringWithFormat:@"%@: Line %u", _file.name, [_bookmarkPoint unsignedIntValue]];
+  return [NSString stringWithFormat:@"%@: %@", _file.name, _bookmarkPoint];
 }
 
 #pragma mark - Plist Internal Methods
@@ -68,11 +68,6 @@
 - (ACProjectItemType)type
 {
   return ACPFileBookmark;
-}
-
-- (void)remove
-{
-  [self.file didRemoveBookmark:self];
 }
 
 @end

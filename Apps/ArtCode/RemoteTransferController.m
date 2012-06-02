@@ -244,16 +244,17 @@ typedef enum {
           continue;
         }
         // Determine if the item should not be synced
-        if (_syncUseFileSize && localItem.type == ACPFile) {
-          // remote to/from local: have the same hanling in this case
-          if ([(ACProjectFile *)localItem fileSize] == [[item objectForKey:NSFileSize] unsignedIntegerValue])
-            [_transfers removeObjectForKey:remoteItemPath];
-        } else {
-          // remote to local: local date later remote date means no sync
-          // local to remote: local date earlier remote date means no sync
-          if ([localItem.contentModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
-            [_transfers removeObjectForKey:remoteItemPath];
-        }
+#warning FIX
+//        if (_syncUseFileSize && localItem.type == ACPFile) {
+//          // remote to/from local: have the same hanling in this case
+//          if ([(ACProjectFile *)localItem fileSize] == [[item objectForKey:NSFileSize] unsignedIntegerValue])
+//            [_transfers removeObjectForKey:remoteItemPath];
+//        } else {
+//          // remote to local: local date later remote date means no sync
+//          // local to remote: local date earlier remote date means no sync
+//          if ([localItem.contentModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
+//            [_transfers removeObjectForKey:remoteItemPath];
+//        }
       }
       
       // When all the remote items have been checked, we can complete a transfer

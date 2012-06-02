@@ -85,22 +85,18 @@
 #pragma mark - Public Methods
 
 - (IBAction)createAction:(id)sender
-{
-  [self startRightBarButtonItemActivityIndicator];
-  
+{  
   NSString *fileName = self.fileNameTextField.text;
   // TODO use ArtCodeTemplate here
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
   ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  [currentFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-    [self stopRightBarButtonItemActivityIndicator];
-    if (newFile) {
-      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    }
-  }];
+  ACProjectFile *newFile = [currentFolder newChildFileWithName:fileName];
+  if (newFile) {
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+  }
 }
 
 @end

@@ -13,7 +13,7 @@
 @property (nonatomic, weak) ACProjectFolder *parentFolder;
 
 /// A fileWrapper of the file system item's content
-@property (nonatomic, strong, readonly) NSFileWrapper *fileWrapper;
+@property (nonatomic, strong) NSFileWrapper *fileWrapper;
 
 /// Designated initializer.
 - (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary;

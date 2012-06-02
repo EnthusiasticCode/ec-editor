@@ -38,23 +38,14 @@ describe(@"A new empty ACProjectFile", ^{
   });
   
   beforeEach(^{
-    [project.contentsFolder addNewFileWithName:fileName originalURL:nil completionHandler:^(ACProjectFile *newFile) {
-      file = newFile;
-    }];
-    [[expectFutureValue(file) shouldEventually] beNonNil];
-    __block BOOL open = NO;
-    [file openWithCompletionHandler:^(BOOL success) {
-      [[theValue(success) should] beYes];
-      open = YES;
-    }];
-    [[expectFutureValue(theValue(open)) shouldEventually] beYes];
+    file = [project.contentsFolder newChildFileWithName:fileName];
+    [[file should] beNonNil];
   });
   
   afterEach(^{
-    [file closeWithCompletionHandler:nil];
-    [file remove];
+    [project.contentsFolder removeChildItem:file];
     file = nil;
-    [[expectFutureValue(theValue(project.contentsFolder.children.count)) shouldEventually] beZero];
+    [[[project.contentsFolder should] have:0] children];
   });
   
   it(@"begins empty", ^{

@@ -180,9 +180,21 @@ describe(@"A new opened ACProject", ^{
       project = createdProject;
     }];
     [[expectFutureValue(project) shouldEventually] beNonNil];
+    __block BOOL opened = NO;
+    [project openWithCompletionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
+      opened = YES;
+    }];
+    [[expectFutureValue(theValue(opened)) shouldEventually] beYes];
   });
   
   afterEach(^{
+    __block BOOL closed = NO;
+    [project closeWithCompletionHandler:^(BOOL success) {
+      [[theValue(success) should] beYes];
+      closed = YES;
+    }];
+    [[expectFutureValue(theValue(closed)) shouldEventually] beYes];
     project = nil;
   });
   
@@ -207,6 +219,7 @@ describe(@"A new opened ACProject", ^{
     
     it(@"can be created with no error", ^{
       ACProjectFolder *subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
+      [[subfolder should] beNonNil];
       [[[project.contentsFolder should] have:1] children];
       [[[project.contentsFolder.children objectAtIndex:0] should] equal:subfolder];
     });
@@ -251,31 +264,14 @@ describe(@"A new opened ACProject", ^{
           [[theValue(success) should] beYes];
           updateComplete = YES;
         }];
-        [[theValue(updateComplete) should] beYes];
+        [[expectFutureValue(theValue(updateComplete)) shouldEventually] beYes];
         [[[subfolder should] have:1] children];
-      });
-      
-      it(@"can update by merging the contents of that URL", ^{
-        subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
-        [[subfolder should] beNonNil];
-        
-        ACProjectFolder *childSubfolder = [subfolder newChildFolderWithName:@"another subfolder"];
-        [[childSubfolder should] beNonNil];
-        
-        [[[subfolder should] have:1] children];
-        
-        __block BOOL updateComplete = NO;
-        [subfolder updateWithContentsOfURL:temporarySubfolder completionHandler:^(BOOL success) {
-          [[theValue(success) should] beYes];
-          updateComplete = YES;
-        }];
-        [[theValue(updateComplete) should] beYes];
-        [[[subfolder should] have:2] children];
       });
       
       it(@"can publish it's contents to that URL", ^{
         subfolder = [project.contentsFolder newChildFolderWithName:subfolderName];
         [[subfolder should] beNonNil];
+        [subfolder newChildFolderWithName:@"test"];
         [[[subfolder should] have:1] children];
         
         __block BOOL publishComplete = NO;
@@ -283,7 +279,7 @@ describe(@"A new opened ACProject", ^{
           [[theValue(success) should] beYes];
           publishComplete = YES;
         }];
-        [[theValue(publishComplete) should] beYes];
+        [[expectFutureValue(theValue(publishComplete)) shouldEventually] beYes];
         [[theValue([fileManager fileExistsAtPath:[[temporaryDirectory2 URLByAppendingPathComponent:@"test"] path]]) should] beYes];
       });
     });
@@ -339,6 +335,7 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be copied", ^{
         ACProjectFolder *subfolder2Copy = (ACProjectFolder *)[subfolder2 copyToFolder:subfolder renameTo:nil];
+        [[subfolder2Copy should] beNonNil];
         [[[subfolder should] have:1] children];
         [[[project.contentsFolder should] have:2] children];
         [[[subfolder2Copy should] have:1] children];
@@ -350,6 +347,7 @@ describe(@"A new opened ACProject", ^{
       
       it(@"can be retrieved by UUID after being moved", ^{
         [subfolder2 moveToFolder:subfolder renameTo:nil];
+        [[[subfolder should] have:1] children];
         [[[project itemWithUUID:subfolder2UUID] should] equal:[subfolder.children objectAtIndex:0]];
       });
       
@@ -417,7 +415,7 @@ describe(@"A new opened ACProject", ^{
       
       // Delete
       [project.contentsFolder removeChildItem:item];
-      [[project.contentsFolder.children should] haveCountOf:0];
+      [[[project.contentsFolder should] have:0] children];
     });
     
     context(@"given a URL", ^{
@@ -679,9 +677,9 @@ describe(@"A new opened ACProject", ^{
     
     [[[project should] have:3] files];
     [testFolder removeChildItem:testFile2];
-    [[project.files should] haveCountOf:2];
+    [[[project should] have:2] files];
     [project.contentsFolder removeChildItem:testFolder];
-    [[project.files should] haveCountOf:0];
+    [[[project should] have:0] files];
   });
   
   it(@"has a list of bookmarks", ^{
@@ -747,10 +745,14 @@ describe(@"An existing ACProject", ^{
     __block BOOL fileUpdated = NO;
     [file updateWithContentsOfURL:originalURL completionHandler:^(BOOL success) {
       [[theValue(success) should] beYes];
+      fileUpdated = YES;
     }];
     [[expectFutureValue(theValue(fileUpdated)) shouldEventually] beYes];
     
     [file addBookmarkWithPoint:bookmarkPoint];
+    
+    [[[project should] have:2] files];
+    [[[project should] have:1] bookmarks];
     
     __block BOOL didClose = NO;
     [project closeWithCompletionHandler:^(BOOL success) {

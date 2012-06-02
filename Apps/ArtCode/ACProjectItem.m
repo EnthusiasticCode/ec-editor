@@ -44,10 +44,6 @@ static NSMutableSet *_projectItemUUIDs;
   return ACPUnknown;
 }
 
-- (void)remove {
-  [self.project updateChangeCount:UIDocumentChangeDone];
-}
-
 #pragma mark - Internal Methods
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
@@ -70,6 +66,10 @@ static NSMutableSet *_projectItemUUIDs;
     _UUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectItemUUIDs];
   }
   [_projectItemUUIDs addObject:_UUID];
+}
+
+- (void)prepareForRemoval {
+  
 }
 
 @end

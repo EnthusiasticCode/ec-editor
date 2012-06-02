@@ -23,29 +23,14 @@
 
 #pragma mark -
 
-/// Folder internal method to remove a child item
-@interface ACProjectFolder (Internal)
-
-- (void)didRemoveChild:(ACProjectFileSystemItem *)child;
-
-@end
-
-#pragma mark -
-
 @implementation ACProjectFileSystemItem
 
-@synthesize parentFolder = _parentFolder, contentModificationDate = _contentModificationDate, fileURL = _fileURL;
-
-#pragma mark - ACProjectItem
-
-- (void)remove {
-  [self removeWithCompletionHandler:nil];
-}
+@synthesize parentFolder = _parentFolder, name = _name;
 
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
-  return [self initWithProject:project propertyListDictionary:plistDictionary parent:nil name:nil];
+  return [self initWithProject:project parent:nil fileWrapper:nil propertyListDictionary:plistDictionary];
 }
 
 - (NSDictionary *)propertyListDictionary {
@@ -58,10 +43,6 @@
 
 #pragma mark - Item Properties
 
-- (NSString *)name {
-  return [_fileURL lastPathComponent];
-}
-
 - (NSString *)pathInProject {
   if (self.parentFolder == nil) {
     return self.project.name;
@@ -72,46 +53,53 @@
 
 #pragma mark - Item Contents
 
-#define PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER(method_call) \
-ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);\
-completionHandler = [completionHandler copy];\
-[self.project performAsynchronousFileAccessUsingBlock:^{\
-BOOL success = method_call;\
-if (completionHandler) {\
-[NSOperationQueue.mainQueue addOperationWithBlock:^{\
-completionHandler(success);\
-}];\
-}\
-}]
-
-
 - (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void (^)(BOOL))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self readFromURL:url error:NULL]);
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    __block NSFileWrapper *fileWrapper = nil;
+    [NSFileCoordinator.alloc.init coordinateReadingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
+      fileWrapper = [NSFileWrapper.alloc initWithURL:newURL options:NSFileWrapperReadingImmediate | NSFileWrapperReadingWithoutMapping error:NULL];
+    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (fileWrapper) {
+        self.fileWrapper = fileWrapper;
+      }
+      if (completionHandler) {
+        completionHandler(fileWrapper ? YES : NO);
+      }
+    });
+  });
 }
 
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void (^)(BOOL))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self writeToURL:url error:NULL]);
-}
-
-- (void)removeWithCompletionHandler:(void (^)(BOOL))completionHandler {
-  PERFORM_ON_FILE_ACCESS_COORDINATION_QUEUE_AND_FORWARD_ERROR_TO_COMPLETION_HANDLER([self removeSynchronouslyWithError:NULL]);
+  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+  NSFileWrapper *fileWrapper = self.fileWrapper;
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    __block BOOL success = NO;
+    [NSFileCoordinator.alloc.init coordinateWritingItemAtURL:url options:0 error:NULL byAccessor:^(NSURL *newURL) {
+      [NSFileManager.alloc.init createDirectoryAtURL:newURL.URLByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:NULL];
+      success = [fileWrapper writeToURL:newURL options:NSFileWrapperWritingAtomic originalContentsURL:nil error:NULL];
+    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (completionHandler) {
+        completionHandler(success);
+      }
+    });
+  });
 }
 
 #pragma mark - Internal Methods
 
-- (NSURL *)fileURL {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  return _fileURL;
+- (NSFileWrapper *)fileWrapper {
+  UNIMPLEMENTED();
 }
 
-- (void)setFileURL:(NSURL *)fileURL {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  _fileURL = fileURL;
+- (void)setFileWrapper:(NSFileWrapper *)fileWrapper {
+  UNIMPLEMENTED_VOID();
 }
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
+- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
   // All filesystem items need to be initialized in the project's file access coordination queue
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
   ASSERT(project);
 
   // Initialize the item
@@ -120,44 +108,10 @@ completionHandler(success);\
     return nil;
   }
   
+  _name = fileWrapper.preferredFilename;
+  
   _parentFolder = parent;
-  if (parent) {
-    _fileURL = [parent.fileURL URLByAppendingPathComponent:name];
-  } else {
-    _fileURL = project.contentsFolderURL;
-  }
-  
   return self;
-}
-
-- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  // Try to get the content modification date
-  NSDate *contentModificationDate = nil;
-  [url getResourceValue:&contentModificationDate forKey:NSURLContentModificationDateKey error:NULL];
-  if (!contentModificationDate) {
-    contentModificationDate = [[NSDate alloc] init];
-  }
-  _contentModificationDate = contentModificationDate;
-  
-  return YES;
-}
-
-- (BOOL)writeToURL:(NSURL *)url error:(out NSError *__autoreleasing *)error {
-  return YES;
-}
-
-- (BOOL)removeSynchronouslyWithError:(NSError *__autoreleasing *)error
-{
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  NSFileManager *fileManager = NSFileManager.alloc.init;
-  if ([fileManager fileExistsAtPath:self.fileURL.path] && ![fileManager removeItemAtURL:self.fileURL error:error]) {
-    ASSERT(!error || *error);
-    return NO;
-  } else {
-    [self.parentFolder didRemoveChild:self];
-    [self.project didRemoveFileSystemItem:self];
-    return YES;
-  }
 }
 
 @end

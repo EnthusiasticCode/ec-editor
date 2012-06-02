@@ -17,4 +17,8 @@
 /// Subclasses must override this and call [self setPropertyListDictionary:plistDictionary] within it.
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary;
 
+/// This method is called by the containing item when the receiver is about to be removed from the project.
+/// Items should perform project related cleanup of contained items here, but they do not need to remove themselves from the project, as the containing item will provide to that.
+- (void)prepareForRemoval;
+
 @end

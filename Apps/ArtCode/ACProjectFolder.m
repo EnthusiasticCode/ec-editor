@@ -17,23 +17,16 @@
 
 static NSString * const _childrenKey = @"children";
 
-@interface ACProject (Folders)
-
-- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem;
-
+@interface ACProjectFolder ()
+- (void)_addChildFileSystemItem:(ACProjectFileSystemItem *)item;
 @end
 
 #pragma mark -
 
-@interface ACProjectFolder ()
+@interface ACProject (Folders)
 
-- (void)_addNewChildItemWithClass:(Class)childClass name:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFileSystemItem *item))completionHandler;
-
-- (ACProjectFileSystemItem *)_addExistingItem:(ACProjectFileSystemItem *)item renameTo:(NSString *)newName error:(out NSError **)error;
-
-- (ACProjectFileSystemItem *)_addCopyOfExistingItem:(ACProjectFileSystemItem *)item renameIfNeeded:(BOOL)renameIfNeeded error:(out NSError **)error;
-
-- (void)_didAddChild:(ACProjectFileSystemItem *)child;
+- (void)addFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem withBlock:(void(^)(void))block;
+- (void)removeFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem withBlock:(void(^)(void))block;
 
 @end
 
@@ -41,6 +34,7 @@ static NSString * const _childrenKey = @"children";
 
 @implementation ACProjectFolder {
   /// Dictionary of item name to ACProjectFileSystemItem.
+  @package
   NSMutableDictionary *_children;
 }
 
@@ -70,82 +64,73 @@ static NSString * const _childrenKey = @"children";
   }
 }
 
+- (void)prepareForRemoval {
+  for (ACProjectFileSystemItem *item in _children.allValues) {
+    [self removeChildItem:item];
+  }
+}
+
 #pragma mark - ACProjectFileSystemItem Internal
 
-- (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary parent:(ACProjectFolder *)parent name:(NSString *)name {
-  self = [super initWithProject:project propertyListDictionary:plistDictionary parent:parent name:name];
+- (NSFileWrapper *)fileWrapper {
+  NSFileWrapper *fileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
+  fileWrapper.preferredFilename = self.name;
+  for (ACProjectFileSystemItem *item in _children.allValues) {
+    [fileWrapper addFileWrapper:item.fileWrapper];
+  }
+  return fileWrapper;
+}
+
+- (void)setFileWrapper:(NSFileWrapper *)fileWrapper {
+  
+  // Get missing files
+  NSMutableDictionary *itemsToRemove = NSMutableDictionary.alloc.init;
+  for (ACProjectFileSystemItem *item in _children.allValues) {
+    if (![fileWrapper.fileWrappers objectForKey:item.name]) {
+      [itemsToRemove setObject:item forKey:item.name];
+    }
+  }
+  
+  // Get added files
+  NSMutableDictionary *itemsToAdd = NSMutableDictionary.alloc.init;
+  for (NSFileWrapper *childWrapper in fileWrapper.fileWrappers.allValues) {
+    if ([_children objectForKey:childWrapper.preferredFilename]) {
+      continue;
+    }
+    if (childWrapper.isDirectory) {
+      [itemsToAdd setObject:[ACProjectFolder.alloc initWithProject:self.project parent:self fileWrapper:childWrapper propertyListDictionary:nil] forKey:childWrapper.preferredFilename];
+    } else if (childWrapper.isRegularFile) {
+      [itemsToAdd setObject:[ACProjectFile.alloc initWithProject:self.project parent:self fileWrapper:childWrapper propertyListDictionary:nil] forKey:childWrapper.preferredFilename];
+    }
+  }
+  
+  // Do the update
+  [self willChangeValueForKey:@"children"];
+  for (NSString *itemName in itemsToRemove) {
+    [self.project removeFileSystemItem:[itemsToRemove objectForKey:itemName] withBlock:^{
+      [_children removeObjectForKey:itemName];
+    }];
+  }
+  for (NSString *itemName in itemsToAdd) {
+    [self.project addFileSystemItem:[itemsToAdd objectForKey:itemName] withBlock:^{
+      [_children setObject:[itemsToAdd objectForKey:itemName] forKey:itemName];
+    }];
+  }
+  [self didChangeValueForKey:@"children"];
+}
+
+- (id)initWithProject:(ACProject *)project parent:(ACProjectFolder *)parent fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
+  self = [super initWithProject:project parent:parent fileWrapper:fileWrapper propertyListDictionary:plistDictionary];
   if (!self) {
     return nil;
   }
   
   _children = NSMutableDictionary.alloc.init;
   
-  if (![self readFromURL:self.fileURL error:NULL]) {
-    return nil;
-  }
-  
-  [self setPropertyListDictionary:plistDictionary];
+  self.fileWrapper = fileWrapper;
+  self.propertyListDictionary = plistDictionary;
   
   return self;
-}
-
-- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  if (![super readFromURL:url error:error]) {
-    return NO;
-  }
-
-  // Read children
-  NSFileManager *fileManager = [[NSFileManager alloc] init];    
-  for (NSURL *childURL in [fileManager contentsOfDirectoryAtURL:url includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:0 error:NULL]) {
-    if ([_children objectForKey:[childURL lastPathComponent]]) {
-      continue;
-    }
-    NSNumber *isDirectory = nil;
-    if (![childURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
-      continue;
-    }
-    Class childClass = [isDirectory boolValue] ? [ACProjectFolder class] : [ACProjectFile class];
-    NSString *childName = childURL.lastPathComponent;
-    ACProjectFileSystemItem *child = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:childName];
-    if (child) {
-      [_children setObject:child forKey:childName];
-      [self.project didAddFileSystemItem:child];
-    }
-    
-  }
-  return YES;
-}
-
-- (BOOL)writeToURL:(NSURL *)url error:(NSError *__autoreleasing *)error {
-  if (![super writeToURL:url error:error]) {
-    return NO;
-  }
-  
-  // Make sure the directory exists
-  NSFileManager *fileManager = [[NSFileManager alloc] init];    
-  if (![fileManager fileExistsAtPath:[url path]]) {
-    if (![fileManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:error]) {
-      return NO;
-    }
-  }
-  
-  // Write children
-  for (ACProjectFileSystemItem *child in _children.allValues) {
-    if (![child writeToURL:[url URLByAppendingPathComponent:child.name] error:error]) {
-      return NO;
-    }
-  }
-  
-  return YES;
-}
-
-- (BOOL)removeSynchronouslyWithError:(NSError *__autoreleasing *)error {
-  for (ACProjectFileSystemItem *item in _children.allValues) {
-    if (![item removeSynchronouslyWithError:error]) {
-      return NO;
-    }
-  }
-  return [super removeSynchronouslyWithError:error];
 }
 
 #pragma mark - Accessing folder content
@@ -158,215 +143,86 @@ static NSString * const _childrenKey = @"children";
   return [_children objectForKey:name];
 }
 
-#pragma mark - Creating new folders and files
+#pragma mark - Creating and deleting folders and files
 
-- (void)addNewFolderWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFolder *))completionHandler {
-  [self _addNewChildItemWithClass:[ACProjectFolder class] name:name originalURL:originalURL completionHandler:(void(^)(ACProjectFileSystemItem *))completionHandler];
+- (ACProjectFolder *)newChildFolderWithName:(NSString *)name {
+  if ([_children objectForKey:name]) {
+    return nil;
+  }
+  NSFileWrapper *fileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
+  fileWrapper.preferredFilename = name;
+  ACProjectFolder *folder = [ACProjectFolder.alloc initWithProject:self.project parent:self fileWrapper:fileWrapper propertyListDictionary:nil];
+  [self _addChildFileSystemItem:folder];
+  return folder;
 }
 
-- (void)addNewFileWithName:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFile *))completionHandler {
-  [self _addNewChildItemWithClass:[ACProjectFile class] name:name originalURL:originalURL completionHandler:(void(^)(ACProjectFileSystemItem *))completionHandler];
+- (ACProjectFile *)newChildFileWithName:(NSString *)name {
+  if ([_children objectForKey:name]) {
+    return nil;
+  }
+  NSFileWrapper *fileWrapper = [NSFileWrapper.alloc initRegularFileWithContents:nil];
+  fileWrapper.preferredFilename = name;
+  ACProjectFile *file = [ACProjectFile.alloc initWithProject:self.project parent:self fileWrapper:fileWrapper propertyListDictionary:nil];
+  [self _addChildFileSystemItem:file];
+  return file;
 }
 
-#pragma mark - Internal Methods
-
-- (void)didRemoveChild:(ACProjectFileSystemItem *)child {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  ASSERT([_children.allValues containsObject:child]);
+- (void)removeChildItem:(ACProjectFileSystemItem *)childItem {
+  if ([_children objectForKey:childItem.name] != childItem) {
+    return;
+  }
   [self willChangeValueForKey:@"children"];
-  [_children removeObjectForKey:child.name];
+  [self.project removeFileSystemItem:childItem withBlock:^{
+    [childItem prepareForRemoval];
+    [_children removeObjectForKey:childItem.name];
+    [self.project updateChangeCount:UIDocumentChangeDone];
+  }];
   [self didChangeValueForKey:@"children"];
 }
 
-#pragma mark - Private Methods
-
-- (void)_addNewChildItemWithClass:(Class)childClass name:(NSString *)name originalURL:(NSURL *)originalURL completionHandler:(void (^)(ACProjectFileSystemItem *))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    if ([_children objectForKey:name]) {
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil);
-        }];
-      }
-      return;
-    }
-    ACProjectFileSystemItem *childItem = [[childClass alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:name];
-    if (!childItem) {
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil);
-        }];
-      }
-      return;
-    }
-    if (originalURL) {
-      if (![childItem readFromURL:originalURL error:NULL]) {
-        if (completionHandler) {
-          [NSOperationQueue.mainQueue addOperationWithBlock:^{
-            completionHandler(nil);
-          }];
-        }
-        return;
-      }
-    }
-    [self _didAddChild:childItem];
-    [self.project didAddFileSystemItem:childItem];
-    [self.project updateChangeCount:UIDocumentChangeDone];
-    if (completionHandler) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        completionHandler(childItem);
-      }];
-    }
-  }];
-}
-
-- (ACProjectFileSystemItem *)_addExistingItem:(ACProjectFileSystemItem *)item renameTo:(NSString *)newName error:(NSError *__autoreleasing *)error {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  // Error if trying to move on the same folder with the same name
-  if (item.parentFolder == self && (!newName || [newName isEqualToString:item.name])) {
-    if (error) {
-      *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteFileExistsError userInfo:nil];
-    }
-    return nil;
-  }
-  
-  // Remove destination item if already existing
-  NSFileManager *fileManager = NSFileManager.alloc.init;
-  NSURL *newItemURL = [self.fileURL URLByAppendingPathComponent:newName];
-  if ([_children objectForKey:newName]) {
-    if ([fileManager removeItemAtURL:newItemURL error:nil]) {
-      [_children removeObjectForKey:newName];
-    }
-  }
-  // Moving
-  if (![item writeToURL:item.fileURL error:error]) {
-    return nil;
-  }
-  if ([fileManager fileExistsAtPath:newItemURL.path] && ![fileManager moveItemAtURL:item.fileURL toURL:newItemURL error:error]) {
-    ASSERT(!error || *error);
-    return nil;
-  }
-  
-  // Inform of movement
-  [item.parentFolder didRemoveChild:item];
-  item.fileURL = newItemURL;
-  item.parentFolder = self;
-  [self _didAddChild:item];
-  return item;
-}
-
-- (ACProjectFileSystemItem *)_addCopyOfExistingItem:(ACProjectFileSystemItem *)item renameIfNeeded:(BOOL)renameIfNeeded error:(NSError *__autoreleasing *)error {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  // Get name of destination item
-  NSString *name = item.name;
-  if (renameIfNeeded) {
-    NSInteger currentNumber = 1;
-    while ([_children objectForKey:name]) {
-      name = [item.name stringByAddingDuplicateNumber:currentNumber];
-      ++currentNumber;
-    }
-  }
-  
-  // Remove destination item if already existing
-  NSURL *childURL = [self.fileURL URLByAppendingPathComponent:name];
-  if ([_children objectForKey:name]) {
-    if ([NSFileManager.alloc.init removeItemAtURL:childURL error:nil]) {
-      [_children removeObjectForKey:name];
-    }
-  }
-  
-  // Copy
-  ACProjectFileSystemItem *childItem = [[[item class] alloc] initWithProject:self.project propertyListDictionary:nil parent:self name:name];
-  if (!childItem) {
-    if (error) {
-      *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnknownError userInfo:nil];
-    }
-    return nil;
-  } else {
-    if (![item writeToURL:item.fileURL error:error]) {
-      return nil;
-    }
-    if (![childItem readFromURL:item.fileURL error:error]) {
-      return nil;
-    };
-  }
-  
-  // Inform of copy
-  [self _didAddChild:childItem];
-  [self.project didAddFileSystemItem:childItem];
-  [self.project updateChangeCount:UIDocumentChangeDone];
-  return childItem;
-}
-
-- (void)_didAddChild:(ACProjectFileSystemItem *)child {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  ASSERT(![_children.allValues containsObject:child]);
+- (void)_addChildFileSystemItem:(ACProjectFileSystemItem *)item {
   [self willChangeValueForKey:@"children"];
-  [_children setObject:child forKey:child.name];
+  [self.project addFileSystemItem:item withBlock:^{
+    [_children setObject:item forKey:item.name];
+    [self.project updateChangeCount:UIDocumentChangeDone];
+  }];
   [self didChangeValueForKey:@"children"];
 }
 
 @end
 
+#pragma mark -
+
 @implementation ACProjectFileSystemItem (RenamingMovingAndCopying)
 
-- (void)setName:(NSString *)name withCompletionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(name && ![name isEqualToString:self.name]);
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    ACProjectFileSystemItem *item = [self.parentFolder _addExistingItem:self renameTo:name error:NULL];
-    ASSERT(!item || [self.name isEqualToString:name]);
-    if (completionHandler) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        completionHandler(item ? YES : NO);
-      }];
-    }
-  }];
+- (void)moveToFolder:(ACProjectFolder *)newParent renameTo:(NSString *)newName {
+  ACProjectFolder *oldParent = self.parentFolder;
+  if (newParent != oldParent) {
+    [oldParent willChangeValueForKey:@"children"];
+    [newParent willChangeValueForKey:@"children"];
+  }
+  [oldParent->_children removeObjectForKey:self.name];
+  if (newName) {
+    self.name = newName;
+  }
+  self.parentFolder = newParent;
+  [newParent->_children setObject:self forKey:self.name];
+  [self.project updateChangeCount:UIDocumentChangeDone];
+  if (newParent != oldParent) {
+    [oldParent didChangeValueForKey:@"children"];
+    [newParent didChangeValueForKey:@"children"];
+  }
 }
 
-- (void)moveToFolder:(ACProjectFolder *)newParent completionHandler:(void (^)(BOOL))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(newParent && newParent != self.parentFolder);
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    ACProjectFileSystemItem *item = [newParent _addExistingItem:self renameTo:self.name error:NULL];
-    ASSERT(!item || self.parentFolder == newParent);
-    if (completionHandler) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        completionHandler(item ? YES : NO);
-      }];
-    }
-  }];
-}
-
-- (void)copyToFolder:(ACProjectFolder *)copyParent completionHandler:(void (^)(ACProjectFileSystemItem *))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  ASSERT(copyParent && copyParent != self.parentFolder);
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    ACProjectFileSystemItem *copy = [copyParent _addCopyOfExistingItem:self renameIfNeeded:NO error:NULL];
-    if (completionHandler) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        completionHandler(copy);
-      }];
-    }
-  }];
-}
-
-- (void)duplicateWithCompletionHandler:(void (^)(ACProjectFileSystemItem *))completionHandler {
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  completionHandler = [completionHandler copy];
-  [self.project performAsynchronousFileAccessUsingBlock:^{
-    ACProjectFileSystemItem *copy = [self.parentFolder _addCopyOfExistingItem:self renameIfNeeded:YES error:NULL];
-    if (completionHandler) {
-      [NSOperationQueue.mainQueue addOperationWithBlock:^{
-        completionHandler(copy);
-      }];
-    }
-  }];
+- (ACProjectFileSystemItem *)copyToFolder:(ACProjectFolder *)copyParent renameTo:(NSString *)newName {
+  [copyParent willChangeValueForKey:@"children"];
+  ACProjectFileSystemItem *copy = [self.class.alloc initWithProject:self.project parent:copyParent fileWrapper:self.fileWrapper propertyListDictionary:nil];
+  if (newName) {
+    copy.name = newName;
+  }
+  [copyParent _addChildFileSystemItem:copy];
+  [copyParent didChangeValueForKey:@"children"];
+  return copy;
 }
 
 @end

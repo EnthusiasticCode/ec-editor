@@ -188,7 +188,7 @@ static void *_currentProjectRemotesContext;
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows)
       {
-        [[self.filteredItems objectAtIndex:indexPath.row] remove];
+        [currentProject removeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

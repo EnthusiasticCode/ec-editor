@@ -265,19 +265,12 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (projectFile == _projectFile)
     return;
   
-  [_projectFile closeWithCompletionHandler:nil];
-  _projectFile = nil;
-  [projectFile openWithCompletionHandler:^(BOOL success) {
-    if (!success) {
-      return;
-    }
-    _projectFile = projectFile;
-    [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
-    [_codeView updateAllText];
-    [self _loadWebPreviewContentAndTitle];
-    [RACAbleSelf(projectFile.attributedContent) subscribeNext:^(id x) {
-      [self.codeView updateAllText];
-    }];
+  _projectFile = projectFile;
+  [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
+  [_codeView updateAllText];
+  [self _loadWebPreviewContentAndTitle];
+  [RACAbleSelf(projectFile.attributedContent) subscribeNext:^(id x) {
+    [self.codeView updateAllText];
   }];
 }
 
@@ -431,10 +424,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 }
 
 #pragma mark - View lifecycle
-
-- (void)dealloc {
-  [_projectFile closeWithCompletionHandler:nil];
-}
 
 - (void)loadView
 {

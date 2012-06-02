@@ -32,6 +32,12 @@ NSString * const ACProjectWillRemoveProjectNotificationName = @"ACProjectWillRem
 NSString * const ACProjectDidRemoveProjectNotificationName = @"ACProjectDidRemoveProjectNotificationName";
 NSString * const ACProjectNotificationIndexKey = @"ACProjectNotificationIndexKey";
 
+NSString * const ACProjectWillAddItem = @"ACProjectWillAddItem";
+NSString * const ACProjectDidAddItem = @"ACProjectDidAddItem";
+NSString * const ACProjectWillRemoveItem = @"ACProjectWillRemoveItem";
+NSString * const ACProjectDidRemoveItem = @"ACProjectDidRemoveItem";
+NSString * const ACProjectNotificationItemKey = @"ACProjectNotificationItemKey";
+
 static NSMutableSet *_projectUUIDs;
 
 /// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
@@ -50,7 +56,7 @@ static NSString * const _plistLabelColorKey = @"labelColor";
 static NSString * const _plistIsNewlyCreatedKey = @"newlyCreated";
 
 // Content
-static NSString * const _projectPlistFileName = @".acproj";
+static NSString * const _plistFilename = @".acproj";
 static NSString * const _plistContentsKey = @"contents";
 static NSString * const _plistBookmarksKey = @"bookmarks";
 static NSString * const _plistRemotesKey = @"remotes";
@@ -70,6 +76,9 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (id)_initWithUUID:(NSString *)uuid;
 
 @property (nonatomic, readwrite, getter = isNewlyCreated) BOOL newlyCreated;
+
+@property (nonatomic, strong) ACProjectFolder *contentsFolder;
+@property (nonatomic, copy) NSArray *remotes;
 
 @end
 
@@ -97,16 +106,13 @@ static NSString * const _plistRemotesKey = @"remotes";
   ACProjectDocument *_document;
   NSMutableDictionary *_filesCache;
   NSMutableDictionary *_bookmarksCache;
-  @package
-  ACProjectFolder *_contentsFolder;
   NSMutableDictionary *_remotes;
-  NSError *_lastError;
   
   dispatch_once_t _codeIndexingSchedulerToken;
   RACScheduler *_codeIndexingScheduler;
 }
 
-@synthesize UUID = _UUID, artCodeURL = _artCodeURL;
+@synthesize UUID = _UUID, artCodeURL = _artCodeURL, contentsFolder = _contentsFolder;
 
 #pragma mark - Forwarding
 
@@ -122,9 +128,6 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
-  if (!_document) {
-    _document = [ACProjectDocument.alloc initWithFileURL:self.fileURL project:self];
-  }
   return _document;
 }
 
@@ -234,7 +237,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   ACProject *project = [[self alloc] _initWithUUID:uuid];
   [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
     if (success) {
-      ASSERT(project->_lastError == nil);
       // Retrieve the index in which the new project will be added in the sorted project's array
       __block NSUInteger insertionIndex = 0;
       [[self projects] enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
@@ -262,7 +264,6 @@ static NSString * const _plistRemotesKey = @"remotes";
       [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidInsertProjectNotificationName object:self userInfo:userInfo];
       completionHandler(project);
     } else {
-      ASSERT(project->_lastError);
       completionHandler(nil);
     }
   }];
@@ -327,11 +328,6 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Project content
 
-- (ACProjectFolder *)contentsFolder {
-  ASSERT(_contentsFolder || self.documentState & UIDocumentStateClosed);
-  return _contentsFolder;
-}
-
 - (NSArray *)files {
   return [_filesCache allValues];
 }
@@ -342,6 +338,13 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 - (NSArray *)remotes {
   return [_remotes allValues];
+}
+
+- (void)setRemotes:(NSArray *)remotes {
+  [_remotes removeAllObjects];
+  for (ACProjectRemote *remote in remotes) {
+    [_remotes setObject:remote forKey:remote.UUID];
+  }
 }
 
 - (ACProjectItem *)itemWithUUID:(id)uuid {
@@ -360,11 +363,25 @@ static NSString * const _plistRemotesKey = @"remotes";
   if (!remote) {
     return nil;
   }
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
   [self willChangeValueForKey:@"remotes"];
+  [defaultCenter postNotificationName:ACProjectWillAddItem object:self userInfo:[NSDictionary dictionaryWithObject:remote forKey:ACProjectNotificationItemKey]];
   [_remotes setObject:remote forKey:remote.UUID];
   [self updateChangeCount:UIDocumentChangeDone];
+  [defaultCenter postNotificationName:ACProjectDidAddItem object:self userInfo:[NSDictionary dictionaryWithObject:remote forKey:ACProjectNotificationItemKey]];
   [self didChangeValueForKey:@"remotes"];
   return remote;
+}
+
+- (void)removeRemote:(ACProjectRemote *)remote {
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
+  [self willChangeValueForKey:@"remotes"];
+  [defaultCenter postNotificationName:ACProjectWillRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:remote forKey:ACProjectNotificationItemKey]];
+  [remote prepareForRemoval];
+  [_remotes removeObjectForKey:remote.UUID];
+  [self updateChangeCount:UIDocumentChangeDone];
+  [defaultCenter postNotificationName:ACProjectDidRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:remote forKey:ACProjectNotificationItemKey]];
+  [self didChangeValueForKey:@"remotes"];
 }
 
 #pragma mark - Project-wide operations
@@ -372,30 +389,13 @@ static NSString * const _plistRemotesKey = @"remotes";
 - (void)duplicateWithCompletionHandler:(void (^)(ACProject *))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   completionHandler = [completionHandler copy];
-  [self performAsynchronousFileAccessUsingBlock:^{
-    NSError *error = nil;
-    
-    // Save the project
-    if (![self writeContents:nil andAttributes:nil safelyToURL:self.fileURL forSaveOperation:UIDocumentSaveForOverwriting error:&error]) {
-      ASSERT(error);
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil);
-        }];
-      }
-    }
-    
-    // Copy files to duplicate project
-    NSString *duplicateUUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
-    if (![[[NSFileManager alloc] init] copyItemAtURL:self.fileURL toURL:[self.class._projectsDirectory URLByAppendingPathComponent:duplicateUUID] error:&error]) {
-      ASSERT(error);
-      
-      if (completionHandler) {
-        [NSOperationQueue.mainQueue addOperationWithBlock:^{
-          completionHandler(nil);
-        }];
-      }
-    }
+  NSString *duplicateUUID = [[NSString alloc] initWithGeneratedUUIDNotContainedInSet:_projectUUIDs];
+  NSURL *duplicateURL = [self.class._projectsDirectory URLByAppendingPathComponent:duplicateUUID];
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    NSFileCoordinator *fileCoordinator = NSFileCoordinator.alloc.init;
+    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 writingItemAtURL:duplicateURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+      [NSFileManager.alloc.init copyItemAtURL:newReadingURL toURL:newWritingURL error:NULL];
+    }];
     
     // Add duplicate project to projects list
     [NSOperationQueue.mainQueue addOperationWithBlock:^{
@@ -423,56 +423,56 @@ static NSString * const _plistRemotesKey = @"remotes";
         completionHandler([self.class.alloc _initWithUUID:duplicateUUID]);
       }
     }];
-  }];
-}
-
-#pragma mark - Internal Remotes Methods
-
-- (void)didRemoveRemote:(ACProjectRemote *)remote {
-  ASSERT(remote);
-  [self willChangeValueForKey:@"remotes"];
-  [_remotes removeObjectForKey:remote.UUID];
-  [self didChangeValueForKey:@"remotes"];
+  });
 }
 
 #pragma mark - Internal Bookmarks Methods
 
-- (void)didAddBookmark:(ACProjectFileBookmark *)bookmark {
+- (void)addBookmark:(ACProjectFileBookmark *)bookmark withBlock:(void(^)(void))block {
   ASSERT(bookmark);
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
   [self willChangeValueForKey:@"bookmarks"];
+  [defaultCenter postNotificationName:ACProjectWillAddItem object:self userInfo:[NSDictionary dictionaryWithObject:bookmark forKey:ACProjectNotificationItemKey]];
+  block();
   [_bookmarksCache setObject:bookmark forKey:bookmark.UUID];
+  [defaultCenter postNotificationName:ACProjectDidAddItem object:self userInfo:[NSDictionary dictionaryWithObject:bookmark forKey:ACProjectNotificationItemKey]];
   [self didChangeValueForKey:@"bookmarks"];
 }
 
-- (void)didRemoveBookmark:(ACProjectFileBookmark *)bookmark {
+- (void)removeBookmark:(ACProjectFileBookmark *)bookmark withBlock:(void(^)(void))block {
   ASSERT(bookmark);
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
   [self willChangeValueForKey:@"bookmarks"];
+  [defaultCenter postNotificationName:ACProjectWillRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:bookmark forKey:ACProjectNotificationItemKey]];
   [_bookmarksCache removeObjectForKey:bookmark.UUID];
+  block();
+  [defaultCenter postNotificationName:ACProjectDidRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:bookmark forKey:ACProjectNotificationItemKey]];
   [self didChangeValueForKey:@"bookmarks"];
 }
 
 #pragma mark - Internal Files Methods
 
-- (void)didAddFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
+- (void)addFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem withBlock:(void(^)(void))block {
   // Called when adding a file and in loading phase
   ASSERT(fileSystemItem);
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
   [self willChangeValueForKey:@"files"];
+  [defaultCenter postNotificationName:ACProjectWillAddItem object:self userInfo:[NSDictionary dictionaryWithObject:fileSystemItem forKey:ACProjectNotificationItemKey]];
+  block();
   [_filesCache setObject:fileSystemItem forKey:fileSystemItem.UUID];
+  [defaultCenter postNotificationName:ACProjectDidAddItem object:self userInfo:[NSDictionary dictionaryWithObject:fileSystemItem forKey:ACProjectNotificationItemKey]];
   [self didChangeValueForKey:@"files"];
 }
 
-- (void)didRemoveFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem {
+- (void)removeFileSystemItem:(ACProjectFileSystemItem *)fileSystemItem withBlock:(void(^)(void))block {
   ASSERT(fileSystemItem);
+  NSNotificationCenter *defaultCenter = NSNotificationCenter.defaultCenter;
   [self willChangeValueForKey:@"files"];
+  [defaultCenter postNotificationName:ACProjectWillRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:fileSystemItem forKey:ACProjectNotificationItemKey]];
   [_filesCache removeObjectForKey:fileSystemItem.UUID];
+  block();
+  [defaultCenter postNotificationName:ACProjectDidRemoveItem object:self userInfo:[NSDictionary dictionaryWithObject:fileSystemItem forKey:ACProjectNotificationItemKey]];
   [self didChangeValueForKey:@"files"];
-}
-
-#pragma mark - Internal Methods
-
-- (NSURL *)contentsFolderURL {
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-  return [self.fileURL URLByAppendingPathComponent:_contentsFolderName];
 }
 
 #pragma mark - Private Methods
@@ -613,89 +613,88 @@ static NSString * const _plistRemotesKey = @"remotes";
   }];
 }
 
-- (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)outError {
+- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
   ASSERT(_project);
+  
+  if (![contents isKindOfClass:[NSFileWrapper class]]) {
+    return NO;
+  }
+  NSFileWrapper *fileWrapper = (NSFileWrapper *)contents;
+  
   // Read plist
-  NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
-  NSData *plistData = [NSData dataWithContentsOfURL:plistURL options:NSDataReadingUncached error:outError];
+  NSData *plistData = [[fileWrapper.fileWrappers objectForKey:_plistFilename] regularFileContents];
   NSDictionary *plist = nil;
   if (plistData)
-    plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:outError];
+    plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
   
   // Read content folder
-  _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:[plist objectForKey:_plistContentsKey] parent:nil name:nil];
+  _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project parent:nil fileWrapper:[fileWrapper.fileWrappers objectForKey:_contentsFolderName] propertyListDictionary:[plist objectForKey:_plistContentsKey]];
+  
+  ASSERT(_project.contentsFolder);
   
   // Read remotes
   if ([plist objectForKey:_plistRemotesKey]) {
-    NSMutableDictionary *remotesFromPlist = [NSMutableDictionary new];
+    NSMutableDictionary *remotesFromPlist = NSMutableDictionary.alloc.init;
     for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey]) {
       ACProjectRemote *remote = [ACProjectRemote.alloc initWithProject:_project propertyListDictionary:remotePlist];
       if (remote) {
         [remotesFromPlist setObject:remote forKey:remote.UUID];
       }
     }
-    _project->_remotes = [remotesFromPlist copy];
+    _project.remotes = remotesFromPlist.copy;
   }
   return YES;
 }
 
-- (BOOL)writeContents:(id)contents andAttributes:(NSDictionary *)additionalFileAttributes safelyToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation error:(NSError *__autoreleasing *)outError {
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
   ASSERT(_project);  
-  ASSERT(url);
-  // Create project plist
+  
+  // Create project plist and fileWrapper
   NSMutableDictionary *plist = NSMutableDictionary.alloc.init;
+  NSFileWrapper *fileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
   
-  // Create the contents folder if it doesn't exist, otherwise just save it
-  if (!_project->_contentsFolder) {
-    _project->_contentsFolder = [ACProjectFolder.alloc initWithProject:_project propertyListDictionary:nil parent:nil name:nil];
-    ASSERT(_project->_contentsFolder);
-  } else {
-    ASSERT(_project->_contentsFolder);
-    NSURL *contentsURL = [url URLByAppendingPathComponent:_contentsFolderName];
-    if (![_project->_contentsFolder writeToURL:contentsURL error:outError]) {
-      return NO;
-    }
+  // Get contents
+  if (!_project.contentsFolder) {
+    NSFileWrapper *contentsFileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
+    contentsFileWrapper.preferredFilename = _contentsFolderName;
+    _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project parent:nil fileWrapper:contentsFileWrapper propertyListDictionary:nil];
   }
-  
-  // Get content plist
-  NSDictionary *contentsPlist = _project->_contentsFolder.propertyListDictionary;
+  NSDictionary *contentsPlist = _project.contentsFolder.propertyListDictionary;
   if (contentsPlist) {
     [plist setObject:contentsPlist forKey:_plistContentsKey];
   }
+  NSFileWrapper *contentsFileWrapper = _project.contentsFolder.fileWrapper;
+  if (contentsFileWrapper) {
+    [fileWrapper addFileWrapper:contentsFileWrapper];
+  }
   
   // Get remotes
-  if (_project->_remotes.count) {
-    NSMutableArray *remotesPlist = [NSMutableArray arrayWithCapacity:_project->_remotes.count];
-    for (ACProjectFileBookmark *remote in _project->_remotes.allValues) {
+  if (_project.remotes.count) {
+    NSMutableArray *remotesPlist = [NSMutableArray arrayWithCapacity:_project.remotes.count];
+    for (ACProjectFileBookmark *remote in _project.remotes) {
       [remotesPlist addObject:remote.propertyListDictionary];
     }
     [plist setObject:remotesPlist forKey:_plistRemotesKey];
   }
   
-  // Write the document bundle if needed, ignore it if it fails
-  [NSFileManager.alloc.init createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:NULL];
-  
-  // Apply attributes to document bundle
-  if (additionalFileAttributes && ![url setResourceValues:additionalFileAttributes error:outError]) {
-    return NO;
-  };
-  
-  // Write plist
-  NSURL *plistURL = [url URLByAppendingPathComponent:_projectPlistFileName];
-  if (![[NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:outError] writeToURL:plistURL atomically:YES]) {
-    return NO;
+  // Serialize property list
+  NSData *plistData = [NSPropertyListSerialization dataWithPropertyList:plist format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+  if (plistData) {
+    NSFileWrapper *plistFileWrapper = [NSFileWrapper.alloc initRegularFileWithContents:plistData];
+    plistFileWrapper.preferredFilename = _plistFilename;
+    if (plistFileWrapper) {
+      [fileWrapper addFileWrapper:plistFileWrapper];
+    }
   }
   
-  return YES;
+  return fileWrapper;
 }
 
-- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
-  ASSERT(_project);
-  _project->_lastError = error;
 #if DEBUG
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted {
   NSLog(@">>>>>>>>>>>>>>>>> %@", error);
-#endif
 }
+#endif
 
 #pragma mark - Public Methods
 
