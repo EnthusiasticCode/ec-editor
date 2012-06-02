@@ -10,8 +10,4 @@
 
 @interface DocSetBrowserController : UIViewController
 
-/// The currently displayed docset URL.
-/// This URL has to be in the form: docset://<docset name>[/<relative file>[#anchor]]
-@property (nonatomic, strong) NSURL *docSetURL;
-
 @end
