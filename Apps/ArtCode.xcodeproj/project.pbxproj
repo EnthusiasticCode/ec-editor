@@ -23,8 +23,6 @@
 		B741D71514C2FA0D00B622D1 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B741D71414C2FA0D00B622D1 /* libiconv.dylib */; };
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
-		B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */; };
 		B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
 		B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
 		B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
@@ -509,7 +507,6 @@
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
-		B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileSpec.m; sourceTree = "<group>"; };
 		B75B5B431532423E00A576A9 /* ArtCodeTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTests.h; sourceTree = "<group>"; };
 		B75B5B441532423E00A576A9 /* ArtCodeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTests.m; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
@@ -1303,7 +1300,6 @@
 				B75B5B431532423E00A576A9 /* ArtCodeTests.h */,
 				B75B5B441532423E00A576A9 /* ArtCodeTests.m */,
 				B771014F1506E40B006AF1FB /* ACProjectSpec.m */,
-				B75B5B40153241E100A576A9 /* ACProjectFileSpec.m */,
 				CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */,
 				B77101291506E20F006AF1FB /* Supporting Files */,
 			);
@@ -2518,7 +2514,6 @@
 				B7728C6315286EE9005EA98A /* TMScope.m in Sources */,
 				B7728C6515286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B75B5B41153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
@@ -2552,7 +2547,6 @@
 				B7728C6215286EE8005EA98A /* TMScope.m in Sources */,
 				B7728C6415286EF5005EA98A /* TMBundle.m in Sources */,
 				B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B75B5B42153241E100A576A9 /* ACProjectFileSpec.m in Sources */,
 				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,

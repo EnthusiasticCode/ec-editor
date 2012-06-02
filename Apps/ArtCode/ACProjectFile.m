@@ -26,14 +26,6 @@ static NSString * const _plistFileEncodingKey = @"fileEncoding";
 static NSString * const _plistExplicitSyntaxKey = @"explicitSyntax";
 static NSString * const _plistBookmarksKey = @"bookmarks";
 
-@interface ACProjectFile ()
-
-@property (nonatomic, copy) NSAttributedString *attributedContent;
-@property (atomic, strong) TMUnit *codeUnit;
-
-@end
-
-#pragma mark -
 
 /// Project internal methods to manage bookarks
 @interface ACProject (Bookmarks)
@@ -56,27 +48,10 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 @implementation ACProjectFile {
   NSMutableDictionary *_bookmarks;
-  NSUInteger _openCount;
-  NSMutableArray *_contentDisposables;
 }
 
-@synthesize explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier, theme = _theme;
-@synthesize content = _content, attributedContent = _attributedContent;
-@synthesize codeUnit = _codeUnit;
-
-#pragma mark - KVO Overrides
-
-+ (NSSet *)keyPathsForValuesAffectingSyntax {
-  return [NSSet setWithObject:@"codeUnit.syntax"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingSymbolList {
-  return [NSSet setWithObject:@"codeUnit.symbolList"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingDiagnostics {
-  return [NSSet setWithObject:@"codeUnit.diagnostics"];
-}
+@synthesize explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier;
+@synthesize content = _content;
 
 #pragma mark - ACProjectItem
 
@@ -132,7 +107,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
   
   _bookmarks = NSMutableDictionary.alloc.init;
-  _contentDisposables = NSMutableArray.alloc.init;
   
   _explicitFileEncoding = [plistDictionary objectForKey:_plistFileEncodingKey];
   _explicitSyntaxIdentifier = [plistDictionary objectForKey:_plistExplicitSyntaxKey];
@@ -165,32 +139,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
 }
 
-#pragma mark - Managing semantic content
-
-- (TMSyntaxNode *)syntax {
-  return _codeUnit.syntax;
-}
-
-- (void)setSyntax:(TMSyntaxNode *)syntax {
-  _codeUnit.syntax = syntax;
-}
-
-- (void)setTheme:(TMTheme *)theme {
-  if (theme == _theme) {
-    return;
-  }
-  _theme = theme;
-  self.attributedContent = [self.attributedContent attributedStringBySettingAttributes:theme.commonAttributes range:NSMakeRange(0, self.attributedContent.length)];
-}
-
-- (NSArray *)symbolList {
-  return _codeUnit.symbolList;
-}
-
-- (NSArray *)diagnostics {
-  return _codeUnit.diagnostics;
-}
-
 #pragma mark - Managing file bookmarks
 
 - (NSArray *)bookmarks {
@@ -219,24 +167,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 
 - (ACProjectFileBookmark *)bookmarkForPoint:(id)point {
   return [_bookmarks objectForKey:point];
-}
-
-@end
-
-#pragma mark -
-
-@implementation ACProjectFile (RACExtensions)
-
-- (RACSubscribable *)rac_qualifiedScopeIdentifierAtOffset:(NSUInteger)offset {
-  return [[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
-    return [self.codeUnit qualifiedScopeIdentifierAtOffset:offset];
-  }] deliverOn:[RACScheduler mainQueueScheduler]];
-}
-
-- (RACSubscribable *)rac_completionsAtOffset:(NSUInteger)offset {
-  return [[RACSubscribable startWithScheduler:self.project.codeIndexingScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
-    return [self.codeUnit qualifiedScopeIdentifierAtOffset:offset];
-  }] deliverOn:[RACScheduler mainQueueScheduler]];
 }
 
 @end

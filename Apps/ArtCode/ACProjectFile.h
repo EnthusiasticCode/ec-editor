@@ -29,25 +29,6 @@
 /// Unattributed content of the file
 @property (nonatomic, copy) NSString *content;
 
-/// Attributed content of the file
-@property (nonatomic, copy, readonly) NSAttributedString *attributedContent;
-
-#pragma mark Managing semantic content
-
-/// The syntax used to interpret the file's contents.
-/// Will be autodetected if not set.
-@property (nonatomic, strong) TMSyntaxNode *syntax;
-
-/// The theme used to color the source code.
-/// The default theme will be used if not set.
-@property (nonatomic, strong) TMTheme *theme;
-
-/// An array of TMSymbol objects representing all the symbols in the file.
-@property (nonatomic, strong, readonly) NSArray *symbolList;
-
-/// Warnings, errors and other diagnostics in the file.
-@property (nonatomic, strong, readonly) NSArray *diagnostics;
-
 #pragma mark Managing file bookmarks
 /// @name Managing file bookmarks
 
@@ -62,14 +43,5 @@
 
 /// Remove a bookmark
 - (void)removeBookmark:(ACProjectFileBookmark *)bookmark;
-
-@end
-
-@class RACSubscribable;
-
-@interface ACProjectFile (RACExtensions)
-
-- (RACSubscribable *)rac_qualifiedScopeIdentifierAtOffset:(NSUInteger)offset;
-- (RACSubscribable *)rac_completionsAtOffset:(NSUInteger)offset;
 
 @end

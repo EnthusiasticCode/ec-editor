@@ -269,7 +269,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
   [_codeView updateAllText];
   [self _loadWebPreviewContentAndTitle];
-  [RACAbleSelf(projectFile.attributedContent) subscribeNext:^(id x) {
+  [RACAbleSelf(projectFile.content) subscribeNext:^(id x) {
     [self.codeView updateAllText];
   }];
 }
@@ -515,7 +515,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (editing)
   {
     // Set keyboard for main scope
-    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:_projectFile.syntax.qualifiedIdentifier];
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:[TMSyntaxNode syntaxWithScopeIdentifier:@"text.plain"]];
   }
   
   if (oldContentView != currentContentView)
@@ -596,20 +596,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return self.projectFile.attributedContent.length;
+  return self.projectFile.content.length;
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 // TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [[self.projectFile.attributedContent attributedSubstringFromRange:stringRange] mutableCopy];
+  NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.projectFile.content substringWithRange:stringRange]];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.projectFile.attributedContent.string substringWithRange:[result rangeAtIndex:1]];
+      NSString *placeHolderName = [self.projectFile.content substringWithRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }
@@ -630,7 +630,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return [self.projectFile.attributedContent attribute:attributeName atIndex:index longestEffectiveRange:effectiveRange inRange:NSMakeRange(0, self.projectFile.attributedContent.length)];
+  return nil;
 }
 
 #pragma mark - Code View Delegate Methods
