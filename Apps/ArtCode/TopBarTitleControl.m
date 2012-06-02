@@ -175,6 +175,10 @@
     [view sizeToFit];
     labelFrame.size.width += view.bounds.size.width + gapBetweenFragments;
   }
+  // Account for large frames
+  if (labelFrame.size.width > bounds.size.width) {
+    labelFrame.size.width = bounds.size.width;
+  }
   labelFrame.size.width -= gapBetweenFragments;
   labelFrame.size.height = bounds.size.height;
   labelFrame.origin = CGPointMake( self.contentInsets.left + (bounds.size.width - labelFrame.size.width) / 2.0, self.contentInsets.top + (bounds.size.height - labelFrame.size.height) / 2.0);
@@ -182,13 +186,19 @@
   // Selected, current views layout
   CGRect viewFrame, lastViewFrame = labelFrame;
   lastViewFrame.size = CGSizeZero;
-  for (UIView *view in _currentViews)
-  {
+  for (UIView *view in _currentViews) {
     viewFrame = view.frame;
     viewFrame.origin = CGPointMake(CGRectGetMaxX(lastViewFrame), labelFrame.origin.y + (labelFrame.size.height - viewFrame.size.height) / 2.0);
     lastViewFrame = CGRectIntegral(viewFrame);
+    // Early exit if already using all the real estate
+    if (CGRectGetMaxX(lastViewFrame) > CGRectGetMaxX(bounds)) {
+      lastViewFrame.size.width = CGRectGetMaxX(bounds) - lastViewFrame.origin.x;
+      view.frame = lastViewFrame;
+      lastViewFrame.origin.x += gapBetweenFragments;
+      return;
+    }
     view.frame = lastViewFrame;
-    lastViewFrame.origin.x += gapBetweenFragments;
+    lastViewFrame.origin.x += gapBetweenFragments;    
   }
   
   CGFloat maxSegmentWidth = (bounds.size.width - labelFrame.size.width) / 2.0 - gapBetweenFragments;

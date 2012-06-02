@@ -52,7 +52,7 @@
   
   // Update on docset changes
   [[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
-    return self.artCodeTab.currentDocSet != nil;
+    return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
   }] subscribeNext:^(NSURL *url) {
     [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
   }];
@@ -80,10 +80,16 @@
   [super viewDidUnload];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [self.webView loadRequest:[NSURLRequest requestWithURL:self.artCodeTab.currentURL]];
+}
+
 #pragma mark - WebView Delegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
 	NSURL *URL = [request URL];
+  
   if ([URL.scheme isEqualToString:@"docset"]) {
     NSURL *fileURL = URL.fileURLByResolvingDocSet;
     if (!fileURL)
@@ -106,6 +112,10 @@
     // Open URL with webview
     [self.webView loadRequest:[NSURLRequest requestWithURL:fileURL]];
     return NO;
+  }
+  
+  if ([URL.scheme isEqualToString:@"file"]) {
+    
   }
   
 	if ([[URL scheme] isEqualToString:@"file"]) {
@@ -161,6 +171,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
   self.loading = NO;
+  self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
 }
 
 - (void)webView:(UIWebView *)aWebView didFailLoadWithError:(NSError *)error {
