@@ -11,6 +11,9 @@
 #import "DocSetOutlineController.h"
 #import "ShapePopoverBackgroundView.h"
 
+#import "DocSet.h"
+#import "DocSetDownloadManager.h"
+
 @interface DocSetBrowserController () <UIWebViewDelegate>
 
 /// The web view to show the docset content
@@ -35,6 +38,34 @@
   return nil;
 }
 
+- (void)setDocSetURL:(NSURL *)docSetURL {
+  if (_docSetURL == docSetURL)
+    return;
+  
+  NSURL *fileURL = docSetURL.fileURLByResolvingDocSet;
+  if (!fileURL)
+    return;
+  
+  _docSetURL = docSetURL;
+  
+  // Handle soft redirects (they otherwise break the history):	
+	NSString *html = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+	if (html) {
+		static NSRegularExpression *metaRefreshRegex = nil;
+    if (!metaRefreshRegex) {
+      metaRefreshRegex = [NSRegularExpression regularExpressionWithPattern:@"<meta id=\"refresh\".*?URL=(.*?)\"" options:0 error:NULL];
+    }
+		NSTextCheckingResult *result = [metaRefreshRegex firstMatchInString:html options:0 range:NSMakeRange(0, html.length)];
+		if (result.numberOfRanges > 1) {
+			NSString *relativeRedirectPath = [html substringWithRange:[result rangeAtIndex:1]];
+			fileURL = [NSURL URLWithString:relativeRedirectPath relativeToURL:fileURL];
+		}
+	}
+  
+  // Open URL with webview
+  [self.webView loadRequest:[NSURLRequest requestWithURL:fileURL]];
+}
+
 #pragma mark - Controller's lifecycle
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -46,13 +77,9 @@
   self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"O" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
-  [RACAbleSelf(self.artCodeTab.currentDocSet) subscribeNext:^(DocSet *docSet) {
-    if (docSet != nil) {
-      
-    } else {
-      // TODO show no docset selected
-    }
-  }];
+  [[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
+    return self.artCodeTab.currentDocSet != nil;
+  }] toProperty:RAC_KEYPATH_SELF(self.docSetURL) onObject:self];
   
   return self;
 }
@@ -93,6 +120,7 @@
     _outlinePopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
     _outlinePopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
   }
+  _outlinePopoverController.contentViewController.artCodeTab = self.artCodeTab;
   [_outlinePopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 

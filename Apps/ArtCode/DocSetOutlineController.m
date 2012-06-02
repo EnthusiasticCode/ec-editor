@@ -9,6 +9,7 @@
 #import "DocSetOutlineController.h"
 #import "DocSet.h"
 #import "HighlightTableViewCell.h"
+#import "ArtCodeTab.h"
 
 @interface DocSetOutlineController ()
 
@@ -18,10 +19,13 @@
 
 @property (nonatomic, strong) NSArray *searchResults;
 - (void)_reloadSearchResults;
+- (void)_openNode:(NSManagedObject *)node;
 
 @end
 
-@implementation DocSetOutlineController
+@implementation DocSetOutlineController {
+  UISearchDisplayController *_searchController;
+}
 
 #pragma mark Properties
 
@@ -55,15 +59,17 @@
 - (void)loadView {
 	[super loadView];
   
-  self.searchDisplayController.delegate = self;
-	self.searchDisplayController.searchResultsDataSource = self;
-	self.searchDisplayController.searchResultsDelegate = self;
+  // This has the side effect of setting self.searchDisplayController
+  _searchController = [UISearchDisplayController.alloc initWithSearchBar:UISearchBar.new contentsController:self];
+  _searchController.delegate = self;
+	_searchController.searchResultsDataSource = self;
+	_searchController.searchResultsDelegate = self;
 	
-	self.searchDisplayController.searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44);
-	self.searchDisplayController.searchBar.scopeButtonTitles = [NSArray arrayWithObjects:NSLocalizedString(@"API",nil), NSLocalizedString(@"Title",nil), nil];
-	self.searchDisplayController.searchBar.selectedScopeButtonIndex = 0;
-	self.searchDisplayController.searchBar.showsScopeBar = NO;
-	self.tableView.tableHeaderView = self.searchDisplayController.searchBar;
+	_searchController.searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44);
+	_searchController.searchBar.scopeButtonTitles = [NSArray arrayWithObjects:NSLocalizedString(@"API",nil), NSLocalizedString(@"Title",nil), nil];
+	_searchController.searchBar.selectedScopeButtonIndex = 0;
+	_searchController.searchBar.showsScopeBar = NO;
+	self.tableView.tableHeaderView = _searchController.searchBar;
 	
 	self.tableView.backgroundColor = [UIColor colorWithWhite:0.96 alpha:1.0];
 }
@@ -256,15 +262,21 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	if (tableView == self.tableView) {
+		NSDictionary *nodeSection = [self.rootNodeSections objectAtIndex:indexPath.section];
+		NSManagedObject *node = [[nodeSection objectForKey:kNodeSectionNodes] objectAtIndex:indexPath.row];
+		[self _openNode:node];
+	} else if (tableView == self.searchDisplayController.searchResultsTableView) {
+		[self.searchDisplayController.searchBar resignFirstResponder];
+		NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
+		if ([result objectForKey:@"tokenType"]) {
+      [self.artCodeTab pushURL:[self.docSet docSetURLForToken:result]];
+		} else {
+			NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:[result objectForKey:@"objectID"] error:NULL];
+			[self _openNode:node];
+		}
+	}
 }
 
 #pragma mark - Private methods
@@ -285,6 +297,21 @@
 		[self.docSet searchForTokensMatching:searchTerm completion:completionHandler];
 	} else {
 		[self.docSet searchForNodesMatching:searchTerm completion:completionHandler];
+	}
+}
+
+- (void)_openNode:(NSManagedObject *)node {
+	BOOL expandable = [self.docSet nodeIsExpandable:node];
+	if (expandable) {
+		DocSetOutlineController *childViewController = [[DocSetOutlineController alloc] initWithDocSet:self.docSet rootNode:node];
+		[self.navigationController pushViewController:childViewController animated:YES];
+	} else {
+		if ([[node valueForKey:@"installDomain"] intValue] > 1) {
+			NSURL *webURL = [self.docSet webURLForNode:node];
+			[[UIApplication sharedApplication] openURL:webURL];
+			return;
+		}
+    [self.artCodeTab pushURL:[self.docSet docSetURLForNode:node]];
 	}
 }
 

@@ -49,8 +49,11 @@ typedef void(^DocSetSearchCompletionHandler)(NSString *searchTerm, NSArray *resu
 - (void)searchForNodesMatching:(NSString *)searchTerm completion:(DocSetSearchCompletionHandler)completion;
 - (void)searchForTokensMatching:(NSString *)searchTerm completion:(DocSetSearchCompletionHandler)completion;
 
+- (NSURL *)docSetURLForNode:(NSManagedObject *)node;
+- (NSURL *)docSetURLForToken:(NSDictionary *)token;
 - (NSURL *)URLForNode:(NSManagedObject *)node;
 - (NSURL *)webURLForNode:(NSManagedObject *)node;
 - (NSURL *)webURLForLocalURL:(NSURL *)localURL;
 
 @end
+

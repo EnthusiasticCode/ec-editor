@@ -526,9 +526,6 @@
         }
       }
     }
-    
-    // Set the tab explicitly since result might not have a parent view controller yet
-    result.artCodeTab = self.artCodeTab;
   } else if ([currentURL.scheme isEqualToString:@"docset"]) {
     if ([self.contentViewController isKindOfClass:[DocSetBrowserController class]])
       result = self.contentViewController;
@@ -537,6 +534,9 @@
   } else {
     ASSERT(NO); // Unknown URL
   }
+  
+  // Set the tab explicitly since result might not have a parent view controller yet
+  result.artCodeTab = self.artCodeTab;
 
   return result;
 }

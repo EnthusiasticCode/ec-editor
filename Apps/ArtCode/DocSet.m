@@ -271,6 +271,32 @@
 	return nil;
 }
 
+- (NSURL *)docSetURLForNode:(NSManagedObject *)node {
+  NSString *docSetURLString = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  if (node) {
+    docSetURLString = [docSetURLString stringByAppendingPathComponent:[node valueForKey:@"kPath"]];
+    if ([node valueForKey:@"kAnchor"]) {
+      docSetURLString = [docSetURLString stringByAppendingPathComponent:[NSString stringWithFormat:@"#%@", [node valueForKey:@"kAnchor"]]];
+    }
+  }
+  return [NSURL URLWithString:[NSString stringWithFormat:@"docset://%@", docSetURLString]];
+}
+
+- (NSURL *)docSetURLForToken:(NSDictionary *)token {
+  NSManagedObjectID *metainformationID = [token objectForKey:@"metainformation"];
+  if (metainformationID) {
+    NSManagedObject *metadata = [[self managedObjectContext] existingObjectWithID:metainformationID error:NULL];
+    NSString *filePath = [metadata valueForKeyPath:@"file.path"];
+    NSString *a = [metadata valueForKey:@"anchor"];
+    if (filePath) {
+      return [NSURL URLWithString:[NSString stringWithFormat:@"docset://%@/%@#%@", [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], filePath, a]];
+    } else {
+      return [[self docSetURLForNode:[token objectForKey:@"parentNode"]] URLByAppendingPathComponent:[NSString stringWithFormat:@"#%@", a]];
+    }
+  } else {
+    return [self docSetURLForNode:[token objectForKey:@"parentNode"]];
+  }
+}
 
 - (NSURL *)URLForNode:(NSManagedObject *)node
 {
@@ -354,3 +380,4 @@
 }
 
 @end
+

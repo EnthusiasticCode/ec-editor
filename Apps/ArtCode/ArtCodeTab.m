@@ -323,20 +323,10 @@ static NSMutableArray *_mutableTabs;
     }
   } else if ([toURL.scheme isEqualToString:@"docset"]) {
     // Handle changes to docset urls
-    NSString *docSetName = [toURL.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
-      if ([docSet.title isEqualToString:docSetName]) {
-        self.currentDocSet = docSet;
-        docSetName = nil;
-        break;
-      }
-    }
-    if (docSetName != nil) {
-      self.currentDocSet = nil;
-    }
+    self.currentDocSet = toURL.docSet;
     self.currentProject = nil;
     self.currentItem = nil;
-    completionHandler(docSetName == nil);
+    completionHandler(self.currentDocSet != nil);
   } else {
     ASSERT(NO); // URL not handled
   }

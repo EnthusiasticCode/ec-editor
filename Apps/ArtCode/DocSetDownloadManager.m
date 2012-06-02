@@ -322,6 +322,34 @@
 	}
 }
 
+@end
 
+@implementation NSURL (DocSet)
+
+- (DocSet *)docSet {
+  NSString *docSetName = [self.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
+    if ([docSet.title isEqualToString:docSetName]) {
+      return docSet;
+    }
+  }
+  return nil;
+}
+
+- (NSURL *)fileURLByResolvingDocSet {
+  DocSet *docSet = self.docSet;
+  if (!docSet)
+    return nil;
+  NSString *URLString = [docSet.path stringByAppendingPathComponent:@"Contents/Resources/Documents"];
+  if (self.path.length) {
+    URLString = [URLString stringByAppendingPathComponent:self.path];
+  } else {
+    URLString = [URLString stringByAppendingPathComponent:@"index.html"];
+  }
+  if (self.fragment.length) {
+    URLString = [URLString stringByAppendingFormat:@"#%@", self.fragment];
+  }
+  return [NSURL fileURLWithPath:URLString];
+}
 
 @end
