@@ -191,16 +191,16 @@ static void updatePath(ShapePopoverBackgroundView *self)
   
   UIPopoverArrowDirection arrowCorner = 0;
   NSUInteger arrowCornerAtStart = 1UL << 8;
-  if (localArrowPosition < arrowLength)
-  {
-    arrowCorner = (NSInteger)self.arrowDirection | arrowCornerAtStart;
-  }
-  else if (
-           (self.arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition > rect.size.width - arrowLength)
-           || (self.arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition > rect.size.height - arrowLength))
-  {
-    arrowCorner = (NSInteger)self.arrowDirection;
-  }
+//  if (localArrowPosition < arrowLength)
+//  {
+//    arrowCorner = (NSInteger)self.arrowDirection | arrowCornerAtStart;
+//  }
+//  else if (
+//           (self.arrowDirection <= UIPopoverArrowDirectionDown && localArrowPosition > rect.size.width - arrowLength)
+//           || (self.arrowDirection > UIPopoverArrowDirectionDown && localArrowPosition > rect.size.height - arrowLength))
+//  {
+//    arrowCorner = (NSInteger)self.arrowDirection;
+//  }
   
   // Start position
   if (arrowCorner & UIPopoverArrowDirectionLeft || arrowCorner & UIPopoverArrowDirectionUp)

@@ -329,6 +329,8 @@
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
 		CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
+		CD625941157A2BAE00B4669A /* DocSetOutlineController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetOutlineController.m */; };
+		CD625943157A358A00B4669A /* docSet.mom in Resources */ = {isa = PBXBuildFile; fileRef = CD625942157A358A00B4669A /* docSet.mom */; };
 		CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
@@ -827,6 +829,9 @@
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
+		CD62593F157A2BAE00B4669A /* DocSetOutlineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetOutlineController.h; sourceTree = "<group>"; };
+		CD625940157A2BAE00B4669A /* DocSetOutlineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetOutlineController.m; sourceTree = "<group>"; };
+		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
 		CD65F1D014F6C4A200E0C441 /* Keychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keychain.h; sourceTree = "<group>"; };
 		CD65F1D114F6C4A200E0C441 /* Keychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Keychain.m; sourceTree = "<group>"; };
 		CD69C90114F1642000FCC987 /* NewRemoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewRemoteViewController.h; sourceTree = "<group>"; };
@@ -1551,6 +1556,8 @@
 			children = (
 				CD2DB606157934FF009E4026 /* DocSetBrowserController.h */,
 				CD2DB607157934FF009E4026 /* DocSetBrowserController.m */,
+				CD62593F157A2BAE00B4669A /* DocSetOutlineController.h */,
+				CD625940157A2BAE00B4669A /* DocSetOutlineController.m */,
 			);
 			name = "DocSet Browser";
 			sourceTree = "<group>";
@@ -1577,6 +1584,15 @@
 				CDC1A078147E6EC300E01B7A /* CodeFileCompletionCell.m */,
 			);
 			name = Completion;
+			sourceTree = "<group>";
+		};
+		CD625944157A358F00B4669A /* DocSet */ = {
+			isa = PBXGroup;
+			children = (
+				CD625942157A358A00B4669A /* docSet.mom */,
+				CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */,
+			);
+			name = DocSet;
 			sourceTree = "<group>";
 		};
 		CD6580C514157B300079412F /* Find & Replace Controllers */ = {
@@ -1794,7 +1810,6 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CD2DB6031578E7C6009E4026 /* AvailableDocSets.plist */,
 				CDA9B66E1524A0620063D76F /* ipad_icon.png */,
 				CDA9B66F1524A0620063D76F /* ipad_icon@2.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
@@ -1802,6 +1817,7 @@
 				B7656C18144B53500084B050 /* Language Bundles */,
 				B7656C17144B53330084B050 /* Themes */,
 				CD7D2B0913C0CEE100B889EE /* UI */,
+				CD625944157A358F00B4669A /* DocSet */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2505,6 +2521,7 @@
 				CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */,
 				CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */,
 				CD2DB6041578E7C6009E4026 /* AvailableDocSets.plist in Resources */,
+				CD625943157A358A00B4669A /* docSet.mom in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2715,6 +2732,7 @@
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
 				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,
 				CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */,
+				CD625941157A2BAE00B4669A /* DocSetOutlineController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
