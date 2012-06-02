@@ -49,7 +49,7 @@
 
 #pragma mark Managing Tabs
 
-@property (nonatomic, readonly) NSUInteger tabCount;
+@property (nonatomic, readonly, copy) NSArray *tabControls;
 @property (nonatomic) NSUInteger selectedTabIndex;
 - (void)setSelectedTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 - (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated;

@@ -9,6 +9,7 @@
 
 #import "TabController.h"
 #import "UIView+ReuseIdentifier.h"
+#import "BezelAlert.h"
 
 #define TABBAR_HEIGHT 40
 
@@ -35,25 +36,25 @@ static void *childViewControllerTitleContext;
 
 @end
 
-@interface TabController () {
-  NSMutableArray *orderedChildViewControllers;
-  CustomizableScrollView *_contentScrollView;
-  BOOL keepCurrentPageCentered;
-}
+@interface TabController ()
 
-- (void)layoutChildViews;
-- (void)loadSelectedAndAdiacentTabViews;
-- (void)scrollToSelectedViewControllerAnimated:(BOOL)animated;
+- (void)_layoutChildViews;
+- (void)_loadSelectedAndAdiacentTabViews;
+- (void)_scrollToSelectedViewControllerAnimated:(BOOL)animated;
 
 @end
 
-@implementation TabController
+@implementation TabController {
+  NSMutableArray *_orderedChildViewControllers;
+  CustomizableScrollView *_contentScrollView;
+  BOOL _keepCurrentPageCentered;
+}
 
 #pragma mark - Properties
 
 @synthesize tabBar = _tabBar, tabBarVisible = _tabBarVisible;
 @synthesize contentScrollView = _contentScrollView, tabPageMargin;
-@synthesize selectedViewControllerIndex;
+@synthesize selectedViewControllerIndex = _selectedViewControllerIndex;
 
 - (TabBar *)tabBar
 {
@@ -86,7 +87,7 @@ static void *childViewControllerTitleContext;
     if (animated)
     {
       [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState animations:^{
-        [self layoutChildViews]; 
+        [self _layoutChildViews]; 
       } completion:^(BOOL finished) {
         if (finished && !_tabBarVisible)
           [self.tabBar removeFromSuperview];
@@ -94,7 +95,7 @@ static void *childViewControllerTitleContext;
     }
     else
     {
-      [self layoutChildViews];
+      [self _layoutChildViews];
       if (!_tabBarVisible)
         [self.tabBar removeFromSuperview];
     }
@@ -120,10 +121,10 @@ static void *childViewControllerTitleContext;
     __weak TabController *this = self;
     _contentScrollView.layoutSubviewsBlock = ^(UIScrollView *scrollView) {
       CGRect bounds = scrollView.bounds;
-      NSUInteger tabControllersCount = [this->orderedChildViewControllers count];
+      NSUInteger tabControllersCount = [this->_orderedChildViewControllers count];
       
       // Will keep the page centered in case of device rotation
-      if (this->keepCurrentPageCentered)
+      if (this->_keepCurrentPageCentered)
       {
         NSUInteger currentPage = roundf(scrollView.contentOffset.x * tabControllersCount / scrollView.contentSize.width);
         scrollView.contentOffset = CGPointMake(currentPage * bounds.size.width, 0);
@@ -136,7 +137,7 @@ static void *childViewControllerTitleContext;
       CGRect pageFrame = bounds;
       pageFrame.origin.x = this->tabPageMargin / 2;
       pageFrame.size.width -= this->tabPageMargin;
-      for (UIViewController *tabController in this->orderedChildViewControllers)
+      for (UIViewController *tabController in this->_orderedChildViewControllers)
       {
         if (tabController.isViewLoaded)
         {
@@ -153,21 +154,21 @@ static void *childViewControllerTitleContext;
 {
   tabPageMargin = margin;
   
-  [self layoutChildViews];
+  [self _layoutChildViews];
   [self.contentScrollView setNeedsLayout];
 }
 
 - (NSArray *)childViewControllers
 {
-  return orderedChildViewControllers;
+  return _orderedChildViewControllers;
 }
 
 - (UIViewController *)selectedViewController
 {
-  if (selectedViewControllerIndex == NSNotFound)
+  if (_selectedViewControllerIndex == NSNotFound)
     return nil;
   
-  return [orderedChildViewControllers objectAtIndex:selectedViewControllerIndex];
+  return [_orderedChildViewControllers objectAtIndex:_selectedViewControllerIndex];
 }
 
 - (void)setSelectedViewControllerIndex:(NSUInteger)index
@@ -184,7 +185,7 @@ static void *childViewControllerTitleContext;
 
 static void init(TabController *self)
 {
-  self->selectedViewControllerIndex = NSNotFound;
+  self->_selectedViewControllerIndex = NSNotFound;
   self->_tabBarVisible = YES;
 }
 
@@ -211,7 +212,7 @@ static void init(TabController *self)
   if (context == &childViewControllerTitleContext)
   {
     // Change title to tab button relative to observed child view controller.
-    NSUInteger tabIndex = [orderedChildViewControllers indexOfObject:object];
+    NSUInteger tabIndex = [_orderedChildViewControllers indexOfObject:object];
     if (tabIndex != NSNotFound)
     {
       [self.tabBar setTitle:[object title] forTabAtIndex:tabIndex];
@@ -238,8 +239,8 @@ static void init(TabController *self)
     [self.view addSubview:self.tabBar];
   [self.view addSubview:self.contentScrollView];
   
-  [self layoutChildViews];
-  [self loadSelectedAndAdiacentTabViews];
+  [self _layoutChildViews];
+  [self _loadSelectedAndAdiacentTabViews];
 }
 
 - (void)viewDidUnload
@@ -254,10 +255,10 @@ static void init(TabController *self)
 {
   [super viewWillAppear:animated];
   
-  if (selectedViewControllerIndex == NSNotFound && [orderedChildViewControllers count] > 0) {
-    selectedViewControllerIndex = 0;
+  if (_selectedViewControllerIndex == NSNotFound && [_orderedChildViewControllers count] > 0) {
+    _selectedViewControllerIndex = 0;
   }
-  [self scrollToSelectedViewControllerAnimated:animated];
+  [self _scrollToSelectedViewControllerAnimated:animated];
 }
 
 // TODO: all messages automatically forwarded to child view controllers should be managed manually
@@ -267,12 +268,12 @@ static void init(TabController *self)
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
   // Makes the current tab view to be centered in the scroll view during device orientation
-  keepCurrentPageCentered = YES;
+  _keepCurrentPageCentered = YES;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-  keepCurrentPageCentered = NO;
+  _keepCurrentPageCentered = NO;
 }
 
 #pragma mark - Managing tabs
@@ -287,35 +288,35 @@ static void init(TabController *self)
   [super addChildViewController:childController];
   
   // Adding to ordered array of controllers
-  if (orderedChildViewControllers == nil)
-    orderedChildViewControllers = [NSMutableArray new];
-  [orderedChildViewControllers addObject:childController];
+  if (_orderedChildViewControllers == nil)
+    _orderedChildViewControllers = [NSMutableArray new];
+  NSUInteger tabIndex = _orderedChildViewControllers.count;
+  [_orderedChildViewControllers addObject:childController];
   
   // Add tab button
   [self.tabBar addTabWithTitle:childController.title animated:animated];
-  // TODO this makes the observer leak because the title is forwarder to the inner controller in singletabcontroller
-  //    [childController addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&childViewControllerTitleContext];
+  [[RACAble(childController, title) distinctUntilChanged] subscribeNext:^(id x) {
+    if (x) {
+      [self.tabBar setTitle:x forTabAtIndex:tabIndex];
+    }
+  }];
   
   // Set selection
-  if (selectedViewControllerIndex == NSNotFound)
-    [self setSelectedViewControllerIndex:([orderedChildViewControllers count] - 1) animated:animated];
-  // Or load adiacent views
-  else if (abs(selectedViewControllerIndex - ([orderedChildViewControllers count] - 1)) <= 1)
-    [self loadSelectedAndAdiacentTabViews];
+  [self setSelectedViewControllerIndex:([_orderedChildViewControllers count] - 1) animated:animated];
   
   [childController didMoveToParentViewController:self];
 }
 
-- (void)removeChildViewControllerAtIndex:(NSUInteger)controllerIndex animated:(BOOL)animated
-{
-  ASSERT(controllerIndex < [orderedChildViewControllers count]);
+- (void)removeChildViewController:(UIViewController *)childController animated:(BOOL)animated {
+  NSUInteger controllerIndex = [_orderedChildViewControllers indexOfObject:childController];
+  ASSERT(controllerIndex != NSNotFound);
   [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
 }
 
 - (void)moveChildViewControllerAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
-  ASSERT(fromIndex < [orderedChildViewControllers count]);
-  ASSERT(toIndex < [orderedChildViewControllers count]);
+  ASSERT(fromIndex < [_orderedChildViewControllers count]);
+  ASSERT(toIndex < [_orderedChildViewControllers count]);
   
   [self.tabBar moveTabAtIndex:fromIndex toIndex:toIndex animated:animated];
   
@@ -324,64 +325,43 @@ static void init(TabController *self)
 
 #pragma mark - Tab bar delegate methods
 
-- (BOOL)tabBar:(TabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index
-{
-  if (!self.isViewLoaded || self.view.window == nil)
-  {
-    selectedViewControllerIndex = index;
+- (BOOL)tabBar:(TabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index {
+  // If view is not loaded just update the selected index
+  if (!self.isViewLoaded || self.view.window == nil) {
+    _selectedViewControllerIndex = index;
     return YES;
   }
   
   UIViewController *toViewController = nil;
-  if (index != NSNotFound)
-  {
-    ASSERT(index < [orderedChildViewControllers count]);
-    toViewController = [orderedChildViewControllers objectAtIndex:index];
+  
+  // Get the child view controller to display
+  if (index != NSNotFound) {
+    ASSERT(index < [_orderedChildViewControllers count]);
+    toViewController = [_orderedChildViewControllers objectAtIndex:index];
   }
   
-  if (abs(selectedViewControllerIndex - (NSInteger)index) <= 1)
-  {
-    // Scroll if adiacent tab
-    selectedViewControllerIndex = index;
-    [self scrollToSelectedViewControllerAnimated:YES];
-  }
-  else
-  {
-    // Crossfade if non adiacent
-    selectedViewControllerIndex = index;
-    [self scrollToSelectedViewControllerAnimated:NO];
-    [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
-  }
+  // Crossfade if non adiacent
+  _selectedViewControllerIndex = index;
+  [self _scrollToSelectedViewControllerAnimated:NO];
+  [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
   
   return YES;
 }
 
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex
-{ 
-  UIViewController *controller = [orderedChildViewControllers objectAtIndex:tabIndex];
-  // TODO move this somewhere more consisten
-  //    [controller removeObserver:self forKeyPath:@"title"];
+{
+  // If only one tab is open, don't allow it to be closed
+  if (tabBar.tabControls.count <= 1) {
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Tab cannot be closed" image:nil displayImmediatly:YES];
+    return NO;
+  }
+  
+  UIViewController *controller = [_orderedChildViewControllers objectAtIndex:tabIndex];
   [controller willMoveToParentViewController:nil];
   
   // Remove from tab controller
-  [orderedChildViewControllers removeObject:controller];
+  [_orderedChildViewControllers removeObject:controller];
   [controller removeFromParentViewController];
-  
-  // Change selection if needed
-  if (self.selectedViewControllerIndex == tabIndex)
-  {
-    selectedViewControllerIndex = -2;
-    if (tabIndex > 0)
-      tabIndex -= 1;
-    if (tabIndex < [orderedChildViewControllers count])
-      [self setSelectedViewControllerIndex:tabIndex animated:YES];
-    else
-      self.selectedViewControllerIndex = NSNotFound;
-  }
-  else
-  {
-    [self scrollToSelectedViewControllerAnimated:YES];
-  }
   
   // Remove view if loaded
   if (controller.isViewLoaded)
@@ -390,21 +370,39 @@ static void init(TabController *self)
   return YES;
 }
 
+- (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
+  // Change selection if needed
+  if (_selectedViewControllerIndex == tabIndex)
+  {
+    _selectedViewControllerIndex = -2;
+    if (tabIndex > 0)
+      tabIndex -= 1;
+    if (tabIndex < [_orderedChildViewControllers count])
+      [self setSelectedViewControllerIndex:tabIndex animated:YES];
+    else
+      _selectedViewControllerIndex = NSNotFound;
+  }
+  else
+  {
+    [self _scrollToSelectedViewControllerAnimated:YES];
+  }
+}
+
 - (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex
 {
-  id obj = [orderedChildViewControllers objectAtIndex:fromIndex];
-  [orderedChildViewControllers removeObjectAtIndex:fromIndex];
-  [orderedChildViewControllers insertObject:obj atIndex:toIndex];
+  id obj = [_orderedChildViewControllers objectAtIndex:fromIndex];
+  [_orderedChildViewControllers removeObjectAtIndex:fromIndex];
+  [_orderedChildViewControllers insertObject:obj atIndex:toIndex];
   
-  if (selectedViewControllerIndex == fromIndex)
-    selectedViewControllerIndex = toIndex;
-  else if (selectedViewControllerIndex > fromIndex)
-    selectedViewControllerIndex -= selectedViewControllerIndex > toIndex ? 0 : 1;
-  else if (selectedViewControllerIndex >= toIndex)
-    selectedViewControllerIndex += selectedViewControllerIndex > fromIndex ? 0 : 1;
+  if (_selectedViewControllerIndex == fromIndex)
+    _selectedViewControllerIndex = toIndex;
+  else if (_selectedViewControllerIndex > fromIndex)
+    _selectedViewControllerIndex -= _selectedViewControllerIndex > toIndex ? 0 : 1;
+  else if (_selectedViewControllerIndex >= toIndex)
+    _selectedViewControllerIndex += _selectedViewControllerIndex > fromIndex ? 0 : 1;
   
   // Reposition content scroll view to 
-  [self scrollToSelectedViewControllerAnimated:NO];
+  [self _scrollToSelectedViewControllerAnimated:NO];
 }
 
 #pragma mark - Scroll view delegate methods
@@ -413,7 +411,7 @@ static void init(TabController *self)
 {
   // Get current tab index
   CGRect pageBounds = self.contentScrollView.bounds;
-  NSUInteger tabControllersCount = [orderedChildViewControllers count];
+  NSUInteger tabControllersCount = [_orderedChildViewControllers count];
   NSInteger currentTabIndex = (NSUInteger)roundf(pageBounds.origin.x / pageBounds.size.width);
   if (currentTabIndex < 0)
     currentTabIndex = 0;
@@ -421,7 +419,7 @@ static void init(TabController *self)
     currentTabIndex = tabControllersCount - 1;
   
   // Return if already on this tab
-  if (currentTabIndex == (NSInteger)selectedViewControllerIndex)
+  if (currentTabIndex == (NSInteger)_selectedViewControllerIndex)
     return;
   
   // Select tab button
@@ -430,7 +428,7 @@ static void init(TabController *self)
 
 #pragma mark - Private methods
 
-- (void)layoutChildViews
+- (void)_layoutChildViews
 {
   if (!self.isViewLoaded)
     return;
@@ -446,15 +444,15 @@ static void init(TabController *self)
   self.contentScrollView.frame = CGRectMake(-tabPageMargin / 2, tabBarActualHeight, bounds.size.width + tabPageMargin, bounds.size.height - tabBarActualHeight);
 }
 
-- (void)loadSelectedAndAdiacentTabViews
+- (void)_loadSelectedAndAdiacentTabViews
 {
   if (!self.isViewLoaded)
     return;
   
-  NSUInteger minLoadableIndex = selectedViewControllerIndex > 0 ? selectedViewControllerIndex - 1 : selectedViewControllerIndex;
-  NSUInteger maxLoadableIndex = selectedViewControllerIndex < [orderedChildViewControllers count] - 1 ? selectedViewControllerIndex + 1 : selectedViewControllerIndex;
+  NSUInteger minLoadableIndex = _selectedViewControllerIndex > 0 ? _selectedViewControllerIndex - 1 : _selectedViewControllerIndex;
+  NSUInteger maxLoadableIndex = _selectedViewControllerIndex < [_orderedChildViewControllers count] - 1 ? _selectedViewControllerIndex + 1 : _selectedViewControllerIndex;
   
-  [orderedChildViewControllers enumerateObjectsUsingBlock:^(UIViewController *viewController, NSUInteger index, BOOL *stop) {
+  [_orderedChildViewControllers enumerateObjectsUsingBlock:^(UIViewController *viewController, NSUInteger index, BOOL *stop) {
     // Load view if current or diacent to current
     if (index >= minLoadableIndex && index <= maxLoadableIndex)
     {
@@ -475,12 +473,11 @@ static void init(TabController *self)
   }];
 }
 
-- (void)scrollToSelectedViewControllerAnimated:(BOOL)animated
-{
-  [self loadSelectedAndAdiacentTabViews];
+- (void)_scrollToSelectedViewControllerAnimated:(BOOL)animated {
+  [self _loadSelectedAndAdiacentTabViews];
   [self.contentScrollView layoutIfNeeded];
   CGFloat pageWidth = self.contentScrollView.bounds.size.width;
-  [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * selectedViewControllerIndex, 0, pageWidth, 1) animated:animated];
+  [self.contentScrollView scrollRectToVisible:CGRectMake(pageWidth * _selectedViewControllerIndex, 0, pageWidth, 1) animated:animated];
 }
 
 @end

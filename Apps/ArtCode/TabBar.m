@@ -49,7 +49,6 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   } delegateFlags;
 }
 
-@property (nonatomic, readonly, strong) NSArray *tabControls;
 @property (nonatomic, weak) UIControl *selectedTabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl;
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
@@ -303,11 +302,6 @@ static void init(TabBar *self)
 }
 
 #pragma mark - Managing Tabs
-
-- (NSUInteger)tabCount
-{
-  return [tabControls count];
-}
 
 - (NSUInteger)selectedTabIndex
 {
@@ -680,7 +674,7 @@ static void init(TabBar *self)
   TabBarButton *tabButton = (TabBarButton *)[self _dequeueReusableTabControlWithIdentifier:tabButtonReusableIdentifier];
   if (tabButton == nil) {
     tabButton = [TabBarButton buttonWithType:UIButtonTypeCustom];
-    tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 44, 0, 0);
+    tabButton.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     tabButton.frame = CGRectMake(0, 0, 100, 44);
     
     tabButton.reuseIdentifier = tabButtonReusableIdentifier;
@@ -690,7 +684,16 @@ static void init(TabBar *self)
     tabCloseButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
     tabCloseButton.frame = CGRectMake(0, 0, 44, 44);
     
-    [tabButton addSubview:tabCloseButton];
+    // Adjust title inset and close button when the tab is selected
+    [RACAble(tabButton, selected) subscribeNext:^(id x) {
+      if ([x boolValue]) {
+        [tabButton addSubview:tabCloseButton];
+        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 38, 0, 0);
+      } else {
+        [tabCloseButton removeFromSuperview];
+        tabButton.titleEdgeInsets = UIEdgeInsetsZero;
+      }
+    }];
   }
   
   [tabButton setTitle:title forState:UIControlStateNormal];

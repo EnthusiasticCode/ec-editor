@@ -7,11 +7,11 @@
 //
 
 #import "SingleTabController.h"
+#import "TabController.h"
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
-#import <ReactiveCocoa/ReactiveCocoa.h>
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -252,7 +252,7 @@
 
 - (NSString *)title
 {
-  return self.contentViewController.title;
+  return self.contentViewController.title ?: self.defaultToolbar.titleControl.title;
 }
 
 - (void)setTitle:(NSString *)title
@@ -262,7 +262,7 @@
 
 + (NSSet *)keyPathsForValuesAffectingTitle
 {
-  return [NSSet setWithObject:@"contentViewController.title"];
+  return [NSSet setWithObjects:@"contentViewController.title", @"defaultToolbar.titleControl.titleFragments", nil];
 }
 
 #pragma mark Editing
@@ -318,6 +318,13 @@
     return xs;
   }] subscribeNext:^(id x) {
     [self updateDefaultToolbarTitle];
+  }];
+  
+  // TODO NIK self.tabCollectionController remove self if self.artCodeTab history is empty
+  [RACAbleSelf(self.artCodeTab.historyURLs) subscribeNext:^(NSArray *urls) {
+    if ([urls count] == 0) {
+      [self.tabCollectionController removeChildViewController:self animated:YES];
+    }
   }];
   
   return self;
@@ -525,10 +532,10 @@
   }
   
   // Update title if controller didn't change
-  if (result == self.contentViewController)
-  {
-    [self updateDefaultToolbarTitle];
-  }
+//  if (result == self.contentViewController)
+//  {
+//    [self updateDefaultToolbarTitle];
+//  }
   return result;
 }
 
