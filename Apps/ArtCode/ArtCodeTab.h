@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application, ACProject, ACProjectItem, ACProjectFile;
+@class Application, ACProject, ACProjectItem, ACProjectFile, DocSet;
 
 @interface ArtCodeTab : NSObject
 
@@ -21,6 +21,8 @@
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
 @property (nonatomic, strong, readonly) NSArray *historyURLs;
+
+#pragma mark Current state
 
 @property (nonatomic) NSUInteger currentHistoryPosition;
 
@@ -37,6 +39,11 @@
 
 /// Shorthands for currentItem casting. Will be nil if the currentItem is not of the correct type.
 @property (nonatomic, readonly) ACProjectFile *currentFile;
+
+/// Access to the current URL docset if any.
+@property (nonatomic, strong, readonly) DocSet *currentDocSet;
+
+#pragma mark Hisotry management
 
 /// A value indicating if calling moveBackInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBackInHistory;

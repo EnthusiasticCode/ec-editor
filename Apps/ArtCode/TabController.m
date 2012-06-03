@@ -207,23 +207,6 @@ static void init(TabController *self)
   return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &childViewControllerTitleContext)
-  {
-    // Change title to tab button relative to observed child view controller.
-    NSUInteger tabIndex = [_orderedChildViewControllers indexOfObject:object];
-    if (tabIndex != NSNotFound)
-    {
-      [self.tabBar setTitle:[object title] forTabAtIndex:tabIndex];
-    }
-  }
-  else 
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
-}
-
 #pragma mark - View lifecycle
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -290,14 +273,13 @@ static void init(TabController *self)
   // Adding to ordered array of controllers
   if (_orderedChildViewControllers == nil)
     _orderedChildViewControllers = [NSMutableArray new];
-  NSUInteger tabIndex = _orderedChildViewControllers.count;
   [_orderedChildViewControllers addObject:childController];
   
   // Add tab button
   [self.tabBar addTabWithTitle:childController.title animated:animated];
   [[RACAble(childController, title) distinctUntilChanged] subscribeNext:^(id x) {
     if (x) {
-      [self.tabBar setTitle:x forTabAtIndex:tabIndex];
+      [self.tabBar setTitle:x forTabAtIndex:[_orderedChildViewControllers indexOfObject:childController]];
     }
   }];
   

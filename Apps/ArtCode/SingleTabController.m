@@ -28,6 +28,8 @@
 #import "CodeFileController.h"
 #import "RemotesListController.h"
 #import "RemoteBrowserController.h"
+#import "DocSetBrowserController.h"
+
 #import "UIImage+AppStyle.h"
 
 #define DEFAULT_TOOLBAR_HEIGHT 44
@@ -285,7 +287,9 @@
     return nil;
   
   // Loading mode react to tab loading signal
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)]];
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)] where:^BOOL(id x) {
+    return x != nil;
+  }]];
 
   // Back and forward buttons to tab history
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
@@ -522,20 +526,18 @@
         }
       }
     }
-    
-    // Set the tab explicitly since result might not have a parent view controller yet
-    result.artCodeTab = self.artCodeTab;
-  }
-  else 
-  {
+  } else if ([currentURL.scheme isEqualToString:@"docset"]) {
+    if ([self.contentViewController isKindOfClass:[DocSetBrowserController class]])
+      result = self.contentViewController;
+    else
+      result = [DocSetBrowserController new];
+  } else {
     ASSERT(NO); // Unknown URL
   }
   
-  // Update title if controller didn't change
-//  if (result == self.contentViewController)
-//  {
-//    [self updateDefaultToolbarTitle];
-//  }
+  // Set the tab explicitly since result might not have a parent view controller yet
+  result.artCodeTab = self.artCodeTab;
+
   return result;
 }
 

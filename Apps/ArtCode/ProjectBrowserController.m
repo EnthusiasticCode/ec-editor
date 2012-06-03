@@ -19,6 +19,9 @@
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 
+#import "DocSetDownloadManager.h"
+#import "DocSet.h"
+
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
@@ -30,6 +33,7 @@
 
 @interface ProjectBrowserController ()
 
+@property (nonatomic, strong, readonly) NSArray *gridElements;
 @property (nonatomic, strong) GridView *gridView;
 @property (nonatomic, strong) UIView *hintView;
 
@@ -42,8 +46,7 @@
 
 #pragma mark -
 
-@implementation ProjectBrowserController
-{
+@implementation ProjectBrowserController {
   UIPopoverController *_toolItemPopover;
   
   NSArray *_toolItemsNormal;
@@ -56,7 +59,18 @@
   UIImage *_cellSelectedBackground;
 }
 
-@synthesize gridView = _gridView, hintView = _hintView;
+@synthesize gridElements=_gridElements, gridView = _gridView, hintView = _hintView;
+
+- (NSArray *)gridElements {
+  if (!_gridElements) {
+    NSMutableArray *elements = [NSMutableArray arrayWithArray:ACProject.projects];
+    [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
+    _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+      return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
+    }];
+  }
+  return _gridElements;
+}
 
 - (UIView *)hintView {
   if (!_hintView) {
@@ -91,10 +105,26 @@
   
   // Update gird view
   [projects subscribeNext:^(NSNotification *note) {
-    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
-    if (note.name == ACProjectDidInsertProjectNotificationName) {
+    __block NSUInteger index = 0;
+    if (note.name == ACProjectDidAddProjectNotificationName) {
+      NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
+      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
+          index = idx;
+          *stop = YES;
+        }
+      }];
+      _gridElements = nil;
       [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
+      NSString *projectUUID = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] UUID];
+      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[ACProject class]] && [projectUUID isEqualToString:[obj UUID]]) {
+          index = idx;
+          *stop = YES;
+        }
+      }];
+      _gridElements = nil;
       [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }
   }];
@@ -182,6 +212,8 @@
   
   _cellNormalBackground = nil;
   _cellSelectedBackground = nil;
+  
+  _gridElements = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -194,7 +226,7 @@
 
 - (NSInteger)numberOfCellsForGridView:(GridView *)gridView
 {
-  return ACProject.projects.count;
+  return self.gridElements.count;
 }
 
 - (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
@@ -215,19 +247,26 @@
     [(UIImageView *)cell.selectedBackgroundView setImage:_cellSelectedBackground];
   }
   
-  // Setup project title
-  ACProject *project = [ACProject.projects objectAtIndex:cellIndex];
-  cell.title.text = project.name;
-  cell.label.text = @"";
-  cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-  cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
+  // Setup cell
+  id element = [self.gridElements objectAtIndex:cellIndex];
+  if ([element isKindOfClass:[ACProject class]]) {
+    ACProject *project = (ACProject *)element;
+    cell.title.text = cell.accessibilityLabel = project.name;
+    cell.label.text = @"";
+    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+    cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
+    cell.accessibilityHint = L(@"Open the project");
+  } else if ([element isKindOfClass:[DocSet class]]) {
+    DocSet *docSet = (DocSet *)element;
+    cell.title.text = cell.accessibilityLabel = docSet.name;
+    cell.label.text = @"";
+    cell.accessibilityHint = L(@"Open the documentation");
+    cell.newlyCreatedBadge.hidden = YES;
+  }
   
   // Accessibility
   cell.isAccessibilityElement = YES;
   cell.accessibilityTraits = UIAccessibilityTraitButton;
-  cell.accessibilityLabel = project.name;
-  // TODO change hint according to project's kind (project or documentation..)
-  cell.accessibilityHint = L(@"Open the project");
   
   return cell;
 }
@@ -236,7 +275,12 @@
 
 - (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
   if (!self.isEditing) {
-    [self.artCodeTab pushURL:[[ACProject.projects objectAtIndex:cellIndex] artCodeURL]];
+    id element = [self.gridElements objectAtIndex:cellIndex];
+    if ([element isKindOfClass:[ACProject class]]) {
+      [self.artCodeTab pushURL:[element artCodeURL]];
+    } else if ([element isKindOfClass:[DocSet class]]) {
+      [self.artCodeTab pushURL:[(DocSet *)element docSetURLForNode:nil]];
+    }
   }
 }
 

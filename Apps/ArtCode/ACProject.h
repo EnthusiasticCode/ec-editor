@@ -12,11 +12,11 @@
 @class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote;
 
 /// Notifications for the projects list
-extern NSString * const ACProjectWillInsertProjectNotificationName;
-extern NSString * const ACProjectDidInsertProjectNotificationName;
+extern NSString * const ACProjectWillAddProjectNotificationName;
+extern NSString * const ACProjectDidAddProjectNotificationName;
 extern NSString * const ACProjectWillRemoveProjectNotificationName;
 extern NSString * const ACProjectDidRemoveProjectNotificationName;
-extern NSString * const ACProjectNotificationIndexKey;
+extern NSString * const ACProjectNotificationProjectKey;
 
 /// Other notifications
 extern NSString * const ACProjectWillAddItem;

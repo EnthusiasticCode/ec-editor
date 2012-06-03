@@ -11,6 +11,10 @@
 #import "ACProject.h"
 #import "ACProjectItem.h"
 #import "ACProjectFileBookmark.h"
+
+#import "DocSet.h"
+#import "DocSetDownloadManager.h"
+
 #import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
@@ -27,6 +31,7 @@ static NSMutableArray *_mutableTabs;
 @property (nonatomic, getter = isLoading) BOOL loading;
 @property (nonatomic, strong) ACProject *currentProject;
 @property (nonatomic, strong) ACProjectItem *currentItem;
+@property (nonatomic, strong) DocSet *currentDocSet;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 
@@ -47,7 +52,7 @@ static NSMutableArray *_mutableTabs;
   NSMutableArray *_mutableHistoryURLs;
 }
 
-@synthesize loading = _loading, currentProject = _currentProject, currentItem = _currentItem;
+@synthesize loading = _loading, currentProject = _currentProject, currentItem = _currentItem, currentDocSet = _currentDocSet;
 
 - (ACProjectItem *)currentItem {
   if (_currentItem)
@@ -101,7 +106,7 @@ static NSMutableArray *_mutableTabs;
   
   // React to remove history items from tab's history when a project is eliminated
   [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class]] subscribeNext:^(NSNotification *note) {
-    ACProject *project = [[ACProject projects] objectAtIndex:[[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue]];
+    ACProject *project = [note.userInfo objectForKey:ACProjectNotificationProjectKey];
     if (!project)
       return;
     
@@ -290,49 +295,61 @@ static NSMutableArray *_mutableTabs;
 
 #pragma mark - Private Methods
 
-- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler
-{
-  NSArray *fromUUIDs = [fromURL artCodeUUIDs];
-  NSArray *toUUIDs = [toURL artCodeUUIDs];
-  
-  // Check if we're changing projects, and if the project we're changing to exists
-  BOOL changeProjects = NO;
-  ACProject *toProject = nil;
-  if ((fromUUIDs.count || toUUIDs.count) && ![(fromUUIDs.count ? [fromUUIDs objectAtIndex:0] : nil) isEqual:(toUUIDs.count ? [toUUIDs objectAtIndex:0] : nil)])
-  {
-    changeProjects = YES;
-    if ([toUUIDs count] && [toUUIDs objectAtIndex:0])
-      toProject = [ACProject projectWithUUID:[toUUIDs objectAtIndex:0]];
-  }
-  
-  // If both are true, we need to make an async load, else we load synchronous
-  if (changeProjects && toProject)
-  {
-    self.loading = YES;
-    [toProject openWithCompletionHandler:^(BOOL success) {
-      [self.currentProject closeWithCompletionHandler:nil];
-      if (success) {
-        self.currentProject = toProject;
-        if ([toUUIDs count] > 1)
-          self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler {
+  if ([toURL isArtCodeURL]) {
+    self.currentDocSet = nil;
+    
+    // Handle changes to art code urls
+    NSArray *fromUUIDs = [fromURL artCodeUUIDs];
+    NSArray *toUUIDs = [toURL artCodeUUIDs];
+    
+    // Check if we're changing projects, and if the project we're changing to exists
+    BOOL changeProjects = NO;
+    ACProject *toProject = nil;
+    if ((fromUUIDs.count || toUUIDs.count) && ![(fromUUIDs.count ? [fromUUIDs objectAtIndex:0] : nil) isEqual:(toUUIDs.count ? [toUUIDs objectAtIndex:0] : nil)])
+    {
+      changeProjects = YES;
+      if ([toUUIDs count] && [toUUIDs objectAtIndex:0])
+        toProject = [ACProject projectWithUUID:[toUUIDs objectAtIndex:0]];
+    }
+    
+    // If both are true, we need to make an async load, else we load synchronous
+    if (changeProjects && toProject)
+    {
+      self.loading = YES;
+      [toProject openWithCompletionHandler:^(BOOL success) {
+        [self.currentProject closeWithCompletionHandler:nil];
+        if (success) {
+          self.currentProject = toProject;
+          if ([toUUIDs count] > 1)
+            self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+        } else {
+          self.currentProject = nil;
+          self.currentItem = nil;
+        }
+        completionHandler(success);
+        self.loading = NO;
+      }];
+    }
+    else
+    {
+      // If we're here, the project is the same
+      if ([toUUIDs count] > 1) {
+        self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
       } else {
-        self.currentProject = nil;
         self.currentItem = nil;
       }
-      completionHandler(success);
-      self.loading = NO;
-    }];
-  }
-  else
-  {
-    // If we're here, the project is the same
-    if ([toUUIDs count] > 1) {
-      self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
-    } else {
-      self.currentItem = nil;
+      // Return success if the porject did't need to be changed or there was an UUID but no project.
+      completionHandler(!changeProjects || !((BOOL)toProject ^ toUUIDs.count));
     }
-    // Return success if the porject did't need to be changed or there was an UUID but no project.
-    completionHandler(!changeProjects || !((BOOL)toProject ^ toUUIDs.count));
+  } else if ([toURL.scheme isEqualToString:@"docset"]) {
+    // Handle changes to docset urls
+    self.currentDocSet = toURL.docSet;
+    self.currentProject = nil;
+    self.currentItem = nil;
+    completionHandler(self.currentDocSet != nil);
+  } else {
+    ASSERT(NO); // URL not handled
   }
 }
 
