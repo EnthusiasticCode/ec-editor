@@ -16,10 +16,6 @@
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
-#pragma mark - Controller's location
-
-@property (nonatomic, strong, readonly) ACProjectFile *projectFile;
-
 #pragma mark - Code viewing and editing
 
 /// The code view used to display code.

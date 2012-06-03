@@ -9,6 +9,8 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
+#import "ACProjectItem.h"
+#import "ACProjectFileBookmark.h"
 #import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
@@ -53,6 +55,21 @@ static NSMutableArray *_mutableTabs;
   if (_currentProject)
     return (ACProjectItem *)_currentProject.contentsFolder;
   return nil;
+}
+
+- (ACProjectFile *)currentFile {
+  switch (self.currentItem.type) {
+    case ACPFile:
+      return (ACProjectFile *)self.currentItem;
+    case ACPFileBookmark:
+      return ((ACProjectFileBookmark *)self.currentItem).file;
+    default:
+      return nil;
+  }
+}
+
++ (NSSet *)keyPathsForValuesAffectingCurrentFile {
+  return [NSSet setWithObject:@"currentItem"];
 }
 
 #pragma mark - Class methods

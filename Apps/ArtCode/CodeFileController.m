@@ -43,7 +43,6 @@
 
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, strong) ACProjectFile *projectFile;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
@@ -77,7 +76,7 @@
 
 // from: http://developer.apple.com/library/mac/#documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_patterns/dq_patterns.html
 #define PSIZE 14
-static void drawStencilStar(void *info, CGContextRef myContext)
+static void drawStencilStar(CGContextRef myContext)
 {
   int k;
   double r, theta;
@@ -122,7 +121,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize projectFile = _projectFile;
 @synthesize _keyboardAccessoryItemCompletionsController;
 
 - (CodeView *)codeView
@@ -159,15 +157,14 @@ static void drawStencilStar(void *info, CGContextRef myContext)
     [_codeView addGestureRecognizer:redoRecognizer];
     
     // Bookmark markers
-// TODO NIK reimplement bookmarks
-    //        [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-    //            if (!line.isTruncation && [[this.artCodeTab.currentProject bookmarksForFile:this.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
-    //            {
-    //                CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
-    //                CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
-    //                drawStencilStar(NULL, context);
-    //            }
-    //        } underText:NO forKey:@"bookmarkMarkers"];
+    [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+      if (!line.isTruncation && [this.artCodeTab.currentFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+      {
+        CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
+        CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
+        drawStencilStar(context);
+      }
+    } underText:NO forKey:@"bookmarkMarkers"];
     
     // Accessory view
     CodeFileKeyboardAccessoryView *accessoryView = [CodeFileKeyboardAccessoryView new];
@@ -260,20 +257,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   return _minimapView;
 }
 
-- (void)setProjectFile:(ACProjectFile *)projectFile
-{
-  if (projectFile == _projectFile)
-    return;
-  
-  _projectFile = projectFile;
-  [self _setCodeViewAttributesForTheme:TMTheme.defaultTheme];
-  [_codeView updateAllText];
-  [self _loadWebPreviewContentAndTitle];
-  [RACAbleSelf(projectFile.content) subscribeNext:^(id x) {
-    [self.codeView updateAllText];
-  }];
-}
-
 - (CGFloat)minimapWidth
 {
   if (_minimapWidth == 0)
@@ -318,16 +301,6 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 + (BOOL)automaticallyNotifiesObserversOfMinimapVisible
 {
   return NO;
-}
-
-#pragma mark - ArtCodeTab Category
-
-- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
-{
-  [super setArtCodeTab:artCodeTab];
-  
-  ASSERT(self.artCodeTab.currentItem.type == ACPFile);
-  self.projectFile = (ACProjectFile *)self.artCodeTab.currentItem;
 }
 
 #pragma mark - Single tab controller informal protocol
@@ -425,6 +398,21 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 #pragma mark - View lifecycle
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (!self) {
+    return nil;
+  }
+  
+  [[[RACSubscribable merge:[NSArray.alloc initWithObjects:RACAbleSelf(artCodeTab.currentFile.content), RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] where:^BOOL(id x) {
+    return self.artCodeTab.currentFile != nil;
+  }] subscribeNext:^(id x) {
+    [self.codeView updateAllText];
+  }];
+  
+  return self;
+}
+
 - (void)loadView
 {
   [super loadView];
@@ -515,7 +503,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   if (editing)
   {
     // Set keyboard for main scope
-    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:[TMSyntaxNode syntaxWithScopeIdentifier:@"text.plain"]];
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:@"text.plain"];
   }
   
   if (oldContentView != currentContentView)
@@ -596,20 +584,20 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
 {
-  return self.projectFile.content.length;
+  return self.artCodeTab.currentFile.content.length;
 }
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
 // TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.projectFile.content substringWithRange:stringRange]];
+  NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.artCodeTab.currentFile.content substringWithRange:stringRange]];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
       placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
     // Add placeholders styles
     [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.projectFile.content substringWithRange:[result rangeAtIndex:1]];
+      NSString *placeHolderName = [self.artCodeTab.currentFile.content substringWithRange:[result rangeAtIndex:1]];
       [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
     }];
   }
@@ -624,7 +612,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  self.projectFile.content =  [self.projectFile.content stringByReplacingCharactersInRange:range withString:commitString];
+  self.artCodeTab.currentFile.content =  [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
@@ -651,24 +639,19 @@ static void drawStencilStar(void *info, CGContextRef myContext)
   }
 }
 
-- (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber
-{
-  ASSERT(NO); // Need implementation
-  //    NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
-  //    if ([bookmarks count] == 0)
-  //    {
-  //        [(ACProjectFile *)self.artCodeTab.currentItem addBookmarkWithFileURL:self.artCodeTab.currentURL line:lineNumber note:nil];
-  //    }
-  //    else
-  //    {
-  //        for (ProjectBookmark *bookmark in bookmarks)
-  //        {
-  //            [self.artCodeTab.currentProject removeBookmark:bookmark];
-  //        }
-  //    }
-  //    [self.codeView setNeedsDisplay];
-  //    if (_minimapVisible)
-  //        [_minimapView setNeedsDisplay];
+- (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
+  NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
+  BOOL removedBookmark = NO;
+  for (ACProjectFileBookmark *bookmark in bookmarks) {
+    if (bookmark.bookmarkPoint && [bookmark.bookmarkPoint unsignedIntegerValue] == lineNumber) {
+      removedBookmark = YES;
+      [(ACProjectFile *)self.artCodeTab.currentItem removeBookmark:bookmark];
+      break;
+    }
+  }
+  if (!removedBookmark) {
+    [(ACProjectFile *)self.artCodeTab.currentItem addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
+  }
 }
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
@@ -788,7 +771,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 //  [_selectionChangeDebounceTimer invalidate];
 //  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
 //    // Retrieve the current scope
-//    [self.projectFile qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+//    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
 //      // Change accessory keyboard
 //      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
 //      
@@ -831,7 +814,7 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
 // TODO NIK better check for file type
-  if (editingState || ![[self.projectFile.name pathExtension] isEqualToString:@"html"])
+  if (editingState || ![[self.artCodeTab.currentFile.name pathExtension] isEqualToString:@"html"])
   {
     return self.codeView;
   }
@@ -853,9 +836,9 @@ static void drawStencilStar(void *info, CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle
 {
-  if ([self _isWebPreview] && self.projectFile)
+  if ([self _isWebPreview] && self.artCodeTab.currentItem)
   {
-    [self.webView loadHTMLString:self.projectFile.content baseURL:nil];
+    [self.webView loadHTMLString:self.artCodeTab.currentFile.content baseURL:nil];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else

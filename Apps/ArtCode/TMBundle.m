@@ -19,9 +19,9 @@ static NSArray *_bundleURLs;
   if (self != [TMBundle class])
     return;
   // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
-#if ! TEST
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-#endif
+//#if ! TEST
+//  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
+//#endif
   NSMutableArray *bundleURLs = [NSMutableArray array];
   NSFileManager *fileManager = [[NSFileManager alloc] init];
   for (NSURL *bundleURL in [fileManager contentsOfDirectoryAtURL:[[NSBundle bundleForClass:self] bundleURL] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])

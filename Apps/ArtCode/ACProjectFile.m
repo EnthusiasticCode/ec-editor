@@ -139,6 +139,17 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   }
 }
 
+#pragma mark - File content
+
+- (void)setContent:(NSString *)content {
+  if (content == _content) {
+    return;
+  }
+  
+  _content = content;
+  [self.project updateChangeCount:UIDocumentChangeDone];
+}
+
 #pragma mark - Managing file bookmarks
 
 - (NSArray *)bookmarks {
