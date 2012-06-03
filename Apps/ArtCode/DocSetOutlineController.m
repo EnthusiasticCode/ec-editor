@@ -11,6 +11,7 @@
 #import "HighlightTableViewCell.h"
 #import "ArtCodeTab.h"
 
+
 @interface DocSetOutlineController ()
 
 @property (nonatomic, strong, readonly) DocSet *docSet;
@@ -22,6 +23,16 @@
 - (void)_openNode:(NSManagedObject *)node;
 
 @end
+
+#pragma mark
+
+@interface DocSetOutlineCell : HighlightTableViewCell
+
+@property (nonatomic) BOOL deprecated;
+
+@end
+
+#pragma mark
 
 @implementation DocSetOutlineController {
   UISearchDisplayController *_searchController;
@@ -181,9 +192,9 @@
 		return cell;
 	} else if (aTableView == self.searchDisplayController.searchResultsTableView) {
 		static NSString *searchCellIdentifier = @"SearchResultCell";
-		HighlightTableViewCell *cell = (HighlightTableViewCell *)[aTableView dequeueReusableCellWithIdentifier:searchCellIdentifier];
+		DocSetOutlineCell *cell = (DocSetOutlineCell *)[aTableView dequeueReusableCellWithIdentifier:searchCellIdentifier];
 		if (cell == nil) {
-			cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:searchCellIdentifier];
+			cell = [[DocSetOutlineCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:searchCellIdentifier];
       cell.textLabel.backgroundColor = [UIColor clearColor];
 //			cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
 		}
@@ -206,9 +217,9 @@
 				cell.accessoryType = UITableViewCellAccessoryNone;
         
         // Deprecation
-//				NSManagedObject *metaInfo = [self.docSet.managedObjectContext existingObjectWithID:[result objectForKey:@"metainformation"] error:NULL];
-//				NSSet *deprecatedVersions = [metaInfo valueForKey:@"deprecatedInVersions"];
-//				cell.deprecated = ([deprecatedVersions count] > 0);
+				NSManagedObject *metaInfo = [self.docSet.managedObjectContext existingObjectWithID:[result objectForKey:@"metainformation"] error:NULL];
+				NSSet *deprecatedVersions = [metaInfo valueForKey:@"deprecatedInVersions"];
+				cell.deprecated = ([deprecatedVersions count] > 0);
     
         // Icon
         static NSDictionary *iconsByTokenType = nil;
@@ -250,7 +261,7 @@
 					cell.detailTextLabel.text = nil;
 				}
 			} else {
-//				cell.deprecated = NO;
+				cell.deprecated = NO;
 				cell.textLabel.text = [result objectForKey:@"kName"];
 				NSManagedObjectID *objectID = [result objectForKey:@"objectID"];
 				
@@ -335,6 +346,43 @@
 		}
     [self.artCodeTab pushURL:[self.docSet docSetURLForNode:node]];
 	}
+}
+
+@end
+
+#pragma mark
+
+@implementation DocSetOutlineCell {
+  UIView *_deprecatedView;
+}
+
+@synthesize deprecated = _deprecated;
+
+- (void)setDeprecated:(BOOL)deprecated {
+  if (deprecated == _deprecated)
+    return;
+  
+  _deprecated = deprecated;
+  
+  if (deprecated) {
+    _deprecatedView = UIView.new;
+    _deprecatedView.backgroundColor = [UIColor redColor];
+    [self.contentView insertSubview:_deprecatedView aboveSubview:self.textLabel];
+  } else {
+    [_deprecatedView removeFromSuperview];
+    _deprecatedView = nil;
+  }
+}
+
+- (void)layoutSubviews {
+  [super layoutSubviews];
+  
+  if (_deprecatedView) {
+    CGRect deprecatedViewFrame = self.textLabel.frame;
+    deprecatedViewFrame.origin.y += deprecatedViewFrame.size.height / 2.0;
+    deprecatedViewFrame.size.height = 1;
+    _deprecatedView.frame = deprecatedViewFrame;
+  }
 }
 
 @end
