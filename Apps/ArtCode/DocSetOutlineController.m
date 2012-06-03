@@ -190,7 +190,7 @@
 		
 		if (!self.searchResults) {
       cell.textLabelHighlightedCharacters = nil;
-			cell.textLabel.text = NSLocalizedString(@"Searching...", nil);
+			cell.textLabel.text = L(@"Searching...");
 			cell.textLabel.textColor = [UIColor grayColor];
 			cell.selectionStyle = UITableViewCellSelectionStyleNone;
 			cell.imageView.image = nil;
@@ -205,19 +205,41 @@
         cell.textLabel.text = [result objectForKey:@"tokenName"];
 				cell.accessoryType = UITableViewCellAccessoryNone;
         
+        // Deprecation
 //				NSManagedObject *metaInfo = [self.docSet.managedObjectContext existingObjectWithID:[result objectForKey:@"metainformation"] error:NULL];
 //				NSSet *deprecatedVersions = [metaInfo valueForKey:@"deprecatedInVersions"];
 //				cell.deprecated = ([deprecatedVersions count] > 0);
-				
-//				NSManagedObjectID *tokenTypeID = [result objectForKey:@"tokenType"];
-//				if (tokenTypeID) {
-//					NSManagedObject *tokenType = [[self.docSet managedObjectContext] existingObjectWithID:tokenTypeID error:NULL];
-//					NSString *tokenTypeName = [tokenType valueForKey:@"typeName"];
-//					UIImage *icon = [iconsByTokenType objectForKey:tokenTypeName];
-//					cell.imageView.image = icon;
-//				} else {
-//					cell.imageView.image = nil;
-//				}
+    
+        // Icon
+        static NSDictionary *iconsByTokenType = nil;
+        if (iconsByTokenType == nil) {
+          iconsByTokenType = [[NSDictionary alloc] initWithObjectsAndKeys:
+                              [UIImage imageNamed:@"Const"], @"econst",
+                              [UIImage imageNamed:@"Member.png"], @"intfm",
+                              [UIImage imageNamed:@"Macro.png"], @"macro",
+                              [UIImage imageNamed:@"Type.png"], @"tdef",
+                              [UIImage imageNamed:@"Class.png"], @"cat",
+                              [UIImage imageNamed:@"Property.png"], @"intfp",
+                              [UIImage imageNamed:@"Const.png"], @"clconst",
+                              [UIImage imageNamed:@"Protocol.png"], @"intf",
+                              [UIImage imageNamed:@"Member.png"], @"instm",
+                              [UIImage imageNamed:@"Class.png"], @"cl",
+                              [UIImage imageNamed:@"Struct.png"], @"tag",
+                              [UIImage imageNamed:@"Member.png"], @"clm",
+                              [UIImage imageNamed:@"Property.png"], @"instp",
+                              [UIImage imageNamed:@"Function.png"], @"func",
+                              [UIImage imageNamed:@"Global.png"], @"data",
+                              nil];
+        }
+				NSManagedObjectID *tokenTypeID = [result objectForKey:@"tokenType"];
+				if (tokenTypeID) {
+					NSManagedObject *tokenType = [[self.docSet managedObjectContext] existingObjectWithID:tokenTypeID error:NULL];
+					NSString *tokenTypeName = [tokenType valueForKey:@"typeName"];
+					UIImage *icon = [iconsByTokenType objectForKey:tokenTypeName];
+					cell.imageView.image = icon;
+				} else {
+					cell.imageView.image = nil;
+				}
 				
 				NSManagedObjectID *parentNodeID = [result objectForKey:@"parentNode"];
 				if (parentNodeID) {
