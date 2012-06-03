@@ -250,7 +250,7 @@
 				cell.detailTextLabel.text = nil;
 			}
       
-      cell.textLabelHighlightedCharacters = [NSIndexSet indexSetWithIndexesInRange:[[result objectForKey:@"kName"] rangeOfString:self.searchDisplayController.searchBar.text options:NSCaseInsensitiveSearch]];
+      cell.textLabelHighlightedCharacters = [NSIndexSet indexSetWithIndexesInRange:[[result objectForKey:@"tokenName"] rangeOfString:self.searchDisplayController.searchBar.text options:NSCaseInsensitiveSearch]];
 			cell.textLabel.textColor = [UIColor blackColor];
 			cell.selectionStyle = UITableViewCellSelectionStyleBlue;
 			cell.accessoryView = nil;
