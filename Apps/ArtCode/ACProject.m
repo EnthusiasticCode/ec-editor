@@ -208,12 +208,12 @@ static NSString * const _plistRemotesKey = @"remotes";
       *stop = YES;
     }
   }];
-  NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:removeIndex] forKey:ACProjectNotificationIndexKey]; 
+  NSDictionary *userInfo = [NSDictionary dictionaryWithObject:project forKey:ACProjectNotificationProjectKey];
+
   [NSNotificationCenter.defaultCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:self.class userInfo:userInfo];
   [_projectsList removeObjectForKey:uuid];
-  ASSERT(_projectsSortedList);
-  [_projectsSortedList removeObjectAtIndex:removeIndex];
   [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:self.class userInfo:userInfo];
+
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     [NSFileCoordinator.alloc.init coordinateWritingItemAtURL:project.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
       [NSFileManager.alloc.init removeItemAtURL:newURL error:NULL];
@@ -228,7 +228,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   ACProject *project = [[self alloc] _initWithUUID:uuid];
   [project saveToURL:project.fileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
     if (success) {
-      ASSERT(project->_lastError == nil);
       NSDictionary *userInfo = [NSDictionary dictionaryWithObject:project forKey:ACProjectNotificationProjectKey];
       
       // Notify start of operations via notification center
@@ -405,22 +404,6 @@ static NSString * const _plistRemotesKey = @"remotes";
       if (completionHandler) {
         completionHandler([self.class.alloc _initWithUUID:duplicateUUID]);
       }
-    }];
-  }];
-}
-
-- (void)remove {
-  NSString *removeUUID = self.UUID;
-
-  NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self forKey:ACProjectNotificationProjectKey];
-  
-  [NSNotificationCenter.defaultCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:self.class userInfo:userInfo];
-  [_projectsList removeObjectForKey:removeUUID];
-  [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:self.class userInfo:userInfo];
-  
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-    [NSFileCoordinator.alloc.init coordinateWritingItemAtURL:self.fileURL options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-      [NSFileManager.alloc.init removeItemAtURL:newURL error:NULL];
     }];
   });
 }

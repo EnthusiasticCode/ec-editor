@@ -544,7 +544,6 @@
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
 		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
-		B73FA23A1570F1BE00A48077 /* ACProject+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProject+Internal.h"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
@@ -1366,7 +1365,6 @@
 			isa = PBXGroup;
 			children = (
 				B77100ED1506DAFF006AF1FB /* ACProject.h */,
-				B73FA23A1570F1BE00A48077 /* ACProject+Internal.h */,
 				B77100EE1506DAFF006AF1FB /* ACProject.m */,
 				B77100F01506DDD5006AF1FB /* ACProjectItem.h */,
 				CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */,
