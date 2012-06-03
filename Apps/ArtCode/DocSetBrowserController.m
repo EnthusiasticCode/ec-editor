@@ -51,9 +51,9 @@
   self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"O" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
-  [[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
+  [[[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
     return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
-  }] subscribeNext:^(NSURL *url) {
+  }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
     [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
   }];
   
@@ -80,20 +80,44 @@
   [super viewDidUnload];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  [self.webView loadRequest:[NSURLRequest requestWithURL:self.artCodeTab.currentURL]];
-}
-
 #pragma mark - WebView Delegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+  // This handler is quite complicated to manage artcode tab history and resolving redirects:
+  // file:// are passed to the webview it they are a cached version of the actual docset page
+  //         otherwise the request is ignored and pushed as a new docset URL to the history.
+  // docset:// are converted into docset-file requests so that this handler can cache the page
+  // docset-file:// are transformed into cached file and requested to the webview
 	NSURL *URL = [request URL];
   
+  // Redirect to docset link to enable history
+  if ([URL.scheme isEqualToString:@"file"]) {
+    
+    // Cached files are the only request type allowed to pass
+    if ([URL.path rangeOfString:@"__cached__"].location != NSNotFound) {
+      return YES;
+    }    
+    
+    // Otherwise redirect to a docset URL to enable history
+    [self.artCodeTab pushURL:URL.docSetURLByRetractingFileURL];
+    return NO;
+  }
+  
+  // Resolve docset link and walk 
   if ([URL.scheme isEqualToString:@"docset"]) {
-    NSURL *fileURL = URL.fileURLByResolvingDocSet;
-    if (!fileURL)
-      return NO;
+    URL = URL.docSetFileURLByResolvingDocSet;
+    if (URL) {
+      [webView loadRequest:[NSURLRequest requestWithURL:URL]];
+    }
+    return NO;
+  }
+  
+  // Docset files can be accessed directly from the webview in their cached version
+	if ([URL.scheme isEqualToString:@"docset-file"]) {
+//    NSInteger fragmentLocation = [URL.absoluteString rangeOfString:@"#"].location;
+//    NSString *fragment = (fragmentLocation != NSNotFound) ? [URL.absoluteString substringFromIndex:fragmentLocation] : nil;
+    
+    NSURL *fileURL = [NSURL fileURLWithPath:URL.path];
     
     // Handle soft redirects (they otherwise break the history):	
     NSString *html = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
@@ -106,62 +130,63 @@
       if (result.numberOfRanges > 1) {
         NSString *relativeRedirectPath = [html substringWithRange:[result rangeAtIndex:1]];
         fileURL = [NSURL URLWithString:relativeRedirectPath relativeToURL:fileURL];
+        html = nil;
       }
     }
     
-    // Open URL with webview
-    [self.webView loadRequest:[NSURLRequest requestWithURL:fileURL]];
-    return NO;
-  }
-  
-  if ([URL.scheme isEqualToString:@"file"]) {
+    // Calculate cacheing path
+    NSString *cachePath = [[fileURL.path stringByDeletingPathExtension] stringByAppendingString:@"__cached__.html"];
+    NSURL *cacheURL = [NSURL fileURLWithPath:cachePath];
+    if (URL.fragment.length) {
+      cacheURL = [NSURL URLWithString:[cacheURL.absoluteString stringByAppendingFormat:@"#%@", URL.fragment]];
+    }
     
-  }
-  
-	if ([[URL scheme] isEqualToString:@"file"]) {
-		if ([[URL path] rangeOfString:@"__cached__"].location == NSNotFound) {
-      static NSString *customCSS = @"<style>body { font-size: 16px !important; } pre { white-space: pre-wrap !important; }</style>";
-      NSString *html = [NSString stringWithContentsOfURL:URL encoding:NSUTF8StringEncoding error:NULL];
-      
-			//Rewrite HTML to get rid of the JavaScript that redirects to the "touch-friendly" page:
-			NSScanner *scanner = [NSScanner scannerWithString:html];
-			NSRange scriptRange;
-			if ([scanner scanUpToString:@"<script>String.prototype.cleanUpURL" intoString:NULL]) {
-				scriptRange.location = [scanner scanLocation];
-				[scanner scanString:@"<script>String.prototype.cleanUpURL" intoString:NULL];
-				[scanner scanUpToString:@"</script>" intoString:NULL];
-				[scanner scanString:@"</script>" intoString:NULL];
-				scriptRange.length = [scanner scanLocation] - scriptRange.location;
-			} else {
-				scriptRange = NSMakeRange(0, 0);
-			}
-			if (scriptRange.length > 0) {
-				html = [html stringByReplacingCharactersInRange:scriptRange withString:customCSS];
-				//We need to write the modified html to a file for back/forward to work properly.
-				NSInteger anchorLocation = [[URL absoluteString] rangeOfString:@"#"].location;
-				NSString *URLAnchor = (anchorLocation != NSNotFound) ? [[URL absoluteString] substringFromIndex:anchorLocation] : nil;
-				NSString *path = [URL path];
-				NSString *cachePath = [[path stringByDeletingPathExtension] stringByAppendingString:@"__cached__.html"];
-				NSURL *cacheURL = [NSURL fileURLWithPath:cachePath];
-				if (URLAnchor) {
-					NSString *cacheURLString = [[cacheURL absoluteString] stringByAppendingFormat:@"%@", URLAnchor];
-					cacheURL = [NSURL URLWithString:cacheURLString];
-				}
-				[html writeToURL:cacheURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-				[webView loadRequest:[NSURLRequest requestWithURL:cacheURL]];
-				return NO;
-			}
-		}
+    // If the cached version already exists, send proper request
+    if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
+      [webView loadRequest:[NSURLRequest requestWithURL:cacheURL]];
+      return NO;
+    }
+    
+    // Cacheing
+    static NSString *customCSS = @"<style>body { font-size: 16px !important; } pre { white-space: pre-wrap !important; }</style>";
+    if (html == nil) {
+      html = [NSString stringWithContentsOfURL:fileURL encoding:NSUTF8StringEncoding error:NULL];
+    }
+    
+    //Rewrite HTML to get rid of the JavaScript that redirects to the "touch-friendly" page:
+    NSScanner *scanner = [NSScanner scannerWithString:html];
+    NSRange scriptRange;
+    if ([scanner scanUpToString:@"<script>String.prototype.cleanUpURL" intoString:NULL]) {
+      scriptRange.location = [scanner scanLocation];
+      [scanner scanString:@"<script>String.prototype.cleanUpURL" intoString:NULL];
+      [scanner scanUpToString:@"</script>" intoString:NULL];
+      [scanner scanString:@"</script>" intoString:NULL];
+      scriptRange.length = [scanner scanLocation] - scriptRange.location;
+    } else {
+      scriptRange = NSMakeRange(0, 0);
+    }
+    if (scriptRange.length > 0) {
+      html = [html stringByReplacingCharactersInRange:scriptRange withString:customCSS];
+      [html writeToURL:cacheURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+      [webView loadRequest:[NSURLRequest requestWithURL:cacheURL]];
+      return NO;
+    }
+    
 		return YES;
-	} else if ([[URL scheme] hasPrefix:@"http"]) { //http or https
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Open Safari", nil)
-                                                    message:NSLocalizedString(@"This is an external link. Do you want to open it in Safari?", nil) 
-                                                   delegate:self 
-                                          cancelButtonTitle:NSLocalizedString(@"Cancel", nil) 
-                                          otherButtonTitles:NSLocalizedString(@"Open Safari", nil), nil];
-		[alert show];
+	}
+  
+  // Redirect to safari
+  // TODO complete with alert view delegate
+  if ([URL.scheme hasPrefix:@"http"]) { //http or https
+		[[[UIAlertView alloc] initWithTitle:L(@"Open Safari")
+                                message:L(@"This is an external link. Do you want to open it in Safari?") 
+                               delegate:self 
+                      cancelButtonTitle:L(@"Cancel") 
+                      otherButtonTitles:L(@"Open Safari"), nil] show];
 		return NO;
 	}
+  
+  ASSERT(NO); // Never reached
 	return YES;
 }
 

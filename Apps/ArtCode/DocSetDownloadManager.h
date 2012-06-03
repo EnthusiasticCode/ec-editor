@@ -94,7 +94,12 @@ typedef enum DocSetDownloadStatus {
 /// Returns the downloaded and available docset from the URL host by name
 - (DocSet *)docSet;
 
-/// Returns a file URL to the resource of the docset + anchor
-- (NSURL *)fileURLByResolvingDocSet;
+/// From a file:// URL, return a docset URL if possible.
+- (NSURL *)docSetURLByRetractingFileURL;
+
+/// Returns a docset-file URL to the resource of the docset + anchor
+- (NSURL *)docSetFileURLByResolvingDocSet;
+
+
 
 @end

@@ -336,20 +336,38 @@
   return nil;
 }
 
-- (NSURL *)fileURLByResolvingDocSet {
+- (NSURL *)docSetURLByRetractingFileURL {
+  NSString *path = self.path;
+  for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
+    if ([path hasPrefix:docSet.path]) {
+      path = self.absoluteString;
+      path = [path substringFromIndex:NSMaxRange([path rangeOfString:@"Contents/Resources/Documents"])];
+      NSUInteger fragmentPosition = [path rangeOfString:@"#"].location;
+      if (fragmentPosition != NSNotFound) {
+        path = [NSString stringWithFormat:@"docset://%@%@", [[docSet.title stringByAppendingPathComponent:[path substringToIndex:fragmentPosition]] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [path substringFromIndex:fragmentPosition]];
+      } else {
+        path = [NSString stringWithFormat:@"docset://%@", [docSet.title stringByAppendingPathComponent:path]];
+      }
+      return [NSURL URLWithString:path];
+    }
+  }
+  return nil;
+}
+
+- (NSURL *)docSetFileURLByResolvingDocSet {
   DocSet *docSet = self.docSet;
   if (!docSet)
     return nil;
   NSString *URLString = [docSet.path stringByAppendingPathComponent:@"Contents/Resources/Documents"];
   if (self.path.length) {
-    URLString = [URLString stringByAppendingPathComponent:self.path];
+    URLString = [[URLString stringByAppendingPathComponent:self.path] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
   } else {
-    URLString = [URLString stringByAppendingPathComponent:@"index.html"];
+    return nil;
   }
   if (self.fragment.length) {
     URLString = [URLString stringByAppendingFormat:@"#%@", self.fragment];
   }
-  return [NSURL fileURLWithPath:URLString];
+  return [NSURL URLWithString:[NSString stringWithFormat:@"docset-file://%@", URLString]];
 }
 
 @end

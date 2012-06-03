@@ -5,6 +5,7 @@
 //  Created by Ole Zorn on 05.12.10.
 //  Copyright 2010 omz:software. All rights reserved.
 //
+// From commit 85fd865a357dd8fdecbb5c56b90ca27526bfbf3d
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
