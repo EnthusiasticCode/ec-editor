@@ -64,6 +64,11 @@
   return YES;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+  [_outlinePopoverController dismissPopoverAnimated:NO];
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView {
