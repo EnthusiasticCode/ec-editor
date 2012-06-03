@@ -247,6 +247,7 @@
     cell.title.text = cell.accessibilityLabel = docSet.title;
     cell.label.text = @"";
     cell.accessibilityHint = L(@"Open the documentation");
+    cell.newlyCreatedBadge.hidden = YES;
   }
   
   // Accessibility
