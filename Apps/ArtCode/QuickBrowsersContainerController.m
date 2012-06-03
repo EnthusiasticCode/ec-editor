@@ -13,6 +13,7 @@
 #import "ACProject.h"
 #import "ACProjectItem.h"
 #import "ACProjectFileSystemItem.h"
+#import "ACProjectFileBookmark.h"
 
 #import "QuickFileBrowserController.h"
 #import "QuickBookmarkBrowserController.h"
@@ -66,6 +67,9 @@
   else
   {
     ACProjectFileSystemItem *fileItem = (ACProjectFileSystemItem *)contentController.artCodeTab.currentItem;
+    if (fileItem.type == ACPFileBookmark) {
+      fileItem = ((ACProjectFileBookmark *)fileItem).file;
+    }
     if ([fileItem parentFolder] == nil)
     {
       if (!_projectController)
