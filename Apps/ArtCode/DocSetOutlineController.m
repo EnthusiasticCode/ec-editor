@@ -43,7 +43,7 @@
   _rootNode = rootNode;
   _rootNodeSections = [set nodeSectionsForRootNode:rootNode];
   
-  self.title = (rootNode != nil) ? [rootNode valueForKey:@"kName"] : set.title;
+  self.title = (rootNode != nil) ? [rootNode valueForKey:@"kName"] : set.name;
 	self.contentSizeForViewInPopover = CGSizeMake(400.0, 1024.0);
   self.clearsSelectionOnViewWillAppear = YES;
 

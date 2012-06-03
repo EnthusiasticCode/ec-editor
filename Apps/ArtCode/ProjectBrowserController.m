@@ -65,12 +65,9 @@
   if (!_gridElements) {
     NSMutableArray *elements = [NSMutableArray arrayWithArray:ACProject.projects];
     [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
-    [_gridElements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-      NSString *str1 = [obj1 isKindOfClass:[ACProject class]] ? [obj1 name] : [obj1 title];
-      NSString *str2 = [obj2 isKindOfClass:[ACProject class]] ? [obj2 name] : [obj2 title];
-      return [str1 compare:str2];
+    _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+      return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
     }];
-    _gridElements = [elements copy];
   }
   return _gridElements;
 }
@@ -108,11 +105,26 @@
   
   // Update gird view
   [projects subscribeNext:^(NSNotification *note) {
-    ASSERT(NO); // TODO FIX index should take count of gridElements
-    NSUInteger index = [[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue];
-    if (note.name == ACProjectDidInsertProjectNotificationName) {
+    __block NSUInteger index = 0;
+    if (note.name == ACProjectDidAddProjectNotificationName) {
+      NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
+      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
+          index = idx;
+          *stop = YES;
+        }
+      }];
+      _gridElements = nil;
       [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
+      NSString *projectUUID = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] UUID];
+      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[ACProject class]] && [projectUUID isEqualToString:[obj UUID]]) {
+          index = idx;
+          *stop = YES;
+        }
+      }];
+      _gridElements = nil;
       [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }
   }];
@@ -200,6 +212,8 @@
   
   _cellNormalBackground = nil;
   _cellSelectedBackground = nil;
+  
+  _gridElements = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -244,7 +258,7 @@
     cell.accessibilityHint = L(@"Open the project");
   } else if ([element isKindOfClass:[DocSet class]]) {
     DocSet *docSet = (DocSet *)element;
-    cell.title.text = cell.accessibilityLabel = docSet.title;
+    cell.title.text = cell.accessibilityLabel = docSet.name;
     cell.label.text = @"";
     cell.accessibilityHint = L(@"Open the documentation");
     cell.newlyCreatedBadge.hidden = YES;
@@ -265,7 +279,7 @@
     if ([element isKindOfClass:[ACProject class]]) {
       [self.artCodeTab pushURL:[element artCodeURL]];
     } else if ([element isKindOfClass:[DocSet class]]) {
-      [self.artCodeTab pushURL:[NSURL URLWithString:[NSString stringWithFormat:@"docset://%@", [[(DocSet *)element title] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]]];
+      [self.artCodeTab pushURL:[(DocSet *)element docSetURLForNode:nil]];
     }
   }
 }

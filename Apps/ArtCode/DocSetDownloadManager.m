@@ -329,7 +329,7 @@
 - (DocSet *)docSet {
   NSString *docSetName = [self.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
   for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
-    if ([docSet.title isEqualToString:docSetName]) {
+    if ([docSet.name isEqualToString:docSetName]) {
       return docSet;
     }
   }
@@ -344,9 +344,9 @@
       path = [path substringFromIndex:NSMaxRange([path rangeOfString:@"Contents/Resources/Documents"])];
       NSUInteger fragmentPosition = [path rangeOfString:@"#"].location;
       if (fragmentPosition != NSNotFound) {
-        path = [NSString stringWithFormat:@"docset://%@%@", [[docSet.title stringByAppendingPathComponent:[path substringToIndex:fragmentPosition]] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [path substringFromIndex:fragmentPosition]];
+        path = [NSString stringWithFormat:@"docset://%@%@", [[docSet.name stringByAppendingPathComponent:[path substringToIndex:fragmentPosition]] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], [path substringFromIndex:fragmentPosition]];
       } else {
-        path = [NSString stringWithFormat:@"docset://%@", [docSet.title stringByAppendingPathComponent:path]];
+        path = [NSString stringWithFormat:@"docset://%@", [docSet.name stringByAppendingPathComponent:path]];
       }
       return [NSURL URLWithString:path];
     }

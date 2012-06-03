@@ -20,7 +20,7 @@ typedef void(^DocSetSearchCompletionHandler)(NSString *searchTerm, NSArray *resu
 @interface DocSet : NSObject {
 
 	NSString *path;
-	NSString *title;
+	NSString *name;
 	NSString *copyright;
 	NSURL *fallbackURL;
 	
@@ -36,7 +36,7 @@ typedef void(^DocSetSearchCompletionHandler)(NSString *searchTerm, NSArray *resu
 }
 
 @property (nonatomic, strong, readonly) NSString *path;
-@property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) NSString *name;
 @property (nonatomic, strong, readonly) NSString *copyright;
 @property (nonatomic, strong, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;

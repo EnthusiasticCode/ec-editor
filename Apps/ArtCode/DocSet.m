@@ -11,7 +11,7 @@
 
 @implementation DocSet
 
-@synthesize path, title, copyright, bookmarks;
+@synthesize path, name, copyright, bookmarks;
 
 - (id)initWithPath:(NSString *)docSetPath
 {
@@ -21,9 +21,9 @@
 	
 	NSString *infoPath = [path stringByAppendingPathComponent:@"Contents/Info.plist"];
 	NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:infoPath];
-	title = [info objectForKey:@"CFBundleName"];
+	name = [info objectForKey:@"CFBundleName"];
 	fallbackURL = [NSURL URLWithString:[info objectForKey:@"DocSetFallbackURL"]];
-	if (title) {
+	if (name) {
 		copyright = [info objectForKey:@"NSHumanReadableCopyright"];
 		if (!copyright) copyright = @"";
 	} else {
@@ -272,7 +272,7 @@
 }
 
 - (NSURL *)docSetURLForNode:(NSManagedObject *)node {
-  NSString *docSetURLString = [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  NSString *docSetURLString = [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
   if (node) {
     docSetURLString = [docSetURLString stringByAppendingPathComponent:[node valueForKey:@"kPath"]];
     if ([node valueForKey:@"kAnchor"]) {
@@ -289,7 +289,7 @@
     NSString *filePath = [metadata valueForKeyPath:@"file.path"];
     NSString *a = [metadata valueForKey:@"anchor"];
     if (filePath) {
-      return [NSURL URLWithString:[NSString stringWithFormat:@"docset://%@/%@#%@", [self.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], filePath, a]];
+      return [NSURL URLWithString:[NSString stringWithFormat:@"docset://%@/%@#%@", [self.name stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding], filePath, a]];
     } else {
       return [[self docSetURLForNode:[token objectForKey:@"parentNode"]] URLByAppendingPathComponent:[NSString stringWithFormat:@"#%@", a]];
     }

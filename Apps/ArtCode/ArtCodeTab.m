@@ -87,7 +87,7 @@ static NSMutableArray *_mutableTabs;
   
   // React to remove history items from tab's history when a project is eliminated
   [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class]] subscribeNext:^(NSNotification *note) {
-    ACProject *project = [[ACProject projects] objectAtIndex:[[note.userInfo objectForKey:ACProjectNotificationIndexKey] unsignedIntegerValue]];
+    ACProject *project = [note.userInfo objectForKey:ACProjectNotificationProjectKey];
     if (!project)
       return;
     
@@ -278,6 +278,8 @@ static NSMutableArray *_mutableTabs;
 
 - (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler {
   if ([toURL isArtCodeURL]) {
+    self.currentDocSet = nil;
+    
     // Handle changes to art code urls
     NSArray *fromUUIDs = [fromURL artCodeUUIDs];
     NSArray *toUUIDs = [toURL artCodeUUIDs];
