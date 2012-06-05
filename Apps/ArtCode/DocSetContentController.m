@@ -26,7 +26,7 @@
 
 #pragma mark
 
-@interface DocSetOutlineCell : HighlightTableViewCell
+@interface DocSetContentCell : HighlightTableViewCell
 
 @property (nonatomic) BOOL deprecated;
 
@@ -192,9 +192,9 @@
 		return cell;
 	} else if (aTableView == self.searchDisplayController.searchResultsTableView) {
 		static NSString *searchCellIdentifier = @"SearchResultCell";
-		DocSetOutlineCell *cell = (DocSetOutlineCell *)[aTableView dequeueReusableCellWithIdentifier:searchCellIdentifier];
+		DocSetContentCell *cell = (DocSetContentCell *)[aTableView dequeueReusableCellWithIdentifier:searchCellIdentifier];
 		if (cell == nil) {
-			cell = [[DocSetOutlineCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:searchCellIdentifier];
+			cell = [[DocSetContentCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:searchCellIdentifier];
       cell.textLabel.backgroundColor = [UIColor clearColor];
 //			cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
 		}
@@ -352,7 +352,7 @@
 
 #pragma mark
 
-@implementation DocSetOutlineCell {
+@implementation DocSetContentCell {
   UIView *_deprecatedView;
 }
 

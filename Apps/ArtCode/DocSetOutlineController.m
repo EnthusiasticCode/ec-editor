@@ -2,387 +2,279 @@
 //  DocSetOutlineController.m
 //  ArtCode
 //
-//  Created by Nicola Peduzzi on 02/06/12.
+//  Created by Nicola Peduzzi on 05/06/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import "DocSetOutlineController.h"
-#import "DocSet.h"
-#import "HighlightTableViewCell.h"
+#import "UIViewController+Utilities.h"
 #import "ArtCodeTab.h"
-
+#import "DocSetDownloadManager.h"
 
 @interface DocSetOutlineController ()
 
-@property (nonatomic, strong, readonly) DocSet *docSet;
-@property (nonatomic, strong, readonly) NSManagedObject *rootNode;
-@property (nonatomic, strong, readonly) NSArray *rootNodeSections;
+@property (nonatomic, strong, readwrite) NSString *bookJSONPath;
 
-@property (nonatomic, strong) NSArray *searchResults;
-- (void)_reloadSearchResults;
-- (void)_openNode:(NSManagedObject *)node;
+- (NSURL *)_docSetURLForOulineItem:(DocSetOutlineItem *)item;
 
 @end
-
-#pragma mark
-
-@interface DocSetOutlineCell : HighlightTableViewCell
-
-@property (nonatomic) BOOL deprecated;
-
-@end
-
-#pragma mark
 
 @implementation DocSetOutlineController {
-  UISearchDisplayController *_searchController;
+  DocSetOutlineItem *_rootOutlineItem;
+  NSArray *_visibleOutlineItems;
 }
 
-#pragma mark Properties
+#pragma mark - Properties
 
-@synthesize docSet = _docSet, rootNode = _rootNode, rootNodeSections = _rootNodeSections;
-@synthesize searchResults = _searchResults;
+@synthesize docSetURL = _docSetURL, bookJSONPath = _bookJSONPath;
 
-#pragma mark Controller's lifecycle
+- (void)setDocSetURL:(NSURL *)docSetURL {
+  if (docSetURL == _docSetURL)
+    return;
+  
+  _docSetURL = docSetURL;
+  
+  if ([docSetURL.scheme isEqualToString:@"docset"])
+    docSetURL = docSetURL.docSetFileURLByResolvingDocSet;
+    
+  NSFileManager *fm = [NSFileManager defaultManager];
+	NSString *path = [docSetURL path];
+	NSString *pathForBook = nil;
+	while (path && ![path isEqual:@"/"]) {		
+		NSString *possibleBookPath = [path stringByAppendingPathComponent:@"book.json"];
+		BOOL bookExists = [fm fileExistsAtPath:possibleBookPath];
+		if (bookExists) {
+			pathForBook = possibleBookPath;
+			break;
+		}
+		path = [path stringByDeletingLastPathComponent];
+	}
+	
+  self.bookJSONPath = pathForBook;
+}
 
-- (id)initWithDocSet:(DocSet *)set rootNode:(NSManagedObject *)rootNode {
-  self = [super initWithStyle:UITableViewStylePlain];
-  if (!self) 
+- (void)setBookJSONPath:(NSString *)bookJSONPath {
+  if ([bookJSONPath isEqualToString:_bookJSONPath])
+    return;
+  
+  _bookJSONPath = bookJSONPath;
+  
+  NSDictionary *book = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:bookJSONPath] options:0 error:NULL];
+  _rootOutlineItem = [[DocSetOutlineItem alloc] initWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:(self.title = [book objectForKey:@"title"]), @"title", [book objectForKey:@"sections"], @"sections", nil] level:0];
+  _visibleOutlineItems = [_rootOutlineItem flattenedChildren];
+  if (self.isViewLoaded)
+    [self.tableView reloadData];
+}
+
+#pragma mark - Controller lifecycle
+
+- (id)initWithStyle:(UITableViewStyle)style {
+  self = [super initWithStyle:style];
+  if (!self)
     return nil;
   
-  _docSet = set;
-  _rootNode = rootNode;
-  _rootNodeSections = [set nodeSectionsForRootNode:rootNode];
+  self.contentSizeForViewInPopover = CGSizeMake(500, 500);
   
-  self.title = (rootNode != nil) ? [rootNode valueForKey:@"kName"] : set.name;
-	self.contentSizeForViewInPopover = CGSizeMake(400.0, 1024.0);
-  self.clearsSelectionOnViewWillAppear = YES;
-
   return self;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  return YES;
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 #pragma mark - View lifecycle
 
-- (void)loadView {
-	[super loadView];
-  
-  // This has the side effect of setting self.searchDisplayController
-  _searchController = [UISearchDisplayController.alloc initWithSearchBar:UISearchBar.new contentsController:self];
-  _searchController.delegate = self;
-	_searchController.searchResultsDataSource = self;
-	_searchController.searchResultsDelegate = self;
-	
-	_searchController.searchBar.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44);
-	_searchController.searchBar.scopeButtonTitles = [NSArray arrayWithObjects:NSLocalizedString(@"API",nil), NSLocalizedString(@"Title",nil), nil];
-	_searchController.searchBar.selectedScopeButtonIndex = 0;
-	_searchController.searchBar.showsScopeBar = NO;
-	self.tableView.tableHeaderView = _searchController.searchBar;
-	
-	self.tableView.backgroundColor = [UIColor colorWithWhite:0.96 alpha:1.0];
-}
-
-#pragma mark - Search display controller delegate
-
-- (void)searchDisplayControllerDidBeginSearch:(UISearchDisplayController *)controller {
-	[self.docSet prepareSearch];
-}
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
-	self.searchResults = nil;
-	[self _reloadSearchResults];
-	return YES;
-}
-
-- (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)searchResultsTableView {
-	searchResultsTableView.backgroundColor = [UIColor colorWithWhite:0.96 alpha:1.0];
-}
-
-- (void)searchDisplayController:(UISearchDisplayController *)controller didHideSearchResultsTableView:(UITableView *)tableView {
-	self.searchResults = nil;
-	[self.searchDisplayController.searchResultsTableView reloadData];
-}
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
-	if (searchString.length == 0) {
-		self.searchResults = nil;
-		return YES;
-	} else {
-		[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_reloadSearchResults) object:nil];
-		[self performSelector:@selector(_reloadSearchResults) withObject:nil afterDelay:0.2];
-		return (self.searchResults == nil);
-	}
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  if (self.artCodeTab.currentDocSet) {
+    self.docSetURL = self.artCodeTab.currentURL;
+  }
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)aTableView 
-{
-	if (aTableView == self.tableView) {
-		return [self.rootNodeSections count];
-	} else if (aTableView == self.searchDisplayController.searchResultsTableView) {
-		return 1;
-	}
-	return 0;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return _visibleOutlineItems.count;
 }
 
-- (NSString *)tableView:(UITableView *)aTableView titleForHeaderInSection:(NSInteger)section
-{
-	if (aTableView == self.tableView) {
-		NSDictionary *nodeSection = [self.rootNodeSections objectAtIndex:section];
-		return [nodeSection objectForKey:kNodeSectionTitle];
-	}
-	return nil;
-}
-
-- (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section 
-{
-	if (aTableView == self.tableView) {
-		return [(NSArray *)[(NSDictionary *)[self.rootNodeSections objectAtIndex:section] objectForKey:kNodeSectionNodes] count];
-	} else if (aTableView == self.searchDisplayController.searchResultsTableView) {
-		if (!self.searchResults) {
-			return 1;
-		} else {
-			return [self.searchResults count];
-		}
-	}
-	return 0;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)aTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (aTableView == self.tableView) {
-		static NSString *CellIdentifier = @"Cell";
-		UITableViewCell *cell = [aTableView dequeueReusableCellWithIdentifier:CellIdentifier];
-		if (cell == nil) {
-			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-			cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
-		}
-    
-		NSDictionary *nodeSection = [self.rootNodeSections objectAtIndex:indexPath.section];
-		NSManagedObject *node = [[nodeSection objectForKey:kNodeSectionNodes] objectAtIndex:indexPath.row];
-		
-		BOOL expandable = [self.docSet nodeIsExpandable:node];
-		cell.accessoryType = (expandable) ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
-		
-		if ([[node valueForKey:@"installDomain"] intValue] > 1) {
-			//external link, e.g. man pages
-			cell.textLabel.textColor = [UIColor grayColor];
-		} else {
-			cell.textLabel.textColor = [UIColor blackColor];
-		}
-		
-		int documentType = [[node valueForKey:@"kDocumentType"] intValue];
-		if (documentType == 1) {
-			cell.imageView.image = [UIImage imageNamed:@"SampleCodeIcon.png"];
-		} else if (documentType == 2) {
-			cell.imageView.image = [UIImage imageNamed:@"ReferenceIcon.png"];
-		} else if (!expandable) {
-			cell.imageView.image = [UIImage imageNamed:@"BookIcon.png"];
-		} else {
-			cell.imageView.image = nil;
-		}
-		
-		cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-		cell.textLabel.text = [node valueForKey:@"kName"];
-		cell.detailTextLabel.text = nil;
-		cell.accessoryView = nil;
-		return cell;
-	} else if (aTableView == self.searchDisplayController.searchResultsTableView) {
-		static NSString *searchCellIdentifier = @"SearchResultCell";
-		DocSetOutlineCell *cell = (DocSetOutlineCell *)[aTableView dequeueReusableCellWithIdentifier:searchCellIdentifier];
-		if (cell == nil) {
-			cell = [[DocSetOutlineCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:searchCellIdentifier];
-      cell.textLabel.backgroundColor = [UIColor clearColor];
-//			cell.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
-		}
-		
-		if (!self.searchResults) {
-      cell.textLabelHighlightedCharacters = nil;
-			cell.textLabel.text = L(@"Searching...");
-			cell.textLabel.textColor = [UIColor grayColor];
-			cell.selectionStyle = UITableViewCellSelectionStyleNone;
-			cell.imageView.image = nil;
-			UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-			[spinner startAnimating];
-			cell.accessoryView = spinner;
-			cell.detailTextLabel.text = nil;
-		} else {
-			NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
-			
-			if ([result objectForKey:@"tokenType"]) {
-        cell.textLabel.text = [result objectForKey:@"tokenName"];
-				cell.accessoryType = UITableViewCellAccessoryNone;
-        
-        // Deprecation
-				NSManagedObject *metaInfo = [self.docSet.managedObjectContext existingObjectWithID:[result objectForKey:@"metainformation"] error:NULL];
-				NSSet *deprecatedVersions = [metaInfo valueForKey:@"deprecatedInVersions"];
-				cell.deprecated = ([deprecatedVersions count] > 0);
-    
-        // Icon
-        static NSDictionary *iconsByTokenType = nil;
-        if (iconsByTokenType == nil) {
-          iconsByTokenType = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              [UIImage imageNamed:@"Const"], @"econst",
-                              [UIImage imageNamed:@"Member.png"], @"intfm",
-                              [UIImage imageNamed:@"Macro.png"], @"macro",
-                              [UIImage imageNamed:@"Type.png"], @"tdef",
-                              [UIImage imageNamed:@"Class.png"], @"cat",
-                              [UIImage imageNamed:@"Property.png"], @"intfp",
-                              [UIImage imageNamed:@"Const.png"], @"clconst",
-                              [UIImage imageNamed:@"Protocol.png"], @"intf",
-                              [UIImage imageNamed:@"Member.png"], @"instm",
-                              [UIImage imageNamed:@"Class.png"], @"cl",
-                              [UIImage imageNamed:@"Struct.png"], @"tag",
-                              [UIImage imageNamed:@"Member.png"], @"clm",
-                              [UIImage imageNamed:@"Property.png"], @"instp",
-                              [UIImage imageNamed:@"Function.png"], @"func",
-                              [UIImage imageNamed:@"Global.png"], @"data",
-                              nil];
-        }
-				NSManagedObjectID *tokenTypeID = [result objectForKey:@"tokenType"];
-				if (tokenTypeID) {
-					NSManagedObject *tokenType = [[self.docSet managedObjectContext] existingObjectWithID:tokenTypeID error:NULL];
-					NSString *tokenTypeName = [tokenType valueForKey:@"typeName"];
-					UIImage *icon = [iconsByTokenType objectForKey:tokenTypeName];
-					cell.imageView.image = icon;
-				} else {
-					cell.imageView.image = nil;
-				}
-				
-				NSManagedObjectID *parentNodeID = [result objectForKey:@"parentNode"];
-				if (parentNodeID) {
-					NSManagedObject *parentNode = [[self.docSet managedObjectContext] existingObjectWithID:parentNodeID error:NULL];
-					NSString *parentNodeTitle = [parentNode valueForKey:@"kName"];
-					cell.detailTextLabel.text = parentNodeTitle;
-				} else {
-					cell.detailTextLabel.text = nil;
-				}
-			} else {
-				cell.deprecated = NO;
-				cell.textLabel.text = [result objectForKey:@"kName"];
-				NSManagedObjectID *objectID = [result objectForKey:@"objectID"];
-				
-				NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:objectID error:NULL];
-        
-				BOOL expandable = [self.docSet nodeIsExpandable:node];
-				cell.accessoryType = (expandable) ? UITableViewCellAccessoryDisclosureIndicator : UITableViewCellAccessoryNone;
-        
-				int documentType = [[node valueForKey:@"kDocumentType"] intValue];
-				if (documentType == 1) {
-					cell.imageView.image = [UIImage imageNamed:@"SampleCodeIcon.png"];
-				} else if (documentType == 2) {
-					cell.imageView.image = [UIImage imageNamed:@"ReferenceIcon.png"];
-				} else if (!expandable) {
-					cell.imageView.image = [UIImage imageNamed:@"BookIcon.png"];
-				} else {
-					cell.imageView.image = nil;
-				}
-				cell.detailTextLabel.text = nil;
-			}
-      
-      cell.textLabelHighlightedCharacters = [NSIndexSet indexSetWithIndexesInRange:[[result objectForKey:@"tokenName"] rangeOfString:self.searchDisplayController.searchBar.text options:NSCaseInsensitiveSearch]];
-			cell.textLabel.textColor = [UIColor blackColor];
-			cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-			cell.accessoryView = nil;
-		}
-		return cell;
-	}
-	return nil;
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  static NSString *CellIdentifier = @"Cell";
+  DocSetOutlineCell *cell = (DocSetOutlineCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+  if (cell == nil) {
+    cell = [[DocSetOutlineCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+  }
+	DocSetOutlineItem *item = [_visibleOutlineItems objectAtIndex:indexPath.row];
+	cell.outlineItem = item;
+	cell.delegate = self;
+  return cell;
 }
 
 #pragma mark - Table view delegate
 
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+  [self tableView:tableView didSelectRowAtIndexPath:indexPath];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (tableView == self.tableView) {
-		NSDictionary *nodeSection = [self.rootNodeSections objectAtIndex:indexPath.section];
-		NSManagedObject *node = [[nodeSection objectForKey:kNodeSectionNodes] objectAtIndex:indexPath.row];
-		[self _openNode:node];
-	} else if (tableView == self.searchDisplayController.searchResultsTableView) {
-		[self.searchDisplayController.searchBar resignFirstResponder];
-		NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
-		if ([result objectForKey:@"tokenType"]) {
-      [self.artCodeTab pushURL:[self.docSet docSetURLForToken:result]];
-		} else {
-			NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:[result objectForKey:@"objectID"] error:NULL];
-			[self _openNode:node];
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	
+	[self.artCodeTab pushURL:[self _docSetURLForOulineItem:[_visibleOutlineItems objectAtIndex:indexPath.row]]];
+  [self.presentingPopoverController dismissPopoverAnimated:YES];
+}
+
+#pragma mark - Outline cell delegate
+
+- (void)docSetOutlineCellDidTapDisclosureButton:(DocSetOutlineCell *)cell {
+	DocSetOutlineItem *item = cell.outlineItem;
+	NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[_visibleOutlineItems indexOfObject:item] inSection:0];
+	
+	if (item.children.count > 0 && !item.expanded) {
+		//expand
+		item.expanded = YES;
+		NSArray *expandedChildren = [item flattenedChildren];
+		NSMutableArray *addedIndexPaths = [NSMutableArray array];
+		for (NSUInteger i=0; i<expandedChildren.count; i++) {
+			NSIndexPath *addedIndexPath = [NSIndexPath indexPathForRow:indexPath.row + i + 1 inSection:0];
+			[addedIndexPaths addObject:addedIndexPath];
 		}
+		_visibleOutlineItems = [_rootOutlineItem flattenedChildren];
+		[self.tableView insertRowsAtIndexPaths:addedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+	} else if (item.children.count > 0 && item.expanded) {
+		//collapse
+		NSMutableArray *removedIndexPaths = [NSMutableArray array];
+		NSArray *collapsedChildren = [item flattenedChildren];
+		item.expanded = NO;
+		for (NSUInteger i=0; i<collapsedChildren.count; i++) {
+			NSIndexPath *removedIndexPath = [NSIndexPath indexPathForRow:indexPath.row + i + 1 inSection:0];
+			[removedIndexPaths addObject:removedIndexPath];
+		}
+		_visibleOutlineItems = [_rootOutlineItem flattenedChildren];
+		[self.tableView deleteRowsAtIndexPaths:removedIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
 	}
 }
 
 #pragma mark - Private methods
 
-- (void)_reloadSearchResults {
-	NSString *searchTerm = self.searchDisplayController.searchBar.text;
-	DocSetSearchCompletionHandler completionHandler = ^(NSString *completedSearchTerm, NSArray *results) {
-		dispatch_async(dispatch_get_main_queue(), ^{
-			NSString *currentSearchTerm = self.searchDisplayController.searchBar.text;
-			if ([currentSearchTerm isEqualToString:completedSearchTerm]) {
-				self.searchResults = results;
-				[self.searchDisplayController.searchResultsTableView reloadData];
-			}
-		});
-	};
-	
-	if (self.searchDisplayController.searchBar.selectedScopeButtonIndex == 0) {
-		[self.docSet searchForTokensMatching:searchTerm completion:completionHandler];
-	} else {
-		[self.docSet searchForNodesMatching:searchTerm completion:completionHandler];
-	}
-}
-
-- (void)_openNode:(NSManagedObject *)node {
-	BOOL expandable = [self.docSet nodeIsExpandable:node];
-	if (expandable) {
-		DocSetOutlineController *childViewController = [[DocSetOutlineController alloc] initWithDocSet:self.docSet rootNode:node];
-		[self.navigationController pushViewController:childViewController animated:YES];
-	} else {
-		if ([[node valueForKey:@"installDomain"] intValue] > 1) {
-			NSURL *webURL = [self.docSet webURLForNode:node];
-			[[UIApplication sharedApplication] openURL:webURL];
-			return;
-		}
-    [self.artCodeTab pushURL:[self.docSet docSetURLForNode:node]];
-	}
+- (NSURL *)_docSetURLForOulineItem:(DocSetOutlineItem *)item {
+  NSString *href = item.href;
+  
+  //strip the anchor from the URL:
+//  NSRange hashRange = [href rangeOfString:@"#"];
+//  if (hashRange.location != NSNotFound) href = [href substringToIndex:hashRange.location];
+  
+  NSURL *itemURL = [[NSURL fileURLWithPath:[self.bookJSONPath stringByDeletingLastPathComponent]] URLByAppendingPathComponent:href];
+  return itemURL.docSetURLByRetractingFileURL;
 }
 
 @end
 
 #pragma mark
 
-@implementation DocSetOutlineCell {
-  UIView *_deprecatedView;
+@implementation DocSetOutlineItem
+
+@synthesize expanded, title, aref, href, level, children;
+
+- (id)initWithDictionary:(NSDictionary *)outlineInfo level:(int)outlineLevel
+{
+	self = [super init];
+	if (self) {
+		title = [outlineInfo objectForKey:@"title"];
+		level = outlineLevel;
+		expanded = (level <= 0);
+		NSArray *sections = [outlineInfo objectForKey:@"sections"];
+		aref = [outlineInfo objectForKey:@"aref"];
+		href = [outlineInfo objectForKey:@"href"];
+		NSMutableArray *subItems = [NSMutableArray array];
+		for (NSDictionary *subItemInfo in sections) {
+			DocSetOutlineItem *subItem = [[DocSetOutlineItem alloc] initWithDictionary:subItemInfo level:level + 1];
+			[subItems addObject:subItem];
+		}
+		children = [NSArray arrayWithArray:subItems];
+	}
+	return self;
 }
 
-@synthesize deprecated = _deprecated;
-
-- (void)setDeprecated:(BOOL)deprecated {
-  if (deprecated == _deprecated)
-    return;
-  
-  _deprecated = deprecated;
-  
-  if (deprecated) {
-    _deprecatedView = UIView.new;
-    _deprecatedView.backgroundColor = [UIColor redColor];
-    [self.contentView insertSubview:_deprecatedView aboveSubview:self.textLabel];
-  } else {
-    [_deprecatedView removeFromSuperview];
-    _deprecatedView = nil;
-  }
+- (NSArray *)flattenedChildren
+{
+	NSMutableArray *flatList = [NSMutableArray array];
+	for (DocSetOutlineItem *child in children) {
+		[child addOpenChildren:flatList];
+	}
+	return [NSArray arrayWithArray:flatList];
 }
 
-- (void)layoutSubviews {
-  [super layoutSubviews];
-  
-  if (_deprecatedView) {
-    CGRect deprecatedViewFrame = self.textLabel.frame;
-    deprecatedViewFrame.origin.y += deprecatedViewFrame.size.height / 2.0;
-    deprecatedViewFrame.size.height = 1;
-    _deprecatedView.frame = deprecatedViewFrame;
-  }
+- (void)addOpenChildren:(NSMutableArray *)list
+{
+	[list addObject:self];
+	if (expanded) {
+		for (DocSetOutlineItem *child in children) {
+			[child addOpenChildren:list];
+		}
+	}
+}
+
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"%@ (level %i)", title, level];
+}
+
+@end
+
+#pragma mark
+
+@implementation DocSetOutlineCell
+
+@synthesize delegate, outlineItem;
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+{
+	self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+	if (self) {
+		outlineDisclosureButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		outlineDisclosureButton.frame = CGRectMake(0, 0, 44, 44);
+		[outlineDisclosureButton setBackgroundImage:[UIImage imageNamed:@"OutlineDisclosureButton.png"] forState:UIControlStateNormal];
+		outlineDisclosureButton.hidden = YES;
+		[outlineDisclosureButton addTarget:self action:@selector(expandOrCollapse:) forControlEvents:UIControlEventTouchUpInside];
+		[self.contentView addSubview:outlineDisclosureButton];
+	}
+	return self;
+}
+
+- (void)setOutlineItem:(DocSetOutlineItem *)item
+{
+	outlineItem = item;
+	self.textLabel.text = outlineItem.title;
+	
+	self.indentationWidth = 32.0 + 15.0 * (outlineItem.level - 1);
+	self.indentationLevel = 1; //outlineItem.level;
+	self.textLabel.font = (outlineItem.level <= 1) ? [UIFont boldSystemFontOfSize:17.0] : [UIFont boldSystemFontOfSize:15.0];
+	
+	if (outlineItem.children.count > 0) {
+		outlineDisclosureButton.frame = CGRectMake(15 * (outlineItem.level - 1), 0, 44, 44);
+		if (outlineItem.expanded) {
+			outlineDisclosureButton.transform = CGAffineTransformMakeRotation(M_PI / 2);
+		} else {
+			outlineDisclosureButton.transform = CGAffineTransformIdentity;
+		}
+		outlineDisclosureButton.hidden = NO;
+	} else {
+		outlineDisclosureButton.hidden = YES;
+	}
+}
+
+- (void)expandOrCollapse:(id)sender
+{
+	[UIView beginAnimations:nil context:nil];
+	if (outlineItem.expanded) {
+		outlineDisclosureButton.transform = CGAffineTransformIdentity;
+	} else {
+		outlineDisclosureButton.transform = CGAffineTransformMakeRotation(M_PI / 2);
+	}
+	if ([self.delegate respondsToSelector:@selector(docSetOutlineCellDidTapDisclosureButton:)]) {
+		[self.delegate docSetOutlineCellDidTapDisclosureButton:self];
+	}
+	[UIView commitAnimations];
 }
 
 @end

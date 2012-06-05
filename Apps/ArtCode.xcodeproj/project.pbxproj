@@ -455,6 +455,8 @@
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
 		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
 		CDA51F3B157E0A9300DB034A /* DocSetOutlineController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */; };
+		CDA51F3F157E205700DB034A /* OutlineDisclosureButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA51F3D157E205700DB034A /* OutlineDisclosureButton.png */; };
+		CDA51F40157E205700DB034A /* OutlineDisclosureButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA51F3E157E205700DB034A /* OutlineDisclosureButton@2x.png */; };
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
@@ -1013,6 +1015,8 @@
 		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
 		CDA51F39157E0A9300DB034A /* DocSetOutlineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetOutlineController.h; sourceTree = "<group>"; };
 		CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetOutlineController.m; sourceTree = "<group>"; };
+		CDA51F3D157E205700DB034A /* OutlineDisclosureButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OutlineDisclosureButton.png; sourceTree = "<group>"; };
+		CDA51F3E157E205700DB034A /* OutlineDisclosureButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "OutlineDisclosureButton@2x.png"; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* CodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA9B66E1524A0620063D76F /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
@@ -1652,6 +1656,7 @@
 		CD625944157A358F00B4669A /* DocSet */ = {
 			isa = PBXGroup;
 			children = (
+				CDA51F3C157E204800DB034A /* Utility Images */,
 				CD625986157BA64100B4669A /* Docs Icons */,
 				CD625949157BA56500B4669A /* Symbol Icons */,
 				CD625942157A358A00B4669A /* docSet.mom */,
@@ -2131,6 +2136,15 @@
 				CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */,
 			);
 			name = "Symbol Icons";
+			sourceTree = "<group>";
+		};
+		CDA51F3C157E204800DB034A /* Utility Images */ = {
+			isa = PBXGroup;
+			children = (
+				CDA51F3D157E205700DB034A /* OutlineDisclosureButton.png */,
+				CDA51F3E157E205700DB034A /* OutlineDisclosureButton@2x.png */,
+			);
+			name = "Utility Images";
 			sourceTree = "<group>";
 		};
 		CDB5DB6214C6F532003DFD1F /* New file */ = {
@@ -2665,6 +2679,8 @@
 				CD625985157BA5EF00B4669A /* Global@2x.png in Resources */,
 				CD625989157BA67600B4669A /* BookIcon.png in Resources */,
 				CD62598A157BA67600B4669A /* BookIcon@2x.png in Resources */,
+				CDA51F3F157E205700DB034A /* OutlineDisclosureButton.png in Resources */,
+				CDA51F40157E205700DB034A /* OutlineDisclosureButton@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

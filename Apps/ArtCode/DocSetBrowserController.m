@@ -7,10 +7,12 @@
 //
 
 #import "DocSetBrowserController.h"
+#import "UIViewController+Utilities.h"
 #import "SingleTabController.h"
 #import "ArtCodeTab.h"
 
 #import "DocSetContentController.h"
+#import "DocSetOutlineController.h"
 #import "ShapePopoverBackgroundView.h"
 #import "BezelAlert.h"
 
@@ -29,6 +31,7 @@
 
 @implementation DocSetBrowserController {
   UIPopoverController *_contentPopoverController;
+  UIPopoverController *_outlinePopoverController;
 }
 
 #pragma mark - Properties
@@ -68,6 +71,7 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
   [_contentPopoverController dismissPopoverAnimated:NO];
+  [_outlinePopoverController dismissPopoverAnimated:NO];
 }
 
 #pragma mark - View lifecycle
@@ -83,9 +87,33 @@
 
 - (void)viewDidUnload {
   self.webView = nil;
+  _contentPopoverController = nil;
+  _outlinePopoverController = nil;
   [super viewDidUnload];
 }
 
+#pragma mark - Single tab content controller protocol methods
+
+- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
+  // TODO return if a page is actually loaded
+  return YES;
+}
+
+- (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender {
+  if (!_outlinePopoverController) {
+    DocSetOutlineController *outlineController = [DocSetOutlineController new];
+    
+    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:outlineController];
+    [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    
+    _outlinePopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _outlinePopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    
+    outlineController.presentingPopoverController = _outlinePopoverController;
+  }
+  _outlinePopoverController.contentViewController.artCodeTab = self.artCodeTab;
+  [_outlinePopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
 #pragma mark - WebView Delegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -217,8 +245,8 @@
 
 - (void)_toolNormalContentsAction:(id)sender {
   if (!_contentPopoverController) {
-    DocSetContentController *outlineController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentDocSet rootNode:nil];
-    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:outlineController];
+    DocSetContentController *contentController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentDocSet rootNode:nil];
+    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:contentController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
     _contentPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
