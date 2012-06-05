@@ -107,6 +107,7 @@
   [projects subscribeNext:^(NSNotification *note) {
     __block NSUInteger index = 0;
     if (note.name == ACProjectDidAddProjectNotificationName) {
+      // When adding a project
       NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
       [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
@@ -117,6 +118,7 @@
       _gridElements = nil;
       [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
+      // When deleting a project
       NSString *projectUUID = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] UUID];
       [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]] && [projectUUID isEqualToString:[obj UUID]]) {
@@ -126,6 +128,14 @@
       }];
       _gridElements = nil;
       [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    }
+  }];
+  
+  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetWillBeDeletedNotification object:nil] subscribeNext:^(NSNotification *note) {
+    NSUInteger idx = [_gridElements indexOfObjectIdenticalTo:note.object];
+    if (idx != NSNotFound) {
+      _gridElements = nil;
+      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:idx] animated:YES];
     }
   }];
   
@@ -303,8 +313,9 @@
 
 #pragma mark - Action Sheet Delegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
+- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
+  ASSERT(NO);// TODO use self.gridElements and handle both projects and docsets
+  
   ASSERT(self.isEditing);
   ASSERT([self.gridView indexForSelectedCell] != -1);
   
@@ -314,8 +325,13 @@
       [self setEditing:NO animated:YES];
       
       // Remove projects
-      [cellsToRemove enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-        [ACProject removeProjectWithUUID:[[ACProject.projects objectAtIndex:idx] UUID]];
+      NSArray *oldElements = self.gridElements;
+      [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[ACProject class]]) {
+          [ACProject removeProjectWithUUID:[obj UUID]];
+        } else if ([obj isKindOfClass:[DocSet class]]) {
+          [[DocSetDownloadManager sharedDownloadManager] deleteDocSet:obj];
+        }
       }];
       
       // Show bezel alert

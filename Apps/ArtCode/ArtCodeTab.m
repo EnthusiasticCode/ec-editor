@@ -317,7 +317,7 @@ static NSMutableArray *_mutableTabs;
     if (changeProjects && toProject)
     {
       self.loading = YES;
-      [self.currentProject closeWithCompletionHandler:^(BOOL success) {
+      void (^openToProject)(BOOL) = ^(BOOL _) {
         [toProject openWithCompletionHandler:^(BOOL success) {
           if (success) {
             self.currentProject = toProject;
@@ -330,16 +330,29 @@ static NSMutableArray *_mutableTabs;
           completionHandler(success);
           self.loading = NO;
         }];
-      }];
+      };
+      if (self.currentProject) {
+        [self.currentProject closeWithCompletionHandler:openToProject];
+      } else {
+        openToProject(YES);
+      }
     }
     else
     {
-      // If we're here, the project is the same
-      if ([toUUIDs count] > 1) {
-        self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
-      } else {
-        self.currentItem = nil;
+      // If we're here, the project is the same or no project at all
+      switch (toUUIDs.count) {
+        case 1:
+          self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+          break;
+          
+        case 0:
+          [self.currentProject closeWithCompletionHandler:nil];
+          self.currentProject = nil;
+        default:
+          self.currentItem = nil;
+          break;
       }
+      
       // Return success if the porject did't need to be changed or there was an UUID but no project.
       completionHandler(!changeProjects || !((BOOL)toProject ^ toUUIDs.count));
     }
