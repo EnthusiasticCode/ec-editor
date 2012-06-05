@@ -317,18 +317,19 @@ static NSMutableArray *_mutableTabs;
     if (changeProjects && toProject)
     {
       self.loading = YES;
-      [toProject openWithCompletionHandler:^(BOOL success) {
-        [self.currentProject closeWithCompletionHandler:nil];
-        if (success) {
-          self.currentProject = toProject;
-          if ([toUUIDs count] > 1)
-            self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
-        } else {
-          self.currentProject = nil;
-          self.currentItem = nil;
-        }
-        completionHandler(success);
-        self.loading = NO;
+      [self.currentProject closeWithCompletionHandler:^(BOOL success) {
+        [toProject openWithCompletionHandler:^(BOOL success) {
+          if (success) {
+            self.currentProject = toProject;
+            if ([toUUIDs count] > 1)
+              self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+          } else {
+            self.currentProject = nil;
+            self.currentItem = nil;
+          }
+          completionHandler(success);
+          self.loading = NO;
+        }];
       }];
     }
     else
