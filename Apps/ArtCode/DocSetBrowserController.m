@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 #import "ArtCodeTab.h"
 
-#import "DocSetOutlineController.h"
+#import "DocSetContentController.h"
 #import "ShapePopoverBackgroundView.h"
 #import "BezelAlert.h"
 
@@ -28,7 +28,7 @@
 @end
 
 @implementation DocSetBrowserController {
-  UIPopoverController *_outlinePopoverController;
+  UIPopoverController *_contentPopoverController;
 }
 
 #pragma mark - Properties
@@ -48,12 +48,13 @@
     return nil;
   
   // Add tool buttons
-  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"O" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
+  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"C" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
   [[[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
     return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
   }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
+    // TODO if url.path.length == 0 show initial page instead
     [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
   }];
   
@@ -66,7 +67,7 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-  [_outlinePopoverController dismissPopoverAnimated:NO];
+  [_contentPopoverController dismissPopoverAnimated:NO];
 }
 
 #pragma mark - View lifecycle
@@ -215,15 +216,15 @@
 #pragma mark - Private Methods
 
 - (void)_toolNormalContentsAction:(id)sender {
-  if (!_outlinePopoverController) {
-    DocSetOutlineController *outlineController = [DocSetOutlineController.alloc initWithDocSet:self.artCodeTab.currentDocSet rootNode:nil];
+  if (!_contentPopoverController) {
+    DocSetContentController *outlineController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentDocSet rootNode:nil];
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:outlineController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    _outlinePopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
-    _outlinePopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _contentPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
   }
-  _outlinePopoverController.contentViewController.artCodeTab = self.artCodeTab;
-  [_outlinePopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  _contentPopoverController.contentViewController.artCodeTab = self.artCodeTab;
+  [_contentPopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 @end

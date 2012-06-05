@@ -327,7 +327,7 @@
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
 		CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
-		CD625941157A2BAE00B4669A /* DocSetOutlineController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetOutlineController.m */; };
+		CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetContentController.m */; };
 		CD625943157A358A00B4669A /* docSet.mom in Resources */ = {isa = PBXBuildFile; fileRef = CD625942157A358A00B4669A /* docSet.mom */; };
 		CD62595C157BA57700B4669A /* Local.png in Resources */ = {isa = PBXBuildFile; fileRef = CD62594A157BA57700B4669A /* Local.png */; };
 		CD62595D157BA57700B4669A /* Local@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD62594B157BA57700B4669A /* Local@2x.png */; };
@@ -857,8 +857,8 @@
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
-		CD62593F157A2BAE00B4669A /* DocSetOutlineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetOutlineController.h; sourceTree = "<group>"; };
-		CD625940157A2BAE00B4669A /* DocSetOutlineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetOutlineController.m; sourceTree = "<group>"; };
+		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = DocSetContentController.h; sourceTree = "<group>"; };
+		CD625940157A2BAE00B4669A /* DocSetContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetContentController.m; sourceTree = "<group>"; };
 		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
 		CD62594A157BA57700B4669A /* Local.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Local.png; sourceTree = "<group>"; };
 		CD62594B157BA57700B4669A /* Local@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Local@2x.png"; sourceTree = "<group>"; };
@@ -1614,8 +1614,8 @@
 			children = (
 				CD2DB606157934FF009E4026 /* DocSetBrowserController.h */,
 				CD2DB607157934FF009E4026 /* DocSetBrowserController.m */,
-				CD62593F157A2BAE00B4669A /* DocSetOutlineController.h */,
-				CD625940157A2BAE00B4669A /* DocSetOutlineController.m */,
+				CD62593F157A2BAE00B4669A /* DocSetContentController.h */,
+				CD625940157A2BAE00B4669A /* DocSetContentController.m */,
 			);
 			name = "DocSet Browser";
 			sourceTree = "<group>";
@@ -2868,7 +2868,7 @@
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
 				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,
 				CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */,
-				CD625941157A2BAE00B4669A /* DocSetOutlineController.m in Sources */,
+				CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
