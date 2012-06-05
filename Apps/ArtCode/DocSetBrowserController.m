@@ -24,6 +24,9 @@
 /// The web view to show the docset content
 @property (nonatomic, strong) UIWebView *webView;
 
+/// Hints view that is placed over the webview when no docs is visible
+@property (nonatomic, strong) UIView *hintsView;
+
 /// Opens the popover with the docset contents controller
 - (void)_toolNormalContentsAction:(id)sender;
 
@@ -36,7 +39,7 @@
 
 #pragma mark - Properties
 
-@synthesize webView = _webView;
+@synthesize webView = _webView, hintsView = _hintsView;
 
 - (UIBarButtonItem *)editButtonItem {
   // To not show the edit button
@@ -57,8 +60,16 @@
   [[[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
     return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
   }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
-    // TODO if url.path.length == 0 show initial page instead
-    [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
+    if (url.path.length == 0) {
+      // Show the hint view
+      self.hintsView.frame = self.webView.frame;
+      [self.view insertSubview:self.hintsView aboveSubview:self.webView];
+      self.title = nil;
+    } else {
+      // Load the docset page
+      [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
+      [self.hintsView removeFromSuperview];
+    }
   }];
   
   return self;
@@ -83,10 +94,15 @@
   self.webView.delegate = self;
   self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.view addSubview:self.webView];
+  
+  self.hintsView = [[[NSBundle mainBundle] loadNibNamed:@"DocSetHintsView" owner:self options:nil] objectAtIndex:0];
+  self.hintsView.frame = self.webView.frame;
+  [self.view insertSubview:self.hintsView aboveSubview:self.webView];
 }
 
 - (void)viewDidUnload {
   self.webView = nil;
+  self.hintsView = nil;
   _contentPopoverController = nil;
   _outlinePopoverController = nil;
   [super viewDidUnload];
@@ -95,8 +111,7 @@
 #pragma mark - Single tab content controller protocol methods
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
-  // TODO return if a page is actually loaded
-  return YES;
+  return self.hintsView.superview == nil;
 }
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender {
