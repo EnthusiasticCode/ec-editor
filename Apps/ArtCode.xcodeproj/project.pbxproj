@@ -454,6 +454,7 @@
 		CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */; };
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
 		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
+		CDA51F3B157E0A9300DB034A /* DocSetOutlineController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */; };
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
@@ -857,7 +858,7 @@
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
-		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = DocSetContentController.h; sourceTree = "<group>"; };
+		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetContentController.h; sourceTree = "<group>"; };
 		CD625940157A2BAE00B4669A /* DocSetContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetContentController.m; sourceTree = "<group>"; };
 		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
 		CD62594A157BA57700B4669A /* Local.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Local.png; sourceTree = "<group>"; };
@@ -1010,6 +1011,8 @@
 		CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Function.png; sourceTree = "<group>"; };
 		CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Method.png; sourceTree = "<group>"; };
 		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
+		CDA51F39157E0A9300DB034A /* DocSetOutlineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetOutlineController.h; sourceTree = "<group>"; };
+		CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetOutlineController.m; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* CodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA9B66E1524A0620063D76F /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
@@ -1616,6 +1619,8 @@
 				CD2DB607157934FF009E4026 /* DocSetBrowserController.m */,
 				CD62593F157A2BAE00B4669A /* DocSetContentController.h */,
 				CD625940157A2BAE00B4669A /* DocSetContentController.m */,
+				CDA51F39157E0A9300DB034A /* DocSetOutlineController.h */,
+				CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */,
 			);
 			name = "DocSet Browser";
 			sourceTree = "<group>";
@@ -2869,6 +2874,7 @@
 				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,
 				CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */,
 				CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */,
+				CDA51F3B157E0A9300DB034A /* DocSetOutlineController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

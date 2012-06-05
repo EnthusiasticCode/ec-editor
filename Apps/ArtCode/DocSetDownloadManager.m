@@ -340,7 +340,9 @@
   NSString *path = self.path;
   for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
     if ([path hasPrefix:docSet.path]) {
-      path = self.absoluteString;
+      if ([path rangeOfString:@"#"].location == NSNotFound) {
+        path = self.absoluteString;
+      }
       path = [path substringFromIndex:NSMaxRange([path rangeOfString:@"Contents/Resources/Documents"])];
       NSUInteger fragmentPosition = [path rangeOfString:@"#"].location;
       if (fragmentPosition != NSNotFound) {
