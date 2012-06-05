@@ -64,7 +64,7 @@
       // Show the hint view
       self.hintsView.frame = self.webView.frame;
       [self.view insertSubview:self.hintsView aboveSubview:self.webView];
-      self.title = nil;
+      self.title = self.artCodeTab.currentDocSet.name;
     } else {
       // Load the docset page
       [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
@@ -98,6 +98,8 @@
   self.hintsView = [[[NSBundle mainBundle] loadNibNamed:@"DocSetHintsView" owner:self options:nil] objectAtIndex:0];
   self.hintsView.frame = self.webView.frame;
   [self.view insertSubview:self.hintsView aboveSubview:self.webView];
+  
+  self.title = self.artCodeTab.currentDocSet.name;
 }
 
 - (void)viewDidUnload {
