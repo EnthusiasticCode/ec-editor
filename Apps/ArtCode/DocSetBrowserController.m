@@ -265,6 +265,7 @@
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
     _contentPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    navigationController.presentingPopoverController = _contentPopoverController;
   }
   _contentPopoverController.contentViewController.artCodeTab = self.artCodeTab;
   [_contentPopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

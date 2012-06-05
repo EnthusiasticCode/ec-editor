@@ -7,6 +7,7 @@
 //
 
 #import "DocSetContentController.h"
+#import "UIViewController+Utilities.h"
 #import "DocSet.h"
 #import "HighlightTableViewCell.h"
 #import "ArtCodeTab.h"
@@ -305,6 +306,7 @@
 		NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
 		if ([result objectForKey:@"tokenType"]) {
       [self.artCodeTab pushURL:[self.docSet docSetURLForToken:result]];
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 		} else {
 			NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:[result objectForKey:@"objectID"] error:NULL];
 			[self _openNode:node];
@@ -345,6 +347,7 @@
 			return;
 		}
     [self.artCodeTab pushURL:[self.docSet docSetURLForNode:node]];
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 	}
 }
 
