@@ -44,6 +44,10 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 /// The default theme
 + (TMTheme *)defaultTheme;
 
+/// Currently selected theme
++ (TMTheme *)currentTheme;
++ (void)setCurrentTheme:(TMTheme *)theme;
+
 /// Returns a dictionary containing the default attributes of a string, common to every theme item.
 + (NSDictionary *)sharedAttributes;
 
