@@ -688,10 +688,10 @@ static void init(TabBar *self)
     [RACAble(tabButton, selected) subscribeNext:^(id x) {
       if ([x boolValue]) {
         [tabButton addSubview:tabCloseButton];
-        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 38, 0, 0);
+        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 38, 0, 3);
       } else {
         [tabCloseButton removeFromSuperview];
-        tabButton.titleEdgeInsets = UIEdgeInsetsZero;
+        tabButton.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 3);
       }
     }];
   }
