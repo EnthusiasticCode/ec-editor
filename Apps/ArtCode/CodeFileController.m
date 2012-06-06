@@ -536,7 +536,7 @@ static void drawStencilStar(CGContextRef myContext)
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-// TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
+  // TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
   /*    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
    {
    *decoration = CodeFileMinimapLineDecorationDisc;
@@ -589,8 +589,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-// TODO this needs to be moved to TMUnit, but I don't want to put the whole placeholder rendering logic inside TMUnit, do something about it
-  NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.artCodeTab.currentFile.content substringWithRange:stringRange]];
+  NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.artCodeTab.currentFile.content substringWithRange:stringRange] attributes:[[TMTheme currentTheme] commonAttributes]];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
@@ -606,7 +605,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender
 {
-  return TMTheme.defaultTheme.commonAttributes;
+  return [[TMTheme currentTheme] commonAttributes];
 }
 
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
@@ -755,28 +754,28 @@ static void drawStencilStar(CGContextRef myContext)
 {
   // Set current symbol in title
   // TODO: change this to RAC
-//  TMSymbol *currentSymbol = nil;
-//  for (TMSymbol *symbol in _projectFile.symbolList)
-//  {
-//    if (symbol.range.location > codeView.selectionRange.location)
-//      break;
-//    currentSymbol = symbol;
-//  }
-//  if (currentSymbol != _currentSymbol)
-//  {
-//    _currentSymbol = currentSymbol;
-//    [self.singleTabController updateDefaultToolbarTitle];
-//  }
-//  // Apply debounce to selection change
-//  [_selectionChangeDebounceTimer invalidate];
-//  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-//    // Retrieve the current scope
-//    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-//      // Change accessory keyboard
-//      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
-//      
-//    }];
-//  } repeats:NO];
+  //  TMSymbol *currentSymbol = nil;
+  //  for (TMSymbol *symbol in _projectFile.symbolList)
+  //  {
+  //    if (symbol.range.location > codeView.selectionRange.location)
+  //      break;
+  //    currentSymbol = symbol;
+  //  }
+  //  if (currentSymbol != _currentSymbol)
+  //  {
+  //    _currentSymbol = currentSymbol;
+  //    [self.singleTabController updateDefaultToolbarTitle];
+  //  }
+  //  // Apply debounce to selection change
+  //  [_selectionChangeDebounceTimer invalidate];
+  //  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+  //    // Retrieve the current scope
+  //    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+  //      // Change accessory keyboard
+  //      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
+  //      
+  //    }];
+  //  } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods
@@ -813,7 +812,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
-// TODO NIK better check for file type
+  // TODO NIK better check for file type
   if (editingState || ![[self.artCodeTab.currentFile.name pathExtension] isEqualToString:@"html"])
   {
     return self.codeView;
