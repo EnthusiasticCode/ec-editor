@@ -13,13 +13,14 @@
 
 #import "DocSetContentController.h"
 #import "DocSetOutlineController.h"
+#import "DocSetBookmarksController.h"
 #import "ShapePopoverBackgroundView.h"
 #import "BezelAlert.h"
 
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
 
-@interface DocSetBrowserController () <UIWebViewDelegate>
+@interface DocSetBrowserController () <UIWebViewDelegate, DocSetBookmarksControllerDelegate>
 
 /// The web view to show the docset content
 @property (nonatomic, strong) UIWebView *webView;
@@ -29,12 +30,14 @@
 
 /// Opens the popover with the docset contents controller
 - (void)_toolNormalContentsAction:(id)sender;
+- (void)_toolNormalBookmarksAction:(id)sender;
 
 @end
 
 @implementation DocSetBrowserController {
   UIPopoverController *_contentPopoverController;
   UIPopoverController *_outlinePopoverController;
+  UIPopoverController *_bookmarkPopoverController;
 }
 
 #pragma mark - Properties
@@ -54,7 +57,7 @@
     return nil;
   
   // Add tool buttons
-  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"C" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
+  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"B" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [UIBarButtonItem.alloc initWithTitle:@"C" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
   [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentURL), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
@@ -85,6 +88,7 @@
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
   [_contentPopoverController dismissPopoverAnimated:NO];
   [_outlinePopoverController dismissPopoverAnimated:NO];
+  [_bookmarkPopoverController dismissPopoverAnimated:NO];
 }
 
 #pragma mark - View lifecycle
@@ -105,6 +109,7 @@
   self.hintsView = nil;
   _contentPopoverController = nil;
   _outlinePopoverController = nil;
+  _bookmarkPopoverController = nil;
   [super viewDidUnload];
 }
 
@@ -256,6 +261,20 @@
 	}
 }
 
+#pragma mark - Bookmarks Controller Delegate
+
+- (NSString *)docSetBookmarksController:(DocSetBookmarksController *)controller titleForBookmarksAtURL:(NSURL *)url anchorTitle:(NSString *__autoreleasing *)anchorTitle {
+  // Subtitle
+  if (anchorTitle) {
+    NSString *fragment = url.fragment;
+    if (fragment.length) {
+      *anchorTitle = [self.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"var elements = document.getElementsByName('%@'); if (elements.length > 0) { elements[0].title; } else { ''; }", fragment]];
+    }
+  }
+  // Title
+  return [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+}
+
 #pragma mark - Private Methods
 
 - (void)_toolNormalContentsAction:(id)sender {
@@ -269,6 +288,20 @@
   }
   _contentPopoverController.contentViewController.artCodeTab = self.artCodeTab;
   [_contentPopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+- (void)_toolNormalBookmarksAction:(id)sender {
+  if (!_bookmarkPopoverController) {
+    DocSetBookmarksController *bookmarkController = [DocSetBookmarksController new];
+    bookmarkController.delegate = self;
+    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:bookmarkController];
+    [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    _bookmarkPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _bookmarkPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    navigationController.presentingPopoverController = _bookmarkPopoverController;
+  }
+  _bookmarkPopoverController.contentViewController.artCodeTab = self.artCodeTab;
+  [_bookmarkPopoverController presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];  
 }
 
 @end
