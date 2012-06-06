@@ -341,11 +341,11 @@ static NSMutableArray *_mutableTabs;
     {
       // If we're here, the project is the same or no project at all
       switch (toUUIDs.count) {
-        case 1:
+        case 2:
           self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
           break;
           
-        case 0:
+        case 1:
           [self.currentProject closeWithCompletionHandler:nil];
           self.currentProject = nil;
         default:
