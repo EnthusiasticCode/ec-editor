@@ -57,7 +57,9 @@
   self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"C" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
-  [[[RACAbleSelf(self.artCodeTab.currentURL) where:^BOOL(id x) {
+  [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentURL), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
+    return xs.first;
+  }] where:^BOOL(id x) {
     return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
   }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
     if (url.path.length == 0) {
@@ -90,16 +92,12 @@
 - (void)loadView {
   [super loadView];
   
+  self.hintsView = [[[NSBundle mainBundle] loadNibNamed:@"DocSetHintsView" owner:self options:nil] objectAtIndex:0];
+  
   self.webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
   self.webView.delegate = self;
   self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.view addSubview:self.webView];
-  
-  self.hintsView = [[[NSBundle mainBundle] loadNibNamed:@"DocSetHintsView" owner:self options:nil] objectAtIndex:0];
-  self.hintsView.frame = self.webView.frame;
-  [self.view insertSubview:self.hintsView aboveSubview:self.webView];
-  
-  self.title = self.artCodeTab.currentDocSet.name;
 }
 
 - (void)viewDidUnload {
