@@ -454,6 +454,7 @@
 		CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */; };
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
 		CDA2EDAC157F9B3400E979E9 /* DocSetBookmarksController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA2EDAB157F9B3400E979E9 /* DocSetBookmarksController.m */; };
+		CDA2EDAE157FD47900E979E9 /* projectsIcon_docSet.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA2EDAD157FD47900E979E9 /* projectsIcon_docSet.png */; };
 		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
 		CDA51F3B157E0A9300DB034A /* DocSetOutlineController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */; };
 		CDA51F3F157E205700DB034A /* OutlineDisclosureButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA51F3D157E205700DB034A /* OutlineDisclosureButton.png */; };
@@ -1016,6 +1017,7 @@
 		CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Method.png; sourceTree = "<group>"; };
 		CDA2EDAA157F9B3400E979E9 /* DocSetBookmarksController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetBookmarksController.h; sourceTree = "<group>"; };
 		CDA2EDAB157F9B3400E979E9 /* DocSetBookmarksController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetBookmarksController.m; sourceTree = "<group>"; };
+		CDA2EDAD157FD47900E979E9 /* projectsIcon_docSet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsIcon_docSet.png; sourceTree = "<group>"; };
 		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
 		CDA51F39157E0A9300DB034A /* DocSetOutlineController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetOutlineController.h; sourceTree = "<group>"; };
 		CDA51F3A157E0A9300DB034A /* DocSetOutlineController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetOutlineController.m; sourceTree = "<group>"; };
@@ -2249,6 +2251,7 @@
 		CDEE0D7014BDA5790019FDEF /* Projects */ = {
 			isa = PBXGroup;
 			children = (
+				CDA2EDAD157FD47900E979E9 /* projectsIcon_docSet.png */,
 				CD711ACF156B9A1500F30964 /* helpArrowUp.png */,
 				CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */,
 				CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */,
@@ -2690,6 +2693,7 @@
 				CDA51F3F157E205700DB034A /* OutlineDisclosureButton.png in Resources */,
 				CDA51F40157E205700DB034A /* OutlineDisclosureButton@2x.png in Resources */,
 				CDA51F42157E25E100DB034A /* DocSetHintsView.xib in Resources */,
+				CDA2EDAE157FD47900E979E9 /* projectsIcon_docSet.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

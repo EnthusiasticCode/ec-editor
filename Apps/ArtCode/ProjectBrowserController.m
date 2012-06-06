@@ -270,6 +270,7 @@
     DocSet *docSet = (DocSet *)element;
     cell.title.text = cell.accessibilityLabel = docSet.name;
     cell.label.text = @"";
+    cell.icon.image = [UIImage imageNamed:@"projectsIcon_docSet"];
     cell.accessibilityHint = L(@"Open the documentation");
     cell.newlyCreatedBadge.hidden = YES;
   }
