@@ -314,8 +314,6 @@
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
-  ASSERT(NO);// TODO use self.gridElements and handle both projects and docsets
-  
   ASSERT(self.isEditing);
   ASSERT([self.gridView indexForSelectedCell] != -1);
   
@@ -335,7 +333,7 @@
       }];
       
       // Show bezel alert
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Project removed" plural:@"%u projects removed" count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
     }
   }
   else if (actionSheet == _toolItemExportActionSheet)
@@ -348,24 +346,34 @@
       self.loading = YES;
       NSInteger cellsToExportCount = [cellsToExport count];
       __block NSInteger progress = 0;
-      [cellsToExport enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:^(NSUInteger idx, BOOL *stop) {
-        ACProject *project = [[ACProject.projects objectAtIndex:idx] copy];
-        [project openWithCompletionHandler:^(BOOL openSuccess) {
-          NSURL *publishURL = [NSURL temporaryDirectory];
-          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
-            if (publishSuccess) {
-              NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-            }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
-            [project closeWithCompletionHandler:nil];
-            // TODO error handling?
-            if (++progress == cellsToExportCount) {
-              self.loading = NO;
-              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-            }
+      void (^progressBlock)() = ^{
+        // Block to advance the progress count and terminate loading phase when done
+        if (++progress == cellsToExportCount) {
+          self.loading = NO;
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+        }
+      };
+      [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[ACProject class]]) {
+          ACProject *project = [obj copy];
+          [project openWithCompletionHandler:^(BOOL openSuccess) {
+            NSURL *publishURL = [NSURL temporaryDirectory];
+            [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
+              if (publishSuccess) {
+                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+                [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+              }
+              [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+              [project closeWithCompletionHandler:nil];
+              // TODO error handling?
+              progressBlock();
+            }];
           }];
-        }];
+        } else {
+          // Not a project
+          progressBlock();
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Only projects can be exported") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+        }
       }];
     }
     else if (buttonIndex == 1) // send mail
@@ -385,48 +393,57 @@
       __block NSInteger progress = 0;
       NSURL *temporaryDirectory = [NSURL temporaryDirectory];
       [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-      [cellsToExport enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        ACProject *project = [[ACProject.projects objectAtIndex:idx] copy];
-        
-        // Generate mail subject
-        [subject appendFormat:@"%@, ", project.name];
-        
-        // Process project
-        [project openWithCompletionHandler:^(BOOL openSuccess) {
-          NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          NSURL *publishURL = [NSURL temporaryDirectory];
-          [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
-            if (publishSuccess) {
-              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-              // Add attachment
-              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-              [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
-            }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
-            [project closeWithCompletionHandler:nil];
-            // Complete process
-            if (++progress == cellsToExportCount) {
-              // Add mail subject
-              if ([subject length] > 2) {
-                [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
-                [mailComposer setSubject:subject];
-              } else {
-                [mailComposer setSubject:@"ArtCode exported project"];
+      void (^progressCompletion)() = ^ {
+        // Complete process
+        if (++progress == cellsToExportCount) {
+          // Add mail subject
+          if ([subject length] > 2) {
+            [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
+            [mailComposer setSubject:subject];
+          } else {
+            [mailComposer setSubject:L(@"ArtCode exported project")];
+          }
+          
+          // Add body
+          if (cellsToExportCount == 1)
+            [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+          else
+            [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
+          
+          // Present
+          [self presentViewController:mailComposer animated:YES completion:nil];
+          [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+          self.loading = NO;
+        }
+      };
+      // Enumerate elements to export
+      [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[ACProject class]]) {
+          ACProject *project = [obj copy];
+          
+          // Generate mail subject
+          [subject appendFormat:@"%@, ", project.name];
+          
+          // Process project
+          [project openWithCompletionHandler:^(BOOL openSuccess) {
+            NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+            NSURL *publishURL = [NSURL temporaryDirectory];
+            [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
+              if (publishSuccess) {
+                [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+                // Add attachment
+                [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+                [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
               }
-              
-              // Add body
-              if (cellsToExportCount == 1)
-                [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
-              else
-                [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
-              
-              // Present
-              [self presentViewController:mailComposer animated:YES completion:nil];
-              [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-              self.loading = NO;
-            }
+              [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+              [project closeWithCompletionHandler:nil];
+              progressCompletion();
+            }];
           }];
-        }];
+        } else {
+          // Ignore non projects
+          progressCompletion();
+        }
       }];
     }
   }
