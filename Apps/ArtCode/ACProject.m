@@ -40,8 +40,10 @@ NSString * const ACProjectNotificationItemKey = @"ACProjectNotificationItemKey";
 
 static NSMutableSet *_projectUUIDs;
 
-/// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
+// UUID to dictionary of cached projects informations (uuid, path, labelColor, name).
 static NSMutableDictionary *_projectsList = nil;
+// UUID to project object
+static NSMutableDictionary *_projects = nil;
 
 static NSString * const _projectsFolderName = @"LocalProjects";
 static NSString * const _contentsFolderName = @"Contents";
@@ -181,36 +183,29 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Projects list
 
-+ (NSArray *)projects {
-  // TODO cache this result
-  NSMutableArray *projects = NSMutableArray.alloc.init;
-  for (id uuid in _projectsList) {
-    [projects addObject:[self.class.alloc _initWithUUID:uuid]];
++ (NSDictionary *)projects {
+  if (!_projects) {
+    _projects = [[NSMutableDictionary alloc] init];
+    for (id uuid in _projectsList) {
+      [_projects setObject:[[self alloc] _initWithUUID:uuid] forKey:uuid];
+    }
   }
-  return projects;
+  return _projects.copy;
 }
 
 + (ACProject *)projectWithUUID:(id)uuid {
-  NSDictionary *projectInfo = [_projectsList objectForKey:uuid];
-  if (!projectInfo) {
-    return nil;
-  }
-  return [self.alloc _initWithUUID:uuid];
+  return [[self projects] objectForKey:uuid];
 }
 
 + (void)removeProjectWithUUID:(id)uuid {
-  __block NSUInteger removeIndex = NSNotFound;
-  __block ACProject *project = nil;
-  [self.class.projects enumerateObjectsUsingBlock:^(ACProject *p, NSUInteger idx, BOOL *stop) {
-    if ([p.UUID isEqualToString:uuid]) {
-      removeIndex = idx;
-      project = p;
-      *stop = YES;
-    }
-  }];
+  ACProject *project = [[self projects] objectForKey:uuid];
+  if (!project) {
+    return;
+  }
   NSDictionary *userInfo = [NSDictionary dictionaryWithObject:project forKey:ACProjectNotificationProjectKey];
 
   [NSNotificationCenter.defaultCenter postNotificationName:ACProjectWillRemoveProjectNotificationName object:self.class userInfo:userInfo];
+  [_projects removeObjectForKey:uuid];
   [_projectsList removeObjectForKey:uuid];
   [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidRemoveProjectNotificationName object:self.class userInfo:userInfo];
 
@@ -234,6 +229,7 @@ static NSString * const _plistRemotesKey = @"remotes";
       [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillAddProjectNotificationName object:self userInfo:userInfo];
       
       // Insert the project
+      [_projects setObject:project forKey:uuid];
       if (labelColor)
         [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, labelColor.hexString, _plistLabelColorKey, nil] forKey:uuid];
       else
@@ -400,9 +396,23 @@ static NSString * const _plistRemotesKey = @"remotes";
       }
       [projectInfo setObject:duplicateName forKey:_plistNameKey];
       [projectInfo setObject:[NSNumber numberWithBool:YES] forKey:_plistIsNewlyCreatedKey];
+      
+      ACProject *project = [[[self class] alloc] _initWithUUID:duplicateUUID];
+
+      NSDictionary *userInfo = [NSDictionary dictionaryWithObject:project forKey:ACProjectNotificationProjectKey];
+      
+      // Notify start of operations via notification center
+      [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectWillAddProjectNotificationName object:self userInfo:userInfo];
+      
+      // Insert the project
+      [_projects setObject:project forKey:duplicateUUID];
       [_projectsList setObject:projectInfo forKey:duplicateUUID];
+      [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
+      
+      // Notify finish
+      [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidAddProjectNotificationName object:self userInfo:userInfo];
       if (completionHandler) {
-        completionHandler([self.class.alloc _initWithUUID:duplicateUUID]);
+        completionHandler(project);
       }
     }];
   });

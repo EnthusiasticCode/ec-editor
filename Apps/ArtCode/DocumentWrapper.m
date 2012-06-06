@@ -95,6 +95,7 @@
     for (void(^pendingOpenCompletionHandler)(BOOL) in _pendingOpenCompletionHandlers) {
       pendingOpenCompletionHandler(success);
     }
+    _pendingOpenCompletionHandlers = nil;
     [self didChangeValueForKey:@"documentState"];
   }];
 }
@@ -149,6 +150,7 @@
     for (void(^pendingCloseCompletionHandler)(BOOL) in _pendingCloseCompletionHandlers) {
       pendingCloseCompletionHandler(success);
     }
+    _pendingCloseCompletionHandlers = nil;
     if (!_openCount) {
       _document = nil;
       [self didChangeValueForKey:@"documentState"];

@@ -42,7 +42,7 @@ describe(@"An ACProject", ^{
   
   it(@"can be retrieved", ^{
     ACProject *project = nil;
-    for (project in [ACProject projects]) {
+    for (project in [ACProject projects].allValues) {
       if ([project.name isEqualToString:projectName]) {
         break;
       }
@@ -52,7 +52,7 @@ describe(@"An ACProject", ^{
   
   it(@"can be deleted", ^{
     ACProject *project = nil;
-    for (project in [ACProject projects]) {
+    for (project in [ACProject projects].allValues) {
       if ([project.name isEqualToString:projectName]) {
         break;
       }

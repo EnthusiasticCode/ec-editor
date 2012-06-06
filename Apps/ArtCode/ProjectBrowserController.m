@@ -63,7 +63,7 @@
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
-    NSMutableArray *elements = [NSMutableArray arrayWithArray:ACProject.projects];
+    NSMutableArray *elements = [NSMutableArray arrayWithArray:[ACProject projects].allValues];
     [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
@@ -528,7 +528,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ACProject *)[ACProject.projects objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate) {
+    [(ACProject *)[ACProject.projects.allValues objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate) {
       [duplicate closeWithCompletionHandler:nil];
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;
