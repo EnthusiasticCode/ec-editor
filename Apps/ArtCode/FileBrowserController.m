@@ -52,8 +52,6 @@
   NSMutableArray *_selectedItems;
 }
 
-@property (nonatomic, strong) ACProjectFolder *currentFolder;
-
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
@@ -76,14 +74,9 @@
   self = [super initWithTitle:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
-  
-  // Update current folder with current tab item
-  [[RACAbleSelf(self.artCodeTab.currentItem) where:^BOOL(id x) {
-    return [x isKindOfClass:[ACProjectFolder class]];
-  }] toProperty:RAC_KEYPATH_SELF(self.currentFolder) onObject:self];
-  
+
   // Update table view when current folder's children change
-  [RACAbleSelf(self.currentFolder.children) subscribeNext:^(id x) {
+  [RACAbleSelf(self.artCodeTab.currentFolder.children) subscribeNext:^(id x) {
     [self invalidateFilteredItems];
     [self.tableView reloadData];
   }];
@@ -93,7 +86,6 @@
 
 #pragma mark - Properties
 
-@synthesize currentFolder = _currentFolder;
 @synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
 
 
@@ -101,16 +93,16 @@
   if (!_filteredItems) {
     if ([self.searchBar.text length]) {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
+      _filteredItems = [self.artCodeTab.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
         return element.name;
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
         self.infoLabel.text = L(@"No items in this folder match the filter.");
       else
-        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.currentFolder.children count]];
+        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.artCodeTab.currentFolder.children count]];
     } else {
-      _filteredItems = [self.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
+      _filteredItems = [self.artCodeTab.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
         return [obj1.name compare:obj2.name];
       }];
       _filteredItemsHitMasks = nil;
@@ -178,12 +170,6 @@
   
   // Hide sync button if no remotes
   self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentProject.remotes count] == 0;
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-  self.currentFolder = nil;
-  [super viewDidDisappear:animated];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -521,7 +507,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync
-  [remoteTransferController synchronizeLocalProjectFolder:self.currentFolder withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController synchronizeLocalProjectFolder:self.artCodeTab.currentFolder withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }

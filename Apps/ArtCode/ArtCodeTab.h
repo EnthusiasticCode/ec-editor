@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application, ACProject, ACProjectItem, ACProjectFile, DocSet;
+@class Application, ACProject, ACProjectItem, ACProjectFolder, ACProjectFile, DocSet;
 
 @interface ArtCodeTab : NSObject
 
@@ -39,6 +39,9 @@
 
 /// Shorthands for currentItem casting. Will be nil if the currentItem is not of the correct type.
 @property (nonatomic, readonly) ACProjectFile *currentFile;
+
+/// Shorthands for currentItem casting. Will be nil if the currentItem is not an ACProjectFolder.
+@property (nonatomic, strong, readonly) ACProjectFolder *currentFolder;
 
 /// Access to the current URL docset if any.
 @property (nonatomic, strong, readonly) DocSet *currentDocSet;

@@ -73,7 +73,18 @@ static NSMutableArray *_mutableTabs;
   }
 }
 
+- (ACProjectFolder *)currentFolder {
+  if (self.currentItem.type == ACPFolder) {
+    return (ACProjectFolder *)self.currentItem;
+  }
+  return nil;
+}
+
 + (NSSet *)keyPathsForValuesAffectingCurrentFile {
+  return [NSSet setWithObject:@"currentItem"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingCurrentFolder {
   return [NSSet setWithObject:@"currentItem"];
 }
 
@@ -400,6 +411,7 @@ static NSMutableArray *_mutableTabs;
     return;
   
   [self willChangeValueForKey:@"historyURLs"];
+  NSURL *currentURL = self.currentURL;
   // Remove history entries
   [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsAtIndexes:removeIndexed];
   [_mutableHistoryURLs removeObjectsAtIndexes:removeIndexed];
@@ -415,7 +427,9 @@ static NSMutableArray *_mutableTabs;
     [[_mutableDictionary objectForKey:_historyURLsKey] removeAllObjects];
     [ArtCodeTab removeTab:self];
   } else {
-    self.currentHistoryPosition = newHistoryPosition;
+    [self _moveFromURL:currentURL toURL:[_mutableHistoryURLs objectAtIndex:newHistoryPosition] completionHandler:^(BOOL success) {
+      self.currentHistoryPosition = newHistoryPosition;
+    }];
   }
   [self didChangeValueForKey:@"historyURLs"];
 }

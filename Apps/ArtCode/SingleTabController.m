@@ -296,12 +296,8 @@
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
   
   // Changing current tab URL re-route the content view controller
-  [[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject), RAC_KEYPATH_SELF(self.artCodeTab.currentItem), RAC_KEYPATH_SELF(self.artCodeTab.currentURL), nil] reduce:^id(RACTuple *xs) {
-    return self.artCodeTab;
-  }] where:^BOOL(id x) {
-    return x != nil;
-  }] subscribeNext:^(id x) {
-    [self setContentViewController:[self _routeViewControllerForTab:x] animated:YES];
+  [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
+    [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
   }];
     
   // Content view controller binds
@@ -332,6 +328,10 @@
   }];
   
   return self;
+}
+
+- (void)dealloc {
+  [ArtCodeTab removeTab:self.artCodeTab];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
