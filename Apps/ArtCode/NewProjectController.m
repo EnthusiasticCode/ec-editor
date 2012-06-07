@@ -92,7 +92,7 @@
     return;
   }
   BOOL validName = YES;
-  for (ACProject *p in [ACProject projects]) {
+  for (ACProject *p in [ACProject projects].allValues) {
     if ([projectName isEqualToString:p.name]) {
       validName = NO;
       break;
