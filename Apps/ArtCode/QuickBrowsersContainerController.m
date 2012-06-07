@@ -12,6 +12,7 @@
 #import "ArtCodeTab.h"
 #import "ACProject.h"
 #import "ACProjectItem.h"
+#import "ACProjectFile.h"
 #import "ACProjectFileSystemItem.h"
 #import "ACProjectFileBookmark.h"
 
