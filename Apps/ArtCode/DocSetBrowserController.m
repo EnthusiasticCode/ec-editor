@@ -57,7 +57,7 @@
     return nil;
   
   // Add tool buttons
-  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithTitle:@"B" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [UIBarButtonItem.alloc initWithTitle:@"C" style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
+  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Bookmarks"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Find"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // Update on docset changes
   [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentURL), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {

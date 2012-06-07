@@ -59,6 +59,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
     return nil;
   
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_addBookmarkAction:)];
+  self.title = L(@"Bookmarks");
     
   return self;
 }
