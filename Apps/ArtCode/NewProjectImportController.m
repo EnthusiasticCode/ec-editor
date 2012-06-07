@@ -19,16 +19,33 @@
 #import "ArchiveUtilities.h"
 
 
-static void *_directoryObservingContext;
+@interface NewProjectImportController ()
 
-@implementation NewProjectImportController {
-  DirectoryPresenter *_documentsDirectoryPresenter;
+@property (nonatomic, strong, readonly) NSArray *documentsArchiveURLs;
+
+@end
+
+
+@implementation NewProjectImportController
+
+@synthesize documentsArchiveURLs = _documentsArchiveURLs;
+
+- (NSArray *)documentsArchiveURLs {
+  if (_documentsArchiveURLs == nil) {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
+      if ([url isArchiveURL]) {
+        [result addObject:url];
+      }
+    }
+    _documentsArchiveURLs = result;
+  }
+  return _documentsArchiveURLs;
 }
 
 #pragma mark - View Lifecycle
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
 }
 
@@ -37,73 +54,47 @@ static void *_directoryObservingContext;
   self.tableView.userInteractionEnabled = YES;
   [self stopRightBarButtonItemActivityIndicator];
   
-  _documentsDirectoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:[NSURL applicationDocumentsDirectory] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-  [_documentsDirectoryPresenter addObserver:self forKeyPath:@"fileURLs" options:0 context:&_directoryObservingContext];
-  if ([_documentsDirectoryPresenter.fileURLs count] != 0)
+  if (self.documentsArchiveURLs.count != 0) {
     [(UILabel *)self.tableView.tableFooterView setText:L(@"Swipe on an item to delete it.")];
+  } else {
+    [(UILabel *)self.tableView.tableFooterView setText:L(@"Add files from iTunes to populate this list.")];
+  }
   
   [self.tableView reloadData];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-  [_documentsDirectoryPresenter removeObserver:self forKeyPath:@"fileURLs" context:&_directoryObservingContext];
-  _documentsDirectoryPresenter = nil;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &_directoryObservingContext)
-  {
-    if ([_documentsDirectoryPresenter.fileURLs count] != 0)
-      [(UILabel *)self.tableView.tableFooterView setText:L(@"Swipe on an item to delete it.")];
-    else
-      [(UILabel *)self.tableView.tableFooterView setText:L(@"Add files from iTunes to populate this list.")];
-    [self.tableView reloadData];
-  }
-  else
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
+- (void)viewDidDisappear:(BOOL)animated {
+  _documentsArchiveURLs = nil;
+  [super viewDidDisappear:animated];
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-  return 1;
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return self.documentsArchiveURLs.count;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-  return [_documentsDirectoryPresenter.fileURLs count];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdentifier = @"Cell";
   
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
   }
-  cell.textLabel.text = [[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] lastPathComponent];
+  cell.textLabel.text = [[self.documentsArchiveURLs objectAtIndex:indexPath.row] lastPathComponent];
   
   return cell;
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
   return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  if (editingStyle == UITableViewCellEditingStyleDelete)
-  {
-    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateWritingItemAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row] options:NSFileCoordinatorWritingForDeleting error:NULL byAccessor:^(NSURL *newURL) {
-      [[NSFileManager new] removeItemAtURL:newURL error:NULL];
-    }];
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete) {
+    [[NSFileManager new] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
+    _documentsArchiveURLs = nil;
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
 }
 
@@ -117,7 +108,7 @@ static void *_directoryObservingContext;
   BOOL attemptAgain = NO;
   do {
     attemptAgain = NO;
-    for (ACProject *p in [ACProject projects]) {
+    for (ACProject *p in ACProject.projects.allValues) {
       if ([p.name isEqualToString:projectName]) {
         projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
         attemptAgain = YES;
@@ -162,7 +153,7 @@ static void *_directoryObservingContext;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self _createProjectFromZipAtURL:[_documentsDirectoryPresenter.fileURLs objectAtIndex:indexPath.row]];
+  [self _createProjectFromZipAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row]];
 }
 
 @end

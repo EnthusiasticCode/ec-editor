@@ -14,3 +14,11 @@
 + (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL;
 
 @end
+
+
+@interface NSURL (ArchiveUtitlies)
+
+/// Indicates if the URL can be extracted by the ArchiveUtility.
+- (BOOL)isArchiveURL;
+
+@end

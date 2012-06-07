@@ -181,3 +181,16 @@
 //    fclose(file);
 //    archive_entry_free(entry);
 //}
+
+@implementation NSURL (ArchiveUtitlies)
+
+- (BOOL)isArchiveURL {
+  NSString *ext = self.pathExtension;
+  return [ext isEqualToString:@"zip"] 
+  || [ext isEqualToString:@"rar"] 
+  || [ext isEqualToString:@"tar"] 
+  || [ext isEqualToString:@"7zip"] 
+  || [ext isEqualToString:@"cab"];
+}
+
+@end
