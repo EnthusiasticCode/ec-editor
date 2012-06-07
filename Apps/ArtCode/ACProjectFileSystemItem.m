@@ -101,6 +101,7 @@
   }
   
   _name = fileWrapper.preferredFilename;
+  ASSERT(_name);
   
   return self;
 }

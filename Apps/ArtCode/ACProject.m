@@ -610,7 +610,12 @@ static NSString * const _plistRemotesKey = @"remotes";
     plist = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListImmutable format:NULL error:NULL];
   
   // Read content folder
-  _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project fileWrapper:[fileWrapper.fileWrappers objectForKey:_contentsFolderName] propertyListDictionary:[plist objectForKey:_plistContentsKey]];
+  NSFileWrapper *contentsFileWrapper = [fileWrapper.fileWrappers objectForKey:_contentsFolderName];
+  if (!contentsFileWrapper) {
+    contentsFileWrapper = [NSFileWrapper.alloc initDirectoryWithFileWrappers:nil];
+    contentsFileWrapper.preferredFilename = _contentsFolderName;
+  }
+  _project.contentsFolder = [ACProjectFolder.alloc initWithProject:_project fileWrapper:contentsFileWrapper propertyListDictionary:[plist objectForKey:_plistContentsKey]];
   
   ASSERT(_project.contentsFolder);
   
