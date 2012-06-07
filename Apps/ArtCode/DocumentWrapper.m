@@ -15,6 +15,7 @@
   NSUInteger _openCount;
   NSMutableArray *_pendingOpenCompletionHandlers;
   NSMutableArray *_pendingCloseCompletionHandlers;
+  NSMutableArray *_pendingSaveCompletionHandlers;
 }
 
 #pragma mark - Forwarding
@@ -63,11 +64,12 @@
     return;
   }
   
-  // If there are pending close, queue the open after the close completes
-  if (_pendingCloseCompletionHandlers) {
+  // If there are pending close or save, queue the open after it completes
+  NSMutableArray *alreadyPendingCompletionHandlers = _pendingCloseCompletionHandlers ?: _pendingSaveCompletionHandlers;
+  if (alreadyPendingCompletionHandlers) {
     __weak id weakSelf = self;
     void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
-    [_pendingCloseCompletionHandlers addObject:[^{
+    [alreadyPendingCompletionHandlers addObject:[^{
       id strongSelf = weakSelf;
       if (!strongSelf) {
         return;
@@ -127,17 +129,18 @@
     return;
   }
   
-  // If there are pending open, queue the close after the open completes
-  if (_pendingOpenCompletionHandlers) {
+  // If there are pending open or save, queue the close after it completes
+  NSMutableArray *alreadyPendingCompletionHandlers = _pendingOpenCompletionHandlers ?: _pendingSaveCompletionHandlers;
+  if (alreadyPendingCompletionHandlers) {
     __weak id weakSelf = self;
     void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
-    [_pendingOpenCompletionHandlers addObject:^{
+    [alreadyPendingCompletionHandlers addObject:[^{
       id strongSelf = weakSelf;
       if (!strongSelf) {
         return;
       }
       [strongSelf closeWithCompletionHandler:completionHandlerCopy];
-    }];
+    } copy]];
     return;
   }
   
@@ -161,6 +164,22 @@
 - (void)saveToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation completionHandler:(void (^)(BOOL))completionHandler {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
   ASSERT(_block);
+
+  // If there are pending open or close, queue the save after it completes
+  NSMutableArray *alreadyPendingCompletionHandlers = _pendingOpenCompletionHandlers ?: _pendingCloseCompletionHandlers;
+  if (alreadyPendingCompletionHandlers) {
+    __weak id weakSelf = self;
+    void (^completionHandlerCopy)(BOOL) = [completionHandler copy];
+    [alreadyPendingCompletionHandlers addObject:[^{
+      id strongSelf = weakSelf;
+      if (!strongSelf) {
+        return;
+      }
+      [strongSelf saveToURL:url forSaveOperation:saveOperation completionHandler:completionHandlerCopy];
+    } copy]];
+    return;
+  }
+  
   NSUInteger openCountIncrease = 0;
   if (!_document) {
     _document = _block();

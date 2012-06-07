@@ -300,29 +300,28 @@ static NSMutableArray *_mutableTabs;
     self.currentDocSet = nil;
     
     // Handle changes to art code urls
-    NSArray *fromUUIDs = [fromURL artCodeUUIDs];
-    NSArray *toUUIDs = [toURL artCodeUUIDs];
+    id fromProjectUUID = [fromURL artCodeProjectUUID];
+    id toProjectUUID = [toURL artCodeProjectUUID];
+    id toItemUUID = [toURL artCodeItemUUID];
     
     // Check if we're changing projects, and if the project we're changing to exists
-    BOOL changeProjects = NO;
-    ACProject *toProject = nil;
-    if ((fromUUIDs.count || toUUIDs.count) && ![(fromUUIDs.count ? [fromUUIDs objectAtIndex:0] : nil) isEqual:(toUUIDs.count ? [toUUIDs objectAtIndex:0] : nil)])
-    {
-      changeProjects = YES;
-      if ([toUUIDs count] && [toUUIDs objectAtIndex:0])
-        toProject = [ACProject projectWithUUID:[toUUIDs objectAtIndex:0]];
+    BOOL isChangingProject = NO;
+    ACProject *fromProject = [ACProject projectWithUUID:fromProjectUUID];
+    ACProject *toProject = [ACProject projectWithUUID:toProjectUUID];
+    if (fromProject != toProject) {
+      isChangingProject = YES;
     }
     
     // If both are true, we need to make an async load, else we load synchronous
-    if (changeProjects && toProject)
+    if (isChangingProject && toProject)
     {
       self.loading = YES;
       void (^openToProject)(BOOL) = ^(BOOL _) {
         [toProject openWithCompletionHandler:^(BOOL success) {
           if (success) {
             self.currentProject = toProject;
-            if ([toUUIDs count] > 1)
-              self.currentItem = [toProject itemWithUUID:[toUUIDs objectAtIndex:1]];
+            if (toItemUUID)
+              self.currentItem = [toProject itemWithUUID:toItemUUID];
           } else {
             self.currentProject = nil;
             self.currentItem = nil;
@@ -331,30 +330,23 @@ static NSMutableArray *_mutableTabs;
           self.loading = NO;
         }];
       };
-      if (self.currentProject) {
-        [self.currentProject closeWithCompletionHandler:openToProject];
+      if (fromProject) {
+        [fromProject closeWithCompletionHandler:openToProject];
       } else {
         openToProject(YES);
       }
     }
-    else
+    else if (toProject)
     {
-      // If we're here, the project is the same or no project at all
-      switch (toUUIDs.count) {
-        case 2:
-          self.currentItem = [self.currentProject itemWithUUID:[toUUIDs objectAtIndex:1]];
-          break;
-          
-        case 1:
-          [self.currentProject closeWithCompletionHandler:nil];
-          self.currentProject = nil;
-        default:
-          self.currentItem = nil;
-          break;
-      }
-      
-      // Return success if the porject did't need to be changed or there was an UUID but no project.
-      completionHandler(!changeProjects || !((BOOL)toProject ^ toUUIDs.count));
+      // If we're here, the project is the same 
+      self.currentItem = [toProject itemWithUUID:toItemUUID];
+      completionHandler(YES);
+    }
+    else {
+      // If we're here, we're changing to an URL without a project
+      self.currentProject = nil;
+      self.currentItem = nil;
+      completionHandler(YES);....
     }
   } else if ([toURL.scheme isEqualToString:@"docset"]) {
     // Handle changes to docset urls

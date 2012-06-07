@@ -589,6 +589,9 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
+  if (!self.artCodeTab.currentFile.content) {
+    return nil;
+  }
   NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.artCodeTab.currentFile.content substringWithRange:stringRange] attributes:[[TMTheme currentTheme] commonAttributes]];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;

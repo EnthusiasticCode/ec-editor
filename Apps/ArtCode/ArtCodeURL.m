@@ -88,6 +88,22 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
   return [uuids copy];
 }
 
+- (id)artCodeProjectUUID {
+  NSArray *artCodeUUIDs = self.artCodeUUIDs;
+  if (!artCodeUUIDs.count) {
+    return nil;
+  }
+  return [self.artCodeUUIDs objectAtIndex:0];
+}
+
+- (id)artCodeItemUUID {
+  NSArray *artCodeUUIDs = self.artCodeUUIDs;
+  if (artCodeUUIDs.count < 2) {
+    return nil;
+  }
+  return [self.artCodeUUIDs objectAtIndex:1];
+}
+
 - (NSString *)prettyPath
 {
   return [[self path] prettyPath];
