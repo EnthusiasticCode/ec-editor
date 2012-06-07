@@ -73,13 +73,13 @@ typedef enum DocSetDownloadStatus {
 @property (nonatomic, strong) NSURL *URL;
 @property (nonatomic, strong) NSFileHandle *fileHandle;
 @property (nonatomic, strong) NSURLConnection *connection;
-@property (strong) NSURL *downloadTargetURL;
+@property (atomic, strong) NSURL *downloadTargetURL;
 @property (nonatomic, strong) NSURL *extractedURL;
 @property (nonatomic, assign) DocSetDownloadStatus status;
 @property (nonatomic, assign) float progress;
 @property (atomic, assign) BOOL shouldCancelExtracting; // must be atomic
-@property (readonly) NSUInteger bytesDownloaded;
-@property (readonly) NSInteger downloadSize;
+@property (atomic, readonly) NSUInteger bytesDownloaded;
+@property (atomic, readonly) NSInteger downloadSize;
 
 - (id)initWithURL:(NSURL *)URL;
 - (void)start;

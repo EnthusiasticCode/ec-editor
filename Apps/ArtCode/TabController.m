@@ -13,8 +13,6 @@
 
 #define TABBAR_HEIGHT 40
 
-static void *childViewControllerTitleContext;
-
 /// A scroll view that can perform custom code blocks on common overloaded operations.
 @interface CustomizableScrollView : UIScrollView
 

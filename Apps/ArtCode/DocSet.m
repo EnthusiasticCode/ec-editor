@@ -160,7 +160,7 @@
 	}
 	
 	dispatch_async(searchQueue, ^{
-		int maxNumberOfResults = 1000;
+		NSUInteger maxNumberOfResults = 1000;
 		NSMutableArray *results = [NSMutableArray array];
 		//Do a simpler prefix search for very short search terms. Otherwise, too many irrelevant results would
 		//clutter the results and most of the relevant results would probably not be returned at all, because
@@ -213,7 +213,7 @@
 		[rootNodeRequest setSortDescriptors:[NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"kName" ascending:YES selector:@selector(caseInsensitiveCompare:)]]];
 		NSArray *rootNodes = [moc executeFetchRequest:rootNodeRequest error:NULL];
 		NSMutableArray *sections = [NSMutableArray array];
-		for (NSManagedObject *rootNode in rootNodes) {
+		for (rootNode in rootNodes) {
 			NSArray *subnodes = [[rootNode valueForKey:@"orderedSubnodes"] sortedArrayUsingDescriptors:
 								  [NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"order" ascending:YES]]];
 			
