@@ -92,7 +92,7 @@
 
 - (id)initWithProject:(ACProject *)project fileWrapper:(NSFileWrapper *)fileWrapper propertyListDictionary:(NSDictionary *)plistDictionary {
   // All filesystem items need to be initialized in the project's file access coordination queue
-  ASSERT(project);
+  ASSERT(project && fileWrapper);
 
   // Initialize the item
   self = [super initWithProject:project propertyListDictionary:plistDictionary];

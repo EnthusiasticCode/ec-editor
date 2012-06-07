@@ -116,6 +116,18 @@ static NSMutableArray *_mutableTabs;
       [tab _removeHistoryEntriesContainingUUID:projectUUID];
     }
   }];
+  
+  // Remove history items from tab when item is eliminated
+  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveItem object:nil] subscribeNext:^(NSNotification *note) {
+    ACProjectItem *item = [note.userInfo objectForKey:ACProjectNotificationItemKey];
+    if (!item)
+      return;
+    
+    id itemUUID = item.UUID;
+    for (ArtCodeTab *tab in _mutableTabs) {
+      [tab _removeHistoryEntriesContainingUUID:itemUUID];
+    }
+  }];
 }
 
 + (NSArray *)allTabs
