@@ -346,7 +346,7 @@ static NSMutableArray *_mutableTabs;
       // If we're here, we're changing to an URL without a project
       self.currentProject = nil;
       self.currentItem = nil;
-      completionHandler(YES);....
+      completionHandler(YES);
     }
   } else if ([toURL.scheme isEqualToString:@"docset"]) {
     // Handle changes to docset urls
