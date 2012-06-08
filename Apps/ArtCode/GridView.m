@@ -50,7 +50,7 @@
 #pragma mark Managing the Delegate and the Data Source
 
 @dynamic delegate;
-@synthesize dataSource;
+@synthesize dataSource = _dataSource;
 
 - (void)setDelegate:(id<GridViewDelegate>)delegate
 {
@@ -64,9 +64,9 @@
 
 - (void)setDataSource:(id<GridViewDataSource>)value
 {
-  if (value == dataSource)
+  if (value == _dataSource)
     return;
-  dataSource = value;
+  _dataSource = value;
   [self reloadData];
 }
 

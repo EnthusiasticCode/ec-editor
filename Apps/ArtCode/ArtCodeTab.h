@@ -73,6 +73,6 @@
 
 /// Retrieve the ArtCode Tab that the view controller is in.
 /// This methods try to retrieve the tab recursively on the receiver's parent view controller.
-@property (nonatomic, weak) ArtCodeTab *artCodeTab;
+@property (nonatomic, strong) ArtCodeTab *artCodeTab;
 
 @end

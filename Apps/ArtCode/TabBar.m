@@ -686,7 +686,7 @@ static void init(TabBar *self)
     
     // RAC
     // Adjust title inset and close button when the tab is selected
-    [[RACAble(tabButton, selected) injectObjectWeakly:tabButton] subscribeNext:^(RACTuple *tuple) {
+    [[[tabButton rac_subscribableForKeyPath:RAC_KEYPATH(tabButton, selected) onObject:tabButton] injectObjectWeakly:tabButton] subscribeNext:^(RACTuple *tuple) {
       if ([tuple.first boolValue]) {
         [tuple.second addSubview:tabCloseButton];
         [tuple.second setTitleEdgeInsets:UIEdgeInsetsMake(0, 38, 0, 3)];

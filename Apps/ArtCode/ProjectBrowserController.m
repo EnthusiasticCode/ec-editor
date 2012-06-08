@@ -137,7 +137,9 @@
   
   [[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetWillBeDeletedNotification object:nil] subscribeNext:^(NSNotification *note) {
     ProjectBrowserController *strongSelf = this;
-    NSUInteger idx = [_gridElements indexOfObjectIdenticalTo:note.object];
+    if (!strongSelf)
+      return;
+    NSUInteger idx = [strongSelf->_gridElements indexOfObjectIdenticalTo:note.object];
     if (idx != NSNotFound) {
       strongSelf->_gridElements = nil;
       [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:idx] animated:YES];
@@ -468,7 +470,7 @@
 
 - (GridView *)gridView
 {
-  if (!_gridView)
+  if (!_gridView && self.isViewLoaded)
   {
     _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     _gridView.allowMultipleSelectionDuringEditing = YES;

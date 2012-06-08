@@ -280,7 +280,7 @@ static void init(TabController *self)
   __weak TabController *this = self;
   [[[[childController rac_subscribableForKeyPath:RAC_KEYPATH(childController, title) onObject:childController] distinctUntilChanged] injectObjectWeakly:childController] subscribeNext:^(RACTuple *tuple) {
     TabController *strongSelf = this;
-    if (tuple.first != [RACTupleNil tupleNil] && tuple.second) {
+    if (strongSelf && tuple.first != [RACTupleNil tupleNil] && tuple.second) {
       [strongSelf.tabBar setTitle:tuple.first forTabAtIndex:[strongSelf->_orderedChildViewControllers indexOfObject:tuple.second]];
     }
   }];
