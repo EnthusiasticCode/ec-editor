@@ -277,9 +277,11 @@ static void init(TabController *self)
   [self.tabBar addTabWithTitle:childController.title animated:animated];
   
   // RAC observe title to change tab button title
-  [[[RACAble(childController, title) distinctUntilChanged] injectObjectWeakly:childController] subscribeNext:^(RACTuple *tuple) {
+  __weak TabController *this = self;
+  [[[[childController rac_subscribableForKeyPath:RAC_KEYPATH(childController, title) onObject:childController] distinctUntilChanged] injectObjectWeakly:childController] subscribeNext:^(RACTuple *tuple) {
+    TabController *strongSelf = this;
     if (tuple.first != [RACTupleNil tupleNil] && tuple.second) {
-      [[(TabController *)tuple.second tabBar] setTitle:tuple.first forTabAtIndex:[_orderedChildViewControllers indexOfObject:tuple.second]];
+      [strongSelf.tabBar setTitle:tuple.first forTabAtIndex:[strongSelf->_orderedChildViewControllers indexOfObject:tuple.second]];
     }
   }];
   
