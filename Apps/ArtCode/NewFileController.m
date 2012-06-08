@@ -27,6 +27,9 @@
   if (!self)
     return nil;
   
+  // RAC 
+  __weak NewFileController *this = self;
+  
   // Subscribable to get the latest filename with extension and activate 'create' button
   [[[[[[[RACAbleSelf(self.fileNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
     if (fileName.length == 0)
@@ -35,16 +38,16 @@
     if ([[fileName pathExtension] length] == 0)
       fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
-    if ([(ACProjectFolder *)self.artCodeTab.currentItem childWithName:fileName] == nil) {
+    if ([(ACProjectFolder *)this.artCodeTab.currentItem childWithName:fileName] == nil) {
       return fileName;
     } else {
       return nil;
     }
   }] doNext:^(id x) {
     if (x) {
-      self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
+      this.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
     } else {
-      self.infoLabel.text = @"The speficied file already exists or is invalid.";
+      this.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];

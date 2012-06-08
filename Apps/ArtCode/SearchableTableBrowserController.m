@@ -95,28 +95,31 @@
   self.title = title;
   _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
   
+  // RAC
+  __weak SearchableTableBrowserController *this = self;
+  
   // Reload the table data when the search bar text changes
   [[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
+    [this invalidateFilteredItems];
+    [this.tableView reloadData];
   }];
   
   // Account for keyboard and resize table accordingly
   [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
     if (note.name == UIKeyboardDidShowNotification) {
-      CGRect tableViewFrame = self.tableView.frame;
-      tableViewFrame.size.height = [self.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
+      CGRect tableViewFrame = this.tableView.frame;
+      tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
       self.tableView.frame = tableViewFrame;
     } else {
-      CGRect tableViewFrame = self.view.bounds;
+      CGRect tableViewFrame = this.view.bounds;
       if (_isSearchBarStaticOnTop) {
         tableViewFrame.origin.y = 44;
         tableViewFrame.size.height -= 44;
       }
-      if (self.bottomToolBar != nil) {
-        tableViewFrame.size.height -= self.bottomToolBar.bounds.size.height;
+      if (this.bottomToolBar != nil) {
+        tableViewFrame.size.height -= this.bottomToolBar.bounds.size.height;
       }
-      self.tableView.frame = tableViewFrame;
+      this.tableView.frame = tableViewFrame;
     }
   }];
       

@@ -273,11 +273,13 @@ static void init(TabController *self)
     _orderedChildViewControllers = [NSMutableArray new];
   [_orderedChildViewControllers addObject:childController];
   
-  // RAC Add tab button
+  // Add tab button
   [self.tabBar addTabWithTitle:childController.title animated:animated];
+  
+  // RAC observe title to change tab button title
   [[[RACAble(childController, title) distinctUntilChanged] injectObjectWeakly:childController] subscribeNext:^(RACTuple *tuple) {
     if (tuple.first != [RACTupleNil tupleNil] && tuple.second) {
-      [self.tabBar setTitle:tuple.first forTabAtIndex:[_orderedChildViewControllers indexOfObject:tuple.second]];
+      [[(TabController *)tuple.second tabBar] setTitle:tuple.first forTabAtIndex:[_orderedChildViewControllers indexOfObject:tuple.second]];
     }
   }];
   

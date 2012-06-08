@@ -59,21 +59,25 @@
   // Add tool buttons
   self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Bookmarks"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Find"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
+  // RAC
+  __weak DocSetBrowserController *this = self;
+  
   // Update on docset changes
   [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentURL), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
     return xs.first;
   }] where:^BOOL(id x) {
-    return self.artCodeTab.currentDocSet != nil && self.isViewLoaded;
+    return this.artCodeTab.currentDocSet != nil && this.isViewLoaded;
   }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
+    DocSetBrowserController *strongSelf = this;
     if (url.path.length == 0) {
       // Show the hint view
-      self.hintsView.frame = self.webView.frame;
-      [self.view insertSubview:self.hintsView aboveSubview:self.webView];
-      self.title = self.artCodeTab.currentDocSet.name;
+      strongSelf.hintsView.frame = strongSelf.webView.frame;
+      [strongSelf.view insertSubview:strongSelf.hintsView aboveSubview:strongSelf.webView];
+      strongSelf.title = strongSelf.artCodeTab.currentDocSet.name;
     } else {
       // Load the docset page
-      [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
-      [self.hintsView removeFromSuperview];
+      [strongSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
+      [strongSelf.hintsView removeFromSuperview];
     }
   }];
   

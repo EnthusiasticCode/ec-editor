@@ -74,11 +74,14 @@
   self = [super initWithTitle:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
+  
+  // RAC
+  __weak FileBrowserController *this = self;
 
   // Update table view when current folder's children change
   [RACAbleSelf(self.artCodeTab.currentFolder.children) subscribeNext:^(id x) {
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
+    [this invalidateFilteredItems];
+    [this.tableView reloadData];
   }];
   
   return self;

@@ -37,6 +37,7 @@
   if (!self)
     return nil;
   
+  // RAC
   // Project name will change when text field does
   [[[[[RACAbleSelf(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(id x) {
     return x != nil;

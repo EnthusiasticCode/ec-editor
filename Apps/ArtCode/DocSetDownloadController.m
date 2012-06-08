@@ -22,13 +22,16 @@
   if (!self)
     return nil;
   
+  // RAC
+  __weak DocSetDownloadController *this = self;
+  
   // Update available docset list
   [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetDownloadManagerAvailableDocSetsChangedNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetDownloadManagerUpdatedDocSetsNotification object:nil]] subscribeNext:^(NSNotification *note) {
     if (note.name == DocSetDownloadManagerAvailableDocSetsChangedNotification) {
-      self.navigationItem.rightBarButtonItem.enabled = YES;
+      this.navigationItem.rightBarButtonItem.enabled = YES;
     }
-    [self.tableView reloadData];
-    [(UILabel *)self.tableView.tableFooterView setText:[NSString stringWithFormat:L(@"Last updated: %@"), [NSDateFormatter localizedStringFromDate:[[DocSetDownloadManager sharedDownloadManager] lastUpdated] dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterShortStyle]]];
+    [this.tableView reloadData];
+    [(UILabel *)this.tableView.tableFooterView setText:[NSString stringWithFormat:L(@"Last updated: %@"), [NSDateFormatter localizedStringFromDate:[[DocSetDownloadManager sharedDownloadManager] lastUpdated] dateStyle:NSDateFormatterMediumStyle timeStyle:NSDateFormatterShortStyle]]];
   }];
     
   return self;

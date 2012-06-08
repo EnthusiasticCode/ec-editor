@@ -30,15 +30,18 @@
   if (!self)
     return nil;
   
+  // RAC
+  __weak NewFileFolderController *this = self;
+  
   // Subscribable to get the latest folder name or nil if the name is not valid
   [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
-    if (x.length && [(ACProjectFolder *)self.artCodeTab.currentItem childWithName:x] == nil) {
+    if (x.length && [(ACProjectFolder *)this.artCodeTab.currentItem childWithName:x] == nil) {
       return x;
     } else {
       return nil;
     }
   }] doNext:^(id x) {
-    self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject] prettyPath]] : @"The speficied folder name already exists or is invalid.";
+    this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)this.artCodeTab.currentItem pathInProject] prettyPath]] : @"The speficied folder name already exists or is invalid.";
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];

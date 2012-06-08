@@ -92,50 +92,55 @@
   if (!self)
     return nil;
   
+  // RAC
+  __weak ProjectBrowserController *this = self;
   RACSubscribable *projects = [ACProject rac_projects];
   
   // Update hint view display
   [[projects startWith:nil] subscribeNext:^(id x) {
+    ProjectBrowserController *strongSelf = this;
     if (ACProject.projects.count > 0) {
-      [_hintView removeFromSuperview];
+      [strongSelf->_hintView removeFromSuperview];
     } else {
-      [self.view addSubview:self.hintView];
+      [strongSelf.view addSubview:strongSelf.hintView];
     }
   }];
   
   // Update gird view
   [projects subscribeNext:^(NSNotification *note) {
+    ProjectBrowserController *strongSelf = this;
     __block NSUInteger index = 0;
     if (note.name == ACProjectDidAddProjectNotificationName) {
       // When adding a project
       NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
-      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
           index = idx;
           *stop = YES;
         }
       }];
-      _gridElements = nil;
-      [self.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+      strongSelf->_gridElements = nil;
+      [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
       // When deleting a project
       NSString *projectUUID = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] UUID];
-      [_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]] && [projectUUID isEqualToString:[obj UUID]]) {
           index = idx;
           *stop = YES;
         }
       }];
-      _gridElements = nil;
-      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+      strongSelf->_gridElements = nil;
+      [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }
   }];
   
   [[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetWillBeDeletedNotification object:nil] subscribeNext:^(NSNotification *note) {
+    ProjectBrowserController *strongSelf = this;
     NSUInteger idx = [_gridElements indexOfObjectIdenticalTo:note.object];
     if (idx != NSNotFound) {
-      _gridElements = nil;
-      [self.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:idx] animated:YES];
+      strongSelf->_gridElements = nil;
+      [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:idx] animated:YES];
     }
   }];
   

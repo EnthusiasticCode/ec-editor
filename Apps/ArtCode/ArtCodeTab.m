@@ -123,7 +123,6 @@ static NSMutableArray *_mutableTabs;
     
     id projectUUID = project.UUID;
     for (ArtCodeTab *tab in _mutableTabs) {
-      // TODO NIK sanity check for tabs with no history, remove them
       [tab _removeHistoryEntriesContainingUUID:projectUUID];
     }
   }];
