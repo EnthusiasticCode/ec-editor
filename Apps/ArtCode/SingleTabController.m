@@ -286,6 +286,9 @@
   if (!self)
     return nil;
   
+  // RAC
+  __weak SingleTabController *this = self;
+  
   // Loading mode react to tab loading signal
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)] where:^BOOL(id x) {
     return x != nil;
@@ -297,33 +300,29 @@
   
   // Changing current tab URL re-route the content view controller
   [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
-    [self setContentViewController:[self _routeViewControllerForTab:self.artCodeTab] animated:YES];
+    [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:YES];
   }];
     
   // Content view controller binds
   [RACAbleSelf(self.contentViewController.editing) subscribeNext:^(id x) {
-    [(UIButton *)self.defaultToolbar.editItem.customView setSelected:[x boolValue]];
+    [(UIButton *)this.defaultToolbar.editItem.customView setSelected:[x boolValue]];
   }];
   
   [RACAbleSelf(self.contentViewController.toolbarItems) subscribeNext:^(id x) {
-    [self _setupDefaultToolbarItemsAnimated:YES];
-  }];
-  
-  [RACAbleSelf(self.contentViewController.title) subscribeNext:^(id x) {
-    [self updateDefaultToolbarTitle];
+    [this _setupDefaultToolbarItemsAnimated:YES];
   }];
   
   // Update tool bar title when project changes
-  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), nil] reduce:^id(RACTuple *xs) {
-    return xs;
+  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), RAC_KEYPATH_SELF(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
+    return nil;
   }] subscribeNext:^(id x) {
-    [self updateDefaultToolbarTitle];
+    [this updateDefaultToolbarTitle];
   }];
   
   // TODO NIK self.tabCollectionController remove self if self.artCodeTab history is empty
   [RACAbleSelf(self.artCodeTab.historyURLs) subscribeNext:^(NSArray *urls) {
     if ([urls count] == 0) {
-      [self.tabCollectionController removeChildViewController:self animated:YES];
+      [this.tabCollectionController removeChildViewController:this animated:YES];
     }
   }];
   

@@ -273,11 +273,11 @@ static void init(TabController *self)
     _orderedChildViewControllers = [NSMutableArray new];
   [_orderedChildViewControllers addObject:childController];
   
-  // Add tab button
+  // RAC Add tab button
   [self.tabBar addTabWithTitle:childController.title animated:animated];
-  [[RACAble(childController, title) distinctUntilChanged] subscribeNext:^(id x) {
-    if (x) {
-      [self.tabBar setTitle:x forTabAtIndex:[_orderedChildViewControllers indexOfObject:childController]];
+  [[[RACAble(childController, title) distinctUntilChanged] injectObjectWeakly:childController] subscribeNext:^(RACTuple *tuple) {
+    if (tuple.first != [RACTupleNil tupleNil] && tuple.second) {
+      [self.tabBar setTitle:tuple.first forTabAtIndex:[_orderedChildViewControllers indexOfObject:tuple.second]];
     }
   }];
   
@@ -340,7 +340,7 @@ static void init(TabController *self)
   [controller willMoveToParentViewController:nil];
   
   // Remove from tab controller
-  [_orderedChildViewControllers removeObject:controller];
+  [_orderedChildViewControllers removeObjectAtIndex:tabIndex];
   [controller removeFromParentViewController];
   
   // Remove view if loaded
