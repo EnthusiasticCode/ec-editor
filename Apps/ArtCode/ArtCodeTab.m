@@ -442,15 +442,20 @@ static NSMutableArray *_mutableTabs;
 static void *artCodeTabKey;
 
 - (ArtCodeTab *)artCodeTab {
-  return objc_getAssociatedObject(self, &artCodeTabKey);;
+  ArtCodeTab *tab = objc_getAssociatedObject(self, &artCodeTabKey);
+  if (tab)
+    return tab;
+  
+  UIViewController *controller = self;
+  do {
+    controller = controller.parentViewController;
+    tab = objc_getAssociatedObject(controller, &artCodeTabKey);
+  } while (tab == nil && controller != nil);
+  return tab;
 }
 
 - (void)setArtCodeTab:(ArtCodeTab *)artCodeTab {
   objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (void)dealloc {
-  self.artCodeTab = nil;
 }
 
 @end

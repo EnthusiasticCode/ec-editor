@@ -407,13 +407,19 @@ static void drawStencilStar(CGContextRef myContext)
   // RAC
   __weak CodeFileController *this = self;
   
-  [[[RACSubscribable merge:[NSArray.alloc initWithObjects:RACAbleSelf(artCodeTab.currentFile.content), RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] where:^BOOL(id x) {
+  [[[self rac_whenAny:[NSArray.alloc initWithObjects:RAC_KEYPATH_SELF(artCodeTab.currentFile.content), RAC_KEYPATH_SELF(artCodeTab.currentFile.bookmarks), nil] reduce:^id(RACTuple *xs) {
+    return xs;
+  }] where:^BOOL(id x) {
     return this.artCodeTab.currentFile != nil;
   }] subscribeNext:^(id x) {
     [this.codeView updateAllText];
   }];
-  
+
   return self;
+}
+
+- (void)dealloc {
+  self.artCodeTab = nil;
 }
 
 - (void)loadView

@@ -329,10 +329,6 @@
   return self;
 }
 
-- (void)dealloc {
-  [ArtCodeTab removeTab:self.artCodeTab];
-}
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
   return YES;

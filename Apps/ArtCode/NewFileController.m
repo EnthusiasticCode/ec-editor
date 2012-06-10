@@ -22,16 +22,14 @@
 
 #pragma mark - View lifecycle
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-  self = [super initWithCoder:aDecoder];
-  if (!self)
-    return nil;
+- (void)viewDidLoad {
+  [super viewDidLoad];
   
   // RAC 
   __weak NewFileController *this = self;
   
   // Subscribable to get the latest filename with extension and activate 'create' button
-  [[[[[[[RACAbleSelf(self.fileNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
     if (fileName.length == 0)
       return nil;
     
@@ -52,8 +50,6 @@
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
-  
-  return self;
 }
 
 - (void)viewDidUnload {

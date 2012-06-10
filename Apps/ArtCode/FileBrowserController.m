@@ -87,6 +87,10 @@
   return self;
 }
 
+- (void)dealloc {
+  self.artCodeTab = nil;
+}
+
 #pragma mark - Properties
 
 @synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;

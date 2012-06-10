@@ -10,6 +10,7 @@
 #import "TabController.h"
 #import "UIView+ReuseIdentifier.h"
 #import "BezelAlert.h"
+#import "ArtCodeTab.h"
 
 #define TABBAR_HEIGHT 40
 
@@ -291,7 +292,7 @@ static void init(TabController *self)
   [childController didMoveToParentViewController:self];
 }
 
-- (void)removeChildViewController:(UIViewController *)childController animated:(BOOL)animated {
+- (void)removeChildViewController:(UIViewController *)childController animated:(BOOL)animated {  
   NSUInteger controllerIndex = [_orderedChildViewControllers indexOfObject:childController];
   ASSERT(controllerIndex != NSNotFound);
   [self.tabBar removeTabAtIndex:controllerIndex animated:animated];
@@ -341,6 +342,10 @@ static void init(TabController *self)
   }
   
   UIViewController *controller = [_orderedChildViewControllers objectAtIndex:tabIndex];
+  if (controller.artCodeTab) {
+    [ArtCodeTab removeTab:controller.artCodeTab];
+  }
+  
   [controller willMoveToParentViewController:nil];
   
   // Remove from tab controller
