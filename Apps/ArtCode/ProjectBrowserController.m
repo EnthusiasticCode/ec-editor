@@ -135,6 +135,9 @@
     }
   }];
   
+  // Update the grid view when a docset gets removed
+  // TODO!!! this will never be disposed
+  // TODO add case when docset is added
   [[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetWillBeDeletedNotification object:nil] subscribeNext:^(NSNotification *note) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
