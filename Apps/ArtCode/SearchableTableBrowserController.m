@@ -105,14 +105,16 @@
   }];
   
   // Account for keyboard and resize table accordingly
+  // TODO!!! this rac is not disposed when the controller is deallocated
   [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
     if (note.name == UIKeyboardDidShowNotification) {
       CGRect tableViewFrame = this.tableView.frame;
       tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
-      self.tableView.frame = tableViewFrame;
+      this.tableView.frame = tableViewFrame;
     } else {
+      SearchableTableBrowserController *strongSelf = this;
       CGRect tableViewFrame = this.view.bounds;
-      if (_isSearchBarStaticOnTop) {
+      if (strongSelf && strongSelf->_isSearchBarStaticOnTop) {
         tableViewFrame.origin.y = 44;
         tableViewFrame.size.height -= 44;
       }
