@@ -17,7 +17,3 @@
 - (id)extensionForKey:(id)key;
 
 @end
-
-@protocol TMIndexExtension <NSObject>
-
-@end

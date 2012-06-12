@@ -35,7 +35,6 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @interface TMUnit ()
 
-- (void)_reparse;
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope;
@@ -45,7 +44,6 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark -
 
 @implementation TMUnit {
-  NSString *_content;
   NSMutableAttributedString *_attributedContent;
   
   TMScope *_rootScope;
@@ -67,20 +65,10 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (id)init {
-  return [self initWithFileURL:nil index:nil];
+  UNIMPLEMENTED();
 }
 
 #pragma mark - Public Methods
-
-- (void)setSyntax:(TMSyntaxNode *)syntax {
-  _rootScope = nil;
-  
-  _syntax = syntax;
-  
-  if (_syntax) {
-    [self _reparse];
-  }
-}
 
 - (NSArray *)symbolList {
   return NSArray.alloc.init;
@@ -90,14 +78,14 @@ static OnigRegexp *_namedCapturesRegexp;
   return NSArray.alloc.init;
 }
 
-- (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index {
+- (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index {
+  ASSERT(fileURL && syntax);
   self = [super init];
   if (!self) {
     return nil;
   }
   
-  // TODO URI load the contents from the file
-  _content = NSString.alloc.init;
+  _syntax = syntax;
   
   _extensions = NSMutableDictionary.alloc.init;
   [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
@@ -110,23 +98,7 @@ static OnigRegexp *_namedCapturesRegexp;
       [_extensions setObject:extension forKey:extensionClassSyntaxIdentifier];
     }];
   }];
-  
-  // TODO URI load the first line from the file
-  NSString *firstLine = nil;
-  TMSyntaxNode *syntax = nil;
-  if (firstLine) {
-    syntax = [TMSyntaxNode syntaxForFirstLine:firstLine];
-  }
-  if (!syntax && fileURL) {
-    syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-  }
-  if (!syntax) {
-    syntax = TMSyntaxNode.defaultSyntax;
-  }
-  _syntax = syntax;
-  
-  [self _reparse];
-  
+    
   return self;
 }
 
@@ -148,12 +120,36 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)reparseWithUnsavedContent:(NSString *)content {
-  if (!content) {
-    // TODO URI: get the file's contents through the index's coordination mechanism
-    UNIMPLEMENTED_VOID();
+  content = content.copy;
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  _attributedContent = [NSMutableAttributedString.alloc initWithString:content];
+  NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
+  // Get the next unparsed range
+  NSRange lineRange = [content lineRangeForRange:NSMakeRange(0, 0)];
+  while (lineRange.length) {
+    NSString *line = [content substringWithRange:lineRange];
+    [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
+    // Stretch all remaining scopes to cover to the end of the line
+    for (TMScope *scope in scopeStack)
+    {
+      NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
+      if (stretchedLength > scope.length)
+        scope.length = stretchedLength;
+    }
+    // Check that we actually advance. It will get stuck here if the file ends without a newline.
+    NSRange oldLineRange = lineRange;
+    lineRange = [content lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
+    if (lineRange.location == oldLineRange.location) {
+      break;
+    }
   }
-  _content = content.copy;
-  [self _reparse];
+  
+#if DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+  [_rootScope performSelector:@selector(_checkConsistency)];
+#pragma clang diagnostic pop
+#endif
 }
 
 #pragma mark - Internal Methods
@@ -175,38 +171,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Private Methods
-
-- (void)_reparse {
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
-  _attributedContent = [NSMutableAttributedString.alloc initWithString:_content];
-  NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
-  // Get the next unparsed range
-  NSRange lineRange = [_content lineRangeForRange:NSMakeRange(0, 0)];
-  while (lineRange.length) {
-    NSString *line = [_content substringWithRange:lineRange];
-    [self _generateScopesWithLine:line range:lineRange scopeStack:scopeStack];
-    // Stretch all remaining scopes to cover to the end of the line
-    for (TMScope *scope in scopeStack)
-    {
-      NSUInteger stretchedLength = NSMaxRange(lineRange) - scope.location;
-      if (stretchedLength > scope.length)
-        scope.length = stretchedLength;
-    }
-    // Check that we actually advance. It will get stuck here if the file ends without a newline.
-    NSRange oldLineRange = lineRange;
-    lineRange = [_content lineRangeForRange:NSMakeRange(NSMaxRange(lineRange), 0)];
-    if (lineRange.location == oldLineRange.location) {
-      break;
-    }
-  }
-  
-#if DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-  [_rootScope performSelector:@selector(_checkConsistency)];
-#pragma clang diagnostic pop
-#endif
-}
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack {
   line = [line stringByCachingCString];

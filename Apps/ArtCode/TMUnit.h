@@ -17,7 +17,7 @@
 @property (nonatomic, weak, readonly) TMIndex *index;
 
 /// The syntax used to interpret the contents of the file
-@property (nonatomic, strong) TMSyntaxNode *syntax;
+@property (nonatomic, strong, readonly) TMSyntaxNode *syntax;
 
 /// Returns an array of TMSymbol objects representing all the symbols in the file.
 @property (nonatomic, strong, readonly) NSArray *symbolList;
@@ -25,8 +25,9 @@
 /// Returns warnings and errors in the unit.
 @property (nonatomic, strong, readonly) NSArray *diagnostics;
 
-/// Designated initializer.
-- (id)initWithFileURL:(NSURL *)fileURL index:(TMIndex *)index;
+/// Designated initializer. Creates a new TMUnit for the file at the given URL and syntax, coordinating with other TMUnits via the given index.
+/// It will not attempt to access the file itself, the fileURL is only used internally for parsing
+- (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index;
 
 /// Enumerates the qualified identifiers of the scopes in the given range
 - (void)enumerateQualifiedScopeIdentifiersInRange:(NSRange)range withBlock:(void(^)(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop))block;
@@ -37,8 +38,7 @@
 /// Returns the possible completions at a given insertion point in the unit's main source file.
 - (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset;
 
-/// Reparses the source file and recreates the scope tree asynchronously.
-/// If the content string is non-nil, it will be used instead of the file's contents.
+/// Reparses the source file using the given content
 - (void)reparseWithUnsavedContent:(NSString *)content;
 
 @end
