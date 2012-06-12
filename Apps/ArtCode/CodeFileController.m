@@ -27,6 +27,7 @@
 
 #import "ShapePopoverBackgroundView.h"
 
+#import "TMUnit.h"
 #import "TMSymbol.h"
 #import "TMSyntaxNode.h"
 #import "TMPreference.h"
@@ -46,6 +47,8 @@
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
+
+@property (nonatomic, strong) TMUnit *codeUnit;
 
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
@@ -121,7 +124,7 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController;
+@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit;
 
 - (CodeView *)codeView
 {
@@ -407,12 +410,24 @@ static void drawStencilStar(CGContextRef myContext)
   // RAC
   __weak CodeFileController *this = self;
   
-  [[[self rac_whenAny:[NSArray.alloc initWithObjects:RAC_KEYPATH_SELF(artCodeTab.currentFile.content), RAC_KEYPATH_SELF(artCodeTab.currentFile.bookmarks), nil] reduce:^id(RACTuple *xs) {
-    return xs;
-  }] where:^BOOL(id x) {
+  [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+    return x != nil;
+  }] subscribeNext:^(id x) {
+    [this.codeUnit reparseWithUnsavedContent:x];
+  }];
+  
+  [[[RACSubscribable merge:[NSArray.alloc initWithObjects:RACAbleSelf(artCodeTab.currentFile.content), RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] where:^BOOL(id x) {
     return this.artCodeTab.currentFile != nil;
   }] subscribeNext:^(id x) {
     [this.codeView updateAllText];
+  }];
+  
+  [RACAbleSelf(artCodeTab.currentFile) subscribeNext:^(ACProjectFile *x) {
+    if (x) {
+      this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:[TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"] index:nil];
+    } else {
+      this.codeUnit = nil;
+    }
   }];
 
   return self;
@@ -602,6 +617,14 @@ static void drawStencilStar(CGContextRef myContext)
     return nil;
   }
   NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:[self.artCodeTab.currentFile.content substringWithRange:stringRange] attributes:[[TMTheme currentTheme] commonAttributes]];
+  [self.codeUnit enumerateQualifiedScopeIdentifiersInRange:stringRange withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
+    NSRange relativeRange = NSIntersectionRange(stringRange, range);
+    if (relativeRange.location == NSNotFound) {
+      return;
+    }
+    relativeRange.location -= stringRange.location;
+    [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:relativeRange];
+  }];
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)

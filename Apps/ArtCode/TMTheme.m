@@ -149,8 +149,10 @@ static NSDictionary *_sharedAttributes = nil;
 - (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
   __block NSDictionary *resultAttributes = nil;
-  if ((resultAttributes = [_scopeAttribuesCache objectForKey:qualifiedIdentifier]))
-    return (NSNull *)resultAttributes == [NSNull null] ? nil : resultAttributes;
+  resultAttributes = [_scopeAttribuesCache objectForKey:qualifiedIdentifier];
+  if (resultAttributes) {
+    return resultAttributes;
+  }
   
   __block float maxScore = 0;
   [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
@@ -162,10 +164,11 @@ static NSDictionary *_sharedAttributes = nil;
     }
   }];
   
-  if (resultAttributes)
-    [_scopeAttribuesCache setObject:resultAttributes forKey:qualifiedIdentifier];
-  else
-    [_scopeAttribuesCache setObject:[NSNull null] forKey:qualifiedIdentifier];
+  if (!resultAttributes) {
+    resultAttributes = [NSDictionary alloc].init;
+  }
+  [_scopeAttribuesCache setObject:resultAttributes forKey:qualifiedIdentifier];
+
   return resultAttributes;
 }
 

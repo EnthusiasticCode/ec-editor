@@ -71,9 +71,9 @@ static NSMutableDictionary *_includedNodesCaches;
     return;
   }
   // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue
-#if ! TEST
-  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
-#endif
+//#if ! TEST
+//  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
+//#endif
   
   _includedNodesCachesLock = dispatch_semaphore_create(1);
   _includedNodesCaches = NSMutableDictionary.alloc.init;
