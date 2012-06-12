@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-@class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote;
+@class ACProjectItem, ACProjectFolder, ACProjectFile, ACProjectRemote, ACProjectFileSystemItem;
 
 /// Notifications for the projects list
 extern NSString * const ACProjectWillAddProjectNotificationName;
@@ -77,6 +77,9 @@ extern NSString * const ACProjectNotificationItemKey;
 
 /// Retrieve an item (file, folder, bookmark or remote) that has the given uuid.
 - (ACProjectItem *)itemWithUUID:(id)uuid;
+
+/// Retrieve the file system item with the given URL
+- (ACProjectFileSystemItem *)itemWithFileURL:(NSURL *)fileURL;
 
 /// Adds a remote to the project with a full remote url <scheme>://user@host:port
 - (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL;

@@ -335,6 +335,46 @@ static NSString * const _plistRemotesKey = @"remotes";
   return item;
 }
 
+- (ACProjectFileSystemItem *)itemWithFileURL:(NSURL *)fileURL {
+  // fileURL must be a file:// URL
+  if (!fileURL.isFileURL) {
+    return nil;
+  }
+  
+  // fileURL must contain the project root
+  if (![self.fileURL.path hasPrefix:fileURL.path]) {
+    return nil;
+  }
+  
+  // fileURL must contain the contents folder
+  NSArray *relativePathComponents = [self.fileURL.path substringFromIndex:fileURL.path.length].pathComponents;
+  if (![[relativePathComponents objectAtIndex:0] isEqual:_contentsFolderName]) {
+    return nil;
+  }
+  
+  // if there is only one component, then the url refers to the contents folder itself
+  if (relativePathComponents.count == 1) {
+    return _contentsFolder;
+  }
+  
+  // cycle through children
+  NSArray *components = [relativePathComponents subarrayWithRange:NSMakeRange(1, relativePathComponents.count - 1)];
+  ACProjectFileSystemItem *currentItem = _contentsFolder;
+  for (NSString *itemName in components) {
+    // if the current folder isn't a folder, we can't recurse
+    if (![currentItem isKindOfClass:[ACProjectFolder class]]) {
+      return nil;
+    }
+    
+    ACProjectFileSystemItem *item  = [(ACProjectFolder *)currentItem childWithName:itemName];
+    if (!item) {
+      return nil;
+    }
+    currentItem = item;
+  }
+  return currentItem;
+}
+
 - (ACProjectRemote *)addRemoteWithName:(NSString *)name URL:(NSURL *)remoteURL {
   ACProjectRemote *remote = [[ACProjectRemote alloc] initWithProject:self name:name URL:remoteURL];
   if (!remote) {

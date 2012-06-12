@@ -20,8 +20,11 @@
 /// Name of the file system item
 @property (nonatomic, copy) NSString *name;
 
-/// Returns a string containing the path relative to the project and starting with the project name.
-- (NSString *)pathInProject;
+/// URL of the file system item. (Do not use to access contents of the item)
+@property (nonatomic, strong, readonly) NSURL *fileURL;
+
+/// String containing the path relative to the project and starting with the project name.
+@property (nonatomic, readonly) NSString *pathInProject;
 
 #pragma mark Item Contents
 

@@ -27,6 +27,16 @@
 
 @synthesize parentFolder = _parentFolder, name = _name;
 
+#pragma mark - KVO Overrides
+
++ (NSSet *)keyPathsForValuesAffectingFileURL {
+  [NSSet setWithObjects:@"name", @"parent.fileURL", nil];
+}
+
++ (NSSet *)keyPathsForValuesAffectingPathInProject {
+  [NSSet setWithObjects:@"name", @"parent.pathInProject", nil];
+}
+
 #pragma mark - ACProjectItem Internal
 
 - (id)initWithProject:(ACProject *)project propertyListDictionary:(NSDictionary *)plistDictionary {
@@ -34,6 +44,13 @@
 }
 
 #pragma mark - Item Properties
+
+- (NSURL *)fileURL {
+  if (!self.parentFolder) {
+    return [self.project.fileURL URLByAppendingPathComponent:self.name];
+  }
+  return [self.parentFolder.fileURL URLByAppendingPathComponent:self.name];
+}
 
 - (NSString *)pathInProject {
   if (self.parentFolder == nil) {
