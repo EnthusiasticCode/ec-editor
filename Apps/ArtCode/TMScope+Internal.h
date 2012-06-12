@@ -37,9 +37,6 @@ typedef enum
 /// The syntax node that created the scope
 @property (nonatomic, strong, readonly) TMSyntaxNode *syntaxNode;
 
-/// Delegate for callbacks, only applicable for root scopes
-@property (nonatomic, weak) id<TMScopeDelegate>delegate;
-
 /// Cached end regexp for scopes with a span syntax node
 @property (nonatomic, strong) OnigRegexp *endRegexp;
 
@@ -72,12 +69,5 @@ typedef enum
 - (void)removeChildScopesInRange:(NSRange)range;
 /// Attempts to merge a broken scope tree at the specified offset. Returns YES if successful or if the tree is not broken
 - (BOOL)attemptMergeAtOffset:(NSUInteger)offset;
-
-@end
-
-@protocol TMScopeDelegate <NSObject>
-
-- (void)scope:(TMScope *)scope didAddScope:(TMScope *)scope;
-- (void)scope:(TMScope *)scope willRemoveScope:(TMScope *)scope;
 
 @end

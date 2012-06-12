@@ -9,36 +9,19 @@
 #import "TMScope+Internal.h"
 
 @interface TMScope ()
-{
-  /// The string range of the scope's identifier in it's qualified identifier.
-  NSRange _identifierRange;
-  NSMutableArray *_children;
-  struct
-  {
-    unsigned didAddScope : 1;
-    unsigned willRemoveScope : 1;
-    unsigned reserved:6;
-  } _delegateFlags;
-}
-
 - (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type;
-
 @end
 
-@implementation TMScope
+#pragma mark -
+
+@implementation TMScope {
+  NSRange _identifierRange;
+  NSMutableArray *_children;
+}
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, delegate = _delegate, endRegexp = _endRegexp, location = _location, length = _length, flags = _flags, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
-
-- (void)setDelegate:(id<TMScopeDelegate>)delegate
-{
-  if (delegate == _delegate)
-    return;
-  _delegate = delegate;
-  _delegateFlags.didAddScope = [delegate respondsToSelector:@selector(scope:didAddScope:)];
-  _delegateFlags.willRemoveScope = [delegate respondsToSelector:@selector(scope:willRemoveScope:)];
-}
+@synthesize syntaxNode = _syntaxNode, endRegexp = _endRegexp, location = _location, length = _length, flags = _flags, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
 
 - (NSString *)identifier
 {
@@ -129,8 +112,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     [_children addObject:childScope];
   else
     [_children insertObject:childScope atIndex:childInsertionIndex];
-  if (_delegateFlags.didAddScope)
-    [_delegate scope:self didAddScope:childScope];
   
   return childScope;
 }
@@ -283,8 +264,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       else if ((range.location <= childScopeRange.location && rangeEnd >= childScopeEnd) || childScope->_type == TMScopeTypeMatch || childScope->_type == TMScopeTypeBegin || childScope->_type == TMScopeTypeEnd)
       {
         // If the child scope is completely contained in the range, or it's a match scope and it overlaps since it didn't match the previous two cases
-        if (_delegateFlags.willRemoveScope)
-          [_delegate scope:self willRemoveScope:childScope];
         [scope->_children removeObjectAtIndex:childScopeIndex];
         if (childScope->_type == TMScopeTypeContent)
           scope->_flags &= ~TMScopeHasContentScope;
@@ -299,8 +278,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasBeginScope)
           {
-            if (_delegateFlags.willRemoveScope)
-              [_delegate scope:self willRemoveScope:[childScope->_children objectAtIndex:0]];
             [childScope->_children removeObjectAtIndex:0];
             childScope->_flags &= ~TMScopeHasBeginScope;
           }
@@ -320,8 +297,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasEndScope)
           {
-            if (_delegateFlags.willRemoveScope)
-              [_delegate scope:self willRemoveScope:[childScope->_children lastObject]];
             [childScope->_children removeLastObject];
             childScope->_flags &= ~TMScopeHasEndScope;
           }
@@ -343,8 +318,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             TMScope *beginScope = [childScope->_children objectAtIndex:0];
             if (range.location < beginScope->_location + beginScope->_length)
             {
-              if (_delegateFlags.willRemoveScope)
-                [_delegate scope:self willRemoveScope:beginScope];
               [childScope->_children removeObjectAtIndex:0];
               childScope->_flags &= ~TMScopeHasBeginScope;
               childScope->_flags &= ~TMScopeHasBegin;
@@ -355,8 +328,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             TMScope *endScope = [childScope->_children lastObject];
             if (NSMaxRange(range) > endScope->_location)
             {
-              if (_delegateFlags.willRemoveScope)
-                [_delegate scope:self willRemoveScope:endScope];
               [childScope->_children removeLastObject];
               childScope->_flags &= ~TMScopeHasEndScope;
               childScope->_flags &= ~TMScopeHasEnd;
