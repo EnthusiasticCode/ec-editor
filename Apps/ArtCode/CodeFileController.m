@@ -49,6 +49,7 @@
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
 @property (nonatomic, strong) TMUnit *codeUnit;
+@property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, copy) NSAttributedString *code;
 
 /// Returns the content view used to display the content in the given editing state.
@@ -125,7 +126,7 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, code = _code;
+@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code;
 
 - (CodeView *)codeView
 {
@@ -409,23 +410,40 @@ static void drawStencilStar(CGContextRef myContext)
   }
   
   // RAC
+  NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
+  schedulerQueue.maxConcurrentOperationCount = 1;
+  _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
   __weak CodeFileController *this = self;
   
-  [[[RACSubscribable merge:[NSArray.alloc initWithObjects:[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  // Update the "code" property when the content of the file changes by applying the default attributes, this is very fast so it can be done synchronously
+  [[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
-  }] doNext:^(id x) {
-    [this.codeUnit reparseWithUnsavedContent:x];
-    NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[[TMTheme currentTheme] commonAttributes]];
-    [this.codeUnit enumerateQualifiedScopeIdentifiersInRange:NSMakeRange(0, attributedString.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
-      [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
+  }] select:^id(id x) {
+    return [[NSAttributedString alloc] initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
+  }] toProperty:RAC_KEYPATH_SELF(code) onObject:this];
+  
+  // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
+  [[[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+    return x != nil;
+  }] throttle:0.5] distinctUntilChanged] select:^id(id x) {
+    return [RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
+      [this.codeUnit reparseWithUnsavedContent:x];
+      NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
+      [this.codeUnit enumerateQualifiedScopeIdentifiersInRange:NSMakeRange(0, attributedString.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
+        [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
+      }];
+      return attributedString;
     }];
-    this.code = attributedString;
-  }], RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] where:^BOOL(id x) {
-    return this.artCodeTab.currentFile != nil;
-  }] subscribeNext:^(id x) {
+  }] switch] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(id x) {
+    this.code = x;
+  }];
+  
+  // Update the display when the "code" property changes
+  [[RACSubscribable merge:[NSArray.alloc initWithObjects:RACAbleSelf(code), RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] subscribeNext:^(id x) {
     [this.codeView updateAllText];
   }];
   
+  // Create a new TMUnit when the file changes
   [RACAbleSelf(artCodeTab.currentFile) subscribeNext:^(ACProjectFile *x) {
     if (x) {
       this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:[TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"] index:nil];
