@@ -11,5 +11,6 @@
 @interface NSAttributedString (PersistentDataStructures)
 
 - (NSAttributedString *)attributedStringBySettingAttributes:(NSDictionary *)attributes range:(NSRange)range;
+- (NSAttributedString *)attributedStringByReplacingCharactersInRange:(NSRange)range withString:(NSString *)string;
 
 @end

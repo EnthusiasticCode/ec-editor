@@ -39,6 +39,8 @@
 #import "ACProjectFile.h"
 #import "ACProjectFileBookmark.h"
 
+#import "NSAttributedString+PersistentDataStructures.h"
+
 
 @interface CodeFileController ()
 
@@ -635,7 +637,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
 {
-  NSMutableAttributedString *attributedString = [self.code attributedSubstringFromRange:stringRange];
+  NSMutableAttributedString *attributedString = [self.code attributedSubstringFromRange:stringRange].mutableCopy;
   if (attributedString.length) {
     static NSRegularExpression *placeholderRegExp = nil;
     if (!placeholderRegExp)
@@ -657,7 +659,9 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  self.artCodeTab.currentFile.content =  [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
+  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
+  self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
+  self.code = changedCode;
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange

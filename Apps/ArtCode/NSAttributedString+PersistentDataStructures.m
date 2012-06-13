@@ -16,4 +16,10 @@
   return attributedString.copy;
 }
 
+- (NSAttributedString *)attributedStringByReplacingCharactersInRange:(NSRange)range withString:(NSString *)string {
+  NSMutableAttributedString *attributedString = self.mutableCopy;
+  [attributedString replaceCharactersInRange:range withString:string];
+  return attributedString.copy;
+}
+
 @end
