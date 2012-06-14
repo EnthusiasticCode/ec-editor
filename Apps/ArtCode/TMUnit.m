@@ -9,11 +9,11 @@
 #import "TMUnit+Internal.h"
 #import "TMIndex.h"
 #import "TMScope+Internal.h"
-#import "TMSymbol.h"
 #import "TMSyntaxNode.h"
 #import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
+#import "TMPreference.h"
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -24,19 +24,14 @@ static NSString * const _captureName = @"name";
 static OnigRegexp *_numberedCapturesRegexp;
 static OnigRegexp *_namedCapturesRegexp;
 
-@interface TMSymbol (Internal)
-
-@property (nonatomic, readwrite) BOOL separator;
-- (id)initWithTitle:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
-
-@end
-
 #pragma mark -
 
 @interface TMUnit ()
 
 - (void)_generateScopesWithLine:(NSString *)line range:(NSRange)lineRange scopeStack:(NSMutableArray *)scopeStack;
 - (void)_generateScopesWithCaptures:(NSDictionary *)dictionary result:(OnigResult *)result type:(TMScopeType)type offset:(NSUInteger)offset parentScope:(TMScope *)scope;
+- (void)_startScope:(TMScope *)scope;
+- (void)_endScope:(TMScope *)scope;
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope;
 
 @end
@@ -47,11 +42,12 @@ static OnigRegexp *_namedCapturesRegexp;
   NSMutableAttributedString *_attributedContent;
   
   TMScope *_rootScope;
+  NSMutableArray *_symbolList;
   
   NSMutableDictionary *_extensions;
 }
 
-@synthesize index = _index, syntax = _syntax;
+@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics;
 
 #pragma mark - NSObject
 
@@ -69,14 +65,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Public Methods
-
-- (NSArray *)symbolList {
-  return NSArray.alloc.init;
-}
-
-- (NSArray *)diagnostics {
-  return NSArray.alloc.init;
-}
 
 - (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index {
   ASSERT(fileURL && syntax);
@@ -121,9 +109,14 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)reparseWithUnsavedContent:(NSString *)content {
   content = content.copy;
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
+  [self willChangeValueForKey:@"symbolList"];
+  [self willChangeValueForKey:@"diagnostics"];
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax content:content];
   _attributedContent = [NSMutableAttributedString.alloc initWithString:content];
+  _symbolList = [NSMutableArray alloc].init;
+  _diagnostics = [NSMutableArray alloc].init;
   NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
+  [self _startScope:_rootScope];
   // Get the next unparsed range
   NSRange lineRange = [content lineRangeForRange:NSMakeRange(0, 0)];
   while (lineRange.length) {
@@ -143,6 +136,12 @@ static OnigRegexp *_namedCapturesRegexp;
       break;
     }
   }
+  // At the end of the parse close all remaining open scopes
+  for (TMScope *scope in scopeStack.reverseObjectEnumerator) {
+    [self _endScope:scope];
+  }
+  [self didChangeValueForKey:@"symbolList"];
+  [self didChangeValueForKey:@"diagnostics"];
   
 #if DEBUG
 #pragma clang diagnostic push
@@ -187,6 +186,7 @@ static OnigRegexp *_namedCapturesRegexp;
       contentScope.endRegexp = scope.endRegexp;
       scope.flags |= TMScopeHasContentScope;
       [scopeStack addObject:contentScope];
+      [self _startScope:contentScope];
     }
   }
   
@@ -229,6 +229,8 @@ static OnigRegexp *_namedCapturesRegexp;
         scope.length = resultRange.location - scope.location;
         if (!scope.length) {
           [scope removeFromParent];
+        } else {
+          [self _endScope:scope];
         }
         [scopeStack removeLastObject];
         scope = [scopeStack lastObject];
@@ -244,6 +246,8 @@ static OnigRegexp *_namedCapturesRegexp;
       scope.flags |= TMScopeHasEnd;
       if (!scope.length) {
         [scope removeFromParent];
+      } else {
+        [self _endScope:scope];
       }
       ASSERT([scopeStack count]);
       [scopeStack removeLastObject];
@@ -259,10 +263,12 @@ static OnigRegexp *_namedCapturesRegexp;
       if (resultRange.length) {
         TMScope *matchScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.identifier syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeMatch];
         matchScope.length = resultRange.length;
+        [self _startScope:matchScope];
         [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:matchScope];
         previousTokenStart = NSMaxRange(resultRange);
         // Handle match pattern captures
         [self _generateScopesWithCaptures:firstSyntaxNode.captures result:firstResult type:TMScopeTypeMatch offset:lineRange.location parentScope:matchScope];
+        [self _endScope:matchScope];
       }
       // We need to make sure position increases, or it would loop forever with a 0 width match
       position = NSMaxRange([firstResult bodyRange]);
@@ -277,6 +283,7 @@ static OnigRegexp *_namedCapturesRegexp;
       previousTokenStart = resultRange.location;
       TMScope *spanScope = [scope newChildScopeWithIdentifier:firstSyntaxNode.identifier syntaxNode:firstSyntaxNode location:resultRange.location type:TMScopeTypeSpan];
       spanScope.flags |= TMScopeHasBegin;
+      [self _startScope:spanScope];
       // Create the end regexp
       NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
       [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
@@ -311,6 +318,7 @@ static OnigRegexp *_namedCapturesRegexp;
         TMScope *contentScope = [spanScope newChildScopeWithIdentifier:firstSyntaxNode.contentName syntaxNode:firstSyntaxNode location:NSMaxRange(resultRange) type:TMScopeTypeContent];
         contentScope.endRegexp = spanScope.endRegexp;
         spanScope.flags |= TMScopeHasContentScope;
+        [self _startScope:contentScope];
         [scopeStack addObject:contentScope];
       }
       // We don't need to make sure position advances since we changed the stack
@@ -338,6 +346,7 @@ static OnigRegexp *_namedCapturesRegexp;
   if (type != TMScopeTypeMatch) {
     capturesScope = [scope newChildScopeWithIdentifier:[(NSDictionary *)[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
     capturesScope.length = [result bodyRange].length;
+    [self _startScope:capturesScope];
     [self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope];
   }
   NSMutableArray *capturesScopesStack = [NSMutableArray arrayWithObject:capturesScope];
@@ -354,14 +363,29 @@ static OnigRegexp *_namedCapturesRegexp;
     }
     while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length) {
       ASSERT([capturesScopesStack count]);
+      [self _endScope:capturesScope];
       [capturesScopesStack removeLastObject];
       capturesScope = [capturesScopesStack lastObject];
     }
     TMScope *currentCaptureScope = [capturesScope newChildScopeWithIdentifier:currentCaptureName syntaxNode:nil location:currentMatchRange.location type:TMScopeTypeCapture];
     currentCaptureScope.length = currentMatchRange.length;
     [self _parsedTokenInRange:NSMakeRange(currentCaptureScope.location, currentCaptureScope.length) withScope:currentCaptureScope];
+    [self _startScope:currentCaptureScope];
     [capturesScopesStack addObject:currentCaptureScope];
     capturesScope = currentCaptureScope;
+  }
+  if (capturesScope != scope) {
+    [self _endScope:capturesScope];
+  }
+}
+
+- (void)_startScope:(TMScope *)scope {
+  
+}
+
+- (void)_endScope:(TMScope *)scope {
+  if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:scope.qualifiedIdentifier] boolValue]) {
+    [_symbolList addObject:scope];
   }
 }
 

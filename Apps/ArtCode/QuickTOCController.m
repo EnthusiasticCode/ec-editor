@@ -9,14 +9,13 @@
 #import "QuickTOCController.h"
 #import "QuickBrowsersContainerController.h"
 #import "CodeFileController.h"
-#import "TMSymbol.h"
 #import "CodeView.h"
 
 #import "NSArray+ScoreForAbbreviation.h"
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
-
+#import "TMScope.h"
 
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
@@ -35,7 +34,7 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMask = nil;
-      //            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMSymbol *element) {
+      //            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMScope *element) {
       //                return element.title;
       //            }];
       _filteredSymbolListHitMask = hitMask;
@@ -81,7 +80,7 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMScope *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
   cell.textLabel.text = symbol.title;
   cell.imageView.image = symbol.icon;
   cell.indentationLevel = symbol.indentation;
@@ -102,7 +101,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMScope *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
   if (symbol.isSeparator)
     return 22;
   return UITableViewAutomaticDimension;

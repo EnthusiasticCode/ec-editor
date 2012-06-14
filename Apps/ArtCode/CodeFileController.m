@@ -28,9 +28,9 @@
 #import "ShapePopoverBackgroundView.h"
 
 #import "TMUnit.h"
-#import "TMSymbol.h"
 #import "TMSyntaxNode.h"
 #import "TMPreference.h"
+#import "TMScope.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 
@@ -109,7 +109,7 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
-  TMSymbol *_currentSymbol;
+  TMScope *_currentSymbol;
   
   CGRect _keyboardFrame;
   CGRect _keyboardRotationFrame;
@@ -804,8 +804,8 @@ static void drawStencilStar(CGContextRef myContext)
 {
   // Set current symbol in title
   // TODO: change this to RAC
-  //  TMSymbol *currentSymbol = nil;
-  //  for (TMSymbol *symbol in _projectFile.symbolList)
+  //  TMScope *currentSymbol = nil;
+  //  for (TMScope *symbol in _projectFile.symbolList)
   //  {
   //    if (symbol.range.location > codeView.selectionRange.location)
   //      break;

@@ -36,6 +36,8 @@
 		B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
 		B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
 		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
+		B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
 		B7656C42144B53FE0084B050 /* AppleScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */; };
@@ -120,7 +122,6 @@
 		B7728C6315286EE9005EA98A /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7728C6415286EF5005EA98A /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7728C6515286EF5005EA98A /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
-		B7728C68152874F1005EA98A /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728C67152874F1005EA98A /* TMSymbol.m */; };
 		B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
@@ -636,8 +637,6 @@
 		B77101311506E20F006AF1FB /* ArtCodeTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtCodeTests-Prefix.pch"; sourceTree = "<group>"; };
 		B77101451506E336006AF1FB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B771014F1506E40B006AF1FB /* ACProjectSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectSpec.m; sourceTree = "<group>"; };
-		B7728C66152874F0005EA98A /* TMSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSymbol.h; sourceTree = "<group>"; };
-		B7728C67152874F1005EA98A /* TMSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSymbol.m; sourceTree = "<group>"; };
 		B7728C69152875CE005EA98A /* TMCompletions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMCompletions.h; sourceTree = "<group>"; };
 		B7728C6A152875DC005EA98A /* TMDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMDiagnostics.h; sourceTree = "<group>"; };
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
@@ -1492,8 +1491,6 @@
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B728590914E5971D00E3DE65 /* TMScope+Internal.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
-				B7728C66152874F0005EA98A /* TMSymbol.h */,
-				B7728C67152874F1005EA98A /* TMSymbol.m */,
 				B7728C69152875CE005EA98A /* TMCompletions.h */,
 				B7728C6A152875DC005EA98A /* TMDiagnostics.h */,
 				B7FB79B114D602F10080A714 /* TMUnit.h */,
@@ -2763,6 +2760,7 @@
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 				B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2796,6 +2794,7 @@
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
 				B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
+				B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2897,7 +2896,6 @@
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
-				B7728C68152874F1005EA98A /* TMSymbol.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
 				B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */,

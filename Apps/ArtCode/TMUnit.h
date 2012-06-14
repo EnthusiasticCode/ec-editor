@@ -19,11 +19,11 @@
 /// The syntax used to interpret the contents of the file
 @property (nonatomic, strong, readonly) TMSyntaxNode *syntax;
 
-/// Returns an array of TMSymbol objects representing all the symbols in the file.
-@property (nonatomic, strong, readonly) NSArray *symbolList;
+/// Returns an array of TMScope objects representing all the symbols in the file.
+@property (nonatomic, copy, readonly) NSArray *symbolList;
 
 /// Returns warnings and errors in the unit.
-@property (nonatomic, strong, readonly) NSArray *diagnostics;
+@property (nonatomic, copy, readonly) NSArray *diagnostics;
 
 /// Designated initializer. Creates a new TMUnit for the file at the given URL and syntax, coordinating with other TMUnits via the given index.
 /// It will not attempt to access the file itself, the fileURL is only used internally for parsing

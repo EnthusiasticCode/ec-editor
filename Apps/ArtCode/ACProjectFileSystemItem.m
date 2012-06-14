@@ -30,11 +30,11 @@
 #pragma mark - KVO Overrides
 
 + (NSSet *)keyPathsForValuesAffectingFileURL {
-  [NSSet setWithObjects:@"name", @"parent.fileURL", nil];
+  return [NSSet setWithObjects:@"name", @"parent.fileURL", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingPathInProject {
-  [NSSet setWithObjects:@"name", @"parent.pathInProject", nil];
+  return [NSSet setWithObjects:@"name", @"parent.pathInProject", nil];
 }
 
 #pragma mark - ACProjectItem Internal

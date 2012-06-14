@@ -56,7 +56,7 @@ typedef enum
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type;
 
 /// Creates a new root scope
-+ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
++ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode content:(NSString *)content;
 
 /// Removes the scope from it's parent's children
 - (void)removeFromParent;

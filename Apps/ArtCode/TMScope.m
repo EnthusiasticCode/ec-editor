@@ -7,9 +7,11 @@
 //
 
 #import "TMScope+Internal.h"
+#import "TMPreference.h"
 
 @interface TMScope ()
-- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type;
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type content:(NSString *)content;
+- (void)_loadSymbolListProperties;
 @end
 
 #pragma mark -
@@ -17,17 +19,52 @@
 @implementation TMScope {
   NSRange _identifierRange;
   NSMutableArray *_children;
+  NSString *_content;
+  NSNumber *_indentation;
+  NSNumber *_separator;
 }
 
 #pragma mark - Properties
 
-@synthesize syntaxNode = _syntaxNode, endRegexp = _endRegexp, location = _location, length = _length, flags = _flags, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type;
+@synthesize syntaxNode = _syntaxNode, endRegexp = _endRegexp, location = _location, length = _length, flags = _flags, parent = _parent, qualifiedIdentifier = _qualifiedIdentifier, identifiersStack = _identifiersStack, type = _type, title = _title, icon = _icon;
 
 - (NSString *)identifier
 {
   if (!_identifierRange.length)
     return nil;
   return [_qualifiedIdentifier substringWithRange:_identifierRange];
+}
+
+- (NSString *)spelling {
+  return [_content substringWithRange:NSMakeRange(_location, _length)];
+}
+
+- (NSString *)title {
+  if (!_title) {
+    [self _loadSymbolListProperties];
+  }
+  return _title;
+}
+
+- (UIImage *)icon {
+  if (!_icon) {
+    [self _loadSymbolListProperties];
+  }
+  return _icon;
+}
+
+- (NSUInteger)indentation {
+  if (!_indentation) {
+    [self _loadSymbolListProperties];
+  }
+  return [_indentation unsignedIntegerValue];
+}
+
+- (BOOL)isSeparator {
+  if (!_separator) {
+    [self _loadSymbolListProperties];
+  }
+  return [_separator boolValue];
 }
 
 - (NSArray *)children
@@ -40,7 +77,7 @@
   return [NSSet setWithObject:@"identifier"];
 }
 
-- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type
+- (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type content:(NSString *)content
 {
   self = [super init];
   if (!self)
@@ -69,6 +106,7 @@
   _identifierRange.length = [identifier length];
   _syntaxNode = syntaxNode;
   _type = type;
+  _content = content;
   return self;
 }
 
@@ -102,7 +140,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
   ASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
-  TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
+  TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type content:_content];
   childScope->_location = location;
   childScope->_parent = self;
   if (!_children)
@@ -116,9 +154,10 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   return childScope;
 }
 
-+ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode
++ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode content:(NSString *)content
 {
-  return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode type:TMScopeTypeRoot];
+  ASSERT(identifier && syntaxNode && content);
+  return [[self alloc] _initWithParent:nil identifier:identifier syntaxNode:syntaxNode type:TMScopeTypeRoot content:content];
 }
 
 - (void)removeFromParent
@@ -402,6 +441,24 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   [head->_parent->_children removeObject:tail];
   
   return YES;
+}
+
+#pragma mark - Private Methods
+
+- (void)_loadSymbolListProperties {
+  // Transform
+  NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey qualifiedIdentifier:self.qualifiedIdentifier]);
+  _title = transformation ? transformation(self.spelling) : self.spelling;
+  // TODO add preference for icon
+  NSUInteger titleLength = [_title length];
+  NSUInteger indentation = 0;
+  for (; indentation < titleLength; ++indentation)
+  {
+    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[_title characterAtIndex:indentation]])
+      break;
+  }
+  _title = indentation ? [_title substringFromIndex:indentation] : _title;
+  _indentation = [NSNumber numberWithUnsignedInteger:indentation];
 }
 
 #pragma mark - Debug Methods
