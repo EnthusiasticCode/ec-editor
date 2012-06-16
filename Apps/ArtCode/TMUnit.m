@@ -43,6 +43,7 @@ static OnigRegexp *_namedCapturesRegexp;
   
   TMScope *_rootScope;
   NSMutableArray *_symbolList;
+  TMScope *_currentSymbol;
   
   NSMutableDictionary *_extensions;
 }
@@ -380,12 +381,15 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_startScope:(TMScope *)scope {
-  
+  if (!_currentSymbol && [[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:scope.qualifiedIdentifier] boolValue]) {
+    _currentSymbol = scope;
+  }
 }
 
 - (void)_endScope:(TMScope *)scope {
-  if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:scope.qualifiedIdentifier] boolValue]) {
-    [_symbolList addObject:scope];
+  if (scope == _currentSymbol) {
+    [_symbolList addObject:_currentSymbol];
+    _currentSymbol = nil;
   }
 }
 
