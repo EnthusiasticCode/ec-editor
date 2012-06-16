@@ -115,7 +115,8 @@
   // TODO push an url instead
   [table deselectRowAtIndexPath:indexPath animated:YES];
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:[[[self filteredItems] objectAtIndex:indexPath.row] range]];
+  TMScope *selectedSymbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:NSMakeRange(selectedSymbol.location, selectedSymbol.length)];
 }
 
 @end

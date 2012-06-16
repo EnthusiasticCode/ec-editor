@@ -447,7 +447,20 @@ static void drawStencilStar(CGContextRef myContext)
   // Create a new TMUnit when the file changes
   [RACAbleSelf(artCodeTab.currentFile) subscribeNext:^(ACProjectFile *x) {
     if (x) {
-      this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:[TMSyntaxNode syntaxWithScopeIdentifier:@"source.c"] index:nil];
+      TMSyntaxNode *syntax = nil;
+      if (x.explicitSyntaxIdentifier) {
+        syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFileName:x.name];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode defaultSyntax];
+      }
+      this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:syntax index:nil];
     } else {
       this.codeUnit = nil;
     }
