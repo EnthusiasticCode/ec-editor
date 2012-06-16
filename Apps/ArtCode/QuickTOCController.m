@@ -15,6 +15,7 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
+#import "TMUnit.h"
 #import "TMScope.h"
 
 #import "AppStyle.h"
@@ -34,14 +35,14 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMask = nil;
-      //            _filteredSymbolList = [[[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList] sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMScope *element) {
-      //                return element.title;
-      //            }];
+      _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMScope *element) {
+        return element.title;
+      }];
       _filteredSymbolListHitMask = hitMask;
     }
     else
     {
-      //            _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit] symbolList];
+      _filteredSymbolList = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList;
       _filteredSymbolListHitMask = nil;
     }
   }

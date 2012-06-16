@@ -21,6 +21,8 @@
 /// The code view used to display code.
 @property (nonatomic, strong, readonly) CodeView *codeView;
 
+@property (nonatomic, strong) TMUnit *codeUnit;
+
 /// The web view used for preview webpages.
 @property (nonatomic, strong, readonly) UIWebView *webView;
 

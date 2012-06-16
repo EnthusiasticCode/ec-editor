@@ -50,7 +50,6 @@
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
-@property (nonatomic, strong) TMUnit *codeUnit;
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, copy) NSAttributedString *code;
 
