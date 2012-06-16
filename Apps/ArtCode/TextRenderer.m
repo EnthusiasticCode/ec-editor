@@ -640,9 +640,30 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 #pragma mark Properties
 
-@synthesize delegate, dataSource;
+@synthesize delegate, text = _text, defaultTextAttributes = _defaultTextAttributes;
 @synthesize renderWidth, renderHeight, renderTextHeight, textInsets, maximumStringLenghtPerSegment;
 @synthesize underlayRenderingPasses, overlayRenderingPasses;
+
+- (void)setText:(NSAttributedString *)text {
+  if (text == _text)
+    return;
+  
+  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
+  {
+    for (TextSegment *segment in textSegments)
+    {
+      [segment discardContent];
+    }
+    
+    [textSegments removeAllObjects];
+    
+    _text = text;
+  }
+  dispatch_semaphore_signal(textSegmentsSemaphore);
+  
+  if (delegateHasDidInvalidateRenderInRect) 
+    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
+}
 
 - (void)setDelegate:(id<TextRendererDelegate>)aDelegate
 {
@@ -762,9 +783,9 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   // has been done to refresh it. See updateTextFromStringRange:toStringRange:
   // to understand how this stringLenght is properly adjusted.
 // TODO BOTH rename in textRenderer:attributedStringInPreferredRange: to internally check for consistency to avoid race conditions
-  NSUInteger inputStringLenght = [dataSource stringLengthForTextRenderer:self];
+  NSUInteger inputStringLenght = self.text.length;
   stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
-  NSAttributedString *attributedString = [dataSource textRenderer:self attributedStringInRange:stringRange];
+  NSAttributedString *attributedString = [self.text attributedSubstringFromRange:stringRange];
   NSUInteger stringLength = [attributedString length];
   
   // Calculate the number of lines in lineCount 
@@ -793,10 +814,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   else if (inputStringLenght == NSMaxRange(stringRange))
   {
     NSMutableAttributedString *newLineString = [attributedString mutableCopy];
-    if ([dataSource respondsToSelector:@selector(defaultTextAttributesForTextRenderer:)])
-      [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:[dataSource defaultTextAttributesForTextRenderer:self]]];
-    else
-      [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:stringLength ? [newLineString attributesAtIndex:stringLength - 1 effectiveRange:NULL] : nil]];
+    [newLineString appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:self.defaultTextAttributes]];
     attributedString = newLineString;
     
     if (isFinalPart)
@@ -1219,97 +1237,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   point.x -= textInsets.left;
   point.y -= textInsets.top;
   return point;
-}
-
-#pragma mark Public Intake Methods
-
-- (void)updateAllText
-{
-  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-  {
-    for (TextSegment *segment in textSegments)
-    {
-      [segment discardContent];
-    }
-    
-    [textSegments removeAllObjects];
-  }
-  dispatch_semaphore_signal(textSegmentsSemaphore);
-  
-  if (delegateHasDidInvalidateRenderInRect) 
-    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
-}
-
-- (void)updateTextFromStringRange:(NSRange)fromRange toStringRange:(NSRange)toRange
-{
-  // Handle special case in which requested update range is longer than the input string
-  if (MAX(fromRange.length, toRange.length) >= [dataSource stringLengthForTextRenderer:self])
-  {
-    [self updateAllText];
-    return;
-  }
-  
-  NSInteger segmentIndex = -1, removeFromSegmentIndex = NSNotFound;
-  CGFloat affectedSegmentHeight = 0, removeFromSegmentYOffset = 0;
-  NSRange segmentRange = NSMakeRange(0, 0);
-  NSUInteger fromRangeEnd = NSMaxRange(fromRange), segmentRangeEnd;
-  
-  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-  {
-    // Calculate change withing single semgment
-    for (TextSegment *segment in textSegments)
-    {
-      segmentIndex++;
-      segmentRange.location += segmentRange.length;
-      segmentRange.length = segment.stringLength;
-      segmentRangeEnd = NSMaxRange(segmentRange);
-      affectedSegmentHeight = segment.renderSegmentHeight;
-      
-      // Skip untouched segmentse
-      ASSERT(segmentRange.location <= fromRangeEnd);
-      if (segmentRangeEnd >= fromRange.location)
-      {
-        // Will remove every segment after the current if changes are crossing multiple segments
-        if (fromRange.location < segmentRangeEnd
-            && fromRangeEnd >= segmentRangeEnd)
-        {
-          removeFromSegmentIndex = segmentIndex;
-          break;
-        }
-        
-        // Will remove segment if modifying it will change it's string lenght too much
-        ASSERT(segment.stringLength + (toRange.length - fromRange.length) >= 0);
-        NSUInteger segmentNewLength = segment.stringLength + (toRange.length - fromRange.length);
-        if (segmentNewLength > maximumStringLenghtPerSegment * 1.5 
-            || (!segment.isLastSegment && segmentNewLength < maximumStringLenghtPerSegment / 2))
-        {
-          removeFromSegmentIndex = segmentIndex;
-          break;
-        }
-        
-        // Only one segment is affected
-        segment.stringLength = segmentNewLength;
-        [segment discardContent];
-        break;
-      }
-      
-      removeFromSegmentYOffset += affectedSegmentHeight;
-    }
-    
-    // If the change crosses multiple segments, recreate all from the one where the change start
-    if (removeFromSegmentIndex != NSNotFound)
-    {
-      [textSegments removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(removeFromSegmentIndex, [textSegments count] - removeFromSegmentIndex)]];
-    }
-  }
-  dispatch_semaphore_signal(textSegmentsSemaphore);
-  
-  // Send invalidation for specific rect
-  if (delegateHasDidInvalidateRenderInRect)
-  {
-    removeFromSegmentYOffset += textInsets.top;
-    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, removeFromSegmentYOffset, self.renderWidth, (removeFromSegmentIndex != NSNotFound ? self.renderHeight - removeFromSegmentYOffset : affectedSegmentHeight))];
-  }
 }
 
 @end

@@ -14,7 +14,7 @@
 
 @class ArtCodeTab, TMTheme, TMUnit;
 
-@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDataSource, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
+@interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
 #pragma mark - Code viewing and editing
 

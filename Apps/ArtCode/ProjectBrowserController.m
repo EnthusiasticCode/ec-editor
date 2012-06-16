@@ -99,6 +99,8 @@
   // Update hint view display
   [[projects startWith:nil] subscribeNext:^(id x) {
     ProjectBrowserController *strongSelf = this;
+    if (!strongSelf)
+      return;
     if (ACProject.projects.count > 0) {
       [strongSelf->_hintView removeFromSuperview];
     } else {
@@ -109,6 +111,8 @@
   // Update gird view
   [projects subscribeNext:^(NSNotification *note) {
     ProjectBrowserController *strongSelf = this;
+    if (!strongSelf)
+      return;
     __block NSUInteger index = 0;
     if (note.name == ACProjectDidAddProjectNotificationName) {
       // When adding a project

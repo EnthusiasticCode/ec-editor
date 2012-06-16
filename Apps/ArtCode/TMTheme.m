@@ -188,7 +188,7 @@ static NSDictionary *_sharedAttributes = nil;
 
 + (TMTheme *)currentTheme {
   if (!_currentTheme) {
-    return [self defaultTheme];
+    _currentTheme = [self defaultTheme];
   }
   return _currentTheme;
 }

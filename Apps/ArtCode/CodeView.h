@@ -17,34 +17,6 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 @class CodeView, KeyboardAccessoryView;
 
-@protocol CodeViewDataSource <TextRendererDataSource>
-@optional
-
-/// Returns a value that indicate if the codeview can edit the dataSource
-/// in the specified text range. By default, if not implemented, this method will
-/// return YES if codeView:commitString:forTextInRange: is implemented.
-- (BOOL)codeView:(CodeView *)codeView canEditTextInRange:(NSRange)range;
-
-/// Commit a change for the given range with the given string.
-/// This operation will not update the renered text. It sould be done using 
-/// updateStringFromStringRange:toStringRange:
-- (void)codeView:(CodeView *)codeView commitString:(NSString *)string forTextInRange:(NSRange)range;
-
-/// If implemented, indicate that the data source support completion of words.
-/// The view controller returned from this method will be presented to the user
-/// when a completion will be requested.
-/// The method receive a range of the string to complete.
-/// This method is supposed to use codeView:stringInRange: to retrieve the part
-/// of text to complete. An action in the view controller should call
-/// codeView:commitString:forTextInRange: to actually complete the word.
-- (UIViewController *)codeView:(CodeView *)codeView viewControllerForCompletionAtTextInRange:(NSRange)range;
-
-/// If implemented, return the attribute value at the given index. 
-/// If effectiveRange is not NULL, the effective range of the given attribute found at index is returned.
-- (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange;
-
-@end
-
 @protocol CodeViewDelegate <UIScrollViewDelegate>
 @optional
 
@@ -81,7 +53,8 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 @interface CodeView : UIScrollView <TextRendererDelegate, UIKeyInput, UITextInputTraits, UITextInput>
 
 @property (nonatomic, weak) id<CodeViewDelegate> delegate;
-@property (nonatomic, weak) id<CodeViewDataSource> dataSource;
+
+@property (nonatomic, strong) NSAttributedString *text;
 
 #pragma mark Advanced Initialization and Configuration
 
@@ -97,9 +70,6 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 @property (nonatomic, getter = isEditing) BOOL editing;
 
 #pragma mark Managing Text Content
-
-/// Access the full text showed in the code view. This methods uses the datasource to retrieve the text.
-@property (nonatomic, strong, readonly) NSString *text;
 
 /// Text insets for the rendering.
 @property (nonatomic) UIEdgeInsets textInsets;
@@ -183,11 +153,7 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 @interface CodeView (TextRendererForwarding)
 
-/// Invalidate the text making the receiver redraw it.
-- (void)updateAllText;
-
-/// Invalidate a particular section of the text making the reveiver redraw it.
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
+@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
 
 @end
 

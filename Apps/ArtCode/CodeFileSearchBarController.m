@@ -117,7 +117,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   
   if ([_searchFilterMatches count] > 0)
   {
-    [self.targetCodeFileController.codeView updateAllText];
+    [self.targetCodeFileController.codeView setNeedsDisplay];
   }
   self.searchFilterMatches = nil;
   
@@ -312,7 +312,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   if (filterString.length == 0) {
     _findResultLabel.hidden = YES;
     self.searchFilterMatches = nil;
-    [_targetCodeFileController.codeView updateAllText];
+    [_targetCodeFileController.codeView setNeedsDisplay];
     return;
   }
   
@@ -342,11 +342,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   NSArray *matches = nil;
   if (self.searchFilter != nil) {
     // TODO URI implement OnigRegexp support in projectFile
+    ASSERT(NO);// Re enable this
     matches = NSArray.alloc.init;// [self.searchFilter matchesInFileBuffer:self.targetCodeFileController.projectFile];
   }
   
   self.searchFilterMatches = matches;
-  [_targetCodeFileController.codeView updateAllText];
+  [_targetCodeFileController.codeView setNeedsDisplay];
   // Set first match to flash
   _searchFilterMatchesLocation = 0;
   NSRange visibleRange = self.targetCodeFileController.codeView.visibleTextRange;

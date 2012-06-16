@@ -132,12 +132,11 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (CodeView *)codeView
 {
-  if (!_codeView)
+  if (!_codeView && self.isViewLoaded)
   {
     __weak CodeFileController *this = self;
     
     _codeView = [CodeView new];
-    _codeView.dataSource = self;
     _codeView.delegate = self;
     _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
     
@@ -227,6 +226,9 @@ static void drawStencilStar(CGContextRef myContext)
     accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
     accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
   }
+  
+  _codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
+  
   return _codeView;
 }
 
@@ -417,6 +419,8 @@ static void drawStencilStar(CGContextRef myContext)
   _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
   __weak CodeFileController *this = self;
   
+  [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
+  
   // Update the "code" property when the content of the file changes by applying the default attributes, this is very fast so it can be done synchronously
   [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
@@ -437,12 +441,7 @@ static void drawStencilStar(CGContextRef myContext)
       [this.codeUnit reparseWithUnsavedContent:x];
     }];
   }];
-  
-  // Update the display when the "code" property changes
-  [[RACSubscribable merge:[NSArray.alloc initWithObjects:RACAbleSelf(code), RACAbleSelf(artCodeTab.currentFile.bookmarks), nil]] subscribeNext:^(id x) {
-    [this.codeView updateAllText];
-  }];
-  
+    
   // Create a new TMUnit when the file changes
   [RACAbleSelf(artCodeTab.currentFile) subscribeNext:^(ACProjectFile *x) {
     if (x) {
@@ -487,12 +486,12 @@ static void drawStencilStar(CGContextRef myContext)
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
-  
-  [self.view addSubview:[self _contentView]];
 }
 
 - (void)viewDidLoad
 {
+  [self.view addSubview:[self _contentView]];
+  
   self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
   
   // Keyboard notifications
@@ -683,12 +682,6 @@ static void drawStencilStar(CGContextRef myContext)
   [_code replaceCharactersInRange:range withString:commitString];
   [self didChangeValueForKey:@"code"];
   self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
-}
-
-- (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
-{
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  return nil;
 }
 
 #pragma mark - Code View Delegate Methods

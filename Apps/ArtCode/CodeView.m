@@ -55,10 +55,6 @@ static const void *rendererContext;
   
   // Delegate and dataSource flags
   struct {
-    unsigned dataSourceHasCodeCanEditTextInRange : 1;
-    unsigned dataSourceHasCommitStringForTextInRange : 1;
-    unsigned dataSourceHasViewControllerForCompletionAtTextInRange : 1;
-    unsigned dataSourceHasAttributeAtIndexLongestEffectiveRange : 1;
     unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
     unsigned delegateHasSelectedLineNumber : 1;
     unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
@@ -115,6 +111,9 @@ static const void *rendererContext;
 // Handle keyboard display
 - (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 - (void)_keyboardDidChangeFrame:(NSNotification *)notification;
+
+/// Prepares the renderer to draw it's content
+- (void)_prepareRenderer;
 
 @end
 
@@ -213,18 +212,13 @@ static const void *rendererContext;
 
 #pragma mark - Properties
 
-@dynamic dataSource, delegate;
-@synthesize renderer = _renderer, editing;
+@dynamic delegate;
+@synthesize text = _text, renderer = _renderer, editing;
 @synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
 
-- (void)setDataSource:(id<CodeViewDataSource>)aDataSource
-{
-  [self.renderer setDataSource:aDataSource];
-  
-  _flags.dataSourceHasCodeCanEditTextInRange = [self.dataSource respondsToSelector:@selector(codeView:canEditTextInRange:)];
-  _flags.dataSourceHasCommitStringForTextInRange = [self.dataSource respondsToSelector:@selector(codeView:commitString:forTextInRange:)];
-  _flags.dataSourceHasViewControllerForCompletionAtTextInRange = [self.dataSource respondsToSelector:@selector(codeView:viewControllerForCompletionAtTextInRange:)];
-  _flags.dataSourceHasAttributeAtIndexLongestEffectiveRange = [self.dataSource respondsToSelector:@selector(codeView:attribute:atIndex:longestEffectiveRange:)];
+- (void)setText:(NSAttributedString *)text {
+  _text = text;
+  [self setNeedsDisplay];
 }
 
 - (void)setDelegate:(id<CodeViewDelegate>)delegate
@@ -474,6 +468,8 @@ static void init(CodeView *self)
   self->_longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
   self->_longDoublePressRecognizer.numberOfTouchesRequired = 2;
   [self addGestureRecognizer:self->_longDoublePressRecognizer];
+  
+  self.text = [NSAttributedString new];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -512,7 +508,8 @@ static void init(CodeView *self)
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
-  if (aSelector == @selector(dataSource))
+  if (aSelector == @selector(defaultTextAttributes) ||
+      aSelector == @selector(setDefaultTextAttributes:))
     return self.renderer;
   return nil;
 }
@@ -561,6 +558,8 @@ static void init(CodeView *self)
 
 - (void)drawRect:(CGRect)rect
 {
+  [self _prepareRenderer];
+  
   [super drawRect:rect];
   
   if (self->lineNumbersEnabled)
@@ -585,20 +584,6 @@ static void init(CodeView *self)
     [_contentView setNeedsDisplay];
   else
     [_contentView setNeedsDisplayInRect:rect];
-}
-
-#pragma mark - Text Renderer Methods
-
-- (void)updateAllText
-{
-  [self.renderer updateAllText];
-  [self setNeedsLayout];
-}
-
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange
-{
-  [self.renderer updateTextFromStringRange:originalRange toStringRange:newRange];
-  [self setNeedsLayout];
 }
 
 #pragma mark - Text Decoration Methods
@@ -669,17 +654,10 @@ static void init(CodeView *self)
 
 #pragma mark - Text Access Methods
 
-- (NSString *)text
-{
-  if (self.dataSource == nil)
-    return nil;
-  
-  return [[self.dataSource textRenderer:self.renderer attributedStringInRange:NSMakeRange(0, [self.dataSource stringLengthForTextRenderer:self.renderer])] string];
-}
-
 - (NSRange)visibleTextRange
 {
   __block NSRange result = NSMakeRange(NSUIntegerMax, 0);
+  [self _prepareRenderer];
   [self.renderer enumerateLinesIntersectingRect:self.bounds usingBlock:^(TextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
     if (result.location == NSUIntegerMax)
       result.location = stringRange.location;
@@ -692,7 +670,7 @@ static void init(CodeView *self)
 
 - (BOOL)canBecomeFirstResponder
 {
-  return editing && _flags.dataSourceHasCommitStringForTextInRange;
+  return editing;
 }
 
 - (BOOL)becomeFirstResponder
@@ -743,7 +721,7 @@ static void init(CodeView *self)
 
 - (BOOL)hasText
 {
-  return [self.dataSource stringLengthForTextRenderer:self.renderer] > 0;
+  return self.text.length > 0;
 }
 
 - (void)insertText:(NSString *)string
@@ -886,7 +864,7 @@ static void init(CodeView *self)
   if (e <= s)
     result = @"";
   else
-    result = [self.dataSource textRenderer:self.renderer attributedStringInRange:(NSRange){s, e - s}].string;
+    result = [self.text.string substringWithRange:(NSRange){s, e - s}];
   
   return result;
 }
@@ -904,7 +882,7 @@ static void init(CodeView *self)
   
   [self unmarkText];
   
-  NSUInteger textLength = [self.dataSource stringLengthForTextRenderer:self.renderer];
+  NSUInteger textLength = self.text.length;
   if (s > textLength)
     s = textLength;
   
@@ -927,7 +905,7 @@ static void init(CodeView *self)
 {
   if (_selectionView.selection.length == 0)
     return @"";
-  return [[self.dataSource textRenderer:self.renderer attributedStringInRange:_selectionView.selection] string];
+  return [self.text.string substringWithRange:_selectionView.selection];
 }
 
 - (UITextRange *)selectedTextRange
@@ -1048,12 +1026,13 @@ static void init(CodeView *self)
   } 
   else
   {
+    [self _prepareRenderer];
     result = [self.renderer positionFromPosition:pos inLayoutDirection:direction offset:offset];
     if (result == NSUIntegerMax)
       return nil;
   }
   
-  NSUInteger textLength = [self.dataSource stringLengthForTextRenderer:self.renderer];
+  NSUInteger textLength = self.text.length;
   if (result > textLength)
     result = textLength;
   
@@ -1070,7 +1049,7 @@ static void init(CodeView *self)
 
 - (UITextPosition *)endOfDocument
 {
-  TextPosition *p = [[TextPosition alloc] initWithIndex:[self.dataSource stringLengthForTextRenderer:self.renderer]];
+  TextPosition *p = [[TextPosition alloc] initWithIndex:self.text.length];
   return p;
 }
 
@@ -1124,6 +1103,7 @@ static void init(CodeView *self)
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
+  [self _prepareRenderer];
   CGRect r = [self.renderer rectsForStringRange:[(TextRange *)range range] limitToFirstLine:YES].bounds;
   return r;
 }
@@ -1132,6 +1112,7 @@ static void init(CodeView *self)
 {
   NSUInteger pos = ((TextPosition *)position).index;
 // TODO NIK: this method is called on main thread, and calls the renderer which eventually starts rendering text, triggering all of the text rendering on main thread
+  [self _prepareRenderer];
   CGRect carretRect = [self.renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
   
   carretRect.origin.x -= 1.0;
@@ -1164,6 +1145,7 @@ static void init(CodeView *self)
     point.y /= scale;
   }
   
+  [self _prepareRenderer];
   NSUInteger location = [self.renderer closestStringLocationToPoint:point withinStringRange:range ? [(TextRange *)range range] : (NSRange){0, 0}];
   return [[TextPosition alloc] initWithIndex:location];
 }
@@ -1172,7 +1154,7 @@ static void init(CodeView *self)
 {
   TextPosition *pos = (TextPosition *)[self closestPositionToPoint:point];
   
-  NSRange r = [[self.dataSource textRenderer:self.renderer attributedStringInRange:(NSRange){ pos.index, 1 }].string rangeOfComposedCharacterSequenceAtIndex:0];
+  NSRange r = [[self.text.string substringWithRange:(NSRange){ pos.index, 1 }] rangeOfComposedCharacterSequenceAtIndex:0];
   
   if (r.location == NSNotFound)
     return nil;
@@ -1225,7 +1207,7 @@ static void init(CodeView *self)
   if (!_selectionView.hidden)
     selectedRange = _selectionView.selectionRange;
   else
-    selectedRange = [TextRange textRangeWithRange:NSMakeRange([self.dataSource stringLengthForTextRenderer:self.renderer], 0)];
+    selectedRange = [TextRange textRangeWithRange:NSMakeRange(self.text.length, 0)];
   
   [inputDelegate textWillChange:self];
   [inputDelegate selectionWillChange:self];
@@ -1338,13 +1320,6 @@ static void init(CodeView *self)
 {
   ASSERT(string);
   
-  if (!_flags.dataSourceHasCommitStringForTextInRange)
-    return;
-  
-  if (_flags.dataSourceHasCodeCanEditTextInRange
-      && ![self.dataSource codeView:self canEditTextInRange:range]) 
-    return;
-  
   [self unmarkText];
   
   NSUInteger stringLenght = [string length];
@@ -1354,11 +1329,17 @@ static void init(CodeView *self)
     [self.undoManager beginUndoGrouping];
     [self.undoManager setActionName:@"Typing"];
   }
-  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [[self.dataSource textRenderer:self.renderer attributedStringInRange:range] string] : @"" selectionRange:range];
+  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [self.text.string substringWithRange:range] : @"" selectionRange:range];
   
   // Commit string
   [inputDelegate textWillChange:self];
-  [self.dataSource codeView:self commitString:string forTextInRange:range];
+  NSMutableAttributedString *newText = [self.text mutableCopy];
+  if (string.length == 0) {
+    [newText deleteCharactersInRange:range];
+  } else {
+    [newText replaceCharactersInRange:range withAttributedString:[NSAttributedString.alloc initWithString:string attributes:self.defaultTextAttributes]];
+  }
+  self.text = newText;
   
   // Update caret location
   [self _setSelectedTextRange:selection notifyDelegate:NO];
@@ -1389,11 +1370,12 @@ static void init(CodeView *self)
   }
   
   // Modify selection to account for placeholders
-  if (_flags.dataSourceHasAttributeAtIndexLongestEffectiveRange && newSelection.location < [self.dataSource stringLengthForTextRenderer:self.renderer])
+  NSUInteger textLength = self.text.length;
+  if (newSelection.location < textLength)
   {
     NSRange replaceSelection = newSelection;
     NSRange placeholderRangeAtLocation;
-    id placeholderValue = [self.dataSource codeView:self attribute:CodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation];
+    id placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation inRange:NSMakeRange(0, textLength)];
     if (placeholderValue && placeholderRangeAtLocation.location != newSelection.location)
     {
       replaceSelection = NSUnionRange(placeholderRangeAtLocation, replaceSelection);
@@ -1401,7 +1383,7 @@ static void init(CodeView *self)
     if (newSelection.length > 0)
     {
       NSRange placeholderRangeAtEnd;
-      placeholderValue = [self.dataSource codeView:self attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd];
+      placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) longestEffectiveRange:&placeholderRangeAtEnd inRange:NSMakeRange(0, textLength)];
       if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
       {
         replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
@@ -1499,6 +1481,13 @@ static void init(CodeView *self)
   _touchScrollTimerCallback = nil;
 }
 
+- (void)_prepareRenderer {
+  // Copy text to renderer so that it can use it in background
+  if (self.renderer.text != self.text) {
+    _text = self.renderer.text = [_text copy];
+  }
+}
+
 #pragma mark - Gesture Recognizers and Interaction
 
 - (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer
@@ -1544,6 +1533,7 @@ static void init(CodeView *self)
   if (_flags.delegateHasSelectedLineNumber && tapPoint.x <= self.lineNumbersWidth)
   {
     __block NSUInteger tappedLineNumber = 0;
+    [self _prepareRenderer];
     [self.renderer enumerateLinesIntersectingRect:(CGRect){ tapPoint, CGSizeMake(1, 1) } usingBlock:^(TextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineYOffset, NSRange stringRange, BOOL *stop) {
       tappedLineNumber = lineNumber + 1;
       *stop = YES;
@@ -1595,6 +1585,7 @@ static void init(CodeView *self)
       }
       else
       {
+        [self _prepareRenderer];
         [_selectionView setSelection:NSMakeRange([self.renderer closestStringLocationToPoint:tapPoint withinStringRange:(NSRange){0, 0}], 0) scrollToVisible:NO];
         CGRect selectionFrame = _selectionView.frame;
         [_selectionView setMagnify:YES fromRect:CGRectMake(tapPoint.x - 1, selectionFrame.origin.y, 2, selectionFrame.size.height) textPoint:CGPointMake(CGRectGetMidX(selectionFrame), CGRectGetMidY(selectionFrame)) ratio:2 animated:animatePopover];
@@ -1606,6 +1597,7 @@ static void init(CodeView *self)
         if ([recognizer numberOfTouches] == 1)
         {
           CGPoint point = [recognizer locationOfTouch:0 inView:self];
+          [self _prepareRenderer];
           [_selectionView setSelection:NSMakeRange([self.renderer closestStringLocationToPoint:point withinStringRange:(NSRange){0, 0}], 0) scrollToVisible:NO];
           if (isScrolling)
             _selectionView.magnify = NO;

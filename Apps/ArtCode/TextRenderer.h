@@ -40,24 +40,6 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 @end
 
 
-@protocol TextRendererDataSource <NSObject>
-@required
-
-/// Returns the length of the source string.
-- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender;
-
-/// An implementer of this method should return a string from the input
-/// text in the given string range. If the range length is 0
-/// the caller is expected to get all the remaining string.
-- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange;
-
-@optional
-
-/// Returns the default attributes that the datasource applies to the returned text.
-- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender;
-
-@end
-
 
 /// A class that present a text retrieved by a dataSource ready to be drawn
 /// fully or partially. The user of an instance of this class should 
@@ -67,12 +49,14 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 
 #pragma mark Managing Text Input Data
 
+@property (nonatomic, strong) NSAttributedString *text;
+
+/// A dictionary containing default text attributes that are applied to add an 
+/// additional tailing new-line.
+@property (nonatomic, strong) NSDictionary *defaultTextAttributes;
+
 /// A delegate that will recevie notifications from the text renderer.
 @property (nonatomic, weak) id <TextRendererDelegate> delegate;
-
-/// The dataSource to retrieve the text to render. It has to conform to
-/// \c TextRendererDataSource protocol.
-@property (nonatomic, weak) id <TextRendererDataSource> dataSource;
 
 /// Defines the maximum number of characters to use for one rendering segment.
 /// If this property is non-zero, input strings from the dataSource will
@@ -80,17 +64,6 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 /// text read and rendered at a time to improve speed and memory 
 /// performance. Default value is 0.
 @property (nonatomic) NSUInteger maximumStringLenghtPerSegment;
-
-/// Invalidate the content making the renderer call back to its dataSource
-/// to refresh required strings.
-- (void)updateAllText;
-
-/// Invalidate a particular section of the content indicating how it changed.
-/// This method will eventually make the renderer call back to it's dataSource
-/// to retrieve the modified content.
-/// The original range can have length of 0 to indicate an insertion before the 
-/// line; the new range can as well have a length of 0 to indicate deletion.
-- (void)updateTextFromStringRange:(NSRange)originalRange toStringRange:(NSRange)newRange;
 
 #pragma mark Customizing Rendering
 
