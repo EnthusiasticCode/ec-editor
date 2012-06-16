@@ -679,9 +679,10 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
 {
   ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
+  [self willChangeValueForKey:@"code"];
+  [_code replaceCharactersInRange:range withString:commitString];
+  [self didChangeValueForKey:@"code"];
   self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
-  self.code = changedCode;
 }
 
 - (id)codeView:(CodeView *)codeView attribute:(NSString *)attributeName atIndex:(NSUInteger)index longestEffectiveRange:(NSRangePointer)effectiveRange
