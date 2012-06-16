@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class TMIndex, TMSyntaxNode;
+@class TMIndex, TMSyntaxNode, RACSubject;
 @protocol TMCompletionResultSet;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
@@ -24,6 +24,9 @@
 
 /// Returns warnings and errors in the unit.
 @property (nonatomic, copy, readonly) NSArray *diagnostics;
+
+/// RAC tokenizer support. Sends (NSString *qualifiedIdentifier, NSValue NSRange tokenRange).
+@property (nonatomic, strong, readonly) RACSubject *parsedTokens;
 
 /// Designated initializer. Creates a new TMUnit for the file at the given URL and syntax, coordinating with other TMUnits via the given index.
 /// It will not attempt to access the file itself, the fileURL is only used internally for parsing
