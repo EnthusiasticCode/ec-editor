@@ -25,7 +25,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 @interface CodeFileSearchBarController ()
 
-@property (nonatomic, readwrite, strong) OnigRegexp *searchFilter;
+@property (nonatomic, readwrite, strong) NSRegularExpression *searchFilter;
 @property (nonatomic, readwrite, copy) NSArray *searchFilterMatches;
 
 - (void)_addFindFilterCodeViewPass;
@@ -37,6 +37,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 @implementation CodeFileSearchBarController {
   NSInteger _searchFilterMatchesLocation;
   NSTimer *_filterDebounceTimer;
+  RACDisposable *_targetCodeViewTextDisposable;
   // Indicate if the controller is in a replacement procedure. This will avoid the file buffer changes to update the filter.
   BOOL _isReplacing;
 }
@@ -141,7 +142,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   if (_filterDebounceTimer) {
     [_filterDebounceTimer invalidate];
   }
-  _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.25 usingBlock:^(NSTimer *timer) {
+  _filterDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 usingBlock:^(NSTimer *timer) {
     [self _applyFindFilterAndFlash:YES];
   } repeats:NO];
   
@@ -201,21 +202,20 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   _isReplacing = YES;
   
   // Get the string to replace
-  OnigResult *match = [self.searchFilterMatches objectAtIndex:_searchFilterMatchesLocation];
+  NSTextCheckingResult *match = [self.searchFilterMatches objectAtIndex:_searchFilterMatchesLocation];
   NSString *replacementString = self.replaceTextField.text;
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
-    // TODO URI use OnigRegExp instead
     replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
   }
-  replacementString = [match stringForReplacementTemplate:replacementString];
+  replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text.string offset:0 template:replacementString];
   
   [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
   [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
-  [self.targetCodeFileController.codeView replaceRange:[TextRange textRangeWithRange:match.bodyRange] withText:replacementString];
+  [self.targetCodeFileController.codeView replaceRange:[TextRange textRangeWithRange:match.range] withText:replacementString];
   [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
   
   _isReplacing = NO;
-  [self.targetCodeFileController.codeView flashTextInRange:NSMakeRange(match.bodyRange.location, [replacementString length])];
+  [self.targetCodeFileController.codeView flashTextInRange:NSMakeRange(match.range.location, [replacementString length])];
   [self _applyFindFilterAndFlash:NO];
 }
 
@@ -230,18 +230,24 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
   [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace All"];
   
-  NSString *replacementString = self.replaceTextField.text;
+  NSString *templateString = self.replaceTextField.text;
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
-    // TODO URI use OnigRegExp instead
-    replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
+    templateString = [NSRegularExpression escapedTemplateForString:templateString];
   }
   
-  // TODO URI implement OnigRegexp support in projectFile
-  NSUInteger replacementsCount = 0; //[self.searchFilter replaceMatchesInFileBuffer:self.targetCodeFileController.projectFile withTemplate:replacementString];
+  NSArray *matches = self.searchFilterMatches;
+  NSString *replacementString = nil;
+  NSInteger offset = 0;
+  for (NSTextCheckingResult *match in matches)
+  {
+    replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text.string offset:offset template:templateString];
+    [self.targetCodeFileController.codeView replaceRange:[TextRange textRangeWithRange:NSMakeRange(match.range.location + offset, match.range.length)] withText:replacementString];
+    offset += replacementString.length - match.range.length;
+  }
   
   [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
   
-  [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", replacementsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+  [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", matches.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   
   _isReplacing = NO;
   [self _applyFindFilterAndFlash:NO];
@@ -269,9 +275,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     }
     
     NSUInteger endStringRange = NSMaxRange(stringRange);
-    [searchSection enumerateObjectsAtIndexes:searchSectionIndexes options:0 usingBlock:^(OnigResult *result, NSUInteger idx, BOOL *stop) {
+    [searchSection enumerateObjectsAtIndexes:searchSectionIndexes options:0 usingBlock:^(NSTextCheckingResult *result, NSUInteger idx, BOOL *stop) {
       // End loop if range after current string range
-      NSRange range = result.bodyRange;
+      NSRange range = result.range;
       if (range.location >= endStringRange) {
         *stop = YES;
         return;
@@ -300,6 +306,15 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
       CGContextFillRect(context, rect);            
     }];
   } underText:YES forKey:findFilterPassBlockKey];
+  
+  // Adding RAC for codeview text change
+  [_targetCodeViewTextDisposable dispose];
+  __weak CodeFileSearchBarController *this = self;
+  _targetCodeViewTextDisposable = [[[[RACAble(self.targetCodeFileController.codeView, text) doNext:^(id x) {
+    this.searchFilterMatches = nil;
+  }] throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
+    [this _applyFindFilterAndFlash:NO];
+  }];
 }
 
 - (void)_applyFindFilterAndFlash:(BOOL)shouldFlash {
@@ -338,12 +353,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   }
   
   // TODO create here? manage error and convert NSRegularExpression options to OnigRegexp options
-  self.searchFilter = [OnigRegexp compile:filterString options:0 error:NULL];
+  self.searchFilter = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
   NSArray *matches = nil;
   if (self.searchFilter != nil) {
-    // TODO URI implement OnigRegexp support in projectFile
-    ASSERT(NO);// Re enable this
-    matches = NSArray.alloc.init;// [self.searchFilter matchesInFileBuffer:self.targetCodeFileController.projectFile];
+    NSString *targetString = self.targetCodeFileController.codeView.text.string;
+    matches = [self.searchFilter matchesInString:targetString options:0 range:NSMakeRange(0, targetString.length)];
   }
   
   self.searchFilterMatches = matches;
@@ -351,8 +365,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   // Set first match to flash
   _searchFilterMatchesLocation = 0;
   NSRange visibleRange = self.targetCodeFileController.codeView.visibleTextRange;
-  [matches enumerateObjectsUsingBlock:^(OnigResult *check, NSUInteger idx, BOOL *stop) {
-    if ([check rangeAt:0].location >= visibleRange.location) {
+  [matches enumerateObjectsUsingBlock:^(NSTextCheckingResult *check, NSUInteger idx, BOOL *stop) {
+    if ([check rangeAtIndex:0].location >= visibleRange.location) {
       _searchFilterMatchesLocation = idx;
       *stop = YES;
     }
