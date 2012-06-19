@@ -161,7 +161,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   }
   _projectsList = newProjectsList;
   [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-  [[NSUserDefaults standardUserDefaults] synchronize];
   
   _projectUUIDs = [[NSMutableSet alloc] initWithArray:_projectsList.allKeys];
 }
@@ -237,7 +236,6 @@ static NSString * const _plistRemotesKey = @"remotes";
         [_projectsList setObject:[NSDictionary dictionaryWithObjectsAndKeys:name, _plistNameKey, [NSNumber numberWithBool:YES], _plistIsNewlyCreatedKey, nil] forKey:uuid];
 
       [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-      [[NSUserDefaults standardUserDefaults] synchronize];
       
       // Notify finish
       [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidAddProjectNotificationName object:self userInfo:userInfo];
@@ -260,7 +258,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   [projectInfo setObject:info forKey:key];
   [_projectsList setObject:projectInfo forKey:project.UUID];
   [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 + (void)removeMetaForProject:(ACProject *)project key:(NSString *)key {
@@ -269,7 +266,6 @@ static NSString * const _plistRemotesKey = @"remotes";
   [projectInfo removeObjectForKey:key];
   [_projectsList setObject:projectInfo forKey:project.UUID];
   [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Project metadata
@@ -452,7 +448,6 @@ static NSString * const _plistRemotesKey = @"remotes";
       [_projects setObject:project forKey:duplicateUUID];
       [_projectsList setObject:projectInfo forKey:duplicateUUID];
       [[NSUserDefaults standardUserDefaults] setObject:_projectsList forKey:_projectsListKey];
-      [[NSUserDefaults standardUserDefaults] synchronize];
       
       // Notify finish
       [[NSNotificationCenter defaultCenter] postNotificationName:ACProjectDidAddProjectNotificationName object:self userInfo:userInfo];
