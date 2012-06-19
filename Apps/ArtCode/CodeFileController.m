@@ -136,6 +136,9 @@ static void drawStencilStar(CGContextRef myContext)
     __weak CodeFileController *this = self;
     
     _codeView = [CodeView new];
+    [RACAble(_codeView, text) subscribeNext:^(NSAttributedString *x) {
+      this.artCodeTab.currentFile.content = x.string;
+    }];
     _codeView.delegate = self;
     _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
     
@@ -428,9 +431,9 @@ static void drawStencilStar(CGContextRef myContext)
   }] toProperty:RAC_KEYPATH_SELF(code) onObject:this];
   
   // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
-  [[[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  [[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
-  }] throttle:0.5] distinctUntilChanged] select:^id(id x) {
+  }] throttle:0.5] select:^id(id x) {
     return [RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
       [this.codeUnit reparseWithUnsavedContent:x];
       NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
@@ -641,39 +644,39 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Code View DataSource Methods
 
-- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
-{
-  return self.code.length;
-}
-
-- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
-{
-  NSMutableAttributedString *attributedString = [self.code attributedSubstringFromRange:stringRange].mutableCopy;
-  if (attributedString.length) {
-    static NSRegularExpression *placeholderRegExp = nil;
-    if (!placeholderRegExp)
-      placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-    // Add placeholders styles
-    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-      NSString *placeHolderName = [self.artCodeTab.currentFile.content substringWithRange:[result rangeAtIndex:1]];
-      [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
-    }];
-  }
-  return attributedString;
-}
-
-- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender
-{
-  return [[TMTheme currentTheme] commonAttributes];
-}
-
-- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
-{
-  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
-  self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
-  self.code = changedCode;
-}
+//- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
+//{
+//  return self.code.length;
+//}
+//
+//- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
+//{
+//  NSMutableAttributedString *attributedString = [self.code attributedSubstringFromRange:stringRange].mutableCopy;
+//  if (attributedString.length) {
+//    static NSRegularExpression *placeholderRegExp = nil;
+//    if (!placeholderRegExp)
+//      placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
+//    // Add placeholders styles
+//    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+//      NSString *placeHolderName = [self.artCodeTab.currentFile.content substringWithRange:[result rangeAtIndex:1]];
+//      [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
+//    }];
+//  }
+//  return attributedString;
+//}
+//
+//- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender
+//{
+//  return [[TMTheme currentTheme] commonAttributes];
+//}
+//
+//- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
+//{
+//  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
+//  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
+//  self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
+//  self.code = changedCode;
+//}
 
 #pragma mark - Code View Delegate Methods
 

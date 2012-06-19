@@ -53,6 +53,12 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
 @synthesize explicitFileEncoding = _explicitFileEncoding, explicitSyntaxIdentifier = _explicitSyntaxIdentifier;
 @synthesize content = _content;
 
+#pragma mark - KVO Overrides
+
++ (BOOL)automaticallyNotifiesObserversOfContent {
+  return NO;
+}
+
 #pragma mark - ACProjectItem
 
 - (ACProjectItemType)type {
@@ -145,9 +151,14 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   if (content == _content) {
     return;
   }
+  if ([content isEqualToString:_content]) {
+    return;
+  }
   
+  [self willChangeValueForKey:@"content"];
   _content = content;
   [self.project updateChangeCount:UIDocumentChangeDone];
+  [self didChangeValueForKey:@"content"];
 }
 
 #pragma mark - Managing file bookmarks
