@@ -14,7 +14,6 @@
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "TMPreference.h"
-#import <ReactiveCocoa/ReactiveCocoa.h>
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -49,7 +48,7 @@ static OnigRegexp *_namedCapturesRegexp;
   NSMutableDictionary *_extensions;
 }
 
-@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics, parsedTokens = _parsedTokens;
+@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics;
 
 #pragma mark - NSObject
 
@@ -67,13 +66,6 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Public Methods
-
-- (RACSubject *)parsedTokens {
-  if (!_parsedTokens) {
-    _parsedTokens = [RACSubject subject];
-  }
-  return _parsedTokens;
-}
 
 - (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index {
   ASSERT(fileURL && syntax);
@@ -124,8 +116,6 @@ static OnigRegexp *_namedCapturesRegexp;
   _attributedContent = [NSMutableAttributedString.alloc initWithString:content];
   _symbolList = [NSMutableArray alloc].init;
   _diagnostics = [NSMutableArray alloc].init;
-  [self didChangeValueForKey:@"symbolList"];
-  [self didChangeValueForKey:@"diagnostics"];  
   NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
   [self _startScope:_rootScope];
   // Get the next unparsed range
@@ -151,6 +141,8 @@ static OnigRegexp *_namedCapturesRegexp;
   for (TMScope *scope in scopeStack.reverseObjectEnumerator) {
     [self _endScope:scope];
   }
+  [self didChangeValueForKey:@"symbolList"];
+  [self didChangeValueForKey:@"diagnostics"];
   
 #if DEBUG
 #pragma clang diagnostic push
@@ -396,16 +388,13 @@ static OnigRegexp *_namedCapturesRegexp;
 
 - (void)_endScope:(TMScope *)scope {
   if (scope == _currentSymbol) {
-    [self willChangeValueForKey:@"symbolList"];
     [_symbolList addObject:_currentSymbol];
-    [self didChangeValueForKey:@"symbolList"];
     _currentSymbol = nil;
   }
 }
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
   [_attributedContent addAttribute:_qualifiedIdentifierAttributeName value:scope.qualifiedIdentifier range:tokenRange];
-  [_parsedTokens sendNext:[RACTuple tupleWithObjects:scope.qualifiedIdentifier, [NSValue valueWithRange:tokenRange], nil]];
 }
 
 @end

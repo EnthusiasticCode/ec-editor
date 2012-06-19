@@ -104,7 +104,6 @@ static void drawStencilStar(CGContextRef myContext)
 
 
 @implementation CodeFileController {
-  NSMutableAttributedString *_code;
   UIActionSheet *_toolsActionSheet;
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
@@ -422,24 +421,26 @@ static void drawStencilStar(CGContextRef myContext)
   [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
   
   // Update the "code" property when the content of the file changes by applying the default attributes, this is very fast so it can be done synchronously
-  [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  [[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
-  }] subscribeNext:^(id x) {
-    CodeFileController *strongSelf = this;
-    if (!strongSelf) {
-      return;
-    }
-    [strongSelf willChangeValueForKey:@"code"];
-    strongSelf->_code = [[NSMutableAttributedString alloc] initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
-  }];
+  }] select:^id(id x) {
+    return [[NSAttributedString alloc] initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
+  }] toProperty:RAC_KEYPATH_SELF(code) onObject:this];
   
   // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
-  [[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  [[[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
-  }] throttle:0.5] distinctUntilChanged] subscribeNext:^(id x) {
-    [this.codeScheduler schedule:^{
+  }] throttle:0.5] distinctUntilChanged] select:^id(id x) {
+    return [RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
       [this.codeUnit reparseWithUnsavedContent:x];
+      NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
+      [this.codeUnit enumerateQualifiedScopeIdentifiersInRange:NSMakeRange(0, attributedString.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
+        [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
+      }];
+      return attributedString;
     }];
+  }] switch] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(id x) {
+    this.code = x;
   }];
     
   // Create a new TMUnit when the file changes
@@ -459,15 +460,6 @@ static void drawStencilStar(CGContextRef myContext)
         syntax = [TMSyntaxNode defaultSyntax];
       }
       this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:syntax index:nil];
-      [[[this.codeUnit.parsedTokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(RACTuple *tuple) {
-        CodeFileController *strongSelf = this;
-        if (!strongSelf) {
-          return;
-        }
-        [strongSelf willChangeValueForKey:@"code"];
-        [strongSelf->_code addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:tuple.first] range:[tuple.second rangeValue]];
-        [strongSelf didChangeValueForKey:@"code"];
-      }];
     } else {
       this.codeUnit = nil;
     }
