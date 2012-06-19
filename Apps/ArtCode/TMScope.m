@@ -449,7 +449,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   // Transform
   NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey qualifiedIdentifier:self.qualifiedIdentifier]);
   _title = transformation ? transformation(self.spelling) : self.spelling;
-  // TODO add preference for icon
   NSUInteger titleLength = [_title length];
   NSUInteger indentation = 0;
   for (; indentation < titleLength; ++indentation)
@@ -459,6 +458,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   }
   _title = indentation ? [_title substringFromIndex:indentation] : _title;
   _indentation = [NSNumber numberWithUnsignedInteger:indentation];
+  _icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
 }
 
 #pragma mark - Debug Methods

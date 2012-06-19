@@ -72,6 +72,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
   id value = [_settings objectForKey:key];
   if (key == TMPreferenceSymbolIconKey && [value isKindOfClass:[NSString class]])
   {
+    // TODO NIK if file exists, create from file, otherwise generate
     // Convert symbol image from path to image when needed
     value = [UIImage imageWithContentsOfFile:(NSString *)value];
     [_settings setObject:value forKey:key];

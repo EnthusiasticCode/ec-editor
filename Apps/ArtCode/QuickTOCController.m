@@ -84,7 +84,7 @@
   TMScope *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
   cell.textLabel.text = symbol.title;
   cell.imageView.image = symbol.icon;
-  cell.indentationLevel = symbol.indentation;
+//  cell.indentationLevel = symbol.indentation;
   cell.textLabelHighlightedCharacters = _filteredSymbolListHitMask ? [_filteredSymbolListHitMask objectAtIndex:indexPath.row] : nil;
   if (symbol.isSeparator)
   {
