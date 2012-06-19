@@ -171,7 +171,7 @@ static const void *rendererContext;
       
       // Position line
       CGFloat lineY = floorf(lineYOffset * this->_toMinimapTransform.a) + ((NSInteger)this->lineThickness % 2 ? 0.5 : 0);
-      
+
       // Render decoration for line
       if (customDecoration > 0 && this->lineDecorationInset > 0)
       {

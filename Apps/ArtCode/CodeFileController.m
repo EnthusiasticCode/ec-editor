@@ -110,6 +110,11 @@ static void drawStencilStar(CGContextRef myContext)
   
   TMScope *_currentSymbol;
   
+  // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
+  UIColor *_minimapSymbolColor;
+  UIColor *_minimapCommentColor;
+  UIColor *_minimapPreprocessorColor;
+  
   CGRect _keyboardFrame;
   CGRect _keyboardRotationFrame;
   
@@ -259,11 +264,10 @@ static void drawStencilStar(CGContextRef myContext)
     _minimapView.contentInset = UIEdgeInsetsMake(10, 0, 10, 10);
     _minimapView.alwaysBounceVertical = YES;
     
-    _minimapView.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"minimap_Background"]];
-    _minimapView.backgroundView.contentMode = UIViewContentModeTopLeft;
+    _minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
+    _minimapView.lineShadowColor = self.codeView.backgroundColor;
     _minimapView.lineDecorationInset = 10;
-    _minimapView.lineShadowColor = [UIColor colorWithWhite:0 alpha:0.75];
-    _minimapView.lineDefaultColor = [UIColor colorWithWhite:0.7 alpha:1];
+    _minimapView.lineDefaultColor = [UIColor blackColor];
   }
   return _minimapView;
 }
@@ -606,9 +610,12 @@ static void drawStencilStar(CGContextRef myContext)
     return NO;
   
   // Color symbols
-  for (TMScope *scope in self.codeUnit.symbolList) {
+  for (TMScope *scope in [self.codeUnit.symbolList copy]) {
     if (NSLocationInRange(scope.location, range)) {
-      *lineColor = [UIColor styleMinimapSymbolColor];
+      if (!_minimapSymbolColor) {
+        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:scope.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      *lineColor = _minimapSymbolColor;
       return YES;
     }
   }
@@ -620,13 +627,19 @@ static void drawStencilStar(CGContextRef myContext)
       return;
     
     if ([qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound) {
-      color = [UIColor styleMinimapPreprocessorColor];
+      if (!_minimapPreprocessorColor) {
+        _minimapPreprocessorColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      color = _minimapPreprocessorColor;
       *stop = YES;
       return;
     }
     
     if ([qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound) {
-      color = [UIColor styleMinimapCommentColor];
+      if (!_minimapCommentColor) {
+        _minimapCommentColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      color = _minimapCommentColor;
       *stop = YES;
       return;
     }
@@ -1179,6 +1192,11 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   self.codeView.caretColor = color ? color : [UIColor blackColor];
   color = [theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
   self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
+  
+  _minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
+  _minimapView.lineShadowColor = self.codeView.backgroundColor;
+  
+  _minimapSymbolColor = _minimapCommentColor = _minimapPreprocessorColor = nil;
 }
 
 @end

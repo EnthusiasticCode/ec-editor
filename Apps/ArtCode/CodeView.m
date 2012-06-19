@@ -501,10 +501,10 @@ static void init(CodeView *self)
   return self;
 }
 
-- (void)dealloc
-{
-  [self setKeyboardAccessoryView:nil];
-}
+//- (void)dealloc
+//{
+//  [self setKeyboardAccessoryView:nil];
+//}
 
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
