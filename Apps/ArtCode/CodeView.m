@@ -2088,7 +2088,7 @@ static void init(CodeView *self)
     }];
     
     // Show popover
-    [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown | UIPopoverArrowDirectionLeft | UIPopoverArrowDirectionRight animated:animated];
+    [self.magnificationPopover presentPopoverFromRect:rect inView:parent permittedArrowDirections:UIPopoverArrowDirectionDown animated:animated];
   }
 }
 
@@ -2098,7 +2098,7 @@ static void init(CodeView *self)
   {
     UIViewController *magnificationViewController = [[UIViewController alloc] init];
     magnificationViewController.view = self.magnificationView;
-    magnificationViewController.contentSizeForViewInPopover = CGSizeMake(200, 40);
+    magnificationViewController.contentSizeForViewInPopover = CGSizeMake(600, 40);
     
     magnificationPopover = [[parent.magnificationPopoverControllerClass alloc] initWithContentViewController:magnificationViewController];
   }
@@ -2109,7 +2109,7 @@ static void init(CodeView *self)
 {
   if (!magnificationView)
   {
-    magnificationView = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 200, 40) codeView:parent];
+    magnificationView = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 600, 40) codeView:parent];
     magnificationView.backgroundColor = parent.backgroundColor;
     // TODO make this more efficient
     magnificationView.layer.cornerRadius = 3;
