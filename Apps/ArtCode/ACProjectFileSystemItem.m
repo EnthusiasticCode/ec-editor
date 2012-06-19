@@ -72,6 +72,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
       if (fileWrapper) {
         self.fileWrapper = fileWrapper;
+        [self.project updateChangeCount:UIDocumentChangeDone];
       }
       if (completionHandler) {
         completionHandler(fileWrapper ? YES : NO);
