@@ -598,42 +598,46 @@ static void drawStencilStar(CGContextRef myContext)
                  decoration:(CodeFileMinimapLineDecoration *)decoration 
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
-  // TODO visitScopes was canned so we can't color the minimap like this anymore, we have to tie it in with the symbol list
-  /*    if (!line.isTruncation && [[self.artCodeTab.currentProject bookmarksForFile:self.artCodeTab.currentURL atLine:(lineNumber + 1)] count] > 0)
-   {
-   *decoration = CodeFileMinimapLineDecorationDisc;
-   *decorationColor = [UIColor whiteColor];
-   }
-   
-   if (*decoration == 0 && line.width < line.height)
-   return NO;
-   
-   __block UIColor *color = *lineColor;
-   [self.codeUnit visitScopesInRange:range withBlock:^TMUnitVisitResult(TMScope *scope, NSRange scopeRange) {
-   if (scopeRange.length <= 2)
-   return TMUnitVisitResultRecurse;
-   if ([scope.qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound)
-   {
-   color = [UIColor styleMinimapPreprocessorColor];
-   return TMUnitVisitResultBreak;
-   }
-   if ([[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey scope:scope] boolValue])
-   {
-   color = [UIColor styleMinimapSymbolColor];
-   return TMUnitVisitResultBreak;
-   }
-   if ([scope.qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound)
-   {
-   color = [UIColor styleMinimapCommentColor];
-   return TMUnitVisitResultBreak;
-   }
-   return TMUnitVisitResultRecurse;
-   }];
-   *lineColor = color;
-   
-   return YES;
-   */
-  return NO;
+  // Set bookmark decoration
+  if (!line.isTruncation && [self.artCodeTab.currentFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+  {
+    *decoration = CodeFileMinimapLineDecorationDisc;
+    *decorationColor = [UIColor whiteColor];
+  }
+  
+  // Don't draw if line is too small
+  if (*decoration == 0 && line.width <= line.height)
+    return NO;
+  
+  // Color symbols
+  for (TMScope *scope in self.codeUnit.symbolList) {
+    if (NSLocationInRange(scope.location, range)) {
+      *lineColor = [UIColor styleMinimapSymbolColor];
+      return YES;
+    }
+  }
+  
+  // Color comments and preprocessor
+  __block UIColor *color = *lineColor;
+  [self.codeUnit enumerateQualifiedScopeIdentifiersInRange:range withBlock:^(NSString *qualifiedIdentifier, NSRange scopeRange, BOOL *stop) {
+    if (scopeRange.length < 2)
+      return;
+    
+    if ([qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound) {
+      color = [UIColor styleMinimapPreprocessorColor];
+      *stop = YES;
+      return;
+    }
+    
+    if ([qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound) {
+      color = [UIColor styleMinimapCommentColor];
+      *stop = YES;
+      return;
+    }
+  }];
+  *lineColor = color;
+
+  return YES;
 }
 
 - (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection
@@ -697,18 +701,20 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
-  NSArray *bookmarks = [(ACProjectFile *)self.artCodeTab.currentItem bookmarks];
+  NSArray *bookmarks = [self.artCodeTab.currentFile bookmarks];
   BOOL removedBookmark = NO;
   for (ACProjectFileBookmark *bookmark in bookmarks) {
     if (bookmark.bookmarkPoint && [bookmark.bookmarkPoint unsignedIntegerValue] == lineNumber) {
       removedBookmark = YES;
-      [(ACProjectFile *)self.artCodeTab.currentItem removeBookmark:bookmark];
+      [self.artCodeTab.currentFile removeBookmark:bookmark];
       break;
     }
   }
   if (!removedBookmark) {
-    [(ACProjectFile *)self.artCodeTab.currentItem addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
+    [self.artCodeTab.currentFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
   }
+  [codeView setNeedsDisplay];
+  [_minimapView setNeedsDisplay];
 }
 
 - (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
