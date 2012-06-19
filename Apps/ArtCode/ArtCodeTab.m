@@ -79,6 +79,10 @@ static NSMutableArray *_mutableTabs;
   return nil;
 }
 
++ (NSSet *)keyPathsForValuesAffectingCurrentItem {
+  return [NSSet setWithObject:@"currentProject"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingCurrentFile {
   return [NSSet setWithObject:@"currentItem"];
 }

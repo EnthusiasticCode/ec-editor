@@ -423,13 +423,6 @@ static void drawStencilStar(CGContextRef myContext)
   
   [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
   
-  // Update the "code" property when the content of the file changes by applying the default attributes, this is very fast so it can be done synchronously
-  [[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
-    return x != nil;
-  }] select:^id(id x) {
-    return [[NSAttributedString alloc] initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
-  }] toProperty:RAC_KEYPATH_SELF(code) onObject:this];
-  
   // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
   [[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
@@ -514,6 +507,9 @@ static void drawStencilStar(CGContextRef myContext)
 {
   [super viewWillAppear:animated];
   [self _layoutChildViews];
+  if (self.artCodeTab.currentFile.content) {
+    self.codeView.text = [[NSAttributedString alloc] initWithString:self.artCodeTab.currentFile.content attributes:[TMTheme currentTheme].commonAttributes];
+  }
 }
 
 #pragma mark - Controller Methods
