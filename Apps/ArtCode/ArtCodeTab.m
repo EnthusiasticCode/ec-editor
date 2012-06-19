@@ -18,11 +18,10 @@
 #import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
-static NSString * const _plistFileName = @"Tabs.plist";
+static NSString * const _tabListKey = @"ArtCodeTabList";
 static NSString * const _historyURLsKey = @"HistoryURLs";
 static NSString * const _currentHistoryPositionKey = @"currentHistoryPosition";
 
-static NSURL *_plistURL;
 static NSMutableArray *_mutableTabDictionaries;
 static NSMutableArray *_mutableTabs;
 
@@ -96,11 +95,7 @@ static NSMutableArray *_mutableTabs;
     return;
   
   // Load persitent history
-  _plistURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_plistFileName];
-  NSData *plistData = [NSData dataWithContentsOfURL:_plistURL options:NSDataReadingUncached error:NULL];
-  if (plistData) {
-    _mutableTabDictionaries = [NSPropertyListSerialization propertyListWithData:plistData options:NSPropertyListMutableContainersAndLeaves format:0 error:NULL];
-  }
+  _mutableTabDictionaries = [[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:_tabListKey]];
   if (!_mutableTabDictionaries) {
     _mutableTabDictionaries = [[NSMutableArray alloc] init];
   }
@@ -149,6 +144,7 @@ static NSMutableArray *_mutableTabs;
 {
   NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
   [_mutableTabDictionaries addObject:dictionary];
+  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary]; 
   [_mutableTabs addObject:newTab];
   return newTab;
@@ -158,6 +154,7 @@ static NSMutableArray *_mutableTabs;
 {
   NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] objectAtIndex:[[tab->_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue]]], _historyURLsKey, nil];
   [_mutableTabDictionaries addObject:dictionary];
+  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
   [_mutableTabs addObject:newTab];
   return newTab;
@@ -167,12 +164,7 @@ static NSMutableArray *_mutableTabs;
 {
   [_mutableTabs removeObject:tab];
   [_mutableTabDictionaries removeObject:tab->_mutableDictionary];
-}
-
-+ (void)saveTabsToDisk
-{
-  NSData *plistData = [NSPropertyListSerialization dataWithPropertyList:_mutableTabDictionaries format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-  [plistData writeToURL:_plistURL atomically:YES];
+  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
 }
 
 #pragma mark - Properties

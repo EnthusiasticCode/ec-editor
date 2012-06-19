@@ -16,7 +16,6 @@
 + (ArtCodeTab *)blankTab;
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
 + (void)removeTab:(ArtCodeTab *)tab;
-+ (void)saveTabsToDisk;
 
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
