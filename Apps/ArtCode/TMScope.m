@@ -9,6 +9,8 @@
 #import "TMScope+Internal.h"
 #import "TMPreference.h"
 
+static UIImage *_TMScopeBlankImage = nil;
+
 @interface TMScope ()
 - (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type content:(NSString *)content;
 - (void)_loadSymbolListProperties;
@@ -50,7 +52,7 @@
   if (!_icon) {
     [self _loadSymbolListProperties];
   }
-  return _icon;
+  return _icon == _TMScopeBlankImage ? nil : _icon;
 }
 
 - (NSUInteger)indentation {
@@ -459,6 +461,13 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   _title = indentation ? [_title substringFromIndex:indentation] : _title;
   _indentation = [NSNumber numberWithUnsignedInteger:indentation];
   _icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
+  if (!_icon) {
+    _icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
+  }
+  _separator = [TMPreference preferenceValueForKey:TMPreferenceSymbolIsSeparatorKey qualifiedIdentifier:self.qualifiedIdentifier];
+  if (!_separator) {
+    _separator = [NSNumber numberWithBool:NO];
+  }
 }
 
 #pragma mark - Debug Methods

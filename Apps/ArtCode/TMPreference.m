@@ -151,6 +151,9 @@ static NSMutableDictionary *symbolIconsCache;
     } else if ([symbolIdentifier isEqualToString:@"Function"]) {
       letter = @"f";
       color = [UIColor colorWithRed:.46 green:.64 blue:.53 alpha:1];
+    } else if ([symbolIdentifier isEqualToString:@"Preprocessor"]) {
+      letter = @"#";
+      color = [UIColor colorWithRed:.75 green:.46 blue:.46 alpha:1];
     }
     // Generate the image
     icon = [UIImage styleSymbolImageWithSize:CGSizeMake(16, 16) color:color letter:letter];
