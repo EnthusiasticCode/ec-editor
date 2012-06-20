@@ -10,6 +10,7 @@
 #import "TMBundle.h"
 #import "NSString+TextMateScopeSelectorMatching.h"
 #import <CocoaOniguruma/OnigRegexp.h>
+#import "UIImage+AppStyle.h"
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
@@ -19,6 +20,7 @@ NSString * const TMPreferenceSymbolIsSeparatorKey = @"symbolIsSeparator";
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
 static NSMutableDictionary *scopeToPreferenceCache;
+static NSMutableDictionary *symbolIconsCache;
 
 @interface TMPreference ()
 
@@ -69,15 +71,7 @@ static NSMutableDictionary *scopeToPreferenceCache;
 
 - (id)preferenceValueForKey:(NSString *)key
 {
-  id value = [_settings objectForKey:key];
-  if (key == TMPreferenceSymbolIconKey && [value isKindOfClass:[NSString class]])
-  {
-    // TODO NIK if file exists, create from file, otherwise generate
-    // Convert symbol image from path to image when needed
-    value = [UIImage imageWithContentsOfFile:(NSString *)value];
-    [_settings setObject:value forKey:key];
-  }
-  return value;
+  return [_settings objectForKey:key];
 }
 
 #pragma mark - Class methods
@@ -145,6 +139,30 @@ static NSMutableDictionary *scopeToPreferenceCache;
   return value;
 }
 
++ (UIImage *)symbolIconForIdentifier:(NSString *)symbolIdentifier {
+  UIImage *icon = [symbolIconsCache objectForKey:symbolIdentifier];
+  if (!icon) {
+    NSString *letter = [symbolIdentifier substringToIndex:1];
+    UIColor *color = [UIColor lightGrayColor];
+    if ([symbolIdentifier isEqualToString:@"Class"]) {
+      color = [UIColor colorWithRed:.62 green:.54 blue:.73 alpha:1];
+    } else if ([symbolIdentifier isEqualToString:@"Method"]) {
+      color = [UIColor colorWithRed:.32 green:.46 blue:.73 alpha:1];
+    } else if ([symbolIdentifier isEqualToString:@"Function"]) {
+      letter = @"f";
+      color = [UIColor colorWithRed:.46 green:.64 blue:.53 alpha:1];
+    }
+    // Generate the image
+    icon = [UIImage styleSymbolImageWithSize:CGSizeMake(16, 16) color:color letter:letter];
+    // Cache the result
+    if (!symbolIconsCache) {
+      symbolIconsCache = [[NSMutableDictionary alloc] init];
+    }
+    [symbolIconsCache setObject:icon forKey:symbolIdentifier];
+  }
+  return icon;
+}
+
 #pragma mark - Private Methods
 
 - (void)_addSettingsDictionary:(NSDictionary *)settingsDict
@@ -166,8 +184,12 @@ static NSMutableDictionary *scopeToPreferenceCache;
     }
     else if ([settingName isEqualToString:TMPreferenceSymbolIconKey])
     {
-      value = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"symbolIcon_%@", value] ofType:@"png"];
-      [_settings setObject:value forKey:TMPreferenceSymbolIconKey];
+      // Load or generate an image for the symbol
+      UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"symbolIcon_%@", value]];
+      if (!image) {
+        image = [[self class] symbolIconForIdentifier:value];
+      }
+      [_settings setObject:image forKey:TMPreferenceSymbolIconKey];
       // TODO also use symbolImagePath, symbolImageColor & Title
     }
     else if ([settingName isEqualToString:TMPreferenceSymbolIsSeparatorKey])

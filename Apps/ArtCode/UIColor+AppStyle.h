@@ -20,8 +20,4 @@
 + (UIColor *)styleThemeColorOne;
 + (UIColor *)styleDeleteColor;
 
-+ (UIColor *)styleMinimapCommentColor;
-+ (UIColor *)styleMinimapPreprocessorColor;
-+ (UIColor *)styleMinimapSymbolColor;
-
 @end

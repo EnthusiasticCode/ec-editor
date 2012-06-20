@@ -44,6 +44,11 @@ extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 /// Returns the specified preference's value for the scope. 
 + (id)preferenceValueForKey:(NSString *)preferenceKey qualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
+#pragma mark Symbol Icons
+
+/// Returns a generated image based on the symbol identifier. Common identifiers are Function, Method, Class.
++ (UIImage *)symbolIconForIdentifier:(NSString *)symbolIdentifier;
+
 @end
 
 

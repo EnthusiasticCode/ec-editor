@@ -567,9 +567,9 @@
   }];
 }
 
-+ (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter
++ (UIImage *)styleSymbolImageWithSize:(CGSize)size color:(UIColor *)color letter:(NSString *)letter
 {
-  return [UIImage imageWithSize:CGSizeMake(14, 14) block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
     rect = CGRectInset(rect, .5, .5);
     CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:2].CGPath;
     
@@ -589,9 +589,9 @@
     
     CGContextSetLineWidth(ctx, 0.4);
     CGContextSetTextDrawingMode(ctx, kCGTextFillStroke);
-    CGContextSelectFont(ctx, "Helvetica-Bold", 13, kCGEncodingMacRoman);
+    CGContextSelectFont(ctx, "Helvetica-Bold", size.width - 1, kCGEncodingMacRoman);
     CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
-    CGContextSetTextPosition(ctx, 1.5, 11.5);
+    CGContextSetTextPosition(ctx, 1.5, size.height - 2.5);
     
     CGContextShowText(ctx, [letter cStringUsingEncoding:NSUTF8StringEncoding], [letter lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
   }];

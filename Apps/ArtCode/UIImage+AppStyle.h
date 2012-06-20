@@ -51,8 +51,8 @@
 /// The outline will look like a border.
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor shadowColor:(UIColor *)shadowColor;
 
-/// Produce a rounded rect 14x14 image with the given color and white letter over it.
-+ (UIImage *)styleSymbolImageWithColor:(UIColor *)color letter:(NSString *)letter;
+/// Produce a rounded rect image with the given color and white letter over it.
++ (UIImage *)styleSymbolImageWithSize:(CGSize)size color:(UIColor *)color letter:(NSString *)letter;
 
 /// Icon 16x16+shadow of a magnifying glass.
 + (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
