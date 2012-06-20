@@ -1337,7 +1337,7 @@ static void init(CodeView *self)
   if (string.length == 0) {
     [newText deleteCharactersInRange:range];
   } else {
-    [newText replaceCharactersInRange:range withAttributedString:[NSAttributedString.alloc initWithString:string attributes:self.defaultTextAttributes]];
+    [newText replaceCharactersInRange:range withString:string];
   }
   self.text = newText;
   
