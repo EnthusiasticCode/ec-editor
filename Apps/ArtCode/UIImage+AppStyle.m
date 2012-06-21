@@ -591,7 +591,8 @@
     CGContextSetTextDrawingMode(ctx, kCGTextFillStroke);
     CGContextSelectFont(ctx, "Helvetica-Bold", size.width - 1, kCGEncodingMacRoman);
     CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
-    CGContextSetTextPosition(ctx, 1.5, size.height - 2.5);
+    CGSize letterSize = [letter sizeWithFont:[UIFont boldSystemFontOfSize:size.width - 1]];
+    CGContextSetTextPosition(ctx, floorf((size.width - letterSize.width) / 2.) + .5, size.height - 2.5);
     
     CGContextShowText(ctx, [letter cStringUsingEncoding:NSUTF8StringEncoding], [letter lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
   }];
