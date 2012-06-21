@@ -24,6 +24,7 @@
 @implementation SearchableTableBrowserController {
   UIPopoverController *_quickBrowsersPopover;
   BOOL _isSearchBarStaticOnTop;
+  RACDisposable *_racGlobalDisposable;
 }
 
 #pragma mark - Properties
@@ -94,36 +95,6 @@
   
   self.title = title;
   _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
-  
-  // RAC
-  __weak SearchableTableBrowserController *this = self;
-  
-  // Reload the table data when the search bar text changes
-  [[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
-    [this invalidateFilteredItems];
-    [this.tableView reloadData];
-  }];
-  
-  // Account for keyboard and resize table accordingly
-  // TODO!!! this rac is not disposed when the controller is deallocated
-  [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
-    if (note.name == UIKeyboardDidShowNotification) {
-      CGRect tableViewFrame = this.tableView.frame;
-      tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
-      this.tableView.frame = tableViewFrame;
-    } else {
-      SearchableTableBrowserController *strongSelf = this;
-      CGRect tableViewFrame = this.view.bounds;
-      if (strongSelf && strongSelf->_isSearchBarStaticOnTop) {
-        tableViewFrame.origin.y = 44;
-        tableViewFrame.size.height -= 44;
-      }
-      if (this.bottomToolBar != nil) {
-        tableViewFrame.size.height -= this.bottomToolBar.bounds.size.height;
-      }
-      this.tableView.frame = tableViewFrame;
-    }
-  }];
       
   return self;
 }
@@ -231,11 +202,51 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
+  // RAC
+  __weak SearchableTableBrowserController *this = self;
+  NSMutableArray *disposables = [NSMutableArray new];
+  _racGlobalDisposable = [RACDisposable disposableWithBlock:^{
+    for (RACDisposable *d in disposables) {
+      [d dispose];
+    }
+  }];
+  
+  // Reload the table data when the search bar text changes
+  [disposables addObject:[[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
+    [this invalidateFilteredItems];
+    [this.tableView reloadData];
+  }]];
+  
+  // TODO this property is not the correct one to use for enabling the keyboard resize, there should be a dedicated one
+  if (!_isSearchBarStaticOnTop) {
+    // Account for keyboard and resize table accordingly
+    [disposables addObject:[[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
+      if (note.name == UIKeyboardDidShowNotification) {
+        CGRect tableViewFrame = this.tableView.frame;
+        tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
+        this.tableView.frame = tableViewFrame;
+      } else {
+        SearchableTableBrowserController *strongSelf = this;
+        CGRect tableViewFrame = this.view.bounds;
+        if (strongSelf && strongSelf->_isSearchBarStaticOnTop) {
+          tableViewFrame.origin.y = 44;
+          tableViewFrame.size.height -= 44;
+        }
+        if (this.bottomToolBar != nil) {
+          tableViewFrame.size.height -= this.bottomToolBar.bounds.size.height;
+        }
+        this.tableView.frame = tableViewFrame;
+      }
+    }]];
+  }
+  
   self.toolbarItems = self.toolNormalItems;
   [self.tableView reloadData];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
+  [_racGlobalDisposable dispose];
+  _racGlobalDisposable = nil;
   [self invalidateFilteredItems];
   [super viewDidDisappear:animated];
 }
