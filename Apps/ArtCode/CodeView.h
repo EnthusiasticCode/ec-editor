@@ -44,9 +44,6 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// Called when the code view is about to change its selection from user interaction.
 - (void)selectionWillChangeForCodeView:(CodeView *)codeView;
 
-/// Called when the code view changes its selection from user interaction.
-- (void)selectionDidChangeForCodeView:(CodeView *)codeView;
-
 @end
 
 

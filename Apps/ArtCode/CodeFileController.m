@@ -53,6 +53,8 @@
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, copy) NSAttributedString *code;
 
+@property (nonatomic, weak) TMScope *currentSymbol;
+
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
 - (UIView *)_contentViewForEditingState:(BOOL)editingState;
@@ -108,8 +110,6 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
-  TMScope *_currentSymbol;
-  
   // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
   UIColor *_minimapSymbolColor;
   UIColor *_minimapCommentColor;
@@ -132,18 +132,13 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code;
+@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code, currentSymbol = _currentSymbol;
 
-- (CodeView *)codeView
-{
-  if (!_codeView && self.isViewLoaded)
-  {
+- (CodeView *)codeView {
+  if (!_codeView && self.isViewLoaded) {
     __weak CodeFileController *this = self;
     
     _codeView = [CodeView new];
-    [RACAble(_codeView, text) subscribeNext:^(NSAttributedString *x) {
-      this.artCodeTab.currentFile.content = x.string;
-    }];
     _codeView.delegate = self;
     _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
     
@@ -232,6 +227,42 @@ static void drawStencilStar(CGContextRef myContext)
     UIView *accessoryPopoverContentView = [UIView new];
     accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
     accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
+    
+    
+    // RAC
+    
+    // Update file content
+    [RACAble(_codeView, text) subscribeNext:^(NSAttributedString *x) {
+      this.artCodeTab.currentFile.content = x.string;
+    }];
+    
+    // Update title with current symbol and keyboard accessory based on current scope
+    [[RACAble(_codeView, selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
+      NSRange selectionRange = [selectionValue rangeValue];
+      
+      // Select current scope
+      TMScope *currentSymbol = nil;
+      for (TMScope *symbol in this.codeUnit.symbolList) {
+        if (symbol.location > selectionRange.location)
+          break;
+        currentSymbol = symbol;
+      }
+      if (currentSymbol != this.currentSymbol) {
+        this.currentSymbol = currentSymbol;
+        [this.singleTabController updateDefaultToolbarTitle];
+      }
+      
+      //  // Apply debounce to selection change
+      //  [_selectionChangeDebounceTimer invalidate];
+      //  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
+      //    // Retrieve the current scope
+      //    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
+      //      // Change accessory keyboard
+      //      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
+      //      
+      //    }];
+      //  } repeats:NO];
+    }];
   }
   
   _codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
@@ -344,16 +375,16 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
 {
-  if (_currentSymbol)
+  if (self.currentSymbol)
   {
     NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject];
-    if (_currentSymbol.icon)
+    if (self.currentSymbol.icon)
     {
-      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.icon, _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     }
     else
     {
-      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], _currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     }
     return YES;
   }
@@ -821,34 +852,6 @@ static void drawStencilStar(CGContextRef myContext)
     } completion:nil];
   }
   return YES;
-}
-
-- (void)selectionDidChangeForCodeView:(CodeView *)codeView
-{
-  // Set current symbol in title
-  // TODO: change this to RAC
-  //  TMScope *currentSymbol = nil;
-  //  for (TMScope *symbol in _projectFile.symbolList)
-  //  {
-  //    if (symbol.range.location > codeView.selectionRange.location)
-  //      break;
-  //    currentSymbol = symbol;
-  //  }
-  //  if (currentSymbol != _currentSymbol)
-  //  {
-  //    _currentSymbol = currentSymbol;
-  //    [self.singleTabController updateDefaultToolbarTitle];
-  //  }
-  //  // Apply debounce to selection change
-  //  [_selectionChangeDebounceTimer invalidate];
-  //  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-  //    // Retrieve the current scope
-  //    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-  //      // Change accessory keyboard
-  //      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
-  //      
-  //    }];
-  //  } repeats:NO];
 }
 
 #pragma mark - Webview delegate methods

@@ -40,7 +40,6 @@ static const void *rendererContext;
   NSMutableDictionary *underlayPasses;
   
   // Text management
-  TextSelectionView *_selectionView;
   NSRange _markedRange;
   
   CodeViewUndoManager *_undoManager;
@@ -61,8 +60,7 @@ static const void *rendererContext;
     unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
     unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
     unsigned delegateHasDidHideKeyboardAccessoryView : 1;
-    unsigned delegateHasSelectionWillChange : 1;
-    unsigned delegateHasSelectionDidChange : 1;
+    unsigned reserved : 2;
   } _flags;
   
   // Recognizers
@@ -78,6 +76,7 @@ static const void *rendererContext;
   NSMutableDictionary *cleanupPasses;
 }
 
+@property (nonatomic, strong) TextSelectionView *selectionView;
 @property (nonatomic, strong) TextRenderer *renderer;
 @property (nonatomic, readonly) BOOL ownsRenderer;
 
@@ -215,6 +214,7 @@ static const void *rendererContext;
 @dynamic delegate;
 @synthesize text = _text, renderer = _renderer, editing;
 @synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
+@synthesize selectionView = _selectionView;
 
 - (void)setText:(NSAttributedString *)text {
   _text = text;
@@ -231,8 +231,6 @@ static const void *rendererContext;
   _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
   _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
   _flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
-  _flags.delegateHasSelectionWillChange = [delegate respondsToSelector:@selector(selectionWillChangeForCodeView:)];
-  _flags.delegateHasSelectionDidChange = [delegate respondsToSelector:@selector(selectionDidChangeForCodeView:)];
 }
 
 - (TextRenderer *)renderer
@@ -408,7 +406,11 @@ static const void *rendererContext;
 
 - (void)setSelectionRange:(NSRange)selectionRange
 {
-  _selectionView.selection = selectionRange;
+  self.selectionView.selection = selectionRange;
+}
+
++ (NSSet *)keyPathsForValuesAffectingSelectionRange {
+  return [NSSet setWithObject:@"selectionView.selection"];
 }
 
 - (RectSet *)selectionRects
@@ -1365,8 +1367,6 @@ static void init(CodeView *self)
   if (shouldNotify)
   {
     [inputDelegate selectionWillChange:self];
-    if (_flags.delegateHasSelectionWillChange)
-      [self.delegate selectionWillChangeForCodeView:self];
   }
   
   // Modify selection to account for placeholders
@@ -1393,13 +1393,10 @@ static void init(CodeView *self)
   }
   
   // Will automatically resize and position the selection view
-  _selectionView.selection = newSelection;
+  self.selectionView.selection = newSelection;
   
-  if (shouldNotify)
-  {
+  if (shouldNotify) {
     [inputDelegate selectionDidChange:self];
-    if (_flags.delegateHasSelectionDidChange)
-      [self.delegate selectionDidChangeForCodeView:self];
   }
 }
 
@@ -1876,7 +1873,7 @@ static void init(CodeView *self)
 
 - (void)setSelection:(NSRange)range scrollToVisible:(BOOL)scrollToVisible
 {
-  [parent willChangeValueForKey:@"selectionRange"];
+  [self willChangeValueForKey:@"selection"];
   
   selection = range;
   [self update];
@@ -1884,7 +1881,7 @@ static void init(CodeView *self)
   if (scrollToVisible)
     [parent scrollRectToVisible:self.frame animated:self.isHidden];
   
-  [parent didChangeValueForKey:@"selectionRange"];
+  [self didChangeValueForKey:@"selection"];
 }
 
 - (void)setSelection:(NSRange)range
@@ -1900,6 +1897,10 @@ static void init(CodeView *self)
 - (void)setSelectionRange:(TextRange *)selectionRange
 {
   self.selection = [selectionRange range];
+}
+
++ (NSSet *)keyPathsForValuesAffectingSelectionRange {
+  return [NSSet setWithObject:@"selection"];
 }
 
 - (TextPosition *)selectionPosition
