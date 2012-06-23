@@ -252,16 +252,8 @@ static void drawStencilStar(CGContextRef myContext)
         [this.singleTabController updateDefaultToolbarTitle];
       }
       
-      //  // Apply debounce to selection change
-      //  [_selectionChangeDebounceTimer invalidate];
-      //  _selectionChangeDebounceTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 usingBlock:^(NSTimer *timer) {
-      //    // Retrieve the current scope
-      //    [self.artCodeTab.currentItem qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location withCompletionHandler:^(NSString *qualifiedScopeIdentifier) {
-      //      // Change accessory keyboard
-      //      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedScopeIdentifier];
-      //      
-      //    }];
-      //  } repeats:NO];
+      // Update the keyboard accessory view
+      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:[this.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location]];
     }];
   }
   
@@ -459,17 +451,18 @@ static void drawStencilStar(CGContextRef myContext)
   [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
   
   // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
-  [[[[[[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  RACSubscribable *currentFileContentSubscribable = RACAbleSelf(artCodeTab.currentFile.content);
+  [[[[[[currentFileContentSubscribable throttle:0.5] where:^BOOL(id x) {
     return x != nil;
-  }] throttle:0.5] select:^id(id x) {
-    return [RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
+  }] select:^id(id x) {
+    return [[RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
       [this.codeUnit reparseWithUnsavedContent:x];
       NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
       [this.codeUnit enumerateQualifiedScopeIdentifiersInRange:NSMakeRange(0, attributedString.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
         [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
       }];
       return attributedString;
-    }];
+    }] takeUntil:currentFileContentSubscribable];
   }] switch] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(id x) {
     this.code = x;
   }];
@@ -641,7 +634,7 @@ static void drawStencilStar(CGContextRef myContext)
     return NO;
   
   // Color symbols
-  for (TMScope *scope in [self.codeUnit.symbolList copy]) {
+  for (TMScope *scope in self.codeUnit.symbolList) {
     if (NSLocationInRange(scope.location, range)) {
       if (!_minimapSymbolColor) {
         _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:scope.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];

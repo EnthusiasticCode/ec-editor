@@ -50,6 +50,10 @@ static OnigRegexp *_namedCapturesRegexp;
 
 @synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics;
 
+- (NSArray *)symbolList {
+  return [_symbolList copy];
+}
+
 #pragma mark - NSObject
 
 + (void)initialize {
