@@ -589,7 +589,7 @@ static void drawStencilStar(CGContextRef myContext)
   if (editing)
   {
     // Set keyboard for main scope
-    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:@"text.plain"];
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:nil];
   }
   
   if (oldContentView != currentContentView)
@@ -991,6 +991,9 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
+  if (!qualifiedIdentifier)
+    qualifiedIdentifier = @"text.plain";
+  
   NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:qualifiedIdentifier];
   if (_keyboardAccessoryItemActions == configuration)
     return;
