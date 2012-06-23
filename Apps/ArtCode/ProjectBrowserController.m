@@ -370,7 +370,7 @@
       };
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
-          ACProject *project = [obj copy];
+          ACProject *project = obj;
           [project openWithCompletionHandler:^(BOOL openSuccess) {
             NSURL *publishURL = [NSURL temporaryDirectory];
             [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {

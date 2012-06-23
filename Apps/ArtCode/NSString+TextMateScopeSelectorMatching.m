@@ -31,13 +31,16 @@ static NSMutableDictionary *systemScopesScoreCache = nil;
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {
-  // Check for cached value
-  if(!systemScopesScoreCache)
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
     systemScopesScoreCache = [NSMutableDictionary new];
-  NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
-  NSNumber *cachedScore = [scopeToScore objectForKey:self];
-  if (cachedScore)
-    return [cachedScore floatValue];
+  });
+  @synchronized(systemScopesScoreCache) {
+    NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
+    NSNumber *cachedScore = [scopeToScore objectForKey:self];
+    if (cachedScore)
+      return [cachedScore floatValue];
+  }
   
   // Compute value
   static NSCharacterSet *spaceCharacterSet = nil; if (!spaceCharacterSet) spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
@@ -66,14 +69,16 @@ static NSMutableDictionary *systemScopesScoreCache = nil;
     }
   }
   
-  // Store in cache
-  if (!scopeToScore)
-  {
-    scopeToScore = [NSMutableDictionary new];
-    [systemScopesScoreCache setObject:scopeToScore forKey:scopeSelector];
+  @synchronized(systemScopesScoreCache) {
+    // Store in cache
+    NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
+    if (!scopeToScore)
+    {
+      scopeToScore = [NSMutableDictionary new];
+      [systemScopesScoreCache setObject:scopeToScore forKey:scopeSelector];
+    }
+    [scopeToScore setObject:[NSNumber numberWithFloat:score] forKey:self];
   }
-  [scopeToScore setObject:[NSNumber numberWithFloat:score] forKey:self];
-  
   return score;
 }
 
