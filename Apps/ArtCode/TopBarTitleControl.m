@@ -130,7 +130,6 @@
       _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     }
     [self addSubview:_activityIndicatorView];
-    _activityIndicatorView.center = CGPointMake(20, self.bounds.size.height / 2);
     [_activityIndicatorView startAnimating];
   }
   else
@@ -166,7 +165,10 @@
 - (void)layoutSubviews
 {
   CGRect bounds = self.bounds;
+  
   self.backgroundButton.frame = bounds;
+  _activityIndicatorView.center = CGPointMake(20, bounds.size.height / 2);
+  
   bounds = UIEdgeInsetsInsetRect(bounds, self.contentInsets);
   
   CGRect labelFrame = CGRectZero;
