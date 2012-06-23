@@ -300,6 +300,8 @@
   
   // Changing current tab URL re-route the content view controller
   [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
+    if (!x)
+      return;
     [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:YES];
   }];
     

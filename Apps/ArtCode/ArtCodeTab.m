@@ -383,8 +383,11 @@ static NSMutableArray *_mutableTabs;
       // In case the project couldn't be opened, remove the current history element and try to load the last one
       [[_mutableDictionary objectForKey:_historyURLsKey] removeLastObject];
       [_mutableHistoryURLs removeLastObject];
-      self.currentHistoryPosition = self.currentHistoryPosition - 1;
+      [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:(self.currentHistoryPosition - 1)] forKey:_currentHistoryPositionKey];
       [self _loadFirstValidProjectItem];
+    } else {
+      // KVO to inform of currentURL change
+      self.currentHistoryPosition = self.currentHistoryPosition;
     }
   }];
 }
