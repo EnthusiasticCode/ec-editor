@@ -470,8 +470,6 @@ static void init(CodeView *self)
   self->_longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
   self->_longDoublePressRecognizer.numberOfTouchesRequired = 2;
   [self addGestureRecognizer:self->_longDoublePressRecognizer];
-  
-  self.text = [NSAttributedString new];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -1334,7 +1332,11 @@ static void init(CodeView *self)
   if (string.length == 0) {
     [newText deleteCharactersInRange:range];
   } else {
-    [newText replaceCharactersInRange:range withString:string];
+    if (newText.length > 0) {
+      [newText replaceCharactersInRange:range withString:string];
+    } else {
+      [newText replaceCharactersInRange:range withAttributedString:[[NSAttributedString alloc] initWithString:string attributes:self.defaultTextAttributes]];
+    }
   }
   self.text = newText;
   
