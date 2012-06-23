@@ -16,9 +16,11 @@ NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
 NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
 NSString * const TMPreferenceSymbolIconKey = @"symbolIcon";
 NSString * const TMPreferenceSymbolIsSeparatorKey = @"symbolIsSeparator";
+NSString * const TMPreferenceSmartTypingPairsKey = @"smartTypingPairs";
 
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
+static TMPreference *systemGlobalPreferences;
 static NSMutableDictionary *scopeToPreferenceCache;
 static NSMutableDictionary *symbolIconsCache;
 
@@ -91,17 +93,30 @@ static NSMutableDictionary *symbolIconsCache;
     {
       NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:preferenceURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
       ASSERT(plist != nil && "Couldn't load plist");
+      
+      // Get preference objects
       NSString *scopeSelector = [plist objectForKey:@"scope"];
-      if (!scopeSelector)
-        continue;
-      TMPreference *pref = [preferences objectForKey:scopeSelector];
-      if (!pref)
-        pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:[plist objectForKey:@"settings"]];
-      else
-        [pref _addSettingsDictionary:[plist objectForKey:@"settings"]];
-      if ([pref count] == 0)
-        continue;
-      [preferences setObject:pref forKey:scopeSelector];
+      NSDictionary *settings = [plist objectForKey:@"settings"];
+      if (scopeSelector) {
+        // Add scope specific preferences
+        TMPreference *pref = [preferences objectForKey:scopeSelector];
+        if (!pref) {
+          pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:settings];
+        } else {
+          [pref _addSettingsDictionary:settings];
+        }
+        // Add preferences to global dictionary if any is present
+        if ([pref count] != 0) {
+          [preferences setObject:pref forKey:scopeSelector];
+        }
+      } else {
+        // Getting supported global settings
+        if (!systemGlobalPreferences) {
+          systemGlobalPreferences = [[TMPreference alloc] initWithScopeSelector:@"*" settingsDictionary:settings];
+        } else {
+          [systemGlobalPreferences _addSettingsDictionary:settings];
+        }
+      }
     }
   }
   systemTMPreferencesDictionary = [preferences copy];
@@ -128,13 +143,17 @@ static NSMutableDictionary *symbolIconsCache;
       *stop = YES;
   }];
   
+  // With no found value, trying the global preferences
+  if (!value) {
+    value = [systemGlobalPreferences preferenceValueForKey:preferenceKey];
+  }
+  
   // Cache resulting coalesed preferences per scope
-  if (!cachedPreferences)
-  {
+  if (!cachedPreferences) {
     cachedPreferences = [NSMutableDictionary new];
     [scopeToPreferenceCache setObject:cachedPreferences forKey:qualifiedIdentifier];
   }
-  [cachedPreferences setObject:value ? value : [NSNull null] forKey:preferenceKey];
+  [cachedPreferences setObject:value ?: [NSNull null] forKey:preferenceKey];
   
   return value;
 }
@@ -173,20 +192,23 @@ static NSMutableDictionary *symbolIconsCache;
   if (!_settings)
     _settings = [NSMutableDictionary new];
   [settingsDict enumerateKeysAndObjectsUsingBlock:^(NSString *settingName, id value, BOOL *stop) {
-    if ([settingName isEqualToString:TMPreferenceShowInSymbolListKey])
-    {
+    
+    // Symbol list
+    if ([settingName isEqualToString:TMPreferenceShowInSymbolListKey]) {
       [_settings setObject:value forKey:TMPreferenceShowInSymbolListKey];
     }
-    else if ([settingName isEqualToString:TMPreferenceSymbolTransformationKey])
-    {
+    
+    // Symbol transformation
+    else if ([settingName isEqualToString:TMPreferenceSymbolTransformationKey]) {
       // Set showInSymbolList if not set
       if (![settingsDict objectForKey:TMPreferenceShowInSymbolListKey])
         [_settings setObject:[NSNumber numberWithBool:YES] forKey:TMPreferenceShowInSymbolListKey];
       // Prepare transformations regexps
       [_settings setObject:[self _createBlockForSymbolTransformation:value] forKey:TMPreferenceSymbolTransformationKey];
     }
-    else if ([settingName isEqualToString:TMPreferenceSymbolIconKey])
-    {
+    
+    // Symbol Icon
+    else if ([settingName isEqualToString:TMPreferenceSymbolIconKey]) {
       // Load or generate an image for the symbol
       UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"symbolIcon_%@", value]];
       if (!image) {
@@ -195,9 +217,16 @@ static NSMutableDictionary *symbolIconsCache;
       [_settings setObject:image forKey:TMPreferenceSymbolIconKey];
       // TODO also use symbolImagePath, symbolImageColor & Title
     }
-    else if ([settingName isEqualToString:TMPreferenceSymbolIsSeparatorKey])
-    {
+
+    // Symbol separation
+    else if ([settingName isEqualToString:TMPreferenceSymbolIsSeparatorKey]) {
       [_settings setObject:value forKey:TMPreferenceSymbolIsSeparatorKey];
+    }
+    
+    // Smart typing pairs
+    else if ([settingName isEqualToString:TMPreferenceSmartTypingPairsKey]) {
+      ASSERT([_settings objectForKey:TMPreferenceSmartTypingPairsKey] == nil); // In this case the array should get mutable
+      [_settings setObject:value forKey:TMPreferenceSmartTypingPairsKey];
     }
   }];
 }
