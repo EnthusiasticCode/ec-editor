@@ -115,6 +115,7 @@ static void drawStencilStar(CGContextRef myContext)
   UIColor *_minimapCommentColor;
   UIColor *_minimapPreprocessorColor;
   
+  // Keyboard manahement
   CGRect _keyboardFrame;
   CGRect _keyboardRotationFrame;
   
@@ -252,8 +253,10 @@ static void drawStencilStar(CGContextRef myContext)
         [this.singleTabController updateDefaultToolbarTitle];
       }
       
-      // Update the keyboard accessory view
-      [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:[this.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location]];
+      // Update the keyboard accessory view and other preferences
+      NSString *qualifiedIdentifier = [this.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
+      [this _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
+      this.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
     }];
   }
   

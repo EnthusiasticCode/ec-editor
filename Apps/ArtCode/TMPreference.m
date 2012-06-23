@@ -226,7 +226,11 @@ static NSMutableDictionary *symbolIconsCache;
     // Smart typing pairs
     else if ([settingName isEqualToString:TMPreferenceSmartTypingPairsKey]) {
       ASSERT([_settings objectForKey:TMPreferenceSmartTypingPairsKey] == nil); // In this case the array should get mutable
-      [_settings setObject:value forKey:TMPreferenceSmartTypingPairsKey];
+      NSMutableDictionary *pairs = [NSMutableDictionary new];
+      for (NSArray *pairArray in value) {
+        [pairs setObject:[pairArray objectAtIndex:1] forKey:[pairArray objectAtIndex:0]];
+      }
+      [_settings setObject:pairs forKey:TMPreferenceSmartTypingPairsKey];
     }
   }];
 }

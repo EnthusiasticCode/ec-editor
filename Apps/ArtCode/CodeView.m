@@ -41,7 +41,6 @@ static const void *rendererContext;
   
   // Text management
   NSRange _markedRange;
-  
   CodeViewUndoManager *_undoManager;
   
   // Support objects
@@ -54,12 +53,12 @@ static const void *rendererContext;
   
   // Delegate and dataSource flags
   struct {
-    unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
     unsigned delegateHasSelectedLineNumber : 1;
     unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
     unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
     unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
     unsigned delegateHasDidHideKeyboardAccessoryView : 1;
+    unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
     unsigned reserved : 2;
   } _flags;
   
@@ -215,6 +214,7 @@ static const void *rendererContext;
 @synthesize text = _text, renderer = _renderer, editing;
 @synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
 @synthesize selectionView = _selectionView;
+@synthesize pairingStringDictionary = _pairingStringDictionary;
 
 - (void)setText:(NSAttributedString *)text {
   _text = text;
@@ -719,50 +719,58 @@ static void init(CodeView *self)
   return self.text.length > 0;
 }
 
-- (void)insertText:(NSString *)string
-{
+- (void)insertText:(NSString *)string {
+  NSRange selection = _selectionView.selection;
+  
   NSString *insertString = nil;
-  NSRange selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + [string length], 0);
+  NSRange selectionAfterInsertion = NSMakeRange(selection.location + [string length], 0);
   
   if (_flags.delegateHasReplaceInsertedTextSelectionAfterInsertion)
     insertString = [self.delegate codeView:self replaceInsertedText:string selectionAfterInsertion:&selectionAfterInsertion];
   
-  if (insertString == nil)
-  {
-    insertString = string;
-    if ([string length] == 1)
-    {
-      unichar ch = [string characterAtIndex:0];
-      switch (ch) {
-          //                case NSLeftArrowFunctionKey:
-          //                    [self _moveInDirection:UITextLayoutDirectionLeft];
-          //                    return;
-          //                case NSRightArrowFunctionKey:
-          //                    [self _moveInDirection:UITextLayoutDirectionRight];
-          //                    return;
-          //                case NSUpArrowFunctionKey:
-          //                    [self _moveInDirection:UITextLayoutDirectionUp];
-          //                    return;
-          //                case NSDownArrowFunctionKey:
-          //                    [self _moveInDirection:UITextLayoutDirectionDown];
-          //                    return;
-        case 0x20: // Space
-        {
-          break;
+  if (insertString == nil) {
+//    insertString = string;
+//    if ([string length] == 1)
+//    {
+//      unichar ch = [string characterAtIndex:0];
+//      switch (ch) {
+//          //                case NSLeftArrowFunctionKey:
+//          //                    [self _moveInDirection:UITextLayoutDirectionLeft];
+//          //                    return;
+//          //                case NSRightArrowFunctionKey:
+//          //                    [self _moveInDirection:UITextLayoutDirectionRight];
+//          //                    return;
+//          //                case NSUpArrowFunctionKey:
+//          //                    [self _moveInDirection:UITextLayoutDirectionUp];
+//          //                    return;
+//          //                case NSDownArrowFunctionKey:
+//          //                    [self _moveInDirection:UITextLayoutDirectionDown];
+//          //                    return;
+//        case 0x20: // Space
+//        {
+//          break;
+//        }
+//      }
+//    }
+    // Smart string pairing
+    if (_pairingStringDictionary.count) {
+      if (selection.length > 0
+          || selection.location == self.text.length 
+          || [[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[self.text.string characterAtIndex:selection.location]]) {
+        NSString *pairedWithString = [self.pairingStringDictionary objectForKey:string];
+        if (pairedWithString) {
+          if (selection.length > 0) {
+            insertString = [NSString stringWithFormat:@"%@%@%@", string, [self selectedText], pairedWithString];
+            selectionAfterInsertion = NSMakeRange(selection.location + insertString.length, 0);
+          } else {
+            insertString = [string stringByAppendingString:pairedWithString];
+          }
         }
-          
-        case L'{':
-          insertString = [NSString stringWithFormat:@"{%@}", [self selectedText]];
-          if ([insertString length] == 2)
-            selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + 1, 0);
-          else
-            selectionAfterInsertion = NSMakeRange(_selectionView.selection.location + [insertString length], 0);
-          break;
       }
     }
   }
   
-  [self _editDataSourceInRange:_selectionView.selection withString:insertString selectionRange:selectionAfterInsertion];
+  [self _editDataSourceInRange:selection withString:insertString ?: string selectionRange:selectionAfterInsertion];
   
   // Interrupting undo grouping on user return
   if ([string hasSuffix:@"\n"] && self.undoManager.groupingLevel != 0)
@@ -772,30 +780,34 @@ static void init(CodeView *self)
 - (void)deleteBackward
 {
   NSRange deleteRange;
-  if (_markedRange.location != NSNotFound)
-  {
+  if (_markedRange.location != NSNotFound) {
     deleteRange = _markedRange;
-  }
-  else if (_selectionView)
-  {
+  } else if (_selectionView) {
     deleteRange = _selectionView.selection;
-  }
-  else
-  {
+  } else {
     ASSERT(NO); // no selection to delete
   }
   
   [self unmarkText];
   
   // TODO as OUI get rangeOfComposedCharacterSequencesForRange: or rangeOfComposedCharacterSequenceAtIndex:
-  if (deleteRange.length == 0)
-  {
+  if (deleteRange.length == 0) {
     if (deleteRange.location == 0)
       return;
     deleteRange = NSMakeRange(deleteRange.location - 1, 1);
+    
+    // Delete pairing strings if any
+    if (self.pairingStringDictionary.count) {
+      NSString *pairingString = [self.pairingStringDictionary objectForKey:[self.text.string substringWithRange:deleteRange]];
+      if (pairingString 
+          && self.text.length >= deleteRange.location + 1 + pairingString.length 
+          && [[self.text.string substringWithRange:NSMakeRange(deleteRange.location + 1, pairingString.length)] isEqualToString:pairingString]) {
+        deleteRange.length += pairingString.length;
+      }
+    }
   }
   
-  [self _editDataSourceInRange:deleteRange withString:@""];
+  [self _editDataSourceInRange:[self.text.string rangeOfComposedCharacterSequencesForRange:deleteRange] withString:@""];
 }
 
 #pragma mark - UITextInputTraits protocol
@@ -1361,33 +1373,32 @@ static void init(CodeView *self)
   if (shouldNotify && self.undoManager.groupingLevel != 0)
     [self.undoManager endUndoGrouping];
   
-  if (shouldNotify)
-  {
+  if (shouldNotify) {
     [inputDelegate selectionWillChange:self];
   }
   
   // Modify selection to account for placeholders
-  NSUInteger textLength = self.text.length;
-  if (newSelection.location < textLength)
-  {
-    NSRange replaceSelection = newSelection;
-    NSRange placeholderRangeAtLocation;
-    id placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation inRange:NSMakeRange(0, textLength)];
-    if (placeholderValue && placeholderRangeAtLocation.location != newSelection.location)
-    {
-      replaceSelection = NSUnionRange(placeholderRangeAtLocation, replaceSelection);
-    }
-    if (newSelection.length > 0)
-    {
-      NSRange placeholderRangeAtEnd;
-      placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) - 1 longestEffectiveRange:&placeholderRangeAtEnd inRange:NSMakeRange(0, textLength)];
-      if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
-      {
-        replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
-      }
-    }
-    newSelection = replaceSelection;
-  }
+//  NSUInteger textLength = self.text.length;
+//  if (newSelection.location < textLength)
+//  {
+//    NSRange replaceSelection = newSelection;
+//    NSRange placeholderRangeAtLocation;
+//    id placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:newSelection.location longestEffectiveRange:&placeholderRangeAtLocation inRange:NSMakeRange(0, textLength)];
+//    if (placeholderValue && placeholderRangeAtLocation.location != newSelection.location)
+//    {
+//      replaceSelection = NSUnionRange(placeholderRangeAtLocation, replaceSelection);
+//    }
+//    if (newSelection.length > 0)
+//    {
+//      NSRange placeholderRangeAtEnd;
+//      placeholderValue = [self.text attribute:CodeViewPlaceholderAttributeName atIndex:NSMaxRange(newSelection) - 1 longestEffectiveRange:&placeholderRangeAtEnd inRange:NSMakeRange(0, textLength)];
+//      if (placeholderValue && !NSEqualRanges(placeholderRangeAtLocation, placeholderRangeAtEnd) && placeholderRangeAtEnd.location != NSMaxRange(newSelection))
+//      {
+//        replaceSelection = NSUnionRange(placeholderRangeAtEnd, replaceSelection);
+//      }
+//    }
+//    newSelection = replaceSelection;
+//  }
   
   // Will automatically resize and position the selection view
   self.selectionView.selection = newSelection;

@@ -20,11 +20,6 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 @protocol CodeViewDelegate <UIScrollViewDelegate>
 @optional
 
-/// This method allow the delegate to substitute the inserted text. 
-/// The selection range after the insertion can also be altered.
-/// Return nil to reproduce the default behaviours.
-- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion;
-
 /// Called when the user tap on a line number. Line numbers starts from 1, if 0 is returned, it has to be considered an invalid line.
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber;
 
@@ -41,8 +36,12 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// Informs the delegate that the accessory view has been hidden.
 - (void)codeViewDidHideKeyboardAccessoryView:(CodeView *)codeView;
 
-/// Called when the code view is about to change its selection from user interaction.
-- (void)selectionWillChangeForCodeView:(CodeView *)codeView;
+#pragma mark Insersion modificators
+
+/// This method allow the delegate to substitute the inserted text. 
+/// The selection range after the insertion can also be altered.
+/// Return nil to reproduce the default behaviours.
+- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion;
 
 @end
 
@@ -65,6 +64,11 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 /// Indicates if the codeview is in editing mode and it's content can be modified by the user.
 @property (nonatomic, getter = isEditing) BOOL editing;
+
+/// Dictionary of smart pairing strings with an input string as key and a paring string as value.
+/// String pairing will insert the paired string and position the cursor before it. 
+/// Deleting the input string with backspace will result in also removin the paired string.
+@property (nonatomic, strong) NSDictionary *pairingStringDictionary;
 
 #pragma mark Managing Text Content
 
