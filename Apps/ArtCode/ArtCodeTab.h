@@ -16,6 +16,8 @@
 + (ArtCodeTab *)blankTab;
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
 + (void)removeTab:(ArtCodeTab *)tab;
++ (NSUInteger)currentTabIndex;
++ (void)setCurrentTabIndex:(NSUInteger)currentTabIndex;
 
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 

@@ -19,6 +19,7 @@
 #import <objc/runtime.h>
 
 static NSString * const _tabListKey = @"ArtCodeTabList";
+static NSString * const _currentTabKey = @"ArtCodeTabCurrent";
 static NSString * const _historyURLsKey = @"HistoryURLs";
 static NSString * const _currentHistoryPositionKey = @"currentHistoryPosition";
 
@@ -156,6 +157,7 @@ static NSMutableArray *_mutableTabs;
 
 + (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
 {
+  ASSERT(tab);
   NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] objectAtIndex:[[tab->_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue]]], _historyURLsKey, nil];
   [_mutableTabDictionaries addObject:dictionary];
   [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
@@ -166,9 +168,18 @@ static NSMutableArray *_mutableTabs;
 
 + (void)removeTab:(ArtCodeTab *)tab
 {
+  ASSERT(tab);
   [_mutableTabs removeObject:tab];
   [_mutableTabDictionaries removeObject:tab->_mutableDictionary];
   [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
+}
+
++ (NSUInteger)currentTabIndex {
+  return [[[NSUserDefaults standardUserDefaults] objectForKey:_currentTabKey] unsignedIntegerValue];
+}
+
++ (void)setCurrentTabIndex:(NSUInteger)currentTabIndex {
+  [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:currentTabIndex] forKey:_currentTabKey];
 }
 
 #pragma mark - Properties

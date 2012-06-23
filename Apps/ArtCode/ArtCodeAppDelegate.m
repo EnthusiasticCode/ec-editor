@@ -136,6 +136,10 @@
     singleTabController.artCodeTab = tab;
     [self.tabController addChildViewController:singleTabController];
   }
+  [self.tabController setSelectedViewControllerIndex:[ArtCodeTab currentTabIndex]];
+  [RACAbleSelf(tabController.selectedViewControllerIndex) subscribeNext:^(NSNumber *x) {
+    [ArtCodeTab setCurrentTabIndex:x.unsignedIntegerValue];
+  }];
 //  [self.tabController setTabBarVisible:NO];
   
   // Start the application

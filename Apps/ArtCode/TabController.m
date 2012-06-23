@@ -162,6 +162,10 @@
   return _orderedChildViewControllers;
 }
 
++ (BOOL)automaticallyNotifiesObserversOfSelectedViewControllerIndex {
+  return NO;
+}
+
 - (UIViewController *)selectedViewController
 {
   if (_selectedViewControllerIndex == NSNotFound)
@@ -313,7 +317,9 @@ static void init(TabController *self)
 - (BOOL)tabBar:(TabBar *)tabBar willSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)index {
   // If view is not loaded just update the selected index
   if (!self.isViewLoaded || self.view.window == nil) {
+    [self willChangeValueForKey:@"selectedViewControllerIndex"];
     _selectedViewControllerIndex = index;
+    [self didChangeValueForKey:@"selectedViewControllerIndex"];
     return YES;
   }
   
@@ -326,7 +332,9 @@ static void init(TabController *self)
   }
   
   // Crossfade if non adiacent
+  [self willChangeValueForKey:@"selectedViewControllerIndex"];
   _selectedViewControllerIndex = index;
+  [self didChangeValueForKey:@"selectedViewControllerIndex"];
   [self _scrollToSelectedViewControllerAnimated:NO];
   [UIView transitionWithView:self.contentScrollView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:nil completion:nil];
   
@@ -366,10 +374,13 @@ static void init(TabController *self)
     _selectedViewControllerIndex = -2;
     if (tabIndex > 0)
       tabIndex -= 1;
-    if (tabIndex < [_orderedChildViewControllers count])
+    if (tabIndex < [_orderedChildViewControllers count]) {
       [self setSelectedViewControllerIndex:tabIndex animated:YES];
-    else
+    } else {
+      [self willChangeValueForKey:@"selectedViewControllerIndex"];
       _selectedViewControllerIndex = NSNotFound;
+      [self didChangeValueForKey:@"selectedViewControllerIndex"];
+    }
   }
   else
   {
@@ -383,12 +394,15 @@ static void init(TabController *self)
   [_orderedChildViewControllers removeObjectAtIndex:fromIndex];
   [_orderedChildViewControllers insertObject:obj atIndex:toIndex];
   
+  
+  [self willChangeValueForKey:@"selectedViewControllerIndex"];
   if (_selectedViewControllerIndex == fromIndex)
     _selectedViewControllerIndex = toIndex;
   else if (_selectedViewControllerIndex > fromIndex)
     _selectedViewControllerIndex -= _selectedViewControllerIndex > toIndex ? 0 : 1;
   else if (_selectedViewControllerIndex >= toIndex)
     _selectedViewControllerIndex += _selectedViewControllerIndex > fromIndex ? 0 : 1;
+  [self didChangeValueForKey:@"selectedViewControllerIndex"];
   
   // Reposition content scroll view to 
   [self _scrollToSelectedViewControllerAnimated:NO];
