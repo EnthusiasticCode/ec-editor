@@ -789,8 +789,7 @@ static void init(CodeView *self)
   }
   
   [self unmarkText];
-  
-  // TODO as OUI get rangeOfComposedCharacterSequencesForRange: or rangeOfComposedCharacterSequenceAtIndex:
+
   if (deleteRange.length == 0) {
     if (deleteRange.location == 0)
       return;

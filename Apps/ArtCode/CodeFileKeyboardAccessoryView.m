@@ -207,6 +207,8 @@ static const void *itemContext;
     [itemButton addTarget:self action:@selector(_itemButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     [itemButton setBackgroundImage:self.itemBackgroundImage forState:UIControlStateNormal];
     [itemButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [itemButton setTitleShadowColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    itemButton.titleLabel.shadowOffset = CGSizeMake(0, 1);
     itemButton.titleLabel.font = [UIFont systemFontOfSize:21];
     item.customView = itemButton;
     [self addSubview:item.customView];

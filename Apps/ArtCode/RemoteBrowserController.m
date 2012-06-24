@@ -202,6 +202,12 @@
   [_selectedItems removeAllObjects];
 }
 
+#pragma mark - SingleTabController
+
+- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
+  return NO;
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

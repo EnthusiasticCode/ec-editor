@@ -22,7 +22,6 @@
 #import "QuickFolderInfoController.h"
 #import "QuickFileInfoController.h"
 #import "QuickTOCController.h"
-#import "QuickRemoteInfoController.h"
 
 @implementation QuickBrowsersContainerController
 
@@ -31,7 +30,6 @@
   static QuickBrowsersContainerController *_projectController = nil;
   static QuickBrowsersContainerController *_folderController = nil;
   static QuickBrowsersContainerController *_fileController = nil;
-  static QuickBrowsersContainerController *_remoteController = nil;
   
   ASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
   
@@ -49,28 +47,15 @@
     }
     return _commonController;
   }
-  else if ([contentController.artCodeTab.currentURL isArtCodeProjectRemotesList])
-  {
-    if (!_remoteController)
-    {
-      _remoteController = [[QuickBrowsersContainerController alloc] init];
-      _remoteController.contentController = contentController;
-      NSMutableArray *viewControllers = [NSMutableArray arrayWithObject:[QuickRemoteInfoController new]];
-      //            [viewControllers addObjectsFromArray:_commonControllers];
-      [_remoteController setViewControllers:viewControllers animated:NO];
-    }
-    else
-    {
-      _remoteController.contentController = contentController;
-    }
-    return _remoteController;
-  }
   else
   {
-    ACProjectFileSystemItem *fileItem = (ACProjectFileSystemItem *)contentController.artCodeTab.currentItem;
-    if (fileItem.type == ACPFileBookmark) {
-      fileItem = ((ACProjectFileBookmark *)fileItem).file;
+    ACProjectItem *projectItem = contentController.artCodeTab.currentItem;
+    // Bookmarks
+    if (projectItem.type == ACPFileBookmark) {
+      projectItem = ((ACProjectFileBookmark *)projectItem).file;
     }
+    // Root folder item
+    ACProjectFileSystemItem *fileItem = (ACProjectFileSystemItem *)projectItem;
     if ([fileItem parentFolder] == nil)
     {
       if (!_projectController)

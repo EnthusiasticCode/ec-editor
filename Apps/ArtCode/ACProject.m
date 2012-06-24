@@ -661,11 +661,11 @@ static NSString * const _plistRemotesKey = @"remotes";
   
   // Read remotes
   if ([plist objectForKey:_plistRemotesKey]) {
-    NSMutableDictionary *remotesFromPlist = NSMutableDictionary.alloc.init;
+    NSMutableArray *remotesFromPlist = [NSMutableArray new];
     for (NSDictionary *remotePlist in [plist objectForKey:_plistRemotesKey]) {
       ACProjectRemote *remote = [ACProjectRemote.alloc initWithProject:_project propertyListDictionary:remotePlist];
       if (remote) {
-        [remotesFromPlist setObject:remote forKey:remote.UUID];
+        [remotesFromPlist addObject:remote];
       }
     }
     _project.remotes = remotesFromPlist.copy;

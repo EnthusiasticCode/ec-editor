@@ -486,7 +486,6 @@
 		CDBD3F82150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7A150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png */; };
 		CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */; };
 		CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */; };
-		CDBD3FA415015E080050B10C /* QuickRemoteInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBD3FA315015E080050B10C /* QuickRemoteInfoController.m */; };
 		CDBF0B401577B77C003F169C /* DocSet.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBF0B3D1577B77C003F169C /* DocSet.m */; };
 		CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBF0B3F1577B77C003F169C /* DocSetDownloadManager.m */; };
 		CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */; };
@@ -1047,8 +1046,6 @@
 		CDBD3F7A150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Files_Selected.png; sourceTree = "<group>"; };
 		CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Normal.png; sourceTree = "<group>"; };
 		CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Selected.png; sourceTree = "<group>"; };
-		CDBD3FA215015E080050B10C /* QuickRemoteInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickRemoteInfoController.h; sourceTree = "<group>"; };
-		CDBD3FA315015E080050B10C /* QuickRemoteInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickRemoteInfoController.m; sourceTree = "<group>"; };
 		CDBF0B3C1577B77C003F169C /* DocSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSet.h; sourceTree = "<group>"; };
 		CDBF0B3D1577B77C003F169C /* DocSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSet.m; sourceTree = "<group>"; };
 		CDBF0B3E1577B77C003F169C /* DocSetDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetDownloadManager.h; sourceTree = "<group>"; };
@@ -1599,8 +1596,6 @@
 				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
 				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
 				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
-				CDBD3FA215015E080050B10C /* QuickRemoteInfoController.h */,
-				CDBD3FA315015E080050B10C /* QuickRemoteInfoController.m */,
 			);
 			name = "Quick Info";
 			sourceTree = "<group>";
@@ -2884,7 +2879,6 @@
 				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
-				CDBD3FA415015E080050B10C /* QuickRemoteInfoController.m in Sources */,
 				B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */,
 				B77100F21506DDD5006AF1FB /* ACProjectItem.m in Sources */,
 				B77100F51506DE6E006AF1FB /* ACProjectFileSystemItem.m in Sources */,
