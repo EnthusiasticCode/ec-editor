@@ -998,6 +998,8 @@ static void drawStencilStar(CGContextRef myContext)
     qualifiedIdentifier = @"text.plain";
   
   NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:qualifiedIdentifier];
+  if (!configuration)
+    configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:@"text.plain"];
   if (_keyboardAccessoryItemActions == configuration)
     return;
   

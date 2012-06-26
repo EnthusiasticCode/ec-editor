@@ -138,9 +138,13 @@ static NSMutableDictionary *symbolIconsCache;
     return value == [NSNull null] ? nil : value;
   
   // Get required preference value
+  __block float highestScore = 0;
+  __block TMPreference *selectedPreference = nil;
   [[self allPreferences] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, TMPreference *preference, BOOL *stop) {
-    if ([qualifiedIdentifier scoreForScopeSelector:scopeSelector] > 0 && (value = [preference preferenceValueForKey:preferenceKey]))
-      *stop = YES;
+    float score = [qualifiedIdentifier scoreForScopeSelector:scopeSelector];
+    if (score > highestScore && (value = [selectedPreference preferenceValueForKey:preferenceKey])) {
+      highestScore = score;
+    }
   }];
   
   // With no found value, trying the global preferences
