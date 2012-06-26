@@ -23,11 +23,7 @@
 
 @class SingleTabController, TopBarToolbar;
 
-static void *_currentProjectRemotesContext;
-
 @interface RemotesListController ()
-
-@property (nonatomic, strong) ACProject *currentProject;
 
 - (void)_toolAddAction:(id)sender;
 
@@ -45,35 +41,19 @@ static void *_currentProjectRemotesContext;
   self = [super initWithTitle:@"Remotes" searchBarStaticOnTop:NO];
   if (!self)
     return nil;
+  
+  // RAC
+  __weak RemotesListController *this = self;
+  
+  [RACAbleSelf(self.artCodeTab.currentProject.remotes) subscribeNext:^(id x) {
+    [this invalidateFilteredItems];
+    [this.tableView reloadData];
+  }];
+  
   return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &_currentProjectRemotesContext)
-  {
-    [self invalidateFilteredItems];
-    [self.tableView reloadData];
-  }
-  else
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
-}
-
 #pragma mark - Properties
-
-@synthesize currentProject;
-
-- (void)setCurrentProject:(ACProject *)value
-{
-  if (value == currentProject)
-    return;
-  
-  [currentProject removeObserver:self forKeyPath:@"remotes" context:&_currentProjectRemotesContext];
-  currentProject = value;
-  [currentProject addObserver:self forKeyPath:@"remotes" options:NSKeyValueObservingOptionNew context:&_currentProjectRemotesContext];
-}
 
 - (NSArray *)filteredItems
 { 
@@ -130,18 +110,6 @@ static void *_currentProjectRemotesContext;
   [super viewDidUnload];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-  [super viewWillAppear:animated];
-  self.currentProject = self.artCodeTab.currentProject;
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-  self.currentProject = nil;
-  [super viewWillDisappear:animated];
-}
-
 #pragma mark - Single tab content controller protocol methods
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
@@ -188,7 +156,7 @@ static void *_currentProjectRemotesContext;
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows)
       {
-        [currentProject removeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
+        [self.artCodeTab.currentProject removeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
