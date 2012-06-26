@@ -105,6 +105,9 @@ static OnigRegexp *_namedCapturesRegexp;
     qualifiedScopeIdentifier = scope.qualifiedIdentifier;
     *stop = YES;
   }];
+  if (!qualifiedScopeIdentifier) {
+    qualifiedScopeIdentifier = self.syntax.identifier;
+  }
   return qualifiedScopeIdentifier;
 }
 
