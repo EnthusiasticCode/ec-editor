@@ -103,20 +103,6 @@ static void init(RemoteBrowserController *self) {
 }
 
 @synthesize remote = _remote;
-
-//- (void)setRemote:(ACProjectRemote *)value {
-//  if (value == _remote)
-//    return;
-//  
-//  _remote = value;
-//  if (self.artCodeTab) {
-//    // TODO a double // results from this operation between host and path
-//    self.remoteURL = [_remote.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
-//  } else {
-//    self.remoteURL = _remote.URL;
-//  }
-//}
-
 @synthesize remoteURL = _remoteURL;
 
 - (void)setRemoteURL:(NSURL *)value
@@ -196,7 +182,6 @@ static void init(RemoteBrowserController *self) {
   [self setLoginAlwaysAskPassword:nil];
   _selectedItems = nil;
 
-  self.artCodeTab = nil;
   [super viewDidUnload];
 }
 
