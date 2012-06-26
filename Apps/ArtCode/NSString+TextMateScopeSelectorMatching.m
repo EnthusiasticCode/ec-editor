@@ -9,9 +9,6 @@
 #import "NSString+TextMateScopeSelectorMatching.h"
 
 
-/// Caches a scope identifier to a dictionary of scope selector references to scores.
-static NSMutableDictionary *systemScopesScoreCache = nil;
-
 @interface NSString (TextMateScopeSelectorMatchingInternal)
 
 /// Return a number indicating how much a scope selector array matches the search.
@@ -31,6 +28,8 @@ static NSMutableDictionary *systemScopesScoreCache = nil;
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {
+  /// Caches a scope identifier to a dictionary of scope selector references to scores.
+  static NSMutableDictionary *systemScopesScoreCache = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     systemScopesScoreCache = [NSMutableDictionary new];
@@ -43,7 +42,11 @@ static NSMutableDictionary *systemScopesScoreCache = nil;
   }
   
   // Compute value
-  static NSCharacterSet *spaceCharacterSet = nil; if (!spaceCharacterSet) spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+  static NSCharacterSet *spaceCharacterSet = nil;
+  static dispatch_once_t onceToken2;
+  dispatch_once(&onceToken2, ^{
+    spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+  });
   
   float score = 0;
   for (NSString *searchScope in [scopeSelector componentsSeparatedByString:@","])
