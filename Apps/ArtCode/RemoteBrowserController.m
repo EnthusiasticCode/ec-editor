@@ -59,13 +59,34 @@
 @synthesize loginPassword = _loginPassword;
 @synthesize loginAlwaysAskPassword = _loginAlwaysAskPassword;
 
+static void init(RemoteBrowserController *self) {
+  // RAC
+  __weak RemoteBrowserController *this = self;
+  
+  [[[RACAbleSelf(self.artCodeTab.currentURL) distinctUntilChanged] where:^BOOL(id x) {
+    return this.artCodeTab.currentItem.type == ACPRemote;
+  }] subscribeNext:^(NSURL *currentURL) {
+    this.remote = (ACProjectRemote *)this.artCodeTab.currentItem;
+    this.remoteURL = [this.remote.URL URLByAppendingPathComponent:currentURL.path];
+  }];
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+  if (!self)
+    return nil;
+  init(self);
+  return self;
+}
+
 - (id)initWithConnection:(id<CKConnection>)con remoteURL:(NSURL *)conUrl
 {
-  self = [super initWithTitle:nil searchBarStaticOnTop:NO];
+  self = [self initWithTitle:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
   _connection = con;
   _remoteURL = conUrl;
+  init(self);
   return self;
 }
 
@@ -83,18 +104,18 @@
 
 @synthesize remote = _remote;
 
-- (void)setRemote:(ACProjectRemote *)value {
-  if (value == _remote)
-    return;
-  
-  _remote = value;
-  if (self.artCodeTab) {
-    // TODO a double // results from this operation between host and path
-    self.remoteURL = [_remote.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
-  } else {
-    self.remoteURL = _remote.URL;
-  }
-}
+//- (void)setRemote:(ACProjectRemote *)value {
+//  if (value == _remote)
+//    return;
+//  
+//  _remote = value;
+//  if (self.artCodeTab) {
+//    // TODO a double // results from this operation between host and path
+//    self.remoteURL = [_remote.URL URLByAppendingPathComponent:self.artCodeTab.currentURL.path];
+//  } else {
+//    self.remoteURL = _remote.URL;
+//  }
+//}
 
 @synthesize remoteURL = _remoteURL;
 
@@ -145,17 +166,6 @@
   _filteredItemsHitMasks = nil;
 }
 
-#pragma mark - ArtCodeTab Category
-
-- (void)setArtCodeTab:(ArtCodeTab *)artCodeTab
-{
-  [super setArtCodeTab:artCodeTab];
-  
-  ASSERT(self.artCodeTab.currentItem.type == ACPRemote);
-  ASSERT(![((ACProjectRemote *)self.artCodeTab.currentItem).URL isArtCodeURL]);
-  self.remote = ((ACProjectRemote *)self.artCodeTab.currentItem);
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -185,6 +195,8 @@
   [self setLoginPassword:nil];
   [self setLoginAlwaysAskPassword:nil];
   _selectedItems = nil;
+
+  self.artCodeTab = nil;
   [super viewDidUnload];
 }
 
