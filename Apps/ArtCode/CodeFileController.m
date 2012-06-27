@@ -30,7 +30,7 @@
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
 #import "TMPreference.h"
-#import "TMScope.h"
+#import "TMSymbol.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 
@@ -53,7 +53,7 @@
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, copy) NSAttributedString *code;
 
-@property (nonatomic, weak) TMScope *currentSymbol;
+@property (nonatomic, weak) TMSymbol *currentSymbol;
 
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
@@ -242,9 +242,9 @@ static void drawStencilStar(CGContextRef myContext)
       NSRange selectionRange = [selectionValue rangeValue];
       
       // Select current scope
-      TMScope *currentSymbol = nil;
-      for (TMScope *symbol in this.codeUnit.symbolList) {
-        if (symbol.location > selectionRange.location)
+      TMSymbol *currentSymbol = nil;
+      for (TMSymbol *symbol in this.codeUnit.symbolList) {
+        if (symbol.range.location > selectionRange.location)
           break;
         currentSymbol = symbol;
       }
@@ -637,10 +637,10 @@ static void drawStencilStar(CGContextRef myContext)
     return NO;
   
   // Color symbols
-  for (TMScope *scope in self.codeUnit.symbolList) {
-    if (NSLocationInRange(scope.location, range)) {
+  for (TMSymbol *symbol in self.codeUnit.symbolList) {
+    if (NSLocationInRange(symbol.range.location, range)) {
       if (!_minimapSymbolColor) {
-        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:scope.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:symbol.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
       }
       *lineColor = _minimapSymbolColor;
       return YES;

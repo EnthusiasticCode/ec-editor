@@ -16,7 +16,7 @@
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
 #import "TMUnit.h"
-#import "TMScope.h"
+#import "TMSymbol.h"
 
 #import "AppStyle.h"
 #import "HighlightTableViewCell.h"
@@ -35,7 +35,7 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMask = nil;
-      _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMScope *element) {
+      _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMSymbol *element) {
         return element.title;
       }];
       _filteredSymbolListHitMask = hitMask;
@@ -81,7 +81,7 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  TMScope *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
   cell.textLabel.text = symbol.title;
   cell.imageView.image = symbol.icon;
 //  cell.indentationLevel = symbol.indentation;
@@ -102,7 +102,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  TMScope *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
   if (symbol.isSeparator)
     return 22;
   return UITableViewAutomaticDimension;
@@ -115,8 +115,8 @@
   // TODO push an url instead
   [table deselectRowAtIndexPath:indexPath animated:YES];
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  TMScope *selectedSymbol = [[self filteredItems] objectAtIndex:indexPath.row];
-  [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:NSMakeRange(selectedSymbol.location, selectedSymbol.length)];
+  TMSymbol *selectedSymbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:selectedSymbol.range];
 }
 
 @end

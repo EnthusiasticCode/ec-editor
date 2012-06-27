@@ -21,7 +21,7 @@ typedef enum
   TMScopeTypeRoot,
 } TMScopeType;
 
-@interface TMScope : NSObject <NSCopying>
+@interface TMScope : NSObject
 
 #pragma mark Scope properties
 
@@ -46,20 +46,6 @@ typedef enum
 
 /// Spelling of the scope
 @property (nonatomic, readonly) NSString *spelling;
-
-#pragma mark Symbol list support
-
-/// The display title of the scope
-@property (nonatomic, strong, readonly) NSString *title;
-
-/// The display icon of the scope
-@property (nonatomic, strong, readonly) UIImage *icon;
-
-/// The level of indentation in the symbol list
-@property (nonatomic, readonly) NSUInteger indentation;
-
-/// Whether or not the scope serves as a separator
-@property (nonatomic, readonly, getter = isSeparator) BOOL separator;
 
 @end
 

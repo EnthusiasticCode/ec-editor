@@ -8,7 +8,7 @@
 
 #import "TMScope.h"
 
-@class TMSyntaxNode, OnigRegexp;
+@class TMSyntaxNode, OnigRegexp, TMSymbol;
 @protocol TMScopeDelegate;
 
 /// Options to specify the behaviour of the scope query methods. These are not cumulative.
@@ -52,11 +52,14 @@ typedef enum
 /// The children scopes, if any exist
 @property (nonatomic, strong, readonly) NSArray *children;
 
+/// The content of the scope, only applicable to root scopes, the scopes' spelling will be derived from this
+@property (nonatomic, strong) NSString *content;
+
 /// Adds a new child scope with the given properties
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type;
 
 /// Creates a new root scope
-+ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode content:(NSString *)content;
++ (TMScope *)newRootScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode;
 
 /// Removes the scope from it's parent's children
 - (void)removeFromParent;
@@ -69,5 +72,7 @@ typedef enum
 - (void)removeChildScopesInRange:(NSRange)range;
 /// Attempts to merge a broken scope tree at the specified offset. Returns YES if successful or if the tree is not broken
 - (BOOL)attemptMergeAtOffset:(NSUInteger)offset;
+
+- (TMSymbol *)symbol;
 
 @end

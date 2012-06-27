@@ -14,6 +14,7 @@
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "TMPreference.h"
+#import "DiffMatchPatch.h"
 
 
 static NSMutableDictionary *_extensionClasses;
@@ -39,6 +40,7 @@ static OnigRegexp *_namedCapturesRegexp;
 #pragma mark -
 
 @implementation TMUnit {
+  NSString *_lastContent;
   NSMutableAttributedString *_attributedContent;
   
   TMScope *_rootScope;
@@ -119,10 +121,10 @@ static OnigRegexp *_namedCapturesRegexp;
   content = content.copy;
   [self willChangeValueForKey:@"symbolList"];
   [self willChangeValueForKey:@"diagnostics"];
-  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax content:content];
-  _attributedContent = [NSMutableAttributedString.alloc initWithString:content];
+  _rootScope = [TMScope newRootScopeWithIdentifier:_syntax.identifier syntaxNode:_syntax];
   _symbolList = [NSMutableArray alloc].init;
   _diagnostics = [NSMutableArray alloc].init;
+  _attributedContent = [NSMutableAttributedString.alloc initWithString:content];
   NSMutableArray *scopeStack = [NSMutableArray.alloc initWithObjects:_rootScope, nil];
   [self _startScope:_rootScope];
   // Get the next unparsed range
@@ -150,6 +152,8 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   [self didChangeValueForKey:@"symbolList"];
   [self didChangeValueForKey:@"diagnostics"];
+  
+  _lastContent = content;
   
 #if DEBUG
 #pragma clang diagnostic push
