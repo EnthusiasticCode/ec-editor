@@ -9,4 +9,9 @@
 #endif
 
 #import <Debug.h>
+
+#ifdef __OBJC__
+
 #import <ReactiveCocoa/ReactiveCocoa.h>
+
+#endif
