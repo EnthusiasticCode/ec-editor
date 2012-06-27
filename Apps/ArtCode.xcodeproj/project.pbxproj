@@ -134,6 +134,27 @@
 		B7AC175514216D91009E9205 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7AC175414216D91009E9205 /* libz.1.2.5.dylib */; };
 		B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */; };
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
+		B7BEA43A159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
+		B7BEA43B159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
+		B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
+		B7BEA43D159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
+		B7BEA43E159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
+		B7BEA43F159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
+		B7BEA440159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
+		B7BEA441159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
+		B7BEA442159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
+		B7BEA443159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
+		B7BEA444159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
+		B7BEA445159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
+		B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
+		B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
+		B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
+		B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
+		B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
+		B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
+		B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
+		B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
+		B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
 		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
 		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
@@ -653,6 +674,20 @@
 		B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileInfoController.m; sourceTree = "<group>"; };
 		B7B15C8214D7735B00A67C02 /* QuickFolderInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFolderInfoController.h; sourceTree = "<group>"; };
 		B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFolderInfoController.m; sourceTree = "<group>"; };
+		B7BEA42E159B0BAE0095C9D1 /* DiffMatchPatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffMatchPatch.h; path = "../ThirdParty/diff-match-patch/DiffMatchPatch.h"; sourceTree = "<group>"; };
+		B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DiffMatchPatch.m; path = "../ThirdParty/diff-match-patch/DiffMatchPatch.m"; sourceTree = "<group>"; };
+		B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = DiffMatchPatchCFUtilities.c; path = "../ThirdParty/diff-match-patch/DiffMatchPatchCFUtilities.c"; sourceTree = "<group>"; };
+		B7BEA431159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffMatchPatchCFUtilities.h; path = "../ThirdParty/diff-match-patch/DiffMatchPatchCFUtilities.h"; sourceTree = "<group>"; };
+		B7BEA432159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableDictionary+DMPExtensions.h"; path = "../ThirdParty/diff-match-patch/NSMutableDictionary+DMPExtensions.h"; sourceTree = "<group>"; };
+		B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSMutableDictionary+DMPExtensions.m"; path = "../ThirdParty/diff-match-patch/NSMutableDictionary+DMPExtensions.m"; sourceTree = "<group>"; };
+		B7BEA434159B0BAE0095C9D1 /* NSString+JavaSubstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+JavaSubstring.h"; path = "../ThirdParty/diff-match-patch/NSString+JavaSubstring.h"; sourceTree = "<group>"; };
+		B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+JavaSubstring.m"; path = "../ThirdParty/diff-match-patch/NSString+JavaSubstring.m"; sourceTree = "<group>"; };
+		B7BEA436159B0BAE0095C9D1 /* NSString+UnicharUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+UnicharUtilities.h"; path = "../ThirdParty/diff-match-patch/NSString+UnicharUtilities.h"; sourceTree = "<group>"; };
+		B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+UnicharUtilities.m"; path = "../ThirdParty/diff-match-patch/NSString+UnicharUtilities.m"; sourceTree = "<group>"; };
+		B7BEA438159B0BAE0095C9D1 /* NSString+UriCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+UriCompatibility.h"; path = "../ThirdParty/diff-match-patch/NSString+UriCompatibility.h"; sourceTree = "<group>"; };
+		B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+UriCompatibility.m"; path = "../ThirdParty/diff-match-patch/NSString+UriCompatibility.m"; sourceTree = "<group>"; };
+		B7BEA460159B1A7E0095C9D1 /* TMSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSymbol.h; sourceTree = "<group>"; };
+		B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSymbol.m; sourceTree = "<group>"; };
 		B7C7E68215285C14006AF8F6 /* TMIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMIndex.h; sourceTree = "<group>"; };
 		B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Active4D.tmbundle; sourceTree = "<group>"; };
 		B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Ada.tmbundle; sourceTree = "<group>"; };
@@ -1422,6 +1457,7 @@
 				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
+				B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */,
 				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
 				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
@@ -1429,6 +1465,25 @@
 				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
 			);
 			name = "Third Party";
+			sourceTree = "<group>";
+		};
+		B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */ = {
+			isa = PBXGroup;
+			children = (
+				B7BEA42E159B0BAE0095C9D1 /* DiffMatchPatch.h */,
+				B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */,
+				B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */,
+				B7BEA431159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.h */,
+				B7BEA432159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.h */,
+				B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */,
+				B7BEA434159B0BAE0095C9D1 /* NSString+JavaSubstring.h */,
+				B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */,
+				B7BEA436159B0BAE0095C9D1 /* NSString+UnicharUtilities.h */,
+				B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */,
+				B7BEA438159B0BAE0095C9D1 /* NSString+UriCompatibility.h */,
+				B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */,
+			);
+			name = "diff-match-patch";
 			sourceTree = "<group>";
 		};
 		B7FB799214D5FE680080A714 /* Additions */ = {
@@ -1488,6 +1543,8 @@
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B728590914E5971D00E3DE65 /* TMScope+Internal.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
+				B7BEA460159B1A7E0095C9D1 /* TMSymbol.h */,
+				B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */,
 				B7728C69152875CE005EA98A /* TMCompletions.h */,
 				B7728C6A152875DC005EA98A /* TMDiagnostics.h */,
 				B7FB79B114D602F10080A714 /* TMUnit.h */,
@@ -2756,6 +2813,13 @@
 				B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */,
+				B7BEA43B159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
+				B7BEA43E159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
+				B7BEA441159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */,
+				B7BEA444159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */,
+				B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
+				B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
+				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2790,6 +2854,13 @@
 				B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */,
+				B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
+				B7BEA43F159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
+				B7BEA442159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */,
+				B7BEA445159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */,
+				B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
+				B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
+				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2901,6 +2972,13 @@
 				CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */,
 				CDA51F3B157E0A9300DB034A /* DocSetOutlineController.m in Sources */,
 				CDA2EDAC157F9B3400E979E9 /* DocSetBookmarksController.m in Sources */,
+				B7BEA43A159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
+				B7BEA43D159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
+				B7BEA440159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */,
+				B7BEA443159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */,
+				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
+				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
+				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
