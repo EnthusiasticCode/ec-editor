@@ -25,14 +25,12 @@
 
 @implementation NSString (UnicharUtilities)
 
-+ (NSString *)diff_stringFromUnichar:(unichar)ch;
++ (NSString *)diff_stringFromUnichar:(unichar)ch
 {
-  CFStringRef c = CFStringCreateWithCharacters(kCFAllocatorDefault, &ch, 1);
-  CFMakeCollectable(c);
-  return [(NSString *)c autorelease];
+  return (__bridge_transfer NSString *) CFStringCreateWithCharacters(kCFAllocatorDefault, &ch, 1);
 }
 
-- (NSString *)diff_substringWithCharacterAtIndex:(NSUInteger)anIndex;
+- (NSString *)diff_substringWithCharacterAtIndex:(NSUInteger)anIndex
 {
   return [self substringWithRange:NSMakeRange(anIndex, 1)];
 }

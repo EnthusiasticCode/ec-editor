@@ -32,15 +32,13 @@
  * @param str The CFStringRef to escape.
  * @return The escaped CFStringRef.
  */
-- (NSString *)diff_stringByAddingPercentEscapesForEncodeUriCompatibility;
+- (NSString *)diff_stringByAddingPercentEscapesForEncodeUriCompatibility
 {
-  CFStringRef urlString = CFURLCreateStringByAddingPercentEscapes(NULL,
-                                  (CFStringRef)self,
+  return (__bridge_transfer NSString *) CFURLCreateStringByAddingPercentEscapes(NULL,
+                                  (__bridge CFStringRef)self,
                                   CFSTR(" !~*'();/?:@&=+$,#"),
                                   NULL,
                                   kCFStringEncodingUTF8);
-  CFMakeCollectable(urlString);
-  return [(NSString *)urlString autorelease];
 }
 
 /**
@@ -50,14 +48,12 @@
  *
  * @return The unescaped NSString.
  */
-- (NSString *)diff_stringByReplacingPercentEscapesForEncodeUriCompatibility;
+- (NSString *)diff_stringByReplacingPercentEscapesForEncodeUriCompatibility
 {
-  CFStringRef decodedString = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, 
-                                            (CFStringRef)self, 
+  return (__bridge_transfer NSString *) CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, 
+                                            (__bridge CFStringRef)self, 
                                             CFSTR(""), 
                                             kCFStringEncodingUTF8);
-  CFMakeCollectable(decodedString);
-  return [(NSString *)decodedString autorelease];
 }
 
 @end
