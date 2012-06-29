@@ -144,6 +144,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options
 {
+  ASSERT((options & TMScopeQueryLeft) || (options & TMScopeQueryRight));
   ASSERT(!_parent);
   if (offset > _length)
     return nil;
@@ -165,7 +166,9 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       NSUInteger childScopeLocation = childScope->_location;
       NSUInteger childScopeEnd = childScope->_location + childScope->_length;
       if ((childScopeLocation < offset && childScopeEnd > offset)
-          || (childScopeLocation == offset && options & TMScopeQueryRight && (!(options & TMScopeQueryOpenOnly) || !(childScope->_flags & TMScopeHasBegin))))
+          || (childScopeLocation == offset && options & TMScopeQueryRight && (!(options & TMScopeQueryOpenOnly) || !((childScope->_type == TMScopeTypeSpan ) && (childScope->_flags & TMScopeHasBegin))))
+          // Very special case for 0 length tailless scopes (it can happen when a content scope is created at the end of a line)
+          || (childScopeLocation == offset && childScopeEnd == offset && (!(options & TMScopeQueryOpenOnly) || !((childScope->_type == TMScopeTypeSpan ) && (childScope->_flags & TMScopeHasBegin)))))
       {
         [scopeStack addObject:childScope];
         continue;
@@ -177,7 +180,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       NSUInteger childScopeLocation = childScope->_location;
       NSUInteger childScopeEnd = childScope->_location + childScope->_length;
       if ((childScopeLocation < offset && childScopeEnd > offset)
-          || (childScopeEnd == offset && options & TMScopeQueryLeft && (!(options & TMScopeQueryOpenOnly) || !(childScope->_flags & TMScopeHasEnd))))
+          || (childScopeEnd == offset && options & TMScopeQueryLeft && (!(options & TMScopeQueryOpenOnly) || !((childScope->_type == TMScopeTypeSpan ) && (childScope->_flags & TMScopeHasEnd)))))
       {
         [scopeStack addObject:childScope];
         continue;
@@ -250,7 +253,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   NSUInteger childScopeIndex = 0;
   for (;;)
   {
-    if (childScopeIndex + 1 <= scope->_children.count)
+    if (childScopeIndex < scope->_children.count)
     {
       BOOL recurse = NO;
       TMScope *childScope = [scope->_children objectAtIndex:childScopeIndex];
@@ -374,9 +377,9 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   if (offset >= _length)
     return NO;
   // We're looking for two scopes to merge, one ending at offset, one starting at offset
-  TMScope *head = nil;
-  TMScope *tail = nil;
-  BOOL scopesMatch = NO;
+  NSMutableArray *heads = [[NSMutableArray alloc] init];
+  NSMutableArray *tails = [[NSMutableArray alloc] init];
+  BOOL scopesMatch = YES;
   BOOL treeIsBroken = NO;
   NSArray *leftScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
   NSArray *rightScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryRight | TMScopeQueryOpenOnly];
@@ -385,23 +388,24 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   
   for (NSUInteger depth = 0; depth < maxDepth; ++depth)
   {
-    head = [leftScopeStack objectAtIndex:depth];
-    tail = [rightScopeStack objectAtIndex:depth];
+    TMScope *head = [leftScopeStack objectAtIndex:depth];
+    TMScope *tail = [rightScopeStack objectAtIndex:depth];
     if (head == tail)
       continue;
-    if (head && head->_type == TMScopeTypeSpan && head->_type == tail->_type && [head.identifier isEqualToString:tail.identifier] && !(head->_flags & TMScopeHasEnd) && !(tail->_flags & TMScopeHasBegin))
+    treeIsBroken = YES;
+    if (head->_type != TMScopeTypeSpan || head->_type != tail->_type || ![head.identifier isEqualToString:tail.identifier] || (head->_flags & TMScopeHasEnd) || (tail->_flags & TMScopeHasBegin))
     {
-      scopesMatch = YES;
-      treeIsBroken = YES;
+      scopesMatch = NO;
       break;
     }
-    treeIsBroken = YES;
+    [heads addObject:head];
+    [tails addObject:tail];
   }
   
   if (!treeIsBroken) {
     // Check if the right scopes all have a begin, so they don't end up headless
     for (TMScope *rightScope in rightScopeStack) {
-      if (!(rightScope->_flags & TMScopeHasBegin)) {
+      if (rightScope->_type == TMScopeTypeSpan && !(rightScope->_flags & TMScopeHasBegin)) {
         return NO;
       }
     }
@@ -411,18 +415,21 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   if (!scopesMatch)
     return NO;
   
-  ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
-  ASSERT(head->_location + head->_length == tail->_location);
-  
-  if (tail->_flags & TMScopeHasEnd) {
-    head->_flags |= TMScopeHasEnd;
-  }
-  if (tail->_flags & TMScopeHasEndScope) {
-    head->_flags |= TMScopeHasEndScope;
-  }
-  
-  [head->_children addObjectsFromArray:tail->_children];
-  [head->_parent->_children removeObject:tail];
+  [heads enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *head, NSUInteger idx, BOOL *stop) {
+    TMScope *tail = [tails objectAtIndex:idx];
+    ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
+    ASSERT(head->_location + head->_length == tail->_location);
+    
+    if (tail->_flags & TMScopeHasEnd) {
+      head->_flags |= TMScopeHasEnd;
+    }
+    if (tail->_flags & TMScopeHasEndScope) {
+      head->_flags |= TMScopeHasEndScope;
+    }
+    head.length = head.length + tail.length;
+    [head->_children addObjectsFromArray:tail->_children];
+    [head->_parent->_children removeObject:tail];
+  }];
   
   return YES;
 }

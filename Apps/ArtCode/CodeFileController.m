@@ -455,7 +455,7 @@ static void drawStencilStar(CGContextRef myContext)
   
   // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
   RACSubscribable *currentFileContentSubscribable = RACAbleSelf(artCodeTab.currentFile.content);
-  [[[[[[currentFileContentSubscribable throttle:0.5] where:^BOOL(id x) {
+  [[[[[currentFileContentSubscribable where:^BOOL(id x) {
     return x != nil;
   }] select:^id(id x) {
     return [[RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {

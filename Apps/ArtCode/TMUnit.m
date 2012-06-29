@@ -232,8 +232,9 @@ static OnigRegexp *_namedCapturesRegexp;
       for (TMScope *scope in scopeStack)
       {
         NSUInteger stretchedLength = NSMaxRange(currentLineRange) - scope.location;
-        if (stretchedLength > scope.length)
+        if (stretchedLength > scope.length) {
           scope.length = stretchedLength;
+        }
       }
       
       // Advance to next line and check that we actually advance. It will get stuck here if the file ends without a newline.
