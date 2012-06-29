@@ -13,7 +13,16 @@
 
 static NSMutableDictionary *systemKeyboardActions;
 static NSMutableDictionary *systemKeyboardActionsConfigurations;
-static NSString * const keyboardActionsDirectory = @"KeyboardActions";
+static NSArray *systemDefaultKeyboardActionsConfiguration;
+static NSString * const keyboardConfigurationsPath = @"KeyboardConfigurations";
+static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardActions";
+
+@interface TMKeyboardAction ()
+
+- (id)initWithDictionary:(NSDictionary *)dict;
+
+@end
+
 
 @implementation TMKeyboardAction {
   UIImage *_image;
@@ -73,28 +82,64 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
   }
 }
 
+#pragma mark Private methods
+
+- (id)initWithDictionary:(NSDictionary *)dict {
+  ASSERT(dict);
+  self = [self initWithUUID:[dict objectForKey:@"uuid"] 
+                      title:[dict objectForKey:@"title"] 
+                description:[dict objectForKey:@"description"] 
+                  imagePath:[dict objectForKey:@"imagePath"] 
+                   commands:[dict objectForKey:@"commands"]];
+  if (!self)
+    return nil;
+  return self;
+}
+
 #pragma mark Class methods
 
-+ (void)_loadKeyboardActionsFromFileURL:(NSURL *)fileURL
-{
++ (void)_loadKeyboardActionsFromFileURL:(NSURL *)fileURL {
   if (!systemKeyboardActions)
     systemKeyboardActions = [NSMutableDictionary new];
+  
   NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL];
   ASSERT(plist != nil);
-  // Load actions
-  for (NSDictionary *action in [plist objectForKey:@"keyboardActions"])
-  {
-    [systemKeyboardActions setObject:[[TMKeyboardAction alloc] initWithUUID:[action objectForKey:@"uuid"] title:[action objectForKey:@"title"] description:[action objectForKey:@"description"] imagePath:[action objectForKey:@"imagePath"] commands:[action objectForKey:@"commands"]] forKey:[action objectForKey:@"uuid"]];
+  ASSERT([plist objectForKey:@"keyboardActionsConfiguration"] == nil); // No configurations allowed
+  
+  // Load global actions
+  for (NSDictionary *action in [plist objectForKey:@"keyboardActions"]) {
+    [systemKeyboardActions setObject:[[TMKeyboardAction alloc] initWithDictionary:action] forKey:[action objectForKey:@"uuid"]];
   }
+}
+
++ (void)_loadKeyboardActionsConfigurationsFromFileURL:(NSURL *)fileURL {
+  // Make sure that all keyboard actions have been loaded
+  [self allKeyboardActions];
+  
+  NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL];
+  ASSERT(plist != nil);
+  
+  // Load local actions
+  NSMutableDictionary *localActions = [NSMutableDictionary new];
+  for (NSDictionary *action in [plist objectForKey:@"keyboardActions"]) {
+    [localActions setObject:[[TMKeyboardAction alloc] initWithDictionary:action] forKey:[action objectForKey:@"uuid"]];
+  }
+  
   // Load configuration
   NSMutableArray *configuration = [NSMutableArray new];
   for (NSString *actionUUID in [plist objectForKey:@"keyboardActionsConfiguration"])
   {
-    if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"])
+    if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"]) {
       [configuration addObject:[NSNull null]];
-    else
-      [configuration addObject:[systemKeyboardActions objectForKey:actionUUID]];
+    } else {
+      // Get action from local or global action dictionaries
+      id action = [localActions objectForKey:actionUUID];
+      if (!action)
+        action = [systemKeyboardActions objectForKey:actionUUID];
+      [configuration addObject:action];
+    }
   }
+  
   // Add configuration to system list
   if (!systemKeyboardActionsConfigurations)
     systemKeyboardActionsConfigurations = [NSMutableDictionary new];
@@ -104,33 +149,70 @@ static NSString * const keyboardActionsDirectory = @"KeyboardActions";
   }
 }
 
-+ (NSDictionary *)allKeyboardActionsConfigurations
-{
-  if (!systemKeyboardActionsConfigurations)
-  {
-    for (NSURL *bundleURL in [TMBundle bundleURLs])
-    {
-      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardActionsDirectory isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
-      {
++ (NSDictionary *)allKeyboardActions {
+  if (!systemKeyboardActions) {
+    for (NSURL *bundleURL in [TMBundle bundleURLs]) {
+      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardActionsPath isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
         [self _loadKeyboardActionsFromFileURL:keyboardActionURL];
+      }
+    }
+  }
+  return systemKeyboardActions;
+}
+
++ (NSArray *)defaultKeyboardActionsConfiguration {
+  if (!systemDefaultKeyboardActionsConfiguration) {
+    // TODO actually craete an hardcoded cofiguration
+    systemDefaultKeyboardActionsConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:@"text.plain"];
+    ASSERT(systemDefaultKeyboardActionsConfiguration.count == 11);
+  }
+  return systemDefaultKeyboardActionsConfiguration;
+}
+
++ (NSDictionary *)allKeyboardActionsConfigurations {
+  if (!systemKeyboardActionsConfigurations) {
+    NSNumber *isRegularFile = nil;
+    for (NSURL *bundleURL in [TMBundle bundleURLs]) {
+      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardConfigurationsPath isDirectory:YES] includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsRegularFileKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
+        if ([keyboardActionURL getResourceValue:&isRegularFile forKey:NSURLIsRegularFileKey error:NULL] && [isRegularFile boolValue]) {
+          [self _loadKeyboardActionsConfigurationsFromFileURL:keyboardActionURL];
+        }
       }
     }
   }
   return systemKeyboardActionsConfigurations;
 }
 
-+ (NSArray *)keyboardActionsConfigurationForQualifiedIdentifier:(NSString *)qualifiedIdentifier
-{
-  // TODO handle "inherit" actions?
-  __block NSArray *configuration = nil;
++ (NSArray *)keyboardActionsConfigurationForQualifiedIdentifier:(NSString *)qualifiedIdentifier {
+  if (qualifiedIdentifier == nil)
+    return [self defaultKeyboardActionsConfiguration];
+  
+  // Get all the configurations that repond to the selector
+  NSMutableDictionary *configurationDictionary = [NSMutableDictionary new];
   [[self allKeyboardActionsConfigurations] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, NSArray *conf, BOOL *stop) {
-    if ([qualifiedIdentifier scoreForScopeSelector:scopeSelector] > 0)
-    {
-      configuration = conf;
-      *stop = YES;
+    float score = [qualifiedIdentifier scoreForScopeSelector:scopeSelector];
+    if (score > 0) {
+      [configurationDictionary setObject:conf forKey:[NSNumber numberWithFloat:score]];
     }
   }];
-  return configuration;
+  
+  // Get the base configuration
+  NSMutableArray *configuration = [[self defaultKeyboardActionsConfiguration] mutableCopy];
+  
+  // Apply configurations
+  if (configurationDictionary.count) {
+    for (NSNumber *n in [[configurationDictionary allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
+      [(NSArray *)[configurationDictionary objectForKey:n] enumerateObjectsUsingBlock:^(id action, NSUInteger idx, BOOL *stop) {
+        if (action != [NSNull null]) {
+          // If action is not inherit, substitute to result configuration
+          [configuration removeObjectAtIndex:idx];
+          [configuration insertObject:action atIndex:idx];
+        }
+      }];
+    }
+  }
+  
+  return [configuration copy];
 }
 
 @end

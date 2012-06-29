@@ -46,6 +46,12 @@
 
 #pragma mark Actions grouping
 
+/// A dictionary of all keyboard actions mapped by UUID.
++ (NSDictionary *)allKeyboardActions;
+
+#pragma mark Configurations
+
++ (NSArray *)defaultKeyboardActionsConfiguration;
 + (NSDictionary *)allKeyboardActionsConfigurations;
 + (NSArray *)keyboardActionsConfigurationForQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
