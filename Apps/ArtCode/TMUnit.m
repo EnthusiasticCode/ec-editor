@@ -198,6 +198,14 @@ static OnigRegexp *_namedCapturesRegexp;
     }
   }
   
+  // If the unparsedRanges contains an index beyond the end of the content, it means there was a deletion around the end of the content, just add the index at the end of the content to force the reparse of the last line
+  if ([unparsedRanges containsIndex:content.length]) {
+    [unparsedRanges removeIndex:content.length];
+    if (content.length) {
+      [unparsedRanges addIndex:content.length - 1];
+    }
+  }
+  
   // Loop the unparsed ranges
   NSMutableArray *scopeStack = nil;
   while (unparsedRanges.count) {

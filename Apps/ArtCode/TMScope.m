@@ -204,7 +204,15 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   // First of all remove all the child scopes in the old range.
   [self removeChildScopesInRange:oldRange];
   
-  NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[[NSArray arrayWithObject:self] objectEnumerator]];
+  // Adjust the root scope
+  ASSERT(_length + newRange.length >= oldRange.length);
+  _length = (_length + newRange.length) - oldRange.length;
+  
+  if (!_children) {
+    return;
+  }
+  
+  NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[_children objectEnumerator]];
   NSUInteger oldRangeEnd = NSMaxRange(oldRange);
   NSInteger offset = newRange.length - oldRange.length;
   // Enumerate all the scopes and adjust them for the change
@@ -376,13 +384,19 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   ASSERT(!_parent);
   if (offset >= _length)
     return NO;
-  // We're looking for two scopes to merge, one ending at offset, one starting at offset
+  
+  // We're looking for scopes to merge, one ending at offset, one starting at offset
   NSMutableArray *heads = [[NSMutableArray alloc] init];
   NSMutableArray *tails = [[NSMutableArray alloc] init];
   BOOL scopesMatch = YES;
   BOOL treeIsBroken = NO;
   NSArray *leftScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
   NSArray *rightScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryRight | TMScopeQueryOpenOnly];
+  
+  // If we have a different stack depth, they don't match up
+  if (leftScopeStack.count != rightScopeStack.count) {
+    return NO;
+  }
   
   NSUInteger maxDepth = MIN(leftScopeStack.count, rightScopeStack.count);
   
@@ -455,6 +469,12 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   
   // 0 length scopes should not exist in a consistent tree
   ASSERT(_length);
+  
+  // Hacky check for overflow and weird values
+  ASSERT(_location < NSUIntegerMax - 100);
+  ASSERT(_location != NSNotFound);
+  ASSERT(_length < NSUIntegerMax - 100);
+  ASSERT(_length != NSNotFound);
   
   // Scope must have a valid type
   ASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
