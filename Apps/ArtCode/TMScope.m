@@ -398,14 +398,28 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     treeIsBroken = YES;
   }
   
-  if (!treeIsBroken)
+  if (!treeIsBroken) {
+    // Check if the right scopes all have a begin, so they don't end up headless
+    for (TMScope *rightScope in rightScopeStack) {
+      if (!(rightScope->_flags & TMScopeHasBegin)) {
+        return NO;
+      }
+    }
     return YES;
+  }
   
   if (!scopesMatch)
     return NO;
   
   ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
   ASSERT(head->_location + head->_length == tail->_location);
+  
+  if (tail->_flags & TMScopeHasEnd) {
+    head->_flags |= TMScopeHasEnd;
+  }
+  if (tail->_flags & TMScopeHasEndScope) {
+    head->_flags |= TMScopeHasEndScope;
+  }
   
   [head->_children addObjectsFromArray:tail->_children];
   [head->_parent->_children removeObject:tail];
