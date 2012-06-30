@@ -39,7 +39,7 @@
 #import "ACProjectFile.h"
 #import "ACProjectFileBookmark.h"
 
-#import "NSAttributedString+PersistentDataStructures.h"
+#import "DiffMatchPatch.h"
 
 
 @interface CodeFileController ()
@@ -52,6 +52,7 @@
 
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, copy) NSAttributedString *code;
+@property (nonatomic, strong) RACDisposable *tokensDisposable;
 
 @property (nonatomic, weak) TMSymbol *currentSymbol;
 
@@ -128,12 +129,14 @@ static void drawStencilStar(CGContextRef myContext)
   
   /// The index of the accessory item action currently being performed.
   NSInteger _keyboardAccessoryItemCurrentActionIndex;
+  
+  NSMutableAttributedString *_code;
 }
 
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code, currentSymbol = _currentSymbol;
+@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
 
 - (CodeView *)codeView {
   if (!_codeView && self.isViewLoaded) {
@@ -445,53 +448,111 @@ static void drawStencilStar(CGContextRef myContext)
     return nil;
   }
   
+  _code = [[NSMutableAttributedString alloc] init];
+  
   // RAC
   NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
   schedulerQueue.maxConcurrentOperationCount = 1;
   _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
   __weak CodeFileController *this = self;
   
+  // Display the code when it changes
   [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
   
-  // Update the "code" property when the content of the file changes by reparsing it and applying syntax coloring, this is slow so it's throttled and done asynchronously
-  RACSubscribable *currentFileContentSubscribable = RACAbleSelf(artCodeTab.currentFile.content);
-  [[[[[currentFileContentSubscribable where:^BOOL(id x) {
+  // Update the code when contents change
+  [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
-  }] select:^id(id x) {
-    return [[RACSubscribable startWithScheduler:this.codeScheduler block:^id(BOOL *success, NSError *__autoreleasing *error) {
-      [this.codeUnit reparseWithUnsavedContent:x];
-      NSMutableAttributedString *attributedString = [NSMutableAttributedString.alloc initWithString:x attributes:[TMTheme currentTheme].commonAttributes];
-      [this.codeUnit enumerateQualifiedScopeIdentifiersInRange:NSMakeRange(0, attributedString.length) withBlock:^(NSString *qualifiedScopeIdentifier, NSRange range, BOOL *stop) {
-        [attributedString addAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedScopeIdentifier] range:range];
-      }];
-      return attributedString;
-    }] takeUntil:currentFileContentSubscribable];
-  }] switch] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(id x) {
-    this.code = x;
-  }];
+  }] subscribeNext:^(NSString *content) {
+    CodeFileController *strongSelf = this;
+    if (!strongSelf) {
+      return;
+    }
     
+    DiffMatchPatch *diffMatchPatch = [[DiffMatchPatch alloc] init];
+    NSMutableArray *diffs = [diffMatchPatch diff_mainOfOldString:strongSelf->_code.string andNewString:content checkLines:YES];
+    
+    // Break out if the content is the same as the current code
+    if (!diffs.count || (diffs.count == 1 && [[diffs objectAtIndex:0] operation] == DIFF_EQUAL)) {
+      return;
+    }
+    
+    // Apply the diff
+    [strongSelf willChangeValueForKey:@"code"];
+    NSUInteger offset = 0;
+    for (Diff *diff in diffs) {
+      switch (diff.operation) {
+        case DIFF_EQUAL:
+        {
+          offset += diff.text.length;
+          break;
+        }
+        case DIFF_INSERT:
+        {
+          [strongSelf->_code replaceCharactersInRange:NSMakeRange(offset, 0) withString:diff.text];
+          offset += diff.text.length;
+          break;
+        }
+        case DIFF_DELETE:
+        {
+          [strongSelf->_code replaceCharactersInRange:NSMakeRange(offset, diff.text.length) withString:@""];
+          break;
+        }
+      }
+    }
+    [strongSelf didChangeValueForKey:@"code"];
+    
+    // Reparse the file
+    [this.codeUnit reparseWithUnsavedContent:content];
+  }];
+  
   // Create a new TMUnit when the file changes
-  [RACAbleSelf(artCodeTab.currentFile) subscribeNext:^(ACProjectFile *x) {
+  [[[[[[[[RACAbleSelf(artCodeTab.currentFile) where:^BOOL(id x) {
+    return x != nil;
+  }] select:^id(ACProjectFile *x) {
+    TMSyntaxNode *syntax = nil;
+    if (x.explicitSyntaxIdentifier) {
+      syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
+    }
+    if (!syntax) {
+      syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
+    }
+    if (!syntax) {
+      syntax = [TMSyntaxNode syntaxForFileName:x.name];
+    }
+    if (!syntax) {
+      syntax = [TMSyntaxNode defaultSyntax];
+    }
+    return [RACTuple tupleWithObjects:x.fileURL, x.content, syntax, nil];
+  }] deliverOn:this.codeScheduler] select:^id(RACTuple *x) {
+    TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:x.first syntax:x.third index:nil];
+    return [RACTuple tupleWithObjects:codeUnit, codeUnit.tokens, x.second, nil];
+  }] deliverOn:[RACScheduler mainQueueScheduler]] select:^id(RACTuple *x) {
+    this.codeUnit = x.first;
+    // Subscribe to the token subject when the codeUnit changes
+    [this.tokensDisposable dispose];
+    this.tokensDisposable = [[[x.second subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+      CodeFileController *strongSelf = this;
+      if (!strongSelf) {
+        return;
+      }
+      [strongSelf willChangeValueForKey:@"code"];
+      [strongSelf->_code setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+      [strongSelf didChangeValueForKey:@"code"];
+    }];
+    return x.third;
+  }] deliverOn:this.codeScheduler] subscribeNext:^(id x) {
     if (x) {
-      TMSyntaxNode *syntax = nil;
-      if (x.explicitSyntaxIdentifier) {
-        syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode syntaxForFileName:x.name];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode defaultSyntax];
-      }
-      this.codeUnit = [[TMUnit alloc] initWithFileURL:x.fileURL syntax:syntax index:nil];
-    } else {
-      this.codeUnit = nil;
+      [this.codeUnit reparseWithUnsavedContent:x];
     }
   }];
 
+  [[[[[RACAbleSelf(codeUnit) deliverOn:this.codeScheduler] where:^BOOL(id x) {
+    return x != nil;
+  }] select:^id(TMUnit *x) {
+    return x.tokens;
+  }] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(RACSubject *x) {
+  }];
+  
   return self;
 }
 
@@ -538,9 +599,6 @@ static void drawStencilStar(CGContextRef myContext)
 {
   [super viewWillAppear:animated];
   [self _layoutChildViews];
-  if (self.artCodeTab.currentFile.content) {
-    self.codeView.text = [[NSAttributedString alloc] initWithString:self.artCodeTab.currentFile.content attributes:[TMTheme currentTheme].commonAttributes];
-  }
 }
 
 #pragma mark - Controller Methods

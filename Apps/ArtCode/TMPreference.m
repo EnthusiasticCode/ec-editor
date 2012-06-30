@@ -1,3 +1,4 @@
+
 //
 //  TMPreferences.m
 //  ArtCode
@@ -129,6 +130,9 @@ static NSMutableDictionary *symbolIconsCache;
 
 + (id)preferenceValueForKey:(NSString *)preferenceKey qualifiedIdentifier:(NSString *)qualifiedIdentifier
 {
+  if (!qualifiedIdentifier || !preferenceKey) {
+    return nil;
+  }
   // Check per scope cache
   if (!scopeToPreferenceCache)
     scopeToPreferenceCache = [NSMutableDictionary new];

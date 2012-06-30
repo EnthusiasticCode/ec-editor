@@ -27,6 +27,15 @@ static OnigRegexp *_namedCapturesRegexp;
 
 #pragma mark -
 
+@interface TMToken ()
+
+@property (nonatomic, strong) NSString *qualifiedIdentifier;
+@property (nonatomic) NSRange range;
+
+@end
+
+#pragma mark -
+
 @interface Change : NSObject
 {
   @package
@@ -58,11 +67,7 @@ static OnigRegexp *_namedCapturesRegexp;
   NSMutableDictionary *_extensions;
 }
 
-@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics;
-
-- (NSArray *)symbolList {
-  return [_symbolList copy];
-}
+@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics, tokens = _tokens;
 
 #pragma mark - NSObject
 
@@ -80,6 +85,17 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 #pragma mark - Public Methods
+
+- (NSArray *)symbolList {
+  return [_symbolList copy];
+}
+
+- (RACSubject *)tokens {
+  if (!_tokens) {
+    _tokens = [RACSubject subject];
+  }
+  return _tokens;
+}
 
 - (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index {
   ASSERT(fileURL && syntax);
@@ -130,6 +146,12 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)reparseWithUnsavedContent:(NSString *)content {
+  if (content == _lastContent) {
+    return;
+  }
+  if ([content isEqualToString:_lastContent]) {
+    return;
+  }
   content = content.copy;
   [self willChangeValueForKey:@"symbolList"];
   [self willChangeValueForKey:@"diagnostics"];
@@ -491,9 +513,21 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
+  if (_tokens) {
+    TMToken *token = [[TMToken alloc] init];
+    token.qualifiedIdentifier = scope.qualifiedIdentifier;
+    token.range = tokenRange;
+    [_tokens sendNext:token];
+  }
   [_attributedContent addAttribute:_qualifiedIdentifierAttributeName value:scope.qualifiedIdentifier range:tokenRange];
 }
 
+@end
+
+#pragma mark -
+
+@implementation TMToken
+@synthesize qualifiedIdentifier, range;
 @end
 
 #pragma mark -

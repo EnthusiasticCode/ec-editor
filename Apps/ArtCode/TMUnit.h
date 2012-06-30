@@ -25,6 +25,9 @@
 /// Returns warnings and errors in the unit.
 @property (nonatomic, copy, readonly) NSArray *diagnostics;
 
+/// Returns a subject that sends tokens as they are parsed
+@property (nonatomic, strong, readonly) RACSubject *tokens;
+
 /// Designated initializer. Creates a new TMUnit for the file at the given URL and syntax, coordinating with other TMUnits via the given index.
 /// It will not attempt to access the file itself, the fileURL is only used internally for parsing
 - (id)initWithFileURL:(NSURL *)fileURL syntax:(TMSyntaxNode *)syntax index:(TMIndex *)index;
@@ -40,5 +43,12 @@
 
 /// Reparses the source file using the given content
 - (void)reparseWithUnsavedContent:(NSString *)content;
+
+@end
+
+@interface TMToken : NSObject
+
+@property (nonatomic, strong, readonly) NSString *qualifiedIdentifier;
+@property (nonatomic, readonly) NSRange range;
 
 @end
