@@ -157,6 +157,9 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
   [projectImportController performSelector:@selector(_createProjectFromZipAtURL:) withObject:url];
+  // TODO make method pubblic
+  // TODO delete imported file
+  // TODO open tab with imported project
   return YES;
 }
 

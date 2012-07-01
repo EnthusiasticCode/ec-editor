@@ -16,15 +16,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 @class TextSegment;
 @class TextSegmentFrame;
 
-@interface TextRenderer () {
-@private
-  NSMutableArray *textSegments;
-  dispatch_semaphore_t textSegmentsSemaphore;
-  
-  BOOL delegateHasDidInvalidateRenderInRect;
-  
-  id _notificationCenterMemoryWarningObserver;
-}
+@interface TextRenderer ()
 
 /// Redefined to accept private changes.
 @property (nonatomic) CGFloat renderHeight;
@@ -636,7 +628,16 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 #pragma mark TextRenderer Implementation
 
 
-@implementation TextRenderer
+@implementation TextRenderer {
+@private
+  NSMutableArray *textSegments;
+  dispatch_semaphore_t textSegmentsSemaphore;
+  
+  BOOL _needsUpdate;
+  BOOL delegateHasDidInvalidateRenderInRect;
+  
+  id _notificationCenterMemoryWarningObserver;
+}
 
 #pragma mark Properties
 
@@ -648,18 +649,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   if (text == _text)
     return;
   
-  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-  {
-    for (TextSegment *segment in textSegments)
-    {
-      [segment discardContent];
-    }
-    
-    [textSegments removeAllObjects];
-    
-    _text = text;
-  }
-  dispatch_semaphore_signal(textSegmentsSemaphore);
+  _text = text;
+  [self setNeedsUpdate];
   
   if (delegateHasDidInvalidateRenderInRect) 
     [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
@@ -838,6 +829,27 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)_generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
+  // Update if neccessary
+  for (;;) {
+    dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
+    {
+      if (_needsUpdate) {
+        for (TextSegment *segment in textSegments) {
+          [segment discardContent];
+        }
+        
+        [textSegments removeAllObjects];
+        _needsUpdate = NO;
+      } else {
+        dispatch_semaphore_signal(textSegmentsSemaphore);
+        break;
+      }
+    }
+    dispatch_semaphore_signal(textSegmentsSemaphore);
+  }
+    
+  
+  // Enumeration
   BOOL stop = NO;
   TextSegment *segment = nil;
   NSUInteger currentIndex = 0;
@@ -956,7 +968,15 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   return requestPosition;
 }
 
-#pragma mark Public Outtake Methods
+#pragma mark Public Methods
+
+- (void)setNeedsUpdate {
+  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
+  {
+    _needsUpdate = YES;
+  }
+  dispatch_semaphore_signal(textSegmentsSemaphore);
+}
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(TextRendererLine *, NSUInteger, NSUInteger, CGFloat, NSRange, BOOL *))block
 {

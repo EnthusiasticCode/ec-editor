@@ -50,7 +50,7 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 @property (nonatomic, weak) id<CodeViewDelegate> delegate;
 
-@property (nonatomic, strong) NSAttributedString *text;
+@property (nonatomic, copy) NSString *text;
 
 #pragma mark Advanced Initialization and Configuration
 
@@ -152,6 +152,14 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 @end
 
+/// Forwarding calls to internal mutable attributed string
+@interface CodeView (AttributedTextForwarding)
+
+- (void)setAttributes:(NSDictionary *)attributes range:(NSRange)aRange;
+
+@end
+
+/// Forwarding calls to text rendere
 @interface CodeView (TextRendererForwarding)
 
 @property (nonatomic, strong) NSDictionary *defaultTextAttributes;

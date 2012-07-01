@@ -151,9 +151,6 @@ static NSString * const _plistBookmarksKey = @"bookmarks";
   if (content == _content) {
     return;
   }
-  if ([content isEqualToString:_content]) {
-    return;
-  }
   
   [self willChangeValueForKey:@"content"];
   _content = content;

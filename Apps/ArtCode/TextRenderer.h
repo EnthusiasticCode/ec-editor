@@ -101,6 +101,11 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 
 #pragma mark Rendering Content
 
+/// Indicate that the whole content should be re-rendered before the next draw.
+- (void)setNeedsUpdate;
+
+// TODO set needs update in rect
+
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines
 /// will be drawn with the current context transformation and context will

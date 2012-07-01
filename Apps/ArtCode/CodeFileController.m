@@ -51,7 +51,6 @@
 @property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
 @property (nonatomic, strong) RACScheduler *codeScheduler;
-@property (nonatomic, copy) NSAttributedString *code;
 @property (nonatomic, strong) RACDisposable *tokensDisposable;
 
 @property (nonatomic, weak) TMSymbol *currentSymbol;
@@ -129,14 +128,12 @@ static void drawStencilStar(CGContextRef myContext)
   
   /// The index of the accessory item action currently being performed.
   NSInteger _keyboardAccessoryItemCurrentActionIndex;
-  
-  NSMutableAttributedString *_code;
 }
 
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, code = _code, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
+@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
 
 - (CodeView *)codeView {
   if (!_codeView && self.isViewLoaded) {
@@ -233,11 +230,14 @@ static void drawStencilStar(CGContextRef myContext)
     accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
     
     
+    _codeView.text = self.artCodeTab.currentFile.content;
+    
     // RAC
     
     // Update file content
-    [RACAble(_codeView, text) subscribeNext:^(NSAttributedString *x) {
-      this.artCodeTab.currentFile.content = x.string;
+    [RACAble(_codeView, text) subscribeNext:^(NSString *x) {
+      this.artCodeTab.currentFile.content = x;
+      [this.codeUnit reparseWithUnsavedContent:x];
     }];
     
     // Update title with current symbol and keyboard accessory based on current scope
@@ -448,67 +448,27 @@ static void drawStencilStar(CGContextRef myContext)
     return nil;
   }
   
-  _code = [[NSMutableAttributedString alloc] init];
-  
   // RAC
   NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
   schedulerQueue.maxConcurrentOperationCount = 1;
   _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
   __weak CodeFileController *this = self;
-  
-  // Display the code when it changes
-  [self rac_bind:RAC_KEYPATH_SELF(self.codeView.text) to:RACAbleSelf(self.code)];
-  
+
   // Update the code when contents change
   [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
     return x != nil;
   }] subscribeNext:^(NSString *content) {
-    CodeFileController *strongSelf = this;
-    if (!strongSelf) {
-      return;
-    }
-    
-    DiffMatchPatch *diffMatchPatch = [[DiffMatchPatch alloc] init];
-    NSMutableArray *diffs = [diffMatchPatch diff_mainOfOldString:strongSelf->_code.string andNewString:content checkLines:YES];
-    
-    // Break out if the content is the same as the current code
-    if (!diffs.count || (diffs.count == 1 && [[diffs objectAtIndex:0] operation] == DIFF_EQUAL)) {
-      return;
-    }
-    
-    // Apply the diff
-    [strongSelf willChangeValueForKey:@"code"];
-    NSUInteger offset = 0;
-    for (Diff *diff in diffs) {
-      switch (diff.operation) {
-        case DIFF_EQUAL:
-        {
-          offset += diff.text.length;
-          break;
-        }
-        case DIFF_INSERT:
-        {
-          [strongSelf->_code replaceCharactersInRange:NSMakeRange(offset, 0) withString:diff.text];
-          offset += diff.text.length;
-          break;
-        }
-        case DIFF_DELETE:
-        {
-          [strongSelf->_code replaceCharactersInRange:NSMakeRange(offset, diff.text.length) withString:@""];
-          break;
-        }
-      }
-    }
-    [strongSelf didChangeValueForKey:@"code"];
-    
-    // Reparse the file
     [this.codeUnit reparseWithUnsavedContent:content];
   }];
   
   // Create a new TMUnit when the file changes
-  [[[[[[[[RACAbleSelf(artCodeTab.currentFile) where:^BOOL(id x) {
+  [[[[[[[[[RACAbleSelf(artCodeTab.currentFile) where:^BOOL(id x) {
     return x != nil;
+  }] doNext:^(ACProjectFile *x) {
+    // Set the text for the codeview
+    this.codeView.text = x.content;
   }] select:^id(ACProjectFile *x) {
+    // Selecting the syntax to use
     TMSyntaxNode *syntax = nil;
     if (x.explicitSyntaxIdentifier) {
       syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
@@ -524,6 +484,7 @@ static void drawStencilStar(CGContextRef myContext)
     }
     return [RACTuple tupleWithObjects:x.fileURL, x.content, syntax, nil];
   }] deliverOn:this.codeScheduler] select:^id(RACTuple *x) {
+    // Create a code unit
     TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:x.first syntax:x.third index:nil];
     return [RACTuple tupleWithObjects:codeUnit, codeUnit.tokens, x.second, nil];
   }] deliverOn:[RACScheduler mainQueueScheduler]] select:^id(RACTuple *x) {
@@ -535,22 +496,13 @@ static void drawStencilStar(CGContextRef myContext)
       if (!strongSelf) {
         return;
       }
-      [strongSelf willChangeValueForKey:@"code"];
-      [strongSelf->_code setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
-      [strongSelf didChangeValueForKey:@"code"];
+      [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
     }];
     return x.third;
-  }] deliverOn:this.codeScheduler] subscribeNext:^(id x) {
-    if (x) {
-      [this.codeUnit reparseWithUnsavedContent:x];
+  }] deliverOn:this.codeScheduler] subscribeNext:^(NSString *content) {
+    if (content) {
+      [this.codeUnit reparseWithUnsavedContent:content];
     }
-  }];
-
-  [[[[[RACAbleSelf(codeUnit) deliverOn:this.codeScheduler] where:^BOOL(id x) {
-    return x != nil;
-  }] select:^id(TMUnit *x) {
-    return x.tokens;
-  }] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(RACSubject *x) {
   }];
   
   return self;
@@ -595,8 +547,7 @@ static void drawStencilStar(CGContextRef myContext)
   _searchBarController = nil;
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self _layoutChildViews];
 }

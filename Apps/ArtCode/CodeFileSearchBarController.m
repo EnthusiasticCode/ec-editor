@@ -207,7 +207,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
     replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
   }
-  replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text.string offset:0 template:replacementString];
+  replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text offset:0 template:replacementString];
   
   [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
   [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace"];
@@ -240,7 +240,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   NSInteger offset = 0;
   for (NSTextCheckingResult *match in matches)
   {
-    replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text.string offset:offset template:templateString];
+    replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text offset:offset template:templateString];
     [self.targetCodeFileController.codeView replaceRange:[TextRange textRangeWithRange:NSMakeRange(match.range.location + offset, match.range.length)] withText:replacementString];
     offset += replacementString.length - match.range.length;
   }
@@ -356,7 +356,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   self.searchFilter = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
   NSArray *matches = nil;
   if (self.searchFilter != nil) {
-    NSString *targetString = self.targetCodeFileController.codeView.text.string;
+    NSString *targetString = self.targetCodeFileController.codeView.text;
     matches = [self.searchFilter matchesInString:targetString options:0 range:NSMakeRange(0, targetString.length)];
   }
   
