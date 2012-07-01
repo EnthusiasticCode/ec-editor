@@ -830,24 +830,18 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 - (void)_generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
 {
   // Update if neccessary
-  for (;;) {
-    dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-    {
-      if (_needsUpdate) {
-        for (TextSegment *segment in textSegments) {
-          [segment discardContent];
-        }
-        
-        [textSegments removeAllObjects];
-        _needsUpdate = NO;
-      } else {
-        dispatch_semaphore_signal(textSegmentsSemaphore);
-        break;
+  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
+  {
+    if (_needsUpdate) {
+      for (TextSegment *segment in textSegments) {
+        [segment discardContent];
       }
+      
+      [textSegments removeAllObjects];
+      _needsUpdate = NO;
     }
-    dispatch_semaphore_signal(textSegmentsSemaphore);
   }
-    
+  dispatch_semaphore_signal(textSegmentsSemaphore);
   
   // Enumeration
   BOOL stop = NO;
