@@ -13,9 +13,9 @@
 
 - (void)_layoutSubviews;
 
-/// Sets the visible child view controller to the one retrievend from the given tab index.
-/// This methods removes other child view controllers that are not selected.
-- (void)_setSelctedChildViewControllerForTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)_addChildViewControllerForTabAtIndex:(NSUInteger)tabIndex;
+- (void)_removeChildViewControllerForTabAtIndex:(NSUInteger)tabIndex;
+- (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 @end
 
@@ -52,9 +52,25 @@
   __weak TabPageViewController *this = self;
   
   [[RACAbleSelf(self.tabBar.selectedTabIndex) merge:RACAbleSelf(self.tabBar.tabsCount)] subscribeNext:^(RACTuple *tuple) {
-    [this _setSelctedChildViewControllerForTabIndex:[tuple.first unsignedIntegerValue] animated:YES];
+    NSInteger count = [tuple.second unsignedIntegerValue];
+    NSInteger currentCount = this.childViewControllers.count;
+    NSInteger countDiff = count - currentCount;
+    if (countDiff > 0) {
+      // Inserting new tabs
+      for (NSInteger i = 0; i < countDiff; ++i) {
+        [this _addChildViewControllerForTabAtIndex:count + i];
+      }
+    } else if (countDiff < 0) {
+      // Remove tabs
+      for (NSInteger i = countDiff; i < 0; ++i) {
+        [this _removeChildViewControllerForTabAtIndex:currentCount + i];
+      }
+    }
+
+    // Set selection
+    [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
   }];
-  
+    
   return self;
 }
 
@@ -81,7 +97,7 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  [self _setSelctedChildViewControllerForTabIndex:self.tabBar.selectedTabIndex animated:NO];
+  [self _setSelctedChildViewControllerForTabAtIndex:self.tabBar.selectedTabIndex animated:NO];
 }
 
 #pragma mark - Private methods
@@ -102,44 +118,76 @@
   }
 }
 
-- (void)_setSelctedChildViewControllerForTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
+- (void)_addChildViewControllerForTabAtIndex:(NSUInteger)tabIndex {
   ASSERT(self.dataSource);
-  
-  if (tabIndex == NSNotFound)
-    return;
+  ASSERT(tabIndex != NSNotFound);
   
   // Get the child controller to show
   UIViewController *childController = [self.dataSource tabPageViewController:self viewControllerForTabAtIndex:tabIndex];
   if (!childController || [self.childViewControllers containsObject:childController])
     return;
   
-  // Remove any already present child controller
-  NSArray *removableChildControllers = self.childViewControllers;
-  for (UIViewController *removableChildController in removableChildControllers) {
-    [removableChildController willMoveToParentViewController:nil];
-  }
-  
   // Add the child controller
   [self addChildViewController:childController];
   
-  // Setup views for animation
-  [_childContainerView addSubview:childController.view];
-  [self _layoutSubviews];
+  // Inform controller of insertion
+  [childController didMoveToParentViewController:self];
+}
+
+- (void)_removeChildViewControllerForTabAtIndex:(NSUInteger)tabIndex {
+  ASSERT(self.dataSource);
+  ASSERT(tabIndex != NSNotFound);
+  
+  UIViewController *childController = [self.dataSource tabPageViewController:self viewControllerForTabAtIndex:tabIndex];
+  if (!childController || ![self.childViewControllers containsObject:childController])
+    return;
+  
+  // Remove child view from container
+  [childController willMoveToParentViewController:nil];
+  if (childController.isViewLoaded) {
+    [childController.view removeFromSuperview];
+  }
+  [childController removeFromParentViewController];
+}
+
+- (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
+  ASSERT(self.dataSource);
+  
+  if (tabIndex == NSNotFound)
+    return;
+  
+  // Retrieve the child controller
+  UIViewController *childController = [self.dataSource tabPageViewController:self viewControllerForTabAtIndex:tabIndex];
+  if (!childController || ![self.childViewControllers containsObject:childController])
+    return;
+  
+  // Modify animation status if there is no other view to transition to
+  if (_childContainerView.subviews.count == 0) {
+    animated = NO;
+  }
+  
+  // Setup the child controller view if neccessary
+  if (childController.view.superview != _childContainerView) {
+    [childController.view removeFromSuperview];
+    [_childContainerView addSubview:childController.view];
+    [self _layoutSubviews];
+  } else {
+    [_childContainerView bringSubviewToFront:childController.view];
+  }
   childController.view.alpha = 0;
   
   // Animate
   [UIView animateWithDuration:animated ? 0.2 : 0 animations:^{
     childController.view.alpha = 1;
   } completion:^(BOOL finished) {
-    // Remove views and inform controllers
+    // Remove unused views and inform controllers
     [childController didMoveToParentViewController:self];
-    for (UIViewController *removableChildController in removableChildControllers) {
-      if (removableChildController.isViewLoaded) {
-        [removableChildController.view removeFromSuperview];
+    for (UIView *view in _childContainerView.subviews) {
+      if (view != childController.view) {
+        [view removeFromSuperview];
       }
-      [removableChildController removeFromParentViewController];
     }
-  }];  
+  }]; 
 }
 
 @end

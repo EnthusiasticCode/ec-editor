@@ -457,6 +457,7 @@
 		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
 		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		CD972DE815A37B0500FD06A2 /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD972DE715A37B0500FD06A2 /* TabPageViewController.m */; };
+		CD972DEB15A59D5600FD06A2 /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD972DEA15A59D5600FD06A2 /* ArtCodeTabPageViewController.m */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
 		CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */; };
@@ -1032,6 +1033,8 @@
 		CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
 		CD972DE615A37B0500FD06A2 /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
 		CD972DE715A37B0500FD06A2 /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
+		CD972DE915A59D5600FD06A2 /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
+		CD972DEA15A59D5600FD06A2 /* ArtCodeTabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabPageViewController.m; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
 		CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Selected.png; sourceTree = "<group>"; };
@@ -1625,6 +1628,8 @@
 				B7FB79E814D6064C0080A714 /* TabBar.m */,
 				B7FB79E914D6064C0080A714 /* TabController.h */,
 				B7FB79EA14D6064C0080A714 /* TabController.m */,
+				CD972DE915A59D5600FD06A2 /* ArtCodeTabPageViewController.h */,
+				CD972DEA15A59D5600FD06A2 /* ArtCodeTabPageViewController.m */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -2985,6 +2990,7 @@
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				CD972DE815A37B0500FD06A2 /* TabPageViewController.m in Sources */,
+				CD972DEB15A59D5600FD06A2 /* ArtCodeTabPageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

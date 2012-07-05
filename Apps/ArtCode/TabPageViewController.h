@@ -14,7 +14,8 @@
 @protocol TabPageViewControllerDataSource <NSObject>
 @required
 
-/// Returns the view controller for the given tab index
+/// Returns the view controller for the given tab index.
+/// This method should take care of returning the same controller for a given index if it didn't changed in the model.
 - (UIViewController *)tabPageViewController:(TabPageViewController *)tabPageController viewControllerForTabAtIndex:(NSUInteger)tabIndex;
 
 @end
