@@ -41,6 +41,13 @@
   [self didChangeValueForKey:@"tabBarVisible"];
 }
 
+//- (TabBar *)tabBar {
+//  if (!self.isViewLoaded) {
+//    [self view];
+//  }
+//  return _tabBar;
+//}
+
 #pragma mark - Controller lifecycle
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -48,28 +55,7 @@
   if (!self)
     return nil;
   
-  // RAC
-  __weak TabPageViewController *this = self;
-  
-  [[RACAbleSelf(self.tabBar.selectedTabIndex) merge:RACAbleSelf(self.tabBar.tabsCount)] subscribeNext:^(RACTuple *tuple) {
-    NSInteger count = [tuple.second unsignedIntegerValue];
-    NSInteger currentCount = this.childViewControllers.count;
-    NSInteger countDiff = count - currentCount;
-    if (countDiff > 0) {
-      // Inserting new tabs
-      for (NSInteger i = 0; i < countDiff; ++i) {
-        [this _addChildViewControllerForTabAtIndex:count + i];
-      }
-    } else if (countDiff < 0) {
-      // Remove tabs
-      for (NSInteger i = countDiff; i < 0; ++i) {
-        [this _removeChildViewControllerForTabAtIndex:currentCount + i];
-      }
-    }
-
-    // Set selection
-    [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
-  }];
+  _tabBarVisible = YES;
     
   return self;
 }
@@ -82,6 +68,7 @@
 
 - (void)loadView {
   [super loadView];
+  self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   
   _tabBar = [[TabBar alloc] init];
   _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
@@ -92,6 +79,37 @@
   [self.view addSubview:_childContainerView];
   
   [self _layoutSubviews];
+}
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  
+  // RAC
+  __weak TabPageViewController *this = self;
+  
+  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.tabBar.selectedTabIndex), RAC_KEYPATH_SELF(self.tabBar.tabsCount), nil] reduce:^id(RACTuple *xs) {
+    return xs;
+  }] subscribeNext:^(RACTuple *tuple) {
+    NSInteger count = [tuple.second unsignedIntegerValue];
+    NSInteger currentCount = this.childViewControllers.count;
+    NSInteger countDiff = count - currentCount;
+    if (countDiff > 0) {
+      // Inserting new tabs
+      for (NSInteger i = 0; i < countDiff; ++i) {
+        [this _addChildViewControllerForTabAtIndex:currentCount + i];
+      }
+    } else if (countDiff < 0) {
+      // Remove tabs
+      for (NSInteger i = countDiff; i < 0; ++i) {
+        [this _removeChildViewControllerForTabAtIndex:count + i];
+      }
+    }
+    
+    // Set selection
+    if (count || currentCount) {
+      [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
+    }
+  }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

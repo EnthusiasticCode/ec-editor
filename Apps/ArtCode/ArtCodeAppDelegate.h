@@ -8,11 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@class TabController;
-
 @interface ArtCodeAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) TabController *tabController;
 
 @end

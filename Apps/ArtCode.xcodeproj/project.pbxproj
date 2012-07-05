@@ -1620,16 +1620,16 @@
 		B7FB79EE14D606530080A714 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
-				CD972DE615A37B0500FD06A2 /* TabPageViewController.h */,
-				CD972DE715A37B0500FD06A2 /* TabPageViewController.m */,
-				B7FB79E514D6064C0080A714 /* BezelAlert.h */,
-				B7FB79E614D6064C0080A714 /* BezelAlert.m */,
 				B7FB79E714D6064C0080A714 /* TabBar.h */,
 				B7FB79E814D6064C0080A714 /* TabBar.m */,
-				B7FB79E914D6064C0080A714 /* TabController.h */,
-				B7FB79EA14D6064C0080A714 /* TabController.m */,
+				CD972DE615A37B0500FD06A2 /* TabPageViewController.h */,
+				CD972DE715A37B0500FD06A2 /* TabPageViewController.m */,
 				CD972DE915A59D5600FD06A2 /* ArtCodeTabPageViewController.h */,
 				CD972DEA15A59D5600FD06A2 /* ArtCodeTabPageViewController.m */,
+				B7FB79E514D6064C0080A714 /* BezelAlert.h */,
+				B7FB79E614D6064C0080A714 /* BezelAlert.m */,
+				B7FB79E914D6064C0080A714 /* TabController.h */,
+				B7FB79EA14D6064C0080A714 /* TabController.m */,
 			);
 			name = Controls;
 			sourceTree = "<group>";

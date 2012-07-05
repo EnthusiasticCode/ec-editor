@@ -309,7 +309,7 @@ static void init(TabBar *self)
 
 - (NSUInteger)selectedTabIndex
 {
-  return [tabControls indexOfObject:selectedTabControl];
+  return selectedTabControl ? [tabControls indexOfObject:selectedTabControl] : NSNotFound;
 }
 
 - (void)setSelectedTabIndex:(NSUInteger)index
