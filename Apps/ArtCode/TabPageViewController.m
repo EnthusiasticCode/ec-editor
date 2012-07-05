@@ -13,8 +13,7 @@
 
 - (void)_layoutSubviews;
 
-- (void)_addChildViewControllerForTabAtIndex:(NSUInteger)tabIndex;
-- (void)_removeChildViewControllerForTabAtIndex:(NSUInteger)tabIndex;
+- (void)_populateChildViewControllersUpToCount:(NSUInteger)tabsCount;
 - (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 @end
@@ -90,25 +89,8 @@
   [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.tabBar.selectedTabIndex), RAC_KEYPATH_SELF(self.tabBar.tabsCount), nil] reduce:^id(RACTuple *xs) {
     return xs;
   }] subscribeNext:^(RACTuple *tuple) {
-    NSInteger count = [tuple.second unsignedIntegerValue];
-    NSInteger currentCount = this.childViewControllers.count;
-    NSInteger countDiff = count - currentCount;
-    if (countDiff > 0) {
-      // Inserting new tabs
-      for (NSInteger i = 0; i < countDiff; ++i) {
-        [this _addChildViewControllerForTabAtIndex:currentCount + i];
-      }
-    } else if (countDiff < 0) {
-      // Remove tabs
-      for (NSInteger i = countDiff; i < 0; ++i) {
-        [this _removeChildViewControllerForTabAtIndex:count + i];
-      }
-    }
-    
-    // Set selection
-    if (count || currentCount) {
-      [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
-    }
+    [this _populateChildViewControllersUpToCount:[tuple.second unsignedIntegerValue]];
+    [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
   }];
 }
 
@@ -136,36 +118,35 @@
   }
 }
 
-- (void)_addChildViewControllerForTabAtIndex:(NSUInteger)tabIndex {
+- (void)_populateChildViewControllersUpToCount:(NSUInteger)tabsCount {
   ASSERT(self.dataSource);
-  ASSERT(tabIndex != NSNotFound);
   
-  // Get the child controller to show
-  UIViewController *childController = [self.dataSource tabPageViewController:self viewControllerForTabAtIndex:tabIndex];
-  if (!childController || [self.childViewControllers containsObject:childController])
-    return;
-  
-  // Add the child controller
-  [self addChildViewController:childController];
-  
-  // Inform controller of insertion
-  [childController didMoveToParentViewController:self];
-}
-
-- (void)_removeChildViewControllerForTabAtIndex:(NSUInteger)tabIndex {
-  ASSERT(self.dataSource);
-  ASSERT(tabIndex != NSNotFound);
-  
-  UIViewController *childController = [self.dataSource tabPageViewController:self viewControllerForTabAtIndex:tabIndex];
-  if (!childController || ![self.childViewControllers containsObject:childController])
-    return;
-  
-  // Remove child view from container
-  [childController willMoveToParentViewController:nil];
-  if (childController.isViewLoaded) {
-    [childController.view removeFromSuperview];
+  // Fetch all view controllers that should become child
+  NSMutableArray *childControllers = [NSMutableArray arrayWithCapacity:tabsCount];
+  for (NSUInteger i = 0; i < tabsCount; ++i) {
+    [childControllers addObject:[self.dataSource tabPageViewController:self viewControllerForTabAtIndex:i]];
   }
-  [childController removeFromParentViewController];
+  
+  // Remove not needed view controllers
+  NSArray *originalChildControllers = self.childViewControllers;
+  for (UIViewController *controller in originalChildControllers) {
+    if (![childControllers containsObject:controller]) {
+      [controller willMoveToParentViewController:nil];
+      if (controller.isViewLoaded) {
+        [controller.view removeFromSuperview];
+      }
+      [controller removeFromParentViewController];
+    }
+  }
+  
+  // Add missing controlelrs
+  originalChildControllers = self.childViewControllers;
+  for (UIViewController *controller in childControllers) {
+    if (![originalChildControllers containsObject:controller]) {
+      [self addChildViewController:controller];
+      [controller didMoveToParentViewController:self];
+    }
+  }
 }
 
 - (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
