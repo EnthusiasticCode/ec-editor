@@ -303,6 +303,10 @@ static void init(TabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (NSUInteger)tabsCount {
+  return tabControls.count;
+}
+
 - (NSUInteger)selectedTabIndex
 {
   return [tabControls indexOfObject:selectedTabControl];
@@ -334,9 +338,10 @@ static void init(TabBar *self)
     tabControls = [NSMutableArray new];
   
   // Creating new tab control
-  //UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
+  [self willChangeValueForKey:@"tabsCount"];
   UIControl *newTabControl = [self _controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
   [tabControls addObject:newTabControl];
+  [self didChangeValueForKey:@"tabsCount"];
   
   // Assigning default tab control selection action
   [newTabControl addTarget:self action:@selector(_setSelectedTabControl:) forControlEvents:UIControlEventTouchUpInside];
@@ -565,10 +570,14 @@ static void init(TabBar *self)
       && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
     return;
   
+  [self willChangeValueForKey:@"selectedTabIndex"];
+  
   // Change selection
   [selectedTabControl setSelected:NO];
   selectedTabControl = tabControl; // TODO!!! make this weak
   [selectedTabControl setSelected:YES];
+  
+  [self didChangeValueForKey:@"selectedTabIndex"];
   
   // Scroll to fully show tab
   CGRect selectedTabFrame = selectedTabControl.frame;
@@ -576,21 +585,12 @@ static void init(TabBar *self)
   selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
   selectedTabFrame.origin.y = 0;
   selectedTabFrame.size.height = 1;
-  if (animated)
-  {
-    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
-      [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
-    } completion:^(BOOL finished) {
-      if (delegateFlags.hasDidSelectTabControlAtIndex)
-        [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-    }];
-  }
-  else
-  {
+  [UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
     [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+  } completion:^(BOOL finished) {
     if (delegateFlags.hasDidSelectTabControlAtIndex)
       [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-  }
+  }];
 }
 
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
@@ -604,7 +604,9 @@ static void init(TabBar *self)
       && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
     return;
   
+  [self willChangeValueForKey:@"tabsCount"];
   [tabControls removeObjectAtIndex:tabIndex];
+  [self didChangeValueForKey:@"tabsCount"];
   
   if (tabControl.reuseIdentifier)
   {

@@ -50,7 +50,13 @@
 #pragma mark Managing Tabs
 
 @property (nonatomic, readonly, copy) NSArray *tabControls;
+
+/// The index of the currently selected tab. This can return NSNotFound if there is no selected tab.
 @property (nonatomic) NSUInteger selectedTabIndex;
+
+/// This property reflect the tabControls.count but it's observable.
+@property (nonatomic, readonly) NSUInteger tabsCount;
+
 - (void)setSelectedTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 - (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
