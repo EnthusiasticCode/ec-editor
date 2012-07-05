@@ -13,6 +13,8 @@
 
 @interface ArtCodeTabPageViewController () <TabPageViewControllerDataSource, TabBarDelegate>
 
+- (void)_addButtonAction:(id)sender;
+
 @end
 
 @implementation ArtCodeTabPageViewController
@@ -30,9 +32,16 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
+  // Adjust tab bar appearence
   self.tabBar.backgroundColor = [UIColor blackColor];
   self.tabBar.tabControlInsets = UIEdgeInsetsMake(5, 3, 0, 3);
   // TODO change child container view background to white
+  
+  // Add tab button
+  UIButton *addTabButton = [UIButton new];
+  [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
+  [addTabButton addTarget:self action:@selector(_addButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+  self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
   
   for (ArtCodeTab *tab in [ArtCodeTab allTabs]) {
     [self.tabBar addTabWithTitle:tab.currentURL.lastPathComponent animated:NO];
@@ -71,5 +80,16 @@
 }
 
 #pragma mark - TabBar delegate
+
+#pragma mark - Private methods
+
+- (void)_addButtonAction:(id)sender {
+  SingleTabController *currentSingleTabController = (SingleTabController *)[self tabPageViewController:self viewControllerForTabAtIndex:self.tabBar.selectedTabIndex];
+  
+  ArtCodeTab *newTab = [ArtCodeTab duplicateTab:currentSingleTabController.artCodeTab];
+  // TODO insert in collection
+
+  [self.tabBar addTabWithTitle:currentSingleTabController.title animated:YES];
+}
 
 @end
