@@ -46,8 +46,8 @@
   for (ArtCodeTab *tab in [ArtCodeTab allTabs]) {
     [self.tabBar addTabWithTitle:tab.currentURL.lastPathComponent animated:NO];
   }
-  // TODO get selected from persistence user defaults
-  [self.tabBar setSelectedTabIndex:0];
+  // Get selected tab from persisted user defaults
+  [self.tabBar setSelectedTabIndex:[ArtCodeTab currentTabIndex]];
 }
 
 #pragma mark - TabPage data source

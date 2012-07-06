@@ -310,7 +310,6 @@
 		B7FB79E314D605FA0080A714 /* TextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79DD14D605FA0080A714 /* TextRenderer.m */; };
 		B7FB79EB14D6064C0080A714 /* BezelAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79E614D6064C0080A714 /* BezelAlert.m */; };
 		B7FB79EC14D6064C0080A714 /* TabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79E814D6064C0080A714 /* TabBar.m */; };
-		B7FB79ED14D6064C0080A714 /* TabController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79EA14D6064C0080A714 /* TabController.m */; };
 		B7FB79F114D606740080A714 /* GridView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79F014D606740080A714 /* GridView.m */; };
 		B7FB79F614D6086A0080A714 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB79F514D6086A0080A714 /* libarc.a */; };
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
@@ -842,8 +841,6 @@
 		B7FB79E614D6064C0080A714 /* BezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BezelAlert.m; sourceTree = "<group>"; };
 		B7FB79E714D6064C0080A714 /* TabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBar.h; sourceTree = "<group>"; };
 		B7FB79E814D6064C0080A714 /* TabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBar.m; sourceTree = "<group>"; };
-		B7FB79E914D6064C0080A714 /* TabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabController.h; sourceTree = "<group>"; };
-		B7FB79EA14D6064C0080A714 /* TabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabController.m; sourceTree = "<group>"; };
 		B7FB79EF14D606740080A714 /* GridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridView.h; sourceTree = "<group>"; };
 		B7FB79F014D606740080A714 /* GridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridView.m; sourceTree = "<group>"; };
 		B7FB79F314D608590080A714 /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry.h; path = ../ThirdParty/libarchive/libarchive/libarchive/archive_entry.h; sourceTree = "<group>"; };
@@ -1628,8 +1625,6 @@
 				CD972DEA15A59D5600FD06A2 /* ArtCodeTabPageViewController.m */,
 				B7FB79E514D6064C0080A714 /* BezelAlert.h */,
 				B7FB79E614D6064C0080A714 /* BezelAlert.m */,
-				B7FB79E914D6064C0080A714 /* TabController.h */,
-				B7FB79EA14D6064C0080A714 /* TabController.m */,
 			);
 			name = Controls;
 			sourceTree = "<group>";
@@ -2932,7 +2927,6 @@
 				B7FB79E314D605FA0080A714 /* TextRenderer.m in Sources */,
 				B7FB79EB14D6064C0080A714 /* BezelAlert.m in Sources */,
 				B7FB79EC14D6064C0080A714 /* TabBar.m in Sources */,
-				B7FB79ED14D6064C0080A714 /* TabController.m in Sources */,
 				B7FB79F114D606740080A714 /* GridView.m in Sources */,
 				B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */,
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
