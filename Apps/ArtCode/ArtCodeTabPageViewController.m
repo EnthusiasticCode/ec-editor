@@ -68,11 +68,11 @@
   singleTabController.artCodeTab = artCodeTab;
   
   // RAC 
+  __weak ArtCodeTabPageViewController *this = self;
   // Attach controller's title to tab button
-  UIButton *tabButton = [self.tabBar.tabControls objectAtIndex:tabIndex];
-  [[[[singleTabController rac_subscribableForKeyPath:RAC_KEYPATH(singleTabController, title) onObject:singleTabController] distinctUntilChanged] injectObjectWeakly:tabButton] subscribeNext:^(RACTuple *tuple) {
+  [[[[singleTabController rac_subscribableForKeyPath:RAC_KEYPATH(singleTabController, title) onObject:singleTabController] distinctUntilChanged] injectObjectWeakly:singleTabController] subscribeNext:^(RACTuple *tuple) {
     if (tuple.first != [RACTupleNil tupleNil] && tuple.second) {
-      [tuple.second setTitle:tuple.first forState:UIControlStateNormal];
+      [this.tabBar setTitle:tuple.first forTabAtIndex:[tuple.second artCodeTab].tabIndex];
     }
   }];
   
@@ -81,13 +81,26 @@
 
 #pragma mark - TabBar delegate
 
+- (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
+  ArtCodeTab *artCodeTab = [[ArtCodeTab allTabs] objectAtIndex:tabIndex];
+  for (SingleTabController *controller in self.childViewControllers) {
+    if (controller.artCodeTab == artCodeTab) {
+      controller.contentViewController = nil;
+      controller.defaultToolbar = nil;
+    }
+  }
+  [artCodeTab remove];
+  return YES;
+}
+
+
 #pragma mark - Private methods
 
 - (void)_addButtonAction:(id)sender {
   SingleTabController *currentSingleTabController = (SingleTabController *)[self tabPageViewController:self viewControllerForTabAtIndex:self.tabBar.selectedTabIndex];
   
   ArtCodeTab *newTab = [ArtCodeTab duplicateTab:currentSingleTabController.artCodeTab];
-  // TODO insert in collection
+  [ArtCodeTab insertTab:newTab atIndex:currentSingleTabController.artCodeTab.tabIndex + 1];
 
   [self.tabBar addTabWithTitle:currentSingleTabController.title animated:YES];
 }

@@ -60,19 +60,6 @@
 @synthesize defaultToolbar = _defaultToolbar, toolbarViewController = _toolbarViewController, toolbarHeight = _toolbarHeight;
 @synthesize contentViewController = _contentViewController;
 
-
-- (TopBarToolbar *)defaultToolbar
-{
-  if (!_defaultToolbar)
-  {
-    self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
-    self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
-    self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
-    self.defaultToolbar.titleControl.accessibilityIdentifier = @"title control";
-  }
-  return _defaultToolbar;
-}
-
 - (void)setDefaultToolbar:(TopBarToolbar *)defaultToolbar
 {
   if (defaultToolbar == _defaultToolbar)
@@ -334,6 +321,11 @@
 {
   [super viewDidLoad];
   
+  self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
+  self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
+  self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
+  self.defaultToolbar.titleControl.accessibilityIdentifier = @"title control";
+  
   // Adding child views
   [self.defaultToolbar removeFromSuperview];
   [self.view addSubview:self.currentToolbarView];
@@ -343,6 +335,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [self _layoutChildViewsAnimated:NO];
+  [self updateDefaultToolbarTitle];
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -290,7 +290,6 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   }
   
   ASSERT(_mutableDictionary == dictionary);
-  ASSERT([_systemTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
   
   // Force the population of currentProject and currentItem.
   [self _loadFirstValidProjectItem];
