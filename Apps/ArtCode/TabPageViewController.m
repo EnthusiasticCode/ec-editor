@@ -124,11 +124,20 @@
   NSArray *originalChildControllers = self.childViewControllers;
   for (UIViewController *controller in originalChildControllers) {
     if (![childControllers containsObject:controller]) {
+      // If a controller is in the childrens but should not, it will get removed
       [controller willMoveToParentViewController:nil];
       if (controller.isViewLoaded) {
-        [controller.view removeFromSuperview];
+        // Fade out the view if it's loaded
+        [UIView animateWithDuration:0.2 animations:^{
+          controller.view.alpha = 0;
+        } completion:^(BOOL finished) {
+          controller.view.alpha = 1;
+          [controller.view removeFromSuperview];
+          [controller removeFromParentViewController];
+        }];
+      } else {
+        [controller removeFromParentViewController];
       }
-      [controller removeFromParentViewController];
     }
   }
   
@@ -164,7 +173,8 @@
     [_childContainerView addSubview:childController.view];
     [self _layoutSubviews];
   } else {
-    [_childContainerView bringSubviewToFront:childController.view];
+    // If the child controller's view is in the container, it's already the selected tab
+    return;
   }
   childController.view.alpha = 0;
   
