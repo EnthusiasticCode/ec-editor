@@ -72,7 +72,8 @@
   __weak ArtCodeTabPageViewController *this = self;
   // Attach controller's title to tab button
   [[[[singleTabController rac_subscribableForKeyPath:RAC_KEYPATH(singleTabController, title) onObject:singleTabController] distinctUntilChanged] injectObjectWeakly:singleTabController] subscribeNext:^(RACTuple *tuple) {
-    if (tuple.first != [RACTupleNil tupleNil] && tuple.second && [tuple.second artCodeTab]) {
+    if (tuple.first && tuple.first != [RACTupleNil tupleNil] 
+        && tuple.second && [tuple.second artCodeTab]) {
       [this.tabBar setTitle:tuple.first forTabAtIndex:[tuple.second artCodeTab].tabIndex];
     }
   }];
@@ -84,8 +85,8 @@
 
 - (void)tabBar:(TabBar *)tabBar didAddTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
   if (animated) {
-    // Update stored selected index
-    [ArtCodeTab setCurrentTabIndex:tabBar.selectedTabIndex];
+    // Select last added tab if after an animation
+    [tabBar setSelectedTabIndex:tabIndex animated:NO];
   }
 }
 
@@ -141,7 +142,7 @@
   SingleTabController *currentSingleTabController = (SingleTabController *)[self tabPageViewController:self viewControllerForTabAtIndex:self.tabBar.selectedTabIndex];
   
   ArtCodeTab *newTab = [ArtCodeTab duplicateTab:currentSingleTabController.artCodeTab];
-  [ArtCodeTab insertTab:newTab atIndex:currentSingleTabController.artCodeTab.tabIndex + 1];
+  [ArtCodeTab insertTab:newTab atIndex:self.tabBar.tabsCount];
 
   [self.tabBar addTabWithTitle:currentSingleTabController.title animated:YES];
 }

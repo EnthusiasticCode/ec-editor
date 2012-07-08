@@ -358,7 +358,7 @@ static void init(TabBar *self)
   
   [tabControlsContainerView addSubview:newTabControl];
   newTabControl.alpha = 0;
-  [UIView animateWithDuration:animated ? .10 : 0 animations:^(void) {
+  [UIView animateWithDuration:animated ? .20 : 0 animations:^(void) {
     newTabControl.alpha = 1;
   } completion:^(BOOL finished) {
     if (delegateFlags.hasDidAddTabAtIndexAnimated)
@@ -426,7 +426,7 @@ static void init(TabBar *self)
       movedTabOffsetFromCenter = CGPointMake(movedTab.center.x - locationInView.x, 0);
       [tabControlsContainerView bringSubviewToFront:movedTab];
       [UIView animateWithDuration:0.2 animations:^(void) {
-        [movedTab setTransform:CGAffineTransformMakeScale(1.25, 1.25)];
+        [movedTab setTransform:CGAffineTransformMakeScale(1.1, 1.1)];
         [movedTab setAlpha:0.75];
       }];
       
