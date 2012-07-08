@@ -107,8 +107,9 @@
   // Clear the controller state to avoid RAC problems
   for (SingleTabController *controller in self.childViewControllers) {
     if (controller.artCodeTab == artCodeTab) {
-//      controller.contentViewController = nil;
       controller.defaultToolbar = nil;
+      controller.artCodeTab = nil;
+      [controller setContentViewController:nil animated:NO];
       break;
     }
   }
