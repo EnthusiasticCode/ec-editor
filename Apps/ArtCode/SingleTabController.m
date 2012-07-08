@@ -336,6 +336,7 @@
 {
   [self _layoutChildViewsAnimated:NO];
   [self updateDefaultToolbarTitle];
+  self.defaultToolbar.titleControl.loadingMode = self.artCodeTab.isLoading;
 }
 
 - (void)viewDidAppear:(BOOL)animated

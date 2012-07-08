@@ -17,7 +17,7 @@
 - (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
 
 - (BOOL)tabBar:(TabBar *)tabBar willAddTabAtIndex:(NSUInteger)tabIndex;
-- (void)tabBar:(TabBar *)tabBar didAddTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
+- (void)tabBar:(TabBar *)tabBar didAddTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;

@@ -41,7 +41,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     unsigned int hasWillSelectTabControlAtIndex :1;
     unsigned int hasDidSelectTabControlAtIndex : 1;
     unsigned int hasWillAddTabAtIndex :1;
-    unsigned int hasDidAddTabControlAtIndex : 1;
+    unsigned int hasDidAddTabAtIndexAnimated : 1;
     unsigned int hasWillRemoveTabControlAtIndex : 1;
     unsigned int hasDidRemoveTabControlAtIndex : 1;
     unsigned int hasWillMoveTabControlAtIndex : 1;
@@ -81,7 +81,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   delegateFlags.hasWillSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabControl:atIndex:)];
   delegateFlags.hasDidSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabControl:atIndex:)];
   delegateFlags.hasWillAddTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabAtIndex:)];
-  delegateFlags.hasDidAddTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabControl:atIndex:)];
+  delegateFlags.hasDidAddTabAtIndexAnimated = [delegate respondsToSelector:@selector(tabBar:didAddTabAtIndex:animated:)];
   delegateFlags.hasWillRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabControl:atIndex:)];
   delegateFlags.hasDidRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabControl:atIndex:)];    
   delegateFlags.hasWillMoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabControl:atIndex:)];
@@ -357,21 +357,13 @@ static void init(TabBar *self)
   tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * (newTabControlIndex + 1), 1);
   
   [tabControlsContainerView addSubview:newTabControl];
-  if (!animated)
-  {        
-    if (delegateFlags.hasDidAddTabControlAtIndex)
-      [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
-  }
-  else
-  {
-    newTabControl.alpha = 0;
-    [UIView animateWithDuration:.10 animations:^(void) {
-      newTabControl.alpha = 1;
-    } completion:^(BOOL finished) {
-      if (delegateFlags.hasDidAddTabControlAtIndex)
-        [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
-    }];
-  }
+  newTabControl.alpha = 0;
+  [UIView animateWithDuration:animated ? .10 : 0 animations:^(void) {
+    newTabControl.alpha = 1;
+  } completion:^(BOOL finished) {
+    if (delegateFlags.hasDidAddTabAtIndexAnimated)
+      [delegate tabBar:self didAddTabAtIndex:newTabControlIndex animated:animated];
+  }];
 }
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated

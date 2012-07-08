@@ -33,6 +33,7 @@
   [super viewDidLoad];
   
   // Adjust tab bar appearence
+  self.tabBar.delegate = self;
   self.tabBar.backgroundColor = [UIColor blackColor];
   self.tabBar.tabControlInsets = UIEdgeInsetsMake(5, 3, 0, 3);
   // TODO change child container view background to white
@@ -82,17 +83,42 @@
 #pragma mark - TabBar delegate
 
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
+  // Don't close if it's the last tab
+  if (tabBar.tabsCount == 1) {
+    return NO;
+  }
+  
+  // If this was the selected tab, change the selection to the closest one
+  // This may not be the case if a tab closes automatically for history cleanup
+  if (self.tabBar.selectedTabIndex == tabIndex) {
+    [self.tabBar setSelectedTabIndex:tabIndex ? tabIndex - 1 : 1 animated:YES];
+  }
+  
+  // Get the art code tab to remove
   ArtCodeTab *artCodeTab = [[ArtCodeTab allTabs] objectAtIndex:tabIndex];
+  
+  // Clear the controller state to avoid RAC problems
   for (SingleTabController *controller in self.childViewControllers) {
     if (controller.artCodeTab == artCodeTab) {
-      controller.contentViewController = nil;
+//      controller.contentViewController = nil;
       controller.defaultToolbar = nil;
+      break;
     }
   }
+  
+  // Remove the tab
   [artCodeTab remove];
+  
   return YES;
 }
 
+- (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
+  [ArtCodeTab setCurrentTabIndex:tabIndex];
+}
+
+- (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
+  [ArtCodeTab moveTabAtIndex:fromIndex toIndex:toIndex];
+}
 
 #pragma mark - Private methods
 
