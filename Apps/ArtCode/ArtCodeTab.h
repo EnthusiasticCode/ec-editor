@@ -10,18 +10,36 @@
 
 @class ACProject, DocSet;
 
+extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
+
 @interface ArtCodeTab : NSObject
 
+/// Get an array of all tabs ordered as they shoyld be displayed
 + (NSArray *)allTabs;
-+ (ArtCodeTab *)blankTab;
-+ (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
-+ (void)removeTab:(ArtCodeTab *)tab;
+
++ (void)insertTab:(ArtCodeTab *)tab atIndex:(NSUInteger)index;
++ (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex;
++ (void)removeTabAtIndex:(NSUInteger)tabIndex;
+
+/// Get or set the current selected tab index that will be persisted.
 + (NSUInteger)currentTabIndex;
 + (void)setCurrentTabIndex:(NSUInteger)currentTabIndex;
+
+// TODO this methods should not automatically modify the allTabs array
+/// Generate a new tab without any URL in it's history
++ (ArtCodeTab *)blankTab;
++ (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
+
+#pragma mark Tab attributes
 
 @property (nonatomic, readonly, getter = isLoading) BOOL loading;
 
 @property (nonatomic, strong, readonly) NSArray *historyURLs;
+
+@property (nonatomic, readonly) NSUInteger tabIndex;
+
+/// Remove the tab from the system tabs
+- (void)remove;
 
 #pragma mark Current state
 

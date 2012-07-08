@@ -21,8 +21,10 @@ static NSString * const _currentTabKey = @"ArtCodeTabCurrent";
 static NSString * const _historyURLsKey = @"HistoryURLs";
 static NSString * const _currentHistoryPositionKey = @"currentHistoryPosition";
 
-static NSMutableArray *_mutableTabDictionaries;
-static NSMutableArray *_mutableTabs;
+static NSMutableArray *_systemTabDictionaries;
+static NSMutableArray *_systemTabs;
+
+NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeAllTabs";
 
 @interface ArtCodeTab ()
 
@@ -54,34 +56,74 @@ static NSMutableArray *_mutableTabs;
     return;
   
   // Load persitent history
-  _mutableTabDictionaries = [[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:_tabListKey]];
-  if (!_mutableTabDictionaries) {
-    _mutableTabDictionaries = [[NSMutableArray alloc] init];
+  _systemTabDictionaries = [[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:_tabListKey]];
+  if (!_systemTabDictionaries) {
+    _systemTabDictionaries = [[NSMutableArray alloc] init];
   }
   
   // Create tabs
-  _mutableTabs = [[NSMutableArray alloc] init];
-  if (![_mutableTabDictionaries count]) {
-    [self blankTab]; // no need to do anything with the return value, it will be automatically added to the class arrays
+  _systemTabs = [[NSMutableArray alloc] init];
+  if (![_systemTabDictionaries count]) {
+    [self insertTab:[self blankTab] atIndex:0];
   } else {
-    for (NSMutableDictionary *dictionary in _mutableTabDictionaries) {
-      [_mutableTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
+    for (NSMutableDictionary *dictionary in _systemTabDictionaries) {
+      [_systemTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
     }
   }
 }
 
-+ (NSArray *)allTabs
-{
-  return [_mutableTabs copy];
++ (NSArray *)allTabs {
+  return [_systemTabs copy];
+}
+
++ (void)insertTab:(ArtCodeTab *)tab atIndex:(NSUInteger)index {
+  ASSERT(index >= 0 && index <= _systemTabs.count);
+  
+  // Update user defaults
+  [_systemTabDictionaries insertObject:tab->_mutableDictionary atIndex:index];
+  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
+
+  // Update working array
+  [_systemTabs insertObject:tab atIndex:index];
+  
+  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
+}
+
++ (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
+  if (fromIndex == toIndex)
+    return;
+  
+  ArtCodeTab *tab = [_systemTabs objectAtIndex:fromIndex];
+  
+  // Update user defaults
+  [_systemTabDictionaries removeObjectAtIndex:fromIndex];
+  [_systemTabDictionaries insertObject:tab->_mutableDictionary atIndex:toIndex];
+  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
+  
+  // Update working array
+  [_systemTabs removeObjectAtIndex:fromIndex];
+  [_systemTabs insertObject:tab atIndex:toIndex];
+  
+  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
+}
+
++ (void)removeTabAtIndex:(NSUInteger)tabIndex {
+  ASSERT(tabIndex >= 0 && tabIndex <= _systemTabs.count);
+  
+  // Update user defaults
+  [_systemTabDictionaries removeObjectAtIndex:tabIndex];
+  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
+  
+  // Update working array
+  [_systemTabs removeObjectAtIndex:tabIndex];
+  
+  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
 }
 
 + (ArtCodeTab *)blankTab
 {
   NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-  [_mutableTabDictionaries addObject:dictionary];
-  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary]; 
-  [_mutableTabs addObject:newTab];
   return newTab;
 }
 
@@ -89,19 +131,8 @@ static NSMutableArray *_mutableTabs;
 {
   ASSERT(tab);
   NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] objectAtIndex:[[tab->_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue]]], _historyURLsKey, nil];
-  [_mutableTabDictionaries addObject:dictionary];
-  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
   ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
-  [_mutableTabs addObject:newTab];
   return newTab;
-}
-
-+ (void)removeTab:(ArtCodeTab *)tab
-{
-  ASSERT(tab);
-  [_mutableTabs removeObject:tab];
-  [_mutableTabDictionaries removeObject:tab->_mutableDictionary];
-  [[NSUserDefaults standardUserDefaults] setObject:_mutableTabDictionaries forKey:_tabListKey];
 }
 
 + (NSUInteger)currentTabIndex {
@@ -113,6 +144,10 @@ static NSMutableArray *_mutableTabs;
 }
 
 #pragma mark - Properties
+
+- (NSUInteger)tabIndex {
+  return [_systemTabs indexOfObject:self];
+}
 
 - (NSArray *)historyURLs
 {
@@ -185,7 +220,6 @@ static NSMutableArray *_mutableTabs;
   }
   
   ASSERT(_mutableDictionary == dictionary);
-  ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
   
   return self;
 }
@@ -193,6 +227,10 @@ static NSMutableArray *_mutableTabs;
 - (id)init
 {
   return [self _initWithDictionary:nil];
+}
+
+- (void)remove {
+  [ArtCodeTab removeTabAtIndex:self.tabIndex];
 }
 
 - (void)pushURL:(NSURL *)url

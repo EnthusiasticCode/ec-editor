@@ -804,7 +804,7 @@ static void init(CodeView *self)
     if (_pairingStringDictionary.count) {
       if (selection.length > 0
           || selection.location == self.text.length 
-          || [[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[self.text characterAtIndex:selection.location]]) {
+          || ! [[NSCharacterSet alphanumericCharacterSet] characterIsMember:[self.text characterAtIndex:selection.location]]) {
         NSString *pairedWithString = [self.pairingStringDictionary objectForKey:string];
         if (pairedWithString) {
           if (selection.length > 0) {

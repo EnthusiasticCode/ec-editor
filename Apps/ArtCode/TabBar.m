@@ -41,7 +41,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
     unsigned int hasWillSelectTabControlAtIndex :1;
     unsigned int hasDidSelectTabControlAtIndex : 1;
     unsigned int hasWillAddTabAtIndex :1;
-    unsigned int hasDidAddTabControlAtIndex : 1;
+    unsigned int hasDidAddTabAtIndexAnimated : 1;
     unsigned int hasWillRemoveTabControlAtIndex : 1;
     unsigned int hasDidRemoveTabControlAtIndex : 1;
     unsigned int hasWillMoveTabControlAtIndex : 1;
@@ -81,7 +81,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   delegateFlags.hasWillSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willSelectTabControl:atIndex:)];
   delegateFlags.hasDidSelectTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didSelectTabControl:atIndex:)];
   delegateFlags.hasWillAddTabAtIndex = [delegate respondsToSelector:@selector(tabBar:willAddTabAtIndex:)];
-  delegateFlags.hasDidAddTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didAddTabControl:atIndex:)];
+  delegateFlags.hasDidAddTabAtIndexAnimated = [delegate respondsToSelector:@selector(tabBar:didAddTabAtIndex:animated:)];
   delegateFlags.hasWillRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willRemoveTabControl:atIndex:)];
   delegateFlags.hasDidRemoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:didRemoveTabControl:atIndex:)];    
   delegateFlags.hasWillMoveTabControlAtIndex = [delegate respondsToSelector:@selector(tabBar:willMoveTabControl:atIndex:)];
@@ -303,9 +303,13 @@ static void init(TabBar *self)
 
 #pragma mark - Managing Tabs
 
+- (NSUInteger)tabsCount {
+  return tabControls.count;
+}
+
 - (NSUInteger)selectedTabIndex
 {
-  return [tabControls indexOfObject:selectedTabControl];
+  return selectedTabControl ? [tabControls indexOfObject:selectedTabControl] : NSNotFound;
 }
 
 - (void)setSelectedTabIndex:(NSUInteger)index
@@ -334,9 +338,10 @@ static void init(TabBar *self)
     tabControls = [NSMutableArray new];
   
   // Creating new tab control
-  //UIControl *newTabControl = [delegate tabBar:self controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
+  [self willChangeValueForKey:@"tabsCount"];
   UIControl *newTabControl = [self _controlForTabWithTitle:(title ? title : @"") atIndex:newTabControlIndex];
   [tabControls addObject:newTabControl];
+  [self didChangeValueForKey:@"tabsCount"];
   
   // Assigning default tab control selection action
   [newTabControl addTarget:self action:@selector(_setSelectedTabControl:) forControlEvents:UIControlEventTouchUpInside];
@@ -352,21 +357,13 @@ static void init(TabBar *self)
   tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * (newTabControlIndex + 1), 1);
   
   [tabControlsContainerView addSubview:newTabControl];
-  if (!animated)
-  {        
-    if (delegateFlags.hasDidAddTabControlAtIndex)
-      [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
-  }
-  else
-  {
-    newTabControl.alpha = 0;
-    [UIView animateWithDuration:.10 animations:^(void) {
-      newTabControl.alpha = 1;
-    } completion:^(BOOL finished) {
-      if (delegateFlags.hasDidAddTabControlAtIndex)
-        [delegate tabBar:self didAddTabControl:newTabControl atIndex:newTabControlIndex];
-    }];
-  }
+  newTabControl.alpha = 0;
+  [UIView animateWithDuration:animated ? .20 : 0 animations:^(void) {
+    newTabControl.alpha = 1;
+  } completion:^(BOOL finished) {
+    if (delegateFlags.hasDidAddTabAtIndexAnimated)
+      [delegate tabBar:self didAddTabAtIndex:newTabControlIndex animated:animated];
+  }];
 }
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
@@ -429,7 +426,7 @@ static void init(TabBar *self)
       movedTabOffsetFromCenter = CGPointMake(movedTab.center.x - locationInView.x, 0);
       [tabControlsContainerView bringSubviewToFront:movedTab];
       [UIView animateWithDuration:0.2 animations:^(void) {
-        [movedTab setTransform:CGAffineTransformMakeScale(1.25, 1.25)];
+        [movedTab setTransform:CGAffineTransformMakeScale(1.1, 1.1)];
         [movedTab setAlpha:0.75];
       }];
       
@@ -565,10 +562,14 @@ static void init(TabBar *self)
       && ![delegate tabBar:self willSelectTabControl:tabControl atIndex:tabIndex])
     return;
   
+  [self willChangeValueForKey:@"selectedTabIndex"];
+  
   // Change selection
   [selectedTabControl setSelected:NO];
   selectedTabControl = tabControl; // TODO!!! make this weak
   [selectedTabControl setSelected:YES];
+  
+  [self didChangeValueForKey:@"selectedTabIndex"];
   
   // Scroll to fully show tab
   CGRect selectedTabFrame = selectedTabControl.frame;
@@ -576,21 +577,12 @@ static void init(TabBar *self)
   selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
   selectedTabFrame.origin.y = 0;
   selectedTabFrame.size.height = 1;
-  if (animated)
-  {
-    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
-      [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
-    } completion:^(BOOL finished) {
-      if (delegateFlags.hasDidSelectTabControlAtIndex)
-        [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-    }];
-  }
-  else
-  {
+  [UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
     [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
+  } completion:^(BOOL finished) {
     if (delegateFlags.hasDidSelectTabControlAtIndex)
       [delegate tabBar:self didSelectTabControl:tabControl atIndex:tabIndex];
-  }
+  }];
 }
 
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated
@@ -604,7 +596,9 @@ static void init(TabBar *self)
       && ![delegate tabBar:self willRemoveTabControl:tabControl atIndex:tabIndex])
     return;
   
+  [self willChangeValueForKey:@"tabsCount"];
   [tabControls removeObjectAtIndex:tabIndex];
+  [self didChangeValueForKey:@"tabsCount"];
   
   if (tabControl.reuseIdentifier)
   {

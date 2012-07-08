@@ -17,7 +17,7 @@
 - (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
 
 - (BOOL)tabBar:(TabBar *)tabBar willAddTabAtIndex:(NSUInteger)tabIndex;
-- (void)tabBar:(TabBar *)tabBar didAddTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
+- (void)tabBar:(TabBar *)tabBar didAddTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
 - (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex;
@@ -50,7 +50,13 @@
 #pragma mark Managing Tabs
 
 @property (nonatomic, readonly, copy) NSArray *tabControls;
+
+/// The index of the currently selected tab. This can return NSNotFound if there is no selected tab.
 @property (nonatomic) NSUInteger selectedTabIndex;
+
+/// This property reflect the tabControls.count but it's observable.
+@property (nonatomic, readonly) NSUInteger tabsCount;
+
 - (void)setSelectedTabIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 - (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated;
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;

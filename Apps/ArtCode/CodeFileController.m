@@ -15,7 +15,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "BezelAlert.h"
-#import "TabController.h"
 #import "TMTheme.h"
 #import "UIColor+Contrast.h"
 #import "UIColor+AppStyle.h"
@@ -428,7 +427,8 @@ static void drawStencilStar(CGContextRef myContext)
       
     case 2: // toggle tabs
     {
-      [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
+      // TODO
+//      [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
       break;
     }
       

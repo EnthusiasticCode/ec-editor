@@ -9,10 +9,8 @@
 #import "ArtCodeAppDelegate.h"
 
 #import "CodeView.h"
-#import "UIControl+BlockAction.h"
 
 #import "AppStyle.h"
-#import "TabController.h"
 
 #import "SingleTabController.h"
 
@@ -24,12 +22,14 @@
 #import "PopoverButton.h"
 
 #import "ArtCodeTab.h"
+#import "ArtCodeTabPageViewController.h"
 
 
-@implementation ArtCodeAppDelegate
+@implementation ArtCodeAppDelegate {
+  ArtCodeTabPageViewController *_tabPageController;
+}
 
 @synthesize window = _window;
-@synthesize tabController = _tabController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   UIFont *defaultFont = [UIFont styleFontWithSize:14];
@@ -106,39 +106,37 @@
   
   ////////////////////////////////////////////////////////////////////////////
   // Creating main tab controllers
-  self.tabController = [[TabController alloc] init];
-  self.tabController.tabBar.backgroundColor = [UIColor blackColor];
-  self.tabController.tabBar.tabControlInsets = UIEdgeInsetsMake(2, 3, 0, 3);
-  self.tabController.definesPresentationContext = YES;
+  _tabPageController = [ArtCodeTabPageViewController new];
+  _tabPageController.definesPresentationContext = YES;
   // Add tab button
-  UIButton *addTabButton = [UIButton new];
-  [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
-  [addTabButton setActionBlock:^(id sender) {
-    // Duplicate current tab
-    SingleTabController *singleTabController = [[SingleTabController alloc] init];
-    singleTabController.artCodeTab = [ArtCodeTab duplicateTab:self.tabController.selectedViewController.artCodeTab];
-    [self.tabController addChildViewController:singleTabController animated:YES];
-  } forControlEvent:UIControlEventTouchUpInside];
-  self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
-  self.tabController.contentScrollView.accessibilityIdentifier = @"tabs scrollview";
+//  UIButton *addTabButton = [UIButton new];
+//  [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
+//  [addTabButton setActionBlock:^(id sender) {
+//    // Duplicate current tab
+//    SingleTabController *singleTabController = [[SingleTabController alloc] init];
+//    singleTabController.artCodeTab = [ArtCodeTab duplicateTab:self.tabController.selectedViewController.artCodeTab];
+//    [self.tabController addChildViewController:singleTabController animated:YES];
+//  } forControlEvent:UIControlEventTouchUpInside];
+//  self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
+//  self.tabController.contentScrollView.accessibilityIdentifier = @"tabs scrollview";
   
   ////////////////////////////////////////////////////////////////////////////
   // Setup window
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-  self.window.rootViewController = self.tabController;
+  self.window.rootViewController = _tabPageController;
   
   ////////////////////////////////////////////////////////////////////////////
   // Resume tabs
-  for (ArtCodeTab *tab in [ArtCodeTab allTabs])
-  {
-    SingleTabController *singleTabController = [[SingleTabController alloc] init];
-    singleTabController.artCodeTab = tab;
-    [self.tabController addChildViewController:singleTabController];
-  }
-  [self.tabController setSelectedViewControllerIndex:[ArtCodeTab currentTabIndex]];
-  [RACAbleSelf(tabController.selectedViewControllerIndex) subscribeNext:^(NSNumber *x) {
-    [ArtCodeTab setCurrentTabIndex:x.unsignedIntegerValue];
-  }];
+//  for (ArtCodeTab *tab in [ArtCodeTab allTabs])
+//  {
+//    SingleTabController *singleTabController = [[SingleTabController alloc] init];
+//    singleTabController.artCodeTab = tab;
+//    [self.tabController addChildViewController:singleTabController];
+//  }
+//  [self.tabController setSelectedViewControllerIndex:[ArtCodeTab currentTabIndex]];
+//  [RACAbleSelf(tabController.selectedViewControllerIndex) subscribeNext:^(NSNumber *x) {
+//    [ArtCodeTab setCurrentTabIndex:x.unsignedIntegerValue];
+//  }];
 //  [self.tabController setTabBarVisible:NO];
   
   // Start the application

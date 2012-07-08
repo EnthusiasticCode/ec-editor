@@ -7,7 +7,6 @@
 //
 
 #import "SingleTabController.h"
-#import "TabController.h"
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 #import <QuartzCore/QuartzCore.h>
@@ -56,19 +55,6 @@
 
 @synthesize defaultToolbar = _defaultToolbar, toolbarViewController = _toolbarViewController, toolbarHeight = _toolbarHeight;
 @synthesize contentViewController = _contentViewController;
-
-
-- (TopBarToolbar *)defaultToolbar
-{
-  if (!_defaultToolbar)
-  {
-    self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
-    self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
-    self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
-    self.defaultToolbar.titleControl.accessibilityIdentifier = @"title control";
-  }
-  return _defaultToolbar;
-}
 
 - (void)setDefaultToolbar:(TopBarToolbar *)defaultToolbar
 {
@@ -152,6 +138,10 @@
   _contentViewController = contentViewController;
 
   [self didChangeValueForKey:@"contentViewController"];
+}
+
++ (BOOL)automaticallyNotifiesObserversOfContentViewController {
+  return NO;
 }
 
 - (UIView *)currentToolbarView
@@ -317,13 +307,6 @@
     [this updateDefaultToolbarTitle];
   }];
   
-  // TODO NIK self.tabCollectionController remove self if self.artCodeTab history is empty
-  [RACAbleSelf(self.artCodeTab.historyURLs) subscribeNext:^(NSArray *urls) {
-    if ([urls count] == 0) {
-      [this.tabCollectionController removeChildViewController:this animated:YES];
-    }
-  }];
-  
   return self;
 }
 
@@ -338,6 +321,11 @@
 {
   [super viewDidLoad];
   
+  self.defaultToolbar = [[TopBarToolbar alloc] initWithFrame:CGRectMake(0, 0, 300, 44)];
+  self.defaultToolbar.accessibilityIdentifier = @"default toolbar";
+  self.defaultToolbar.titleControl.accessibilityHint = L(@"Open quick navigation browsers");
+  self.defaultToolbar.titleControl.accessibilityIdentifier = @"title control";
+  
   // Adding child views
   [self.defaultToolbar removeFromSuperview];
   [self.view addSubview:self.currentToolbarView];
@@ -347,6 +335,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [self _layoutChildViewsAnimated:NO];
+  //
+  [self updateDefaultToolbarTitle];
+  self.defaultToolbar.titleControl.loadingMode = self.artCodeTab.isLoading;
+  self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
+  self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
 }
 
 - (void)viewDidAppear:(BOOL)animated
