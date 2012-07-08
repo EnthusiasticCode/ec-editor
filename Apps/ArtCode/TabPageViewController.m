@@ -40,13 +40,6 @@
   [self didChangeValueForKey:@"tabBarVisible"];
 }
 
-//- (TabBar *)tabBar {
-//  if (!self.isViewLoaded) {
-//    [self view];
-//  }
-//  return _tabBar;
-//}
-
 #pragma mark - Controller lifecycle
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {

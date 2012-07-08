@@ -82,6 +82,13 @@
 
 #pragma mark - TabBar delegate
 
+- (void)tabBar:(TabBar *)tabBar didAddTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
+  if (animated) {
+    // Update stored selected index
+    [ArtCodeTab setCurrentTabIndex:tabBar.selectedTabIndex];
+  }
+}
+
 - (BOOL)tabBar:(TabBar *)tabBar willRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
   // Don't close if it's the last tab
   if (tabBar.tabsCount == 1) {
@@ -112,12 +119,19 @@
   return YES;
 }
 
+- (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
+  // Update stored selected index
+  [ArtCodeTab setCurrentTabIndex:tabBar.selectedTabIndex];
+}
+
 - (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
   [ArtCodeTab setCurrentTabIndex:tabIndex];
 }
 
 - (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
   [ArtCodeTab moveTabAtIndex:fromIndex toIndex:toIndex];
+  // Update stored selected index
+  [ArtCodeTab setCurrentTabIndex:tabBar.selectedTabIndex];
 }
 
 #pragma mark - Private methods
