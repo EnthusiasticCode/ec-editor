@@ -753,6 +753,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     {
       segment.renderWrapWidth = wrapWidth;
     }
+    _needsUpdate = YES;
   }
   dispatch_semaphore_signal(textSegmentsSemaphore);
 }
