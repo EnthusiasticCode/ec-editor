@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "CodeView.h"
 #import "CodeFileMinimapView.h"
-#import "ACProjectFile.h"
 #import "TMKeyboardAction.h"
 
 @class ArtCodeTab, TMTheme, TMUnit;

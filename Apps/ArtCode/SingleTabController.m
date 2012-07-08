@@ -17,10 +17,6 @@
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectFileSystemItem.h"
-#import "ACProjectFileBookmark.h"
-#import "ACProjectRemote.h"
 
 #import "ProjectBrowserController.h"
 #import "FileBrowserController.h"

@@ -35,9 +35,6 @@
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectFile.h"
-#import "ACProjectFileBookmark.h"
 
 #import "DiffMatchPatch.h"
 

@@ -10,9 +10,6 @@
 #import <Connection/CKConnectionRegistry.h>
 #import "ArtCodeURL.h"
 #import "ACProject.h"
-#import "ACProjectFileSystemItem.h"
-#import "ACProjectFolder.h"
-#import "ACProjectFile.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
 

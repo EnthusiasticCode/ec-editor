@@ -9,7 +9,6 @@
 #import "NewProjectImportController.h"
 
 #import "ACProject.h"
-#import "ACProjectFolder.h"
 
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"

@@ -10,7 +10,6 @@
 #import "SingleTabController.h"
 
 #import "CodeFileController.h"
-#import "ACProjectFile.h"
 #import "NSTimer+BlockTimer.h"
 #import "CodeView.h"
 #import "TextRange.h"

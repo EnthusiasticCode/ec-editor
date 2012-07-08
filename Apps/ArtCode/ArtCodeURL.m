@@ -9,7 +9,6 @@
 #import "ArtCodeURL.h"
 
 #import "ACProject.h"
-#import "ACProjectItem.h"
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
@@ -72,36 +71,6 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 - (BOOL)isArtCodeProjectRemotesList
 {
   return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectRemoteListPath];
-}
-
-- (NSArray *)artCodeUUIDs
-{
-  // TODO cache?
-  static NSRegularExpression *uuidRegExp = nil;
-  if (!uuidRegExp)
-    uuidRegExp = [NSRegularExpression regularExpressionWithPattern:@"([\\da-f]{8}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{4}-[\\da-f]{12})-?" options:NSRegularExpressionCaseInsensitive error:NULL];
-  
-  NSMutableArray *uuids = [NSMutableArray arrayWithCapacity:2];
-  [uuidRegExp enumerateMatchesInString:self.host options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, [self.host length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-    [uuids addObject:[self.host substringWithRange:[result rangeAtIndex:1]]]; 
-  }];
-  return [uuids copy];
-}
-
-- (id)artCodeProjectUUID {
-  NSArray *artCodeUUIDs = self.artCodeUUIDs;
-  if (!artCodeUUIDs.count) {
-    return nil;
-  }
-  return [self.artCodeUUIDs objectAtIndex:0];
-}
-
-- (id)artCodeItemUUID {
-  NSArray *artCodeUUIDs = self.artCodeUUIDs;
-  if (artCodeUUIDs.count < 2) {
-    return nil;
-  }
-  return [self.artCodeUUIDs objectAtIndex:1];
 }
 
 - (NSString *)prettyPath

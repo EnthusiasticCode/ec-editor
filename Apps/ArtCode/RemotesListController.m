@@ -11,7 +11,6 @@
 
 #import "ArtCodeTab.h"
 #import "ACProject.h"
-#import "ACProjectRemote.h"
 
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"

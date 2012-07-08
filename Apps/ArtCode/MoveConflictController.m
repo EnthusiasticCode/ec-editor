@@ -9,8 +9,6 @@
 #import "MoveConflictController.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
-#import "ACProjectFileSystemItem.h"
-#import "ACProjectFolder.h"
 #import "UIImage+AppStyle.h"
 
 @implementation MoveConflictController {

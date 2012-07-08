@@ -17,7 +17,6 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
-#import "ACProjectFolder.h"
 
 #import "DocSetDownloadManager.h"
 #import "DocSet.h"
@@ -25,6 +24,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
+#import "NSFileManager+FileCoordination.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
@@ -127,9 +127,9 @@
       [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
       // When deleting a project
-      NSString *projectUUID = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] UUID];
+      NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
       [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ACProject class]] && [projectUUID isEqualToString:[obj UUID]]) {
+        if ([obj isKindOfClass:[ACProject class]] && [projectName isEqualToString:[obj name]]) {
           index = idx;
           *stop = YES;
         }
@@ -341,14 +341,17 @@
       NSArray *oldElements = self.gridElements;
       [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
-          [ACProject removeProjectWithUUID:[obj UUID]];
+          [NSFileManager coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[obj presentedItemURL]] completionHandler:^(NSError *error) {
+            // Show bezel alert
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+          }];
         } else if ([obj isKindOfClass:[DocSet class]]) {
           [[DocSetDownloadManager sharedDownloadManager] deleteDocSet:obj];
+          // Show bezel alert
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
       }];
       
-      // Show bezel alert
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
     }
   }
   else if (actionSheet == _toolItemExportActionSheet)
@@ -371,18 +374,15 @@
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
           ACProject *project = obj;
-          [project openWithCompletionHandler:^(BOOL openSuccess) {
-            NSURL *publishURL = [NSURL temporaryDirectory];
-            [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
-              if (publishSuccess) {
-                NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-                [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-              }
-              [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
-              [project closeWithCompletionHandler:nil];
-              // TODO error handling?
-              progressBlock();
-            }];
+          NSURL *publishURL = [NSURL temporaryDirectory];
+          [project publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+            if (!error) {
+              NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+            }
+            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+            // TODO error handling?
+            progressBlock();
           }];
         } else {
           // Not a project
@@ -440,20 +440,17 @@
           [subject appendFormat:@"%@, ", project.name];
           
           // Process project
-          [project openWithCompletionHandler:^(BOOL openSuccess) {
             NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
             NSURL *publishURL = [NSURL temporaryDirectory];
-            [project.contentsFolder publishContentsToURL:publishURL completionHandler:^(BOOL publishSuccess) {
-              if (publishSuccess) {
-                [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-                // Add attachment
-                [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-                [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
-              }
-              [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
-              [project closeWithCompletionHandler:nil];
-              progressCompletion();
-            }];
+          [project publishContentsToURL:publishURL completionHandler:^(NSError *error) {
+            if (!error) {
+              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
+              // Add attachment
+              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+              [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
+            }
+            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+            progressCompletion();
           }];
         } else {
           // Ignore non projects
@@ -544,7 +541,6 @@
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
     [(ACProject *)[ACProject.projects.allValues objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate) {
-      [duplicate closeWithCompletionHandler:nil];
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;
       }

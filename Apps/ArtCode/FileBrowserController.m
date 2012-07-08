@@ -32,10 +32,6 @@
 #import "TopBarTitleControl.h"
 
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectFileSystemItem.h"
-#import "ACProjectFolder.h"
-#import "ACProjectRemote.h"
 
 #import "UIViewController+Utilities.h"
 #import "NSArray+ScoreForAbbreviation.h"

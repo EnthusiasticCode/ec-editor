@@ -91,33 +91,21 @@
     self.descriptionLabel.text = L(@"A project name must be specified.");
     return;
   }
-  BOOL validName = YES;
-  for (ACProject *p in [ACProject projects].allValues) {
-    if ([projectName isEqualToString:p.name]) {
-      validName = NO;
-      break;
-    }
-  }
-  if (!validName) {
-    [self.projectNameTextField selectAll:nil];
-    self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
-    return;
-  }
   
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorButton.enabled = NO;
   self.projectNameTextField.enabled = NO;
-  [ACProject createProjectWithName:projectName labelColor:projectColor completionHandler:^(ACProject *createdProject) {
+  [ACProject createProjectWithName:projectName completionHandler:^(ACProject *project) {
     [self stopRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = YES;
     self.projectNameTextField.enabled = YES;
-    if (createdProject) {
-      [createdProject closeWithCompletionHandler:^(BOOL success) {
-        [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-      }];
+    if (!project) {
+      [self.projectNameTextField selectAll:nil];
+      self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
     } else {
-      ASSERT(NO); // TODO never reaches this point
+      project.labelColor = projectColor;
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }
   }];
 }

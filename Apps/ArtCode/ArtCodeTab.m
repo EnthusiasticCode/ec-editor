@@ -9,8 +9,6 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectFileBookmark.h"
 
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
@@ -30,18 +28,12 @@ static NSMutableArray *_mutableTabs;
 
 @property (nonatomic, getter = isLoading) BOOL loading;
 @property (nonatomic, strong) ACProject *currentProject;
-@property (nonatomic, strong) ACProjectItem *currentItem;
 @property (nonatomic, strong) DocSet *currentDocSet;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 
-- (void)_loadFirstValidProjectItem;
-
 /// Moves the current URL for the tab and populate current project and item if neccessary.
-- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void(^)(BOOL success))completionHandler;
-
-/// Removes hisotry entries with an URL containing the given UUID and updates properties.
-- (void)_removeHistoryEntriesContainingUUID:(id)uuid;
+- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
 
 @end
 
@@ -52,45 +44,7 @@ static NSMutableArray *_mutableTabs;
   NSMutableArray *_mutableHistoryURLs;
 }
 
-@synthesize loading = _loading, currentProject = _currentProject, currentItem = _currentItem, currentDocSet = _currentDocSet;
-
-- (ACProjectItem *)currentItem {
-  if (_currentItem)
-    return _currentItem;
-  if (_currentProject)
-    return (ACProjectItem *)_currentProject.contentsFolder;
-  return nil;
-}
-
-- (ACProjectFile *)currentFile {
-  switch (self.currentItem.type) {
-    case ACPFile:
-      return (ACProjectFile *)self.currentItem;
-    case ACPFileBookmark:
-      return ((ACProjectFileBookmark *)self.currentItem).file;
-    default:
-      return nil;
-  }
-}
-
-- (ACProjectFolder *)currentFolder {
-  if (self.currentItem.type == ACPFolder) {
-    return (ACProjectFolder *)self.currentItem;
-  }
-  return nil;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingCurrentItem {
-  return [NSSet setWithObject:@"currentProject"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingCurrentFile {
-  return [NSSet setWithObject:@"currentItem"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingCurrentFolder {
-  return [NSSet setWithObject:@"currentItem"];
-}
+@synthesize loading = _loading, currentProject = _currentProject, currentDocSet = _currentDocSet;
 
 #pragma mark - Class methods
 
@@ -114,30 +68,6 @@ static NSMutableArray *_mutableTabs;
       [_mutableTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
     }
   }
-  
-  // React to remove history items from tab's history when a project is eliminated
-  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveProjectNotificationName object:[ACProject class]] subscribeNext:^(NSNotification *note) {
-    ACProject *project = [note.userInfo objectForKey:ACProjectNotificationProjectKey];
-    if (!project)
-      return;
-    
-    id projectUUID = project.UUID;
-    for (ArtCodeTab *tab in _mutableTabs) {
-      [tab _removeHistoryEntriesContainingUUID:projectUUID];
-    }
-  }];
-  
-  // Remove history items from tab when item is eliminated
-  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:ACProjectWillRemoveItem object:nil] subscribeNext:^(NSNotification *note) {
-    ACProjectItem *item = [note.userInfo objectForKey:ACProjectNotificationItemKey];
-    if (!item)
-      return;
-    
-    id itemUUID = item.UUID;
-    for (ArtCodeTab *tab in _mutableTabs) {
-      [tab _removeHistoryEntriesContainingUUID:itemUUID];
-    }
-  }];
 }
 
 + (NSArray *)allTabs
@@ -257,9 +187,6 @@ static NSMutableArray *_mutableTabs;
   ASSERT(_mutableDictionary == dictionary);
   ASSERT([_mutableTabDictionaries indexOfObject:_mutableDictionary] != NSNotFound);
   
-  // Force the population of currentProject and currentItem.
-  [self _loadFirstValidProjectItem];
-  
   return self;
 }
 
@@ -276,9 +203,8 @@ static NSMutableArray *_mutableTabs;
   {
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
     [_mutableHistoryURLs addObject:url];
-    [self _moveFromURL:nil toURL:url completionHandler:^(BOOL success) {
-      self.currentHistoryPosition = 0;
-    }];
+    [self _moveFromURL:nil toURL:url];
+    self.currentHistoryPosition = 0;
     return;
   }
   
@@ -305,9 +231,8 @@ static NSMutableArray *_mutableTabs;
   
   // Get the history position before we initiate the move so it's consistent
   NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;    
-  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition - 1] completionHandler:^(BOOL success) {
-    self.currentHistoryPosition = historyPositionBeforeMove - 1;
-  }];
+  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition - 1]];
+  self.currentHistoryPosition = historyPositionBeforeMove - 1;
 }
 
 - (void)moveForwardInHistory
@@ -317,130 +242,27 @@ static NSMutableArray *_mutableTabs;
   
   // Get the history position before we initiate the move so it's consistent
   NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;
-  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1] completionHandler:^(BOOL success) {
-    self.currentHistoryPosition = historyPositionBeforeMove + 1;
-  }];
+  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1]];
+  self.currentHistoryPosition = historyPositionBeforeMove + 1;
 }
 
 #pragma mark - Private Methods
 
-- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL completionHandler:(void (^)(BOOL))completionHandler {
+- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL {
   if ([toURL isArtCodeURL]) {
     self.currentDocSet = nil;
-    
-    // Handle changes to art code urls
-    id fromProjectUUID = [fromURL artCodeProjectUUID];
-    id toProjectUUID = [toURL artCodeProjectUUID];
-    id toItemUUID = [toURL artCodeItemUUID];
-    
-    // Check if we're changing projects, and if the project we're changing to exists
-    BOOL isChangingProject = NO;
-    ACProject *fromProject = [ACProject projectWithUUID:fromProjectUUID];
-    ACProject *toProject = [ACProject projectWithUUID:toProjectUUID];
+    ACProject *fromProject = [ACProject projectContainingURL:fromURL];
+    ACProject *toProject = [ACProject projectContainingURL:toURL];
     if (fromProject != toProject) {
-      isChangingProject = YES;
-    }
-    
-    // If both are true, we need to make an async load, else we load synchronous
-    if (isChangingProject && toProject)
-    {
-      self.loading = YES;
-      void (^openToProject)(BOOL) = ^(BOOL _) {
-        [toProject openWithCompletionHandler:^(BOOL success) {
-          if (success) {
-            self.currentProject = toProject;
-            if (toItemUUID)
-              self.currentItem = [toProject itemWithUUID:toItemUUID];
-          } else {
-            self.currentProject = nil;
-            self.currentItem = nil;
-          }
-          completionHandler(success);
-          self.loading = NO;
-        }];
-      };
-      if (fromProject) {
-        [fromProject closeWithCompletionHandler:openToProject];
-      } else {
-        openToProject(YES);
-      }
-    }
-    else if (toProject)
-    {
-      // If we're here, the project is the same 
-      self.currentItem = [toProject itemWithUUID:toItemUUID];
-      completionHandler(YES);
-    }
-    else {
-      // If we're here, we're changing to an URL without a project
-      self.currentProject = nil;
-      self.currentItem = nil;
-      completionHandler(YES);
+      self.currentProject = toProject;
     }
   } else if ([toURL.scheme isEqualToString:@"docset"]) {
     // Handle changes to docset urls
     self.currentDocSet = toURL.docSet;
     self.currentProject = nil;
-    self.currentItem = nil;
-    completionHandler(self.currentDocSet != nil);
   } else {
     ASSERT(NO); // URL not handled
   }
-}
-
-- (void)_loadFirstValidProjectItem {
-  [self _moveFromURL:nil toURL:self.currentURL completionHandler:^(BOOL success) {
-    if (!success) {
-      // In case the project couldn't be opened, remove the current history element and try to load the last one
-      [[_mutableDictionary objectForKey:_historyURLsKey] removeLastObject];
-      [_mutableHistoryURLs removeLastObject];
-      [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:(self.currentHistoryPosition - 1)] forKey:_currentHistoryPositionKey];
-      [self _loadFirstValidProjectItem];
-    } else {
-      // KVO to inform of currentURL change
-      self.currentHistoryPosition = self.currentHistoryPosition;
-    }
-  }];
-}
-
-- (void)_removeHistoryEntriesContainingUUID:(id)uuid {
-  // Get the indexes of history entries to remove, also removes identical URLs adjiacent to one another
-  NSMutableIndexSet *removeIndexed = NSMutableIndexSet.new;
-  __block NSString *lastURLString = nil;
-  [(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] enumerateObjectsUsingBlock:^(NSString *URLString, NSUInteger idx, BOOL *stop) {
-    if ([URLString rangeOfString:uuid].location != NSNotFound
-        || [lastURLString isEqualToString:URLString]) {
-      [removeIndexed addIndex:idx];
-    } else {
-      lastURLString = URLString;
-    }
-  }];
-  // Exit if nothing done
-  if (removeIndexed.count == 0)
-    return;
-  
-  [self willChangeValueForKey:@"historyURLs"];
-  NSURL *currentURL = self.currentURL;
-  // Remove history entries
-  [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsAtIndexes:removeIndexed];
-  [_mutableHistoryURLs removeObjectsAtIndexes:removeIndexed];
-  // Adjust current history position
-  NSInteger newHistoryPosition = (NSInteger)self.currentHistoryPosition;
-  NSInteger hisotryCount = (NSInteger)_mutableHistoryURLs.count;
-  while (newHistoryPosition >= hisotryCount || [removeIndexed containsIndex:newHistoryPosition]) {
-    newHistoryPosition--;
-  }
-  // We may not find a new position, in which case the history is completely erased and the tab considered not valid anymore
-  if (newHistoryPosition < 0) {
-    [_mutableHistoryURLs removeAllObjects];
-    [[_mutableDictionary objectForKey:_historyURLsKey] removeAllObjects];
-    [ArtCodeTab removeTab:self];
-  } else {
-    [self _moveFromURL:currentURL toURL:[_mutableHistoryURLs objectAtIndex:newHistoryPosition] completionHandler:^(BOOL success) {
-      self.currentHistoryPosition = newHistoryPosition;
-    }];
-  }
-  [self didChangeValueForKey:@"historyURLs"];
 }
 
 @end

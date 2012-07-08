@@ -9,7 +9,6 @@
 #import "TMSyntaxNode.h"
 #import "TMBundle.h"
 #import <CocoaOniguruma/OnigRegexp.h>
-#import "ACProjectFile.h"
 
 static NSString * const _syntaxDirectory = @"Syntaxes";
 

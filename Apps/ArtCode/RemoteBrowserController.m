@@ -19,8 +19,6 @@
 
 #import "ArtCodeURL.h"
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectRemote.h"
 
 #import <Connection/CKConnectionRegistry.h>
 

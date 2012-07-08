@@ -16,8 +16,6 @@
 #import "CodeFileController.h"
 #import "CodeFileKeyboardAccessoryView.h"
 
-#import "ACProjectFile.h"
-
 
 @interface CodeFileCompletionsController () {
   CGFloat _minimumTypeLabelSize;

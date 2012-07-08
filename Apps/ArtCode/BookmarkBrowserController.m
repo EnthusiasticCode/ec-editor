@@ -14,9 +14,6 @@
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
-#import "ACProjectItem.h"
-#import "ACProjectFile.h"
-#import "ACProjectFileBookmark.h"
 
 #import "HighlightTableViewCell.h"
 

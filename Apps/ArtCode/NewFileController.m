@@ -11,7 +11,6 @@
 
 #import "ArtCodeTab.h"
 #import "ACProject.h"
-#import "ACProjectFolder.h"
 #import "BezelAlert.h"
 
 @implementation NewFileController

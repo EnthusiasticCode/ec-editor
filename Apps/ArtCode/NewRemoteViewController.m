@@ -9,7 +9,6 @@
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
 #import "ACProject.h"
-#import "ACProjectRemote.h"
 
 #import "UIViewController+Utilities.h"
 #import "BezelAlert.h"

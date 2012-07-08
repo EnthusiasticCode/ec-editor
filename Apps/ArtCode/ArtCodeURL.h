@@ -45,14 +45,6 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 /// ie: the URL is in the format artcode://<project uuid>/remotes
 - (BOOL)isArtCodeProjectRemotesList;
 
-/// Gets the UUIDs encoded in the URL if present. The array is sorted with the project UUID at index 0.
-/// ie: the URL is in the format artcode://<project uuid>[-<item uuid>]...
-- (NSArray *)artCodeUUIDs;
-
-/// Returns the UUID of the project or item referenced by the URL or nil
-- (id)artCodeProjectUUID;
-- (id)artCodeItemUUID;
-
 /// Substitute / with ▸
 - (NSString *)prettyPath;
 

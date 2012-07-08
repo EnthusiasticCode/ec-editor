@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class Application, ACProject, ACProjectItem, ACProjectFolder, ACProjectFile, DocSet;
+@class ACProject, DocSet;
 
 @interface ArtCodeTab : NSObject
 
@@ -34,20 +34,10 @@
 /// The current project for the tab's URL.
 @property (nonatomic, strong, readonly) ACProject *currentProject;
 
-/// The current project item for the tab's URL. If no item has been selected by
-/// the URL, the root item of the current project will be returned.
-@property (nonatomic, strong, readonly) ACProjectItem *currentItem;
-
-/// Shorthands for currentItem casting. Will be nil if the currentItem is not of the correct type.
-@property (nonatomic, readonly) ACProjectFile *currentFile;
-
-/// Shorthands for currentItem casting. Will be nil if the currentItem is not an ACProjectFolder.
-@property (nonatomic, strong, readonly) ACProjectFolder *currentFolder;
-
 /// Access to the current URL docset if any.
 @property (nonatomic, strong, readonly) DocSet *currentDocSet;
 
-#pragma mark Hisotry management
+#pragma mark History management
 
 /// A value indicating if calling moveBackInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveBackInHistory;

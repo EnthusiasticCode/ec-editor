@@ -97,12 +97,6 @@
 		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
-		B77100F21506DDD5006AF1FB /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
-		B77100F51506DE6E006AF1FB /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
-		B77100F81506DF34006AF1FB /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
-		B77100FB1506DF57006AF1FB /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
-		B77100FE1506DF88006AF1FB /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
-		B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
 		B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
 		B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101451506E336006AF1FB /* SenTestingKit.framework */; };
 		B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
@@ -128,6 +122,9 @@
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
+		B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
+		B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
+		B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -257,12 +254,6 @@
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
-		B7EB5796151B9B7B0031C977 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
-		B7EB5797151B9B7B0031C977 /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
-		B7EB5798151B9B7B0031C977 /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
-		B7EB5799151B9B7B0031C977 /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
-		B7EB579A151B9B7B0031C977 /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
-		B7EB579B151B9B7B0031C977 /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
 		B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
@@ -282,9 +273,6 @@
 		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
-		B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
-		B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
-		B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A826156EAE5700954D48 /* DocumentWrapper.m */; };
 		B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
@@ -490,12 +478,6 @@
 		CDB5DB6514C6F56A003DFD1F /* ProjectFolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* ProjectFolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
-		CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F11506DDD5006AF1FB /* ACProjectItem.m */; };
-		CDBC78301507CBF800461A71 /* ACProjectFileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */; };
-		CDBC78311507CBF800461A71 /* ACProjectFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100F71506DF34006AF1FB /* ACProjectFile.m */; };
-		CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FA1506DF56006AF1FB /* ACProjectFolder.m */; };
-		CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */; };
-		CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = B77101001506DFC2006AF1FB /* ACProjectRemote.m */; };
 		CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
 		CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */; };
@@ -639,18 +621,6 @@
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
 		B77100ED1506DAFF006AF1FB /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
 		B77100EE1506DAFF006AF1FB /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
-		B77100F01506DDD5006AF1FB /* ACProjectItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectItem.h; sourceTree = "<group>"; };
-		B77100F11506DDD5006AF1FB /* ACProjectItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectItem.m; sourceTree = "<group>"; };
-		B77100F31506DE6E006AF1FB /* ACProjectFileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFileSystemItem.h; sourceTree = "<group>"; };
-		B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileSystemItem.m; sourceTree = "<group>"; };
-		B77100F61506DF34006AF1FB /* ACProjectFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFile.h; sourceTree = "<group>"; };
-		B77100F71506DF34006AF1FB /* ACProjectFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFile.m; sourceTree = "<group>"; };
-		B77100F91506DF56006AF1FB /* ACProjectFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFolder.h; sourceTree = "<group>"; };
-		B77100FA1506DF56006AF1FB /* ACProjectFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFolder.m; sourceTree = "<group>"; };
-		B77100FC1506DF88006AF1FB /* ACProjectFileBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectFileBookmark.h; sourceTree = "<group>"; };
-		B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectFileBookmark.m; sourceTree = "<group>"; };
-		B77100FF1506DFC2006AF1FB /* ACProjectRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProjectRemote.h; sourceTree = "<group>"; };
-		B77101001506DFC2006AF1FB /* ACProjectRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectRemote.m; sourceTree = "<group>"; };
 		B77101211506E20F006AF1FB /* ArtCodeTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArtCodeTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B771012A1506E20F006AF1FB /* ArtCodeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ArtCodeTests-Info.plist"; sourceTree = "<group>"; };
 		B771012C1506E20F006AF1FB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -665,6 +635,8 @@
 		B78C160415245F6000C66DDC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160615245F6000C66DDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+FileCoordination.h"; sourceTree = "<group>"; };
+		B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileCoordination.m"; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -793,10 +765,7 @@
 		B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntaxNode.h; sourceTree = "<group>"; };
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
-		B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectFileSystemItem+Internal.h"; sourceTree = "<group>"; };
 		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7F3A825156EAE5700954D48 /* DocumentWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWrapper.h; sourceTree = "<group>"; };
-		B7F3A826156EAE5700954D48 /* DocumentWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocumentWrapper.m; sourceTree = "<group>"; };
 		B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
 		B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
@@ -1113,7 +1082,6 @@
 		CDE8FA8214B9B32A00CFC953 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
 		CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
-		CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ACProjectItem+Internal.h"; sourceTree = "<group>"; };
 		CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTable_Background.png; sourceTree = "<group>"; };
 		CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundNormal.png; sourceTree = "<group>"; };
 		CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundSelected.png; sourceTree = "<group>"; };
@@ -1410,20 +1378,6 @@
 			children = (
 				B77100ED1506DAFF006AF1FB /* ACProject.h */,
 				B77100EE1506DAFF006AF1FB /* ACProject.m */,
-				B77100F01506DDD5006AF1FB /* ACProjectItem.h */,
-				CDEBC2D415090B20003FDD33 /* ACProjectItem+Internal.h */,
-				B77100F11506DDD5006AF1FB /* ACProjectItem.m */,
-				B77100F31506DE6E006AF1FB /* ACProjectFileSystemItem.h */,
-				B7E7DBB01508D2A200A1BD1F /* ACProjectFileSystemItem+Internal.h */,
-				B77100F41506DE6E006AF1FB /* ACProjectFileSystemItem.m */,
-				B77100F91506DF56006AF1FB /* ACProjectFolder.h */,
-				B77100FA1506DF56006AF1FB /* ACProjectFolder.m */,
-				B77100F61506DF34006AF1FB /* ACProjectFile.h */,
-				B77100F71506DF34006AF1FB /* ACProjectFile.m */,
-				B77100FC1506DF88006AF1FB /* ACProjectFileBookmark.h */,
-				B77100FD1506DF88006AF1FB /* ACProjectFileBookmark.m */,
-				B77100FF1506DFC2006AF1FB /* ACProjectRemote.h */,
-				B77101001506DFC2006AF1FB /* ACProjectRemote.m */,
 			);
 			name = ACProject;
 			sourceTree = "<group>";
@@ -1489,6 +1443,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */,
+				B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */,
 				B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */,
 				B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
@@ -1561,8 +1517,6 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				B7F3A825156EAE5700954D48 /* DocumentWrapper.h */,
-				B7F3A826156EAE5700954D48 /* DocumentWrapper.m */,
 				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
 				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
@@ -2787,12 +2741,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B77101541506E76F006AF1FB /* ACProject.m in Sources */,
-				CDBC782F1507CBF800461A71 /* ACProjectItem.m in Sources */,
-				CDBC78301507CBF800461A71 /* ACProjectFileSystemItem.m in Sources */,
-				CDBC78311507CBF800461A71 /* ACProjectFile.m in Sources */,
-				CDBC78321507CBF800461A71 /* ACProjectFolder.m in Sources */,
-				CDBC78331507CBF800461A71 /* ACProjectFileBookmark.m in Sources */,
-				CDBC78341507CBF800461A71 /* ACProjectRemote.m in Sources */,
 				CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */,
 				CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */,
 				CD7D1266150946D5003DE99B /* Keychain.m in Sources */,
@@ -2810,7 +2758,6 @@
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7F3A828156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */,
 				B7BEA43B159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
@@ -2820,6 +2767,7 @@
 				B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
+				B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2828,12 +2776,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */,
-				B7EB5796151B9B7B0031C977 /* ACProjectItem.m in Sources */,
-				B7EB5797151B9B7B0031C977 /* ACProjectFileSystemItem.m in Sources */,
-				B7EB5798151B9B7B0031C977 /* ACProjectFile.m in Sources */,
-				B7EB5799151B9B7B0031C977 /* ACProjectFolder.m in Sources */,
-				B7EB579A151B9B7B0031C977 /* ACProjectFileBookmark.m in Sources */,
-				B7EB579B151B9B7B0031C977 /* ACProjectRemote.m in Sources */,
 				B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */,
 				B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */,
 				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
@@ -2851,7 +2793,6 @@
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7F3A829156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */,
 				B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
@@ -2861,6 +2802,7 @@
 				B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
+				B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2951,19 +2893,12 @@
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
 				B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */,
-				B77100F21506DDD5006AF1FB /* ACProjectItem.m in Sources */,
-				B77100F51506DE6E006AF1FB /* ACProjectFileSystemItem.m in Sources */,
-				B77100F81506DF34006AF1FB /* ACProjectFile.m in Sources */,
-				B77100FB1506DF57006AF1FB /* ACProjectFolder.m in Sources */,
-				B77100FE1506DF88006AF1FB /* ACProjectFileBookmark.m in Sources */,
-				B77101011506DFC2006AF1FB /* ACProjectRemote.m in Sources */,
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
-				B7F3A827156EAE5700954D48 /* DocumentWrapper.m in Sources */,
 				B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				CDBF0B401577B77C003F169C /* DocSet.m in Sources */,
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
@@ -2979,6 +2914,7 @@
 				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
+				B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

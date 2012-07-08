@@ -7,7 +7,6 @@
 //
 
 #import "ExportRemotesListController.h"
-#import "ACProjectRemote.h"
 
 @implementation ExportRemotesListController
 
