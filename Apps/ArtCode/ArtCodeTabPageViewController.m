@@ -110,7 +110,7 @@
     if (controller.artCodeTab == artCodeTab) {
       controller.defaultToolbar = nil;
       controller.artCodeTab = nil;
-      [controller setContentViewController:nil animated:NO];
+      controller.contentViewController = nil;
       break;
     }
   }

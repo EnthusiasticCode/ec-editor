@@ -144,6 +144,10 @@
   [self didChangeValueForKey:@"contentViewController"];
 }
 
++ (BOOL)automaticallyNotifiesObserversOfContentViewController {
+  return NO;
+}
+
 - (UIView *)currentToolbarView
 {
   if (_toolbarViewController)
