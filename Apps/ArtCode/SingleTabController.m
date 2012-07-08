@@ -335,8 +335,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [self _layoutChildViewsAnimated:NO];
+  //
   [self updateDefaultToolbarTitle];
   self.defaultToolbar.titleControl.loadingMode = self.artCodeTab.isLoading;
+  self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
+  self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
 }
 
 - (void)viewDidAppear:(BOOL)animated
