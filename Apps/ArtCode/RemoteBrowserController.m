@@ -14,7 +14,7 @@
 #import "ArtCodeTab.h"
 
 #import "Keychain.h"
-#import "ProjectFolderBrowserController.h"
+#import "FolderBrowserController.h"
 #import "RemoteTransferController.h"
 
 #import "ArtCodeURL.h"
@@ -494,7 +494,7 @@ static void init(RemoteBrowserController *self) {
 
 - (IBAction)syncAction:(id)sender
 {
-  ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
+  FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
   directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -504,7 +504,7 @@ static void init(RemoteBrowserController *self) {
 - (void)_toolEditExportAction:(id)sender
 {
   // Show directory browser presenter to select where to download
-  ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
+  FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
   directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -543,7 +543,7 @@ static void init(RemoteBrowserController *self) {
 - (void)_modalNavigationControllerDownloadAction:(id)sender
 {
   // Retrieve URL to move to
-  ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
   ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
   
   // Show conflit resolution controller
@@ -565,7 +565,7 @@ static void init(RemoteBrowserController *self) {
 - (void)_modalNavigationControllerSyncAction:(id)sender
 {
   // Retrieve URL to sync to
-  ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
   ACProjectFolder *localFolder = directoryBrowser.selectedFolder;
   
   // Show sync controller

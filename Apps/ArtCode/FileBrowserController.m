@@ -14,7 +14,7 @@
 #import "ArchiveUtilities.h"
 
 #import "NewFileController.h"
-#import "ProjectFolderBrowserController.h"
+#import "FolderBrowserController.h"
 #import "MoveConflictController.h"
 
 #import "ExportRemotesListController.h"
@@ -262,7 +262,7 @@
   {
     if (buttonIndex == 0) // Copy
     {
-      ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
+      FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
       directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -282,7 +282,7 @@
   {
     if (buttonIndex == 0) // Move
     {
-      ProjectFolderBrowserController *directoryBrowser = [ProjectFolderBrowserController new];
+      FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
       directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -415,7 +415,7 @@
 
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
-  ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
   ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
@@ -440,7 +440,7 @@
 
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
-  ProjectFolderBrowserController *directoryBrowser = (ProjectFolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
   ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
