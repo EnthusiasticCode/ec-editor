@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 @class TMIndex, TMSyntaxNode;
-@protocol TMCompletionResultSet;
 
 /// Class that encapsulates interaction with parsing and indexing libraries to provide language related file-specific functionality such as syntax aware highlighting, diagnostics and completions.
 @interface TMUnit : NSObject
@@ -22,9 +21,6 @@
 /// Returns an array of TMScope objects representing all the symbols in the file.
 @property (nonatomic, copy, readonly) NSArray *symbolList;
 
-/// Returns warnings and errors in the unit.
-@property (nonatomic, copy, readonly) NSArray *diagnostics;
-
 /// Returns a subject that sends tokens as they are parsed
 @property (nonatomic, strong, readonly) RACSubject *tokens;
 
@@ -37,9 +33,6 @@
 
 /// Returns the qualified identifier of the deepest scope at the specified offset
 - (NSString *)qualifiedScopeIdentifierAtOffset:(NSUInteger)offset;
-
-/// Returns the possible completions at a given insertion point in the unit's main source file.
-- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset;
 
 /// Reparses the source file using the given content
 - (void)reparseWithUnsavedContent:(NSString *)content;

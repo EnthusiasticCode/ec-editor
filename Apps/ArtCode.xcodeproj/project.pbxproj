@@ -276,9 +276,6 @@
 		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
-		B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
-		B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
-		B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */ = {isa = PBXBuildFile; fileRef = B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */; };
 		B7F3A82F156EAF6800954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
 		B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
@@ -289,7 +286,6 @@
 		B7FB79B514D602F10080A714 /* TMIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A914D602F10080A714 /* TMIndex.m */; };
 		B7FB79B714D602F10080A714 /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7FB79B914D602F10080A714 /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BB14D6033D0080A714 /* UIControl+BlockAction.m */; };
 		B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */; };
 		B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */; };
 		B7FB79C914D604FA0080A714 /* RectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C614D604FA0080A714 /* RectSet.m */; };
@@ -414,7 +410,6 @@
 		CD78C1C614E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1C114E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png */; };
 		CD78C1C714E15CFB00EBBBFF /* bezelAlert_nothingIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1C214E15CFB00EBBBFF /* bezelAlert_nothingIcon.png */; };
 		CD78C1C814E15CFB00EBBBFF /* bezelAlert_okIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1C314E15CFB00EBBBFF /* bezelAlert_okIcon.png */; };
-		CD78E52014729A0E00801C3F /* CodeFileCompletionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD78E51F14729A0E00801C3F /* CodeFileCompletionsController.m */; };
 		CD7B435114CECA5700090CAE /* QuickBrowsersContainerController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7B435014CECA5700090CAE /* QuickBrowsersContainerController.m */; };
 		CD7B435414CECA9900090CAE /* QuickFileBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7B435314CECA9900090CAE /* QuickFileBrowserController.m */; };
 		CD7BC79414B7059000313CDB /* RemoteOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7BC79314B7059000313CDB /* RemoteOptions.xib */; };
@@ -501,7 +496,6 @@
 		CDC1333814602F5E0028423F /* searchBar_NextButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */; };
 		CDC1333914602F5E0028423F /* searchBar_PrevButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */; };
 		CDC1333B146030380028423F /* searchBar_OptionButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC1333A146030380028423F /* searchBar_OptionButton.png */; };
-		CDC1A079147E6EC300E01B7A /* CodeFileCompletionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC1A078147E6EC300E01B7A /* CodeFileCompletionCell.m */; };
 		CDC1A07B147E6EF500E01B7A /* CompletionControllerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */; };
 		CDC2829314508D500054358D /* topBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2828F14508D500054358D /* topBar_Background.png */; };
 		CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */; };
@@ -631,8 +625,6 @@
 		B77101311506E20F006AF1FB /* ArtCodeTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArtCodeTests-Prefix.pch"; sourceTree = "<group>"; };
 		B77101451506E336006AF1FB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B771014F1506E40B006AF1FB /* ACProjectSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProjectSpec.m; sourceTree = "<group>"; };
-		B7728C69152875CE005EA98A /* TMCompletions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMCompletions.h; sourceTree = "<group>"; };
-		B7728C6A152875DC005EA98A /* TMDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMDiagnostics.h; sourceTree = "<group>"; };
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
 		B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextMateScopeSelectorMatching.m"; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
@@ -772,8 +764,6 @@
 		B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntaxNode.h; sourceTree = "<group>"; };
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
 		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+PersistentDataStructures.h"; sourceTree = "<group>"; };
-		B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+PersistentDataStructures.m"; sourceTree = "<group>"; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -784,15 +774,11 @@
 		B7FB799D14D602C60080A714 /* NSTimer+BlockTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSTimer+BlockTimer.m"; sourceTree = "<group>"; };
 		B7FB79A614D602F10080A714 /* TMBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMBundle.h; sourceTree = "<group>"; };
 		B7FB79A714D602F10080A714 /* TMBundle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMBundle.m; sourceTree = "<group>"; };
-		B7FB79A814D602F10080A714 /* TMIndex+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMIndex+Internal.h"; sourceTree = "<group>"; };
 		B7FB79A914D602F10080A714 /* TMIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMIndex.m; sourceTree = "<group>"; };
 		B7FB79AD14D602F10080A714 /* TMScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMScope.h; sourceTree = "<group>"; };
 		B7FB79AE14D602F10080A714 /* TMScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMScope.m; sourceTree = "<group>"; };
 		B7FB79B114D602F10080A714 /* TMUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMUnit.h; sourceTree = "<group>"; };
 		B7FB79B214D602F10080A714 /* TMUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMUnit.m; sourceTree = "<group>"; };
-		B7FB79B314D602F10080A714 /* TMUnit+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMUnit+Internal.h"; sourceTree = "<group>"; };
-		B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIControl+BlockAction.h"; sourceTree = "<group>"; };
-		B7FB79BB14D6033D0080A714 /* UIControl+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIControl+BlockAction.m"; sourceTree = "<group>"; };
 		B7FB79BC14D6033D0080A714 /* UIImage+BlockDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BlockDrawing.h"; sourceTree = "<group>"; };
 		B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BlockDrawing.m"; sourceTree = "<group>"; };
 		B7FB79C114D604FA0080A714 /* ArchiveUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveUtilities.h; sourceTree = "<group>"; };
@@ -1455,14 +1441,10 @@
 				B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */,
 				CDE47B9A15AAE0EA0068D7BC /* NSFileManager+Utilities.h */,
 				CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */,
-				B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */,
-				B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
 				B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */,
-				B7FB79BA14D6033D0080A714 /* UIControl+BlockAction.h */,
-				B7FB79BB14D6033D0080A714 /* UIControl+BlockAction.m */,
 				B7FB79BC14D6033D0080A714 /* UIImage+BlockDrawing.h */,
 				B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */,
 				CD3045B014E1B3B900F216BB /* UIColor+Contrast.h */,
@@ -1504,18 +1486,14 @@
 				CD49AA0D14E33D98006032F6 /* TMPreference.h */,
 				CD49AA0E14E33D98006032F6 /* TMPreference.m */,
 				B7C7E68215285C14006AF8F6 /* TMIndex.h */,
-				B7FB79A814D602F10080A714 /* TMIndex+Internal.h */,
 				B7FB79A914D602F10080A714 /* TMIndex.m */,
 				B7FB79AD14D602F10080A714 /* TMScope.h */,
 				B728590914E5971D00E3DE65 /* TMScope+Internal.h */,
 				B7FB79AE14D602F10080A714 /* TMScope.m */,
 				B7BEA460159B1A7E0095C9D1 /* TMSymbol.h */,
 				B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */,
-				B7728C69152875CE005EA98A /* TMCompletions.h */,
-				B7728C6A152875DC005EA98A /* TMDiagnostics.h */,
 				B7FB79B114D602F10080A714 /* TMUnit.h */,
 				B7FB79B214D602F10080A714 /* TMUnit.m */,
-				B7FB79B314D602F10080A714 /* TMUnit+Internal.h */,
 				CDE8FA8114B9B32A00CFC953 /* TMTheme.h */,
 				CDE8FA8214B9B32A00CFC953 /* TMTheme.m */,
 				CD0C97DB14DD455A0014A7B0 /* TMKeyboardAction.h */,
@@ -2770,7 +2748,6 @@
 				B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */,
 				B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7F3A82D156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */,
 				B7BEA43B159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
 				B7BEA43E159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
@@ -2806,7 +2783,6 @@
 				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
 				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
 				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B7F3A82E156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */,
 				B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
 				B7BEA43F159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
@@ -2844,8 +2820,6 @@
 				CDC13330145FFE390028423F /* CodeFileSearchOptionsController.m in Sources */,
 				CD6E416C14614A0C00A9CE7F /* CodeFileMinimapView.m in Sources */,
 				CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */,
-				CD78E52014729A0E00801C3F /* CodeFileCompletionsController.m in Sources */,
-				CDC1A079147E6EC300E01B7A /* CodeFileCompletionCell.m in Sources */,
 				CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */,
 				CDE80660147F949300C94BFD /* ShapePopoverBackgroundView.m in Sources */,
 				CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */,
@@ -2866,7 +2840,6 @@
 				B7FB79B514D602F10080A714 /* TMIndex.m in Sources */,
 				B7FB79B714D602F10080A714 /* TMScope.m in Sources */,
 				B7FB79B914D602F10080A714 /* TMUnit.m in Sources */,
-				B7FB79BE14D6033D0080A714 /* UIControl+BlockAction.m in Sources */,
 				B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */,
 				B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */,
 				B7FB79C914D604FA0080A714 /* RectSet.m in Sources */,
@@ -2913,7 +2886,6 @@
 				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
-				B7F3A82C156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m in Sources */,
 				CDBF0B401577B77C003F169C /* DocSet.m in Sources */,
 				CDBF0B411577B77C003F169C /* DocSetDownloadManager.m in Sources */,
 				CD2DB6021578CCA8009E4026 /* DocSetDownloadController.m in Sources */,

@@ -12,8 +12,4 @@
 
 - (id)initWithGeneratedUUID;
 
-- (id)initWithGeneratedUUIDForUseAsKeyInDictionary:(NSDictionary *)dictionary;
-
-- (id)initWithGeneratedUUIDNotContainedInSet:(NSSet *)uuidSet;
-
 @end

@@ -9,7 +9,6 @@
 #import "CodeFileCompletionsController.h"
 #import "CodeFileCompletionCell.h"
 
-#import "TMCompletions.h"
 #import "Index.h"
 #import "TextRange.h"
 

@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "TMUnit+Internal.h"
+#import "TMUnit.h"
 #import "TMIndex.h"
 #import "TMScope+Internal.h"
 #import "TMSyntaxNode.h"
@@ -16,8 +16,6 @@
 #import "TMPreference.h"
 #import "DiffMatchPatch.h"
 
-
-static NSMutableDictionary *_extensionClasses;
 
 static NSString * const _qualifiedIdentifierAttributeName = @"TMUnitQualifiedIdentifierAttributeName";
 
@@ -63,11 +61,9 @@ static OnigRegexp *_namedCapturesRegexp;
   TMScope *_rootScope;
   NSMutableArray *_symbolList;
   TMScope *_currentSymbol;
-  
-  NSMutableDictionary *_extensions;
 }
 
-@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, diagnostics = _diagnostics, tokens = _tokens;
+@synthesize index = _index, syntax = _syntax, symbolList = _symbolList, tokens = _tokens;
 
 #pragma mark - NSObject
 
@@ -110,18 +106,6 @@ static OnigRegexp *_namedCapturesRegexp;
   _lastContent = @"";
   _attributedContent = [[NSMutableAttributedString alloc] init];
   
-  _extensions = NSMutableDictionary.alloc.init;
-  [_extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassesSyntaxIdentifier, NSDictionary *extensionClasses, BOOL *outerStop) {
-    if (![_syntax.identifier isEqualToString:extensionClassesSyntaxIdentifier])
-      return;
-    [extensionClasses enumerateKeysAndObjectsUsingBlock:^(NSString *extensionClassSyntaxIdentifier, Class extensionClass, BOOL *innerStop) {
-      id extension = [[extensionClass alloc] initWithCodeUnit:self];
-      if (!extension)
-        return;
-      [_extensions setObject:extension forKey:extensionClassSyntaxIdentifier];
-    }];
-  }];
-  
   return self;
 }
 
@@ -141,10 +125,6 @@ static OnigRegexp *_namedCapturesRegexp;
   return qualifiedScopeIdentifier;
 }
 
-- (id<TMCompletionResultSet>)completionsAtOffset:(NSUInteger)offset {
-  return (id<TMCompletionResultSet>)NSArray.alloc.init;
-}
-
 - (void)reparseWithUnsavedContent:(NSString *)content {
   if (content == _lastContent) {
     return;
@@ -154,7 +134,6 @@ static OnigRegexp *_namedCapturesRegexp;
   }
   content = content.copy;
   [self willChangeValueForKey:@"symbolList"];
-  [self willChangeValueForKey:@"diagnostics"];
   [_symbolList removeAllObjects];
   
   // Diff the last parsed content with the new one
@@ -287,7 +266,6 @@ static OnigRegexp *_namedCapturesRegexp;
   }
 
   [self didChangeValueForKey:@"symbolList"];
-  [self didChangeValueForKey:@"diagnostics"];
   
   _lastContent = content;
   
@@ -297,24 +275,6 @@ static OnigRegexp *_namedCapturesRegexp;
   [_rootScope performSelector:@selector(_checkConsistency)];
 #pragma clang diagnostic pop
 #endif
-}
-
-#pragma mark - Internal Methods
-
-+ (void)registerExtension:(Class)extensionClass forLanguageIdentifier:(NSString *)languageIdentifier forKey:(id)key {
-  if (!_extensionClasses) {
-    _extensionClasses = NSMutableDictionary.alloc.init;
-  }
-  NSMutableDictionary *extensionClassesForLanguage = [_extensionClasses objectForKey:languageIdentifier];
-  if (!extensionClassesForLanguage) {
-    extensionClassesForLanguage = NSMutableDictionary.alloc.init;
-    [_extensionClasses setObject:extensionClassesForLanguage forKey:languageIdentifier];
-  }
-  [extensionClassesForLanguage setObject:extensionClass forKey:key];
-}
-
-- (id)extensionForKey:(id)key {
-  return [_extensions objectForKey:key];
 }
 
 #pragma mark - Private Methods

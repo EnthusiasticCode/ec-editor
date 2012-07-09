@@ -13,33 +13,9 @@
 
 - (id)initWithGeneratedUUID {
   CFUUIDRef uuid = CFUUIDCreate(NULL);
-  CFStringRef uuidString = CFUUIDCreateString(NULL, uuid);
-  NSString *string = (__bridge NSString *)uuidString;
-  CFRelease(uuidString);
+  NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
   CFRelease(uuid);
-  return string;
-}
-
-- (id)initWithGeneratedUUIDForUseAsKeyInDictionary:(NSDictionary *)dictionary {
-  NSString *string = nil;
-  for (;;) {
-    string = [self initWithGeneratedUUID];
-    if (![dictionary objectForKey:string]) {
-      break;
-    }
-  }
-  return string;
-}
-
-- (id)initWithGeneratedUUIDNotContainedInSet:(NSSet *)uuidSet {
-  NSString *string = nil;
-  for (;;) {
-    string = [self initWithGeneratedUUID];
-    if (![uuidSet containsObject:string]) {
-      break;
-    }
-  }
-  return string;
+  return uuidString;
 }
 
 @end

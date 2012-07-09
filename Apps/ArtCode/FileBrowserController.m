@@ -422,8 +422,6 @@
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
   [self modalNavigationControllerPresentViewController:conflictController];
   
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  
   // Start copy
   NSArray *items = [_selectedItems copy];
   [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
@@ -447,8 +445,6 @@
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
   [self modalNavigationControllerPresentViewController:conflictController];
-  
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
   
   // Start moving
   NSArray *items = [_selectedItems copy];
