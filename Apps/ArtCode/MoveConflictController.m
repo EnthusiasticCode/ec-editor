@@ -14,7 +14,7 @@
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  void (^_processingBlock)(ACProjectFileSystemItem *);
+  void (^_processingBlock)(NSURL *);
   void (^_completionBlock)(void);
 }
 
@@ -73,40 +73,40 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  ACProjectFileSystemItem *item = [_conflictItems objectAtIndex:indexPath.row];
-  cell.textLabel.text = [item name];
-  if ([(ACProjectFileSystemItem *)item type] == ACPFolder)
+  NSURL *itemURL = [_conflictItems objectAtIndex:indexPath.row];
+  cell.textLabel.text = itemURL.lastPathComponent;
+  if (itemURL.isArtCodeDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[item name] pathExtension]];
-  cell.detailTextLabel.text = [[item pathInProject] prettyPath];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
+  cell.detailTextLabel.text = itemURL.prettyPath;
   
   return cell;
 }
 
 #pragma mark - Public Methods
 
-- (void)moveItems:(NSArray *)items toFolder:(ACProjectFolder *)toFolder usingBlock:(void (^)(ACProjectFileSystemItem *))processingBlock completion:(void (^)(void))completionBlock {
+- (void)moveItems:(NSArray *)items toFolder:(NSURL *)toFolderURL usingBlock:(void (^)(NSURL *))processingBlock completion:(void (^)(void))completionBlock {
   _conflictItems = [NSMutableArray new];
   _resolvedItems = [NSMutableArray arrayWithArray:items];
   _processingBlock = [processingBlock copy];
   _completionBlock = [completionBlock copy];
   
   // Processing
-  ACProjectFileSystemItem *conflictItem;
-  for (ACProjectFileSystemItem *toItem in toFolder.children) {
-    conflictItem = nil;
+  NSURL *conflictItemURL;
+  for (NSURL *toItemURL in [[NSFileManager defaultManager] enumeratorAtURL:toFolderURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
+    conflictItemURL = nil;
     // Check if current toItem has a conflict with a fromItem
-    for (ACProjectFileSystemItem *fromItem in _resolvedItems) {
-      if ([toItem.name isEqualToString:fromItem.name]) {
-        conflictItem = fromItem;
+    for (NSURL *fromItemURL in _resolvedItems) {
+      if ([toItemURL.lastPathComponent isEqualToString:fromItemURL.lastPathComponent]) {
+        conflictItemURL = fromItemURL;
         break;
       }
     }
     // Put in conflict list if conflict spotted
-    if (conflictItem) {
-      [_resolvedItems removeObject:conflictItem];
-      [_conflictItems addObject:conflictItem];
+    if (conflictItemURL) {
+      [_resolvedItems removeObject:conflictItemURL];
+      [_conflictItems addObject:conflictItemURL];
     }
   }
   
@@ -147,8 +147,8 @@
   // Processing
   ASSERT(_processingBlock);
   float resolvedCount = [_resolvedItems count];
-  [_resolvedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-    _processingBlock(item);
+  [_resolvedItems enumerateObjectsUsingBlock:^(NSURL *itemURL, NSUInteger idx, BOOL *stop) {
+    _processingBlock(itemURL);
     self.progressView.progress = (float)(idx + 1) / resolvedCount;
   }];
   
