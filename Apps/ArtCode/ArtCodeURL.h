@@ -67,6 +67,8 @@ typedef enum {
 /// Returns the name of the ArtCodeRemote URL
 - (NSString *)artCodeRemoteName;
 
+- (id)artCodeBookmarkPoint;
+
 #pragma mark Utilities
 
 /// Substitute / with ▸

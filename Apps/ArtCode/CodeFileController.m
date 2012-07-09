@@ -35,6 +35,8 @@
 
 #import "ACProject.h"
 
+#import "TextFile.h"
+
 #import "DiffMatchPatch.h"
 
 
@@ -163,7 +165,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     // Bookmark markers
     [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-      if (!line.isTruncation && [this.artCodeTab.currentFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+      if (!line.isTruncation && [this.textFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
       {
         CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
         CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
@@ -226,13 +228,13 @@ static void drawStencilStar(CGContextRef myContext)
     accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
     
     
-    _codeView.text = self.artCodeTab.currentFile.content;
+    _codeView.text = self.textFile.content;
     
     // RAC
     
     // Update file content
     [RACAble(_codeView, text) subscribeNext:^(NSString *x) {
-      this.artCodeTab.currentFile.content = x;
+      this.textFile.content = x;
       [this.codeUnit reparseWithUnsavedContent:x];
     }];
     
@@ -371,7 +373,7 @@ static void drawStencilStar(CGContextRef myContext)
 {
   if (self.currentSymbol)
   {
-    NSString *path = [(ACProjectFileSystemItem *)self.artCodeTab.currentItem pathInProject];
+    NSString *path = [self.artCodeTab.currentURL path];
     if (self.currentSymbol.icon)
     {
       [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
@@ -452,19 +454,19 @@ static void drawStencilStar(CGContextRef myContext)
   __weak CodeFileController *this = self;
 
   // Update the code when contents change
-  [[RACAbleSelf(artCodeTab.currentFile.content) where:^BOOL(id x) {
+  [[RACAbleSelf(textFile.content) where:^BOOL(id x) {
     return x != nil;
   }] subscribeNext:^(NSString *content) {
     [this.codeUnit reparseWithUnsavedContent:content];
   }];
   
   // Create a new TMUnit when the file changes
-  [[[[[[[[[RACAbleSelf(artCodeTab.currentFile) where:^BOOL(id x) {
+  [[[[[[[[[RACAbleSelf(textFile) where:^BOOL(id x) {
     return x != nil;
-  }] doNext:^(ACProjectFile *x) {
+  }] doNext:^(TextFile *x) {
     // Set the text for the codeview
     this.codeView.text = x.content;
-  }] select:^id(ACProjectFile *x) {
+  }] select:^id(TextFile *x) {
     // Selecting the syntax to use
     TMSyntaxNode *syntax = nil;
     if (x.explicitSyntaxIdentifier) {
@@ -474,7 +476,7 @@ static void drawStencilStar(CGContextRef myContext)
       syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
     }
     if (!syntax) {
-      syntax = [TMSyntaxNode syntaxForFileName:x.name];
+      syntax = [TMSyntaxNode syntaxForFileName:x.localizedName];
     }
     if (!syntax) {
       syntax = [TMSyntaxNode defaultSyntax];
@@ -632,7 +634,7 @@ static void drawStencilStar(CGContextRef myContext)
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
   // Set bookmark decoration
-  if (!line.isTruncation && [self.artCodeTab.currentFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+  if (!line.isTruncation && [self.textFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
   {
     *decoration = CodeFileMinimapLineDecorationDisc;
     *decorationColor = [UIColor whiteColor];
@@ -704,7 +706,7 @@ static void drawStencilStar(CGContextRef myContext)
 //      placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
 //    // Add placeholders styles
 //    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-//      NSString *placeHolderName = [self.artCodeTab.currentFile.content substringWithRange:[result rangeAtIndex:1]];
+//      NSString *placeHolderName = [self.textFile.content substringWithRange:[result rangeAtIndex:1]];
 //      [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
 //    }];
 //  }
@@ -720,7 +722,7 @@ static void drawStencilStar(CGContextRef myContext)
 //{
 //  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
 //  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
-//  self.artCodeTab.currentFile.content = [self.artCodeTab.currentFile.content stringByReplacingCharactersInRange:range withString:commitString];
+//  self.textFile.content = [self.textFile.content stringByReplacingCharactersInRange:range withString:commitString];
 //  self.code = changedCode;
 //}
 
@@ -743,17 +745,17 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
-  NSArray *bookmarks = [self.artCodeTab.currentFile bookmarks];
+  NSArray *bookmarks = [self.textFile bookmarks];
   BOOL removedBookmark = NO;
-  for (ACProjectFileBookmark *bookmark in bookmarks) {
-    if (bookmark.bookmarkPoint && [bookmark.bookmarkPoint unsignedIntegerValue] == lineNumber) {
+  for (NSURL *bookmark in bookmarks) {
+    if (bookmark.artCodeBookmarkPoint && [bookmark.artCodeBookmarkPoint unsignedIntegerValue] == lineNumber) {
       removedBookmark = YES;
-      [self.artCodeTab.currentFile removeBookmark:bookmark];
+      [self.textFile removeBookmark:bookmark];
       break;
     }
   }
   if (!removedBookmark) {
-    [self.artCodeTab.currentFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
+    [self.textFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
   }
   [codeView setNeedsDisplay];
   [_minimapView setNeedsDisplay];
@@ -891,7 +893,7 @@ static void drawStencilStar(CGContextRef myContext)
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
   // TODO NIK better check for file type
-  if (editingState || ![[self.artCodeTab.currentFile.name pathExtension] isEqualToString:@"html"])
+  if (editingState || ![[self.textFile.localizedName pathExtension] isEqualToString:@"html"])
   {
     return self.codeView;
   }
@@ -913,9 +915,9 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle
 {
-  if ([self _isWebPreview] && self.artCodeTab.currentItem)
+  if ([self _isWebPreview] && self.textFile)
   {
-    [self.webView loadHTMLString:self.artCodeTab.currentFile.content baseURL:nil];
+    [self.webView loadHTMLString:self.textFile.content baseURL:nil];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else

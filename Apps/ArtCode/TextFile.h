@@ -18,4 +18,12 @@
 
 @property (nonatomic, strong) NSString *explicitSyntaxIdentifier;
 
+@property (nonatomic, strong) NSArray *bookmarks;
+
+- (NSURL *)bookmarkForPoint:(id)point;
+
+- (void)addBookmarkWithPoint:(id)point;
+
+- (void)removeBookmark:(NSURL *)bookmark;
+
 @end
