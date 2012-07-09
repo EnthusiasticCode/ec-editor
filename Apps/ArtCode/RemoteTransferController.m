@@ -30,10 +30,10 @@ typedef enum {
 - (NSURL *)_localTemporaryDirectoryURL;
 
 /// Sets up the internal state to handle a new operation
-- (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolder:(ACProjectFolder *)localFolder connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler;
+- (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolderURL:(NSURL *)localFolderURL connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// Method used by synchronizeLocalProjectFolder:... to recursevly append files to upload in a syncronization
-- (void)_syncLocalProjectFolder:(ACProjectFolder *)folder toRemotePath:(NSString *)remotePath;
+- (void)_syncLocalDirectoryURL:(NSURL *)directoryURL toRemotePath:(NSString *)remotePath;
 
 /// Calls the completion handler with the given error, if error is nil, _transferError will be sent.
 /// This method restores the connection's original delegate before calling the completion handler.
@@ -55,7 +55,7 @@ typedef enum {
   /// Working related variables
   NSArray *_items;
   NSMutableArray *_itemsConflicts;
-  ACProjectFolder *_localFolder;
+  NSURL *_localFolderURL;
   RemoteTransferCompletionBlock _completionHandler;
   NSURL *_localTemporaryDirectoryURL;
   
@@ -427,25 +427,25 @@ typedef enum {
 
 #pragma mark - Initiating a transfer
 
-- (void)uploadProjectItems:(NSArray *)projectItems toConnection:(id<CKConnection>)connection path:(NSString *)remotePath completion:(RemoteTransferCompletionBlock)completionHandler {
-  [self _setupInternalStateForOperation:RemoteTransferUploadOperation localFolder:nil connection:connection path:remotePath items:projectItems completion:completionHandler];
+- (void)uploadItemURLs:(NSArray *)itemURLs toConnection:(id<CKConnection>)connection path:(NSString *)remotePath completion:(RemoteTransferCompletionBlock)completionHandler {
+  [self _setupInternalStateForOperation:RemoteTransferUploadOperation localFolderURL:nil connection:connection path:remotePath items:itemURLs completion:completionHandler];
   
-  for (ACProjectFileSystemItem *item in projectItems) {
-    [_transfers setObject:item forKey:[_connectionPath stringByAppendingPathComponent:[item name]]];
+  for (NSURL *itemURL in itemURLs) {
+    [_transfers setObject:item forKey:[_connectionPath stringByAppendingPathComponent:itemURL.lastPathComponent]];
   }
   [connection changeToDirectory:_connectionPath];
   [connection directoryContents];
 }
 
-- (void)downloadConnectionItems:(NSArray *)items fromConnection:(id<CKConnection>)connection path:(NSString *)remotePath toProjectFolder:(ACProjectFolder *)localProjectFolder completion:(RemoteTransferCompletionBlock)completionHandler {
-  [self _setupInternalStateForOperation:RemoteTransferDownloadOperation localFolder:localProjectFolder connection:connection path:remotePath items:items completion:completionHandler];
+- (void)downloadConnectionItems:(NSArray *)items fromConnection:(id<CKConnection>)connection path:(NSString *)remotePath toDirectoryURL:(NSURL *)localDirectoryURL completion:(RemoteTransferCompletionBlock)completionHandler {
+  [self _setupInternalStateForOperation:RemoteTransferDownloadOperation localFolderURL:localDirectoryURL connection:connection path:remotePath items:items completion:completionHandler];
   
   for (NSDictionary *item in items)
   {
     NSString *itemName = [item objectForKey:cxFilenameKey];
     
     // Check for conflicts in downloading location
-    if ([localProjectFolder childWithName:itemName]) {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[localDirectoryURL URLByAppendingPathComponent:itemName].path]) {
       [_itemsConflicts addObject:item];
       continue;
     }
@@ -473,8 +473,8 @@ typedef enum {
   }
 }
 
-- (void)synchronizeLocalProjectFolder:(ACProjectFolder *)localProjectFolder withConnection:(id<CKConnection>)connection path:(NSString *)remotePath options:(NSDictionary *)optionsDictionary completion:(RemoteTransferCompletionBlock)completionHandler {
-  [self _setupInternalStateForOperation:RemoteTransferSynchronizationOperation localFolder:localProjectFolder connection:connection path:remotePath items:nil completion:completionHandler];
+- (void)synchronizeLocalDirectoryURL:(NSURL *)localDirectoryURL withConnection:(id<CKConnection>)connection path:(NSString *)remotePath options:(NSDictionary *)optionsDictionary completion:(RemoteTransferCompletionBlock)completionHandler {
+  [self _setupInternalStateForOperation:RemoteTransferSynchronizationOperation localFolderURL:localDirectoryURL connection:connection path:remotePath items:nil completion:completionHandler];
   
   // Shows loading bar
   self.conflictTableView.hidden = YES;
@@ -653,7 +653,7 @@ typedef enum {
 
 #pragma mark - Private methods
 
-- (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolder:(ACProjectFolder *)localFolder connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler {
+- (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolderURL:(NSURL *)localFolderURL connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler {
   ASSERT(connection != nil);
   
   _connection = connection;
@@ -665,7 +665,7 @@ typedef enum {
   
   _items = items;
   _itemsConflicts = [NSMutableArray new];
-  _localFolder = localFolder;
+  _localFolderURL = localFolderURL;
   _completionHandler = [completionHandler copy];
   
   _transfers = [NSMutableDictionary dictionaryWithCapacity:[items count]];
@@ -687,17 +687,17 @@ typedef enum {
   return _localTemporaryDirectoryURL;
 }
 
-- (void)_syncLocalProjectFolder:(ACProjectFolder *)folder toRemotePath:(NSString *)remotePath
-{
+- (void)_syncLocalDirectoryURL:(NSURL *)directoryURL toRemotePath:(NSString *)remotePath {
   ASSERT(_transfers);
   NSString *remoteItemPath = nil;
-  for (ACProjectFileSystemItem *localItem in folder.children) {
+  NSNumber isDirectory;
+  for (NSURL *localItemURL in [[NSFileManager defaultManager] enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
     // Add to trasnfers as remote path to local project item
-    remoteItemPath = [remotePath stringByAppendingPathComponent:localItem.name];
-    [_transfers setObject:localItem forKey:remoteItemPath];
+    remoteItemPath = [remotePath stringByAppendingPathComponent:localItemURL.lastPathComponent];
+    [_transfers setObject:localItemURL forKey:remoteItemPath];
     // Recurse if folder
-    if (localItem.type == ACPFolder) {
-      [self _syncLocalProjectFolder:(ACProjectFolder *)localItem toRemotePath:remoteItemPath];
+    if ([localItemURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && [isDirectory boolValue]) {
+      [self _syncLocalDirectoryURL:localItemURL toRemotePath:remoteItemPath];
     }
   }
   

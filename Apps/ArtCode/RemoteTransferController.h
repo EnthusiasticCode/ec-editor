@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "MoveConflictController.h"
 
-@class ACProjectFileSystemItem, ACProjectFolder;
 @protocol CKConnection;
 
 /// An NSNumber with an int value of RemoteSyncDirection enum indicating if the syncronization should happen between remote to tocal.
@@ -38,26 +37,26 @@ enum RemoteSyncChangeDetermination {
 #pragma mark Initiating a transfer
 
 /// Uploads the given ACProjectFileSystemItem(s) to the specified connection.
-- (void)uploadProjectItems:(NSArray *)projectItems 
-              toConnection:(id<CKConnection>)connection 
-                      path:(NSString *)remotePath 
-                completion:(RemoteTransferCompletionBlock)completionHandler;
+- (void)uploadItemURLs:(NSArray *)itemURLs 
+          toConnection:(id<CKConnection>)connection 
+                  path:(NSString *)remotePath 
+            completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// This method will start the download process of the given item names relative to the given remote path from the connection to the local folder.
 /// |items| are an array of dictionaries as returned by the CKConnection.
 - (void)downloadConnectionItems:(NSArray *)items 
                  fromConnection:(id<CKConnection>)connection 
                            path:(NSString *)remotePath 
-                toProjectFolder:(ACProjectFolder *)localProjectFolder 
+                 toDirectoryURL:(NSURL *)localDirectoryURL 
                      completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// Syncronizes a local project folder with a remote path. 
 /// Shows what is going to be moved before actually perform the operation.
-- (void)synchronizeLocalProjectFolder:(ACProjectFolder *)localProjectFolder 
-                       withConnection:(id<CKConnection>)connection 
-                                 path:(NSString *)remotePath 
-                              options:(NSDictionary *)optionsDictionary 
-                           completion:(RemoteTransferCompletionBlock)completionHandler;
+- (void)synchronizeLocalDirectoryURL:(NSURL *)localDirectoryURL 
+                      withConnection:(id<CKConnection>)connection 
+                                path:(NSString *)remotePath 
+                             options:(NSDictionary *)optionsDictionary 
+                          completion:(RemoteTransferCompletionBlock)completionHandler;
 
 /// This method will start the process of deleting the given items.
 /// |items| are an array of dictionaries as returned by the CKConnection.

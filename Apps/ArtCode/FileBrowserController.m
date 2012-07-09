@@ -416,7 +416,7 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolder = directoryBrowser.selectedFolderURL;
+  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -426,8 +426,8 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(NSURL *itemURL) {
-    if (![fileManager copyItemAtURL:itemURL toURL:moveFolder error:NULL]) {
+  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
+    if (![[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL]) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
     };
   } completion:^{
@@ -442,7 +442,7 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolder = directoryBrowser.selectedFolderURL;
+  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -452,8 +452,8 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(NSURL *itemURL) {
-    [fileManager moveItemAtURL:itemURL toURL:moveFolder error:NULL];
+  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
+    [[NSFileManager defaultManager] moveItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -505,7 +505,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start upload
-  [remoteTransferController uploadProjectItems:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection path:remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController uploadItemURLs:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection path:remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
   }];
@@ -525,7 +525,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync
-  [remoteTransferController synchronizeLocalProjectFolder:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }
