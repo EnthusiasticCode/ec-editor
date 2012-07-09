@@ -63,6 +63,8 @@ extern NSString * const ACProjectNotificationItemKey;
 
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
+- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
+
 @end
 
 @interface ACProject (RACExtensions)

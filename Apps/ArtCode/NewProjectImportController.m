@@ -119,7 +119,7 @@
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [ACProject createProjectWithName:projectName labelColor:nil completionHandler:^(ACProject *createdProject) {
+  [ACProject createProjectWithName:projectName completionHandler:^(ACProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed
@@ -131,16 +131,13 @@
           [ArchiveUtilities extractArchiveAtURL:zipURL toDirectory:tempURL];
           
           // Update project's content with extracted items
-          [createdProject.contentsFolder updateWithContentsOfURL:tempURL completionHandler:^(BOOL updateSuccess) {
+          [createdProject updateWithContentsOfURL:tempURL completionHandler:^(NSError *error) {
             [fileManager removeItemAtURL:tempURL error:NULL];
-            // Close the project
-            [createdProject closeWithCompletionHandler:^(BOOL closeSuccess) {
-              [self stopRightBarButtonItemActivityIndicator];
-              self.tableView.userInteractionEnabled = YES;
-              
-              [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-            }];
+            [self stopRightBarButtonItemActivityIndicator];
+            self.tableView.userInteractionEnabled = YES;
+            
+            [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
           }];
         }
         // TODO error handling

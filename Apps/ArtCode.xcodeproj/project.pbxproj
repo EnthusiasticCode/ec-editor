@@ -125,6 +125,9 @@
 		B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
 		B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
 		B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
+		B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
+		B78D137015AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
+		B78D137115AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -638,6 +641,8 @@
 		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+FileCoordination.h"; sourceTree = "<group>"; };
 		B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileCoordination.m"; sourceTree = "<group>"; };
+		B78D136D15AB4D5D0022C93B /* TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFile.h; sourceTree = "<group>"; };
+		B78D136E15AB4D5D0022C93B /* TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFile.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1541,6 +1546,8 @@
 				B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */,
 				B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */,
 				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
+				B78D136D15AB4D5D0022C93B /* TextFile.h */,
+				B78D136E15AB4D5D0022C93B /* TextFile.m */,
 			);
 			name = Filesystem;
 			sourceTree = "<group>";
@@ -2773,6 +2780,7 @@
 				B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
+				B78D137015AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2808,6 +2816,7 @@
 				B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
+				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2921,6 +2930,7 @@
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
 				CDE47B9C15AAE0EB0068D7BC /* NSFileManager+Utilities.m in Sources */,
+				B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

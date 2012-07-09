@@ -14,37 +14,11 @@
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
 static NSString * const artCodeURLScheme = @"artcode";
 
-NSString * const artCodeURLProjectListPath = @"projects";
-NSString * const artCodeURLProjectBookmarkListPath = @"/bookmarks";
-NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
-
 
 @implementation ArtCodeURL
 
-+ (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path
-{
-  NSString *URLString = nil;
-  if (path && ![path hasPrefix:@"/"])
-    path = [@"/" stringByAppendingString:path];
-  if (item)
-  {
-    ASSERT(project);
-    ASSERT(item.project == project);
-    URLString = [NSString stringWithFormat:@"%@://%@-%@%@", artCodeURLScheme, [project UUID], [item UUID], path ? path : @""];
-  }
-  else if (project)
-  {
-    URLString = [NSString stringWithFormat:@"%@://%@%@", artCodeURLScheme, [project UUID], path ? path : @""];
-  }
-  else if (path)
-  {
-    URLString = [NSString stringWithFormat:@"%@:/%@", artCodeURLScheme, path];
-  }
-  else 
-  {
-    return nil;
-  }
-  return [NSURL URLWithString:URLString];
++ (NSURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path {
+  ASSERT(NO);
 }
 
 @end
@@ -53,28 +27,23 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
 @implementation NSURL (ArtCodeURL)
 
-- (BOOL)isArtCodeURL
-{
+- (BOOL)isArtCodeURL {
   return [self.scheme isEqualToString:artCodeURLScheme];
 }
 
-- (BOOL)isArtCodeProjectsList
-{
-  return [self.host isEqualToString:artCodeURLProjectListPath];
+- (BOOL)isArtCodeProjectsList {
+  UNIMPLEMENTED();
 }
 
-- (BOOL)isArtCodeProjectBookmarksList
-{
-  return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectBookmarkListPath];
+- (BOOL)isArtCodeProjectBookmarksList {
+  UNIMPLEMENTED();
 }
 
-- (BOOL)isArtCodeProjectRemotesList
-{
-  return [self.host length] == 36 && [self.path isEqualToString:artCodeURLProjectRemoteListPath];
+- (BOOL)isArtCodeProjectRemotesList {
+  UNIMPLEMENTED();
 }
 
-- (NSString *)prettyPath
-{
+- (NSString *)prettyPath {
   return [[self path] prettyPath];
 }
 
@@ -84,8 +53,7 @@ NSString * const artCodeURLProjectRemoteListPath = @"/remotes";
 
 @implementation NSString (ArtCodeURL)
 
-- (NSString *)prettyPath
-{
+- (NSString *)prettyPath {
   return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
 }
 
