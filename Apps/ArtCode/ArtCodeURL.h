@@ -8,30 +8,30 @@
 
 #import <Foundation/Foundation.h>
 
-@class ACProject, ACProjectItem;
+@class ACProject;
 
-extern NSString * const artCodeURLProjectListPath;
-extern NSString * const artCodeURLProjectBookmarkListPath;
-extern NSString * const artCodeURLProjectRemoteListPath;
+typedef enum {
+  ArtCodeURLTypeProjectsList,
+  ArtCodeURLTypeProject,
+  ArtCodeURLTypeDirectory,
+  ArtCodeURLTypeFile,
+  ArtCodeURLTypeBookmarksList,
+  ArtCodeURLTypeBookmark,
+  ArtCodeURLTypeRemoteList,
+  ArtCodeURLTypeRemote,
+} ArtCodeURLType;
 
-/// ArtCodeURL is encoded as follow:
-/// artcode://projects                          -- project list
-/// artcode://<project uuid>/bookmarks          -- project's bookmark list
-/// artcode://<project uuid>/remotes            -- project's remote list
-/// artcode://<project uuid>-<item uuid>/path   -- generic project, project item URL
 @interface ArtCodeURL
 
-/// Create a new NSURL encoding the project, project's item and path.
-/// See const paths to generate lists variant.
-/// ie: artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath; generates artcode://projects
-+ (NSURL *)artCodeURLWithProject:(ACProject *)project item:(ACProjectItem *)item path:(NSString *)path;
+/// Create a new NSURL encoding the project, type and path.
++ (NSURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path;
 
 @end
 
 @interface NSURL (ArtCodeURL)
 
 /// Get a mask indicating properties of the URL. See ArtCodeURLType enum for more informations.
-- (NSUInteger)artCodeURLTypeMask;
+- (ArtCodeURLType)artCodeType;
 
 #pragma mark Top level URLs
 
@@ -61,7 +61,7 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 - (BOOL)isArtCodeFileBookmark;
 
 /// Returns a file:// URL from either an artcode or a file URL.
-- (NSURL *)artCodeFileURL;
+- (NSURL *)artCodeURLToActualURL;
 
 #pragma mark Utilities
 
