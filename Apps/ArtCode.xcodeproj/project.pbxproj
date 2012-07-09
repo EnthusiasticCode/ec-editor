@@ -1035,7 +1035,7 @@
 		CDA9B66F1524A0620063D76F /* ipad_icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ipad_icon@2.png"; sourceTree = "<group>"; };
 		CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverButton.h; sourceTree = "<group>"; };
 		CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverButton.m; sourceTree = "<group>"; };
-		CDB5DB6314C6F56A003DFD1F /* FolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; path = FolderBrowserController.h; sourceTree = "<group>"; };
+		CDB5DB6314C6F56A003DFD1F /* FolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderBrowserController.h; sourceTree = "<group>"; };
 		CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderBrowserController.m; sourceTree = "<group>"; };
 		CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveConflictController.h; sourceTree = "<group>"; };
 		CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoveConflictController.m; sourceTree = "<group>"; };
