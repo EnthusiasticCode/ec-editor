@@ -75,7 +75,7 @@
   [super viewWillAppear:animated];
   
   self.projectNameTextField.text = self.artCodeTab.currentProject.name;
-  self.projectFileCountLabel.text = [NSString stringWithFormat:@"%u", self.artCodeTab.currentProject.files.count];
+  self.projectFileCountLabel.text = @"0"; // This has to be calculated asynchronously, maybe remove it?
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

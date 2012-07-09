@@ -15,9 +15,10 @@ typedef enum {
   ArtCodeURLTypeProject,
   ArtCodeURLTypeDirectory,
   ArtCodeURLTypeFile,
+  ArtCodeURLTypeTextFile,
   ArtCodeURLTypeBookmarksList,
   ArtCodeURLTypeBookmark,
-  ArtCodeURLTypeRemoteList,
+  ArtCodeURLTypeRemotesList,
   ArtCodeURLTypeRemote,
 } ArtCodeURLType;
 
@@ -62,6 +63,9 @@ typedef enum {
 
 /// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)artCodeURLToActualURL;
+
+/// Returns the name of the ArtCodeRemote URL
+- (NSString *)artCodeRemoteName;
 
 #pragma mark Utilities
 

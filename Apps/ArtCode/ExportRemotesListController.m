@@ -7,6 +7,7 @@
 //
 
 #import "ExportRemotesListController.h"
+#import "ArtCodeURL.h"
 
 @implementation ExportRemotesListController
 
@@ -31,9 +32,9 @@
     cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  ACProjectRemote *remote = [self.remotes objectAtIndex:indexPath.row];
-  cell.textLabel.text = remote.name;
-  cell.detailTextLabel.text = remote.URL.absoluteString;
+  NSURL *remoteURL = [self.remotes objectAtIndex:indexPath.row];
+  cell.textLabel.text = remoteURL.artCodeRemoteName;
+  cell.detailTextLabel.text = remoteURL.artCodeURLToActualURL.absoluteString;
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   
   return cell;

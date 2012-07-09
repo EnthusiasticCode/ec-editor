@@ -361,38 +361,38 @@
     else
     {
       NSURL *url = self.artCodeTab.currentURL;
-      if ([url isArtCodeURL])
-      {
-        ACProjectItem *item = self.artCodeTab.currentItem;
-        switch (item.type)
-        {
-          case ACPRemote:
-            url = [(ACProjectRemote *)item URL];
-            break;
-            
-          case ACPFileBookmark:
-            item = (ACProjectItem *)[(ACProjectFileBookmark *)item file];
-            
-          default:
-          {
-            // If project root set color and project name 
-            if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
-            {
-              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
-            }
-            // or path and file name for items
-            else
-            {
-              NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
-              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
-            }
-            // Mark url as handled
-            url = nil;
-            break;
-          }
-        }
-      }
-      
+//      if ([url isArtCodeURL])
+//      {
+//        ACProjectItem *item = self.artCodeTab.currentItem;
+//        switch (item.type)
+//        {
+//          case ACPRemote:
+//            url = [(ACProjectRemote *)item URL];
+//            break;
+//            
+//          case ACPFileBookmark:
+//            item = (ACProjectItem *)[(ACProjectFileBookmark *)item file];
+//            
+//          default:
+//          {
+//            // If project root set color and project name 
+//            if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
+//            {
+//              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
+//            }
+//            // or path and file name for items
+//            else
+//            {
+//              NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
+//              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
+//            }
+//            // Mark url as handled
+//            url = nil;
+//            break;
+//          }
+//        }
+//      }
+//      
       // If URL has not been handled jet
       if (url)
       {
@@ -455,62 +455,43 @@
   // ArtCode URLs routing
   if ([currentURL isArtCodeURL])
   {
-    // Projects list
-    if ([currentURL isArtCodeProjectsList])
-    {
-      if ([self.contentViewController isKindOfClass:[ProjectBrowserController class]])
-        result = self.contentViewController;
-      else
-        result = [ProjectBrowserController new];
-    }
-    // Project's bookmarks list
-    else if ([currentURL isArtCodeProjectBookmarksList])
-    {
-      if ([self.contentViewController isKindOfClass:[BookmarkBrowserController class]])
-        result = self.contentViewController;
-      else
-        result = [BookmarkBrowserController new];
-    }
-    // Project's remotes list
-    else if ([currentURL isArtCodeProjectRemotesList])
-    {
-      if ([self.contentViewController isKindOfClass:[RemotesListController class]])
-        result = self.contentViewController;
-      else
-        result = [RemotesListController new];
-    }
-    // Project's item
-    else
-    {
-      switch (tab.currentItem.type) {   
-        case ACPFile:
-        case ACPFileBookmark:
-        {
-          if ([self.contentViewController isKindOfClass:[CodeFileController class]])
-            result = self.contentViewController;
-          else
-            result = [CodeFileController new];
-          break;
-        }
-          
-        case ACPRemote:
-        {
-          if ([self.contentViewController isKindOfClass:[RemoteBrowserController class]])
-            result = self.contentViewController;
-          else
-            result = [RemoteBrowserController new];
-          break;
-        }
-          
-        default:
-        {
-          if ([self.contentViewController isKindOfClass:[FileBrowserController class]])
-            result = self.contentViewController;
-          else
-            result = [FileBrowserController new];
-          break;
-        }
+    Class controllerClass = nil;
+    
+    switch (currentURL.artCodeType) {
+      case ArtCodeURLTypeProjectsList:
+      {
+        controllerClass = [ProjectBrowserController class];
+        break;
       }
+      case ArtCodeURLTypeBookmarksList:
+      case ArtCodeURLTypeBookmark:
+      {
+        controllerClass = [BookmarkBrowserController class];
+        break;
+      }
+      case ArtCodeURLTypeRemotesList:
+      case ArtCodeURLTypeRemote:
+      {
+        controllerClass = [RemotesListController class];
+        break;
+      }
+      case ArtCodeURLTypeTextFile:
+      {
+        controllerClass = [CodeFileController class];
+        break;
+      }
+      case ArtCodeURLTypeProject:
+      case ArtCodeURLTypeDirectory:
+      case ArtCodeURLTypeFile:
+      {
+        controllerClass = [FileBrowserController class];
+        break;
+      }
+    }
+    if ([self.contentViewController isKindOfClass:controllerClass]) {
+      result = self.contentViewController;
+    } else {
+      result = [controllerClass new];
     }
   } else if ([currentURL.scheme isEqualToString:@"docset"]) {
     if ([self.contentViewController isKindOfClass:[DocSetBrowserController class]])
