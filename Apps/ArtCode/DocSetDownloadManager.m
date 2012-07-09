@@ -288,25 +288,17 @@
 	self.status = DocSetDownloadStatusExtracting;
 	self.progress = 0.0;
 	
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		NSFileManager *fm = [[NSFileManager alloc] init];
-		NSURL *extractionTargetURL = [[self.downloadTargetURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:@"docset_extract"];
-		self.extractedURL = extractionTargetURL;
-		[fm createDirectoryAtURL:extractionTargetURL withIntermediateDirectories:YES attributes:nil error:NULL];
+  NSURL *extractionTargetURL = [[self.downloadTargetURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:@"docset_extract"];
+  self.extractedURL = extractionTargetURL;
+  
+  [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:self.downloadTargetURL toURL:extractionTargetURL completionHandler:^(NSError *error) {
+    self.status = DocSetDownloadStatusFinished;
+    [[DocSetDownloadManager sharedDownloadManager] downloadFinished:self];
     
-    [ArchiveUtilities extractArchiveAtURL:self.downloadTargetURL toDirectory:extractionTargetURL];
-
-		[fm removeItemAtURL:self.downloadTargetURL error:NULL];
-		
-		dispatch_async(dispatch_get_main_queue(), ^{
-			self.status = DocSetDownloadStatusFinished;
-			[[DocSetDownloadManager sharedDownloadManager] downloadFinished:self];
-			
-			if (_backgroundTask != UIBackgroundTaskInvalid) {
-				[[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
-			}
-		});
-	});
+    if (_backgroundTask != UIBackgroundTaskInvalid) {
+      [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+    }
+  }];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error

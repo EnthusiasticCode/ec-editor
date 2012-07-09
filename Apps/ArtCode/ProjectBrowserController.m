@@ -24,7 +24,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
-#import "NSFileManager+FileCoordination.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
@@ -341,7 +341,7 @@
       NSArray *oldElements = self.gridElements;
       [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
-          [NSFileManager coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[obj presentedItemURL]] completionHandler:^(NSError *error) {
+          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[obj presentedItemURL]] completionHandler:^(NSError *error) {
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
           }];
@@ -374,13 +374,8 @@
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
           ACProject *project = obj;
-          NSURL *publishURL = [NSURL temporaryDirectory];
-          [project publishContentsToURL:publishURL completionHandler:^(NSError *error) {
-            if (!error) {
-              NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-            }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+          NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error) {
             // TODO error handling?
             progressBlock();
           }];
@@ -434,22 +429,17 @@
       // Enumerate elements to export
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ACProject class]]) {
-          ACProject *project = [obj copy];
+          ACProject *project = obj;
           
           // Generate mail subject
           [subject appendFormat:@"%@, ", project.name];
           
           // Process project
-            NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-            NSURL *publishURL = [NSURL temporaryDirectory];
-          [project publishContentsToURL:publishURL completionHandler:^(NSError *error) {
-            if (!error) {
-              [ArchiveUtilities compressDirectoryAtURL:publishURL toArchive:zipURL];
-              // Add attachment
-              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-              [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
-            }
-            [[NSFileManager defaultManager] removeItemAtURL:publishURL error:NULL];
+          NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error) {
+            // Add attachment
+            [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+            [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
             progressCompletion();
           }];
         } else {

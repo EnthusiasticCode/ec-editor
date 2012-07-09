@@ -123,25 +123,14 @@
     if (createdProject) {
       // Import the zip file
       // Extract files if needed
-      NSFileManager *fileManager = [NSFileManager new];
-      if (zipURL && [fileManager fileExistsAtPath:zipURL.path]) {
-        NSURL *tempURL = [NSURL temporaryDirectory];
-        if ([fileManager createDirectoryAtURL:tempURL withIntermediateDirectories:YES attributes:nil error:NULL]) {
-          // Extract into the temporary directory
-          [ArchiveUtilities extractArchiveAtURL:zipURL toDirectory:tempURL];
-          
-          // Update project's content with extracted items
-          [createdProject updateWithContentsOfURL:tempURL completionHandler:^(NSError *error) {
-            [fileManager removeItemAtURL:tempURL error:NULL];
-            [self stopRightBarButtonItemActivityIndicator];
-            self.tableView.userInteractionEnabled = YES;
-            
-            [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-          }];
-        }
+      [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:zipURL toURL:createdProject.presentedItemURL completionHandler:^(NSError *error) {
+        [self stopRightBarButtonItemActivityIndicator];
+        self.tableView.userInteractionEnabled = YES;
+        
+        [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         // TODO error handling
-      }
+      }];
     } else {
       ASSERT(NO); // TODO error handling
     }

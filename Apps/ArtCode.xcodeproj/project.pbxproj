@@ -122,9 +122,9 @@
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
-		B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
-		B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */; };
+		B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
+		B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
+		B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
 		B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
 		B78D137015AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
 		B78D137115AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
@@ -504,7 +504,6 @@
 		CDD40B0313E1A046008AC36B /* PopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */; };
 		CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDDC95061462E23F00E2B96C /* minimap_Background.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
-		CDE47B9C15AAE0EB0068D7BC /* NSFileManager+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */; };
 		CDE80660147F949300C94BFD /* ShapePopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */; };
 		CDE8F9D4145EEEFE00CA4496 /* CodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* CodeFileSearchBarController.m */; };
 		CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
@@ -631,8 +630,8 @@
 		B78C160415245F6000C66DDC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160615245F6000C66DDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+FileCoordination.h"; sourceTree = "<group>"; };
-		B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+FileCoordination.m"; sourceTree = "<group>"; };
+		B78D132E15A9C0070022C93B /* NSFileCoordinator+CoordinatedFileManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileCoordinator+CoordinatedFileManagement.h"; sourceTree = "<group>"; };
+		B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileCoordinator+CoordinatedFileManagement.m"; sourceTree = "<group>"; };
 		B78D136D15AB4D5D0022C93B /* TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFile.h; sourceTree = "<group>"; };
 		B78D136E15AB4D5D0022C93B /* TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFile.m; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
@@ -1066,8 +1065,6 @@
 		CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDDC95061462E23F00E2B96C /* minimap_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimap_Background.png; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
-		CDE47B9A15AAE0EA0068D7BC /* NSFileManager+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Utilities.h"; sourceTree = "<group>"; };
-		CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Utilities.m"; sourceTree = "<group>"; };
 		CDE8065E147F949300C94BFD /* ShapePopoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapePopoverBackgroundView.h; sourceTree = "<group>"; };
 		CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShapePopoverBackgroundView.m; sourceTree = "<group>"; };
 		CDE8F9D1145EEEFE00CA4496 /* CodeFileSearchBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchBarController.h; sourceTree = "<group>"; };
@@ -1437,10 +1434,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */,
-				B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */,
-				CDE47B9A15AAE0EA0068D7BC /* NSFileManager+Utilities.h */,
-				CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */,
+				B78D132E15A9C0070022C93B /* NSFileCoordinator+CoordinatedFileManagement.h */,
+				B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
@@ -2756,7 +2751,7 @@
 				B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133115A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
+				B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137015AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2791,7 +2786,7 @@
 				B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133215A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
+				B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2900,8 +2895,7 @@
 				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
-				CDE47B9C15AAE0EB0068D7BC /* NSFileManager+Utilities.m in Sources */,
+				B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

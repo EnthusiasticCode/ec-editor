@@ -10,8 +10,8 @@
 
 @interface ArchiveUtilities : NSObject
 
-+ (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL;
-+ (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL;
++ (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error))completionHandler;
 
 @end
 

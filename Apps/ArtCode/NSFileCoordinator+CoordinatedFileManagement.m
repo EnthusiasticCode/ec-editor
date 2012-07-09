@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "NSFileManager+FileCoordination.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
 
-@implementation NSFileManager (FileCoordination)
+@implementation NSFileCoordinator (CoordinatedFileManagement)
 
 @end
