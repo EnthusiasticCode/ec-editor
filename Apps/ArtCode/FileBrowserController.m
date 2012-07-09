@@ -27,6 +27,8 @@
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
+#import "DirectoryPresenter.h"
+#import "SmartFilteredDirectoryPresenter.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
@@ -34,19 +36,12 @@
 #import "ACProject.h"
 
 #import "UIViewController+Utilities.h"
-#import "NSArray+ScoreForAbbreviation.h"
+#import "NSFileManager+Utilities.h"
 
 
-@interface FileBrowserController () {
-  NSArray *_filteredItems;
-  NSArray *_filteredItemsHitMasks;
-  
-  UIPopoverController *_toolNormalAddPopover;
-  UIActionSheet *_toolEditItemDuplicateActionSheet;
-  UIActionSheet *_toolEditItemExportActionSheet;
-  
-  NSMutableArray *_selectedItems;
-}
+@interface FileBrowserController ()
+
+@property (nonatomic, strong) NSURL *directoryURL;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -63,7 +58,16 @@
 #pragma mark - Implementations
 #pragma mark -
 
-@implementation FileBrowserController
+@implementation FileBrowserController {
+  DirectoryPresenter *_directoryPresenter;
+  SmartFilteredDirectoryPresenter *_filteredDirectoryPresenter;
+  
+  UIPopoverController *_toolNormalAddPopover;
+  UIActionSheet *_toolEditItemDuplicateActionSheet;
+  UIActionSheet *_toolEditItemExportActionSheet;
+  
+  NSMutableArray *_selectedItems;
+}
 
 - (id)init
 {
@@ -72,13 +76,7 @@
     return nil;
   
   // RAC
-  __weak FileBrowserController *this = self;
-
-  // Update table view when current folder's children change
-  [RACAbleSelf(self.artCodeTab.currentFolder.children) subscribeNext:^(id x) {
-    [this invalidateFilteredItems];
-    [this.tableView reloadData];
-  }];
+  [self rac_bind:RAC_KEYPATH_SELF(self.directoryURL) to:RACAbleSelf(self.artCodeTab.currentURL)];
   
   return self;
 }
@@ -89,39 +87,53 @@
 
 #pragma mark - Properties
 
+@synthesize directoryURL = _directoryURL;
 @synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
 
-
-- (NSArray *)filteredItems {
-  if (!_filteredItems) {
-    if ([self.searchBar.text length]) {
-      NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentFolder.children sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
-        return element.name;
-      }];
-      _filteredItemsHitMasks = hitMasks;
-      if ([_filteredItems count] == 0)
-        self.infoLabel.text = L(@"No items in this folder match the filter.");
-      else
-        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), [_filteredItems count], [self.artCodeTab.currentFolder.children count]];
-    } else {
-      _filteredItems = [self.artCodeTab.currentFolder.children sortedArrayUsingComparator:^NSComparisonResult(ACProjectFileSystemItem *obj1, ACProjectFileSystemItem *obj2) {
-        return [obj1.name compare:obj2.name];
-      }];
-      _filteredItemsHitMasks = nil;
-      if ([_filteredItems count] == 0)
-        self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
-      else
-        self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:[_filteredItems count]];
-    }
-  }
-  return _filteredItems;
+- (void)setDirectoryURL:(NSURL *)directoryURL {
+  if (directoryURL == _directoryURL)
+    return;
+  
+  _directoryURL = directoryURL;
+  
+  [self invalidateFilteredItems];
+  [self.tableView reloadData];
 }
 
-- (void)invalidateFilteredItems
-{
-  _filteredItems = nil;
-  _filteredItemsHitMasks = nil;
+- (NSArray *)filteredItems {
+  // Generating the default directory presenter if needed
+  if (!_directoryPresenter) {
+    _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+  }
+  
+  // Select the appropriate presenter in case of search string
+  if (self.searchBar.text.length) {
+    // Preparing the filtered directory presenter
+    if (!_filteredDirectoryPresenter) {
+      _filteredDirectoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    }
+    _filteredDirectoryPresenter.filterString = self.searchBar.text;
+    // Peparing hint message
+    if (_filteredDirectoryPresenter.fileURLs.count == 0) {
+      self.infoLabel.text = L(@"No items in this folder match the filter.");
+    } else {
+      self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), _filteredDirectoryPresenter.fileURLs.count, _directoryPresenter.fileURLs.count];
+    }
+    return _filteredDirectoryPresenter.fileURLs;
+  } else {
+    // Peparing hint message
+    if (_directoryPresenter.fileURLs.count == 0) {
+      self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
+    } else {
+      self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:_directoryPresenter.fileURLs];
+    }
+    return _directoryPresenter.fileURLs;
+  }
+}
+
+- (void)invalidateFilteredItems {
+  _directoryPresenter = nil;
+  _filteredDirectoryPresenter = nil;
 }
 
 #pragma mark - View lifecycle
@@ -170,7 +182,7 @@
   
   //    [self invalidateFilteredItems];
   [super viewWillAppear:animated];
-  
+    
   // Hide sync button if no remotes
   self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentProject.remotes count] == 0;
 }
@@ -188,21 +200,22 @@
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
   
   // Configure the cell
-  ACProjectFileSystemItem *fileItem = [self.filteredItems objectAtIndex:indexPath.row];
+  NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
   
-  if (fileItem.type == ACPFolder) {
+  cell.textLabel.text = itemURL.lastPathComponent;
+  cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
+  
+  BOOL isDirectory = NO;
+  [[NSFileManager defaultManager] fileExistsAtPath:itemURL.path isDirectory:&isDirectory];
+  if (isDirectory) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
     cell.accessoryType = UITableViewCellAccessoryNone;
   }
-  
-  cell.textLabel.text = fileItem.name;
-  cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
-  
-  // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-  if ([_selectedItems containsObject:fileItem])
+    // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
+  if ([_selectedItems containsObject:itemURL])
     [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   
   return cell;
@@ -238,8 +251,8 @@
   {
     if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
     {
-      for (ACProjectFileSystemItem *item in _selectedItems) {
-        [item.parentFolder removeChildItem:item];
+      for (NSURL *itemURL in _selectedItems) {
+        [[NSFileManager defaultManager] removeItemAtURL:itemURL error:NULL];
       }
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       [self setEditing:NO animated:YES];
@@ -258,8 +271,8 @@
     {
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
-      [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item copyToFolder:item.parentFolder renameTo:nil];
+      [_selectedItems enumerateObjectsUsingBlock:^(NSURL *itemURL, NSUInteger idx, BOOL *stop) {
+        [[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:itemURL avoidReplace:YES error:NULL];
       }];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       [self setEditing:NO animated:YES];
@@ -283,62 +296,61 @@
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
       __block NSInteger processed = 0;
-      [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item publishContentsToURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:item.name] completionHandler:^(BOOL success) {
-          if (++processed == selectedItemsCount) {
-            self.loading = NO;
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-          }
-        }];
+      [_selectedItems enumerateObjectsUsingBlock:^(NSURL *itemURL, NSUInteger idx, BOOL *stop) {
+        [[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:[[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:itemURL.lastPathComponent] avoidReplace:YES error:NULL];
+        if (++processed == selectedItemsCount) {
+          self.loading = NO;
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+        }
       }];
       [self setEditing:NO animated:YES];
     }
     else if (buttonIndex == 3) // Mail
     {
       NSURL *tempDirecotryURL = [NSURL temporaryDirectory];
+      NSArray *selectedUrls = [_selectedItems copy];
+      NSFileManager *fileManager = [NSFileManager new];
       
       // Compressing files to export
       self.loading = YES;
-      NSInteger selectedItemsCount = [_selectedItems count];
-      __block NSInteger processed = 0;
+
       // Create temporary directory to compress
       NSURL *directoryToZipURL = [tempDirecotryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentProject.name]];
-      [[NSFileManager defaultManager] createDirectoryAtURL:directoryToZipURL withIntermediateDirectories:YES attributes:nil error:NULL];
-      // Add files to directory to zip
-      [_selectedItems enumerateObjectsUsingBlock:^(ACProjectFileSystemItem *item, NSUInteger idx, BOOL *stop) {
-        [item publishContentsToURL:[directoryToZipURL URLByAppendingPathComponent:item.name] completionHandler:^(BOOL success) {
-          if (++processed == selectedItemsCount) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-              // Compress directory
-              NSURL *archiveToSendURL = [directoryToZipURL URLByAppendingPathExtension:@"zip"];
-              [ArchiveUtilities compressDirectoryAtURL:directoryToZipURL toArchive:archiveToSendURL];
-              // Switch to main thread to show mail composer
-              dispatch_async(dispatch_get_main_queue(), ^{
-                // Create mail composer
-                MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
-                mailComposer.mailComposeDelegate = self;
-                mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-                mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-                
-                // Add attachement
-                [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveToSendURL] mimeType:@"application/zip" fileName:[archiveToSendURL lastPathComponent]];
-                
-                // Remote temporary folder
-                [[NSFileManager defaultManager] removeItemAtURL:tempDirecotryURL error:NULL];
-                
-                // Add precompiled mail fields
-                [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentProject.name]];
-                [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
-                
-                // Present mail composer
-                [self presentViewController:mailComposer animated:YES completion:nil];
-                [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-                self.loading = NO;
-              });
-            });
-          }
+      [fileManager createDirectoryAtURL:directoryToZipURL withIntermediateDirectories:YES attributes:nil error:NULL];
+      
+      // Compress and send
+      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // Copy items to temporary directory
+        [selectedUrls enumerateObjectsUsingBlock:^(NSURL *itemURL, NSUInteger idx, BOOL *stop) {
+          [[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:[directoryToZipURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL];
         }];
-      }];
+        // Compress directory
+        NSURL *archiveToSendURL = [directoryToZipURL URLByAppendingPathExtension:@"zip"];
+        [ArchiveUtilities compressDirectoryAtURL:directoryToZipURL toArchive:archiveToSendURL];
+        // Switch to main thread to show mail composer
+        dispatch_async(dispatch_get_main_queue(), ^{
+          // Create mail composer
+          MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+          mailComposer.mailComposeDelegate = self;
+          mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+          mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+          
+          // Add attachement
+          [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveToSendURL] mimeType:@"application/zip" fileName:[archiveToSendURL lastPathComponent]];
+          
+          // Remote temporary folder
+          [file removeItemAtURL:tempDirecotryURL error:NULL];
+          
+          // Add precompiled mail fields
+          [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentProject.name]];
+          [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+          
+          // Present mail composer
+          [self presentViewController:mailComposer animated:YES completion:nil];
+          [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+          self.loading = NO;
+        });
+      });
       [self setEditing:NO animated:YES];
     }
   }

@@ -507,6 +507,7 @@
 		CDD40B0313E1A046008AC36B /* PopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */; };
 		CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDDC95061462E23F00E2B96C /* minimap_Background.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
+		CDE47B9C15AAE0EB0068D7BC /* NSFileManager+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */; };
 		CDE80660147F949300C94BFD /* ShapePopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */; };
 		CDE8F9D4145EEEFE00CA4496 /* CodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* CodeFileSearchBarController.m */; };
 		CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
@@ -1074,6 +1075,8 @@
 		CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDDC95061462E23F00E2B96C /* minimap_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimap_Background.png; sourceTree = "<group>"; };
 		CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inconsolata-dz.otf"; sourceTree = "<group>"; };
+		CDE47B9A15AAE0EA0068D7BC /* NSFileManager+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Utilities.h"; sourceTree = "<group>"; };
+		CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Utilities.m"; sourceTree = "<group>"; };
 		CDE8065E147F949300C94BFD /* ShapePopoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShapePopoverBackgroundView.h; sourceTree = "<group>"; };
 		CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShapePopoverBackgroundView.m; sourceTree = "<group>"; };
 		CDE8F9D1145EEEFE00CA4496 /* CodeFileSearchBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchBarController.h; sourceTree = "<group>"; };
@@ -1445,6 +1448,8 @@
 			children = (
 				B78D132E15A9C0070022C93B /* NSFileManager+FileCoordination.h */,
 				B78D132F15A9C0080022C93B /* NSFileManager+FileCoordination.m */,
+				CDE47B9A15AAE0EA0068D7BC /* NSFileManager+Utilities.h */,
+				CDE47B9B15AAE0EA0068D7BC /* NSFileManager+Utilities.m */,
 				B7F3A82A156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.h */,
 				B7F3A82B156EAE6200954D48 /* NSAttributedString+PersistentDataStructures.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
@@ -2915,6 +2920,7 @@
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133015A9C0080022C93B /* NSFileManager+FileCoordination.m in Sources */,
+				CDE47B9C15AAE0EB0068D7BC /* NSFileManager+Utilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

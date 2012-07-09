@@ -10,8 +10,6 @@
 #import "ArtCodeURL.h"
 #import "ACProject.h"
 
-#import "DirectoryPresenter.h"
-
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
 
@@ -34,7 +32,6 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 
 @property (nonatomic, getter = isLoading) BOOL loading;
 @property (nonatomic, strong) ACProject *currentProject;
-@property (nonatomic, strong) DirectoryPresenter *currentDirectoryPresenter;
 @property (nonatomic, strong) DocSet *currentDocSet;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
@@ -52,7 +49,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   NSMutableArray *_mutableHistoryURLs;
 }
 
-@synthesize loading = _loading, currentProject = _currentProject, currentDocSet = _currentDocSet, currentDirectoryPresenter = _currentDirectoryPresenter;
+@synthesize loading = _loading, currentProject = _currentProject, currentDocSet = _currentDocSet;
 
 #pragma mark - Class methods
 
@@ -300,12 +297,10 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     if (fromProject != toProject) {
       self.currentProject = toProject;
     }
-    self.currentDirectoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:toURL options:0];
   } else if ([toURL.scheme isEqualToString:@"docset"]) {
     // Handle changes to docset urls
     self.currentDocSet = toURL.docSet;
     self.currentProject = nil;
-    self.currentDirectoryPresenter = nil;
   } else {
     ASSERT(NO); // URL not handled
   }
