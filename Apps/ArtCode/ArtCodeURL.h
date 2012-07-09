@@ -30,6 +30,11 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 
 @interface NSURL (ArtCodeURL)
 
+/// Get a mask indicating properties of the URL. See ArtCodeURLType enum for more informations.
+- (NSUInteger)artCodeURLTypeMask;
+
+#pragma mark Top level URLs
+
 /// Returns YES if the URL has an ArtCode scheme
 - (BOOL)isArtCodeURL;
 
@@ -45,8 +50,23 @@ extern NSString * const artCodeURLProjectRemoteListPath;
 /// ie: the URL is in the format artcode://<project uuid>/remotes
 - (BOOL)isArtCodeProjectRemotesList;
 
+#pragma mark URL specific
+
+/// Indicate if the URL is a directory.
+- (BOOL)isArtCodeDirectory;
+- (BOOL)isArtCodeProjectDirectory;
+- (BOOL)isArtCodeFile;
+- (BOOL)isArtCodeTextFile;
+- (BOOL)isArtCodeRemote;
+- (BOOL)isArtCodeFileBookmark;
+
+/// Returns a file:// URL from either an artcode or a file URL.
+- (NSURL *)artCodeFileURL;
+
+#pragma mark Utilities
+
 /// Substitute / with ▸
-- (NSString *)prettyPath;
+- (NSString *)prettyPath; // TODO rename to artCodePrettyPath.
 
 @end
 
