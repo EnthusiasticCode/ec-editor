@@ -125,7 +125,7 @@
     if (_directoryPresenter.fileURLs.count == 0) {
       self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
     } else {
-      self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:_directoryPresenter.fileURLs];
+      self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:_directoryPresenter.fileURLs.count];
     }
     return _directoryPresenter.fileURLs;
   }
@@ -264,7 +264,7 @@
     {
       FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
+      directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Duplicate
@@ -284,7 +284,7 @@
     {
       FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-      directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
+      directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Upload
@@ -339,7 +339,7 @@
           [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveToSendURL] mimeType:@"application/zip" fileName:[archiveToSendURL lastPathComponent]];
           
           // Remote temporary folder
-          [file removeItemAtURL:tempDirecotryURL error:NULL];
+          [fileManager removeItemAtURL:tempDirecotryURL error:NULL];
           
           // Add precompiled mail fields
           [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentProject.name]];
@@ -416,17 +416,18 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
+  NSURL *moveFolder = directoryBrowser.selectedFolderURL;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
   [self modalNavigationControllerPresentViewController:conflictController];
   
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    ACProjectFileSystemItem *copy = [item copyToFolder:moveFolder renameTo:nil];
-    if (!copy) {
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(NSURL *itemURL) {
+    if (![fileManager copyItemAtURL:itemURL toURL:moveFolder error:NULL]) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
     };
   } completion:^{
@@ -441,16 +442,18 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
+  NSURL *moveFolder = directoryBrowser.selectedFolderURL;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
   [self modalNavigationControllerPresentViewController:conflictController];
   
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
+  
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(ACProjectFileSystemItem *item) {
-    [item moveToFolder:moveFolder renameTo:nil];
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(NSURL *itemURL) {
+    [fileManager moveItemAtURL:itemURL toURL:moveFolder error:NULL];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -522,7 +525,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync
-  [remoteTransferController synchronizeLocalProjectFolder:self.artCodeTab.currentFolder withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController synchronizeLocalProjectFolder:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }
