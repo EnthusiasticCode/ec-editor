@@ -375,7 +375,7 @@
         if ([obj isKindOfClass:[ACProject class]]) {
           ACProject *project = obj;
           NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error) {
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error, NSURL *newURL) {
             // TODO error handling?
             progressBlock();
           }];
@@ -436,7 +436,7 @@
           
           // Process project
           NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error) {
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
             // Add attachment
             [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
             [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];

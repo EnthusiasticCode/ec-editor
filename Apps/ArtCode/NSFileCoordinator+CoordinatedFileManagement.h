@@ -10,11 +10,15 @@
 
 @interface NSFileCoordinator (CoordinatedFileManagement)
 
++ (void)coordinatedTouchItemAtURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error, NSURL *newURL))completionHandler;
+
++ (void)coordinatedMakeDirectoryAtURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error, NSURL *newURL))completionHandler;
+
 + (void)coordinatedDeleteItemsAtURLs:(NSArray *)urls completionHandler:(void(^)(NSError *error))completionHandler;
 
-+ (void)coordinatedMoveItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedMoveItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
-+ (void)coordinatedCopyItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedCopyItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
 + (void)coordinatedDuplicateItemsAtURLS:(NSArray *)urls completionHandler:(void(^)(NSError *error))completionHandler;
 

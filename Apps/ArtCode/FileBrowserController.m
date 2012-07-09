@@ -293,7 +293,7 @@
     {
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
-      [NSFileCoordinator coordinatedCopyItemsAtURLS:_selectedItems toURL:[NSURL applicationDocumentsDirectory] renameIfNeeded:YES completionHandler:^(NSError *error) {
+      [NSFileCoordinator coordinatedCopyItemsAtURLS:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];
@@ -307,7 +307,7 @@
       // Compressing files to export
       self.loading = YES;
       
-      [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error) {
+      [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
         // Create mail composer
         MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
         mailComposer.mailComposeDelegate = self;
