@@ -13,6 +13,10 @@
 #import "ACProject.h"
 #import "BezelAlert.h"
 
+#import "ArtCodeURL.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
+
+
 @implementation NewFileController
 
 @synthesize fileNameTextField;
@@ -25,30 +29,30 @@
   [super viewDidLoad];
   
   // RAC 
-  __weak NewFileController *this = self;
+//  __weak NewFileController *this = self;
   
   // Subscribable to get the latest filename with extension and activate 'create' button
-  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
-    if (fileName.length == 0)
-      return nil;
-    
-    if ([[fileName pathExtension] length] == 0)
-      fileName = [fileName stringByAppendingPathExtension:@"txt"];
-    
-    if ([(ACProjectFolder *)this.artCodeTab.currentItem childWithName:fileName] == nil) {
-      return fileName;
-    } else {
-      return nil;
-    }
-  }] doNext:^(id x) {
-    if (x) {
-      this.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
-    } else {
-      this.infoLabel.text = @"The speficied file already exists or is invalid.";
-    }
-  }] select:^id(id x) {
-    return [NSNumber numberWithBool:x != nil];
-  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+//  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+//    if (fileName.length == 0)
+//      return nil;
+//    
+//    if ([[fileName pathExtension] length] == 0)
+//      fileName = [fileName stringByAppendingPathExtension:@"txt"];
+//    
+//    if ([(ACProjectFolder *)this.artCodeTab.currentItem childWithName:fileName] == nil) {
+//      return fileName;
+//    } else {
+//      return nil;
+//    }
+//  }] doNext:^(id x) {
+//    if (x) {
+//      this.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
+//    } else {
+//      this.infoLabel.text = @"The speficied file already exists or is invalid.";
+//    }
+//  }] select:^id(id x) {
+//    return [NSNumber numberWithBool:x != nil];
+//  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }
 
 - (void)viewDidUnload {
@@ -83,18 +87,18 @@
 #pragma mark - Public Methods
 
 - (IBAction)createAction:(id)sender
-{  
+{
   NSString *fileName = self.fileNameTextField.text;
   // TODO use ArtCodeTemplate here
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  ACProjectFile *newFile = [currentFolder newChildFileWithName:fileName];
-  if (newFile) {
+  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-  }
+    if (!error) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    }
+  }];
 }
 
 @end
