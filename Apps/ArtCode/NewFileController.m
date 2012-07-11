@@ -30,7 +30,7 @@
   [super viewDidLoad];
   
   // RAC 
-//  __weak NewFileController *this = self;
+  __weak NewFileController *this = self;
   
   // Subscribable to get the latest filename with extension and activate 'create' button
   [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
