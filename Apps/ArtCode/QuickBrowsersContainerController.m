@@ -29,16 +29,12 @@
   
   ASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
   
-  if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList])
-  {
-    if (!_commonController)
-    {
+  if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList]) {
+    if (!_commonController) {
       _commonController = [[QuickBrowsersContainerController alloc] init];
       _commonController.contentController = contentController;
       [_commonController setViewControllers:[NSArray arrayWithObjects:[QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
-    }
-    else
-    {
+    } else {
       _commonController.contentController = contentController;
     }
     return _commonController;

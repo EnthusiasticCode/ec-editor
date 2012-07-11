@@ -14,6 +14,10 @@
 #import "ACProject.h"
 #import "BezelAlert.h"
 
+#import "ArtCodeURL.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
+
+
 @implementation NewFileController
 
 @synthesize fileNameTextField;
@@ -26,7 +30,7 @@
   [super viewDidLoad];
   
   // RAC 
-  __weak NewFileController *this = self;
+//  __weak NewFileController *this = self;
   
   // Subscribable to get the latest filename with extension and activate 'create' button
   [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
@@ -84,15 +88,15 @@
 #pragma mark - Public Methods
 
 - (IBAction)createAction:(id)sender
-{  
+{
   NSString *fileName = self.fileNameTextField.text;
   // TODO use ArtCodeTemplate here
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
-    if ( ! error) {
-      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    if (!error) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }
   }];

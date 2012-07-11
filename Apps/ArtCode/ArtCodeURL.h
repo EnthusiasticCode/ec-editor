@@ -55,7 +55,7 @@ typedef enum {
 
 /// Indicate if the URL is a directory.
 - (BOOL)isArtCodeDirectory;
-- (BOOL)isArtCodeProjectDirectory;
+- (BOOL)isArtCodeProject;
 - (BOOL)isArtCodeFile;
 - (BOOL)isArtCodeTextFile;
 - (BOOL)isArtCodeRemote;
