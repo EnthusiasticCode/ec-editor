@@ -45,54 +45,52 @@
   }
   else
   {
-    ACProjectItem *projectItem = contentController.artCodeTab.currentItem;
-    // Bookmarks
-    if (projectItem.type == ACPFileBookmark) {
-      projectItem = ((ACProjectFileBookmark *)projectItem).file;
-    }
-    // Root folder item
-    ACProjectFileSystemItem *fileItem = (ACProjectFileSystemItem *)projectItem;
-    if ([fileItem parentFolder] == nil)
-    {
-      if (!_projectController)
-      {
-        _projectController = [[QuickBrowsersContainerController alloc] init];
-        _projectController.contentController = contentController;
-        [_projectController setViewControllers:[NSArray arrayWithObjects:[QuickProjectInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
-      }
-      else
-      {
-        _projectController.contentController = contentController;
-      }
-      return _projectController;
-    }
-    else if (fileItem.type == ACPFolder)
-    {
-      if (!_folderController)
-      {
-        _folderController = [[QuickBrowsersContainerController alloc] init];
-        _folderController.contentController = contentController;
-        [_folderController setViewControllers:[NSArray arrayWithObjects:[QuickFolderInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
-      }
-      else
-      {
-        _folderController.contentController = contentController;
-      }
-      return _folderController;
-    }
-    else
-    {
-      if (!_fileController)
-      {
-        _fileController = [[QuickBrowsersContainerController alloc] init];
-        _fileController.contentController = contentController;
-        [_fileController setViewControllers:[NSArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
-      }
-      else
-      {
-        _fileController.contentController = contentController;
-      }
-      return _fileController;
+    switch (contentController.artCodeTab.currentURL.artCodeType) {
+      case ArtCodeURLTypeProject:
+        if (!_projectController)
+        {
+          _projectController = [[QuickBrowsersContainerController alloc] init];
+          _projectController.contentController = contentController;
+          [_projectController setViewControllers:[NSArray arrayWithObjects:[QuickProjectInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        }
+        else
+        {
+          _projectController.contentController = contentController;
+        }
+        return _projectController;
+        
+      case ArtCodeURLTypeDirectory:
+        if (!_folderController)
+        {
+          _folderController = [[QuickBrowsersContainerController alloc] init];
+          _folderController.contentController = contentController;
+          [_folderController setViewControllers:[NSArray arrayWithObjects:[QuickFolderInfoController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        }
+        else
+        {
+          _folderController.contentController = contentController;
+        }
+        return _folderController;
+        
+      case ArtCodeURLTypeBookmark:
+        // TODO pass file next
+        
+      case ArtCodeURLTypeTextFile:
+        if (!_fileController)
+        {
+          _fileController = [[QuickBrowsersContainerController alloc] init];
+          _fileController.contentController = contentController;
+          [_fileController setViewControllers:[NSArray arrayWithObjects:[QuickFileInfoController new], [QuickTOCController new], [QuickFileBrowserController new], [QuickBookmarkBrowserController new], nil] animated:NO];
+        }
+        else
+        {
+          _fileController.contentController = contentController;
+        }
+        return _fileController;
+        
+      default:
+        ASSERT(NO); // Not handled type
+        break;
     }
   }
   return nil;

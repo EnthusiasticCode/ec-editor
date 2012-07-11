@@ -52,8 +52,10 @@ extern NSString * const ACProjectNotificationItemKey;
 
 #pragma mark Project content
 
-@property (nonatomic, copy, readonly) NSArray *bookmarks;
 @property (nonatomic, copy, readonly) NSArray *remotes;
+
+/// Get an array of all files and forlders in the project.
+- (NSArray *)allFiles;
 
 #pragma mark Project-wide operations
 

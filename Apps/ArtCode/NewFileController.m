@@ -8,6 +8,7 @@
 
 #import "NewFileController.h"
 #import "UIViewController+Utilities.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 #import "ArtCodeTab.h"
 #import "ACProject.h"
@@ -35,7 +36,7 @@
     if ([[fileName pathExtension] length] == 0)
       fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
-    if ([(ACProjectFolder *)this.artCodeTab.currentItem childWithName:fileName] == nil) {
+    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL URLByAppendingPathComponent:fileName].path]) {
       return fileName;
     } else {
       return nil;
@@ -89,12 +90,12 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  ACProjectFile *newFile = [currentFolder newChildFileWithName:fileName];
-  if (newFile) {
-    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-  }
+  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+    if ( ! error) {
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    }
+  }];
 }
 
 @end

@@ -43,8 +43,8 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentProject.files sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectFileSystemItem *element) {
-        return element.name;
+      _filteredItems = [self.artCodeTab.currentProject.allFiles sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(NSURL *elementURL) {
+        return elementURL.lastPathComponent;
       }];
       _filteredItemsHitMasks = hitMasks;
       if ([_filteredItems count] == 0)
@@ -111,15 +111,15 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  ACProjectFileSystemItem *fileItem = [self.filteredItems objectAtIndex:indexPath.row];
-  if (fileItem.type == ACPFolder)
+  NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
+  if (itemURL.isArtCodeDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[fileItem.name pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
   
-  cell.textLabel.text = fileItem.name;
+  cell.textLabel.text = itemURL.lastPathComponent;
   cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
-  cell.detailTextLabel.text = [[fileItem pathInProject] prettyPath];
+  cell.detailTextLabel.text = itemURL.prettyPath;
   
   return cell;
 }
@@ -144,7 +144,7 @@
 - (void)_showProjectsInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath]];
+  [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:nil type:ArtCodeURLTypeProjectsList path:nil]];
 }
 
 @end
