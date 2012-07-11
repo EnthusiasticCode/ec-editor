@@ -9,6 +9,7 @@
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
 #import "ACProject.h"
+#import "ArtCodeURL.h"
 
 #import "UIViewController+Utilities.h"
 #import "BezelAlert.h"
@@ -61,11 +62,14 @@
   if ([self.remotePort.text length])
     [remoteURLString appendFormat:@":%d", [self.remotePort.text integerValue]];
   
-  ACProjectRemote *remote = [self.artCodeTab.currentProject addRemoteWithName:self.remoteName.text URL:[NSURL URLWithString:remoteURLString]];
+  NSURL *remote = [ArtCodeURL artCodeRemoteURLWithProject:self.artCodeTab.currentProject name:self.remoteName.text url:[NSURL URLWithString:remoteURLString]];
+  
+  [self.artCodeTab.currentProject addRemote:remote];
+  
   if (remote)
   {
-    if ([self.remotePassword.text length])
-      remote.password = self.remotePassword.text;
+//    if ([self.remotePassword.text length])
+//      remote.password = self.remotePassword.text;
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }
   else

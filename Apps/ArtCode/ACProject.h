@@ -53,7 +53,10 @@ extern NSString * const ACProjectNotificationItemKey;
 #pragma mark Project content
 
 @property (nonatomic, copy, readonly) NSArray *bookmarks;
+
 @property (nonatomic, copy, readonly) NSArray *remotes;
+
+- (void)addRemote:(NSURL *)remote;
 
 #pragma mark Project-wide operations
 

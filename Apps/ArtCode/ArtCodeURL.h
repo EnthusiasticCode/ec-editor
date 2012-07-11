@@ -27,6 +27,8 @@ typedef enum {
 /// Create a new NSURL encoding the project, type and path.
 + (NSURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path;
 
++ (NSURL *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
+
 @end
 
 @interface NSURL (ArtCodeURL)
