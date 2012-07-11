@@ -57,6 +57,9 @@ extern NSString * const ACProjectNotificationItemKey;
 /// Get an array of all files and forlders in the project.
 - (NSArray *)allFiles;
 
+/// Gets all the bookmarks from the files in the project.
+- (NSArray *)bookmarks;
+
 #pragma mark Project-wide operations
 
 /// Duplicate the entire project.

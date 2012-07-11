@@ -8,6 +8,7 @@
 
 #import "NewFileFolderController.h"
 #import "UIViewController+Utilities.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeURL.h"
@@ -32,13 +33,13 @@
   
   // Subscribable to get the latest folder name or nil if the name is not valid
   [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
-    if (x.length && [(ACProjectFolder *)this.artCodeTab.currentItem childWithName:x] == nil) {
+    if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL URLByAppendingPathComponent:x].path]) {
       return x;
     } else {
       return nil;
     }
   }] doNext:^(id x) {
-    this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [[(ACProjectFileSystemItem *)this.artCodeTab.currentItem pathInProject] prettyPath]] : @"The speficied folder name already exists or is invalid.";
+    this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", this.artCodeTab.currentURL.prettyPath] : @"The speficied folder name already exists or is invalid.";
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
@@ -77,13 +78,12 @@
 
 #pragma mark Public methods
 
-- (IBAction)createAction:(id)sender
-{
-  ACProjectFolder *currentFolder = (ACProjectFolder *)self.artCodeTab.currentItem;
-  ACProjectFolder *newFolder = [currentFolder newChildFolderWithName:self.folderNameTextField.text];
-  if (newFolder) {
-    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-  }
+- (IBAction)createAction:(id)sender {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+    if (!error) {
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    }
+  }];
 }
 @end
