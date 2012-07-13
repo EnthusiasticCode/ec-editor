@@ -64,7 +64,7 @@ static void init(RemoteBrowserController *self) {
   [[[RACAbleSelf(self.artCodeTab.currentURL) distinctUntilChanged] where:^BOOL(id x) {
     return this.artCodeTab.currentItem.type == ACPRemote;
   }] subscribeNext:^(NSURL *currentURL) {
-    this.remote = (ACProjectRemote *)this.artCodeTab.currentItem;
+    this.remote = (ArtCodeRemote *)this.artCodeTab.currentItem;
     this.remoteURL = [this.remote.URL URLByAppendingPathComponent:currentURL.path];
   }];
 }

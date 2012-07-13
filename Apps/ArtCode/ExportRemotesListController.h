@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACProjectRemote;
+@class ArtCodeRemote;
 
 /// A controller that can be used to display a list of remotes.
 /// The controller is supposed to be used inside a modal navigation controller.
@@ -19,6 +19,6 @@
 @property (nonatomic, strong) NSArray *remotes;
 
 /// A block that will be called when the user select a remote from the list.
-@property (nonatomic, copy) void (^remoteSelectedBlock)(ExportRemotesListController *sender, ACProjectRemote *remote);
+@property (nonatomic, copy) void (^remoteSelectedBlock)(ExportRemotesListController *sender, ArtCodeRemote *remote);
 
 @end

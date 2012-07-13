@@ -446,7 +446,7 @@
       
     case 1: {
       RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-      syncController.remote = (ACProjectRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0];
+      syncController.remote = (ArtCodeRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0];
       syncController.navigationItem.rightBarButtonItem = rightButton;
       [self modalNavigationControllerPresentViewController:syncController];
       break;
@@ -455,7 +455,7 @@
     default: {
       ExportRemotesListController *remotesListController = [ExportRemotesListController new];
       remotesListController.remotes = self.artCodeTab.currentProject.remotes;
-      remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ACProjectRemote *remote) {
+      remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ArtCodeRemote *remote) {
         // Shows the remote directory browser
         RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
         uploadController.remote = remote;

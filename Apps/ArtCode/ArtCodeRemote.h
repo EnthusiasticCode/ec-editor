@@ -10,4 +10,7 @@
 
 @interface ArtCodeRemote : NSObject
 
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSURL *url;
+
 @end

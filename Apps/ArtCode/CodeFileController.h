@@ -42,6 +42,6 @@
 /// Generate and shows a keyboard accessory popover at the specified item index 
 /// containing the completions for the cursor. If no completions are available
 /// a bezel alert will be shown instead.
-- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex;
+//- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex;
 
 @end

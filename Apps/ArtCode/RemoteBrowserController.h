@@ -8,7 +8,7 @@
 
 #import "SearchableTableBrowserController.h"
 
-@class ACProjectRemote;
+@class ArtCodeRemote;
 @protocol CKConnection;
 
 @interface RemoteBrowserController : SearchableTableBrowserController
@@ -19,7 +19,7 @@
 @property (nonatomic, strong, readonly) id<CKConnection> connection;
 
 /// The remote that the connection is relative to.
-@property (nonatomic, strong) ACProjectRemote *remote;
+@property (nonatomic, strong) ArtCodeRemote *remote;
 
 /// Set the URL to open. This methos will activelly connect to the URL.
 @property (nonatomic, strong) NSURL *remoteURL;

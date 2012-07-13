@@ -22,7 +22,7 @@
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
-#import "CodeFileCompletionsController.h"
+//#import "CodeFileCompletionsController.h"
 
 #import "ShapePopoverBackgroundView.h"
 
@@ -46,7 +46,7 @@
 @property (nonatomic, strong) UIWebView *webView;
 
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
-@property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
+//@property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 @property (nonatomic, strong) RACDisposable *tokensDisposable;
@@ -131,7 +131,7 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize _keyboardAccessoryItemCompletionsController, codeUnit = _codeUnit, codeScheduler = _codeScheduler, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
+@synthesize /*_keyboardAccessoryItemCompletionsController, */codeUnit = _codeUnit, codeScheduler = _codeScheduler, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
 
 - (CodeView *)codeView {
   if (!_codeView && self.isViewLoaded) {
@@ -201,27 +201,27 @@ static void drawStencilStar(CGContextRef myContext)
     [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
     accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
     // Prepare handlers to show and hide controllers in keyboard accessory item popover
-    accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
-      UIView *presentedView = nil;
-      UIView *presentingView = sender.superview;
-      presentedView = this._keyboardAccessoryItemCompletionsController.view;
-      CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
-      presentedView.frame = popoverContentFrame;
-      [presentingView addSubview:presentedView];
-      presentedView.alpha = 0;
-      [UIView animateWithDuration:animationDuration animations:^{
-        presentedView.alpha = 1;
-      }];
-    };
-    accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
-      [UIView animateWithDuration:animationDuration animations:^{
-        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-          this._keyboardAccessoryItemCompletionsController.view.alpha = 0;              
-      } completion:^(BOOL finished) {
-        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-          [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
-      }];
-    };
+//    accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
+//      UIView *presentedView = nil;
+//      UIView *presentingView = sender.superview;
+//      presentedView = this._keyboardAccessoryItemCompletionsController.view;
+//      CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
+//      presentedView.frame = popoverContentFrame;
+//      [presentingView addSubview:presentedView];
+//      presentedView.alpha = 0;
+//      [UIView animateWithDuration:animationDuration animations:^{
+//        presentedView.alpha = 1;
+//      }];
+//    };
+//    accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
+//      [UIView animateWithDuration:animationDuration animations:^{
+//        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
+//          this._keyboardAccessoryItemCompletionsController.view.alpha = 0;              
+//      } completion:^(BOOL finished) {
+//        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
+//          [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
+//      }];
+//    };
     
     UIView *accessoryPopoverContentView = [UIView new];
     accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
@@ -874,19 +874,19 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Public Methods
 
-- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
-{
-  ASSERT(self._keyboardAccessoryView.superview);
-  
-  self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
-  if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
-  {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
-    return;
-  }
-  
-  [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
-}
+//- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
+//{
+//  ASSERT(self._keyboardAccessoryView.superview);
+//  
+//  self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
+//  if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
+//  {
+//    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+//    return;
+//  }
+//  
+//  [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
+//}
 
 #pragma mark - Private Methods
 
@@ -988,17 +988,17 @@ static void drawStencilStar(CGContextRef myContext)
   return (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
 }
 
-- (CodeFileCompletionsController *)_keyboardAccessoryItemCompletionsController
-{
-  if (!_keyboardAccessoryItemCompletionsController)
-  {
-    _keyboardAccessoryItemCompletionsController = [[CodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
-    _keyboardAccessoryItemCompletionsController.targetCodeFileController = self;
-    _keyboardAccessoryItemCompletionsController.targetKeyboardAccessoryView = self._keyboardAccessoryView;
-    _keyboardAccessoryItemCompletionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-  }
-  return _keyboardAccessoryItemCompletionsController;
-}
+//- (CodeFileCompletionsController *)_keyboardAccessoryItemCompletionsController
+//{
+//  if (!_keyboardAccessoryItemCompletionsController)
+//  {
+//    _keyboardAccessoryItemCompletionsController = [[CodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
+//    _keyboardAccessoryItemCompletionsController.targetCodeFileController = self;
+//    _keyboardAccessoryItemCompletionsController.targetKeyboardAccessoryView = self._keyboardAccessoryView;
+//    _keyboardAccessoryItemCompletionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
+//  }
+//  return _keyboardAccessoryItemCompletionsController;
+//}
 
 - (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier
 {  
@@ -1186,10 +1186,10 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   return nil;
 }
 
-- (void)showCompletionsAtCursor
-{
-  [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
-}
+//- (void)showCompletionsAtCursor
+//{
+//  [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
+//}
 
 - (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
   UIColor *color = nil;

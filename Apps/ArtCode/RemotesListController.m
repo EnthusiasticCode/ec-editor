@@ -11,6 +11,7 @@
 
 #import "ArtCodeTab.h"
 #import "ACProject.h"
+#import "ArtCodeRemote.h"
 
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"
@@ -66,7 +67,7 @@
     else
     {
       NSArray *hitMasks = nil;
-      _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ACProjectRemote *element) {
+      _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
         return element.name;
       }];
       _filteredRemotesHitMasks = hitMasks;
@@ -122,10 +123,10 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
   
-  ACProjectRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+  ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
   cell.textLabel.text = remote.name;
   cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
-  cell.detailTextLabel.text = [[remote URL] absoluteString];
+  cell.detailTextLabel.text = [[remote url] absoluteString];
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   
   return cell;

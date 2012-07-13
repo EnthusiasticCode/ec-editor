@@ -367,7 +367,7 @@
 //        switch (item.type)
 //        {
 //          case ACPRemote:
-//            url = [(ACProjectRemote *)item URL];
+//            url = [(ArtCodeRemote *)item URL];
 //            break;
 //            
 //          case ACPFileBookmark:

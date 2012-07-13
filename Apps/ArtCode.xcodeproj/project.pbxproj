@@ -13,6 +13,14 @@
 		5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
 		5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
 		5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
+		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
+		5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
+		5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
+		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
+		5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
+		5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
+		5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
+		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
@@ -307,13 +315,11 @@
 		B7FB79F614D6086A0080A714 /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B7FB79F514D6086A0080A714 /* libarc.a */; };
 		B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB7A2114D60C360080A714 /* UIView+ReuseIdentifier.m */; };
 		CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */; };
-		CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
 		CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A98314F14F0F0005F603 /* RemotesListController.m */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
-		CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
 		CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D6B1914F2B3B9007AC652 /* libConnection.a */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
@@ -548,6 +554,10 @@
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F315B0AF9C00FFCFEE /* ArtCodeBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeBookmark.h; sourceTree = "<group>"; };
 		5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeBookmark.m; sourceTree = "<group>"; };
+		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
+		5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabPageViewController.m; sourceTree = "<group>"; };
+		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
+		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B7072BBA15111A3000580855 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
@@ -2020,6 +2030,10 @@
 		CD7D2B1613C0D39B00B889EE /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */,
+				5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */,
+				5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */,
+				5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */,
 				CDF4C013144F2C8A00475F6B /* SingleTabController.h */,
 				CDF4C014144F2C8A00475F6B /* SingleTabController.m */,
 				B7FB79EE14D606530080A714 /* Controls */,
@@ -2764,6 +2778,8 @@
 				B78D137015AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
+				5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
+				5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2801,6 +2817,8 @@
 				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
+				5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
+				5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2881,9 +2899,7 @@
 				CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */,
 				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
 				CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */,
-				CD19920B14F25F390059D1E8 /* RemoteBrowserController.m in Sources */,
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
-				CD05149A14F7FB3A003CED2F /* RemoteTransferController.m in Sources */,
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
 				B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */,
@@ -2911,6 +2927,10 @@
 				B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
+				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
+				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
+				5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */,
+				5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

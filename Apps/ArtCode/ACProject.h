@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
+@class ArtCodeRemote;
+
 /// Notifications for the projects list
 extern NSString * const ACProjectWillAddProjectNotificationName;
 extern NSString * const ACProjectDidAddProjectNotificationName;
@@ -61,7 +63,9 @@ extern NSString * const ACProjectNotificationItemKey;
 /// Get all the remotes for the project.
 - (NSArray *)remotes;
 
-- (void)addRemote:(NSURL *)remote;
+- (void)addRemote:(ArtCodeRemote *)remote;
+
+- (void)removeRemote:(ArtCodeRemote *)remote;
 
 #pragma mark Project-wide operations
 

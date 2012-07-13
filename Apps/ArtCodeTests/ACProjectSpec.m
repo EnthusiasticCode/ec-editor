@@ -11,7 +11,7 @@
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 #import "ArtCodeBookmark.h"
-#import "ACProjectRemote.h"
+#import "ArtCodeRemote.h"
 
 #import "NSURL+Utilities.h"
 
@@ -616,7 +616,7 @@ describe(@"A new opened ACProject", ^{
       [[[project should] have:1] remotes];
       
       id item = [project.remotes objectAtIndex:0];
-      [[item should] beMemberOfClass:[ACProjectRemote class]];            
+      [[item should] beMemberOfClass:[ArtCodeRemote class]];            
     });
     
     it(@"can be removed", ^{
@@ -625,7 +625,7 @@ describe(@"A new opened ACProject", ^{
       [[[project should] have:1] remotes];
       
       id item = [project.remotes objectAtIndex:0];
-      [[item should] beMemberOfClass:[ACProjectRemote class]];
+      [[item should] beMemberOfClass:[ArtCodeRemote class]];
       
       [project removeRemote:item];
       [[[project should] have:0] remotes];
@@ -633,7 +633,7 @@ describe(@"A new opened ACProject", ^{
     
     context(@"when present", ^{
       
-      __block ACProjectRemote *remote = nil;
+      __block ArtCodeRemote *remote = nil;
       
       beforeEach(^{
         [project addRemoteWithName:remoteName URL:remoteURL];
