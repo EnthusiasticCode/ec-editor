@@ -62,10 +62,9 @@ static void init(RemoteBrowserController *self) {
   __weak RemoteBrowserController *this = self;
   
   [[[RACAbleSelf(self.artCodeTab.currentURL) distinctUntilChanged] where:^BOOL(id x) {
-    return this.artCodeTab.currentItem.type == ACPRemote;
+    return this.artCodeTab.currentURL.isArtCodeRemote;
   }] subscribeNext:^(NSURL *currentURL) {
-    this.remote = (ArtCodeRemote *)this.artCodeTab.currentItem;
-    this.remoteURL = [this.remote.URL URLByAppendingPathComponent:currentURL.path];
+    this.remoteURL = this.artCodeTab.currentURL.artCodeURLToActualURL;
   }];
 }
 
@@ -100,7 +99,6 @@ static void init(RemoteBrowserController *self) {
   return _selectedItems;
 }
 
-@synthesize remote = _remote;
 @synthesize remoteURL = _remoteURL;
 
 - (void)setRemoteURL:(NSURL *)value
@@ -496,7 +494,7 @@ static void init(RemoteBrowserController *self) {
 {
   FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
-  directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
+  directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
   
 }
@@ -506,7 +504,7 @@ static void init(RemoteBrowserController *self) {
   // Show directory browser presenter to select where to download
   FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-  directoryBrowser.currentFolder = self.artCodeTab.currentProject.contentsFolder;
+  directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 
@@ -544,7 +542,7 @@ static void init(RemoteBrowserController *self) {
 {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  ACProjectFolder *moveFolder = directoryBrowser.selectedFolder;
+  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
   
   // Show conflit resolution controller
   RemoteTransferController *transferController = [RemoteTransferController new];
@@ -554,7 +552,7 @@ static void init(RemoteBrowserController *self) {
   [_modalNavigationController pushViewController:transferController animated:YES];
   
   // Start download modal
-  [transferController downloadConnectionItems:([self._selectedItems count] ? [self._selectedItems copy] : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path toProjectFolder:moveFolder completion:^(id<CKConnection> connection, NSError *error) {
+  [transferController downloadConnectionItems:([self._selectedItems count] ? [self._selectedItems copy] : [NSArray arrayWithObject:[self.filteredItems objectAtIndex:self.tableView.indexPathForSelectedRow.row]]) fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path toDirectoryURL:moveFolderURL completion:^(id<CKConnection> connection, NSError *error) {
     [self setEditing:NO animated:YES];
     if (self.tableView.indexPathForSelectedRow)
       [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
@@ -566,7 +564,7 @@ static void init(RemoteBrowserController *self) {
 {
   // Retrieve URL to sync to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  ACProjectFolder *localFolder = directoryBrowser.selectedFolder;
+  NSURL *localFolderURL = directoryBrowser.selectedFolderURL;
   
   // Show sync controller
   RemoteTransferController *transferController = [RemoteTransferController new];
@@ -576,7 +574,7 @@ static void init(RemoteBrowserController *self) {
   [_modalNavigationController pushViewController:transferController animated:YES];
   
   // Start sync
-  [transferController synchronizeLocalProjectFolder:localFolder withConnection:(id<CKConnection>)_connection path:self.remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [transferController synchronizeLocalDirectoryURL:localFolderURL withConnection:(id<CKConnection>)_connection path:self.remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }

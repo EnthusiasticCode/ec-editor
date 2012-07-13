@@ -26,6 +26,7 @@
 #import "BezelAlert.h"
 
 #import "ArtCodeURL.h"
+#import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
 #import "DirectoryPresenter.h"
 #import "SmartFilteredDirectoryPresenter.h"
@@ -446,7 +447,7 @@
       
     case 1: {
       RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-      syncController.remote = (ArtCodeRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0];
+      syncController.remoteURL = [(ArtCodeRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0] url];
       syncController.navigationItem.rightBarButtonItem = rightButton;
       [self modalNavigationControllerPresentViewController:syncController];
       break;
@@ -458,7 +459,7 @@
       remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ArtCodeRemote *remote) {
         // Shows the remote directory browser
         RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
-        uploadController.remote = remote;
+        uploadController.remoteURL = remote.url;
         uploadController.navigationItem.rightBarButtonItem = rightButton;
         [senderController.navigationController pushViewController:uploadController animated:YES];
       };
