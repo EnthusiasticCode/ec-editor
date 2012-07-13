@@ -32,6 +32,7 @@
 #import "TMSymbol.h"
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeBookmark.h"
 
 #import "ACProject.h"
 
@@ -747,8 +748,8 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
   NSArray *bookmarks = [self.textFile bookmarks];
   BOOL removedBookmark = NO;
-  for (NSURL *bookmark in bookmarks) {
-    if (bookmark.artCodeBookmarkPoint && [bookmark.artCodeBookmarkPoint unsignedIntegerValue] == lineNumber) {
+  for (ArtCodeBookmark *bookmark in bookmarks) {
+    if (bookmark.line == lineNumber) {
       removedBookmark = YES;
       [self.textFile removeBookmark:bookmark];
       break;

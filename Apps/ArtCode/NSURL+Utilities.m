@@ -82,6 +82,10 @@
   return [self.URLByDeletingLastPathComponent URLByAppendingPathComponent:[self.lastPathComponent stringByAddingDuplicateNumber:number]];
 }
 
+- (NSString *)prettyPath {
+  return [[self path] prettyPath];
+}
+
 @end
 
 @implementation NSURL (FixedIsEqual)

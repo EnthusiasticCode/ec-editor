@@ -20,18 +20,19 @@ typedef enum {
   ArtCodeURLTypeBookmark,
   ArtCodeURLTypeRemotesList,
   ArtCodeURLTypeRemote,
+  ArtCodeURLTypeDocset,
 } ArtCodeURLType;
 
-@interface ArtCodeURL
+@interface ArtCodeURL : NSObject
 
-/// Create a new NSURL encoding the project, type and path.
-+ (NSURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path;
+/// Create a new ArtCodeURL encoding the project, type and path.
++ (ArtCodeURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path;
 
-+ (NSURL *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
++ (ArtCodeURL *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
 
-@end
+- (NSString *)stringRepresentation;
 
-@interface NSURL (ArtCodeURL)
+- (id)initWithStringRepresentation:(NSString *)string;
 
 /// Get a mask indicating properties of the URL. See ArtCodeURLType enum for more informations.
 - (ArtCodeURLType)artCodeType;
@@ -62,6 +63,7 @@ typedef enum {
 - (BOOL)isArtCodeTextFile;
 - (BOOL)isArtCodeRemote;
 - (BOOL)isArtCodeFileBookmark;
+- (BOOL)isArtCodeDocset;
 
 /// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)artCodeURLToActualURL;
@@ -71,16 +73,15 @@ typedef enum {
 
 - (id)artCodeBookmarkPoint;
 
-#pragma mark Utilities
+- (NSString *)name;
 
-/// Substitute / with ▸
-- (NSString *)prettyPath; // TODO rename to artCodePrettyPath.
+- (NSString *)fileExtension;
 
-@end
+- (NSString *)projectName;
 
-@interface NSString (ArtCodeURL)
+- (NSString *)path;
 
-/// Substitute / with ▸
 - (NSString *)prettyPath;
 
 @end
+

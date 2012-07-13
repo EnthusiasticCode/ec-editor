@@ -9,6 +9,7 @@
 #import "ArtCodeTabPageViewController.h"
 #import "TabBar.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeURL.h"
 #import "SingleTabController.h"
 
 @interface ArtCodeTabPageViewController () <TabPageViewControllerDataSource, TabBarDelegate>
@@ -45,7 +46,7 @@
   self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
   
   for (ArtCodeTab *tab in [ArtCodeTab allTabs]) {
-    [self.tabBar addTabWithTitle:tab.currentURL.lastPathComponent animated:NO];
+    [self.tabBar addTabWithTitle:tab.currentURL.name animated:NO];
   }
   // Get selected tab from persisted user defaults
   [self.tabBar setSelectedTabIndex:[ArtCodeTab currentTabIndex]];

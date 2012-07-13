@@ -7,7 +7,7 @@
 //
 
 #import "MoveConflictController.h"
-#import "ArtCodeURL.h"
+#import "NSURL+Utilities.h"
 #import "ACProject.h"
 #import "UIImage+AppStyle.h"
 
@@ -75,7 +75,7 @@
   
   NSURL *itemURL = [_conflictItems objectAtIndex:indexPath.row];
   cell.textLabel.text = itemURL.lastPathComponent;
-  if (itemURL.isArtCodeDirectory)
+  if (itemURL.isDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];

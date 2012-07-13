@@ -40,7 +40,7 @@
     if ([[fileName pathExtension] length] == 0)
       fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
-    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL URLByAppendingPathComponent:fileName].path]) {
+    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:fileName].path]) {
       return fileName;
     } else {
       return nil;

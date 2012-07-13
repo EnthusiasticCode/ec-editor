@@ -13,4 +13,7 @@
 // If the string has a path extension it will add the number before it
 - (NSString *)stringByAddingDuplicateNumber:(NSUInteger)number;
 
+/// Substitute / with ▸
+- (NSString *)prettyPath;
+
 @end

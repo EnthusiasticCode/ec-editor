@@ -34,7 +34,7 @@ extern NSString * const ACProjectNotificationItemKey;
 + (NSDictionary *)projects;
 
 /// Returns the project containing the given url
-+ (ACProject *)projectContainingURL:(NSURL *)url;
++ (ACProject *)projectWithName:(NSString *)name;
 
 + (void)createProjectWithName:(NSString *)name completionHandler:(void(^)(ACProject *project))completionHandler;
 

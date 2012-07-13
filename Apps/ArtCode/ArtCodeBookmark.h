@@ -10,6 +10,8 @@
 
 @interface ArtCodeBookmark : NSObject
 
+- (NSUInteger)line;
+
 @end
 
 @interface ArtCodeBookmarkSet : NSObject

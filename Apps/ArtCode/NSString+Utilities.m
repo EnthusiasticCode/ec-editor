@@ -23,4 +23,8 @@
   return string;
 }
 
+- (NSString *)prettyPath {
+  return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
+}
+
 @end

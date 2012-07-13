@@ -43,18 +43,4 @@ static NSString * const artCodeURLScheme = @"artcode";
   UNIMPLEMENTED();
 }
 
-- (NSString *)prettyPath {
-  return [[self path] prettyPath];
-}
-
-@end
-
-#pragma mark -
-
-@implementation NSString (ArtCodeURL)
-
-- (NSString *)prettyPath {
-  return [self stringByReplacingOccurrencesOfString:@"/" withString:@" ▸ "];
-}
-
 @end

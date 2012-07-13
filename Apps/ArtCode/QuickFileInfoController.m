@@ -9,6 +9,7 @@
 #import "QuickFileInfoController.h"
 #import "QuickBrowsersContainerController.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeURL.h"
 
 @implementation QuickFileInfoController
 
@@ -34,7 +35,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  self.fileNameTextField.text = [self.artCodeTab.currentURL lastPathComponent];
+  self.fileNameTextField.text = [self.artCodeTab.currentURL name];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

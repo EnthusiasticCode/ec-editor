@@ -11,6 +11,7 @@
 
 #import "NSTimer+BlockTimer.h"
 #import "NSArray+ScoreForAbbreviation.h"
+#import "NSURL+Utilities.h"
 
 #import "ArtCodeURL.h"
 #import "ArtCodeTab.h"
@@ -112,7 +113,7 @@
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
   NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
-  if (itemURL.isArtCodeDirectory)
+  if (itemURL.isDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];

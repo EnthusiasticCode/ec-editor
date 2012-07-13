@@ -10,6 +10,7 @@
 #import "UIViewController+Utilities.h"
 #import "DocSet.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeURL.h"
 
 static NSString * const DocSetBookmarkTitleKey = @"title";
 static NSString * const DocSetBookmarkSubtitleKey = @"subtitle";
@@ -139,7 +140,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   NSString *anchorTitle = @"";
   NSString *bookmarkTitle = [self.delegate respondsToSelector:@selector(docSetBookmarksController:titleForBookmarksAtURL:anchorTitle:)] ? [self.delegate docSetBookmarksController:self titleForBookmarksAtURL:self.artCodeTab.currentURL anchorTitle:&anchorTitle] : self.artCodeTab.currentURL.path.lastPathComponent;
   
-  [_bookmarksArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:bookmarkTitle, DocSetBookmarkTitleKey, anchorTitle, DocSetBookmarkSubtitleKey, self.artCodeTab.currentURL.absoluteString, DocSetBookmarkDocSetURLKey, nil]];
+  [_bookmarksArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:bookmarkTitle, DocSetBookmarkTitleKey, anchorTitle, DocSetBookmarkSubtitleKey, self.artCodeTab.currentURL.stringRepresentation, DocSetBookmarkDocSetURLKey, nil]];
   [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_bookmarksArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 

@@ -206,7 +206,7 @@
   cell.textLabel.text = itemURL.lastPathComponent;
   cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
   
-  if ([itemURL isArtCodeDirectory]) {
+  if ([itemURL isDirectory]) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } else {

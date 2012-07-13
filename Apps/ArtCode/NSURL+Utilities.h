@@ -33,8 +33,14 @@
 - (BOOL)isPackage;
 - (BOOL)isPackageDescendant;
 
+/// Returns whether the fileURL refers to a directory. Uses resource value.
+- (BOOL)isDirectory;
+
 /// Create a new URL that has the given number before the URL extension in brackets.
 /// /url/to/file.ext become /url/to/file (number).ext
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number;
+
+/// Substitute / with ▸
+- (NSString *)prettyPath;
 
 @end

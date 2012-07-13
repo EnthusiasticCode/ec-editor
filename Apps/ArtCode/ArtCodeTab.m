@@ -13,7 +13,6 @@
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
 
-#import "NSURL+Utilities.h"
 #import <objc/runtime.h>
 
 static NSString * const _tabListKey = @"ArtCodeTabList";
@@ -37,7 +36,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 
 /// Moves the current URL for the tab and populate current project and item if neccessary.
-- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL;
+- (void)_moveFromURL:(ArtCodeURL *)fromURL toURL:(ArtCodeURL *)toURL;
 
 @end
 
@@ -166,7 +165,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
 }
 
-- (NSURL *)currentURL
+- (ArtCodeURL *)currentURL
 {
   return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
@@ -209,12 +208,12 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
   
   if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count]) {
-    NSURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil type:ArtCodeURLTypeProjectsList path:nil];
-    [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.absoluteString];
+    ArtCodeURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil type:ArtCodeURLTypeProjectsList path:nil];
+    [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.stringRepresentation];
     [_mutableHistoryURLs addObject:projectsURL];
   } else {
     for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
-      [_mutableHistoryURLs addObject:[NSURL URLWithString:string]];
+      [_mutableHistoryURLs addObject:[[ArtCodeURL alloc] initWithStringRepresentation:string]];
   }
 
   // Set the history point
@@ -236,13 +235,13 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [ArtCodeTab removeTabAtIndex:self.tabIndex];
 }
 
-- (void)pushURL:(NSURL *)url
+- (void)pushURL:(ArtCodeURL *)url
 {
   ASSERT(url);
   // Moving in case of no previous history
   if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count])
   {
-    [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
+    [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url stringRepresentation]];
     [_mutableHistoryURLs addObject:url];
     [self _moveFromURL:nil toURL:url];
     self.currentHistoryPosition = 0;
@@ -258,7 +257,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     [[_mutableDictionary objectForKey:_historyURLsKey] removeObjectsInRange:rangeToDelete];
     [_mutableHistoryURLs removeObjectsInRange:rangeToDelete];
   }
-  [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url absoluteString]];
+  [[_mutableDictionary objectForKey:_historyURLsKey] addObject:[url stringRepresentation]];
   [_mutableHistoryURLs addObject:url];
   [self didChangeValueForKey:@"historyURLs"];
   
@@ -289,20 +288,18 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 
 #pragma mark - Private Methods
 
-- (void)_moveFromURL:(NSURL *)fromURL toURL:(NSURL *)toURL {
-  if ([toURL isArtCodeURL]) {
+- (void)_moveFromURL:(ArtCodeURL *)fromURL toURL:(ArtCodeURL*)toURL {
+  if (toURL.isArtCodeDocset) {
+    // Handle changes to docset urls
+//    self.currentDocSet = toURL.docSet; // get the docset
+    self.currentProject = nil;
+  } else {
     self.currentDocSet = nil;
-    ACProject *fromProject = [ACProject projectContainingURL:fromURL];
-    ACProject *toProject = [ACProject projectContainingURL:toURL];
+    ACProject *fromProject = [ACProject projectWithName:fromURL.projectName];
+    ACProject *toProject = [ACProject projectWithName:toURL.projectName];
     if (fromProject != toProject) {
       self.currentProject = toProject;
     }
-  } else if ([toURL.scheme isEqualToString:@"docset"]) {
-    // Handle changes to docset urls
-    self.currentDocSet = toURL.docSet;
-    self.currentProject = nil;
-  } else {
-    ASSERT(NO); // URL not handled
   }
 }
 

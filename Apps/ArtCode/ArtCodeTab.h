@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACProject, DocSet, DirectoryPresenter;
+@class ACProject, DocSet, DirectoryPresenter, ArtCodeURL;
 
 extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
@@ -47,7 +47,7 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
 /// The current URL the tab history is pointing at. This property is read only.
 /// To change the current URL use one of the move methods or pushURL.
-@property (nonatomic, strong, readonly) NSURL *currentURL;
+@property (nonatomic, strong, readonly) ArtCodeURL *currentURL;
 
 /// The current project for the tab's URL.
 @property (nonatomic, strong, readonly) ACProject *currentProject;
@@ -65,7 +65,7 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
 /// Pushes an URL to the tab's history.
 /// Changes the current url to the newly pushed url, and deletes any history items following the previously current one
-- (void)pushURL:(NSURL *)url;
+- (void)pushURL:(ArtCodeURL *)url;
 
 /// Convinience method that moves the tab's history back by one step.
 /// KVO attached to currentURL will be notified after this method is called.

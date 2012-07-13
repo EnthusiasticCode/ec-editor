@@ -134,9 +134,9 @@
       [_contentViewController.view removeFromSuperview];
     }
   }
-
+  
   _contentViewController = contentViewController;
-
+  
   [self didChangeValueForKey:@"contentViewController"];
 }
 
@@ -279,7 +279,7 @@
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)] where:^BOOL(id x) {
     return x != nil;
   }]];
-
+  
   // Back and forward buttons to tab history
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
@@ -290,7 +290,7 @@
       return;
     [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:YES];
   }];
-    
+  
   // Content view controller binds
   [RACAbleSelf(self.contentViewController.editing) subscribeNext:^(id x) {
     [(UIButton *)this.defaultToolbar.editItem.customView setSelected:[x boolValue]];
@@ -361,38 +361,38 @@
     else
     {
       NSURL *url = self.artCodeTab.currentURL;
-//      if ([url isArtCodeURL])
-//      {
-//        ACProjectItem *item = self.artCodeTab.currentItem;
-//        switch (item.type)
-//        {
-//          case ACPRemote:
-//            url = [(ArtCodeRemote *)item URL];
-//            break;
-//            
-//          case ACPFileBookmark:
-//            item = (ACProjectItem *)[(ArtCodeBookmark *)item file];
-//            
-//          default:
-//          {
-//            // If project root set color and project name 
-//            if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
-//            {
-//              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
-//            }
-//            // or path and file name for items
-//            else
-//            {
-//              NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
-//              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
-//            }
-//            // Mark url as handled
-//            url = nil;
-//            break;
-//          }
-//        }
-//      }
-//      
+      //      if ([url isArtCodeURL])
+      //      {
+      //        ACProjectItem *item = self.artCodeTab.currentItem;
+      //        switch (item.type)
+      //        {
+      //          case ACPRemote:
+      //            url = [(ArtCodeRemote *)item URL];
+      //            break;
+      //            
+      //          case ACPFileBookmark:
+      //            item = (ACProjectItem *)[(ArtCodeBookmark *)item file];
+      //            
+      //          default:
+      //          {
+      //            // If project root set color and project name 
+      //            if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
+      //            {
+      //              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
+      //            }
+      //            // or path and file name for items
+      //            else
+      //            {
+      //              NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
+      //              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
+      //            }
+      //            // Mark url as handled
+      //            url = nil;
+      //            break;
+      //          }
+      //        }
+      //      }
+      //      
       // If URL has not been handled jet
       if (url)
       {
@@ -449,62 +449,57 @@
 
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab
 {
-  NSURL *currentURL = tab.currentURL;
+  ArtCodeURL *currentURL = tab.currentURL;
   UIViewController *result = nil;
   
   // ArtCode URLs routing
-  if ([currentURL isArtCodeURL])
-  {
-    Class controllerClass = nil;
-    
-    switch (currentURL.artCodeType) {
-      case ArtCodeURLTypeProjectsList:
-      {
-        controllerClass = [ProjectBrowserController class];
-        break;
-      }
-      case ArtCodeURLTypeBookmarksList:
-      case ArtCodeURLTypeBookmark:
-      {
-        controllerClass = [BookmarkBrowserController class];
-        break;
-      }
-      case ArtCodeURLTypeRemotesList:
-      case ArtCodeURLTypeRemote:
-      {
-        controllerClass = [RemotesListController class];
-        break;
-      }
-      case ArtCodeURLTypeTextFile:
-      {
-        controllerClass = [CodeFileController class];
-        break;
-      }
-      case ArtCodeURLTypeProject:
-      case ArtCodeURLTypeDirectory:
-      case ArtCodeURLTypeFile:
-      {
-        controllerClass = [FileBrowserController class];
-        break;
-      }
+  Class controllerClass = nil;
+  
+  switch (currentURL.artCodeType) {
+    case ArtCodeURLTypeProjectsList:
+    {
+      controllerClass = [ProjectBrowserController class];
+      break;
     }
-    if ([self.contentViewController isKindOfClass:controllerClass]) {
-      result = self.contentViewController;
-    } else {
-      result = [controllerClass new];
+    case ArtCodeURLTypeBookmarksList:
+    case ArtCodeURLTypeBookmark:
+    {
+      controllerClass = [BookmarkBrowserController class];
+      break;
     }
-  } else if ([currentURL.scheme isEqualToString:@"docset"]) {
-    if ([self.contentViewController isKindOfClass:[DocSetBrowserController class]])
-      result = self.contentViewController;
-    else
-      result = [DocSetBrowserController new];
+    case ArtCodeURLTypeRemotesList:
+    case ArtCodeURLTypeRemote:
+    {
+      controllerClass = [RemotesListController class];
+      break;
+    }
+    case ArtCodeURLTypeTextFile:
+    {
+      controllerClass = [CodeFileController class];
+      break;
+    }
+    case ArtCodeURLTypeProject:
+    case ArtCodeURLTypeDirectory:
+    case ArtCodeURLTypeFile:
+    {
+      controllerClass = [FileBrowserController class];
+      break;
+    }
+    case ArtCodeURLTypeDocset:
+    {
+      controllerClass = [DocSetBrowserController class];
+      break;
+    }
+  }
+  if ([self.contentViewController isKindOfClass:controllerClass]) {
+    result = self.contentViewController;
   } else {
-    ASSERT(NO); // Unknown URL
+    result = [controllerClass new];
   }
   
   // Set the tab explicitly since result might not have a parent view controller yet
   result.artCodeTab = self.artCodeTab;
-
+  
   return result;
 }
 
