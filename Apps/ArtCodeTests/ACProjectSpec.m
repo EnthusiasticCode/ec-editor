@@ -10,7 +10,7 @@
 #import "ACProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
-#import "ACProjectFileBookmark.h"
+#import "ArtCodeBookmark.h"
 #import "ACProjectRemote.h"
 
 #import "NSURL+Utilities.h"
@@ -555,7 +555,7 @@ describe(@"A new opened ACProject", ^{
         [[[file should] have:1] bookmarks];
         
         id item = [file.bookmarks objectAtIndex:0];
-        [[item should] beMemberOfClass:[ACProjectFileBookmark class]];                
+        [[item should] beMemberOfClass:[ArtCodeBookmark class]];                
       });
       
       it(@"can remove a bookmark", ^{
@@ -563,7 +563,7 @@ describe(@"A new opened ACProject", ^{
         [[[file should] have:1] bookmarks];
         
         id item = [file.bookmarks objectAtIndex:0];
-        [[item should] beMemberOfClass:[ACProjectFileBookmark class]];
+        [[item should] beMemberOfClass:[ArtCodeBookmark class]];
         
         [file removeBookmark:item];
         [[[file should] have:0] bookmarks];
@@ -571,7 +571,7 @@ describe(@"A new opened ACProject", ^{
       
       context(@"having a line bookmark", ^{
         
-        __block ACProjectFileBookmark *bookmark = nil;
+        __block ArtCodeBookmark *bookmark = nil;
         NSNumber *bookmarkPoint = [NSNumber numberWithInt:0];
         
         beforeEach(^{
@@ -802,7 +802,7 @@ describe(@"An existing ACProject", ^{
     [[file.name should] equal:fileName];
     [[[file should] have:1] bookmarks];
     
-    ACProjectFileBookmark *bookmark = [file.bookmarks objectAtIndex:0];
+    ArtCodeBookmark *bookmark = [file.bookmarks objectAtIndex:0];
     [[bookmark.bookmarkPoint should] equal:bookmarkPoint];
   });
 });

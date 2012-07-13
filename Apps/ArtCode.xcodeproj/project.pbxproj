@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
+		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
+		5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
+		5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
+		5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
+		5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
@@ -538,6 +544,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
+		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
+		5F6539F315B0AF9C00FFCFEE /* ArtCodeBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeBookmark.h; sourceTree = "<group>"; };
+		5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeBookmark.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B7072BBA15111A3000580855 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
@@ -1188,6 +1198,10 @@
 				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
+				5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */,
+				5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */,
+				5F6539F315B0AF9C00FFCFEE /* ArtCodeBookmark.h */,
+				5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -2748,6 +2762,8 @@
 				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137015AB4D5D0022C93B /* TextFile.m in Sources */,
+				5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
+				5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2783,6 +2799,8 @@
 				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
+				5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
+				5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2891,6 +2909,8 @@
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
 				B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */,
+				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
+				5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

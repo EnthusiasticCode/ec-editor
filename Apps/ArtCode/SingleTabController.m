@@ -371,7 +371,7 @@
 //            break;
 //            
 //          case ACPFileBookmark:
-//            item = (ACProjectItem *)[(ACProjectFileBookmark *)item file];
+//            item = (ACProjectItem *)[(ArtCodeBookmark *)item file];
 //            
 //          default:
 //          {
