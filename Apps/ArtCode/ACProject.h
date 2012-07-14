@@ -41,7 +41,7 @@ extern NSString * const ACProjectNotificationItemKey;
 #pragma mark Project metadata
 
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
-@property (nonatomic, strong, readonly) ArtCodeLocation *ArtCodeLocation;
+@property (nonatomic, strong, readonly) ArtCodeLocation *artCodeLocation;
 
 /// Name of the project set at creation
 @property (nonatomic, readonly) NSString *name;
@@ -57,7 +57,7 @@ extern NSString * const ACProjectNotificationItemKey;
 /// Get an array of all files and forlders in the project.
 - (NSArray *)allFiles;
 
-/// Gets all the bookmarks from the files in the project.
+/// Gets an array of ArtCodeLocations representing all bookmarks from the files in the project.
 - (NSArray *)bookmarks;
 
 /// Get all the remotes for the project.

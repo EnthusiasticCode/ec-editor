@@ -111,7 +111,7 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Project metadata
 
-- (ArtCodeLocation *)ArtCodeLocation {
+- (ArtCodeLocation *)artCodeLocation {
   return [ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:self.name url:nil];
 }
 

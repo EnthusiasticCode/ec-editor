@@ -302,7 +302,7 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ACProject class]]) {
-      [self.artCodeTab pushURL:[element ArtCodeLocation]];
+      [self.artCodeTab pushURL:[element artCodeLocation]];
     } else if ([element isKindOfClass:[DocSet class]]) {
       [self.artCodeTab pushURL:[(DocSet *)element docSetURLForNode:nil]];
     }

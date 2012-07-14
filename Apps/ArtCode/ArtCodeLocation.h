@@ -66,6 +66,8 @@ typedef enum {
 
 - (NSString *)name;
 
+- (NSString *)prettyName;
+
 - (NSString *)fileExtension;
 
 - (NSString *)projectName;

@@ -166,7 +166,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     // Bookmark markers
     [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-      if (!line.isTruncation && [this.textFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+      if (!line.isTruncation && [this.textFile hasBookmarkAtLine:lineNumber + 1])
       {
         CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
         CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
@@ -635,7 +635,7 @@ static void drawStencilStar(CGContextRef myContext)
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
   // Set bookmark decoration
-  if (!line.isTruncation && [self.textFile bookmarkForPoint:[NSNumber numberWithUnsignedInteger:lineNumber + 1]])
+  if (!line.isTruncation && [self.textFile hasBookmarkAtLine:lineNumber + 1])
   {
     *decoration = CodeFileMinimapLineDecorationDisc;
     *decorationColor = [UIColor whiteColor];
@@ -746,17 +746,10 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
-  NSArray *bookmarks = [self.textFile bookmarks];
-  BOOL removedBookmark = NO;
-  for (ArtCodeBookmark *bookmark in bookmarks) {
-    if (bookmark.line == lineNumber) {
-      removedBookmark = YES;
-      [self.textFile removeBookmark:bookmark];
-      break;
-    }
-  }
-  if (!removedBookmark) {
-    [self.textFile addBookmarkWithPoint:[NSNumber numberWithUnsignedInteger:lineNumber]];
+  if ([self.textFile hasBookmarkAtLine:lineNumber]) {
+    [self.textFile removeBookmarkAtLine:lineNumber];
+  } else {
+    [self.textFile addBookmarkAtLine:lineNumber];
   }
   [codeView setNeedsDisplay];
   [_minimapView setNeedsDisplay];

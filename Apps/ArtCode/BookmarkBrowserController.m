@@ -14,7 +14,6 @@
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
-#import "ArtCodeBookmark.h"
 
 #import "HighlightTableViewCell.h"
 
@@ -46,8 +45,8 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeBookmark *bookmark) {
-        return [bookmark description];
+      _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
+        return bookmarkLocation.prettyName;
       }];
       _filteredItemsHitMask = hitMasks;
       
@@ -57,7 +56,7 @@
     else
     {
       _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [[obj1 description] compare:[obj2 description]];
+        return [[obj1 prettyName] compare:[obj2 prettyName]];
       }];
       _filteredItemsHitMask = nil;
       
@@ -102,11 +101,10 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  ArtCodeBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+  ArtCodeLocation *bookmarkLocation = [self.filteredItems objectAtIndex:indexPath.row];
   
-  cell.textLabel.text = [bookmark description];
+  cell.textLabel.text = bookmarkLocation.prettyName;
   cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
-  //    cell.detailTextLabel.text = bookmark.note;
   cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   
   return cell;
@@ -119,7 +117,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] ArtCodeLocation]];
+    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeLocation]];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

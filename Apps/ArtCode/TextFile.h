@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface TextFile : UIDocument
 
 #pragma mark Content
@@ -20,10 +21,10 @@
 
 @property (nonatomic, strong) NSArray *bookmarks;
 
-- (NSURL *)bookmarkForPoint:(id)point;
+- (BOOL)hasBookmarkAtLine:(NSUInteger)line;
 
-- (void)addBookmarkWithPoint:(id)point;
+- (void)addBookmarkAtLine:(NSUInteger)line;
 
-- (void)removeBookmark:(NSURL *)bookmark;
+- (void)removeBookmarkAtLine:(NSUInteger)line;
 
 @end
