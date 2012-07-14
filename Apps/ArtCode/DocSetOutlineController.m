@@ -9,7 +9,9 @@
 #import "DocSetOutlineController.h"
 #import "UIViewController+Utilities.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
 #import "DocSetDownloadManager.h"
+
 
 @interface DocSetOutlineController ()
 
@@ -88,7 +90,7 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   if (self.artCodeTab.currentDocSet) {
-    self.docSetURL = self.artCodeTab.currentLocation;
+    self.docSetURL = self.artCodeTab.currentLocation.url;
   }
 }
 
@@ -119,7 +121,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	[self.artCodeTab pushLocation:[self _docSetURLForOulineItem:[_visibleOutlineItems objectAtIndex:indexPath.row]]];
+	[self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[self _docSetURLForOulineItem:[_visibleOutlineItems objectAtIndex:indexPath.row]]]];
   [self.presentingPopoverController dismissPopoverAnimated:YES];
 }
 

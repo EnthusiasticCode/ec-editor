@@ -462,6 +462,11 @@
       controllerClass = [DocSetBrowserController class];
       break;
     }
+    case ArtCodeLocationTypeRemoteDirectory:
+    {
+      controllerClass = [RemoteBrowserController class];
+      break;
+    }
   }
   if ([self.contentViewController isKindOfClass:controllerClass]) {
     result = self.contentViewController;
