@@ -352,51 +352,26 @@
 - (void)updateDefaultToolbarTitle
 {
   if (![self.contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
-      || ![(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl])
-  {
-    if ([self.contentViewController.title length] > 0)
-    {
+      || ![(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl]) {
+    if ([self.contentViewController.title length] > 0) {
       [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:self.contentViewController.title] selectedIndexes:nil];
-    }
-    else
-    {
-      NSURL *url = self.artCodeTab.currentLocation;
-      //      if ([url isArtCodeLocation])
-      //      {
-      //        ACProjectItem *item = self.artCodeTab.currentItem;
-      //        switch (item.type)
-      //        {
-      //          case ACPRemote:
-      //            url = [(ArtCodeRemote *)item URL];
-      //            break;
-      //            
-      //          case ACPFileBookmark:
-      //            item = (ACProjectItem *)[(ArtCodeBookmark *)item file];
-      //            
-      //          default:
-      //          {
-      //            // If project root set color and project name 
-      //            if ([(ACProjectFileSystemItem *)item parentFolder] == nil)
-      //            {
-      //              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
-      //            }
-      //            // or path and file name for items
-      //            else
-      //            {
-      //              NSString *path = [(ACProjectFileSystemItem *)item pathInProject];
-      //              [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], nil] selectedIndexes:nil];
-      //            }
-      //            // Mark url as handled
-      //            url = nil;
-      //            break;
-      //          }
-      //        }
-      //      }
-      //      
-      // If URL has not been handled jet
-      if (url)
-      {
-        [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+    } else {
+      // Create title fragments from a location
+      ArtCodeLocation *location = self.artCodeTab.currentLocation;
+      switch (location.artCodeType) {
+        case ArtCodeLocationTypeProject:
+          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
+          break;
+          
+        case ArtCodeLocationTypeTextFile:
+          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[location.path stringByDeletingLastPathComponent], location.name, nil] selectedIndexes:nil];
+          break;
+          
+        default: {
+          NSURL *url = location.url;
+          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+          break;
+        }
       }
     }
   }

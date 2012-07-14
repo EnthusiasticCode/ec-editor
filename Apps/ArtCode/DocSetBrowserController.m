@@ -10,6 +10,7 @@
 #import "UIViewController+Utilities.h"
 #import "SingleTabController.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
 
 #import "DocSetContentController.h"
 #import "DocSetOutlineController.h"
@@ -157,7 +158,7 @@
     }    
     
     // Otherwise redirect to a docset URL to enable history
-    [self.artCodeTab pushLocation:URL.docSetURLByRetractingFileURL];
+    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:URL.docSetURLByRetractingFileURL]];
     return NO;
   }
   

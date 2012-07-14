@@ -237,7 +237,7 @@ static void init(RemoteBrowserController *self) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
     {
-      [self.artCodeTab pushLocation:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+      [self.artCodeTab pushLocation:[self.artCodeTab.currentLocation locationByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
     }
     else
     {

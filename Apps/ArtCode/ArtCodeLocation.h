@@ -72,9 +72,13 @@ typedef enum {
 
 - (NSString *)projectName;
 
+/// The path from the project containing the file name.
 - (NSString *)path;
 
 - (NSString *)prettyPath;
+
+
+- (ArtCodeLocation *)locationByAppendingPathComponent:(NSString *)pathComponent;
 
 @end
 

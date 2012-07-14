@@ -75,6 +75,11 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 /// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveForwardInHistory;
 
+/// Updates the current location with the given one. 
+/// This method can be used to change some properties of the current location 
+/// without leaving traces in the history.
+- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location;
+
 @end
 
 
