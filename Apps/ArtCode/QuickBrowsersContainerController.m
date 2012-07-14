@@ -27,7 +27,7 @@
   static QuickBrowsersContainerController *_folderController = nil;
   static QuickBrowsersContainerController *_fileController = nil;
   
-  if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList]) {
+  if ([contentController.artCodeTab.currentLocation isArtCodeProjectBookmarksList]) {
     if (!_commonController) {
       _commonController = [[QuickBrowsersContainerController alloc] init];
       _commonController.contentController = contentController;
@@ -39,7 +39,7 @@
   }
   else
   {
-    switch (contentController.artCodeTab.currentURL.artCodeType) {
+    switch (contentController.artCodeTab.currentLocation.artCodeType) {
       case ArtCodeLocationTypeProject:
         if (!_projectController)
         {

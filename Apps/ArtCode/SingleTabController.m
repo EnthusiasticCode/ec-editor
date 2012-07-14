@@ -360,7 +360,7 @@
     }
     else
     {
-      NSURL *url = self.artCodeTab.currentURL;
+      NSURL *url = self.artCodeTab.currentLocation;
       //      if ([url isArtCodeLocation])
       //      {
       //        ACProjectItem *item = self.artCodeTab.currentItem;
@@ -449,7 +449,7 @@
 
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab
 {
-  ArtCodeLocation *currentURL = tab.currentURL;
+  ArtCodeLocation *currentURL = tab.currentLocation;
   UIViewController *result = nil;
   
   // ArtCode URLs routing

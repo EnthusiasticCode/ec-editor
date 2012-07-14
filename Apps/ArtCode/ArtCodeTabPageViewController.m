@@ -46,7 +46,7 @@
   self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
   
   for (ArtCodeTab *tab in [ArtCodeTab allTabs]) {
-    [self.tabBar addTabWithTitle:tab.currentURL.name animated:NO];
+    [self.tabBar addTabWithTitle:tab.currentLocation.name animated:NO];
   }
   // Get selected tab from persisted user defaults
   [self.tabBar setSelectedTabIndex:[ArtCodeTab currentTabIndex]];

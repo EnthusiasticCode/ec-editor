@@ -170,9 +170,9 @@
     
     // Select button
     NSInteger selectedTag = 0;
-    if ([self.artCodeTab.currentURL isArtCodeProjectBookmarksList])
+    if ([self.artCodeTab.currentLocation isArtCodeProjectBookmarksList])
       selectedTag = 1;
-    else if ([self.artCodeTab.currentURL isArtCodeProjectRemotesList])
+    else if ([self.artCodeTab.currentLocation isArtCodeProjectRemotesList])
       selectedTag = 2;
     for (UIView *subview in self.bottomToolBar.subviews)
     {
@@ -255,7 +255,7 @@
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
 {
-  return self.artCodeTab.currentURL != nil;
+  return self.artCodeTab.currentLocation != nil;
 }
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender

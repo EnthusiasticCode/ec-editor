@@ -35,7 +35,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  self.fileNameTextField.text = [self.artCodeTab.currentURL name];
+  self.fileNameTextField.text = [self.artCodeTab.currentLocation name];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

@@ -79,7 +79,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentLocation.ArtCodeLocationToActualURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     if (!error) {
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

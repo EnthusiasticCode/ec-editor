@@ -94,7 +94,7 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentLocation.ArtCodeLocationToActualURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     if (!error) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

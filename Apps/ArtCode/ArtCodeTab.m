@@ -271,7 +271,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   
   // Get the history position before we initiate the move so it's consistent
   NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;    
-  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition - 1]];
+  [self _moveFromURL:self.currentLocation toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition - 1]];
   self.currentHistoryPosition = historyPositionBeforeMove - 1;
 }
 
@@ -282,7 +282,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   
   // Get the history position before we initiate the move so it's consistent
   NSUInteger historyPositionBeforeMove = self.currentHistoryPosition;
-  [self _moveFromURL:self.currentURL toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1]];
+  [self _moveFromURL:self.currentLocation toURL:[_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition + 1]];
   self.currentHistoryPosition = historyPositionBeforeMove + 1;
 }
 

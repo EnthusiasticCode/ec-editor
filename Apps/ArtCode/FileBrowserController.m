@@ -499,7 +499,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync
-  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentURL withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentLocation withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }

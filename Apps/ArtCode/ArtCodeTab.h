@@ -47,7 +47,7 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
 /// The current URL the tab history is pointing at. This property is read only.
 /// To change the current URL use one of the move methods or pushURL.
-@property (nonatomic, strong, readonly) ArtCodeLocation *currentURL;
+@property (nonatomic, strong, readonly) ArtCodeLocation *currentLocation;
 
 /// The current project for the tab's URL.
 @property (nonatomic, strong, readonly) ACProject *currentProject;

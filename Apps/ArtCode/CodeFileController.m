@@ -374,7 +374,7 @@ static void drawStencilStar(CGContextRef myContext)
 {
   if (self.currentSymbol)
   {
-    NSString *path = [self.artCodeTab.currentURL path];
+    NSString *path = [self.artCodeTab.currentLocation path];
     if (self.currentSymbol.icon)
     {
       [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
