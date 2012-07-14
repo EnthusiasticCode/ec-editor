@@ -302,9 +302,9 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ACProject class]]) {
-      [self.artCodeTab pushURL:[element artCodeLocation]];
+      [self.artCodeTab pushLocation:[element artCodeLocation]];
     } else if ([element isKindOfClass:[DocSet class]]) {
-      [self.artCodeTab pushURL:[(DocSet *)element docSetURLForNode:nil]];
+      [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[(DocSet *)element docSetURLForNode:nil]]];
     }
   }
 }

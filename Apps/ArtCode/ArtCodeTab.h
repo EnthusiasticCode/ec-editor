@@ -65,7 +65,7 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
 /// Pushes an URL to the tab's history.
 /// Changes the current url to the newly pushed url, and deletes any history items following the previously current one
-- (void)pushURL:(ArtCodeLocation *)url;
+- (void)pushLocation:(ArtCodeLocation *)url;
 
 /// Convinience method that moves the tab's history back by one step.
 /// KVO attached to currentLocation will be notified after this method is called.

@@ -235,7 +235,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [ArtCodeTab removeTabAtIndex:self.tabIndex];
 }
 
-- (void)pushURL:(ArtCodeLocation *)url
+- (void)pushLocation:(ArtCodeLocation *)url
 {
   ASSERT(url);
   // Moving in case of no previous history

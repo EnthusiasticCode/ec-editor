@@ -305,7 +305,7 @@
 		[self.searchDisplayController.searchBar resignFirstResponder];
 		NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
 		if ([result objectForKey:@"tokenType"]) {
-      [self.artCodeTab pushURL:[self.docSet docSetURLForToken:result]];
+      [self.artCodeTab pushLocation:[self.docSet docSetURLForToken:result]];
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 		} else {
 			NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:[result objectForKey:@"objectID"] error:NULL];
@@ -346,7 +346,7 @@
 			[[UIApplication sharedApplication] openURL:webURL];
 			return;
 		}
-    [self.artCodeTab pushURL:[self.docSet docSetURLForNode:node]];
+    [self.artCodeTab pushLocation:[self.docSet docSetURLForNode:node]];
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 	}
 }

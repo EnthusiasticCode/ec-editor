@@ -119,7 +119,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
-	[self.artCodeTab pushURL:[self _docSetURLForOulineItem:[_visibleOutlineItems objectAtIndex:indexPath.row]]];
+	[self.artCodeTab pushLocation:[self _docSetURLForOulineItem:[_visibleOutlineItems objectAtIndex:indexPath.row]]];
   [self.presentingPopoverController dismissPopoverAnimated:YES];
 }
 
