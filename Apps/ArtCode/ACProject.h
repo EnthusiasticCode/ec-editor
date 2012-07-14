@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-@class ArtCodeRemote;
+@class ArtCodeRemote, ArtCodeLocation;
 
 /// Notifications for the projects list
 extern NSString * const ACProjectWillAddProjectNotificationName;
@@ -41,7 +41,7 @@ extern NSString * const ACProjectNotificationItemKey;
 #pragma mark Project metadata
 
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
-@property (nonatomic, strong, readonly) NSURL *ArtCodeLocation;
+@property (nonatomic, strong, readonly) ArtCodeLocation *ArtCodeLocation;
 
 /// Name of the project set at creation
 @property (nonatomic, readonly) NSString *name;

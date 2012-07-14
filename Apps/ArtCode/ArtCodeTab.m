@@ -208,7 +208,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
   
   if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count]) {
-    ArtCodeLocation *projectsURL = [ArtCodeLocation ArtCodeLocationWithProject:nil type:ArtCodeLocationTypeProjectsList path:nil];
+    ArtCodeLocation *projectsURL = [ArtCodeLocation locationWithType:ArtCodeLocationTypeProjectsList projectName:nil url:nil];
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.stringRepresentation];
     [_mutableHistoryURLs addObject:projectsURL];
   } else {

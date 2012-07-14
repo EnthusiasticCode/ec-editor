@@ -66,9 +66,6 @@
         }
         return _folderController;
         
-      case ArtCodeLocationTypeBookmark:
-        // TODO pass file next
-        
       case ArtCodeLocationTypeTextFile:
         if (!_fileController)
         {

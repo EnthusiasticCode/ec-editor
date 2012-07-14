@@ -462,13 +462,11 @@
       break;
     }
     case ArtCodeLocationTypeBookmarksList:
-    case ArtCodeLocationTypeBookmark:
     {
       controllerClass = [BookmarkBrowserController class];
       break;
     }
     case ArtCodeLocationTypeRemotesList:
-    case ArtCodeLocationTypeRemote:
     {
       controllerClass = [RemotesListController class];
       break;
@@ -480,7 +478,6 @@
     }
     case ArtCodeLocationTypeProject:
     case ArtCodeLocationTypeDirectory:
-    case ArtCodeLocationTypeFile:
     {
       controllerClass = [FileBrowserController class];
       break;

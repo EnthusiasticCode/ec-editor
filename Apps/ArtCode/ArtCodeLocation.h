@@ -14,21 +14,17 @@ typedef enum {
   ArtCodeLocationTypeProjectsList,
   ArtCodeLocationTypeProject,
   ArtCodeLocationTypeDirectory,
-  ArtCodeLocationTypeFile,
   ArtCodeLocationTypeTextFile,
   ArtCodeLocationTypeBookmarksList,
-  ArtCodeLocationTypeBookmark,
   ArtCodeLocationTypeRemotesList,
-  ArtCodeLocationTypeRemote,
+  ArtCodeLocationTypeRemoteDirectory,
   ArtCodeLocationTypeDocset,
 } ArtCodeLocationType;
 
 @interface ArtCodeLocation : NSObject
 
 /// Create a new ArtCodeLocation encoding the project, type and path.
-+ (ArtCodeLocation *)ArtCodeLocationWithProject:(ACProject *)project type:(ArtCodeLocationType)type path:(NSString *)path;
-
-+ (ArtCodeLocation *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
++ (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type projectName:(NSString *)projectName url:(NSURL *)url;
 
 - (NSString *)stringRepresentation;
 
@@ -67,8 +63,6 @@ typedef enum {
 
 /// Returns the name of the ArtCodeRemote URL
 - (NSString *)artCodeRemoteName;
-
-- (id)artCodeBookmarkPoint;
 
 - (NSString *)name;
 

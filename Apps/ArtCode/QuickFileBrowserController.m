@@ -145,7 +145,7 @@
 - (void)_showProjectsInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:nil type:ArtCodeLocationTypeProjectsList path:nil]];
+  [self.artCodeTab pushURL:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProjectsList projectName:nil url:nil]];
 }
 
 @end

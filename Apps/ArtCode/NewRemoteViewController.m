@@ -9,7 +9,7 @@
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
 #import "ACProject.h"
-#import "ArtCodeLocation.h"
+#import "ArtCodeRemote.h"
 
 #import "UIViewController+Utilities.h"
 #import "BezelAlert.h"
@@ -62,7 +62,9 @@
   if ([self.remotePort.text length])
     [remoteURLString appendFormat:@":%d", [self.remotePort.text integerValue]];
   
-  NSURL *remote = [ArtCodeLocation artCodeRemoteURLWithProject:self.artCodeTab.currentProject name:self.remoteName.text url:[NSURL URLWithString:remoteURLString]];
+  ArtCodeRemote *remote = [[ArtCodeRemote alloc] init];
+  remote.name = self.remoteName.text;
+  remote.url = [NSURL URLWithString:remoteURLString];
   
   [self.artCodeTab.currentProject addRemote:remote];
   

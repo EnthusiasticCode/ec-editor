@@ -348,15 +348,15 @@
 {
   switch ([sender tag]) {
     case 1:
-      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeBookmarksList path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation locationWithType:ArtCodeLocationTypeBookmarksList projectName:self.artCodeTab.currentProject.name url:nil]];
       break;
       
     case 2:
-      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeRemotesList path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation locationWithType:ArtCodeLocationTypeRemotesList projectName:self.artCodeTab.currentProject.name url:nil]];
       break;
       
     default:
-      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeProject path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:self.artCodeTab.currentProject.name url:nil]];
       break;
   }
 }
