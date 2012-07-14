@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 /// Shows the outline loaded from a book.json DocSet file derived from the current
-/// artCodeTab.currentURL URL.
+/// artCodeTab.currentLocation URL.
 @interface DocSetOutlineController : UITableViewController
 
 /// The DocSet URL from which extract the book URL.

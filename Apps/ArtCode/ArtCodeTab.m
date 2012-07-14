@@ -165,12 +165,12 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
 }
 
-- (ArtCodeLocation *)currentURL
+- (ArtCodeLocation *)currentLocation
 {
   return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingCurrentURL
++ (NSSet *)keyPathsForValuesAffectingcurrentLocation
 {
   return [NSSet setWithObject:@"currentHistoryPosition"];
 }

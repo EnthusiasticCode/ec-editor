@@ -76,7 +76,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   if (self.artCodeTab.currentDocSet) {
     self.docSet = self.artCodeTab.currentDocSet;
   }
-  NSURL *url = self.artCodeTab.currentLocation.ArtCodeLocationToActualURL;
+  NSURL *url = self.artCodeTab.currentLocation.url;
   if (url) {
     self.navigationItem.rightBarButtonItem.enabled = [url.scheme isEqualToString:@"docset"] && url.path.length > 0;
   }
@@ -138,7 +138,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
 - (void)_addBookmarkAction:(id)sender {
   ASSERT(self.artCodeTab.currentLocation);
   NSString *anchorTitle = @"";
-  NSString *bookmarkTitle = [self.delegate respondsToSelector:@selector(docSetBookmarksController:titleForBookmarksAtURL:anchorTitle:)] ? [self.delegate docSetBookmarksController:self titleForBookmarksAtURL:self.artCodeTab.currentLocation.ArtCodeLocationToActualURL anchorTitle:&anchorTitle] : self.artCodeTab.currentLocation.path.lastPathComponent;
+  NSString *bookmarkTitle = [self.delegate respondsToSelector:@selector(docSetBookmarksController:titleForBookmarksAtURL:anchorTitle:)] ? [self.delegate docSetBookmarksController:self titleForBookmarksAtURL:self.artCodeTab.currentLocation.url anchorTitle:&anchorTitle] : self.artCodeTab.currentLocation.path.lastPathComponent;
   
   [_bookmarksArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:bookmarkTitle, DocSetBookmarkTitleKey, anchorTitle, DocSetBookmarkSubtitleKey, self.artCodeTab.currentLocation.stringRepresentation, DocSetBookmarkDocSetURLKey, nil]];
   [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_bookmarksArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];

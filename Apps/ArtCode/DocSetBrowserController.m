@@ -63,7 +63,7 @@
   __weak DocSetBrowserController *this = self;
   
   // Update on docset changes
-  [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentURL), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
+  [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
     return xs.first;
   }] where:^BOOL(id x) {
     return this.artCodeTab.currentDocSet != nil && this.isViewLoaded;

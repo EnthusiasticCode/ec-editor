@@ -59,7 +59,7 @@ typedef enum {
 - (BOOL)isArtCodeDocset;
 
 /// Returns a file:// URL from either an artcode or a file URL.
-- (NSURL *)ArtCodeLocationToActualURL;
+- (NSURL *)url;
 
 /// Returns the name of the ArtCodeRemote URL
 - (NSString *)artCodeRemoteName;

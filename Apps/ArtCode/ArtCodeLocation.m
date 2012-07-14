@@ -17,6 +17,10 @@ static NSString * const ArtCodeLocationScheme = @"artcode";
 
 @implementation ArtCodeLocation
 
+- (NSURL *)url {
+  
+}
+
 + (NSURL *)ArtCodeLocationWithProject:(ACProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
   ASSERT(NO);
 }

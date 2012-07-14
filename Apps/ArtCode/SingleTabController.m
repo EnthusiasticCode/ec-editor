@@ -285,7 +285,7 @@
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
   
   // Changing current tab URL re-route the content view controller
-  [RACAbleSelf(self.artCodeTab.currentURL) subscribeNext:^(id x) {
+  [RACAbleSelf(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
     if (!x)
       return;
     [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:YES];
@@ -449,13 +449,13 @@
 
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab
 {
-  ArtCodeLocation *currentURL = tab.currentLocation;
+  ArtCodeLocation *currentLocation = tab.currentLocation;
   UIViewController *result = nil;
   
   // ArtCode URLs routing
   Class controllerClass = nil;
   
-  switch (currentURL.artCodeType) {
+  switch (currentLocation.artCodeType) {
     case ArtCodeLocationTypeProjectsList:
     {
       controllerClass = [ProjectBrowserController class];

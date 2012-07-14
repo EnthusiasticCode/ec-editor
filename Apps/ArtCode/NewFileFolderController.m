@@ -33,13 +33,13 @@
   
   // Subscribable to get the latest folder name or nil if the name is not valid
   [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
-    if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:x].path]) {
+    if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
       return x;
     } else {
       return nil;
     }
   }] doNext:^(id x) {
-    this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", this.artCodeTab.currentURL.prettyPath] : @"The speficied folder name already exists or is invalid.";
+    this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", this.artCodeTab.currentLocation.prettyPath] : @"The speficied folder name already exists or is invalid.";
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
@@ -79,7 +79,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentLocation.ArtCodeLocationToActualURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     if (!error) {
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

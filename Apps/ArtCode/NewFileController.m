@@ -40,7 +40,7 @@
     if ([[fileName pathExtension] length] == 0)
       fileName = [fileName stringByAppendingPathExtension:@"txt"];
     
-    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:fileName].path]) {
+    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName].path]) {
       return fileName;
     } else {
       return nil;
@@ -94,7 +94,7 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentLocation.ArtCodeLocationToActualURL URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     if (!error) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

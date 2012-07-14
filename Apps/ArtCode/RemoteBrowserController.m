@@ -61,10 +61,10 @@ static void init(RemoteBrowserController *self) {
   // RAC
   __weak RemoteBrowserController *this = self;
   
-  [[[RACAbleSelf(self.artCodeTab.currentURL) distinctUntilChanged] where:^BOOL(id x) {
-    return this.artCodeTab.currentURL.isArtCodeRemote;
-  }] subscribeNext:^(NSURL *currentURL) {
-    this.remoteURL = this.artCodeTab.currentURL.ArtCodeLocationToActualURL;
+  [[[RACAbleSelf(self.artCodeTab.currentLocation) distinctUntilChanged] where:^BOOL(id x) {
+    return this.artCodeTab.currentLocation.isArtCodeRemote;
+  }] subscribeNext:^(NSURL *currentLocation) {
+    this.remoteURL = this.artCodeTab.currentLocation.url;
   }];
 }
 
@@ -237,7 +237,7 @@ static void init(RemoteBrowserController *self) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
     {
-      [self.artCodeTab pushURL:[self.artCodeTab.currentLocation.ArtCodeLocationToActualURL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+      [self.artCodeTab pushURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
     }
     else
     {

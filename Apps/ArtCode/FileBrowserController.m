@@ -77,7 +77,7 @@
     return nil;
   
   // RAC
-  [self rac_bind:RAC_KEYPATH_SELF(self.directoryURL) to:RACAbleSelf(self.artCodeTab.currentURL)];
+  [self rac_bind:RAC_KEYPATH_SELF(self.directoryURL) to:RACAbleSelf(self.artCodeTab.currentLocation.url)];
   
   return self;
 }
@@ -499,7 +499,7 @@
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync
-  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentLocation withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
+  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentLocation.url withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
 }
