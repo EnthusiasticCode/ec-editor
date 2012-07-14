@@ -17,7 +17,7 @@
 #import "FolderBrowserController.h"
 #import "RemoteTransferController.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ACProject.h"
 
 #import <Connection/CKConnectionRegistry.h>
@@ -64,7 +64,7 @@ static void init(RemoteBrowserController *self) {
   [[[RACAbleSelf(self.artCodeTab.currentURL) distinctUntilChanged] where:^BOOL(id x) {
     return this.artCodeTab.currentURL.isArtCodeRemote;
   }] subscribeNext:^(NSURL *currentURL) {
-    this.remoteURL = this.artCodeTab.currentURL.artCodeURLToActualURL;
+    this.remoteURL = this.artCodeTab.currentURL.ArtCodeLocationToActualURL;
   }];
 }
 
@@ -237,7 +237,7 @@ static void init(RemoteBrowserController *self) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
     {
-      [self.artCodeTab pushURL:[self.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
+      [self.artCodeTab pushURL:[self.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey] isDirectory:YES]];
     }
     else
     {

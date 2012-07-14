@@ -10,7 +10,7 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "AppStyle.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"

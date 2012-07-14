@@ -30,7 +30,7 @@
 #import "TMSyntaxNode.h"
 #import "TMPreference.h"
 #import "TMSymbol.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeBookmark.h"
 

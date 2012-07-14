@@ -15,7 +15,7 @@
 #import "ArtCodeAppDelegate.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ACProject.h"
 
 #import "DocSetDownloadManager.h"
@@ -302,7 +302,7 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ACProject class]]) {
-      [self.artCodeTab pushURL:[element artCodeURL]];
+      [self.artCodeTab pushURL:[element ArtCodeLocation]];
     } else if ([element isKindOfClass:[DocSet class]]) {
       [self.artCodeTab pushURL:[(DocSet *)element docSetURLForNode:nil]];
     }

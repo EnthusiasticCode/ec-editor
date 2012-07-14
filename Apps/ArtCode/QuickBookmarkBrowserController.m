@@ -10,7 +10,7 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 
 #import "ACProject.h"
 
@@ -47,7 +47,7 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject type:ArtCodeURLTypeBookmarksList path:nil]];
+  [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeBookmarksList path:nil]];
 }
 
 @end

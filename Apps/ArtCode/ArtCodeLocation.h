@@ -1,5 +1,5 @@
 //
-//  ArtCodeURL.h
+//  ArtCodeLocation.h
 //  ArtCode
 //
 //  Created by Uri Baghin on 1/31/12.
@@ -11,36 +11,33 @@
 @class ACProject;
 
 typedef enum {
-  ArtCodeURLTypeProjectsList,
-  ArtCodeURLTypeProject,
-  ArtCodeURLTypeDirectory,
-  ArtCodeURLTypeFile,
-  ArtCodeURLTypeTextFile,
-  ArtCodeURLTypeBookmarksList,
-  ArtCodeURLTypeBookmark,
-  ArtCodeURLTypeRemotesList,
-  ArtCodeURLTypeRemote,
-  ArtCodeURLTypeDocset,
-} ArtCodeURLType;
+  ArtCodeLocationTypeProjectsList,
+  ArtCodeLocationTypeProject,
+  ArtCodeLocationTypeDirectory,
+  ArtCodeLocationTypeFile,
+  ArtCodeLocationTypeTextFile,
+  ArtCodeLocationTypeBookmarksList,
+  ArtCodeLocationTypeBookmark,
+  ArtCodeLocationTypeRemotesList,
+  ArtCodeLocationTypeRemote,
+  ArtCodeLocationTypeDocset,
+} ArtCodeLocationType;
 
-@interface ArtCodeURL : NSObject
+@interface ArtCodeLocation : NSObject
 
-/// Create a new ArtCodeURL encoding the project, type and path.
-+ (ArtCodeURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path;
+/// Create a new ArtCodeLocation encoding the project, type and path.
++ (ArtCodeLocation *)ArtCodeLocationWithProject:(ACProject *)project type:(ArtCodeLocationType)type path:(NSString *)path;
 
-+ (ArtCodeURL *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
++ (ArtCodeLocation *)artCodeRemoteURLWithProject:(ACProject *)project name:(NSString *)name url:(NSURL *)url;
 
 - (NSString *)stringRepresentation;
 
 - (id)initWithStringRepresentation:(NSString *)string;
 
-/// Get a mask indicating properties of the URL. See ArtCodeURLType enum for more informations.
-- (ArtCodeURLType)artCodeType;
+/// Get a mask indicating properties of the URL. See ArtCodeLocationType enum for more informations.
+- (ArtCodeLocationType)artCodeType;
 
 #pragma mark Top level URLs
-
-/// Returns YES if the URL has an ArtCode scheme
-- (BOOL)isArtCodeURL;
 
 /// Indicates if the URL points to the global projects list
 /// ie: the URL is in the format artcode://projects
@@ -66,7 +63,7 @@ typedef enum {
 - (BOOL)isArtCodeDocset;
 
 /// Returns a file:// URL from either an artcode or a file URL.
-- (NSURL *)artCodeURLToActualURL;
+- (NSURL *)ArtCodeLocationToActualURL;
 
 /// Returns the name of the ArtCodeRemote URL
 - (NSString *)artCodeRemoteName;

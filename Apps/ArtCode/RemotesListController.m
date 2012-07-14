@@ -138,7 +138,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
+    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] ArtCodeLocation]];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }

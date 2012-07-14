@@ -15,7 +15,7 @@
 #import "UIImage+AppStyle.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ACProject.h"
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
@@ -348,15 +348,15 @@
 {
   switch ([sender tag]) {
     case 1:
-      [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject type:ArtCodeURLTypeBookmarksList path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeBookmarksList path:nil]];
       break;
       
     case 2:
-      [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject type:ArtCodeURLTypeRemotesList path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeRemotesList path:nil]];
       break;
       
     default:
-      [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:self.artCodeTab.currentProject type:ArtCodeURLTypeProject path:nil]];
+      [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:self.artCodeTab.currentProject type:ArtCodeLocationTypeProject path:nil]];
       break;
   }
 }

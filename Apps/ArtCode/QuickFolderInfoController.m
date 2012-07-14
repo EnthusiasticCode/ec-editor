@@ -9,7 +9,7 @@
 #import "QuickFolderInfoController.h"
 #import "QuickBrowsersContainerController.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 
 @implementation QuickFolderInfoController
 

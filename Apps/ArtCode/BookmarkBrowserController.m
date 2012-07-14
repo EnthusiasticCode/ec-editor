@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 #import "NSArray+ScoreForAbbreviation.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
@@ -119,7 +119,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
+    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] ArtCodeLocation]];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

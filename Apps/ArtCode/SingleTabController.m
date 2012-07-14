@@ -12,7 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
@@ -361,7 +361,7 @@
     else
     {
       NSURL *url = self.artCodeTab.currentURL;
-      //      if ([url isArtCodeURL])
+      //      if ([url isArtCodeLocation])
       //      {
       //        ACProjectItem *item = self.artCodeTab.currentItem;
       //        switch (item.type)
@@ -449,43 +449,43 @@
 
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab
 {
-  ArtCodeURL *currentURL = tab.currentURL;
+  ArtCodeLocation *currentURL = tab.currentURL;
   UIViewController *result = nil;
   
   // ArtCode URLs routing
   Class controllerClass = nil;
   
   switch (currentURL.artCodeType) {
-    case ArtCodeURLTypeProjectsList:
+    case ArtCodeLocationTypeProjectsList:
     {
       controllerClass = [ProjectBrowserController class];
       break;
     }
-    case ArtCodeURLTypeBookmarksList:
-    case ArtCodeURLTypeBookmark:
+    case ArtCodeLocationTypeBookmarksList:
+    case ArtCodeLocationTypeBookmark:
     {
       controllerClass = [BookmarkBrowserController class];
       break;
     }
-    case ArtCodeURLTypeRemotesList:
-    case ArtCodeURLTypeRemote:
+    case ArtCodeLocationTypeRemotesList:
+    case ArtCodeLocationTypeRemote:
     {
       controllerClass = [RemotesListController class];
       break;
     }
-    case ArtCodeURLTypeTextFile:
+    case ArtCodeLocationTypeTextFile:
     {
       controllerClass = [CodeFileController class];
       break;
     }
-    case ArtCodeURLTypeProject:
-    case ArtCodeURLTypeDirectory:
-    case ArtCodeURLTypeFile:
+    case ArtCodeLocationTypeProject:
+    case ArtCodeLocationTypeDirectory:
+    case ArtCodeLocationTypeFile:
     {
       controllerClass = [FileBrowserController class];
       break;
     }
-    case ArtCodeURLTypeDocset:
+    case ArtCodeLocationTypeDocset:
     {
       controllerClass = [DocSetBrowserController class];
       break;

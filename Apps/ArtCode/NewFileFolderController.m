@@ -11,7 +11,7 @@
 #import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ACProject.h"
 #import "BezelAlert.h"
 
@@ -33,7 +33,7 @@
   
   // Subscribable to get the latest folder name or nil if the name is not valid
   [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
-    if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:x].path]) {
+    if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:x].path]) {
       return x;
     } else {
       return nil;
@@ -79,7 +79,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentURL.artCodeURLToActualURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[self.artCodeTab.currentURL.ArtCodeLocationToActualURL URLByAppendingPathComponent:self.folderNameTextField.text] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     if (!error) {
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

@@ -49,7 +49,7 @@
 		B75B5B9315337A6400A576A9 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
 		B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
 		B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
-		B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		B75F658414D868EB008B88C5 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
 		B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
@@ -275,7 +275,7 @@
 		B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
-		B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		B7EB57A0151B9B7B0031C977 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
 		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
@@ -339,7 +339,7 @@
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
 		CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D77F31570EFD000E51933 /* popover_Button.png */; };
 		CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
-		CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeURL.m */; };
+		CD4469D6150CE7F6004236D8 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
 		CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
 		CD4719A6145196CE00C7BCC5 /* tabBar_TabAddButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */; };
 		CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49924D14D6C7480046CD19 /* InstantGestureRecognizer.m */; };
@@ -575,8 +575,8 @@
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
 		B75B5B431532423E00A576A9 /* ArtCodeTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTests.h; sourceTree = "<group>"; };
 		B75B5B441532423E00A576A9 /* ArtCodeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTests.m; sourceTree = "<group>"; };
-		B75F658214D868EB008B88C5 /* ArtCodeURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeURL.h; sourceTree = "<group>"; };
-		B75F658314D868EB008B88C5 /* ArtCodeURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURL.m; sourceTree = "<group>"; };
+		B75F658214D868EB008B88C5 /* ArtCodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ArtCodeLocation.h; sourceTree = "<group>"; };
+		B75F658314D868EB008B88C5 /* ArtCodeLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeLocation.m; sourceTree = "<group>"; };
 		B7656C19144B53FE0084B050 /* ActionScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ActionScript.tmbundle; sourceTree = "<group>"; };
 		B7656C1A144B53FE0084B050 /* Apache.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Apache.tmbundle; sourceTree = "<group>"; };
 		B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppleScript.tmbundle; sourceTree = "<group>"; };
@@ -1204,8 +1204,8 @@
 				B7FB79A514D602DB0080A714 /* TextMate */,
 				B7FB79CA14D605050080A714 /* Filesystem */,
 				CDBF0B3B1577B761003F169C /* DocSet */,
-				B75F658214D868EB008B88C5 /* ArtCodeURL.h */,
-				B75F658314D868EB008B88C5 /* ArtCodeURL.m */,
+				B75F658214D868EB008B88C5 /* ArtCodeLocation.h */,
+				B75F658314D868EB008B88C5 /* ArtCodeLocation.m */,
 				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
 				5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */,
@@ -2753,7 +2753,7 @@
 				CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */,
 				CD7D1266150946D5003DE99B /* Keychain.m in Sources */,
 				CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */,
-				CD4469D6150CE7F6004236D8 /* ArtCodeURL.m in Sources */,
+				CD4469D6150CE7F6004236D8 /* ArtCodeLocation.m in Sources */,
 				CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */,
 				B7072BD31511479B00580855 /* NSString+UUID.m in Sources */,
 				B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */,
@@ -2792,7 +2792,7 @@
 				B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */,
 				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
 				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
-				B7EB57A0151B9B7B0031C977 /* ArtCodeURL.m in Sources */,
+				B7EB57A0151B9B7B0031C977 /* ArtCodeLocation.m in Sources */,
 				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
 				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
 				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
@@ -2888,7 +2888,7 @@
 				CD7BD9EC14D817D40048A48A /* NewFileFolderController.m in Sources */,
 				CD7BD9ED14D817D40048A48A /* NewFileTemplateSelectionController.m in Sources */,
 				CD7BD9F114D83C850048A48A /* UIViewController+Utilities.m in Sources */,
-				B75F658414D868EB008B88C5 /* ArtCodeURL.m in Sources */,
+				B75F658414D868EB008B88C5 /* ArtCodeLocation.m in Sources */,
 				CDC0056B14D96B8900BB6867 /* BookmarkBrowserController.m in Sources */,
 				CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */,
 				CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */,

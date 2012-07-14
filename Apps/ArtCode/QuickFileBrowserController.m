@@ -13,7 +13,7 @@
 #import "NSArray+ScoreForAbbreviation.h"
 #import "NSURL+Utilities.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
 #import "ACProject.h"
@@ -131,7 +131,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
+  [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] ArtCodeLocation]];
 }
 
 #pragma mark - Private methods
@@ -139,13 +139,13 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[self.artCodeTab.currentProject artCodeURL]];
+  [self.artCodeTab pushURL:[self.artCodeTab.currentProject ArtCodeLocation]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushURL:[ArtCodeURL artCodeURLWithProject:nil type:ArtCodeURLTypeProjectsList path:nil]];
+  [self.artCodeTab pushURL:[ArtCodeLocation ArtCodeLocationWithProject:nil type:ArtCodeLocationTypeProjectsList path:nil]];
 }
 
 @end

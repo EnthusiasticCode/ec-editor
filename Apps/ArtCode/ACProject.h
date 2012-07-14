@@ -41,7 +41,7 @@ extern NSString * const ACProjectNotificationItemKey;
 #pragma mark Project metadata
 
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
-@property (nonatomic, strong, readonly) NSURL *artCodeURL;
+@property (nonatomic, strong, readonly) NSURL *ArtCodeLocation;
 
 /// Name of the project set at creation
 @property (nonatomic, readonly) NSString *name;

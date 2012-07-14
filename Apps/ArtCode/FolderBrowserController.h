@@ -15,7 +15,7 @@
 /// The folder that the browser is currently displaying.
 @property (nonatomic, strong) NSURL *currentFolderURL;
 
-/// The ArtCodeURL selected by the user.
+/// The ArtCodeLocation selected by the user.
 @property (nonatomic, strong, readonly) NSURL *selectedFolderURL;
 
 @end

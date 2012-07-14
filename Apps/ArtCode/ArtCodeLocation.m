@@ -1,34 +1,24 @@
 //
-//  ArtCodeURL.m
+//  ArtCodeLocation.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 1/31/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 
 #import "ACProject.h"
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
-static NSString * const artCodeURLScheme = @"artcode";
+static NSString * const ArtCodeLocationScheme = @"artcode";
 
 
-@implementation ArtCodeURL
+@implementation ArtCodeLocation
 
-+ (NSURL *)artCodeURLWithProject:(ACProject *)project type:(ArtCodeURLType)type path:(NSString *)path {
++ (NSURL *)ArtCodeLocationWithProject:(ACProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
   ASSERT(NO);
-}
-
-@end
-
-#pragma mark -
-
-@implementation NSURL (ArtCodeURL)
-
-- (BOOL)isArtCodeURL {
-  return [self.scheme isEqualToString:artCodeURLScheme];
 }
 
 - (BOOL)isArtCodeProjectsList {
@@ -42,5 +32,6 @@ static NSString * const artCodeURLScheme = @"artcode";
 - (BOOL)isArtCodeProjectRemotesList {
   UNIMPLEMENTED();
 }
+
 
 @end

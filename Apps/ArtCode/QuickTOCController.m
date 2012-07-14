@@ -13,7 +13,7 @@
 
 #import "NSArray+ScoreForAbbreviation.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 #import "TMUnit.h"
 #import "TMSymbol.h"

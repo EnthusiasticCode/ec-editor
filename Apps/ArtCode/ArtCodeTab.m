@@ -7,7 +7,7 @@
 //
 
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ACProject.h"
 
 #import "DocSet.h"
@@ -36,7 +36,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
 
 /// Moves the current URL for the tab and populate current project and item if neccessary.
-- (void)_moveFromURL:(ArtCodeURL *)fromURL toURL:(ArtCodeURL *)toURL;
+- (void)_moveFromURL:(ArtCodeLocation *)fromURL toURL:(ArtCodeLocation *)toURL;
 
 @end
 
@@ -165,7 +165,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
 }
 
-- (ArtCodeURL *)currentURL
+- (ArtCodeLocation *)currentURL
 {
   return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
 }
@@ -208,12 +208,12 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     [_mutableDictionary setObject:[[NSMutableArray alloc] init] forKey:_historyURLsKey];
   
   if (![(NSArray *)[_mutableDictionary objectForKey:_historyURLsKey] count]) {
-    ArtCodeURL *projectsURL = [ArtCodeURL artCodeURLWithProject:nil type:ArtCodeURLTypeProjectsList path:nil];
+    ArtCodeLocation *projectsURL = [ArtCodeLocation ArtCodeLocationWithProject:nil type:ArtCodeLocationTypeProjectsList path:nil];
     [[_mutableDictionary objectForKey:_historyURLsKey] addObject:projectsURL.stringRepresentation];
     [_mutableHistoryURLs addObject:projectsURL];
   } else {
     for (NSString *string in [_mutableDictionary objectForKey:_historyURLsKey])
-      [_mutableHistoryURLs addObject:[[ArtCodeURL alloc] initWithStringRepresentation:string]];
+      [_mutableHistoryURLs addObject:[[ArtCodeLocation alloc] initWithStringRepresentation:string]];
   }
 
   // Set the history point
@@ -235,7 +235,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
   [ArtCodeTab removeTabAtIndex:self.tabIndex];
 }
 
-- (void)pushURL:(ArtCodeURL *)url
+- (void)pushURL:(ArtCodeLocation *)url
 {
   ASSERT(url);
   // Moving in case of no previous history
@@ -288,7 +288,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 
 #pragma mark - Private Methods
 
-- (void)_moveFromURL:(ArtCodeURL *)fromURL toURL:(ArtCodeURL*)toURL {
+- (void)_moveFromURL:(ArtCodeLocation *)fromURL toURL:(ArtCodeLocation*)toURL {
   if (toURL.isArtCodeDocset) {
     // Handle changes to docset urls
 //    self.currentDocSet = toURL.docSet; // get the docset

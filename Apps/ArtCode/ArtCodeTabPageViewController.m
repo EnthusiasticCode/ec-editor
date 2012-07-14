@@ -9,7 +9,7 @@
 #import "ArtCodeTabPageViewController.h"
 #import "TabBar.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "SingleTabController.h"
 
 @interface ArtCodeTabPageViewController () <TabPageViewControllerDataSource, TabBarDelegate>

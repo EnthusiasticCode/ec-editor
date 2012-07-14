@@ -1,5 +1,5 @@
 //
-//  ArtCodeURL.m
+//  ArtCodeLocation.m
 //  ArtCode
 //
 //  Created by Nicola Peduzzi on 11/03/12.
@@ -7,14 +7,14 @@
 //
 
 #import "ArtCodeTests.h"
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 
-SPEC_BEGIN(ArtCodeURLSpec)
+SPEC_BEGIN(ArtCodeLocationSpec)
 
-describe(@"The ArtCodeURL class", ^{
+describe(@"The ArtCodeLocation class", ^{
   
   it(@"should create a valid project list URL", ^{
-    NSURL *url = [ArtCodeURL artCodeURLWithProject:nil item:nil path:artCodeURLProjectListPath];
+    NSURL *url = [ArtCodeLocation ArtCodeLocationWithProject:nil item:nil path:ArtCodeLocationProjectListPath];
     [[[url absoluteString] should] equal:@"artcode://projects"];
   });
   

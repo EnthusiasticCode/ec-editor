@@ -25,7 +25,7 @@
 #import "NSURL+Utilities.h"
 #import "BezelAlert.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
 #import "DirectoryPresenter.h"
@@ -229,7 +229,7 @@
       _selectedItems = [NSMutableArray new];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
-    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] artCodeURL]];
+    [self.artCodeTab pushURL:[[self.filteredItems objectAtIndex:indexPath.row] ArtCodeLocation]];
   }
 }
 

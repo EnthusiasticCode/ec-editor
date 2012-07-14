@@ -8,7 +8,7 @@
 
 #import "QuickBrowsersContainerController.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 #import "ACProject.h"
 
@@ -27,8 +27,6 @@
   static QuickBrowsersContainerController *_folderController = nil;
   static QuickBrowsersContainerController *_fileController = nil;
   
-  ASSERT([contentController.artCodeTab.currentURL isArtCodeURL]);
-  
   if ([contentController.artCodeTab.currentURL isArtCodeProjectBookmarksList]) {
     if (!_commonController) {
       _commonController = [[QuickBrowsersContainerController alloc] init];
@@ -42,7 +40,7 @@
   else
   {
     switch (contentController.artCodeTab.currentURL.artCodeType) {
-      case ArtCodeURLTypeProject:
+      case ArtCodeLocationTypeProject:
         if (!_projectController)
         {
           _projectController = [[QuickBrowsersContainerController alloc] init];
@@ -55,7 +53,7 @@
         }
         return _projectController;
         
-      case ArtCodeURLTypeDirectory:
+      case ArtCodeLocationTypeDirectory:
         if (!_folderController)
         {
           _folderController = [[QuickBrowsersContainerController alloc] init];
@@ -68,10 +66,10 @@
         }
         return _folderController;
         
-      case ArtCodeURLTypeBookmark:
+      case ArtCodeLocationTypeBookmark:
         // TODO pass file next
         
-      case ArtCodeURLTypeTextFile:
+      case ArtCodeLocationTypeTextFile:
         if (!_fileController)
         {
           _fileController = [[QuickBrowsersContainerController alloc] init];

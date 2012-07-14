@@ -12,7 +12,7 @@
 #import "UIColor+HexColor.h"
 #import "NSString+Utilities.h"
 
-#import "ArtCodeURL.h"
+#import "ArtCodeLocation.h"
 
 
 NSString * const ACProjectWillAddProjectNotificationName = @"ACProjectWillAddProjectNotificationName";
@@ -111,8 +111,8 @@ static NSString * const _plistRemotesKey = @"remotes";
 
 #pragma mark - Project metadata
 
-- (NSURL *)artCodeURL {
-  return [ArtCodeURL artCodeURLWithProject:self type:ArtCodeURLTypeProject path:nil];
+- (NSURL *)ArtCodeLocation {
+  return [ArtCodeLocation ArtCodeLocationWithProject:self type:ArtCodeLocationTypeProject path:nil];
 }
 
 - (NSString *)name {
