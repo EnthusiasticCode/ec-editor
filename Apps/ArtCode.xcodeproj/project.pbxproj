@@ -10,9 +10,6 @@
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
-		5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
-		5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
-		5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
@@ -552,8 +549,6 @@
 /* Begin PBXFileReference section */
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
-		5F6539F315B0AF9C00FFCFEE /* ArtCodeBookmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeBookmark.h; sourceTree = "<group>"; };
-		5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeBookmark.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
 		5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabPageViewController.m; sourceTree = "<group>"; };
 		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
@@ -1210,8 +1205,6 @@
 				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
 				5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */,
 				5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */,
-				5F6539F315B0AF9C00FFCFEE /* ArtCodeBookmark.h */,
-				5F6539F415B0AF9C00FFCFEE /* ArtCodeBookmark.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -2777,7 +2770,6 @@
 				B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137015AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
-				5F6539F615B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 				5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 			);
@@ -2816,7 +2808,6 @@
 				B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
-				5F6539F715B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 				5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 			);
@@ -2926,7 +2917,6 @@
 				B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */,
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
-				5F6539F515B0AF9C00FFCFEE /* ArtCodeBookmark.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 				5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */,
