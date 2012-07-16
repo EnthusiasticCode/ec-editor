@@ -6,11 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "Remote.h"
 
-@interface ArtCodeRemote : NSObject
+@interface ArtCodeRemote : Remote
 
-@property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSURL *url;
 
 @end

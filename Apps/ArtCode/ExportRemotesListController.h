@@ -16,7 +16,7 @@
 @interface ExportRemotesListController : UITableViewController
 
 /// The list of remotes to show on this controller.
-@property (nonatomic, strong) NSArray *remotes;
+@property (nonatomic, strong) NSOrderedSet *remotes;
 
 /// A block that will be called when the user select a remote from the list.
 @property (nonatomic, copy) void (^remoteSelectedBlock)(ExportRemotesListController *sender, ArtCodeRemote *remote);

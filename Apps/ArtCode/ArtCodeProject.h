@@ -6,10 +6,9 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import <ReactiveCocoa/ReactiveCocoa.h>
+#import "Project.h"
 
-@class ArtCodeRemote, ArtCodeLocation;
+@class ArtCodeRemote, ArtCodeLocation, RACSubscribable;
 
 /// Notifications for the projects list
 extern NSString * const ACProjectWillAddProjectNotificationName;
@@ -25,7 +24,7 @@ extern NSString * const ACProjectWillRemoveItem;
 extern NSString * const ACProjectDidRemoveItem;
 extern NSString * const ACProjectNotificationItemKey;
 
-@interface ArtCodeProject : NSObject <NSFilePresenter>
+@interface ArtCodeProject : Project <NSFilePresenter>
 
 /// The local URL at which all projects are stored.
 + (NSURL *)projectsDirectory;
@@ -43,14 +42,8 @@ extern NSString * const ACProjectNotificationItemKey;
 /// Unique identifier of the project. It can be a string with an uuid or a core data identifier.
 @property (nonatomic, strong, readonly) ArtCodeLocation *artCodeLocation;
 
-/// Name of the project set at creation
-@property (nonatomic, readonly) NSString *name;
-
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
-
-/// A flag indicating if the project has been newly created and never opened.
-@property (nonatomic, getter = isNewlyCreated) BOOL newlyCreated;
 
 #pragma mark Project content
 
@@ -59,13 +52,6 @@ extern NSString * const ACProjectNotificationItemKey;
 
 /// Gets an array of ArtCodeLocations representing all bookmarks from the files in the project.
 - (NSArray *)bookmarks;
-
-/// Get all the remotes for the project.
-- (NSArray *)remotes;
-
-- (void)addRemote:(ArtCodeRemote *)remote;
-
-- (void)removeRemote:(ArtCodeRemote *)remote;
 
 #pragma mark Project-wide operations
 
