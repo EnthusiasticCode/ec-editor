@@ -14,6 +14,7 @@
 		5F13325615B46D0900964FD4 /* TabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13325515B46D0900964FD4 /* TabSet.m */; };
 		5F13325915B46D0A00964FD4 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13325815B46D0A00964FD4 /* Project.m */; };
 		5F13325C15B46D0A00964FD4 /* Remote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13325B15B46D0A00964FD4 /* Remote.m */; };
+		5F1332E115B4D82A00964FD4 /* ArtCodeDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F1332E015B4D82A00964FD4 /* ArtCodeDataStore.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -567,6 +568,8 @@
 		5F13325815B46D0A00964FD4 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
 		5F13325A15B46D0A00964FD4 /* Remote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Remote.h; sourceTree = "<group>"; };
 		5F13325B15B46D0A00964FD4 /* Remote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Remote.m; sourceTree = "<group>"; };
+		5F1332DF15B4D82A00964FD4 /* ArtCodeDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDataStore.h; sourceTree = "<group>"; };
+		5F1332E015B4D82A00964FD4 /* ArtCodeDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDataStore.m; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -1413,6 +1416,8 @@
 		B77100EC1506DAE6006AF1FB /* ArtCode */ = {
 			isa = PBXGroup;
 			children = (
+				5F1332DF15B4D82A00964FD4 /* ArtCodeDataStore.h */,
+				5F1332E015B4D82A00964FD4 /* ArtCodeDataStore.m */,
 				B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */,
 				B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */,
 				B75F658214D868EB008B88C5 /* ArtCodeLocation.h */,
@@ -2969,6 +2974,7 @@
 				5F13325615B46D0900964FD4 /* TabSet.m in Sources */,
 				5F13325915B46D0A00964FD4 /* Project.m in Sources */,
 				5F13325C15B46D0A00964FD4 /* Remote.m in Sources */,
+				5F1332E115B4D82A00964FD4 /* ArtCodeDataStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
