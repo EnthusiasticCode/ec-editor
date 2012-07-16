@@ -16,7 +16,7 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
 

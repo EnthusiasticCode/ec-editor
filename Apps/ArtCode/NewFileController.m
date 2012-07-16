@@ -11,7 +11,7 @@
 #import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 #import "ArtCodeTab.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 #import "BezelAlert.h"
 
 #import "ArtCodeLocation.h"

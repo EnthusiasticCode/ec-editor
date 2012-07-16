@@ -107,7 +107,7 @@
 		B7656C8A144B54120084B050 /* Sunburst.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C77144B54120084B050 /* Sunburst.tmTheme */; };
 		B7656C8B144B54120084B050 /* Twilight.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C78144B54120084B050 /* Twilight.tmTheme */; };
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
-		B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
+		B77100EF1506DAFF006AF1FB /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
 		B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
 		B77101461506E336006AF1FB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101451506E336006AF1FB /* SenTestingKit.framework */; };
 		B77101471506E340006AF1FB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
@@ -118,7 +118,7 @@
 		B771014C1506E340006AF1FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
-		B77101541506E76F006AF1FB /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
+		B77101541506E76F006AF1FB /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
 		B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7728C5F15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7728C6015286EE3005EA98A /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
@@ -267,7 +267,7 @@
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ACProject.m */; };
+		B7EB5795151B9B7B0031C977 /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
 		B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
 		B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
@@ -630,8 +630,8 @@
 		B7656C77144B54120084B050 /* Sunburst.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Sunburst.tmTheme; sourceTree = "<group>"; };
 		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
-		B77100ED1506DAFF006AF1FB /* ACProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACProject.h; sourceTree = "<group>"; };
-		B77100EE1506DAFF006AF1FB /* ACProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACProject.m; sourceTree = "<group>"; };
+		B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ArtCodeProject.h; sourceTree = "<group>"; };
+		B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProject.m; sourceTree = "<group>"; };
 		B77101211506E20F006AF1FB /* ArtCodeTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArtCodeTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B771012A1506E20F006AF1FB /* ArtCodeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ArtCodeTests-Info.plist"; sourceTree = "<group>"; };
 		B771012C1506E20F006AF1FB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1381,8 +1381,8 @@
 		B77100EC1506DAE6006AF1FB /* ACProject */ = {
 			isa = PBXGroup;
 			children = (
-				B77100ED1506DAFF006AF1FB /* ACProject.h */,
-				B77100EE1506DAFF006AF1FB /* ACProject.m */,
+				B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */,
+				B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */,
 			);
 			name = ACProject;
 			sourceTree = "<group>";
@@ -2741,7 +2741,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B77101541506E76F006AF1FB /* ACProject.m in Sources */,
+				B77101541506E76F006AF1FB /* ArtCodeProject.m in Sources */,
 				CDBC78351507EC4F00461A71 /* NSURL+Utilities.m in Sources */,
 				CD7D126515093319003DE99B /* UIColor+HexColor.m in Sources */,
 				CD7D1266150946D5003DE99B /* Keychain.m in Sources */,
@@ -2779,7 +2779,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B7EB5795151B9B7B0031C977 /* ACProject.m in Sources */,
+				B7EB5795151B9B7B0031C977 /* ArtCodeProject.m in Sources */,
 				B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */,
 				B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */,
 				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
@@ -2893,7 +2893,7 @@
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
 				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
-				B77100EF1506DAFF006AF1FB /* ACProject.m in Sources */,
+				B77100EF1506DAFF006AF1FB /* ArtCodeProject.m in Sources */,
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,

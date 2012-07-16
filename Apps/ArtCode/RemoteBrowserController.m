@@ -18,7 +18,7 @@
 #import "RemoteTransferController.h"
 
 #import "ArtCodeLocation.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import <Connection/CKConnectionRegistry.h>
 

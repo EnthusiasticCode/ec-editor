@@ -8,7 +8,7 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
@@ -30,7 +30,7 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 @interface ArtCodeTab ()
 
 @property (nonatomic, getter = isLoading) BOOL loading;
-@property (nonatomic, strong) ACProject *currentProject;
+@property (nonatomic, strong) ArtCodeProject *currentProject;
 @property (nonatomic, strong) DocSet *currentDocSet;
 
 - (id)_initWithDictionary:(NSMutableDictionary *)dictionary;
@@ -295,8 +295,8 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     self.currentProject = nil;
   } else {
     self.currentDocSet = nil;
-    ACProject *fromProject = [ACProject projectWithName:fromURL.projectName];
-    ACProject *toProject = [ACProject projectWithName:toURL.projectName];
+    ArtCodeProject *fromProject = [ArtCodeProject projectWithName:fromURL.projectName];
+    ArtCodeProject *toProject = [ArtCodeProject projectWithName:toURL.projectName];
     if (fromProject != toProject) {
       self.currentProject = toProject;
     }

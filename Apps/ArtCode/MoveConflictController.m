@@ -8,7 +8,7 @@
 
 #import "MoveConflictController.h"
 #import "NSURL+Utilities.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
 
 @implementation MoveConflictController {

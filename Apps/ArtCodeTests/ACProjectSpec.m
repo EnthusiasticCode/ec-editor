@@ -7,7 +7,7 @@
 //
 
 #import "ArtCodeTests.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 #import "ACProjectFolder.h"
 #import "ACProjectFile.h"
 #import "ArtCodeBookmark.h"

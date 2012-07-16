@@ -16,7 +16,7 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import "DocSetDownloadManager.h"
 #import "DocSet.h"
@@ -63,7 +63,7 @@
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
-    NSMutableArray *elements = [NSMutableArray arrayWithArray:[ACProject projects].allValues];
+    NSMutableArray *elements = [NSMutableArray arrayWithArray:[ArtCodeProject projects].allValues];
     [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
@@ -94,14 +94,14 @@
   
   // RAC
   __weak ProjectBrowserController *this = self;
-  RACSubscribable *projects = [ACProject rac_projects];
+  RACSubscribable *projects = [ArtCodeProject rac_projects];
   
   // Update hint view display
   [[projects startWith:nil] subscribeNext:^(id x) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
-    if (ACProject.projects.count > 0) {
+    if (ArtCodeProject.projects.count > 0) {
       [strongSelf->_hintView removeFromSuperview];
     } else {
       [strongSelf.view addSubview:strongSelf.hintView];
@@ -129,7 +129,7 @@
       // When deleting a project
       NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
       [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ACProject class]] && [projectName isEqualToString:[obj name]]) {
+        if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
           index = idx;
           *stop = YES;
         }
@@ -273,8 +273,8 @@
   
   // Setup cell
   id element = [self.gridElements objectAtIndex:cellIndex];
-  if ([element isKindOfClass:[ACProject class]]) {
-    ACProject *project = (ACProject *)element;
+  if ([element isKindOfClass:[ArtCodeProject class]]) {
+    ArtCodeProject *project = (ArtCodeProject *)element;
     cell.title.text = cell.accessibilityLabel = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
@@ -301,7 +301,7 @@
 - (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
-    if ([element isKindOfClass:[ACProject class]]) {
+    if ([element isKindOfClass:[ArtCodeProject class]]) {
       [self.artCodeTab pushLocation:[element artCodeLocation]];
     } else if ([element isKindOfClass:[DocSet class]]) {
       [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[(DocSet *)element docSetURLForNode:nil]]];
@@ -340,7 +340,7 @@
       // Remove projects
       NSArray *oldElements = self.gridElements;
       [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ACProject class]]) {
+        if ([obj isKindOfClass:[ArtCodeProject class]]) {
           [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[obj presentedItemURL]] completionHandler:^(NSError *error) {
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -372,8 +372,8 @@
         }
       };
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ACProject class]]) {
-          ACProject *project = obj;
+        if ([obj isKindOfClass:[ArtCodeProject class]]) {
+          ArtCodeProject *project = obj;
           NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
           [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.presentedItemURL] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error, NSURL *newURL) {
             // TODO error handling?
@@ -428,8 +428,8 @@
       };
       // Enumerate elements to export
       [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ACProject class]]) {
-          ACProject *project = obj;
+        if ([obj isKindOfClass:[ArtCodeProject class]]) {
+          ArtCodeProject *project = obj;
           
           // Generate mail subject
           [subject appendFormat:@"%@, ", project.name];
@@ -530,7 +530,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ACProject *)[ACProject.projects.allValues objectAtIndex:idx] duplicateWithCompletionHandler:^(ACProject *duplicate) {
+    [(ArtCodeProject *)[ArtCodeProject.projects.allValues objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;
       }

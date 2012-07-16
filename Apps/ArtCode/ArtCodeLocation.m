@@ -8,7 +8,7 @@
 
 #import "ArtCodeLocation.h"
 
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
@@ -17,7 +17,7 @@ static NSString * const ArtCodeLocationScheme = @"artcode";
 
 @implementation ArtCodeLocation
 
-+ (NSURL *)ArtCodeLocationWithProject:(ACProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
++ (NSURL *)ArtCodeLocationWithProject:(ArtCodeProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
   ASSERT(NO);
 }
 

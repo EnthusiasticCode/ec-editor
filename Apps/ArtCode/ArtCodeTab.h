@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ACProject, DocSet, DirectoryPresenter, ArtCodeLocation;
+@class ArtCodeProject, DocSet, DirectoryPresenter, ArtCodeLocation;
 
 extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
@@ -50,7 +50,7 @@ extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 @property (nonatomic, strong, readonly) ArtCodeLocation *currentLocation;
 
 /// The current project for the tab's URL.
-@property (nonatomic, strong, readonly) ACProject *currentProject;
+@property (nonatomic, strong, readonly) ArtCodeProject *currentProject;
 
 /// Access to the current URL docset if any.
 @property (nonatomic, strong, readonly) DocSet *currentDocSet;

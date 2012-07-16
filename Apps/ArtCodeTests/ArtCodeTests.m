@@ -7,13 +7,13 @@
 //
 
 #import "ArtCodeTests.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 
 // this is just debug code so ignore the warnings
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 void clearProjectsDirectory(void) {
-  [ACProject performSelector:@selector(_removeAllProjects)];
+  [ArtCodeProject performSelector:@selector(_removeAllProjects)];
 }
 #pragma clang diagnostic pop

@@ -8,7 +8,7 @@
 
 #import "NewProjectImportController.h"
 
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"
@@ -107,7 +107,7 @@
   BOOL attemptAgain = NO;
   do {
     attemptAgain = NO;
-    for (ACProject *p in ACProject.projects.allValues) {
+    for (ArtCodeProject *p in ArtCodeProject.projects.allValues) {
       if ([p.name isEqualToString:projectName]) {
         projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
         attemptAgain = YES;
@@ -119,7 +119,7 @@
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [ACProject createProjectWithName:projectName completionHandler:^(ACProject *createdProject) {
+  [ArtCodeProject createProjectWithName:projectName completionHandler:^(ArtCodeProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed

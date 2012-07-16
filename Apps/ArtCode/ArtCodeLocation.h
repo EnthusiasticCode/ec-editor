@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class ACProject;
+@class ArtCodeProject;
 
 typedef enum {
   ArtCodeLocationTypeProjectsList,

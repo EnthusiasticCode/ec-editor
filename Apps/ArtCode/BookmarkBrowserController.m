@@ -13,7 +13,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 #import "HighlightTableViewCell.h"
 

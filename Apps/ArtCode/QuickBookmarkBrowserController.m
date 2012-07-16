@@ -12,7 +12,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 
 @interface QuickBookmarkBrowserController (/*Private methods*/)

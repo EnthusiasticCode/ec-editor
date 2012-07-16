@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 
 #import "ArtCodeTab.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
 
 #import "NSArray+ScoreForAbbreviation.h"

@@ -15,7 +15,7 @@
 #import "UIViewController+Utilities.h"
 
 #import "ArtCodeTab.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 
 @implementation NewProjectController {
   UIViewController *changeColorController;
@@ -95,7 +95,7 @@
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorButton.enabled = NO;
   self.projectNameTextField.enabled = NO;
-  [ACProject createProjectWithName:projectName completionHandler:^(ACProject *project) {
+  [ArtCodeProject createProjectWithName:projectName completionHandler:^(ArtCodeProject *project) {
     [self stopRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = YES;
     self.projectNameTextField.enabled = YES;

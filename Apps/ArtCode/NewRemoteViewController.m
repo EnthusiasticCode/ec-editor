@@ -8,7 +8,7 @@
 
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
-#import "ACProject.h"
+#import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
 
 #import "UIViewController+Utilities.h"
