@@ -630,7 +630,7 @@
 		B7656C77144B54120084B050 /* Sunburst.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Sunburst.tmTheme; sourceTree = "<group>"; };
 		B7656C78144B54120084B050 /* Twilight.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Twilight.tmTheme; sourceTree = "<group>"; };
 		B7656C79144B54120084B050 /* Zenburnesque.tmTheme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Zenburnesque.tmTheme; sourceTree = "<group>"; };
-		B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ArtCodeProject.h; sourceTree = "<group>"; };
+		B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeProject.h; sourceTree = "<group>"; };
 		B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProject.m; sourceTree = "<group>"; };
 		B77101211506E20F006AF1FB /* ArtCodeTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArtCodeTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B771012A1506E20F006AF1FB /* ArtCodeTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "ArtCodeTests-Info.plist"; sourceTree = "<group>"; };
