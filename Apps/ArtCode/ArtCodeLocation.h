@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "Location.h"
 
 @class ArtCodeProject;
 
@@ -21,7 +21,7 @@ typedef enum {
   ArtCodeLocationTypeDocset,
 } ArtCodeLocationType;
 
-@interface ArtCodeLocation : NSObject
+@interface ArtCodeLocation : Location
 
 /// Create a new ArtCodeLocation encoding the project, type and path.
 + (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type projectName:(NSString *)projectName url:(NSURL *)url;

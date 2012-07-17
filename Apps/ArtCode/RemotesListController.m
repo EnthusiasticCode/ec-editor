@@ -61,13 +61,13 @@
   {
     if ([self.searchBar.text length] == 0)
     {
-      _filteredRemotes = self.artCodeTab.currentProject.remotes;
+      _filteredRemotes = self.artCodeTab.currentProject.remotes.array;
       _filteredRemotesHitMasks = nil;
     }
     else
     {
       NSArray *hitMasks = nil;
-      _filteredRemotes = [self.artCodeTab.currentProject.remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
+      _filteredRemotes = [self.artCodeTab.currentProject.remotes.array sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
         return element.name;
       }];
       _filteredRemotesHitMasks = hitMasks;
@@ -154,9 +154,8 @@
       self.loading = YES;
       NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
-      for (NSIndexPath *indexPath in selectedRows)
-      {
-        [self.artCodeTab.currentProject removeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
+      for (NSIndexPath *indexPath in selectedRows) {
+        [self.artCodeTab.currentProject removeRemotesObject:[self.filteredItems objectAtIndex:indexPath.row]];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

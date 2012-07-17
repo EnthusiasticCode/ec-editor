@@ -278,7 +278,7 @@
     cell.title.text = cell.accessibilityLabel = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-    cell.newlyCreatedBadge.hidden = !project.isNewlyCreated;
+    cell.newlyCreatedBadge.hidden = !project.newlyCreated;
     cell.accessibilityHint = L(@"Open the project");
   } else if ([element isKindOfClass:[DocSet class]]) {
     DocSet *docSet = (DocSet *)element;

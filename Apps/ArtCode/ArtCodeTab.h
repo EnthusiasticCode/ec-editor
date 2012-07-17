@@ -6,13 +6,13 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "Tab.h"
 
 @class ArtCodeProject, DocSet, DirectoryPresenter, ArtCodeLocation;
 
 extern NSString * const ArtCodeTabDidChangeAllTabsNotification;
 
-@interface ArtCodeTab : NSObject
+@interface ArtCodeTab : Tab
 
 /// Get an array of all tabs ordered as they shoyld be displayed
 + (NSArray *)allTabs;
