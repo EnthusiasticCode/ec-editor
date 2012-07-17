@@ -2,30 +2,26 @@
 //  Project.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/16/12.
+//  Created by Uri Baghin on 7/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Location, Remote;
+@class Location, ProjectSet, Remote;
 
 @interface Project : NSManagedObject
 
 @property (nonatomic, retain) NSString * labelColorString;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic) BOOL newlyCreated;
-@property (nonatomic, retain) NSSet *visitedLocations;
 @property (nonatomic, retain) NSOrderedSet *remotes;
+@property (nonatomic, retain) NSSet *visitedLocations;
+@property (nonatomic, retain) ProjectSet *projectSet;
 @end
 
 @interface Project (CoreDataGeneratedAccessors)
-
-- (void)addVisitedLocationsObject:(Location *)value;
-- (void)removeVisitedLocationsObject:(Location *)value;
-- (void)addVisitedLocations:(NSSet *)values;
-- (void)removeVisitedLocations:(NSSet *)values;
 
 - (void)insertObject:(Remote *)value inRemotesAtIndex:(NSUInteger)idx;
 - (void)removeObjectFromRemotesAtIndex:(NSUInteger)idx;
@@ -37,4 +33,9 @@
 - (void)removeRemotesObject:(Remote *)value;
 - (void)addRemotes:(NSOrderedSet *)values;
 - (void)removeRemotes:(NSOrderedSet *)values;
+- (void)addVisitedLocationsObject:(Location *)value;
+- (void)removeVisitedLocationsObject:(Location *)value;
+- (void)addVisitedLocations:(NSSet *)values;
+- (void)removeVisitedLocations:(NSSet *)values;
+
 @end

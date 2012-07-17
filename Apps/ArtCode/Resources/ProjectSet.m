@@ -1,19 +1,18 @@
 //
-//  Remote.m
+//  ProjectSet.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 7/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "Remote.h"
+#import "ProjectSet.h"
 #import "Project.h"
 
 
-@implementation Remote
+@implementation ProjectSet
 
 @dynamic name;
-@dynamic urlString;
-@dynamic project;
+@dynamic projects;
 
 @end

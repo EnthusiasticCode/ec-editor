@@ -1,16 +1,16 @@
 //
-//  ArtCodeDataStore.m
+//  ArtCodeDatastore.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 7/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ArtCodeDataStore.h"
+#import "ArtCodeDatastore.h"
 #import <CoreData/CoreData.h>
 #import "NSURL+Utilities.h"
 
-@interface ArtCodeDataStore ()
+@interface ArtCodeDatastore ()
 
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
@@ -19,19 +19,19 @@
 
 @end
 
-@implementation ArtCodeDataStore {
+@implementation ArtCodeDatastore {
   RACDisposable *_autosaveDisposable;
 }
 
 @synthesize managedObjectContext = _managedObjectContext, managedObjectModel = _managedObjectModel, persistentStoreCoordinator = _persistentStoreCoordinator;
 
-+ (ArtCodeDataStore *)sharedDataStore {
-  static ArtCodeDataStore *_sharedDataStore = nil;
++ (ArtCodeDatastore *)defaultDatastore {
+  static ArtCodeDatastore *_defaultDatastore = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    _sharedDataStore = [[self alloc] init];
+    _defaultDatastore = [[self alloc] init];
   });
-  return _sharedDataStore;
+  return _defaultDatastore;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {
@@ -73,7 +73,7 @@
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
   if (!_persistentStoreCoordinator) {
-    NSURL *storeURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:@"DataStore.sqlite"];
+    NSURL *storeURL = [[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:@"Datastore.sqlite"];
     NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {

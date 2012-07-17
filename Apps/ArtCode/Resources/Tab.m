@@ -2,7 +2,7 @@
 //  Tab.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/16/12.
+//  Created by Uri Baghin on 7/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
@@ -14,7 +14,7 @@
 @implementation Tab
 
 @dynamic currentPosition;
-@dynamic tabSet;
 @dynamic history;
+@dynamic tabSet;
 
 @end

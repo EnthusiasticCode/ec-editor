@@ -10,8 +10,13 @@
         <attribute name="labelColorString" attributeType="String" minValueString="7" maxValueString="7" defaultValueString="#000000" syncable="YES"/>
         <attribute name="name" attributeType="String" minValueString="1" indexed="YES" syncable="YES"/>
         <attribute name="newlyCreated" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <relationship name="projectSet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ProjectSet" inverseName="projects" inverseEntity="ProjectSet" syncable="YES"/>
         <relationship name="remotes" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Remote" inverseName="project" inverseEntity="Remote" syncable="YES"/>
         <relationship name="visitedLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="project" inverseEntity="Location" syncable="YES"/>
+    </entity>
+    <entity name="ProjectSet" representedClassName="ProjectSet" syncable="YES">
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Project" inverseName="projectSet" inverseEntity="Project" syncable="YES"/>
     </entity>
     <entity name="Remote" representedClassName="Remote" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
@@ -19,18 +24,20 @@
         <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="remotes" inverseEntity="Project" syncable="YES"/>
     </entity>
     <entity name="Tab" representedClassName="Tab" syncable="YES">
-        <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="history" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Location" inverseName="tabs" inverseEntity="Location" syncable="YES"/>
         <relationship name="tabSet" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TabSet" inverseName="tabs" inverseEntity="TabSet" syncable="YES"/>
     </entity>
     <entity name="TabSet" representedClassName="TabSet" syncable="YES">
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="tabSet" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <elements>
         <element name="Location" positionX="7" positionY="54" width="128" height="105"/>
-        <element name="Project" positionX="214" positionY="-45" width="128" height="120"/>
-        <element name="Tab" positionX="214" positionY="162" width="128" height="90"/>
-        <element name="TabSet" positionX="9" positionY="252" width="128" height="60"/>
+        <element name="Project" positionX="214" positionY="-45" width="128" height="135"/>
         <element name="Remote" positionX="7" positionY="-117" width="128" height="90"/>
+        <element name="Tab" positionX="214" positionY="162" width="128" height="90"/>
+        <element name="TabSet" positionX="9" positionY="252" width="128" height="75"/>
+        <element name="ProjectSet" positionX="160" positionY="192" width="128" height="75"/>
     </elements>
 </model>

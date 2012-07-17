@@ -1,5 +1,5 @@
 //
-//  ArtCodeDataStore.h
+//  ArtCodeDatastore.h
 //  ArtCode
 //
 //  Created by Uri Baghin on 7/17/12.
@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ArtCodeDataStore : NSObject
+@interface ArtCodeDatastore : NSObject
 
-+ (ArtCodeDataStore *)sharedDataStore;
++ (ArtCodeDatastore *)defaultDatastore;
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 

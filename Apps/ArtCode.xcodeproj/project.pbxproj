@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F13322B15B462C000964FD4 /* Global.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5F13322915B462C000964FD4 /* Global.xcdatamodeld */; };
+		5F13323E15B468FF00964FD4 /* ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13323D15B468FF00964FD4 /* ArtCodeTabSet.m */; };
+		5F13330A15B5D1A400964FD4 /* ProjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13330915B5D1A400964FD4 /* ProjectSet.m */; };
+		5F13330D15B5D1A400964FD4 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13330C15B5D1A400964FD4 /* Location.m */; };
+		5F13331015B5D1A400964FD4 /* Tab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13330F15B5D1A400964FD4 /* Tab.m */; };
+		5F13331315B5D1A400964FD4 /* Project.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13331215B5D1A400964FD4 /* Project.m */; };
+		5F13331615B5D1A400964FD4 /* Remote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13331515B5D1A400964FD4 /* Remote.m */; };
+		5F13331915B5D1A400964FD4 /* TabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13331815B5D1A400964FD4 /* TabSet.m */; };
+		5F13331C15B5D1BC00964FD4 /* ArtCodeProjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F13331B15B5D1BC00964FD4 /* ArtCodeProjectSet.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -18,6 +27,7 @@
 		5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
+		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
@@ -547,12 +557,31 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5F13322A15B462C000964FD4 /* Global.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Global.xcdatamodel; sourceTree = "<group>"; };
+		5F13323C15B468FF00964FD4 /* ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabSet.h; sourceTree = "<group>"; };
+		5F13323D15B468FF00964FD4 /* ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabSet.m; sourceTree = "<group>"; };
+		5F13330815B5D1A400964FD4 /* ProjectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProjectSet.h; sourceTree = "<group>"; };
+		5F13330915B5D1A400964FD4 /* ProjectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProjectSet.m; sourceTree = "<group>"; };
+		5F13330B15B5D1A400964FD4 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
+		5F13330C15B5D1A400964FD4 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
+		5F13330E15B5D1A400964FD4 /* Tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tab.h; sourceTree = "<group>"; };
+		5F13330F15B5D1A400964FD4 /* Tab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tab.m; sourceTree = "<group>"; };
+		5F13331115B5D1A400964FD4 /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
+		5F13331215B5D1A400964FD4 /* Project.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Project.m; sourceTree = "<group>"; };
+		5F13331415B5D1A400964FD4 /* Remote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Remote.h; sourceTree = "<group>"; };
+		5F13331515B5D1A400964FD4 /* Remote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Remote.m; sourceTree = "<group>"; };
+		5F13331715B5D1A400964FD4 /* TabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabSet.h; sourceTree = "<group>"; };
+		5F13331815B5D1A400964FD4 /* TabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabSet.m; sourceTree = "<group>"; };
+		5F13331A15B5D1BC00964FD4 /* ArtCodeProjectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeProjectSet.h; sourceTree = "<group>"; };
+		5F13331B15B5D1BC00964FD4 /* ArtCodeProjectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeProjectSet.m; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
 		5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabPageViewController.m; sourceTree = "<group>"; };
 		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
 		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
+		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
+		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
 		B70231F914345B5A006D23F7 /* ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTab.m; sourceTree = "<group>"; };
 		B7072BBA15111A3000580855 /* NSString+UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UUID.h"; sourceTree = "<group>"; };
@@ -1192,19 +1221,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F13322C15B467B700964FD4 /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				5F13322915B462C000964FD4 /* Global.xcdatamodeld */,
+				5F13331715B5D1A400964FD4 /* TabSet.h */,
+				5F13331815B5D1A400964FD4 /* TabSet.m */,
+				5F13331415B5D1A400964FD4 /* Remote.h */,
+				5F13331515B5D1A400964FD4 /* Remote.m */,
+				5F13331115B5D1A400964FD4 /* Project.h */,
+				5F13331215B5D1A400964FD4 /* Project.m */,
+				5F13330E15B5D1A400964FD4 /* Tab.h */,
+				5F13330F15B5D1A400964FD4 /* Tab.m */,
+				5F13330B15B5D1A400964FD4 /* Location.h */,
+				5F13330C15B5D1A400964FD4 /* Location.m */,
+				5F13330815B5D1A400964FD4 /* ProjectSet.h */,
+				5F13330915B5D1A400964FD4 /* ProjectSet.m */,
+			);
+			name = "Core Data";
+			sourceTree = "<group>";
+		};
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				B77100EC1506DAE6006AF1FB /* ACProject */,
+				B77100EC1506DAE6006AF1FB /* ArtCode */,
 				B7FB79A514D602DB0080A714 /* TextMate */,
 				B7FB79CA14D605050080A714 /* Filesystem */,
 				CDBF0B3B1577B761003F169C /* DocSet */,
-				B75F658214D868EB008B88C5 /* ArtCodeLocation.h */,
-				B75F658314D868EB008B88C5 /* ArtCodeLocation.m */,
-				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
-				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
-				5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */,
-				5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1378,13 +1421,25 @@
 			path = Bundles;
 			sourceTree = "<group>";
 		};
-		B77100EC1506DAE6006AF1FB /* ACProject */ = {
+		B77100EC1506DAE6006AF1FB /* ArtCode */ = {
 			isa = PBXGroup;
 			children = (
+				5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */,
+				5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */,
 				B77100ED1506DAFF006AF1FB /* ArtCodeProject.h */,
 				B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */,
+				B75F658214D868EB008B88C5 /* ArtCodeLocation.h */,
+				B75F658314D868EB008B88C5 /* ArtCodeLocation.m */,
+				B70231F814345B5A006D23F7 /* ArtCodeTab.h */,
+				B70231F914345B5A006D23F7 /* ArtCodeTab.m */,
+				5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */,
+				5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */,
+				5F13323C15B468FF00964FD4 /* ArtCodeTabSet.h */,
+				5F13323D15B468FF00964FD4 /* ArtCodeTabSet.m */,
+				5F13331A15B5D1BC00964FD4 /* ArtCodeProjectSet.h */,
+				5F13331B15B5D1BC00964FD4 /* ArtCodeProjectSet.m */,
 			);
-			name = ACProject;
+			name = ArtCode;
 			sourceTree = "<group>";
 		};
 		B77101281506E20F006AF1FB /* ArtCodeTests */ = {
@@ -1937,6 +1992,7 @@
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5F13322C15B467B700964FD4 /* Core Data */,
 				CDA9B66E1524A0620063D76F /* ipad_icon.png */,
 				CDA9B66F1524A0620063D76F /* ipad_icon@2.png */,
 				CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */,
@@ -2921,6 +2977,16 @@
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 				5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */,
 				5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */,
+				5F13322B15B462C000964FD4 /* Global.xcdatamodeld in Sources */,
+				5F13323E15B468FF00964FD4 /* ArtCodeTabSet.m in Sources */,
+				5F13330A15B5D1A400964FD4 /* ProjectSet.m in Sources */,
+				5F13330D15B5D1A400964FD4 /* Location.m in Sources */,
+				5F13331015B5D1A400964FD4 /* Tab.m in Sources */,
+				5F13331315B5D1A400964FD4 /* Project.m in Sources */,
+				5F13331615B5D1A400964FD4 /* Remote.m in Sources */,
+				5F13331915B5D1A400964FD4 /* TabSet.m in Sources */,
+				5F13331C15B5D1BC00964FD4 /* ArtCodeProjectSet.m in Sources */,
+				5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3221,6 +3287,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5F13322915B462C000964FD4 /* Global.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5F13322A15B462C000964FD4 /* Global.xcdatamodel */,
+			);
+			currentVersion = 5F13322A15B462C000964FD4 /* Global.xcdatamodel */;
+			path = Global.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = CD7D2AD613C0CD2600B889EE /* Project object */;
 }

@@ -10,4 +10,6 @@
 
 @interface ArtCodeTabSet : TabSet
 
++ (ArtCodeTabSet *)defaultSet;
+
 @end
