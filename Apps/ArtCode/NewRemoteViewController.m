@@ -10,6 +10,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
+#import "ArtCodeLocation.h"
 
 #import "UIViewController+Utilities.h"
 #import "BezelAlert.h"

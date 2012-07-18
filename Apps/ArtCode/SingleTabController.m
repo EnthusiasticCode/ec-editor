@@ -275,11 +275,6 @@
   // RAC
   __weak SingleTabController *this = self;
   
-  // Loading mode react to tab loading signal
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.titleControl.loadingMode) to:[[RACAbleSelf(self.artCodeTab.loading) merge:RACAbleSelf(self.contentViewController.loading)] where:^BOOL(id x) {
-    return x != nil;
-  }]];
-  
   // Back and forward buttons to tab history
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
   [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
@@ -337,7 +332,6 @@
   [self _layoutChildViewsAnimated:NO];
   //
   [self updateDefaultToolbarTitle];
-  self.defaultToolbar.titleControl.loadingMode = self.artCodeTab.isLoading;
   self.defaultToolbar.backButton.enabled = self.artCodeTab.canMoveBackInHistory;
   self.defaultToolbar.forwardButton.enabled = self.artCodeTab.canMoveForwardInHistory;
 }

@@ -89,7 +89,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  if (self.artCodeTab.currentDocSet) {
+  if (self.artCodeTab.currentLocation.url.docSet) {
     self.docSetURL = self.artCodeTab.currentLocation.url;
   }
 }

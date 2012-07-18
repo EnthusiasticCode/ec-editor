@@ -21,16 +21,6 @@ static NSString * const ArtCodeLocationScheme = @"artcode";
   ASSERT(NO);
 }
 
-+ (ArtCodeLocation *)locationWithAutoTypeForProjectName:(NSString *)projectName fileURL:(NSURL *)fileURL {
-  ArtCodeLocationType type = ArtCodeLocationTypeUnknown;
-  if ([fileURL isDirectory]) {
-    type = ArtCodeLocationTypeDirectory;
-  } else {
-    type = ArtCodeLocationTypeTextFile;
-  }
-  return [ArtCodeLocation locationWithType:type projectName:projectName url:fileURL];
-}
-
 - (BOOL)isArtCodeProjectsList {
   UNIMPLEMENTED();
 }

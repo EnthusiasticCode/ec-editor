@@ -170,9 +170,9 @@
     
     // Select button
     NSInteger selectedTag = 0;
-    if ([self.artCodeTab.currentLocation isArtCodeProjectBookmarksList])
+    if ([self.artCodeTab.currentLocation isProjectBookmarksList])
       selectedTag = 1;
-    else if ([self.artCodeTab.currentLocation isArtCodeProjectRemotesList])
+    else if ([self.artCodeTab.currentLocation isProjectRemotesList])
       selectedTag = 2;
     for (UIView *subview in self.bottomToolBar.subviews)
     {

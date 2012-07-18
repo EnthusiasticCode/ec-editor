@@ -11,6 +11,7 @@
 #import "DocSet.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
+#import "DocSetDownloadManager.h"
 
 static NSString * const DocSetBookmarkTitleKey = @"title";
 static NSString * const DocSetBookmarkSubtitleKey = @"subtitle";
@@ -73,8 +74,8 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  if (self.artCodeTab.currentDocSet) {
-    self.docSet = self.artCodeTab.currentDocSet;
+  if (self.artCodeTab.currentLocation.url.docSet) {
+    self.docSet = self.artCodeTab.currentLocation.url.docSet;
   }
   NSURL *url = self.artCodeTab.currentLocation.url;
   if (url) {

@@ -50,7 +50,7 @@
     [self.tabBar addTabWithTitle:tab.currentLocation.name animated:NO];
   }
   // Get selected tab from persisted user defaults
-  [self.tabBar setSelectedTabIndex:[[ArtCodeTabSet defaultSet] activeTabIndex]];
+  [self.tabBar setSelectedTabIndex:[[ArtCodeTabSet defaultSet] activeTabIndexValue]];
 }
 
 #pragma mark - TabPage data source
@@ -76,7 +76,7 @@
   [[[[singleTabController rac_subscribableForKeyPath:RAC_KEYPATH(singleTabController, title) onObject:singleTabController] distinctUntilChanged] injectObjectWeakly:singleTabController] subscribeNext:^(RACTuple *tuple) {
     if (tuple.first && tuple.first != [RACTupleNil tupleNil] 
         && tuple.second && [tuple.second artCodeTab]) {
-      [this.tabBar setTitle:tuple.first forTabAtIndex:[tuple.second artCodeTab].tabIndex];
+      [this.tabBar setTitle:tuple.first forTabAtIndex:[[tuple.second artCodeTab].tabSet.tabs indexOfObject:[tuple.second artCodeTab]]];
     }
   }];
   
@@ -118,24 +118,24 @@
   }
   
   // Remove the tab
-  [artCodeTab remove];
+  [artCodeTab.managedObjectContext deleteObject:artCodeTab];
   
   return YES;
 }
 
 - (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
   // Update stored selected index
-  [[ArtCodeTabSet defaultSet] setActiveTabIndex:tabBar.selectedTabIndex];
+  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabBar.selectedTabIndex];
 }
 
 - (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
-  [[ArtCodeTabSet defaultSet] setActiveTabIndex:tabIndex];
+  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabIndex];
 }
 
 - (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
   [[[ArtCodeTabSet defaultSet] mutableOrderedSetValueForKey:@"tabs"] moveObjectsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] toIndex:toIndex];
   // Update stored selected index
-  [[ArtCodeTabSet defaultSet] setActiveTabIndex:tabBar.selectedTabIndex];
+  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabBar.selectedTabIndex];
 }
 
 #pragma mark - Private methods

@@ -27,7 +27,7 @@
   static QuickBrowsersContainerController *_folderController = nil;
   static QuickBrowsersContainerController *_fileController = nil;
   
-  if ([contentController.artCodeTab.currentLocation isArtCodeProjectBookmarksList]) {
+  if ([contentController.artCodeTab.currentLocation isProjectBookmarksList]) {
     if (!_commonController) {
       _commonController = [[QuickBrowsersContainerController alloc] init];
       _commonController.contentController = contentController;

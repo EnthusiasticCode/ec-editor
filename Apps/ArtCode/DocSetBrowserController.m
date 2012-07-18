@@ -67,14 +67,14 @@
   [[[[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation), RAC_KEYPATH_SELF(self.view.superview), nil] reduce:^id(RACTuple *xs) {
     return xs.first;
   }] where:^BOOL(id x) {
-    return this.artCodeTab.currentDocSet != nil && this.isViewLoaded;
+    return this.artCodeTab.currentLocation.url.docSet != nil && this.isViewLoaded;
   }] distinctUntilChanged] subscribeNext:^(NSURL *url) {
     DocSetBrowserController *strongSelf = this;
     if (url.path.length == 0) {
       // Show the hint view
       strongSelf.hintsView.frame = strongSelf.webView.frame;
       [strongSelf.view insertSubview:strongSelf.hintsView aboveSubview:strongSelf.webView];
-      strongSelf.title = strongSelf.artCodeTab.currentDocSet.name;
+      strongSelf.title = strongSelf.artCodeTab.currentLocation.url.docSet.name;
     } else {
       // Load the docset page
       [strongSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
@@ -284,7 +284,7 @@
 
 - (void)_toolNormalContentsAction:(id)sender {
   if (!_contentPopoverController) {
-    DocSetContentController *contentController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentDocSet rootNode:nil];
+    DocSetContentController *contentController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentLocation.url.docSet rootNode:nil];
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:contentController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
