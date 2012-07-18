@@ -45,7 +45,7 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentProject.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
+      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
         return bookmarkLocation.prettyName;
       }];
       _filteredItemsHitMask = hitMasks;
@@ -55,7 +55,7 @@
     }
     else
     {
-      _filteredItems = [self.artCodeTab.currentProject.allBookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         return [[obj1 prettyName] compare:[obj2 prettyName]];
       }];
       _filteredItemsHitMask = nil;

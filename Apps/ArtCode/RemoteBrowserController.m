@@ -494,7 +494,7 @@ static void init(RemoteBrowserController *self) {
 {
   FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
-  directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
+  directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.presentedItemURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
   
 }
@@ -504,7 +504,7 @@ static void init(RemoteBrowserController *self) {
   // Show directory browser presenter to select where to download
   FolderBrowserController *directoryBrowser = [FolderBrowserController new];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
-  directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
+  directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.presentedItemURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
 }
 

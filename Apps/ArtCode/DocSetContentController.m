@@ -306,7 +306,7 @@
 		[self.searchDisplayController.searchBar resignFirstResponder];
 		NSDictionary *result = [self.searchResults objectAtIndex:indexPath.row];
 		if ([result objectForKey:@"tokenType"]) {
-      [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[self.docSet docSetURLForToken:result]]];
+      [self.artCodeTab pushLocation:[self.docSet docSetURLForToken:result].location];
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 		} else {
 			NSManagedObject *node = [[self.docSet managedObjectContext] existingObjectWithID:[result objectForKey:@"objectID"] error:NULL];
@@ -347,7 +347,7 @@
 			[[UIApplication sharedApplication] openURL:webURL];
 			return;
 		}
-    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[self.docSet docSetURLForNode:node]]];
+    [self.artCodeTab pushLocation:[self.docSet docSetURLForNode:node].location];
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 	}
 }

@@ -158,7 +158,7 @@
     }    
     
     // Otherwise redirect to a docset URL to enable history
-    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:URL.docSetURLByRetractingFileURL]];
+    [self.artCodeTab pushLocation:URL.docSetURLByRetractingFileURL.location];
     return NO;
   }
   

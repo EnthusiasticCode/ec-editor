@@ -308,17 +308,16 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ArtCodeProject class]]) {
-      [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:[element name] url:nil]];
+      [self.artCodeTab pushLocation:[element location]];
     } else if ([element isKindOfClass:[DocSet class]]) {
-      [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[(DocSet *)element docSetURLForNode:nil]]];
+      [self.artCodeTab pushLocation:[(DocSet *)element docSetURLForNode:nil].location];
     }
   }
 }
 
 - (void)gridView:(GridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
 {
-  if (self.isEditing)
-  {
+  if (self.isEditing) {
     BOOL enable = [gridView indexForSelectedCell] != -1;
     [_toolItemsEditing enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger idx, BOOL *stop) {
       [(UIButton *)item.customView setEnabled:enable];

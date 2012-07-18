@@ -46,7 +46,7 @@
   // RAC
   __weak RemotesListController *this = self;
   
-  [RACAbleSelf(self.artCodeTab.currentProject.remotes) subscribeNext:^(id x) {
+  [RACAbleSelf(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(id x) {
     [this invalidateFilteredItems];
     [this.tableView reloadData];
   }];
@@ -62,13 +62,13 @@
   {
     if ([self.searchBar.text length] == 0)
     {
-      _filteredRemotes = self.artCodeTab.currentProject.remotes.array;
+      _filteredRemotes = self.artCodeTab.currentLocation.project.remotes.array;
       _filteredRemotesHitMasks = nil;
     }
     else
     {
       NSArray *hitMasks = nil;
-      _filteredRemotes = [self.artCodeTab.currentProject.remotes.array sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
+      _filteredRemotes = [self.artCodeTab.currentLocation.project.remotes.array sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
         return element.name;
       }];
       _filteredRemotesHitMasks = hitMasks;
@@ -139,7 +139,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeRemoteDirectory projectName:self.artCodeTab.currentProject.name url:[[self.filteredItems objectAtIndex:indexPath.row] url]]];
+    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] locationWithPath:@"/"]];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
@@ -156,7 +156,7 @@
       NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows) {
-        [self.artCodeTab.currentProject removeRemotesObject:[self.filteredItems objectAtIndex:indexPath.row]];
+        [self.artCodeTab.currentLocation.project removeRemotesObject:[self.filteredItems objectAtIndex:indexPath.row]];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

@@ -124,12 +124,12 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *bookamrk = [_bookmarksArray objectAtIndex:indexPath.row];
-  NSString *url = [bookamrk objectForKey:DocSetBookmarkDocSetURLKey];
+  NSDictionary *bookmark = [_bookmarksArray objectAtIndex:indexPath.row];
+  NSString *url = [bookmark objectForKey:DocSetBookmarkDocSetURLKey];
   if (!url)
     return;
   
-  [self.artCodeTab pushLocation:[NSURL URLWithString:url]];
+  [self.artCodeTab pushLocation:[[NSURL URLWithString:url] location]];
   [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 }
 

@@ -44,7 +44,7 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentProject.allFiles sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(NSURL *elementURL) {
+      _filteredItems = [self.artCodeTab.currentLocation.project.allFiles sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(NSURL *elementURL) {
         return elementURL.lastPathComponent;
       }];
       _filteredItemsHitMasks = hitMasks;
@@ -131,7 +131,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushLocation:[ArtCodeLocation locationWithAutoTypeForProjectName:self.artCodeTab.currentProject.name fileURL:[self.filteredItems objectAtIndex:indexPath.row]]];
+  [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] location]];
 }
 
 #pragma mark - Private methods
@@ -139,13 +139,13 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:self.artCodeTab.currentProject.name url:nil]];
+  [self.artCodeTab pushLocation:self.artCodeTab.currentLocation.project.location];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProjectsList projectName:nil url:nil]];
+  [self.artCodeTab pushLocation:[ArtCodeProjectSet defaultSet].location];
 }
 
 @end

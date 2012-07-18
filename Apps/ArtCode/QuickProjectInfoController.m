@@ -41,12 +41,12 @@
   // Project name will change when text field does
   [[[[[RACAbleSelf(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(id x) {
     return x != nil;
-  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name) onObject:self];
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.name) onObject:self];
   
   // Project label color will change when selecting a new color
   [[[RACAbleSelf(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] where:^BOOL(id x) {
     return x != nil;
-  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor) onObject:self];
+  }] toProperty:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.labelColor) onObject:self];
   
   return self;
 }
@@ -74,7 +74,7 @@
 {
   [super viewWillAppear:animated];
   
-  self.projectNameTextField.text = self.artCodeTab.currentProject.name;
+  self.projectNameTextField.text = self.artCodeTab.currentLocation.project.name;
   self.projectFileCountLabel.text = @"0"; // This has to be calculated asynchronously, maybe remove it?
 }
 

@@ -66,7 +66,7 @@
   remote.name = self.remoteName.text;
   remote.url = [NSURL URLWithString:remoteURLString];
   
-  [self.artCodeTab.currentProject addRemotesObject:remote];
+  [self.artCodeTab.currentLocation.project addRemotesObject:remote];
   
   if (remote)
   {

@@ -30,16 +30,16 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   if (tab == _tab)
     return;
   [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:&PopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-  [_tab removeObserver:self forKeyPath:@"historyURLs" context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
+  [_tab removeObserver:self forKeyPath:@"history" context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
   _tab = tab;
   [_tab addObserver:self forKeyPath:@"currentHistoryPosition" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&PopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-  [_tab addObserver:self forKeyPath:@"historyURLs" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
+  [_tab addObserver:self forKeyPath:@"history" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
 }
 
 - (void)dealloc
 {
   [_tab removeObserver:self forKeyPath:@"currentHistoryPosition" context:&PopoverHistoryToolControllerTabCurrentHistoryPositionObserving];
-  [_tab removeObserver:self forKeyPath:@"historyURLs" context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
+  [_tab removeObserver:self forKeyPath:@"history" context:&PopoverHistoryToolControllerTabHistoryItemsObserving];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -83,7 +83,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return section == SECTION_HISTORY_URLS ? [self.tab.historyURLs count] : 1;
+  return section == SECTION_HISTORY_URLS ? [self.tab.history count] : 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -107,7 +107,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   }
   else
   {
-    cell.textLabel.text = [[[self.tab.historyURLs objectAtIndex:[self historyIndexForIndexPath:indexPath]] URL] path];
+    cell.textLabel.text = [[[self.tab.history objectAtIndex:[self historyIndexForIndexPath:indexPath]] URL] path];
     if ([self currentHistoryPositionIsAtIndexPath:indexPath])
       cell.imageView.image = [UIImage imageNamed:@"toolPanelBookmarksToolSelectedImage.png"];
     else
@@ -124,19 +124,19 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
 
 - (NSUInteger)historyIndexForIndexPath:(NSIndexPath *)indexPath
 {
-  return [self.tab.historyURLs count] - 1 - indexPath.row;
+  return [self.tab.history count] - 1 - indexPath.row;
 }
 
 - (BOOL)currentHistoryPositionIsAtIndexPath:(NSIndexPath *)indexPath
 {
-  return [self.tab.historyURLs count] - 1 - self.tab.currentHistoryPosition == (NSUInteger)indexPath.row;
+  return [self.tab.history count] - 1 - self.tab.currentPosition == (NSUInteger)indexPath.row;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  self.tab.currentHistoryPosition = [self historyIndexForIndexPath:indexPath];
+  self.tab.currentPosition = [self historyIndexForIndexPath:indexPath];
 }
 
 @end

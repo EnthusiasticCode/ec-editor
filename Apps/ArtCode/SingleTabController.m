@@ -301,7 +301,7 @@
   }];
   
   // Update tool bar title when project changes
-  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentProject.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentProject.name), RAC_KEYPATH_SELF(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
+  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.name), RAC_KEYPATH_SELF(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
     return nil;
   }] subscribeNext:^(id x) {
     [this updateDefaultToolbarTitle];
@@ -360,7 +360,7 @@
       ArtCodeLocation *location = self.artCodeTab.currentLocation;
       switch (location.type) {
         case ArtCodeLocationTypeProject:
-          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
+          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name, nil] selectedIndexes:nil];
           break;
           
         case ArtCodeLocationTypeTextFile:

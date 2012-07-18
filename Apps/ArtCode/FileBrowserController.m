@@ -185,7 +185,7 @@
   [super viewWillAppear:animated];
     
   // Hide sync button if no remotes
-  self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentProject.remotes count] == 0;
+  self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentLocation.project.remotes count] == 0;
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -229,7 +229,7 @@
       _selectedItems = [NSMutableArray new];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
-    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithAutoTypeForProjectName:self.artCodeTab.currentProject.name fileURL:[self.filteredItems objectAtIndex:indexPath.row]]];
+    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] location]];
   }
 }
 
@@ -262,7 +262,7 @@
     {
       FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
+      directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.presentedItemURL;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Duplicate
@@ -281,7 +281,7 @@
     {
       FolderBrowserController *directoryBrowser = [FolderBrowserController new];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-      directoryBrowser.currentFolderURL = self.artCodeTab.currentProject.presentedItemURL;
+      directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.presentedItemURL;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Upload
@@ -301,7 +301,7 @@
     else if (buttonIndex == 3) // Mail
     {
       NSURL *temporaryDirectory = [NSURL temporaryDirectory];
-      NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentProject.name]] URLByAppendingPathExtension:@"zip"];
+      NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
       
       // Compressing files to export
       self.loading = YES;
@@ -320,7 +320,7 @@
         [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
         
         // Add precompiled mail fields
-        [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentProject.name]];
+        [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
         [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
         
         // Present mail composer
@@ -438,7 +438,7 @@
 }
 
 - (void)_remoteBrowserWithRightButton:(UIBarButtonItem *)rightButton {
-  switch ([self.artCodeTab.currentProject.remotes count]) {
+  switch ([self.artCodeTab.currentLocation.project.remotes count]) {
     case 0: {
       // Show error
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"No remotes present") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
@@ -447,7 +447,7 @@
       
     case 1: {
       RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
-      syncController.remoteURL = [(ArtCodeRemote *)[self.artCodeTab.currentProject.remotes objectAtIndex:0] url];
+      syncController.remoteURL = [(ArtCodeRemote *)[self.artCodeTab.currentLocation.project.remotes objectAtIndex:0] url];
       syncController.navigationItem.rightBarButtonItem = rightButton;
       [self modalNavigationControllerPresentViewController:syncController];
       break;
@@ -455,7 +455,7 @@
       
     default: {
       ExportRemotesListController *remotesListController = [ExportRemotesListController new];
-      remotesListController.remotes = self.artCodeTab.currentProject.remotes;
+      remotesListController.remotes = self.artCodeTab.currentLocation.project.remotes;
       remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ArtCodeRemote *remote) {
         // Shows the remote directory browser
         RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
