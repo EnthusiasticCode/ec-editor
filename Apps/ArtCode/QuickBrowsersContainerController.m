@@ -39,7 +39,7 @@
   }
   else
   {
-    switch (contentController.artCodeTab.currentLocation.artCodeType) {
+    switch (contentController.artCodeTab.currentLocation.type) {
       case ArtCodeLocationTypeProject:
         if (!_projectController)
         {

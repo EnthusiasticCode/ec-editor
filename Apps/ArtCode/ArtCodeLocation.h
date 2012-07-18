@@ -24,31 +24,30 @@ typedef enum {
 
 @interface ArtCodeLocation : Location
 
-/// Create a new ArtCodeLocation encoding the project, type and path.
+/// Returns a location with the given type. Only valid for location types that don't require other parameters
++ (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type;
+
+/// Returns a ArtCodeLocationTypeProject location with the given project
++ (ArtCodeLocation *)locationWithProject:(ArtCodeProject *)project;
+
+/// Returns a location encoding the project, type and path.
 + (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type projectName:(NSString *)projectName url:(NSURL *)url;
 
-/// Create a new ArtCodeLocation by inferring the type (directory or textfile) for the given project and file url.
+/// Returns a location by inferring the type (directory or textfile) for the given project and file url.
 + (ArtCodeLocation *)locationWithAutoTypeForProjectName:(NSString *)projectName fileURL:(NSURL *)fileURL;
 
-- (NSString *)stringRepresentation;
-
-- (id)initWithStringRepresentation:(NSString *)string;
-
 /// Get a mask indicating properties of the URL. See ArtCodeLocationType enum for more informations.
-- (ArtCodeLocationType)artCodeType;
+- (ArtCodeLocationType)type;
 
-#pragma mark Top level URLs
+#pragma mark Top level locations
 
-/// Indicates if the URL points to the global projects list
-/// ie: the URL is in the format artcode://projects
+/// Indicates if the location points to the default projects list
 - (BOOL)isArtCodeProjectsList;
 
-/// Indicates if the URL points to a projects' bookmark list
-/// ie: the URL is in the format artcode://<project uuid>/bookmarks
+/// Indicates if the location points to a project's bookmark list
 - (BOOL)isArtCodeProjectBookmarksList;
 
-/// Indicates if the URL points to a projects' bookmark list
-/// ie: the URL is in the format artcode://<project uuid>/remotes
+/// Indicates if the URL points to a project's bookmark list
 - (BOOL)isArtCodeProjectRemotesList;
 
 #pragma mark URL specific
@@ -80,7 +79,6 @@ typedef enum {
 - (NSString *)path;
 
 - (NSString *)prettyPath;
-
 
 - (ArtCodeLocation *)locationByAppendingPathComponent:(NSString *)pathComponent;
 

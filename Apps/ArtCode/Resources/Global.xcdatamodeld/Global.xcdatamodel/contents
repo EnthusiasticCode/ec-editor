@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Location" representedClassName="Location" syncable="YES">
-        <attribute name="dataString" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="dataString" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="typeInt16" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="project" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="visitedLocations" inverseEntity="Project" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
     </entity>
@@ -29,15 +29,16 @@
         <relationship name="tabSet" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TabSet" inverseName="tabs" inverseEntity="TabSet" syncable="YES"/>
     </entity>
     <entity name="TabSet" representedClassName="TabSet" syncable="YES">
+        <attribute name="activeTabIndex" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="tabSet" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <elements>
         <element name="Location" positionX="7" positionY="54" width="128" height="105"/>
         <element name="Project" positionX="214" positionY="-45" width="128" height="135"/>
+        <element name="ProjectSet" positionX="160" positionY="192" width="128" height="75"/>
         <element name="Remote" positionX="7" positionY="-117" width="128" height="90"/>
         <element name="Tab" positionX="214" positionY="162" width="128" height="90"/>
-        <element name="TabSet" positionX="9" positionY="252" width="128" height="75"/>
-        <element name="ProjectSet" positionX="160" positionY="192" width="128" height="75"/>
+        <element name="TabSet" positionX="9" positionY="252" width="128" height="90"/>
     </elements>
 </model>

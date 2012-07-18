@@ -2,7 +2,7 @@
 //  Location.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/17/12.
+//  Created by Uri Baghin on 7/18/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
@@ -14,7 +14,7 @@
 @interface Location : NSManagedObject
 
 @property (nonatomic, retain) NSString * dataString;
-@property (nonatomic) int16_t type;
+@property (nonatomic) int16_t typeInt16;
 @property (nonatomic, retain) Project *project;
 @property (nonatomic, retain) NSSet *tabs;
 @end

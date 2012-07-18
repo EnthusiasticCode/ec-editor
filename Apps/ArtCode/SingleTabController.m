@@ -358,7 +358,7 @@
     } else {
       // Create title fragments from a location
       ArtCodeLocation *location = self.artCodeTab.currentLocation;
-      switch (location.artCodeType) {
+      switch (location.type) {
         case ArtCodeLocationTypeProject:
           [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentProject.labelColor], self.artCodeTab.currentProject.name, nil] selectedIndexes:nil];
           break;
@@ -430,7 +430,7 @@
   // ArtCode URLs routing
   Class controllerClass = nil;
   
-  switch (currentLocation.artCodeType) {
+  switch (currentLocation.type) {
     case ArtCodeLocationTypeProjectsList:
     {
       controllerClass = [ProjectBrowserController class];

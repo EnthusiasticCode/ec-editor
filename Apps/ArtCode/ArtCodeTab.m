@@ -15,17 +15,6 @@
 
 #import <objc/runtime.h>
 
-static NSString * const _tabListKey = @"ArtCodeTabList";
-static NSString * const _currentTabKey = @"ArtCodeTabCurrent";
-static NSString * const _historyURLsKey = @"HistoryURLs";
-static NSString * const _currentHistoryPositionKey = @"currentHistoryPosition";
-
-static NSMutableArray *_systemTabDictionaries;
-static NSMutableArray *_systemTabs;
-
-NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeAllTabs";
-
-#pragma mark -
 
 @interface ArtCodeTab ()
 
@@ -50,124 +39,8 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
 
 @synthesize loading = _loading, currentProject = _currentProject, currentDocSet = _currentDocSet;
 
-#pragma mark - Class methods
-
-+ (void)initialize
-{
-  if (self != [ArtCodeTab class])
-    return;
-  
-  // Load persitent history
-  _systemTabDictionaries = [[NSMutableArray alloc] initWithArray:[[NSUserDefaults standardUserDefaults] arrayForKey:_tabListKey]];
-  if (!_systemTabDictionaries) {
-    _systemTabDictionaries = [[NSMutableArray alloc] init];
-  }
-  
-  // Create tabs
-  _systemTabs = [[NSMutableArray alloc] init];
-  if (![_systemTabDictionaries count]) {
-    [self insertTab:[self blankTab] atIndex:0];
-  } else {
-    for (NSMutableDictionary *dictionary in _systemTabDictionaries) {
-      [_systemTabs addObject:[[self alloc] _initWithDictionary:dictionary]];
-    }
-  }
-}
-
-+ (NSArray *)allTabs {
-  return [_systemTabs copy];
-}
-
-+ (void)insertTab:(ArtCodeTab *)tab atIndex:(NSUInteger)index {
-  ASSERT(index >= 0 && index <= _systemTabs.count);
-  
-  // Update user defaults
-  [_systemTabDictionaries insertObject:tab->_mutableDictionary atIndex:index];
-  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
-
-  // Update working array
-  [_systemTabs insertObject:tab atIndex:index];
-  
-  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
-}
-
-+ (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
-  if (fromIndex == toIndex)
-    return;
-  
-  ArtCodeTab *tab = [_systemTabs objectAtIndex:fromIndex];
-  
-  // Update user defaults
-  [_systemTabDictionaries removeObjectAtIndex:fromIndex];
-  [_systemTabDictionaries insertObject:tab->_mutableDictionary atIndex:toIndex];
-  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
-  
-  // Update working array
-  [_systemTabs removeObjectAtIndex:fromIndex];
-  [_systemTabs insertObject:tab atIndex:toIndex];
-  
-  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
-}
-
-+ (void)removeTabAtIndex:(NSUInteger)tabIndex {
-  ASSERT(tabIndex >= 0 && tabIndex <= _systemTabs.count);
-  
-  // Update user defaults
-  [_systemTabDictionaries removeObjectAtIndex:tabIndex];
-  [[NSUserDefaults standardUserDefaults] setObject:_systemTabDictionaries forKey:_tabListKey];
-  
-  // Update working array
-  [_systemTabs removeObjectAtIndex:tabIndex];
-  
-  [[NSNotificationCenter defaultCenter] postNotificationName:ArtCodeTabDidChangeAllTabsNotification object:self];
-}
-
-+ (ArtCodeTab *)blankTab
-{
-  NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-  ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary]; 
-  return newTab;
-}
-
-+ (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab
-{
-  ASSERT(tab);
-  NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInteger:0], _currentHistoryPositionKey, [NSMutableArray arrayWithObject:[[tab->_mutableDictionary objectForKey:_historyURLsKey] objectAtIndex:[[tab->_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue]]], _historyURLsKey, nil];
-  ArtCodeTab *newTab = [[self alloc] _initWithDictionary:dictionary];
-  return newTab;
-}
-
-+ (NSUInteger)currentTabIndex {
-  return [[[NSUserDefaults standardUserDefaults] objectForKey:_currentTabKey] unsignedIntegerValue];
-}
-
-+ (void)setCurrentTabIndex:(NSUInteger)currentTabIndex {
-  [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedInteger:currentTabIndex] forKey:_currentTabKey];
-}
-
-#pragma mark - Properties
-
-- (NSUInteger)tabIndex {
-  return [_systemTabs indexOfObject:self];
-}
-
-- (NSArray *)historyURLs
-{
-  return [_mutableHistoryURLs copy];
-}
-
-- (NSUInteger)currentHistoryPosition
-{
-  return [[_mutableDictionary objectForKey:_currentHistoryPositionKey] unsignedIntegerValue];
-}
-
-- (void)setCurrentHistoryPosition:(NSUInteger)currentHistoryPosition {
-  [_mutableDictionary setObject:[NSNumber numberWithUnsignedInteger:currentHistoryPosition] forKey:_currentHistoryPositionKey];
-}
-
-- (ArtCodeLocation *)currentLocation
-{
-  return [_mutableHistoryURLs objectAtIndex:self.currentHistoryPosition];
+- (ArtCodeLocation *)currentLocation {
+  return [self.history objectAtIndex:self.currentHistoryPosition];
 }
 
 + (NSSet *)keyPathsForValuesAffectingcurrentLocation

@@ -8,8 +8,16 @@
 
 #import "TabSet.h"
 
+@class ArtCodeTab;
+
+
 @interface ArtCodeTabSet : TabSet
 
 + (ArtCodeTabSet *)defaultSet;
+
+// TODO this methods should not automatically modify the allTabs array
+/// Generate a new tab without any URL in it's history
+- (ArtCodeTab *)blankTab;
+- (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
 
 @end

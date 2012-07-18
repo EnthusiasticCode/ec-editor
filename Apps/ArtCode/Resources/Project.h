@@ -2,7 +2,7 @@
 //  Project.h
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/17/12.
+//  Created by Uri Baghin on 7/18/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
@@ -16,9 +16,9 @@
 @property (nonatomic, retain) NSString * labelColorString;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic) BOOL newlyCreated;
+@property (nonatomic, retain) ProjectSet *projectSet;
 @property (nonatomic, retain) NSOrderedSet *remotes;
 @property (nonatomic, retain) NSSet *visitedLocations;
-@property (nonatomic, retain) ProjectSet *projectSet;
 @end
 
 @interface Project (CoreDataGeneratedAccessors)

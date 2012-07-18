@@ -140,7 +140,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   NSString *anchorTitle = @"";
   NSString *bookmarkTitle = [self.delegate respondsToSelector:@selector(docSetBookmarksController:titleForBookmarksAtURL:anchorTitle:)] ? [self.delegate docSetBookmarksController:self titleForBookmarksAtURL:self.artCodeTab.currentLocation.url anchorTitle:&anchorTitle] : self.artCodeTab.currentLocation.path.lastPathComponent;
   
-  [_bookmarksArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:bookmarkTitle, DocSetBookmarkTitleKey, anchorTitle, DocSetBookmarkSubtitleKey, self.artCodeTab.currentLocation.stringRepresentation, DocSetBookmarkDocSetURLKey, nil]];
+  [_bookmarksArray addObject:[NSDictionary dictionaryWithObjectsAndKeys:bookmarkTitle, DocSetBookmarkTitleKey, anchorTitle, DocSetBookmarkSubtitleKey, self.artCodeTab.currentLocation.url.absoluteString, DocSetBookmarkDocSetURLKey, nil]];
   [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:_bookmarksArray.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
 }
 

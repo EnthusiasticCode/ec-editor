@@ -131,7 +131,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] artCodeLocation]];
+  [self.artCodeTab pushLocation:[ArtCodeLocation locationWithAutoTypeForProjectName:self.artCodeTab.currentProject.name fileURL:[self.filteredItems objectAtIndex:indexPath.row]]];
 }
 
 #pragma mark - Private methods
@@ -139,7 +139,7 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushLocation:[self.artCodeTab.currentProject artCodeLocation]];
+  [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:self.artCodeTab.currentProject.name url:nil]];
 }
 
 - (void)_showProjectsInTabAction:(id)sender

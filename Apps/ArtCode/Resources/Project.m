@@ -2,7 +2,7 @@
 //  Project.m
 //  ArtCode
 //
-//  Created by Uri Baghin on 7/17/12.
+//  Created by Uri Baghin on 7/18/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
@@ -17,8 +17,8 @@
 @dynamic labelColorString;
 @dynamic name;
 @dynamic newlyCreated;
+@dynamic projectSet;
 @dynamic remotes;
 @dynamic visitedLocations;
-@dynamic projectSet;
 
 @end
