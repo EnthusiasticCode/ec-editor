@@ -7,6 +7,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import <ReactiveCocoa/NSObject+RACKVOWrapper.h>
 
 #import "ProjectBrowserController.h"
 #import "AppStyle.h"
@@ -110,33 +111,37 @@
   }];
   
   // Update gird view
-  [projects subscribeNext:^(NSNotification *note) {
+  [self rac_addObserver:[ArtCodeProjectSet defaultSet] forKeyPath:@"projects" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld queue:[NSOperationQueue mainQueue] block:^(id target, NSDictionary *change) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
     __block NSUInteger index = 0;
-    if (note.name == ACProjectDidAddProjectNotificationName) {
+    if ([[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue] == NSKeyValueChangeInsertion) {
       // When adding a project
-      NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
-      [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
-          index = idx;
-          *stop = YES;
-        }
+      [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeNewKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
+        NSString *projectName = [proj name];
+        [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+          if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
+            index = idx;
+            *stop = YES;
+          }
+        }];
+        strongSelf->_gridElements = nil;
+        [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
       }];
-      strongSelf->_gridElements = nil;
-      [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     } else {
       // When deleting a project
-      NSString *projectName = [[note.userInfo objectForKey:ACProjectNotificationProjectKey] name];
-      [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
-          index = idx;
-          *stop = YES;
-        }
+      [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeOldKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
+        NSString *projectName = [proj name];
+        [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+          if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
+            index = idx;
+            *stop = YES;
+          }
+        }];
+        strongSelf->_gridElements = nil;
+        [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
       }];
-      strongSelf->_gridElements = nil;
-      [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
     }
   }];
   
@@ -303,7 +308,7 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ArtCodeProject class]]) {
-      [self.artCodeTab pushLocation:[element artCodeLocation]];
+      [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeProject projectName:[element name] url:nil]];
     } else if ([element isKindOfClass:[DocSet class]]) {
       [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeDocset projectName:nil url:[(DocSet *)element docSetURLForNode:nil]]];
     }
@@ -531,7 +536,7 @@
   [self setEditing:NO animated:YES];
   
   [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ArtCodeProject *)[ArtCodeProject.projects.allValues objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+    [(ArtCodeProject *)[[[ArtCodeProjectSet defaultSet] projects] objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
       if (++progress == cellsToDuplicateCount) {
         self.loading = NO;
       }
