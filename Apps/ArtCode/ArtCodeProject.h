@@ -6,10 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "Project.h"
+#import "_ArtCodeProject.h"
 
 
-@interface ArtCodeProject : Project <NSFilePresenter>
+@interface ArtCodeProject : _ArtCodeProject <NSFilePresenter>
 
 #pragma mark Project metadata
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Location" representedClassName="Location" syncable="YES">
+    <entity name="Location" representedClassName="ArtCodeLocation" syncable="YES">
         <attribute name="dataString" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="typeInt16" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="project" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="visitedLocations" inverseEntity="Project" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
     </entity>
-    <entity name="Project" representedClassName="Project" syncable="YES">
+    <entity name="Project" representedClassName="ArtCodeProject" syncable="YES">
         <attribute name="labelColorString" attributeType="String" minValueString="7" maxValueString="7" defaultValueString="#000000" syncable="YES"/>
         <attribute name="name" attributeType="String" minValueString="1" indexed="YES" syncable="YES"/>
         <attribute name="newlyCreated" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
@@ -14,21 +14,21 @@
         <relationship name="remotes" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Remote" inverseName="project" inverseEntity="Remote" syncable="YES"/>
         <relationship name="visitedLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="project" inverseEntity="Location" syncable="YES"/>
     </entity>
-    <entity name="ProjectSet" representedClassName="ProjectSet" syncable="YES">
+    <entity name="ProjectSet" representedClassName="ArtCodeProjectSet" syncable="YES">
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Project" inverseName="projectSet" inverseEntity="Project" syncable="YES"/>
     </entity>
-    <entity name="Remote" representedClassName="Remote" syncable="YES">
+    <entity name="Remote" representedClassName="ArtCodeRemote" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="urlString" attributeType="String" syncable="YES"/>
         <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="remotes" inverseEntity="Project" syncable="YES"/>
     </entity>
-    <entity name="Tab" representedClassName="Tab" syncable="YES">
+    <entity name="Tab" representedClassName="ArtCodeTab" syncable="YES">
         <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="history" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Location" inverseName="tabs" inverseEntity="Location" syncable="YES"/>
         <relationship name="tabSet" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TabSet" inverseName="tabs" inverseEntity="TabSet" syncable="YES"/>
     </entity>
-    <entity name="TabSet" representedClassName="TabSet" syncable="YES">
+    <entity name="TabSet" representedClassName="ArtCodeTabSet" syncable="YES">
         <attribute name="activeTabIndex" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="tabSet" inverseEntity="Tab" syncable="YES"/>

@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "Remote.h"
+#import "_ArtCodeRemote.h"
 
-@interface ArtCodeRemote : Remote
+@interface ArtCodeRemote : _ArtCodeRemote
 
 @property (nonatomic, strong) NSURL *url;
 

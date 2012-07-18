@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "Location.h"
+#import "_ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeProjectSet.h"
 #import "ArtCodeRemote.h"
@@ -23,7 +23,7 @@ typedef enum {
   ArtCodeLocationTypeDocset,
 } ArtCodeLocationType;
 
-@interface ArtCodeLocation : Location
+@interface ArtCodeLocation : _ArtCodeLocation
 
 /// Returns a location encoding the project, type and path.
 + (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project url:(NSURL *)url;

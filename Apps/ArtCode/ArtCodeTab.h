@@ -6,12 +6,12 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "Tab.h"
+#import "_ArtCodeTab.h"
 
 @class ArtCodeLocation;
 
 
-@interface ArtCodeTab : Tab
+@interface ArtCodeTab : _ArtCodeTab
 
 /// The current URL the tab history is pointing at. This property is read only.
 /// To change the current URL use one of the move methods or pushURL.

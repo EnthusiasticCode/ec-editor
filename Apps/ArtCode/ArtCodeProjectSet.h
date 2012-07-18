@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ProjectSet.h"
+#import "_ArtCodeProjectSet.h"
 @class ArtCodeProject;
 
 
-@interface ArtCodeProjectSet : ProjectSet
+@interface ArtCodeProjectSet : _ArtCodeProjectSet
 
 + (ArtCodeProjectSet *)defaultSet;
 

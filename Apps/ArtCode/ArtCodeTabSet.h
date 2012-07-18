@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "TabSet.h"
+#import "_ArtCodeTabSet.h"
 
 @class ArtCodeTab;
 
 
-@interface ArtCodeTabSet : TabSet
+@interface ArtCodeTabSet : _ArtCodeTabSet
 
 + (ArtCodeTabSet *)defaultSet;
 
