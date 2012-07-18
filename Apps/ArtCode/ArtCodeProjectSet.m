@@ -8,6 +8,11 @@
 
 #import "ArtCodeProjectSet.h"
 
+
+static NSString * const _localProjectsFolderName = @"LocalProjects";
+static NSString * const _defaultProjectSetName = @"default";
+
+
 @implementation ArtCodeProjectSet
 
 @end

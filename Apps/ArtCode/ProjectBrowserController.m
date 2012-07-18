@@ -17,6 +17,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
+#import "ArtCodeProjectSet.h"
 
 #import "DocSetDownloadManager.h"
 #import "DocSet.h"
@@ -63,7 +64,7 @@
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
-    NSMutableArray *elements = [NSMutableArray arrayWithArray:[ArtCodeProject projects].allValues];
+    NSMutableArray *elements = [NSMutableArray arrayWithArray:[[ArtCodeProjectSet defaultSet] projects].array];
     [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
@@ -94,14 +95,14 @@
   
   // RAC
   __weak ProjectBrowserController *this = self;
-  RACSubscribable *projects = [ArtCodeProject rac_projects];
+  RACSubscribable *projects = RACAble([ArtCodeProjectSet defaultSet], projects);
   
   // Update hint view display
-  [[projects startWith:nil] subscribeNext:^(id x) {
+  [projects subscribeNext:^(NSOrderedSet *x) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
-    if (ArtCodeProject.projects.count > 0) {
+    if (x.count > 0) {
       [strongSelf->_hintView removeFromSuperview];
     } else {
       [strongSelf.view addSubview:strongSelf.hintView];

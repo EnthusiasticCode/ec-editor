@@ -7,8 +7,8 @@
 //
 
 #import "ArtCodeLocation.h"
-
 #import "ArtCodeProject.h"
+#import "NSURL+Utilities.h"
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
@@ -17,8 +17,18 @@ static NSString * const ArtCodeLocationScheme = @"artcode";
 
 @implementation ArtCodeLocation
 
-+ (NSURL *)ArtCodeLocationWithProject:(ArtCodeProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
++ (NSURL *)locationWithProject:(ArtCodeProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
   ASSERT(NO);
+}
+
++ (ArtCodeLocation *)locationWithAutoTypeForProjectName:(NSString *)projectName fileURL:(NSURL *)fileURL {
+  ArtCodeLocationType type = ArtCodeLocationTypeUnknown;
+  if ([fileURL isDirectory]) {
+    type = ArtCodeLocationTypeDirectory;
+  } else {
+    type = ArtCodeLocationTypeTextFile;
+  }
+  return [ArtCodeLocation locationWithType:type projectName:projectName url:fileURL];
 }
 
 - (BOOL)isArtCodeProjectsList {

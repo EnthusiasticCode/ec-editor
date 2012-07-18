@@ -295,8 +295,8 @@ NSString * const ArtCodeTabDidChangeAllTabsNotification = @"ArtCodeTabDidChangeA
     self.currentProject = nil;
   } else {
     self.currentDocSet = nil;
-    ArtCodeProject *fromProject = [ArtCodeProject projectWithName:fromURL.projectName];
-    ArtCodeProject *toProject = [ArtCodeProject projectWithName:toURL.projectName];
+    ArtCodeProject *fromProject = (ArtCodeProject *)fromURL.project;
+    ArtCodeProject *toProject = (ArtCodeProject *)toURL.project;
     if (fromProject != toProject) {
       self.currentProject = toProject;
     }

@@ -7,9 +7,17 @@
 //
 
 #import "ProjectSet.h"
+@class ArtCodeProject;
+
 
 @interface ArtCodeProjectSet : ProjectSet
 
 + (ArtCodeProjectSet *)defaultSet;
+
+/// Returns the project containing the given url
+- (ArtCodeProject *)projectWithName:(NSString *)name;
+
+- (void)createProjectWithName:(NSString *)name completionHandler:(void(^)(ArtCodeProject *project))completionHandler;
+
 
 @end

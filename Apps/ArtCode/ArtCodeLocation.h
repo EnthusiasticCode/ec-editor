@@ -11,6 +11,7 @@
 @class ArtCodeProject;
 
 typedef enum {
+  ArtCodeLocationTypeUnknown = 0,
   ArtCodeLocationTypeProjectsList,
   ArtCodeLocationTypeProject,
   ArtCodeLocationTypeDirectory,
@@ -25,6 +26,9 @@ typedef enum {
 
 /// Create a new ArtCodeLocation encoding the project, type and path.
 + (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type projectName:(NSString *)projectName url:(NSURL *)url;
+
+/// Create a new ArtCodeLocation by inferring the type (directory or textfile) for the given project and file url.
++ (ArtCodeLocation *)locationWithAutoTypeForProjectName:(NSString *)projectName fileURL:(NSURL *)fileURL;
 
 - (NSString *)stringRepresentation;
 

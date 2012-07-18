@@ -45,7 +45,7 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
+      _filteredItems = [self.artCodeTab.currentProject.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
         return bookmarkLocation.prettyName;
       }];
       _filteredItemsHitMask = hitMasks;
@@ -55,7 +55,7 @@
     }
     else
     {
-      _filteredItems = [self.artCodeTab.currentProject.bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+      _filteredItems = [self.artCodeTab.currentProject.allBookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
         return [[obj1 prettyName] compare:[obj2 prettyName]];
       }];
       _filteredItemsHitMask = nil;
@@ -117,7 +117,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] artCodeLocation]];
+    [self.artCodeTab pushLocation:[self.filteredItems objectAtIndex:indexPath.row]];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

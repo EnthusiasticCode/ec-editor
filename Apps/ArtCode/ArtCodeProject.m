@@ -15,34 +15,6 @@
 #import "ArtCodeLocation.h"
 
 
-NSString * const ACProjectWillAddProjectNotificationName = @"ACProjectWillAddProjectNotificationName";
-NSString * const ACProjectDidAddProjectNotificationName = @"ACProjectDidAddProjectNotificationName";
-NSString * const ACProjectWillRemoveProjectNotificationName = @"ACProjectWillRemoveProjectNotificationName";
-NSString * const ACProjectDidRemoveProjectNotificationName = @"ACProjectDidRemoveProjectNotificationName";
-NSString * const ACProjectNotificationProjectKey = @"ACProjectNotificationProjectKey";
-
-NSString * const ACProjectWillAddItem = @"ACProjectWillAddItem";
-NSString * const ACProjectDidAddItem = @"ACProjectDidAddItem";
-NSString * const ACProjectWillRemoveItem = @"ACProjectWillRemoveItem";
-NSString * const ACProjectDidRemoveItem = @"ACProjectDidRemoveItem";
-NSString * const ACProjectNotificationItemKey = @"ACProjectNotificationItemKey";
-
-static NSMutableDictionary *_projects = nil;
-
-static NSString * const _projectsKey = @"ACProjectProjects";
-static NSString * const _projectsFolderName = @"LocalProjects";
-
-// Metadata
-static NSString * const _plistNameKey = @"name";
-static NSString * const _plistLabelColorKey = @"labelColor";
-static NSString * const _plistIsNewlyCreatedKey = @"newlyCreated";
-
-// Content
-static NSString * const _plistContentsKey = @"contents";
-static NSString * const _plistBookmarksKey = @"bookmarks";
-static NSString * const _plistRemotesKey = @"remotes";
-
-
 @interface ArtCodeProject ()
 
 - (id)_initWithFileURL:(NSURL *)fileURL;
@@ -54,8 +26,6 @@ static NSString * const _plistRemotesKey = @"remotes";
 @implementation ArtCodeProject {
   NSURL *_presentedItemURL;
   NSOperationQueue *_presentedItemOperationQueue;
-  NSMutableDictionary *_bookmarks;
-  NSMutableDictionary *_remotes;
 }
 
 @synthesize labelColor = _labelColor, newlyCreated = _newlyCreated;
@@ -159,21 +129,5 @@ static NSString * const _plistRemotesKey = @"remotes";
 }
 
 #endif
-
-@end
-
-#pragma mark
-
-@implementation ArtCodeProject (RACExtensions)
-
-+ (RACSubscribable *)rac_projects {
-  static RACSubscribable *_rac_projects = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    _rac_projects = [RACSubscribable merge:[NSArray arrayWithObjects:[notificationCenter rac_addObserverForName:ACProjectDidAddProjectNotificationName object:self], [notificationCenter rac_addObserverForName:ACProjectDidRemoveProjectNotificationName object:self], nil]];
-  });
-  return _rac_projects;
-}
 
 @end

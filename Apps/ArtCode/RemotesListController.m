@@ -12,6 +12,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
+#import "ArtCodeLocation.h"
 
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"
@@ -138,7 +139,7 @@
 {
   if (!self.isEditing)
   {
-    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] artCodeLocation]];
+    [self.artCodeTab pushLocation:[ArtCodeLocation locationWithType:ArtCodeLocationTypeRemoteDirectory projectName:self.artCodeTab.currentProject.name url:[[self.filteredItems objectAtIndex:indexPath.row] url]]];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
