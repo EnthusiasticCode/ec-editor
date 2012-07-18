@@ -19,27 +19,27 @@
 @implementation ArtCodeTab
 
 - (ArtCodeLocation *)currentLocation {
-  return [self.history objectAtIndex:self.currentPosition];
+  return [self.history objectAtIndex:self.currentPositionValue];
 }
 
 + (NSSet *)keyPathsForValuesAffectingcurrentLocation {
-  return [NSSet setWithObject:@"currentPosition"];
+  return [NSSet setWithObject:@"currentPositionValue"];
 }
 
 - (BOOL)canMoveBackInHistory {
-  return self.currentPosition > 0;
+  return self.currentPositionValue > 0;
 }
 
 + (NSSet *)keyPathsForValuesAffectingCanMoveBackInHistory {
-  return [NSSet setWithObject:@"currentPosition"];
+  return [NSSet setWithObject:@"currentPositionValue"];
 }
 
 - (BOOL)canMoveForwardInHistory {
-  return self.currentPosition < (int16_t)self.history.count - 1;
+  return self.currentPositionValue < (int16_t)self.history.count - 1;
 }
 
 + (NSSet *)keyPathsForValuesAffectingCanMoveForwardInHistory {
-  return [NSSet setWithObjects:@"currentPosition", @"history", nil];
+  return [NSSet setWithObjects:@"currentPositionValue", @"history", nil];
 }
 
 - (void)pushLocation:(ArtCodeLocation *)location
@@ -47,8 +47,8 @@
   ASSERT(location && self.history.count); // Cannot be called on empty tab
   // Adding path to history and move forward
   int16_t lastPosition = self.history.count - 1;
-  if (self.currentPosition < lastPosition) {
-    NSRange rangeToDelete = NSMakeRange(self.currentPosition + 1, lastPosition - self.currentPosition);
+  if (self.currentPositionValue < lastPosition) {
+    NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
     [[self mutableOrderedSetValueForKey:@"history"] removeObjectsInRange:rangeToDelete];
   }
   [self addHistoryObject:location];
@@ -59,7 +59,7 @@
   if (!self.canMoveBackInHistory) {
     return;
   }
-  self.currentPosition = self.currentPosition - 1;
+  self.currentPositionValue = self.currentPositionValue - 1;
 }
 
 - (void)moveForwardInHistory
@@ -67,11 +67,11 @@
   if (!self.canMoveForwardInHistory) {
     return;
   }
-  self.currentPosition = self.currentPosition + 1;
+  self.currentPositionValue = self.currentPositionValue + 1;
 }
 
 - (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
-  [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPosition withObject:location];
+  [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPositionValue withObject:location];
 }
 
 @end

@@ -129,14 +129,14 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
 
 - (BOOL)currentHistoryPositionIsAtIndexPath:(NSIndexPath *)indexPath
 {
-  return [self.tab.history count] - 1 - self.tab.currentPosition == (NSUInteger)indexPath.row;
+  return [self.tab.history count] - 1 - self.tab.currentPositionValue == (NSUInteger)indexPath.row;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  self.tab.currentPosition = [self historyIndexForIndexPath:indexPath];
+  self.tab.currentPositionValue = [self historyIndexForIndexPath:indexPath];
 }
 
 @end
