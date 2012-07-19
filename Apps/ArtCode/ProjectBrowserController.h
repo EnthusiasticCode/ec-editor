@@ -15,6 +15,8 @@
 
 @interface ProjectBrowserController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
+@property (nonatomic, strong) NSOrderedSet *projectsSet;
+
 @end
 
 

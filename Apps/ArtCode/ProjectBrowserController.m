@@ -62,6 +62,7 @@
 }
 
 @synthesize gridElements=_gridElements, gridView = _gridView, hintView = _hintView;
+@synthesize projectsSet = _projectsSet;
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
@@ -96,10 +97,10 @@
   
   // RAC
   __weak ProjectBrowserController *this = self;
-  RACSubscribable *projects = RACAble([ArtCodeProjectSet defaultSet], projects);
+  [self rac_bind:RAC_KEYPATH_SELF(projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
   
   // Update hint view display
-  [projects subscribeNext:^(NSOrderedSet *x) {
+  [RACAbleSelf(projectsSet) subscribeNext:^(NSOrderedSet *x) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
@@ -111,7 +112,7 @@
   }];
   
   // Update gird view
-  [self rac_addObserver:[ArtCodeProjectSet defaultSet] forKeyPath:@"projects" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld queue:[NSOperationQueue mainQueue] block:^(id target, NSDictionary *change) {
+  [self rac_addObserver:self forKeyPath:RAC_KEYPATH_SELF(projectsSet) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld queue:[NSOperationQueue mainQueue] block:^(id target, NSDictionary *change) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
