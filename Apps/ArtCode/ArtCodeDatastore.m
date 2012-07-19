@@ -60,6 +60,9 @@
     _autosaveDisposable = nil;
   }
   [self _saveContext];
+  _managedObjectContext = nil;
+  _persistentStoreCoordinator = nil;
+  _managedObjectModel = nil;
 }
 
 #pragma mark - Private Methods
