@@ -12,26 +12,8 @@
 
 
 static NSString * const ProjectsDirectoryName = @"LocalProjects";
-static NSString * const ArtCodeLocationScheme = @"artcode";
 
 
 @implementation ArtCodeLocation
-
-+ (NSURL *)locationWithProject:(ArtCodeProject *)project type:(ArtCodeLocationType)type path:(NSString *)path {
-  ASSERT(NO);
-}
-
-- (BOOL)isArtCodeProjectsList {
-  UNIMPLEMENTED();
-}
-
-- (BOOL)isArtCodeProjectBookmarksList {
-  UNIMPLEMENTED();
-}
-
-- (BOOL)isArtCodeProjectRemotesList {
-  UNIMPLEMENTED();
-}
-
 
 @end

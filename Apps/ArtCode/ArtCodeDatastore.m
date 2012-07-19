@@ -46,23 +46,17 @@
 }
 
 - (void)setUp {
-  if (_autosaveDisposable) {
-    return;
-  }
+  ASSERT(!_autosaveDisposable);
   _autosaveDisposable = [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:NSManagedObjectContextObjectsDidChangeNotification object:[self managedObjectContext]] throttle:2.0] subscribeNext:^(id x) {
     [self _saveContext];
   }];
 }
 
 - (void)tearDown {
-  if (_autosaveDisposable) {
-    [_autosaveDisposable dispose];
-    _autosaveDisposable = nil;
-  }
+  ASSERT(_autosaveDisposable);
+  [_autosaveDisposable dispose];
+  _autosaveDisposable = nil;
   [self _saveContext];
-  _managedObjectContext = nil;
-  _persistentStoreCoordinator = nil;
-  _managedObjectModel = nil;
 }
 
 #pragma mark - Private Methods

@@ -25,9 +25,6 @@ typedef enum {
 
 @interface ArtCodeLocation : _ArtCodeLocation
 
-/// Returns a location encoding the project, type and path.
-+ (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project url:(NSURL *)url;
-
 /// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
 @property (nonatomic) ArtCodeLocationType type;
 

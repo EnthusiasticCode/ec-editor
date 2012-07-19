@@ -120,11 +120,11 @@
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [[ArtCodeProjectSet defaultSet] createProjectWithName:projectName completionHandler:^(ArtCodeProject *createdProject) {
+  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName completionHandler:^(ArtCodeProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed
-      [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:zipURL toURL:createdProject.presentedItemURL completionHandler:^(NSError *error) {
+      [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:zipURL toURL:createdProject.fileURL completionHandler:^(NSError *error) {
         [self stopRightBarButtonItemActivityIndicator];
         self.tableView.userInteractionEnabled = YES;
         

@@ -14,6 +14,8 @@
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
+/// Sets up and tears down the datastore autosave machinery.
+/// setUp and tearDown calls must be balanced.
 - (void)setUp;
 - (void)tearDown;
 

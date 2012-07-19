@@ -9,9 +9,12 @@
 #import "_ArtCodeProject.h"
 
 
-@interface ArtCodeProject : _ArtCodeProject <NSFilePresenter>
+@interface ArtCodeProject : _ArtCodeProject
 
 #pragma mark Project metadata
+
+/// The location of the project on the filesystem
+@property (nonatomic, strong, readonly) NSURL *fileURL;
 
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
@@ -27,7 +30,6 @@
 #pragma mark Project-wide operations
 
 /// Duplicate the entire project.
-/// The returned project is opened, it must be closed in the completion handler if not needed anymore.
 - (void)duplicateWithCompletionHandler:(void(^)(ArtCodeProject *duplicate))completionHandler;
 
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;

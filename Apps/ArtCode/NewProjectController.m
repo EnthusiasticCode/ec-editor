@@ -96,7 +96,7 @@
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorButton.enabled = NO;
   self.projectNameTextField.enabled = NO;
-  [[ArtCodeProjectSet defaultSet] createProjectWithName:projectName completionHandler:^(ArtCodeProject *project) {
+  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName completionHandler:^(ArtCodeProject *project) {
     [self stopRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = YES;
     self.projectNameTextField.enabled = YES;
