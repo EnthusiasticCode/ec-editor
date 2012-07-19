@@ -77,6 +77,33 @@
 
 #pragma mark - Validation
 
+- (BOOL)_validateHistoryWithError:(NSError *__autoreleasing *)error {
+  // Validates history and create an initial location if neccessary
+  NSOrderedSet *oldHistory = self.history;
+  NSOrderedSet *newHistory = oldHistory;
+  if (![self validateValue:&newHistory forKey:@"history" error:error]) {
+    return NO;
+  }
+  if (newHistory != oldHistory) {
+    self.history = newHistory;
+  }
+  return YES;
+}
+
+- (BOOL)validateForInsert:(NSError *__autoreleasing *)error {
+  if (![super validateForInsert:error]) {
+    return NO;
+  }
+  return [self _validateHistoryWithError:error];
+}
+
+- (BOOL)validateForUpdate:(NSError *__autoreleasing *)error {
+  if (![super validateForUpdate:error]) {
+    return NO;
+  }
+  return [self _validateHistoryWithError:error];  
+}
+
 - (BOOL)validateValue:(__autoreleasing id *)value forKey:(NSString *)key error:(NSError *__autoreleasing *)error {
   if (![super validateValue:value forKey:key error:error]) {
     return NO;
