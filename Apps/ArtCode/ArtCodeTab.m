@@ -112,7 +112,7 @@
   if ([key isEqualToString:@"history"] && [(NSOrderedSet *)(*value) count] == 0) {
     ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
     location.type = ArtCodeLocationTypeProjectsList;
-    ASSERT(NO); // TODO set location.tab = self; when locations has tab instead of tabs
+    location.tab = self;
     *value = [NSOrderedSet orderedSetWithObject:location];
   }
   return YES;
