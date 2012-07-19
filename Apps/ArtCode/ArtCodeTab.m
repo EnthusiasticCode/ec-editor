@@ -9,6 +9,7 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
+#import "ArtCodeLocation.h"
 
 #import "DocSet.h"
 #import "DocSetDownloadManager.h"
@@ -72,6 +73,22 @@
 
 - (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
   [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPositionValue withObject:location];
+}
+
+#pragma mark - Validation
+
+- (BOOL)validateValue:(__autoreleasing id *)value forKey:(NSString *)key error:(NSError *__autoreleasing *)error {
+  if (![super validateValue:value forKey:key error:error]) {
+    return NO;
+  }
+  // History should have at least one element pointing to the projects list location
+  if ([key isEqualToString:@"history"] && [(NSOrderedSet *)(*value) count] == 0) {
+    ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
+    location.type = ArtCodeLocationTypeProjectsList;
+    ASSERT(NO); // TODO set location.tab = self; when locations has tab instead of tabs
+    *value = [NSOrderedSet orderedSetWithObject:location];
+  }
+  return YES;
 }
 
 @end

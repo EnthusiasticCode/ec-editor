@@ -66,14 +66,11 @@
   if (![super validateValue:value forKey:key error:error]) {
     return NO;
   }
-  if ([key isEqualToString:@"tabs"]) {
-    // Insert a single blank tab if there are no tabs in the value
-    if ([(NSOrderedSet *)(*value) count] == 0) {
-      NSManagedObjectContext *context = [[ArtCodeDatastore defaultDatastore] managedObjectContext];
-      ArtCodeTab *blankTab = [ArtCodeTab insertInManagedObjectContext:context];
-      *value = [NSOrderedSet orderedSetWithObject:blankTab];
-    }
-    return YES;
+  // Insert a single blank tab if there are no tabs in the value
+  if ([key isEqualToString:@"tabs"] && [(NSOrderedSet *)(*value) count] == 0) {
+    ArtCodeTab *blankTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
+    blankTab.tabSet = self;
+    *value = [NSOrderedSet orderedSetWithObject:blankTab];
   }
   return YES;
 }

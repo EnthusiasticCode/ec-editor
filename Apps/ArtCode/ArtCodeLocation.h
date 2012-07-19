@@ -28,8 +28,8 @@ typedef enum {
 /// Returns a location encoding the project, type and path.
 + (ArtCodeLocation *)locationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project url:(NSURL *)url;
 
-/// Get a mask indicating properties of the URL. See ArtCodeLocationType enum for more informations.
-- (ArtCodeLocationType)type;
+/// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
+@property (nonatomic) ArtCodeLocationType type;
 
 #pragma mark Top level locations
 
