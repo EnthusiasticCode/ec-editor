@@ -4,7 +4,7 @@
         <attribute name="dataString" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="typeInt16" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="project" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="visitedLocations" inverseEntity="Project" syncable="YES"/>
-        <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
+        <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <entity name="Project" representedClassName="ArtCodeProject" syncable="YES">
         <attribute name="labelColorString" attributeType="String" minValueString="7" maxValueString="7" defaultValueString="#000000" syncable="YES"/>
@@ -25,7 +25,7 @@
     </entity>
     <entity name="Tab" representedClassName="ArtCodeTab" syncable="YES">
         <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
-        <relationship name="history" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Location" inverseName="tabs" inverseEntity="Location" syncable="YES"/>
+        <relationship name="history" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Location" inverseName="tab" inverseEntity="Location" syncable="YES"/>
         <relationship name="tabSet" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TabSet" inverseName="tabs" inverseEntity="TabSet" syncable="YES"/>
     </entity>
     <entity name="TabSet" representedClassName="ArtCodeTabSet" syncable="YES">

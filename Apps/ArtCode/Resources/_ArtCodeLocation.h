@@ -11,7 +11,7 @@ extern const struct ArtCodeLocationAttributes {
 
 extern const struct ArtCodeLocationRelationships {
 	__unsafe_unretained NSString *project;
-	__unsafe_unretained NSString *tabs;
+	__unsafe_unretained NSString *tab;
 } ArtCodeLocationRelationships;
 
 extern const struct ArtCodeLocationFetchedProperties {
@@ -63,9 +63,9 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSSet* tabs;
+@property (nonatomic, strong) ArtCodeTab* tab;
 
-- (NSMutableSet*)tabsSet;
+//- (BOOL)validateTab:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -74,11 +74,6 @@ extern const struct ArtCodeLocationFetchedProperties {
 @end
 
 @interface _ArtCodeLocation (CoreDataGeneratedAccessors)
-
-- (void)addTabs:(NSSet*)value_;
-- (void)removeTabs:(NSSet*)value_;
-- (void)addTabsObject:(ArtCodeTab*)value_;
-- (void)removeTabsObject:(ArtCodeTab*)value_;
 
 @end
 
@@ -106,8 +101,8 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
-- (NSMutableSet*)primitiveTabs;
-- (void)setPrimitiveTabs:(NSMutableSet*)value;
+- (ArtCodeTab*)primitiveTab;
+- (void)setPrimitiveTab:(ArtCodeTab*)value;
 
 
 @end

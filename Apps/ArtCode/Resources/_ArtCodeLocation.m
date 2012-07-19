@@ -10,7 +10,7 @@ const struct ArtCodeLocationAttributes ArtCodeLocationAttributes = {
 
 const struct ArtCodeLocationRelationships ArtCodeLocationRelationships = {
 	.project = @"project",
-	.tabs = @"tabs",
+	.tab = @"tab",
 };
 
 const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties = {
@@ -90,17 +90,8 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 
 	
 
-@dynamic tabs;
+@dynamic tab;
 
-	
-- (NSMutableSet*)tabsSet {
-	[self willAccessValueForKey:@"tabs"];
-  
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"tabs"];
-  
-	[self didAccessValueForKey:@"tabs"];
-	return result;
-}
 	
 
 
