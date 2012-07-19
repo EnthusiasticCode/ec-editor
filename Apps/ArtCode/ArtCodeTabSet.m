@@ -35,10 +35,8 @@
 
 #pragma mark - Validation
 
-- (BOOL)validateForInsert:(NSError *__autoreleasing *)error {
-  if (![super validateForInsert:error]) {
-    return NO;
-  }
+- (BOOL)_validateTabsWithError:(NSError *__autoreleasing *)error {
+  // Validates tabs and create a blank tab if neccessary
   NSOrderedSet *oldTabs = self.tabs;
   NSOrderedSet *newTabs = oldTabs;
   if (![self validateValue:&newTabs forKey:@"tabs" error:error]) {
@@ -48,6 +46,20 @@
     self.tabs = newTabs;
   }
   return YES;
+}
+
+- (BOOL)validateForInsert:(NSError *__autoreleasing *)error {
+  if (![super validateForInsert:error]) {
+    return NO;
+  }
+  return [self _validateTabsWithError:error];
+}
+
+- (BOOL)validateForUpdate:(NSError *__autoreleasing *)error {
+  if (![super validateForUpdate:error]) {
+    return NO;
+  }
+  return [self _validateTabsWithError:error];
 }
 
 - (BOOL)validateValue:(__autoreleasing id *)value forKey:(NSString *)key error:(NSError *__autoreleasing *)error {
