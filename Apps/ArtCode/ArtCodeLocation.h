@@ -23,6 +23,7 @@ typedef enum {
   ArtCodeLocationTypeDocSet,
 } ArtCodeLocationType;
 
+/// Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.
 @interface ArtCodeLocation : _ArtCodeLocation
 
 /// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
@@ -51,56 +52,14 @@ typedef enum {
 /// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)url;
 
-/// Returns the name of the ArtCodeRemote URL
-- (NSString *)artCodeRemoteName;
-
+/// Returns a useful name for the location. Usually the file name if present.
 - (NSString *)name;
 
-- (NSString *)prettyName;
-
 - (NSString *)fileExtension;
-
-- (NSString *)projectName;
 
 /// The path from the project containing the file name.
 - (NSString *)path;
 
 - (NSString *)prettyPath;
-
-- (ArtCodeLocation *)locationByAppendingPathComponent:(NSString *)pathComponent;
-
-@end
-
-@interface NSURL (ArtCodeLocation)
-
-/// Returns the location of the url if it can be inferred, or nil.
-- (ArtCodeLocation *)location;
-
-@end
-
-@interface ArtCodeProject (ArtCodeLocation)
-
-/// Returns the location of the project
-- (ArtCodeLocation *)location;
-
-/// Returns the location of the project's bookmarks list
-- (ArtCodeLocation *)bookmarksListLocation;
-
-/// Returns the location of the project's remotes list
-- (ArtCodeLocation *)remotesListLocation;
-
-@end
-
-@interface ArtCodeProjectSet (ArtCodeLocation)
-
-/// Returns the location of the project set
-- (ArtCodeLocation *)location;
-
-@end
-
-@interface ArtCodeRemote (ArtCodeLocation)
-
-/// Returns a location for the remote with the given path
-- (ArtCodeLocation *)locationWithPath:(NSString *)path;
 
 @end

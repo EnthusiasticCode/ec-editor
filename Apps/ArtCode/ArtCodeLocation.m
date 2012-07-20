@@ -8,6 +8,7 @@
 
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
+#import "NSString+Utilities.h"
 
 @implementation ArtCodeLocation
 
@@ -84,6 +85,38 @@
     default:
       return nil;
   }
+}
+
+- (NSString *)name {
+  return self.url.lastPathComponent;
+}
+
+- (NSString *)fileExtension {
+  return self.url.pathExtension;
+}
+
+- (NSString *)path {
+  NSString *path = self.url.path;
+  switch (self.type) {
+    case ArtCodeLocationTypeDocSet:
+    {
+      path = [path substringFromIndex:NSMaxRange([path rangeOfString:@"Contents/Resources/Documents"])];
+    }
+      
+    case ArtCodeLocationTypeDirectory:
+    case ArtCodeLocationTypeTextFile:
+    {
+      path = [path substringFromIndex:self.project.fileURL.path.length];
+    }
+      
+    default:
+      break;
+  }
+  return path;
+}
+
+- (NSString *)prettyPath {
+  return self.path.prettyPath;
 }
 
 @end
