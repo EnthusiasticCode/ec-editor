@@ -13,6 +13,8 @@
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
 
+static NSString * const docSetContentsPath = @"Contents/Resources/Documents";
+
 @interface DocSetDownloadManager ()
 
 - (void)startNextDownload;
@@ -319,7 +321,19 @@
 @implementation NSURL (DocSet)
 
 - (DocSet *)docSet {
-  NSString *docSetName = [self.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  NSString *docSetName = nil;
+  if (self.isFileURL) {
+    NSString *path = [self.path substringFromIndex:[NSURL applicationDocumentsDirectory].path.length];
+    NSRange pathContentsRange = [path rangeOfString:docSetContentsPath];
+    if (pathContentsRange.location != NSNotFound) {
+      docSetName = [path substringToIndex:pathContentsRange.location - 1];
+    } else {
+      // TODO get untill /
+      docSetName = path;
+    }
+  } else {
+    docSetName = [self.host stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  }
   for (DocSet *docSet in [[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]) {
     if ([docSet.name isEqualToString:docSetName]) {
       return docSet;
