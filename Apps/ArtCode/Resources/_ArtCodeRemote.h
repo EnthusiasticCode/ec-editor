@@ -11,12 +11,14 @@ extern const struct ArtCodeRemoteAttributes {
 
 extern const struct ArtCodeRemoteRelationships {
 	__unsafe_unretained NSString *project;
+	__unsafe_unretained NSString *visitedLocations;
 } ArtCodeRemoteRelationships;
 
 extern const struct ArtCodeRemoteFetchedProperties {
 } ArtCodeRemoteFetchedProperties;
 
 @class ArtCodeProject;
+@class ArtCodeLocation;
 
 
 
@@ -57,10 +59,22 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+@property (nonatomic, strong) NSSet* visitedLocations;
+
+- (NSMutableSet*)visitedLocationsSet;
+
+
+
+
 
 @end
 
 @interface _ArtCodeRemote (CoreDataGeneratedAccessors)
+
+- (void)addVisitedLocations:(NSSet*)value_;
+- (void)removeVisitedLocations:(NSSet*)value_;
+- (void)addVisitedLocationsObject:(ArtCodeLocation*)value_;
+- (void)removeVisitedLocationsObject:(ArtCodeLocation*)value_;
 
 @end
 
@@ -82,6 +96,11 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 - (ArtCodeProject*)primitiveProject;
 - (void)setPrimitiveProject:(ArtCodeProject*)value;
+
+
+
+- (NSMutableSet*)primitiveVisitedLocations;
+- (void)setPrimitiveVisitedLocations:(NSMutableSet*)value;
 
 
 @end

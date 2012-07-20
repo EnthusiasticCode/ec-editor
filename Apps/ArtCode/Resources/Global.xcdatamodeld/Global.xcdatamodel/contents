@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11E53" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Location" representedClassName="ArtCodeLocation" syncable="YES">
-        <attribute name="dataString" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
         <attribute name="typeInt16" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="project" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="visitedLocations" inverseEntity="Project" syncable="YES"/>
+        <relationship name="remote" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Remote" inverseName="visitedLocations" inverseEntity="Remote" syncable="YES"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <entity name="Project" representedClassName="ArtCodeProject" syncable="YES">
@@ -22,6 +23,7 @@
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="urlString" attributeType="String" syncable="YES"/>
         <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="remotes" inverseEntity="Project" syncable="YES"/>
+        <relationship name="visitedLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="remote" inverseEntity="Location" syncable="YES"/>
     </entity>
     <entity name="Tab" representedClassName="ArtCodeTab" syncable="YES">
         <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
@@ -34,10 +36,10 @@
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="tabSet" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Location" positionX="7" positionY="54" width="128" height="105"/>
+        <element name="Location" positionX="7" positionY="54" width="128" height="120"/>
         <element name="Project" positionX="214" positionY="-45" width="128" height="135"/>
-        <element name="ProjectSet" positionX="160" positionY="192" width="128" height="75"/>
-        <element name="Remote" positionX="7" positionY="-117" width="128" height="90"/>
+        <element name="ProjectSet" positionX="403" positionY="-12" width="128" height="75"/>
+        <element name="Remote" positionX="9" positionY="-117" width="128" height="105"/>
         <element name="Tab" positionX="214" positionY="162" width="128" height="90"/>
         <element name="TabSet" positionX="9" positionY="252" width="128" height="90"/>
     </elements>

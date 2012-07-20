@@ -451,7 +451,7 @@
       controllerClass = [FileBrowserController class];
       break;
     }
-    case ArtCodeLocationTypeDocset:
+    case ArtCodeLocationTypeDocSet:
     {
       controllerClass = [DocSetBrowserController class];
       break;

@@ -4,12 +4,13 @@
 #import "_ArtCodeLocation.h"
 
 const struct ArtCodeLocationAttributes ArtCodeLocationAttributes = {
-	.dataString = @"dataString",
+	.data = @"data",
 	.typeInt16 = @"typeInt16",
 };
 
 const struct ArtCodeLocationRelationships ArtCodeLocationRelationships = {
 	.project = @"project",
+	.remote = @"remote",
 	.tab = @"tab",
 };
 
@@ -53,7 +54,7 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 
 
 
-@dynamic dataString;
+@dynamic data;
 
 
 
@@ -87,6 +88,10 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 
 
 @dynamic project;
+
+	
+
+@dynamic remote;
 
 	
 

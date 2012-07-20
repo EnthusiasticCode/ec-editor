@@ -10,6 +10,7 @@ const struct ArtCodeRemoteAttributes ArtCodeRemoteAttributes = {
 
 const struct ArtCodeRemoteRelationships ArtCodeRemoteRelationships = {
 	.project = @"project",
+	.visitedLocations = @"visitedLocations",
 };
 
 const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
@@ -64,6 +65,19 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 
 @dynamic project;
 
+	
+
+@dynamic visitedLocations;
+
+	
+- (NSMutableSet*)visitedLocationsSet {
+	[self willAccessValueForKey:@"visitedLocations"];
+  
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"visitedLocations"];
+  
+	[self didAccessValueForKey:@"visitedLocations"];
+	return result;
+}
 	
 
 

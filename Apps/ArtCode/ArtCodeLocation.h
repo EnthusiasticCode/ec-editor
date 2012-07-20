@@ -20,7 +20,7 @@ typedef enum {
   ArtCodeLocationTypeBookmarksList,
   ArtCodeLocationTypeRemotesList,
   ArtCodeLocationTypeRemoteDirectory,
-  ArtCodeLocationTypeDocset,
+  ArtCodeLocationTypeDocSet,
 } ArtCodeLocationType;
 
 @interface ArtCodeLocation : _ArtCodeLocation
@@ -44,11 +44,9 @@ typedef enum {
 /// Indicate if the URL is a directory.
 - (BOOL)isDirectory;
 - (BOOL)isProject;
-- (BOOL)isFile;
 - (BOOL)isTextFile;
-- (BOOL)isRemote;
-- (BOOL)isFileBookmark;
-- (BOOL)isDocset;
+- (BOOL)isRemoteDirectory;
+- (BOOL)isDocSet;
 
 /// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)url;

@@ -5,12 +5,13 @@
 
 
 extern const struct ArtCodeLocationAttributes {
-	__unsafe_unretained NSString *dataString;
+	__unsafe_unretained NSString *data;
 	__unsafe_unretained NSString *typeInt16;
 } ArtCodeLocationAttributes;
 
 extern const struct ArtCodeLocationRelationships {
 	__unsafe_unretained NSString *project;
+	__unsafe_unretained NSString *remote;
 	__unsafe_unretained NSString *tab;
 } ArtCodeLocationRelationships;
 
@@ -18,6 +19,7 @@ extern const struct ArtCodeLocationFetchedProperties {
 } ArtCodeLocationFetchedProperties;
 
 @class ArtCodeProject;
+@class ArtCodeRemote;
 @class ArtCodeTab;
 
 
@@ -35,10 +37,10 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSString* dataString;
+@property (nonatomic, strong) NSData* data;
 
 
-//- (BOOL)validateDataString:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateData:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -63,6 +65,13 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
+@property (nonatomic, strong) ArtCodeRemote* remote;
+
+//- (BOOL)validateRemote:(id*)value_ error:(NSError**)error_;
+
+
+
+
 @property (nonatomic, strong) ArtCodeTab* tab;
 
 //- (BOOL)validateTab:(id*)value_ error:(NSError**)error_;
@@ -80,8 +89,8 @@ extern const struct ArtCodeLocationFetchedProperties {
 @interface _ArtCodeLocation (CoreDataGeneratedPrimitiveAccessors)
 
 
-- (NSString*)primitiveDataString;
-- (void)setPrimitiveDataString:(NSString*)value;
+- (NSData*)primitiveData;
+- (void)setPrimitiveData:(NSData*)value;
 
 
 
@@ -98,6 +107,11 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 - (ArtCodeProject*)primitiveProject;
 - (void)setPrimitiveProject:(ArtCodeProject*)value;
+
+
+
+- (ArtCodeRemote*)primitiveRemote;
+- (void)setPrimitiveRemote:(ArtCodeRemote*)value;
 
 
 
