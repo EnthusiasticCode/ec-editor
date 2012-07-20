@@ -8,29 +8,23 @@
 
 #import "ArtCodeProjectSet.h"
 #import "ArtCodeDatastore.h"
+#import "NSURL+Utilities.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "ArtCodeProject.h"
 
 
 static NSString * const _localProjectsFolderName = @"LocalProjects";
 static NSString * const _defaultProjectSetName = @"default";
 
-@interface ArtCodeProjectSet () <NSFilePresenter>
 
-+ (NSOperationQueue *)_sharedQueue;
+@interface ArtCodeProjectSet ()
+
+- (NSURL *)_fileURL;
 
 @end
 
 
 @implementation ArtCodeProjectSet
-
-@synthesize fileURL = _fileURL;
-
-#pragma mark - KVO overrides
-
-+ (NSSet *)keyPathsForValuesAffectingPresentedItemURL {
-  return [NSSet setWithObject:@"fileURL"];
-}
-
-#pragma mark - Public Methods
 
 + (ArtCodeProjectSet *)defaultSet {
   static ArtCodeProjectSet *defaultSet = nil;
@@ -51,34 +45,32 @@ static NSString * const _defaultProjectSetName = @"default";
   return defaultSet;
 }
 
-- (void)setUp {
-  
+- (NSURL *)_fileURL {
+  return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:self.name];
 }
 
-- (void)tearDown {
-  
+- (void)addNewProjectWithName:(NSString *)name completionHandler:(void (^)(ArtCodeProject *))completionHandler {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[[self _fileURL] URLByAppendingPathComponent:name] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+    if (error) {
+      completionHandler(nil);
+      return;
+    }
+    ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
+    project.name = [newURL lastPathComponent];
+    project.projectSet = self;
+    completionHandler(project);
+  }];
 }
 
-#pragma mark - NSFilePresenter
-
-- (NSURL *)presentedItemURL {
-  return self.fileURL;
-}
-
-- (NSOperationQueue *)presentedItemOperationQueue {
-  return [ArtCodeProjectSet _sharedQueue];
-}
-
-#pragma mark - Private Methods
-
-+ (NSOperationQueue *)_sharedQueue {
-  static NSOperationQueue *_sharedQueue;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    _sharedQueue = [[NSOperationQueue alloc] init];
-    [_sharedQueue setMaxConcurrentOperationCount:1];
-  });
-  return _sharedQueue;
+- (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
+  [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[project fileURL]] completionHandler:^(NSError *error) {
+    if (error) {
+      completionHandler(error);
+      return;
+    }
+    [self.managedObjectContext deleteObject:project];
+    completionHandler(nil);
+  }];
 }
 
 @end
