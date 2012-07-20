@@ -11,15 +11,11 @@
 
 @interface ArtCodeProject : _ArtCodeProject
 
-#pragma mark Project metadata
-
 /// The location of the project on the filesystem
 @property (nonatomic, strong, readonly) NSURL *fileURL;
 
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
-
-#pragma mark Project content
 
 /// Get an array of all NSURLs of files and folders in the project.
 - (NSArray *)allFiles;

@@ -14,19 +14,20 @@
 
 
 static NSString * const _localProjectsFolderName = @"LocalProjects";
-static NSString * const _defaultProjectSetName = @"default";
-
-
-@interface ArtCodeProjectSet ()
-
-- (NSURL *)_fileURL;
-
-@end
 
 
 @implementation ArtCodeProjectSet
 
+#pragma mark - KVO overrides
+
++ (NSSet *)keyPathsForValuesAffectingFileURL {
+  return [NSSet setWithObject:@"name"];
+}
+
+#pragma mark - Public Methods
+
 + (ArtCodeProjectSet *)defaultSet {
+  static NSString * const _defaultProjectSetName = @"default";
   static ArtCodeProjectSet *defaultSet = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
@@ -39,25 +40,25 @@ static NSString * const _defaultProjectSetName = @"default";
       defaultSet = [results objectAtIndex:0];
     } else {
       defaultSet = [self insertInManagedObjectContext:defaultContext];
-      defaultSet.name = _defaultProjectSetName;
+      [defaultSet setName:_defaultProjectSetName];
     }
   });
   return defaultSet;
 }
 
-- (NSURL *)_fileURL {
-  return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:self.name];
+- (NSURL *)fileURL {
+  return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:[self name]];
 }
 
 - (void)addNewProjectWithName:(NSString *)name completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[[self _fileURL] URLByAppendingPathComponent:name] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[[self fileURL] URLByAppendingPathComponent:name] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     if (error) {
       completionHandler(nil);
       return;
     }
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
-    project.name = [newURL lastPathComponent];
-    project.projectSet = self;
+    [project setName:[newURL lastPathComponent]];
+    [project setProjectSet:self];
     completionHandler(project);
   }];
 }
@@ -68,7 +69,7 @@ static NSString * const _defaultProjectSetName = @"default";
       completionHandler(error);
       return;
     }
-    [self.managedObjectContext deleteObject:project];
+    [[self managedObjectContext] deleteObject:project];
     completionHandler(nil);
   }];
 }

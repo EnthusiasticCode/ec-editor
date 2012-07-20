@@ -17,9 +17,29 @@
 
 @implementation ArtCodeProject
 
+#pragma mark - KVO overrides
+
++ (NSSet *)keyPathsForValuesAffectingFileURL {
+  return [NSSet setWithObjects:@"name", @"projectSet.fileURL", nil];
+}
+
++ (NSSet *)keyPathsForValuesAffectingLabelColor {
+  return [NSSet setWithObject:@"labelColorString"];
+}
+
 #pragma mark - Public Methods
 
-#pragma mark - Project metadata
+- (NSURL *)fileURL {
+  return [[[self projectSet] fileURL] URLByAppendingPathComponent:[self name]];
+}
+
+- (UIColor *)labelColor {
+  return [UIColor colorWithHexString:[self labelColorString]];
+}
+
+- (void)setLabelColor:(UIColor *)labelColor {
+  [self setLabelColorString:[labelColor hexString]];
+}
 
 #pragma mark - Project-wide operations
 

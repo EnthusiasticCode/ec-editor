@@ -17,7 +17,7 @@
 
 // TODO this methods should not automatically modify the allTabs array
 /// Generate a new tab without any URL in it's history
-- (ArtCodeTab *)blankTab;
-- (ArtCodeTab *)duplicateTab:(ArtCodeTab *)tab;
+- (ArtCodeTab *)addNewBlankTab;
+- (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab;
 
 @end

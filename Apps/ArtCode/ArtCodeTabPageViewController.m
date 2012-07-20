@@ -143,8 +143,7 @@
 - (void)_addButtonAction:(id)sender {
   SingleTabController *currentSingleTabController = (SingleTabController *)[self tabPageViewController:self viewControllerForTabAtIndex:self.tabBar.selectedTabIndex];
   
-  ArtCodeTab *newTab = [[ArtCodeTabSet defaultSet] duplicateTab:currentSingleTabController.artCodeTab];
-  [[ArtCodeTabSet defaultSet] addTabsObject:newTab];
+  [[ArtCodeTabSet defaultSet] addNewTabByDuplicatingTab:currentSingleTabController.artCodeTab];
   
   [self.tabBar addTabWithTitle:currentSingleTabController.title animated:YES];
 }
