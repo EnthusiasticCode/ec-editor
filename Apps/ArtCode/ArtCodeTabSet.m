@@ -30,49 +30,14 @@
   // At this point there is no default tab set and it should be created
   ArtCodeTabSet *defaultTabSet = [self insertInManagedObjectContext:context];
   defaultTabSet.name = defaultSetName;
+  
   return defaultTabSet;
 }
 
-#pragma mark - Validation
-
-- (BOOL)_validateTabsWithError:(NSError *__autoreleasing *)error {
-  // Validates tabs and create a blank tab if neccessary
-  NSOrderedSet *oldTabs = self.tabs;
-  NSOrderedSet *newTabs = oldTabs;
-  if (![self validateValue:&newTabs forKey:@"tabs" error:error]) {
-    return NO;
-  }
-  if (newTabs != oldTabs) {
-    self.tabs = newTabs;
-  }
-  return YES;
-}
-
-- (BOOL)validateForInsert:(NSError *__autoreleasing *)error {
-  if (![super validateForInsert:error]) {
-    return NO;
-  }
-  return [self _validateTabsWithError:error];
-}
-
-- (BOOL)validateForUpdate:(NSError *__autoreleasing *)error {
-  if (![super validateForUpdate:error]) {
-    return NO;
-  }
-  return [self _validateTabsWithError:error];
-}
-
-- (BOOL)validateValue:(__autoreleasing id *)value forKey:(NSString *)key error:(NSError *__autoreleasing *)error {
-  if (![super validateValue:value forKey:key error:error]) {
-    return NO;
-  }
-  // Insert a single blank tab if there are no tabs in the value
-  if ([key isEqualToString:@"tabs"] && [(NSOrderedSet *)(*value) count] == 0) {
-    ArtCodeTab *blankTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
-    blankTab.tabSet = self;
-    *value = [NSOrderedSet orderedSetWithObject:blankTab];
-  }
-  return YES;
+- (void)awakeFromInsert {
+  [super awakeFromInsert];
+  ArtCodeTab *blankTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
+  blankTab.tabSet = self;
 }
 
 @end
