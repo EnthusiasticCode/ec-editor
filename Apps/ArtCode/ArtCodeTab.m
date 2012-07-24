@@ -74,14 +74,14 @@
   int16_t lastPosition = self.history.count - 1;
   if (self.currentPositionValue < lastPosition) {
     NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
-    [[self mutableOrderedSetValueForKey:@"history"] removeObjectsInRange:rangeToDelete];
+    [[self historySet] removeObjectsInRange:rangeToDelete];
   }
-  [self addHistoryObject:location];
+  [[self historySet] addObject:location];
   [self moveForwardInHistory];
 }
 
 - (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
-  [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPositionValue withObject:location];
+  [[self historySet] replaceObjectAtIndex:self.currentPositionValue withObject:location];
 }
 
 @end
