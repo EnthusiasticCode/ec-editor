@@ -117,7 +117,8 @@
     if (!strongSelf)
       return;
     __block NSUInteger index = 0;
-    if ([[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue] == NSKeyValueChangeInsertion) {
+    NSUInteger changeType = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
+    if (changeType == NSKeyValueChangeInsertion) {
       // When adding a project
       [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeNewKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
         NSString *projectName = [proj name];
@@ -130,7 +131,7 @@
         strongSelf->_gridElements = nil;
         [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
       }];
-    } else {
+    } else if (changeType == NSKeyValueChangeRemoval) {
       // When deleting a project
       [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeOldKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
         NSString *projectName = [proj name];
