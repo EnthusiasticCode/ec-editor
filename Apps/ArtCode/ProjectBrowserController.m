@@ -71,6 +71,13 @@
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
     }];
+    
+    // Side effect to update hint view
+    if (_gridElements.count > 0) {
+      [_hintView removeFromSuperview];
+    } else {
+      [self.view addSubview:self.hintView];
+    }
   }
   return _gridElements;
 }
@@ -98,18 +105,6 @@
   // RAC
   __weak ProjectBrowserController *this = self;
   [self rac_bind:RAC_KEYPATH_SELF(projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
-  
-  // Update hint view display
-  [RACAbleSelf(projectsSet) subscribeNext:^(NSOrderedSet *x) {
-    ProjectBrowserController *strongSelf = this;
-    if (!strongSelf)
-      return;
-    if (x.count > 0) {
-      [strongSelf->_hintView removeFromSuperview];
-    } else {
-      [strongSelf.view addSubview:strongSelf.hintView];
-    }
-  }];
   
   // Update gird view
   [self rac_addObserver:self forKeyPath:RAC_KEYPATH_SELF(projectsSet) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld queue:[NSOperationQueue mainQueue] block:^(id target, NSDictionary *change) {
