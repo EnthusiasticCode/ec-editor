@@ -185,4 +185,8 @@
   [self pushLocation:location];
 }
 
+- (void)pushCopyOfLocation:(ArtCodeLocation *)location {
+  [self pushLocationWithType:location.type project:location.project remote:location.remote data:location.data];
+}
+
 @end

@@ -9,6 +9,7 @@
 #import "ArtCodeTabSet.h"
 #import "ArtCodeDatastore.h"
 #import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
 
 @implementation ArtCodeTabSet
 
@@ -38,6 +39,13 @@
   [super awakeFromInsert];
   ArtCodeTab *blankTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
   blankTab.tabSet = self;
+}
+
+- (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab {
+  ArtCodeTab *newTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
+  newTab.tabSet = self;
+  [newTab pushCopyOfLocation:tab.currentLocation];
+  return newTab;
 }
 
 @end

@@ -15,9 +15,7 @@
 
 + (ArtCodeTabSet *)defaultSet;
 
-// TODO this methods should not automatically modify the allTabs array
-/// Generate a new tab without any URL in it's history
-- (ArtCodeTab *)addNewBlankTab;
+/// Adds a new tab at the end of the set. The new tab will have a single location in its history equal to the given tab current location.
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab;
 
 @end
