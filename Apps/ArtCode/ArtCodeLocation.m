@@ -10,6 +10,7 @@
 #import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
 #import "NSString+Utilities.h"
+#import "NSURL+Utilities.h"
 
 
 @interface ArtCodeTab (ArtCodeLocation)
@@ -30,7 +31,7 @@
 @interface ArtCodeTab (ArtCodeLocation_Internal)
 
 /// Pushes the location built with the given parameters
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project data:(NSData *)data;
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data;
 
 @end
 
@@ -152,11 +153,46 @@
 @implementation ArtCodeTab (Location)
 
 - (void)pushDefaultProjectSet {
-  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil data:nil];
+  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil remote:nil data:nil];
 }
 
 - (void)pushProject:(ArtCodeProject *)project {
-  [self pushLocationWithType:ArtCodeLocationTypeProject project:project data:nil];
+  ASSERT(project);
+  [self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
+}
+
+- (void)pushDocSetURL:(NSURL *)url {
+  ASSERT(url);
+  [self pushLocationWithType:ArtCodeLocationTypeDocSet project:nil remote:nil data:[[url absoluteString] dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project {
+  ASSERT(project && url);
+  NSData *bookmarkData = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark | NSURLBookmarkCreationPreferFileIDResolution includingResourceValuesForKeys:nil relativeToURL:nil error:NULL];
+  if ([url isDirectory]) {
+    [self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil data:bookmarkData];
+  } else {
+    [self pushLocationWithType:ArtCodeLocationTypeTextFile project:project remote:nil data:bookmarkData];
+  }
+}
+
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project lineNumber:(NSUInteger)lineNumber {
+  [self pushFileURL:url withProject:project];
+}
+
+- (void)pushBookmarksListForProject:(ArtCodeProject *)project {
+  ASSERT(project);
+  [self pushLocationWithType:ArtCodeLocationTypeBookmarksList project:project remote:nil data:nil];
+}
+
+- (void)pushRemotesListForProject:(ArtCodeProject *)project {
+  ASSERT(project);
+  [self pushLocationWithType:ArtCodeLocationTypeRemotesList project:project remote:nil data:nil];
+}
+
+- (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote {
+  ASSERT(path && remote);
+  [self pushLocationWithType:ArtCodeLocationTypeRemoteDirectory project:remote.project remote:remote data:[path dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 @end
@@ -165,13 +201,16 @@
 
 @implementation ArtCodeTab (ArtCodeLocation_Internal)
 
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project data:(NSData *)data {
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data {
   ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
   if (type) {
     location.type = type;
   }
   if (project) {
     location.project = project;
+  }
+  if (remote) {
+    location.remote = remote;
   }
   if (data) {
     location.data = data;

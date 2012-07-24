@@ -10,4 +10,16 @@
 
 @implementation ArtCodeRemote
 
++ (NSSet *)keyPathsForValuesAffectingUrl {
+  return [NSSet setWithObject:@"urlString"];
+}
+
+- (NSURL *)url {
+  return [NSURL URLWithString:self.urlString];
+}
+
+- (void)setUrl:(NSURL *)url {
+  self.urlString = url.absoluteString;
+}
+
 @end
