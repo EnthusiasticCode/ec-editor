@@ -31,6 +31,15 @@
 /// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveForwardInHistory;
 
+/// Pushes a location to the tab's history.
+/// Changes the current location to the newly pushed location, and deletes any history items following the previously current one
+- (void)pushLocation:(ArtCodeLocation *)location;
+
+/// Updates the current location with the given one.
+/// This method can be used to change some properties of the current location 
+/// without leaving traces in the history.
+- (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location;
+
 @end
 
 

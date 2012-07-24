@@ -13,19 +13,6 @@
 #import "NSURL+Utilities.h"
 
 
-@interface ArtCodeTab (ArtCodeLocation)
-
-/// Pushes a location to the tab's history.
-/// Changes the current location to the newly pushed location, and deletes any history items following the previously current one
-- (void)pushLocation:(ArtCodeLocation *)location;
-
-/// Updates the current location with the given one.
-/// This method can be used to change some properties of the current location 
-/// without leaving traces in the history.
-- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location;
-
-@end
-
 #pragma mark -
 
 @interface ArtCodeTab (ArtCodeLocation_Internal)
@@ -183,10 +170,6 @@
   }
   location.tab = self;
   [self pushLocation:location];
-}
-
-- (void)pushCopyOfLocation:(ArtCodeLocation *)location {
-  [self pushLocationWithType:location.type project:location.project remote:location.remote data:location.data];
 }
 
 @end

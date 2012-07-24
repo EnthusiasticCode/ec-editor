@@ -44,7 +44,12 @@
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab {
   ArtCodeTab *newTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
   newTab.tabSet = self;
-  [newTab pushCopyOfLocation:tab.currentLocation];
+  ArtCodeLocation *newLocation = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
+  newLocation.type = tab.currentLocation.type;
+  newLocation.project = tab.currentLocation.project;
+  newLocation.remote = tab.currentLocation.remote;
+  newLocation.data = tab.currentLocation.data;
+  [newTab replaceCurrentLocationWithLocation:newLocation];
   return newTab;
 }
 

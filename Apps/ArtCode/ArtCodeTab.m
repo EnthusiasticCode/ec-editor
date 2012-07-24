@@ -80,8 +80,10 @@
   [self moveForwardInHistory];
 }
 
-- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
+- (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location {
+  ArtCodeLocation *oldLocation = self.currentLocation;
   [[self historySet] replaceObjectAtIndex:self.currentPositionValue withObject:location];
+  [oldLocation.managedObjectContext deleteObject:oldLocation];
 }
 
 @end

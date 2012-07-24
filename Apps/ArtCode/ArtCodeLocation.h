@@ -73,6 +73,4 @@ typedef enum {
 
 - (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote;
 
-- (void)pushCopyOfLocation:(ArtCodeLocation *)location;
-
 @end
