@@ -296,7 +296,6 @@
   }];
   
   // Update tool bar title when project changes
-  ASSERT(NO); // This is going to crash when currentLocation.project is not set (i.e. in the projects list)
   [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.name), RAC_KEYPATH_SELF(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
     return nil;
   }] subscribeNext:^(id x) {

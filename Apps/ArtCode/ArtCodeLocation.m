@@ -51,40 +51,6 @@
   return [NSSet setWithObjects:@"typeInt16Value", nil];
 }
 
-#pragma mark - Utitlity methods
-
-- (BOOL)isProjectsList {
-  return self.type == ArtCodeLocationTypeProjectsList;
-}
-
-- (BOOL)isProjectBookmarksList {
-  return self.type == ArtCodeLocationTypeBookmarksList;
-}
-
-- (BOOL)isProjectRemotesList {
-  return self.type == ArtCodeLocationTypeRemotesList;
-}
-
-- (BOOL)isDirectory {
-  return self.type == ArtCodeLocationTypeDirectory;
-}
-
-- (BOOL)isProject {
-  return self.type == ArtCodeLocationTypeProject;
-}
-
-- (BOOL)isTextFile {
-  return self.type == ArtCodeLocationTypeTextFile;
-}
-
-- (BOOL)isRemoteDirectory {
-  return self.type == ArtCodeLocationTypeRemoteDirectory;
-}
-
-- (BOOL)isDocSet {
-  return self.type == ArtCodeLocationTypeDocSet;
-}
-
 #pragma mark Data Properties
 
 - (NSURL *)url {

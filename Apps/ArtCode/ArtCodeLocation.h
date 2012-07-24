@@ -40,13 +40,6 @@ typedef enum {
 
 #pragma mark URL specific
 
-/// Indicate if the URL is a directory.
-- (BOOL)isDirectory;
-- (BOOL)isProject;
-- (BOOL)isTextFile;
-- (BOOL)isRemoteDirectory;
-- (BOOL)isDocSet;
-
 /// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)url;
 
