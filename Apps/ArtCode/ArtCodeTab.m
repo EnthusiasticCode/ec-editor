@@ -43,19 +43,6 @@
   return [NSSet setWithObjects:@"currentPositionValue", @"history", nil];
 }
 
-- (void)pushLocation:(ArtCodeLocation *)location
-{
-  ASSERT(location && self.history.count); // Cannot be called on empty tab
-  // Adding path to history and move forward
-  int16_t lastPosition = self.history.count - 1;
-  if (self.currentPositionValue < lastPosition) {
-    NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
-    [[self mutableOrderedSetValueForKey:@"history"] removeObjectsInRange:rangeToDelete];
-  }
-  [self addHistoryObject:location];
-  [self moveForwardInHistory];
-}
-
 - (void)moveBackInHistory {
   if (!self.canMoveBackInHistory) {
     return;
@@ -69,10 +56,6 @@
     return;
   }
   self.currentPositionValue = self.currentPositionValue + 1;
-}
-
-- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
-  [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPositionValue withObject:location];
 }
 
 #pragma mark - Validation
@@ -116,6 +99,25 @@
     *value = [NSOrderedSet orderedSetWithObject:location];
   }
   return YES;
+}
+
+#pragma mark - ArtCodeLocation
+
+- (void)pushLocation:(ArtCodeLocation *)location
+{
+  ASSERT(location && self.history.count); // Cannot be called on empty tab
+  // Adding path to history and move forward
+  int16_t lastPosition = self.history.count - 1;
+  if (self.currentPositionValue < lastPosition) {
+    NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
+    [[self mutableOrderedSetValueForKey:@"history"] removeObjectsInRange:rangeToDelete];
+  }
+  [self addHistoryObject:location];
+  [self moveForwardInHistory];
+}
+
+- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location {
+  [[self mutableOrderedSetValueForKey:@"history"] replaceObjectAtIndex:self.currentPositionValue withObject:location];
 }
 
 @end

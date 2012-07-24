@@ -158,7 +158,7 @@
     }    
     
     // Otherwise redirect to a docset URL to enable history
-    [self.artCodeTab pushLocation:URL.docSetURLByRetractingFileURL.location];
+    [self.artCodeTab pushDocSetURL:URL.docSetURLByRetractingFileURL];
     return NO;
   }
   

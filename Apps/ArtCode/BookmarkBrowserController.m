@@ -45,8 +45,8 @@
     if ([self.searchBar.text length])
     {
       NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeLocation *bookmarkLocation) {
-        return bookmarkLocation.prettyName;
+      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
+        return bookmark.name;
       }];
       _filteredItemsHitMask = hitMasks;
       
@@ -56,7 +56,7 @@
     else
     {
       _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [[obj1 prettyName] compare:[obj2 prettyName]];
+        return [[obj1 name] compare:[obj2 name]];
       }];
       _filteredItemsHitMask = nil;
       
@@ -103,7 +103,7 @@
   
   ArtCodeLocation *bookmarkLocation = [self.filteredItems objectAtIndex:indexPath.row];
   
-  cell.textLabel.text = bookmarkLocation.prettyName;
+  cell.textLabel.text = bookmarkLocation.name;
   cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
   cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   
@@ -115,9 +115,9 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  if (!self.isEditing)
-  {
-    [self.artCodeTab pushLocation:[self.filteredItems objectAtIndex:indexPath.row]];
+  if (!self.isEditing) {
+    ArtCodeProjectBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+    [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project lineNumber:bookmark.lineNumber];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

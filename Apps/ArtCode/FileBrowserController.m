@@ -229,7 +229,7 @@
       _selectedItems = [NSMutableArray new];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
-    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] location]];
+    [self.artCodeTab pushFileURL:[self.filteredItems objectAtIndex:indexPath.row] withProject:self.artCodeTab.currentLocation.project];
   }
 }
 

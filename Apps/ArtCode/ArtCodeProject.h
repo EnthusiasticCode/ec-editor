@@ -20,7 +20,7 @@
 /// Get an array of all NSURLs of files and folders in the project.
 - (NSArray *)allFiles;
 
-/// Gets an array of ArtCodeLocations representing all bookmarks from the files in the project.
+/// Gets an array of ArtCodeProjectBookmark objects for all bookmarks found on all files in the project.
 - (NSArray *)allBookmarks;
 
 #pragma mark Project-wide operations
@@ -31,5 +31,13 @@
 - (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
 - (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
+
+@end
+
+@interface ArtCodeProjectBookmark : NSObject
+
+@property (nonatomic, strong, readonly) NSURL *fileURL;
+@property (nonatomic, readonly) NSUInteger lineNumber;
+@property (nonatomic, strong, readonly) NSString *name;
 
 @end

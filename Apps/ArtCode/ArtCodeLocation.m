@@ -8,7 +8,33 @@
 
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
+#import "ArtCodeRemote.h"
 #import "NSString+Utilities.h"
+
+
+@interface ArtCodeTab (ArtCodeLocation)
+
+/// Pushes a location to the tab's history.
+/// Changes the current location to the newly pushed location, and deletes any history items following the previously current one
+- (void)pushLocation:(ArtCodeLocation *)location;
+
+/// Updates the current location with the given one.
+/// This method can be used to change some properties of the current location 
+/// without leaving traces in the history.
+- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location;
+
+@end
+
+#pragma mark -
+
+@interface ArtCodeTab (ArtCodeLocation_Internal)
+
+/// Pushes the location built with the given parameters
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project data:(NSData *)data;
+
+@end
+
+#pragma mark -
 
 @implementation ArtCodeLocation
 
@@ -117,6 +143,41 @@
 
 - (NSString *)prettyPath {
   return self.path.prettyPath;
+}
+
+@end
+
+#pragma mark -
+
+@implementation ArtCodeTab (Location)
+
+- (void)pushDefaultProjectSet {
+  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil data:nil];
+}
+
+- (void)pushProject:(ArtCodeProject *)project {
+  [self pushLocationWithType:ArtCodeLocationTypeProject project:project data:nil];
+}
+
+@end
+
+#pragma mark -
+
+@implementation ArtCodeTab (ArtCodeLocation_Internal)
+
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project data:(NSData *)data {
+  ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
+  if (type) {
+    location.type = type;
+  }
+  if (project) {
+    location.project = project;
+  }
+  if (data) {
+    location.data = data;
+  }
+  location.tab = self;
+  [self pushLocation:location];
 }
 
 @end

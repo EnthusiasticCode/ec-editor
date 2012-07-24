@@ -7,9 +7,7 @@
 //
 
 #import "_ArtCodeLocation.h"
-#import "ArtCodeProject.h"
-#import "ArtCodeProjectSet.h"
-#import "ArtCodeRemote.h"
+#import "ArtCodeTab.h"
 
 typedef enum {
   ArtCodeLocationTypeUnknown = 0,
@@ -61,5 +59,25 @@ typedef enum {
 - (NSString *)path;
 
 - (NSString *)prettyPath;
+
+@end
+
+@interface ArtCodeTab (Location)
+
+- (void)pushDefaultProjectSet;
+
+- (void)pushProject:(ArtCodeProject *)project;
+
+- (void)pushDocSetURL:(NSURL *)url;
+
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project;
+
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project lineNumber:(NSUInteger)lineNumber;
+
+- (void)pushBookmarksListForProject:(ArtCodeProject *)project;
+
+- (void)pushRemotesListForProject:(ArtCodeProject *)project;
+
+- (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote;
 
 @end

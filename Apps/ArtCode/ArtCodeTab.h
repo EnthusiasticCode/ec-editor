@@ -23,10 +23,6 @@
 /// A value indicating if calling moveForwardInHistory will have any effect.
 @property (nonatomic, readonly) BOOL canMoveForwardInHistory;
 
-/// Pushes an URL to the tab's history.
-/// Changes the current url to the newly pushed url, and deletes any history items following the previously current one
-- (void)pushLocation:(ArtCodeLocation *)url;
-
 /// Convinience method that moves the tab's history back by one step.
 /// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveBackInHistory;
@@ -34,11 +30,6 @@
 /// Convinience method that moves the tab's history forward by one step.
 /// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveForwardInHistory;
-
-/// Updates the current location with the given one. 
-/// This method can be used to change some properties of the current location 
-/// without leaving traces in the history.
-- (void)updateCurrentLocationWithLocation:(ArtCodeLocation *)location;
 
 @end
 

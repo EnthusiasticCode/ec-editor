@@ -135,11 +135,9 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  if (!self.isEditing)
-  {
-    [self.artCodeTab pushLocation:[[self.filteredItems objectAtIndex:indexPath.row] locationWithPath:@"/"]];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (!self.isEditing) {
+    [self.artCodeTab pushRemotePath:@"/" withRemote:[self.filteredItems objectAtIndex:indexPath.row]];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }

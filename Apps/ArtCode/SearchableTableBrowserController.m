@@ -348,15 +348,15 @@
 {
   switch ([sender tag]) {
     case 1:
-      [self.artCodeTab pushLocation:self.artCodeTab.currentLocation.project.bookmarksListLocation];
+      [self.artCodeTab pushBookmarksListForProject:self.artCodeTab.currentLocation.project];
       break;
       
     case 2:
-      [self.artCodeTab pushLocation:self.artCodeTab.currentLocation.project.remotesListLocation];
+      [self.artCodeTab pushRemotesListForProject:self.artCodeTab.currentLocation.project];
       break;
       
     default:
-      [self.artCodeTab pushLocation:self.artCodeTab.currentLocation.project.location];
+      [self.artCodeTab pushProject:self.artCodeTab.currentLocation.project];
       break;
   }
 }

@@ -130,7 +130,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   if (!url)
     return;
   
-  [self.artCodeTab pushLocation:[[NSURL URLWithString:url] location]];
+  [self.artCodeTab pushDocSetURL:[NSURL URLWithString:url]];
   [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
 }
 

@@ -230,22 +230,15 @@ static void init(RemoteBrowserController *self) {
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  if (!self.isEditing)
-  {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (!self.isEditing) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
-    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
-    {
-      [self.artCodeTab pushLocation:[self.artCodeTab.currentLocation locationByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
-    }
-    else
-    {
+    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
+      [self.artCodeTab pushRemotePath:[self.artCodeTab.currentLocation.path stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]] withRemote:self.artCodeTab.currentLocation.remote];
+    } else {
       [self _toolEditExportAction:nil];
     }
-  }
-  else
-  {
+  } else {
     [self._selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];

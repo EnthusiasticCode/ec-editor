@@ -13,7 +13,16 @@
 #import "NSString+Utilities.h"
 
 #import "ArtCodeLocation.h"
+#import "ArtCodeProjectSet.h"
 
+
+@interface ArtCodeProjectBookmark ()
+
++ (ArtCodeProjectBookmark *)bookmarkWithFileURL:(NSURL *)fileURL lineNumber:(NSUInteger)lineNumber;
+
+@end
+
+#pragma mark -
 
 @implementation ArtCodeProject
 
@@ -44,5 +53,22 @@
 #pragma mark - Project-wide operations
 
 #pragma mark - Private Methods
+
+@end
+
+#pragma mark -
+
+@implementation ArtCodeProjectBookmark
+
+@synthesize fileURL = _fileURL, lineNumber = _lineNumber, name = _name;
+
++ (ArtCodeProjectBookmark *)bookmarkWithFileURL:(NSURL *)fileURL lineNumber:(NSUInteger)lineNumber {
+  ASSERT(fileURL);
+  ArtCodeProjectBookmark *bookmark = [[self alloc] init];
+  bookmark->_fileURL = fileURL;
+  bookmark->_lineNumber = lineNumber;
+  bookmark->_name = [NSString stringWithFormat:@"%@: %d", fileURL.lastPathComponent, lineNumber];
+  return bookmark;
+}
 
 @end
