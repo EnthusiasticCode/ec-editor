@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 /// Provides the contents of a directory, updating in response to file system events
-@interface DirectoryPresenter : NSObject <NSFastEnumeration>
+@interface DirectoryPresenter : NSObject <NSFastEnumeration, NSFilePresenter>
 
-/// Directory presented.
-@property (atomic, strong, readonly) NSURL *directoryURL;
+/// The fileURL of the presented directory
+@property (atomic, readonly) NSURL *presentedItemURL;
 
 /// An array of presented file URLs
 /// Affected by the directory that is presented and options

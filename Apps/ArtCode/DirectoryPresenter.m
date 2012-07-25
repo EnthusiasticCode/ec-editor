@@ -9,23 +9,22 @@
 #import "DirectoryPresenter.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSURL+Compare.h"
-#import <objc/runtime.h>
 
-@interface DirectoryPresenter () <NSFilePresenter>
-{
+@interface DirectoryPresenter () {
+  NSURL *_presentedItemURL;
   NSThread *_homeThread;
   NSMutableArray *_mutableFileURLs;
   NSOperationQueue *_internalAccessQueue;
   __weak NSTimer *_updateCoalescingTimer;
 }
-@property (atomic, strong) NSURL *directoryURL;
+@property (atomic) NSURL *presentedItemURL;
 - (void)_enqueueUpdate;
 - (void)_updateFileURLs;
 @end
 
 @implementation DirectoryPresenter
 
-@synthesize directoryURL = _directoryURL, options = _options;
+@synthesize presentedItemURL = _presentedItemURL, options = _options;
 
 #pragma mark - General methods
 
@@ -40,14 +39,14 @@
   self = [super init];
   if (!self)
     return nil;
-  _directoryURL = [directoryURL standardizedURL];
+  _presentedItemURL = [directoryURL standardizedURL];
   _options = options;
   _internalAccessQueue = [[NSOperationQueue alloc] init];
   _internalAccessQueue.maxConcurrentOperationCount = 1;
   _homeThread = [NSThread currentThread];
   _mutableFileURLs = [[NSMutableArray alloc] init];
   NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-  [fileCoordinator coordinateReadingItemAtURL:_directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+  [fileCoordinator coordinateReadingItemAtURL:_presentedItemURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
     [NSFileCoordinator addFilePresenter:self];
   }];
   [self _updateFileURLs];
@@ -75,7 +74,7 @@
   NSMutableIndexSet *indexesOfInsertedFileURLs = [[NSMutableIndexSet alloc] init];
   NSMutableIndexSet *indexesOfRemovedFileURLs = [[NSMutableIndexSet alloc] init];
   NSMutableArray *newFileURLs = [[NSMutableArray alloc] init];
-  NSURL *directoryURL = self.directoryURL;
+  NSURL *directoryURL = self.presentedItemURL;
   NSDirectoryEnumerationOptions options = self.options;
   if (directoryURL)
     [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
@@ -125,16 +124,6 @@
 
 #pragma mark - NSFilePresenter protocol
 
-- (NSURL *)presentedItemURL
-{
-  return self.directoryURL;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingPresentedItemURL
-{
-  return [NSSet setWithObject:@"directoryURL"];
-}
-
 - (NSOperationQueue *)presentedItemOperationQueue
 {
   return _internalAccessQueue;
@@ -143,7 +132,7 @@
 - (void)accommodatePresentedItemDeletionWithCompletionHandler:(void (^)(NSError *))completionHandler
 {
   ASSERT(NSOperationQueue.currentQueue == _internalAccessQueue);
-  self.directoryURL = nil;
+  self.presentedItemURL = nil;
   [self performSelector:@selector(_enqueueUpdate) onThread:_homeThread withObject:nil waitUntilDone:NO];
   completionHandler(nil);
 }
@@ -151,7 +140,7 @@
 - (void)presentedItemDidMoveToURL:(NSURL *)newURL
 {
   ASSERT(NSOperationQueue.currentQueue == _internalAccessQueue);
-  self.directoryURL = newURL;
+  self.presentedItemURL = newURL;
 }
 
 - (void)presentedItemDidChange

@@ -23,7 +23,7 @@
   return [self.history objectAtIndex:self.currentPositionValue];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingcurrentLocation {
++ (NSSet *)keyPathsForValuesAffectingCurrentLocation {
   return [NSSet setWithObject:@"currentPositionValue"];
 }
 

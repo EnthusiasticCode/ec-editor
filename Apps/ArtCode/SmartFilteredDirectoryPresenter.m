@@ -33,7 +33,7 @@ static void * _directoryObservingContext;
 
 - (NSURL *)directoryURL
 {
-  return self.directoryPresenter.directoryURL;
+  return self.directoryPresenter.presentedItemURL;
 }
 
 + (NSSet *)keyPathsForValuesAffectingDirectoryURL
