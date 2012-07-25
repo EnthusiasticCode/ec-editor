@@ -104,7 +104,9 @@
       [self.projectNameTextField selectAll:nil];
       self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
     } else {
-      project.labelColor = projectColor;
+      if (projectColor) {
+        project.labelColor = projectColor;
+      }
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }

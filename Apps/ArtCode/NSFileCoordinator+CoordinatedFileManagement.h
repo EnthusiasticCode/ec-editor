@@ -16,10 +16,10 @@
 
 + (void)coordinatedDeleteItemsAtURLs:(NSArray *)urls completionHandler:(void(^)(NSError *error))completionHandler;
 
-+ (void)coordinatedMoveItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedMoveItemsAtURLs:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
-+ (void)coordinatedCopyItemsAtURLS:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedCopyItemsAtURLs:(NSArray *)urls toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
 
-+ (void)coordinatedDuplicateItemsAtURLS:(NSArray *)urls completionHandler:(void(^)(NSError *error))completionHandler;
++ (void)coordinatedDuplicateItemsAtURLs:(NSArray *)urls completionHandler:(void(^)(NSError *error))completionHandler;
 
 @end

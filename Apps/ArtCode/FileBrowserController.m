@@ -269,7 +269,7 @@
     {
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
-      [NSFileCoordinator coordinatedDuplicateItemsAtURLS:_selectedItems completionHandler:^(NSError *error) {
+      [NSFileCoordinator coordinatedDuplicateItemsAtURLs:_selectedItems completionHandler:^(NSError *error) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
@@ -292,7 +292,7 @@
     {
       self.loading = YES;
       NSInteger selectedItemsCount = [_selectedItems count];
-      [NSFileCoordinator coordinatedCopyItemsAtURLS:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
+      [NSFileCoordinator coordinatedCopyItemsAtURLs:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];

@@ -28,10 +28,6 @@
 /// Duplicate the entire project.
 - (void)duplicateWithCompletionHandler:(void(^)(ArtCodeProject *duplicate))completionHandler;
 
-- (void)publishContentsToURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
-
-- (void)updateWithContentsOfURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
-
 @end
 
 @interface ArtCodeProjectBookmark : NSObject
