@@ -27,17 +27,6 @@ typedef enum {
 /// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
 @property (nonatomic) ArtCodeLocationType type;
 
-#pragma mark Top level locations
-
-/// Indicates if the location points to the default projects list
-- (BOOL)isProjectsList;
-
-/// Indicates if the location points to a project's bookmark list
-- (BOOL)isProjectBookmarksList;
-
-/// Indicates if the URL points to a project's bookmark list
-- (BOOL)isProjectRemotesList;
-
 #pragma mark URL specific
 
 /// Returns a file:// URL from either an artcode or a file URL.

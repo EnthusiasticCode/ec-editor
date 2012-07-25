@@ -33,7 +33,10 @@
     __block NSError *error = nil;
     [fileCoordinator coordinateWritingItemAtURL:url options:0 error:&error byAccessor:^(NSURL *newURL) {
       NSFileManager *fileManager = [[NSFileManager alloc] init];
-      BOOL success = [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:YES attributes:nil error:&error];
+      BOOL success = [fileManager createDirectoryAtURL:[newURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
+      if (success) {
+        success = [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:NO attributes:nil error:&error];
+      }
       dispatch_async(dispatch_get_main_queue(), ^{
         if (success) {
           completionHandler(nil, newURL);

@@ -363,7 +363,11 @@
           
         default: {
           NSURL *url = location.url;
-          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+          if (url) {
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+          } else {
+            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:@"No title"] selectedIndexes:[NSIndexSet indexSetWithIndex:0]];
+          }
           break;
         }
       }
