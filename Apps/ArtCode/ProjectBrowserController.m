@@ -107,39 +107,36 @@
   [self rac_bind:RAC_KEYPATH_SELF(projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
   
   // Update gird view
-  [self rac_addObserver:self forKeyPath:RAC_KEYPATH_SELF(projectsSet) options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld queue:[NSOperationQueue mainQueue] block:^(id target, NSDictionary *change) {
+  [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {
     ProjectBrowserController *strongSelf = this;
     if (!strongSelf)
       return;
+    NSString *projectName = [proj name];
+    __block NSUInteger index = strongSelf->_gridElements.count;
+    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
+        index = idx;
+        *stop = YES;
+      }
+    }];
+    strongSelf->_gridElements = nil;
+    [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+  }];
+  
+  [[ArtCodeProjectSet defaultSet].objectsRemoved subscribeNext:^(ArtCodeProject *proj) {
+    ProjectBrowserController *strongSelf = this;
+    if (!strongSelf)
+      return;
+    NSString *projectName = [proj name];
     __block NSUInteger index = 0;
-    NSUInteger changeType = [[change objectForKey:NSKeyValueChangeKindKey] unsignedIntegerValue];
-    if (changeType == NSKeyValueChangeInsertion) {
-      // When adding a project
-      [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeNewKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
-        NSString *projectName = [proj name];
-        [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-          if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
-            index = idx;
-            *stop = YES;
-          }
-        }];
-        strongSelf->_gridElements = nil;
-        [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-      }];
-    } else if (changeType == NSKeyValueChangeRemoval) {
-      // When deleting a project
-      [(NSOrderedSet *)[change objectForKey:NSKeyValueChangeOldKey] enumerateObjectsAtIndexes:[change objectForKey:NSKeyValueChangeIndexesKey] options:0 usingBlock:^(ArtCodeProject *proj, NSUInteger projIdx, BOOL *projStop) {
-        NSString *projectName = [proj name];
-        [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-          if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
-            index = idx;
-            *stop = YES;
-          }
-        }];
-        strongSelf->_gridElements = nil;
-        [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-      }];
-    }
+    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
+        index = idx;
+        *stop = YES;
+      }
+    }];
+    strongSelf->_gridElements = nil;
+    [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
   }];
   
   // Update the grid view when a docset gets removed
@@ -343,7 +340,7 @@
       NSArray *oldElements = self.gridElements;
       [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         if ([obj isKindOfClass:[ArtCodeProject class]]) {
-          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[obj presentedItemURL]] completionHandler:^(NSError *error) {
+          [[ArtCodeProjectSet defaultSet] removeProject:obj completionHandler:^(NSError *error) {
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
           }];

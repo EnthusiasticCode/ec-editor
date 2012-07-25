@@ -21,4 +21,12 @@
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void(^)(NSError *error))completionHandler;
 
+#pragma mark RAC Outlets
+
+// Sends each object after it has been added. It never completes or errors.
+@property (nonatomic, readonly) RACSubscribable *objectsAdded;
+
+// Sends each object after it has been removed. It never completes or errors.
+@property (nonatomic, readonly) RACSubscribable *objectsRemoved;
+
 @end

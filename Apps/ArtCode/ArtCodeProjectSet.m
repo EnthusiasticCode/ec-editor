@@ -16,7 +16,30 @@
 static NSString * const _localProjectsFolderName = @"LocalProjects";
 
 
-@implementation ArtCodeProjectSet
+@implementation ArtCodeProjectSet {
+  RACSubject *_objectsAddedSubject;
+  RACSubject *_objectsRemovedSubject;
+}
+
+- (RACSubscribable *)objectsAdded {
+  if (!_objectsAddedSubject) {
+    _objectsAddedSubject = [RACSubject subject];
+  }
+  return _objectsAddedSubject;
+}
+
+- (RACSubscribable *)objectsRemoved {
+  if (!_objectsRemovedSubject) {
+    _objectsRemovedSubject = [RACSubject subject];
+  }
+  return _objectsRemovedSubject;  
+}
+
+- (void)willTurnIntoFault {
+  [super willTurnIntoFault];
+  _objectsAddedSubject = nil;
+  _objectsRemovedSubject = nil;
+}
 
 #pragma mark - KVO overrides
 
@@ -59,6 +82,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:[newURL lastPathComponent]];
     [project setProjectSet:self];
+    [(RACSubject *)self.objectsAdded sendNext:project];
     completionHandler(project);
   }];
 }
@@ -70,6 +94,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
       return;
     }
     [[self managedObjectContext] deleteObject:project];
+    [(RACSubject *)self.objectsRemoved sendNext:project];
     completionHandler(nil);
   }];
 }
