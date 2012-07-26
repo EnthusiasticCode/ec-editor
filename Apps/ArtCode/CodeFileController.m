@@ -165,9 +165,11 @@ static void drawStencilStar(CGContextRef myContext)
     
     // Bookmark markers
     [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-      if (!line.isTruncation && [this.textFile hasBookmarkAtLine:lineNumber + 1])
-      {
-        CGContextSetFillColorWithColor(context, this->_codeView.lineNumbersColor.CGColor);
+      if (!line.isTruncation && [this.textFile hasBookmarkAtLine:lineNumber + 1]) {
+        CodeFileController *strongSelf = this;
+        if (!strongSelf)
+          return;
+        CGContextSetFillColorWithColor(context, strongSelf->_codeView.lineNumbersColor.CGColor);
         CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
         drawStencilStar(context);
       }

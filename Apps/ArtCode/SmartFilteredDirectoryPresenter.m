@@ -221,8 +221,12 @@ static void * _directoryObservingContext;
   {
     __weak SmartFilteredDirectoryPresenter *weakSelf = self;
     __fileURLComparatorBlock = ^NSComparisonResult(NSURL *fileURL1, NSURL *fileURL2){
-      NSNumber *associatedScore1 = objc_getAssociatedObject(fileURL1, &(weakSelf->_scoreAssociationKey));
-      NSNumber *associatedScore2 = objc_getAssociatedObject(fileURL2, &(weakSelf->_scoreAssociationKey));
+      SmartFilteredDirectoryPresenter *strongSelf = weakSelf;
+      if (!strongSelf) {
+        return NSOrderedSame;
+      }
+      NSNumber *associatedScore1 = objc_getAssociatedObject(fileURL1, &(strongSelf->_scoreAssociationKey));
+      NSNumber *associatedScore2 = objc_getAssociatedObject(fileURL2, &(strongSelf->_scoreAssociationKey));
       ASSERT(associatedScore1 && associatedScore2);
       float score1 = [associatedScore1 floatValue];
       float score2 = [associatedScore2 floatValue];

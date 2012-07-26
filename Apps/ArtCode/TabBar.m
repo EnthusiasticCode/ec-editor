@@ -205,35 +205,40 @@ static void init(TabBar *self)
   [self->tabControlsContainerView setShowsHorizontalScrollIndicator:NO];
   __weak TabBar *this = self;
   self->tabControlsContainerView.customLayoutSubviews = ^(UIScrollView *scrollView) {
+    TabBar *strongSelf = this;
+    if (!strongSelf) {
+      return;
+    }
+    
     CGRect bounds = scrollView.bounds;
     
     // TODO remove non visible controls
     
     // Determine button's size
-    CGRect buttonFrame = (CGRect) { CGPointZero, this->tabControlSize };
+    CGRect buttonFrame = (CGRect) { CGPointZero, strongSelf->tabControlSize };
     if (buttonFrame.size.height == 0)
       buttonFrame.size.height = bounds.size.height;
     
     // Layout tab buttons
     NSUInteger buttonIndex = 0;
-    for (UIControl *button in this->tabControls)
+    for (UIControl *button in strongSelf->tabControls)
     {
-      if (this->movedTab != nil
-          && buttonIndex == this->movedTabDestinationIndex 
-          && this->movedTabIndex > this->movedTabDestinationIndex)
+      if (strongSelf->movedTab != nil
+          && buttonIndex == strongSelf->movedTabDestinationIndex 
+          && strongSelf->movedTabIndex > strongSelf->movedTabDestinationIndex)
       {
         buttonFrame.origin.x += buttonFrame.size.width;
       }
       
-      if (button != this->movedTab)
+      if (button != strongSelf->movedTab)
       {
-        button.frame = UIEdgeInsetsInsetRect(buttonFrame, this->tabControlInsets);
+        button.frame = UIEdgeInsetsInsetRect(buttonFrame, strongSelf->tabControlInsets);
         buttonFrame.origin.x += buttonFrame.size.width;
       }
       
-      if (this->movedTab != nil
-          && buttonIndex == this->movedTabDestinationIndex 
-          && this->movedTabIndex <= this->movedTabDestinationIndex)
+      if (strongSelf->movedTab != nil
+          && buttonIndex == strongSelf->movedTabDestinationIndex 
+          && strongSelf->movedTabIndex <= strongSelf->movedTabDestinationIndex)
       {
         buttonFrame.origin.x += buttonFrame.size.width;
       }
@@ -244,29 +249,29 @@ static void init(TabBar *self)
     // Show left fading layer
     if (bounds.origin.x > 0)
     {
-      this->leftFadeLayer.frame = (CGRect){ 
+      strongSelf->leftFadeLayer.frame = (CGRect){ 
         CGPointZero, 
         CGSizeMake(20, bounds.size.height)
       };
-      this->leftFadeLayer.opacity = 1;
+      strongSelf->leftFadeLayer.opacity = 1;
     }
     else
     {
-      this->leftFadeLayer.opacity = 0;
+      strongSelf->leftFadeLayer.opacity = 0;
     }
     
     // Show right fading layer
     if (CGRectGetMaxX(bounds) < scrollView.contentSize.width)
     {
-      this->rightFadeLayer.frame = (CGRect){ 
-        CGPointMake(bounds.size.width - this->rightFadeLayer.bounds.size.width, 0), 
+      strongSelf->rightFadeLayer.frame = (CGRect){ 
+        CGPointMake(bounds.size.width - strongSelf->rightFadeLayer.bounds.size.width, 0),
         CGSizeMake(20, bounds.size.height)
       };
-      this->rightFadeLayer.opacity = 1;
+      strongSelf->rightFadeLayer.opacity = 1;
     }
     else
     {
-      this->rightFadeLayer.opacity = 0;
+      strongSelf->rightFadeLayer.opacity = 0;
     }
   };
   [self addSubview:self->tabControlsContainerView];
@@ -464,23 +469,28 @@ static void init(TabBar *self)
         {
           __weak TabBar *this = self;
           movedTabScrollTimer = [NSTimer scheduledTimerWithTimeInterval:1./100. usingBlock:^(NSTimer *timer) {
-            CGFloat contentOffsetX = this->tabControlsContainerView.contentOffset.x;
+            TabBar *strongSelf = this;
+            if (!strongSelf) {
+              return;
+            }
+            
+            CGFloat contentOffsetX = strongSelf->tabControlsContainerView.contentOffset.x;
             if ((scrollingOffset < 0 && contentOffsetX <= 0)
-                || (scrollingOffset > 0 && contentOffsetX >= (this->tabControlsContainerView.contentSize.width - this->tabControlsContainerView.bounds.size.width)))
+                || (scrollingOffset > 0 && contentOffsetX >= (strongSelf->tabControlsContainerView.contentSize.width - strongSelf->tabControlsContainerView.bounds.size.width)))
             {
-              [this->movedTabScrollTimer invalidate];
-              this->movedTabScrollTimer = nil;
+              [strongSelf->movedTabScrollTimer invalidate];
+              strongSelf->movedTabScrollTimer = nil;
             }
             else
             {
               CGFloat delta = roundf(scrollingOffset / 5);
               contentOffsetX += delta;
               
-              CGPoint center = this->movedTab.center;
+              CGPoint center = strongSelf->movedTab.center;
               center.x += delta;
-              this->movedTab.center = center;
+              strongSelf->movedTab.center = center;
               
-              [this->tabControlsContainerView scrollRectToVisible:CGRectMake(contentOffsetX, 0, this->tabControlsContainerView.bounds.size.width, 1) animated:NO];
+              [strongSelf->tabControlsContainerView scrollRectToVisible:CGRectMake(contentOffsetX, 0, strongSelf->tabControlsContainerView.bounds.size.width, 1) animated:NO];
             }
           } repeats:YES];
         }

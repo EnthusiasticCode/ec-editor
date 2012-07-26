@@ -720,7 +720,12 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     if (dispatch_semaphore_wait(textSegmentsSemaphore, dispatch_time(DISPATCH_TIME_NOW, 5 * 1000 * 1000)) != 0)
       return;
     
-    for (TextSegment *segment in this->textSegments)
+    TextRenderer *strongSelf = this;
+    if (!strongSelf) {
+      return;
+    }
+    
+    for (TextSegment *segment in strongSelf->textSegments)
     {
       [segment discardContentIfPossible];
     }

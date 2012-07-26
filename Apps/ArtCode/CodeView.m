@@ -348,23 +348,28 @@ static const void *rendererContext;
   {
     __weak CodeView *this = self;
     [self addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-      CGContextSetFillColorWithColor(context, this->lineNumbersColor.CGColor);
+      CodeView *strongSelf = this;
+      if (!strongSelf) {
+        return;
+      }
+      
+      CGContextSetFillColorWithColor(context, strongSelf->lineNumbersColor.CGColor);
       if (!line.isTruncation)
       {
         // Rendering line number
         // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
         NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
-        CGSize lineNumberStringSize = [lineNumberString sizeWithFont:this->lineNumbersFont];
+        CGSize lineNumberStringSize = [lineNumberString sizeWithFont:strongSelf->lineNumbersFont];
         
-        CGContextSelectFont(context, this->lineNumbersFont.fontName.UTF8String, this->lineNumbersFont.pointSize, kCGEncodingMacRoman);
+        CGContextSelectFont(context, strongSelf->lineNumbersFont.fontName.UTF8String, strongSelf->lineNumbersFont.pointSize, kCGEncodingMacRoman);
         CGContextSetTextDrawingMode(context, kCGTextFill);
         
-        CGContextShowTextAtPoint(context, -lineBounds.origin.x + this->lineNumbersWidth - lineNumberStringSize.width - 2, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
+        CGContextShowTextAtPoint(context, -lineBounds.origin.x + strongSelf->lineNumbersWidth - lineNumberStringSize.width - 2, line.descent + (lineBounds.size.height - lineNumberStringSize.height) / 2, lineNumberString.UTF8String, [lineNumberString lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
       }
       else
       {
         // Rendering dot
-        CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + this->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
+        CGContextFillEllipseInRect(context, CGRectMake(-lineBounds.origin.x + strongSelf->lineNumbersWidth - 3 - 4, (line.height - 3) / 2, 3, 3));
       }
     } underText:YES forKey:lineNumberPassKey];
   }
@@ -1829,6 +1834,11 @@ static void init(CodeView *self)
   // Render magnified image
   __weak TextMagnificationView *this = self;
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+    TextMagnificationView *strongSelf = this;
+    if (!strongSelf) {
+      return;
+    }
+    
     UIGraphicsBeginImageContext(this.bounds.size);
     // Prepare magnified context
     CGContextRef imageContext = UIGraphicsGetCurrentContext();        
@@ -1836,15 +1846,15 @@ static void init(CodeView *self)
     CGContextTranslateCTM(imageContext, -textRect.origin.x, 0);
     // Render text
     CGContextSaveGState(imageContext);
-    [this->parent.renderer drawTextWithinRect:textRect inContext:imageContext];
+    [strongSelf->parent.renderer drawTextWithinRect:textRect inContext:imageContext];
     CGContextRestoreGState(imageContext);
     // Render additional drawings
     if (block)
       block(imageContext, textRect.origin);
     // Get result image
-    @synchronized(this->detailImage)
+    @synchronized(strongSelf->detailImage)
     {
-      this->detailImage = UIGraphicsGetImageFromCurrentImageContext();
+      strongSelf->detailImage = UIGraphicsGetImageFromCurrentImageContext();
     }
     UIGraphicsEndImageContext();
     // Request rerendering

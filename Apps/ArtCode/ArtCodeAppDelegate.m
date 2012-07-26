@@ -20,6 +20,7 @@
 #import "CodeFileSearchBarController.h"
 #import "SearchableTableBrowserController.h"
 #import "PopoverButton.h"
+#import "NewProjectImportController.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeTabPageViewController.h"
@@ -31,7 +32,6 @@
   ArtCodeTabPageViewController *_tabPageController;
 }
 
-@synthesize window = _window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   UIFont *defaultFont = [UIFont styleFontWithSize:14];
@@ -154,8 +154,6 @@
   
   return YES;
 }
-
-#import "NewProjectImportController.h"
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
