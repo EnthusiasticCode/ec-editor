@@ -93,8 +93,9 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
       completionHandler(error);
       return;
     }
-    [[self managedObjectContext] deleteObject:project];
+    project.projectSet = nil;
     [(RACSubject *)self.objectsRemoved sendNext:project];
+    [[self managedObjectContext] deleteObject:project];
     completionHandler(nil);
   }];
 }
