@@ -35,7 +35,6 @@
 
 - (id)initWithDirectoryURL:(NSURL *)directoryURL options:(NSDirectoryEnumerationOptions)options
 {
-  ASSERT(directoryURL);
   self = [super init];
   if (!self)
     return nil;
@@ -45,11 +44,13 @@
   _internalAccessQueue.maxConcurrentOperationCount = 1;
   _homeThread = [NSThread currentThread];
   _mutableFileURLs = [[NSMutableArray alloc] init];
-  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-  [fileCoordinator coordinateReadingItemAtURL:_presentedItemURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-    [NSFileCoordinator addFilePresenter:self];
-  }];
-  [self _updateFileURLs];
+  if (_presentedItemURL) {
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    [fileCoordinator coordinateReadingItemAtURL:_presentedItemURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+      [NSFileCoordinator addFilePresenter:self];
+    }];
+    [self _updateFileURLs];
+  }
   return self;
 }
 
