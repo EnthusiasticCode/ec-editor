@@ -10,6 +10,9 @@
 
 @implementation NSString (PluralFormat)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+
 + (NSString *)stringWithFormatForSingular:(NSString *)singularFormat plural:(NSString *)pluralFormat count:(NSUInteger)count
 {
   return count == 1 ? [self stringWithFormat:singularFormat, count] : [self stringWithFormat:pluralFormat, count];
@@ -19,5 +22,7 @@
 {
   return count == 1 ? [self stringByAppendingFormat:singularFormat, count] : [self stringByAppendingFormat:pluralFormat, count];
 }
+
+#pragma clang diagnostic pop
 
 @end
