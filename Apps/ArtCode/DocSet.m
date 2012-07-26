@@ -27,7 +27,7 @@
 		copyright = [info objectForKey:@"NSHumanReadableCopyright"];
 		if (!copyright) copyright = @"";
 	} else {
-		self = nil;
+		return nil;
 	}
 		
 	searchQueue = dispatch_queue_create("DocSet Search Queue", NULL);
