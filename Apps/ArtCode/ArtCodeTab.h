@@ -24,11 +24,9 @@
 @property (nonatomic, readonly) BOOL canMoveForwardInHistory;
 
 /// Convinience method that moves the tab's history back by one step.
-/// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveBackInHistory;
 
 /// Convinience method that moves the tab's history forward by one step.
-/// KVO attached to currentLocation will be notified after this method is called.
 - (void)moveForwardInHistory;
 
 /// Pushes a location to the tab's history.

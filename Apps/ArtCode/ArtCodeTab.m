@@ -24,7 +24,7 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingCurrentLocation {
-  return [NSSet setWithObject:@"currentPositionValue"];
+  return [NSSet setWithObjects:@"currentPositionValue", @"history", nil];
 }
 
 - (BOOL)canMoveBackInHistory {
