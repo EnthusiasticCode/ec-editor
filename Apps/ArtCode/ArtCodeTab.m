@@ -85,9 +85,11 @@
 }
 
 - (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location {
+  [self willChangeValueForKey:@"currentLocation"];
   ArtCodeLocation *oldLocation = self.currentLocation;
   [[self historySet] replaceObjectAtIndex:self.currentPositionValue withObject:location];
   [oldLocation.managedObjectContext deleteObject:oldLocation];
+  [self didChangeValueForKey:@"currentLocation"];
 }
 
 @end
