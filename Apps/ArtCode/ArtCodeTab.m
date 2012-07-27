@@ -23,8 +23,8 @@
   return [self.history objectAtIndex:self.currentPositionValue];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingCurrentLocation {
-  return [NSSet setWithObjects:@"currentPositionValue", @"history", nil];
++ (BOOL)automaticallyNotifiesObserversOfCurrentLocation {
+  return NO;
 }
 
 - (BOOL)canMoveBackInHistory {
@@ -47,7 +47,9 @@
   if (!self.canMoveBackInHistory) {
     return;
   }
+  [self willChangeValueForKey:@"currentLocation"];
   self.currentPositionValue = self.currentPositionValue - 1;
+  [self didChangeValueForKey:@"currentLocation"];
 }
 
 - (void)moveForwardInHistory
@@ -55,7 +57,9 @@
   if (!self.canMoveForwardInHistory) {
     return;
   }
+  [self willChangeValueForKey:@"currentLocation"];
   self.currentPositionValue = self.currentPositionValue + 1;
+  [self didChangeValueForKey:@"currentLocation"];
 }
 
 - (void)awakeFromInsert {
