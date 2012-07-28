@@ -79,7 +79,7 @@
   NSDirectoryEnumerationOptions options = self.options;
   if (directoryURL)
     [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:directoryURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-      for (NSURL *fileURL in [[[NSFileManager alloc] init] enumeratorAtURL:newURL includingPropertiesForKeys:nil options:options errorHandler:nil])
+      for (NSURL *fileURL in [[[NSFileManager alloc] init] enumeratorAtURL:newURL includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:options errorHandler:nil])
         [newFileURLs addObject:fileURL];
     }];
   

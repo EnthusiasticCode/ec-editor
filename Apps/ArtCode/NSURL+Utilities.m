@@ -80,9 +80,10 @@
 
 - (BOOL)isDirectory {
   NSNumber *isDirectory;
-  if ([self getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && [isDirectory boolValue]) {
-    return YES;
+  if ([self getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
+    return [isDirectory boolValue];
   }
+  // Backup by looking with the defaul file manager
   BOOL isDirectoryBool = NO;
   [[NSFileManager defaultManager] fileExistsAtPath:self.path isDirectory:&isDirectoryBool];
   return isDirectoryBool;
