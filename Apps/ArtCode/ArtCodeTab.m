@@ -75,7 +75,6 @@
   if (self.currentPositionValue < lastPosition) {
     NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
     NSArray *locationsToDelete = [self.history objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeToDelete]];
-    [[self historySet] removeObjectsInRange:rangeToDelete];
     for (ArtCodeLocation *loc in locationsToDelete) {
       [self.managedObjectContext deleteObject:loc];
     }
