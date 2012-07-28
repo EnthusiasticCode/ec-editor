@@ -11,11 +11,13 @@
 
 #import "SmartFilteredDirectoryPresenter.h"
 #import "NSTimer+BlockTimer.h"
+#import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
 
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
+#import "ArtCodeProjectSet.h"
 #import "ArtCodeProject.h"
 
 #import "AppStyle.h"
@@ -108,7 +110,7 @@
   
   cell.textLabel.text = itemURL.lastPathComponent;
   cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
-  cell.detailTextLabel.text = itemURL.prettyPath;
+  cell.detailTextLabel.text = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:itemURL].prettyPath;
   
   return cell;
 }

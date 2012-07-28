@@ -29,4 +29,9 @@
 // Sends each object after it has been removed. It never completes or errors.
 @property (nonatomic, readonly) RACSubscribable *objectsRemoved;
 
+#pragma mark Utilities
+
+/// Returns a path relative to the project set for the given file URL.
+- (NSString *)relativePathForFileURL:(NSURL *)fileURL;
+
 @end
