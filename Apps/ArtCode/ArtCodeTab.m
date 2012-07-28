@@ -23,8 +23,8 @@
   return [self.history objectAtIndex:self.currentPositionValue];
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfCurrentLocation {
-  return NO;
++ (NSSet *)keyPathsForValuesAffectingCurrentLocation {
+  return [NSSet setWithObjects:@"currentPosition", @"history", nil];
 }
 
 - (BOOL)canMoveBackInHistory {
@@ -32,7 +32,7 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingCanMoveBackInHistory {
-  return [NSSet setWithObject:@"currentPositionValue"];
+  return [NSSet setWithObject:@"currentPosition"];
 }
 
 - (BOOL)canMoveForwardInHistory {
@@ -40,16 +40,14 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingCanMoveForwardInHistory {
-  return [NSSet setWithObjects:@"currentPositionValue", @"history", nil];
+  return [NSSet setWithObjects:@"currentPosition", @"history", nil];
 }
 
 - (void)moveBackInHistory {
   if (!self.canMoveBackInHistory) {
     return;
   }
-  [self willChangeValueForKey:@"currentLocation"];
   self.currentPositionValue = self.currentPositionValue - 1;
-  [self didChangeValueForKey:@"currentLocation"];
 }
 
 - (void)moveForwardInHistory
@@ -57,9 +55,7 @@
   if (!self.canMoveForwardInHistory) {
     return;
   }
-  [self willChangeValueForKey:@"currentLocation"];
   self.currentPositionValue = self.currentPositionValue + 1;
-  [self didChangeValueForKey:@"currentLocation"];
 }
 
 - (void)awakeFromInsert {
@@ -85,11 +81,9 @@
 }
 
 - (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location {
-  [self willChangeValueForKey:@"currentLocation"];
   ArtCodeLocation *oldLocation = self.currentLocation;
   [[self historySet] replaceObjectAtIndex:self.currentPositionValue withObject:location];
   [oldLocation.managedObjectContext deleteObject:oldLocation];
-  [self didChangeValueForKey:@"currentLocation"];
 }
 
 @end
