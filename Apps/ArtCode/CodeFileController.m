@@ -912,8 +912,10 @@ static void drawStencilStar(CGContextRef myContext)
 {
   if ([self _isWebPreview] && self.textFile)
   {
-    [self.webView loadRequest:[NSURLRequest requestWithURL:self.artCodeTab.currentLocation.url]];
-    self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.artCodeTab.currentLocation.url options:0 error:NULL byAccessor:^(NSURL *newURL) {
+      [self.webView loadRequest:[NSURLRequest requestWithURL:newURL]];
+      self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    }];
   }
   else
   {
