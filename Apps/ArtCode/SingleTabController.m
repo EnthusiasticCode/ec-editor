@@ -348,25 +348,25 @@
   if (![self.contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
       || ![(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl]) {
     if ([self.contentViewController.title length] > 0) {
-      [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:self.contentViewController.title] selectedIndexes:nil];
+      [self.defaultToolbar.titleControl setTitleFragments:@[ self.contentViewController.title ] selectedIndexes:nil];
     } else {
       // Create title fragments from a location
       ArtCodeLocation *location = self.artCodeTab.currentLocation;
       switch (location.type) {
         case ArtCodeLocationTypeProject:
-          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name, nil] selectedIndexes:nil];
+          [self.defaultToolbar.titleControl setTitleFragments:@[ [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name ] selectedIndexes:nil];
           break;
           
         case ArtCodeLocationTypeTextFile:
-          [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[location.path stringByDeletingLastPathComponent], location.name, nil] selectedIndexes:nil];
+          [self.defaultToolbar.titleControl setTitleFragments:@[ [location.path stringByDeletingLastPathComponent], location.name ] selectedIndexes:nil];
           break;
           
         default: {
           NSURL *url = location.url;
           if (url) {
-            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObjects:[NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+            [self.defaultToolbar.titleControl setTitleFragments:@[ [NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path ] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
           } else {
-            [self.defaultToolbar.titleControl setTitleFragments:[NSArray arrayWithObject:@"No title"] selectedIndexes:[NSIndexSet indexSetWithIndex:0]];
+            [self.defaultToolbar.titleControl setTitleFragments:@[ @"No title" ] selectedIndexes:[NSIndexSet indexSetWithIndex:0]];
           }
           break;
         }

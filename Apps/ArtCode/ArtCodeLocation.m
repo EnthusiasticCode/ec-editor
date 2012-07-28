@@ -7,6 +7,7 @@
 //
 
 #import "ArtCodeLocation.h"
+#import "ArtCodeProjectSet.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
 #import "NSString+Utilities.h"
@@ -86,7 +87,7 @@
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {
-      path = [path substringFromIndex:self.project.fileURL.path.length];
+      path = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:self.url];
     }
       
     default:

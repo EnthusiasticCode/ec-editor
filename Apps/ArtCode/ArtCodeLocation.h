@@ -37,7 +37,7 @@ typedef enum {
 
 - (NSString *)fileExtension;
 
-/// The path from the project containing the file name.
+/// The path from the project containing the file name included.
 - (NSString *)path;
 
 - (NSString *)prettyPath;
