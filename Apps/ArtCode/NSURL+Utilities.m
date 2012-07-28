@@ -78,6 +78,16 @@
   return NO;
 }
 
+- (BOOL)isDirectory {
+  NSNumber *isDirectory;
+  if ([self getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && [isDirectory boolValue]) {
+    return YES;
+  }
+  BOOL isDirectoryBool = NO;
+  [[NSFileManager defaultManager] fileExistsAtPath:self.path isDirectory:&isDirectoryBool];
+  return isDirectoryBool;
+}
+
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number {
   return [self.URLByDeletingLastPathComponent URLByAppendingPathComponent:[self.lastPathComponent stringByAddingDuplicateNumber:number]];
 }
