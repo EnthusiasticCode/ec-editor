@@ -102,11 +102,12 @@
 }
 
 - (NSArray *)filteredItems {
-  __weak FileBrowserController *this = self;
-  
   // Generating the default directory presenter if needed
   if (!_directoryPresenter) {
     _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+    
+    // RAC
+    __weak FileBrowserController *this = self;
     [RACAble(_directoryPresenter, fileURLs) subscribeNext:^(id x) {
       [this.tableView reloadData];
     }];

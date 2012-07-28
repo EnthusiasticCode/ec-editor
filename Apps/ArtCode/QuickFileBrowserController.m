@@ -9,8 +9,8 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
+#import "SmartFilteredDirectoryPresenter.h"
 #import "NSTimer+BlockTimer.h"
-#import "NSArray+ScoreForAbbreviation.h"
 #import "NSURL+Utilities.h"
 
 #import "ArtCodeLocation.h"
@@ -31,42 +31,30 @@
 
 
 @implementation QuickFileBrowserController {
-  NSArray *_filteredItems;
-  NSArray *_filteredItemsHitMasks;
+  SmartFilteredDirectoryPresenter *_filteredDirectoryPresenter;
 }
 
 #pragma mark - Properties
 
-- (NSArray *)filteredItems
-{
-  if (!_filteredItems)
-  {
-    if ([self.searchBar.text length])
-    {
-      NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentLocation.project.allFiles sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(NSURL *elementURL) {
-        return elementURL.lastPathComponent;
-      }];
-      _filteredItemsHitMasks = hitMasks;
-      if ([_filteredItems count] == 0)
-        self.infoLabel.text = L(@"Nothing found.");
-      else
-        self.infoLabel.text = @"";
-    }
-    else
-    {
-      _filteredItems = nil;
-      _filteredItemsHitMasks = nil;
-      self.infoLabel.text = L(@"Type a file name to open.");
-    }
+- (NSArray *)filteredItems {
+  if (!_filteredDirectoryPresenter) {
+    _filteredDirectoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.artCodeTab.currentLocation.project.fileURL options:0];
   }
-  return _filteredItems;
+  
+  _filteredDirectoryPresenter.filterString = self.searchBar.text;
+  
+  if (self.searchBar.text.length == 0) {
+    self.infoLabel.text = L(@"Type a file name to open.");
+  } else if (_filteredDirectoryPresenter.fileURLs.count == 0) {
+    self.infoLabel.text = L(@"Nothing found.");
+  } else {
+    self.infoLabel.text = @"";
+  }
+  return _filteredDirectoryPresenter.fileURLs;
 }
 
-- (void)invalidateFilteredItems
-{
-  _filteredItems = nil;
-  _filteredItemsHitMasks = nil;
+- (void)invalidateFilteredItems {
+  _filteredDirectoryPresenter = nil;
 }
 
 #pragma mark - Controller lifecycle
@@ -119,7 +107,7 @@
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
+  cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
   cell.detailTextLabel.text = itemURL.prettyPath;
   
   return cell;
