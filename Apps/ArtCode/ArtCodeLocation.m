@@ -168,7 +168,6 @@
   if (data) {
     location.data = data;
   }
-  location.tab = self;
   [self pushLocation:location];
 }
 

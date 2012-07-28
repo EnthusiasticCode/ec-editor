@@ -70,12 +70,17 @@
 - (void)pushLocation:(ArtCodeLocation *)location
 {
   ASSERT(location && self.history.count); // Cannot be called on empty tab
-  // Adding path to history and move forward
+  // Remove locations between the current position and the end of the history
   int16_t lastPosition = self.history.count - 1;
   if (self.currentPositionValue < lastPosition) {
     NSRange rangeToDelete = NSMakeRange(self.currentPositionValue + 1, lastPosition - self.currentPositionValue);
+    NSArray *locationsToDelete = [self.history objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rangeToDelete]];
     [[self historySet] removeObjectsInRange:rangeToDelete];
+    for (ArtCodeLocation *loc in locationsToDelete) {
+      [self.managedObjectContext deleteObject:loc];
+    }
   }
+  // Adding path to history and move forward
   [[self historySet] addObject:location];
   [self moveForwardInHistory];
 }
