@@ -20,6 +20,9 @@
 @implementation ArtCodeTab
 
 - (ArtCodeLocation *)currentLocation {
+  if (self.currentPositionValue + 1 > (int16_t)self.history.count) {
+    return nil;
+  }
   return [self.history objectAtIndex:self.currentPositionValue];
 }
 

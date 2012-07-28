@@ -10,8 +10,6 @@
 
 @implementation TextFile
 
-@synthesize content = _content;
-
 #pragma mark - UIDocument
 
 - (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
@@ -20,6 +18,20 @@
   }
   self.content = [[NSString alloc] initWithData:contents encoding:NSUTF8StringEncoding];
   return YES;
+}
+
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
+  return [self.content dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+#pragma mark - Public Methods
+
+- (void)setContent:(NSString *)content {
+  if (content == _content) {
+    return;
+  }
+  _content = content;
+  [self updateChangeCount:UIDocumentChangeDone];
 }
 
 @end

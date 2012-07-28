@@ -14,7 +14,7 @@
 - (void)_layoutSubviews;
 
 - (void)_populateChildViewControllersUpToCount:(NSUInteger)tabsCount;
-- (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
+- (void)_setSelectedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated;
 
 @end
 
@@ -83,14 +83,14 @@
     return xs;
   }] subscribeNext:^(RACTuple *tuple) {
     [this _populateChildViewControllersUpToCount:[tuple.second unsignedIntegerValue]];
-    [this _setSelctedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
+    [this _setSelectedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
   }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  [self _setSelctedChildViewControllerForTabAtIndex:self.tabBar.selectedTabIndex animated:NO];
+  [self _setSelectedChildViewControllerForTabAtIndex:self.tabBar.selectedTabIndex animated:NO];
 }
 
 #pragma mark - Private methods
@@ -151,7 +151,7 @@
   }
 }
 
-- (void)_setSelctedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
+- (void)_setSelectedChildViewControllerForTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated {
   ASSERT(self.dataSource);
   
   if (tabIndex == NSNotFound)
