@@ -221,21 +221,29 @@
   if (!_isSearchBarStaticOnTop) {
     // Account for keyboard and resize table accordingly
     [disposables addObject:[[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
+      CGPoint tableViewOffset = this.tableView.contentOffset;
+      SearchableTableBrowserController *strongSelf = this;
       if (note.name == UIKeyboardDidShowNotification) {
         CGRect tableViewFrame = this.tableView.frame;
         tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
         this.tableView.frame = tableViewFrame;
       } else {
-        SearchableTableBrowserController *strongSelf = this;
         CGRect tableViewFrame = this.view.bounds;
+        // Re-calculate frame based of search bar position
         if (strongSelf && strongSelf->_isSearchBarStaticOnTop) {
           tableViewFrame.origin.y = 44;
           tableViewFrame.size.height -= 44;
         }
+        // Account for bottom bar
         if (this.bottomToolBar != nil) {
           tableViewFrame.size.height -= this.bottomToolBar.bounds.size.height;
         }
+        // Resize table view
         this.tableView.frame = tableViewFrame;
+      }
+      // Account for search bar glitch
+      if (strongSelf && !strongSelf->_isSearchBarStaticOnTop && tableViewOffset.y < 45) {
+        [this.tableView setContentOffset:tableViewOffset animated:NO];
       }
     }]];
   }
