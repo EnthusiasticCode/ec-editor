@@ -887,8 +887,8 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState
 {
-  // TODO NIK better check for file type
-  if (editingState || ![[self.textFile.localizedName pathExtension] isEqualToString:@"html"])
+#warning TODO NIK better check for file type
+  if (editingState || ![self.artCodeTab.currentLocation.fileExtension isEqualToString:@"html"])
   {
     return self.codeView;
   }
@@ -912,7 +912,7 @@ static void drawStencilStar(CGContextRef myContext)
 {
   if ([self _isWebPreview] && self.textFile)
   {
-    [self.webView loadHTMLString:self.textFile.content baseURL:nil];
+    [self.webView loadRequest:[NSURLRequest requestWithURL:self.artCodeTab.currentLocation.url]];
     self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
   }
   else
