@@ -347,31 +347,41 @@
 {
   if (![self.contentViewController respondsToSelector:@selector(singleTabController:setupDefaultToolbarTitleControl:)]
       || ![(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self setupDefaultToolbarTitleControl:self.defaultToolbar.titleControl]) {
+    NSArray *fragments = nil;
+    NSIndexSet *fragmentSelection = nil;
     if ([self.contentViewController.title length] > 0) {
-      [self.defaultToolbar.titleControl setTitleFragments:@[ self.contentViewController.title ] selectedIndexes:nil];
+      // Use content controller title if present
+      fragments = @[ self.contentViewController.title ];
     } else {
       // Create title fragments from a location
       ArtCodeLocation *location = self.artCodeTab.currentLocation;
-      switch (location.type) {
+      if (location) switch (location.type) {
+        // For projects show the project name and label
         case ArtCodeLocationTypeProject:
-          [self.defaultToolbar.titleControl setTitleFragments:@[ [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name ] selectedIndexes:nil];
+          fragments = @[ [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name ];
           break;
           
+        // Files show the location in the project
         case ArtCodeLocationTypeTextFile:
-          [self.defaultToolbar.titleControl setTitleFragments:@[ [location.path stringByDeletingLastPathComponent], location.name ] selectedIndexes:nil];
-          break;
-          
-        default: {
-          NSURL *url = location.url;
-          if (url) {
-            [self.defaultToolbar.titleControl setTitleFragments:@[ [NSString stringWithFormat:@"%@://", url.scheme], url.host, url.path ] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
-          } else {
-            [self.defaultToolbar.titleControl setTitleFragments:@[ @"No title" ] selectedIndexes:[NSIndexSet indexSetWithIndex:0]];
+          if (location.url) {
+            fragments = @[ [location.path stringByDeletingLastPathComponent], location.name ];
           }
           break;
-        }
+          
+        // Anything else shows the location's URL highlighting the host
+        default:
+          if (location.url) {
+            fragments = @[ [NSString stringWithFormat:@"%@://", location.url.scheme], location.url.host, location.url.path ];
+            fragmentSelection = [NSIndexSet indexSetWithIndex:1];
+          }
+          break;
       }
     }
+    // Setup title
+    if (!fragments) {
+      fragments = @[ @"Nothing found" ];
+    }
+    [self.defaultToolbar.titleControl setTitleFragments:fragments selectedIndexes:fragmentSelection];
   }
   
   self.defaultToolbar.titleControl.backgroundButton.enabled = [(UIViewController<SingleTabContentController> *)self.contentViewController singleTabController:self shouldEnableTitleControlForDefaultToolbar:self.defaultToolbar];
