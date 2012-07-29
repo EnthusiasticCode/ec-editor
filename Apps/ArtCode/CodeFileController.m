@@ -456,7 +456,7 @@ static void drawStencilStar(CGContextRef myContext)
   
   // Create a text file when the location changes
   [RACAbleSelf(artCodeTab.currentLocation) subscribeNext:^(ArtCodeLocation *location) {
-    if (!location || location.type != ArtCodeLocationTypeTextFile) {
+    if (!location || location.type != ArtCodeLocationTypeTextFile || !location.url) {
       this.textFile = nil;
       return;
     }
