@@ -157,7 +157,6 @@ static void drawStencilStar(CGContextRef myContext)
     undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
     undoRecognizer.numberOfTouchesRequired = 2;
     [_codeView addGestureRecognizer:undoRecognizer];
-    
     UISwipeGestureRecognizer *redoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureRedo:)];
     redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
     undoRecognizer.numberOfTouchesRequired = 2;
@@ -454,11 +453,18 @@ static void drawStencilStar(CGContextRef myContext)
   schedulerQueue.maxConcurrentOperationCount = 1;
   _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
   __weak CodeFileController *this = self;
+  
+  // Create a text file when the location changes
+  [RACAbleSelf(artCodeTab.currentLocation) subscribeNext:^(ArtCodeLocation *location) {
+    if (!location || location.type != ArtCodeLocationTypeTextFile) {
+      this.textFile = nil;
+      return;
+    }
+    this.textFile = [[TextFile alloc] initWithFileURL:location.url];
+  }];
 
   // Update the code when contents change
-  [[RACAbleSelf(textFile.content) where:^BOOL(id x) {
-    return x != nil;
-  }] subscribeNext:^(NSString *content) {
+  [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
     [this.codeUnit reparseWithUnsavedContent:content];
   }];
   
@@ -504,6 +510,13 @@ static void drawStencilStar(CGContextRef myContext)
     if (content) {
       [this.codeUnit reparseWithUnsavedContent:content];
     }
+  }];
+  
+  // Remove the TMUnit when the file is gone
+  [[RACAbleSelf(textFile) where:^BOOL(id x) {
+    return x == nil;
+  }] subscribeNext:^(id x) {
+    this.codeUnit = nil;
   }];
   
   return self;
