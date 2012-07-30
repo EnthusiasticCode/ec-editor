@@ -278,7 +278,7 @@
     cell.title.text = cell.accessibilityLabel = project.name;
     cell.label.text = @"";
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-    cell.newlyCreatedBadge.hidden = !project.newlyCreated;
+    cell.newlyCreatedBadge.hidden = !project.newlyCreatedValue;
     cell.accessibilityHint = L(@"Open the project");
   } else if ([element isKindOfClass:[DocSet class]]) {
     DocSet *docSet = (DocSet *)element;
@@ -302,6 +302,7 @@
   if (!self.isEditing) {
     id element = [self.gridElements objectAtIndex:cellIndex];
     if ([element isKindOfClass:[ArtCodeProject class]]) {
+      [(ArtCodeProject *)element setNewlyCreatedValue:NO];
       [self.artCodeTab pushProject:element];
     } else if ([element isKindOfClass:[DocSet class]]) {
       [self.artCodeTab pushDocSetURL:[(DocSet *)element docSetURLForNode:nil]];
