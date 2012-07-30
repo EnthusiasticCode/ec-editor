@@ -13,13 +13,28 @@
 
 @implementation ArchiveUtilities
 
-+ (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL
++ (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
+  NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    // Prepare to execute the extracting operation
+    __block NSError *error = nil;
+    [fileCoordinator coordinateReadingItemAtURL:archiveURL options:0 writingItemAtURL:url options:0 error:&error byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+      [self extractArchiveAtURL:newReadingURL toDirectory:newWritingURL error:&error];
+    }];
+    // Call the external completion handler
+    dispatch_async(dispatch_get_main_queue(), ^{
+      completionHandler(error);
+    });
+  });
+}
+
++ (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
 {
   ASSERT(archiveURL && directoryURL);
   
   NSFileManager *fileManager = [[NSFileManager alloc] init];
   NSURL *workingDirectory = [NSURL uniqueDirectoryInDirectory:directoryURL];
-  if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:NULL])
+  if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:error])
     return NO;
   NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
   [fileManager changeCurrentDirectoryPath:[workingDirectory path]];
@@ -65,28 +80,28 @@
     if (returnCode < 0)
       break;
   }
-  for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:NULL])
+  for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:error])
   {
     NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
-    [fileManager moveItemAtURL:fileURL toURL:destinationURL error:NULL];
+    [fileManager moveItemAtURL:fileURL toURL:destinationURL error:error];
   }
   archive_write_close(output);
   archive_write_free(output);
   archive_read_close(archive);
   archive_read_free(archive);
   
-  [fileManager removeItemAtURL:workingDirectory error:NULL];
+  [fileManager removeItemAtURL:workingDirectory error:error];
   [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
   
   return returnCode >= 0 ? YES : NO;
 }
 
-+ (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL
++ (BOOL)compressDirectoryAtURL:(NSURL *)directoryURL toArchive:(NSURL *)archiveURL error:(NSError **)error
 {
   ASSERT(directoryURL && archiveURL);
   
   NSFileManager *fileManager = [[NSFileManager alloc] init];
-  ASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:NULL] fileType] == NSFileTypeDirectory);
+  ASSERT([[fileManager attributesOfItemAtPath:[directoryURL path] error:error] fileType] == NSFileTypeDirectory);
   NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
   [fileManager changeCurrentDirectoryPath:[directoryURL path]];
   
@@ -100,7 +115,7 @@
   }
   
   int returnCode = ARCHIVE_FATAL;
-  for (NSString *relativeFilePath in [fileManager contentsOfDirectoryAtPath:[directoryURL path] error:NULL])
+  for (NSString *relativeFilePath in [fileManager contentsOfDirectoryAtPath:[directoryURL path] error:error])
   {
     struct archive *disk = archive_read_disk_new();
     archive_read_disk_set_standard_lookup(disk);
@@ -148,7 +163,7 @@
   archive_write_free(archive);
   
   if (returnCode == ARCHIVE_FATAL)
-    [fileManager removeItemAtURL:archiveURL error:NULL];
+    [fileManager removeItemAtURL:archiveURL error:error];
   [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
   
   return returnCode != ARCHIVE_FATAL ? YES : NO;

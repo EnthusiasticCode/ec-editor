@@ -28,15 +28,15 @@
 }
 
 + (void)coordinatedMakeDirectoryAtURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void (^)(NSError *, NSURL *))completionHandler {
+  ASSERT(!renameIfNeeded); // Not impemented
   NSFileCoordinator *fileCoordinator = [[self alloc] init];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     __block NSError *error = nil;
     [fileCoordinator coordinateWritingItemAtURL:url options:0 error:&error byAccessor:^(NSURL *newURL) {
       NSFileManager *fileManager = [[NSFileManager alloc] init];
-      BOOL success = [fileManager createDirectoryAtURL:[newURL URLByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
-      if (success) {
-        success = [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:NO attributes:nil error:&error];
-      }
+      // Create new directory
+      BOOL success = [fileManager createDirectoryAtURL:newURL withIntermediateDirectories:YES attributes:nil error:&error];
+      // Send completion handler
       dispatch_async(dispatch_get_main_queue(), ^{
         if (success) {
           completionHandler(nil, newURL);
