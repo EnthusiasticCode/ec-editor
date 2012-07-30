@@ -28,6 +28,39 @@
   });
 }
 
++ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)archiveURL renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void (^)(NSError *, NSURL *))completionHandler {
+  NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    __block NSError *error = nil;
+    NSURL *newArchiveURL = archiveURL;
+    // Generate valid archiveURL if needed
+    if (renameIfNeeded) {
+      NSFileManager *fileManager = [NSFileManager new];
+      NSUInteger duplicateCount = 0;
+      __block BOOL alreadyExisting = NO;
+      do {
+        // Check for existance
+        [fileCoordinator coordinateReadingItemAtURL:newArchiveURL options:0 error:&error byAccessor:^(NSURL *newURL) {
+          alreadyExisting = [fileManager fileExistsAtPath:newURL.path];
+        }];
+        // Create a new destination URL if needed
+        if (alreadyExisting) {
+          newArchiveURL = [archiveURL URLByAddingDuplicateNumber:++duplicateCount];
+        }
+      } while (alreadyExisting);
+    }
+    // Prepare to execute the extracting operation
+    ASSERT(urls.count == 1); // Not implemented for multiple files
+    [fileCoordinator coordinateReadingItemAtURL:[urls objectAtIndex:0] options:0 writingItemAtURL:newArchiveURL options:0 error:&error byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+      [self compressDirectoryAtURL:newReadingURL toArchive:newWritingURL error:&error];
+    }];
+    // Call the external completion handler
+    dispatch_async(dispatch_get_main_queue(), ^{
+      completionHandler(error, newArchiveURL);
+    });
+  });
+}
+
 + (BOOL)extractArchiveAtURL:(NSURL *)archiveURL toDirectory:(NSURL *)directoryURL error:(NSError **)error
 {
   ASSERT(archiveURL && directoryURL);

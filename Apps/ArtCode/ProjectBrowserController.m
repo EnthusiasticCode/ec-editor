@@ -375,7 +375,7 @@
         if ([obj isKindOfClass:[ArtCodeProject class]]) {
           ArtCodeProject *project = obj;
           NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.fileURL] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error, NSURL *newURL) {
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:@[ project.fileURL ] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error, NSURL *newURL) {
             // TODO error handling?
             progressBlock();
           }];

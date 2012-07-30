@@ -11,7 +11,7 @@
 @interface ArchiveUtilities : NSObject
 
 + (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
-+ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)url renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error, NSURL *newURL))completionHandler;
++ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)archiveURL renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error, NSURL *newURL))completionHandler;
 
 @end
 
