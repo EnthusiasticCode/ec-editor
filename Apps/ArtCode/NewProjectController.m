@@ -106,6 +106,8 @@
     } else {
       if (projectColor) {
         project.labelColor = projectColor;
+      } else {
+        project.labelColor = [UIColor styleForegroundColor];
       }
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
