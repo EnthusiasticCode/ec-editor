@@ -17,6 +17,7 @@
 #import "DirectoryPresenter.h"
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
+#import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 
 @interface NewProjectImportController ()
@@ -128,9 +129,27 @@
         [self stopRightBarButtonItemActivityIndicator];
         self.tableView.userInteractionEnabled = YES;
         
-        [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-        // TODO error handling
+        // Explode single folder if present
+        __block NSArray *explodingURLs = nil;
+        [[NSFileCoordinator new] coordinateReadingItemAtURL:createdProject.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+          NSFileManager *fileManager = [NSFileManager new];
+          NSArray *projectContents = [fileManager contentsOfDirectoryAtURL:createdProject.fileURL includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+          NSNumber *isDirectory = nil;
+          if (projectContents.count == 1 && [[projectContents objectAtIndex:0] getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && isDirectory.boolValue) {
+            explodingURLs = [fileManager contentsOfDirectoryAtURL:[projectContents objectAtIndex:0] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+          }
+        }];
+        if (explodingURLs) {
+          [NSFileCoordinator coordinatedMoveItemsAtURLs:explodingURLs toURL:createdProject.fileURL completionHandler:^(NSError *er) {
+            [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            // TODO error handling
+          }];
+        } else {
+          [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          // TODO error handling
+        }
       }];
     } else {
       ASSERT(NO); // TODO error handling
