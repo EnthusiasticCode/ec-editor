@@ -49,7 +49,6 @@
 //@property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
 @property (nonatomic, strong) RACScheduler *codeScheduler;
-@property (nonatomic, strong) RACDisposable *tokensDisposable;
 
 @property (nonatomic, weak) TMSymbol *currentSymbol;
 
@@ -131,7 +130,7 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize /*_keyboardAccessoryItemCompletionsController, */codeUnit = _codeUnit, codeScheduler = _codeScheduler, tokensDisposable = _tokensDisposable, currentSymbol = _currentSymbol;
+@synthesize /*_keyboardAccessoryItemCompletionsController, */codeUnit = _codeUnit, codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
 
 - (CodeView *)codeView {
   if (!_codeView && self.isViewLoaded) {
@@ -443,81 +442,52 @@ static void drawStencilStar(CGContextRef myContext)
   if (self.artCodeTab.currentLocation.url) {
     self.textFile = [[TextFile alloc] initWithFileURL:self.artCodeTab.currentLocation.url];
     [self.textFile openWithCompletionHandler:^(BOOL success) {
-      // Load the contents
-      self.codeView.text = self.textFile.content;
-      
-      // RAC
+      __weak CodeFileController *this = self;
       NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
       schedulerQueue.maxConcurrentOperationCount = 1;
       _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
-      __weak CodeFileController *this = self;
+      // Load the contents
+      self.codeView.text = self.textFile.content;
       
-      // Create a text file when the location changes
-      [RACAbleSelf(artCodeTab.currentLocation) subscribeNext:^(ArtCodeLocation *location) {
-        if (!location || location.type != ArtCodeLocationTypeTextFile || !location.url) {
-          this.textFile = nil;
-          return;
-        }
-        this.textFile = [[TextFile alloc] initWithFileURL:location.url];
+      // Selecting the syntax to use
+      TMSyntaxNode *syntax = nil;
+      if (self.textFile.explicitSyntaxIdentifier) {
+        syntax = [TMSyntaxNode syntaxWithScopeIdentifier:self.textFile.explicitSyntaxIdentifier];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFirstLine:[self.textFile.content substringWithRange:[self.textFile.content lineRangeForRange:NSMakeRange(0, 0)]]];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFileName:self.textFile.fileURL.lastPathComponent];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode defaultSyntax];
+      }
+      ASSERT(syntax && self.textFile.content);
+      [_codeScheduler schedule:^{
+        TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:self.textFile.fileURL syntax:syntax index:nil];
+        [[RACScheduler mainQueueScheduler] schedule:^{
+          this.codeUnit = codeUnit;
+          [[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+            CodeFileController *strongSelf = this;
+            if (!strongSelf) {
+              return;
+            }
+            [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+          }];
+          [_codeScheduler schedule:^{
+            [this.codeUnit reparseWithUnsavedContent:this.textFile.content];
+          }];
+        }];
       }];
+
+      // RAC
       
       // Update the code when contents change
       [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
         [this.codeUnit reparseWithUnsavedContent:content];
       }];
-      
-      // Create a new TMUnit when the file changes
-      [[[[[[[[[RACAbleSelf(textFile) where:^BOOL(id x) {
-        return x != nil;
-      }] doNext:^(TextFile *x) {
-        // Set the text for the codeview
-        this.codeView.text = x.content;
-      }] select:^id(TextFile *x) {
-        // Selecting the syntax to use
-        TMSyntaxNode *syntax = nil;
-        if (x.explicitSyntaxIdentifier) {
-          syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
-        }
-        if (!syntax) {
-          syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
-        }
-        if (!syntax) {
-          syntax = [TMSyntaxNode syntaxForFileName:x.localizedName];
-        }
-        if (!syntax) {
-          syntax = [TMSyntaxNode defaultSyntax];
-        }
-        ASSERT(syntax && x.content);
-        return [RACTuple tupleWithObjects:x.fileURL, x.content, syntax, nil];
-      }] deliverOn:this.codeScheduler] select:^id(RACTuple *x) {
-        // Create a code unit
-        TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:x.first syntax:x.third index:nil];
-        return [RACTuple tupleWithObjects:codeUnit, codeUnit.tokens, x.second, nil];
-      }] deliverOn:[RACScheduler mainQueueScheduler]] select:^id(RACTuple *x) {
-        this.codeUnit = x.first;
-        // Subscribe to the token subject when the codeUnit changes
-        [this.tokensDisposable dispose];
-        this.tokensDisposable = [[[x.second subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
-          CodeFileController *strongSelf = this;
-          if (!strongSelf) {
-            return;
-          }
-          [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
-        }];
-        return x.third;
-      }] deliverOn:this.codeScheduler] subscribeNext:^(NSString *content) {
-        if (content) {
-          [this.codeUnit reparseWithUnsavedContent:content];
-        }
-      }];
-      
-      // Remove the TMUnit when the file is gone
-      [[RACAbleSelf(textFile) where:^BOOL(id x) {
-        return x == nil;
-      }] subscribeNext:^(id x) {
-        this.codeUnit = nil;
-      }];
-      
+            
       // Update file content
       [RACAbleSelf(codeView.text) subscribeNext:^(NSString *x) {
         this.textFile.content = x;
