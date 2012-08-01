@@ -416,8 +416,8 @@
       __block NSInteger progress = 0;
       NSURL *temporaryDirectory = [NSURL temporaryDirectory];
       [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+      // Complete process block
       void (^progressCompletion)() = ^ {
-        // Complete process
         if (++progress == cellsToExportCount) {
           // Add mail subject
           if ([subject length] > 2) {
@@ -436,6 +436,7 @@
           // Present
           [self presentViewController:mailComposer animated:YES completion:nil];
           [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+          [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
           self.loading = NO;
         }
       };
@@ -449,7 +450,7 @@
           
           // Process project
           NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:[NSArray arrayWithObject:project.fileURL] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:@[ project.fileURL ] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
             // Add attachment
             [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
             [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
