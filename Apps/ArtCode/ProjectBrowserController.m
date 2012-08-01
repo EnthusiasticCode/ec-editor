@@ -352,7 +352,6 @@
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
       }];
-      
     }
   } else if (actionSheet == _toolItemDuplicateActionSheet) {
     self.loading = YES;
@@ -361,12 +360,14 @@
     __block NSInteger progress = 0;
     [self setEditing:NO animated:YES];
     
-    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-      [(ArtCodeProject *)[[[ArtCodeProjectSet defaultSet] projects] objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-        if (++progress == cellsToDuplicateCount) {
-          self.loading = NO;
-        }
-      }];
+    [self.gridElements enumerateObjectsAtIndexes:cellsToDuplicate options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj isKindOfClass:[ArtCodeProject class]]) {
+        [(ArtCodeProject *)obj duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+          if (++progress == cellsToDuplicateCount) {
+            self.loading = NO;
+          }
+        }];
+      }
     }];
   } else if (actionSheet == _toolItemExportActionSheet) {
     if (buttonIndex == 0) // export to iTunes

@@ -52,6 +52,32 @@
 
 #pragma mark - Project-wide operations
 
+- (void)duplicateWithCompletionHandler:(void (^)(ArtCodeProject *))completionHandler {
+  [self _duplicateWithDuplicationNumber:1 completionHandler:completionHandler];
+}
+
+/// Recursive method to create a duplicated project
+- (void)_duplicateWithDuplicationNumber:(NSUInteger)duplicationNumber completionHandler:(void (^)(ArtCodeProject *))completionHandler {
+  __weak ArtCodeProject *this = self;
+  [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] completionHandler:^(ArtCodeProject *project) {
+    if (project) {
+      // The project has been successfuly created, copying files
+      NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+      [fileCoordinator coordinateReadingItemAtURL:this.fileURL options:0 writingItemAtURL:project.fileURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+        NSFileManager *fileManager = [NSFileManager new];
+        for (NSURL *url in [fileManager enumeratorAtURL:newReadingURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:NULL]) {
+          [fileManager copyItemAtURL:url toURL:[newWritingURL URLByAppendingPathComponent:url.lastPathComponent] error:NULL];
+        }
+      }];
+      if (completionHandler) {
+        completionHandler(project);
+      }
+    } else {
+      [this _duplicateWithDuplicationNumber:duplicationNumber + 1 completionHandler:completionHandler];
+    }
+  }];
+}
+
 #pragma mark - Private Methods
 
 @end
