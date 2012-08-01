@@ -386,10 +386,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     return NO;
   
   // We're looking for scopes to merge, one ending at offset, one starting at offset
-  NSMutableArray *heads = [[NSMutableArray alloc] init];
-  NSMutableArray *tails = [[NSMutableArray alloc] init];
-  BOOL scopesMatch = YES;
-  BOOL treeIsBroken = NO;
+  __block BOOL scopesMatch = YES;
+  __block BOOL treeIsBroken = NO;
   NSArray *leftScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
   NSArray *rightScopeStack = [self scopeStackAtOffset:offset options:TMScopeQueryRight | TMScopeQueryOpenOnly];
   
@@ -398,24 +396,26 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     return NO;
   }
   
-  NSUInteger maxDepth = MIN(leftScopeStack.count, rightScopeStack.count);
-  
-  for (NSUInteger depth = 0; depth < maxDepth; ++depth)
-  {
-    TMScope *head = [leftScopeStack objectAtIndex:depth];
+  // Compare scopes at each depth to see if they all match
+  [leftScopeStack enumerateObjectsUsingBlock:^(TMScope *head, NSUInteger depth, BOOL *stop) {
     TMScope *tail = [rightScopeStack objectAtIndex:depth];
-    if (head == tail)
-      continue;
-    treeIsBroken = YES;
-    if (head->_type != TMScopeTypeSpan || head->_type != tail->_type || ![head.identifier isEqualToString:tail.identifier] || (head->_flags & TMScopeHasEnd) || (tail->_flags & TMScopeHasBegin))
-    {
-      scopesMatch = NO;
-      break;
+    if (head == tail) {
+      return;
     }
-    [heads addObject:head];
-    [tails addObject:tail];
+    treeIsBroken = YES;
+    if (head->_type != TMScopeTypeSpan || head->_type != tail->_type || ![head.identifier isEqualToString:tail.identifier] || (head->_flags & TMScopeHasEnd) || (tail->_flags & TMScopeHasBegin)) {
+      scopesMatch = NO;
+      *stop = YES;
+      return;
+    }
+  }];
+  
+  // If the scopes at any depth don't match, fail the merge
+  if (!scopesMatch) {
+    return NO;
   }
   
+  // If the tree is not broken, there is no need to merge
   if (!treeIsBroken) {
     // Check if the right scopes all have a begin, so they don't end up headless
     for (TMScope *rightScope in rightScopeStack) {
@@ -426,14 +426,14 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     return YES;
   }
   
-  if (!scopesMatch)
-    return NO;
-  
-  [heads enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TMScope *head, NSUInteger idx, BOOL *stop) {
-    TMScope *tail = [tails objectAtIndex:idx];
-    ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
+  // Proceed to merge
+  [leftScopeStack enumerateObjectsUsingBlock:^(TMScope *head, NSUInteger depth, BOOL *stop) {
+    TMScope *tail = [rightScopeStack objectAtIndex:depth];
+    if (head == tail) {
+      return;
+    }
+    ASSERT(head && tail && head->_type == TMScopeTypeSpan && tail->_type == TMScopeTypeSpan && head->_parent == tail->_parent && [head.identifier isEqualToString:tail.identifier]);
     ASSERT(head->_location + head->_length == tail->_location);
-    
     if (tail->_flags & TMScopeHasEnd) {
       head->_flags |= TMScopeHasEnd;
     }
@@ -442,6 +442,9 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     }
     head.length = head.length + tail.length;
     [head->_children addObjectsFromArray:tail->_children];
+    for (TMScope *tailChild in tail->_children) {
+      tailChild->_parent = head;
+    }
     [head->_parent->_children removeObject:tail];
   }];
   
