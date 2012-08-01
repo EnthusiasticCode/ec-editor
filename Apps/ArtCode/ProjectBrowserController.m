@@ -55,6 +55,7 @@
   NSArray *_toolItemsEditing;
   
   UIActionSheet *_toolItemDeleteActionSheet;
+  UIActionSheet *_toolItemDuplicateActionSheet;
   UIActionSheet *_toolItemExportActionSheet;
   
   UIImage *_cellNormalBackground;
@@ -353,9 +354,21 @@
       }];
       
     }
-  }
-  else if (actionSheet == _toolItemExportActionSheet)
-  {
+  } else if (actionSheet == _toolItemDuplicateActionSheet) {
+    self.loading = YES;
+    NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
+    NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
+    __block NSInteger progress = 0;
+    [self setEditing:NO animated:YES];
+    
+    [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+      [(ArtCodeProject *)[[[ArtCodeProjectSet defaultSet] projects] objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+        if (++progress == cellsToDuplicateCount) {
+          self.loading = NO;
+        }
+      }];
+    }];
+  } else if (actionSheet == _toolItemExportActionSheet) {
     if (buttonIndex == 0) // export to iTunes
     {
       NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
@@ -523,19 +536,11 @@
   ASSERT(self.isEditing);
   ASSERT([self.gridView indexForSelectedCell] != -1);
   
-  self.loading = YES;
-  NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
-  NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
-  __block NSInteger progress = 0;
-  [self setEditing:NO animated:YES];
-  
-  [cellsToDuplicate enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-    [(ArtCodeProject *)[[[ArtCodeProjectSet defaultSet] projects] objectAtIndex:idx] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-      if (++progress == cellsToDuplicateCount) {
-        self.loading = NO;
-      }
-    }];
-  }];
+  if (!_toolItemDuplicateActionSheet) {
+    _toolItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Duplicate"), nil];
+    _toolItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+  }
+  [_toolItemDuplicateActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 @end
