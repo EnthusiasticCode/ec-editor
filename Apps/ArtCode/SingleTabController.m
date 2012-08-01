@@ -437,6 +437,7 @@
   
   // ArtCode URLs routing
   Class controllerClass = nil;
+  BOOL recycleController = YES;
   
   switch (currentLocation.type) {
     case ArtCodeLocationTypeProjectsList:
@@ -457,6 +458,7 @@
     case ArtCodeLocationTypeTextFile:
     {
       controllerClass = [CodeFileController class];
+      recycleController = NO;
       break;
     }
     case ArtCodeLocationTypeProject:
@@ -476,14 +478,16 @@
       break;
     }
   }
-  if ([self.contentViewController isKindOfClass:controllerClass]) {
+  if ([self.contentViewController isKindOfClass:controllerClass] && recycleController) {
     result = self.contentViewController;
   } else {
-    result = [controllerClass new];
+    result = [[controllerClass alloc] init];
   }
   
-  // Set the tab explicitly since result might not have a parent view controller yet
-  result.artCodeTab = self.artCodeTab;
+  // Set the tab if needed
+  if (result.artCodeTab != self.artCodeTab) {
+    result.artCodeTab = self.artCodeTab;
+  }
   
   return result;
 }

@@ -202,27 +202,27 @@ static void drawStencilStar(CGContextRef myContext)
     [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
     accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
     // Prepare handlers to show and hide controllers in keyboard accessory item popover
-//    accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
-//      UIView *presentedView = nil;
-//      UIView *presentingView = sender.superview;
-//      presentedView = this._keyboardAccessoryItemCompletionsController.view;
-//      CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
-//      presentedView.frame = popoverContentFrame;
-//      [presentingView addSubview:presentedView];
-//      presentedView.alpha = 0;
-//      [UIView animateWithDuration:animationDuration animations:^{
-//        presentedView.alpha = 1;
-//      }];
-//    };
-//    accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
-//      [UIView animateWithDuration:animationDuration animations:^{
-//        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-//          this._keyboardAccessoryItemCompletionsController.view.alpha = 0;              
-//      } completion:^(BOOL finished) {
-//        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-//          [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
-//      }];
-//    };
+    //    accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
+    //      UIView *presentedView = nil;
+    //      UIView *presentingView = sender.superview;
+    //      presentedView = this._keyboardAccessoryItemCompletionsController.view;
+    //      CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
+    //      presentedView.frame = popoverContentFrame;
+    //      [presentingView addSubview:presentedView];
+    //      presentedView.alpha = 0;
+    //      [UIView animateWithDuration:animationDuration animations:^{
+    //        presentedView.alpha = 1;
+    //      }];
+    //    };
+    //    accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
+    //      [UIView animateWithDuration:animationDuration animations:^{
+    //        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
+    //          this._keyboardAccessoryItemCompletionsController.view.alpha = 0;
+    //      } completion:^(BOOL finished) {
+    //        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
+    //          [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
+    //      }];
+    //    };
     
     UIView *accessoryPopoverContentView = [UIView new];
     accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
@@ -231,35 +231,6 @@ static void drawStencilStar(CGContextRef myContext)
     
     _codeView.text = self.textFile.content;
     
-    // RAC
-    
-    // Update file content
-    [RACAble(_codeView, text) subscribeNext:^(NSString *x) {
-      this.textFile.content = x;
-      [this.codeUnit reparseWithUnsavedContent:x];
-    }];
-    
-    // Update title with current symbol and keyboard accessory based on current scope
-    [[RACAble(_codeView, selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
-      NSRange selectionRange = [selectionValue rangeValue];
-      
-      // Select current scope
-      TMSymbol *currentSymbol = nil;
-      for (TMSymbol *symbol in this.codeUnit.symbolList) {
-        if (symbol.range.location > selectionRange.location)
-          break;
-        currentSymbol = symbol;
-      }
-      if (currentSymbol != this.currentSymbol) {
-        this.currentSymbol = currentSymbol;
-        [this.singleTabController updateDefaultToolbarTitle];
-      }
-      
-      // Update the keyboard accessory view and other preferences
-      NSString *qualifiedIdentifier = [this.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
-      [this _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
-      this.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
-    }];
   }
   
   _codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
@@ -400,8 +371,8 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-  switch (buttonIndex) {    
-    case 0: // toggle find/replace 
+  switch (buttonIndex) {
+    case 0: // toggle find/replace
     {
       if (!_searchBarController)
       {
@@ -431,7 +402,7 @@ static void drawStencilStar(CGContextRef myContext)
     case 2: // toggle tabs
     {
       // TODO
-//      [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
+      //      [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
       break;
     }
       
@@ -441,86 +412,6 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 #pragma mark - View lifecycle
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-  if (!self) {
-    return nil;
-  }
-  
-  // RAC
-  NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
-  schedulerQueue.maxConcurrentOperationCount = 1;
-  _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
-  __weak CodeFileController *this = self;
-  
-  // Create a text file when the location changes
-  [RACAbleSelf(artCodeTab.currentLocation) subscribeNext:^(ArtCodeLocation *location) {
-    if (!location || location.type != ArtCodeLocationTypeTextFile || !location.url) {
-      this.textFile = nil;
-      return;
-    }
-    this.textFile = [[TextFile alloc] initWithFileURL:location.url];
-  }];
-
-  // Update the code when contents change
-  [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
-    [this.codeUnit reparseWithUnsavedContent:content];
-  }];
-  
-  // Create a new TMUnit when the file changes
-  [[[[[[[[[RACAbleSelf(textFile) where:^BOOL(id x) {
-    return x != nil;
-  }] doNext:^(TextFile *x) {
-    // Set the text for the codeview
-    this.codeView.text = x.content;
-  }] select:^id(TextFile *x) {
-    // Selecting the syntax to use
-    TMSyntaxNode *syntax = nil;
-    if (x.explicitSyntaxIdentifier) {
-      syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode syntaxForFileName:x.localizedName];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode defaultSyntax];
-    }
-    return [RACTuple tupleWithObjects:x.fileURL, x.content, syntax, nil];
-  }] deliverOn:this.codeScheduler] select:^id(RACTuple *x) {
-    // Create a code unit
-    TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:x.first syntax:x.third index:nil];
-    return [RACTuple tupleWithObjects:codeUnit, codeUnit.tokens, x.second, nil];
-  }] deliverOn:[RACScheduler mainQueueScheduler]] select:^id(RACTuple *x) {
-    this.codeUnit = x.first;
-    // Subscribe to the token subject when the codeUnit changes
-    [this.tokensDisposable dispose];
-    this.tokensDisposable = [[[x.second subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
-      CodeFileController *strongSelf = this;
-      if (!strongSelf) {
-        return;
-      }
-      [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
-    }];
-    return x.third;
-  }] deliverOn:this.codeScheduler] subscribeNext:^(NSString *content) {
-    if (content) {
-      [this.codeUnit reparseWithUnsavedContent:content];
-    }
-  }];
-  
-  // Remove the TMUnit when the file is gone
-  [[RACAbleSelf(textFile) where:^BOOL(id x) {
-    return x == nil;
-  }] subscribeNext:^(id x) {
-    this.codeUnit = nil;
-  }];
-  
-  return self;
-}
 
 - (void)dealloc {
   self.artCodeTab = nil;
@@ -546,6 +437,112 @@ static void drawStencilStar(CGContextRef myContext)
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
   _keyboardFrame = CGRectNull;
   _keyboardRotationFrame = CGRectNull;
+  
+  if (self.artCodeTab.currentLocation.url) {
+    self.textFile = [[TextFile alloc] initWithFileURL:self.artCodeTab.currentLocation.url];
+    [self.textFile openWithCompletionHandler:^(BOOL success) {
+      // RAC
+      NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
+      schedulerQueue.maxConcurrentOperationCount = 1;
+      _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
+      __weak CodeFileController *this = self;
+      
+      // Create a text file when the location changes
+      [RACAbleSelf(artCodeTab.currentLocation) subscribeNext:^(ArtCodeLocation *location) {
+        if (!location || location.type != ArtCodeLocationTypeTextFile || !location.url) {
+          this.textFile = nil;
+          return;
+        }
+        this.textFile = [[TextFile alloc] initWithFileURL:location.url];
+      }];
+      
+      // Update the code when contents change
+      [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
+        [this.codeUnit reparseWithUnsavedContent:content];
+      }];
+      
+      // Create a new TMUnit when the file changes
+      [[[[[[[[[RACAbleSelf(textFile) where:^BOOL(id x) {
+        return x != nil;
+      }] doNext:^(TextFile *x) {
+        // Set the text for the codeview
+        this.codeView.text = x.content;
+      }] select:^id(TextFile *x) {
+        // Selecting the syntax to use
+        TMSyntaxNode *syntax = nil;
+        if (x.explicitSyntaxIdentifier) {
+          syntax = [TMSyntaxNode syntaxWithScopeIdentifier:x.explicitSyntaxIdentifier];
+        }
+        if (!syntax) {
+          syntax = [TMSyntaxNode syntaxForFirstLine:[x.content substringWithRange:[x.content lineRangeForRange:NSMakeRange(0, 0)]]];
+        }
+        if (!syntax) {
+          syntax = [TMSyntaxNode syntaxForFileName:x.localizedName];
+        }
+        if (!syntax) {
+          syntax = [TMSyntaxNode defaultSyntax];
+        }
+        ASSERT(syntax && x.content);
+        return [RACTuple tupleWithObjects:x.fileURL, x.content, syntax, nil];
+      }] deliverOn:this.codeScheduler] select:^id(RACTuple *x) {
+        // Create a code unit
+        TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:x.first syntax:x.third index:nil];
+        return [RACTuple tupleWithObjects:codeUnit, codeUnit.tokens, x.second, nil];
+      }] deliverOn:[RACScheduler mainQueueScheduler]] select:^id(RACTuple *x) {
+        this.codeUnit = x.first;
+        // Subscribe to the token subject when the codeUnit changes
+        [this.tokensDisposable dispose];
+        this.tokensDisposable = [[[x.second subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+          CodeFileController *strongSelf = this;
+          if (!strongSelf) {
+            return;
+          }
+          [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+        }];
+        return x.third;
+      }] deliverOn:this.codeScheduler] subscribeNext:^(NSString *content) {
+        if (content) {
+          [this.codeUnit reparseWithUnsavedContent:content];
+        }
+      }];
+      
+      // Remove the TMUnit when the file is gone
+      [[RACAbleSelf(textFile) where:^BOOL(id x) {
+        return x == nil;
+      }] subscribeNext:^(id x) {
+        this.codeUnit = nil;
+      }];
+      
+      // Update file content
+      [RACAbleSelf(codeView.text) subscribeNext:^(NSString *x) {
+        this.textFile.content = x;
+        [this.codeUnit reparseWithUnsavedContent:x];
+      }];
+      
+      // Update title with current symbol and keyboard accessory based on current scope
+      [[RACAbleSelf(codeView.selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
+        NSRange selectionRange = [selectionValue rangeValue];
+        
+        // Select current scope
+        TMSymbol *currentSymbol = nil;
+        for (TMSymbol *symbol in this.codeUnit.symbolList) {
+          if (symbol.range.location > selectionRange.location)
+            break;
+          currentSymbol = symbol;
+        }
+        if (currentSymbol != this.currentSymbol) {
+          this.currentSymbol = currentSymbol;
+          [this.singleTabController updateDefaultToolbarTitle];
+        }
+        
+        // Update the keyboard accessory view and other preferences
+        NSString *qualifiedIdentifier = [this.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
+        [this _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
+        this.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
+      }];
+      
+    }];
+  }
 }
 
 - (void)viewDidUnload
@@ -640,12 +637,12 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Minimap Delegate Methods
 
-- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView 
-           shouldRenderLine:(TextRendererLine *)line 
-                     number:(NSUInteger)lineNumber 
+- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView
+           shouldRenderLine:(TextRendererLine *)line
+                     number:(NSUInteger)lineNumber
                       range:(NSRange)range
-                  withColor:(UIColor *__autoreleasing *)lineColor 
-                 decoration:(CodeFileMinimapLineDecoration *)decoration 
+                  withColor:(UIColor *__autoreleasing *)lineColor
+                 decoration:(CodeFileMinimapLineDecoration *)decoration
             decorationColor:(UIColor *__autoreleasing *)decorationColor
 {
   // Set bookmark decoration
@@ -695,7 +692,7 @@ static void drawStencilStar(CGContextRef myContext)
     }
   }];
   *lineColor = color;
-
+  
   return YES;
 }
 
@@ -885,14 +882,14 @@ static void drawStencilStar(CGContextRef myContext)
 //- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
 //{
 //  ASSERT(self._keyboardAccessoryView.superview);
-//  
+//
 //  self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
 //  if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
 //  {
 //    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
 //    return;
 //  }
-//  
+//
 //  [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
 //}
 
@@ -1011,7 +1008,7 @@ static void drawStencilStar(CGContextRef myContext)
 //}
 
 - (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier
-{  
+{
   NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:qualifiedIdentifier];
   ASSERT(configuration);
   
@@ -1044,7 +1041,7 @@ static void drawStencilStar(CGContextRef myContext)
         [item setWidth:82 + 4 forAccessoryPosition:KeyboardAccessoryPositionLandscape];
         [item setWidth:44 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating];
       }
-      else 
+      else
       {
         if (i % 2)
           [item setWidth:60 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
@@ -1052,7 +1049,7 @@ static void drawStencilStar(CGContextRef myContext)
       
       action = [_keyboardAccessoryItemActions objectAtIndex:i];
       item.title = action.title;
-      item.image = [action image];            
+      item.image = [action image];
       item.tag = i;
       [items addObject:item];
     }
