@@ -48,13 +48,12 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
     return NO;
   }
   void *bookmarksBytes = malloc(_bookmarksXattrMaxSize);
-  ssize_t bookmarksBytesCount = getxattr(url.path.fileSystemRepresentation, _bookmarksXattrName, &bookmarksBytes, _bookmarksXattrMaxSize, 0, 0);
+  ssize_t bookmarksBytesCount = getxattr(url.path.fileSystemRepresentation, _bookmarksXattrName, bookmarksBytes, _bookmarksXattrMaxSize, 0, 0);
   id bookmarksData = [NSNull null];
   if (bookmarksBytesCount != -1) {
-    bookmarksData = [NSData dataWithBytesNoCopy:bookmarksBytes length:bookmarksBytesCount freeWhenDone:YES];
-  } else {
-    free(bookmarksBytes);
+    bookmarksData = [NSData dataWithBytes:bookmarksBytes length:bookmarksBytesCount];
   }
+  free(bookmarksBytes);
   __block BOOL success;
   dispatch_sync(dispatch_get_main_queue(), ^{
     success = [self loadFromContents:@{ _contentKey : content, _bookmarksKey : bookmarksData } ofType:nil error:outError];
@@ -92,20 +91,42 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   [self updateChangeCount:UIDocumentChangeDone];
 }
 
+- (NSIndexSet *)bookmarks {
+  if (!_bookmarks) {
+    _bookmarks = [NSMutableIndexSet indexSet];
+  }
+  return _bookmarks.copy;
+}
+
+- (void)setBookmarks:(NSIndexSet *)bookmarks {
+  if (bookmarks == _bookmarks) {
+    return;
+  }
+  _bookmarks = bookmarks.mutableCopy;
+}
+
 - (BOOL)hasBookmarkAtLine:(NSUInteger)line {
   return [self.bookmarks containsIndex:line];
 }
 
 - (void)addBookmarkAtLine:(NSUInteger)line {
   [self willChangeValueForKey:@"bookmarks"];
+  if (!_bookmarks) {
+    _bookmarks = [NSMutableIndexSet indexSet];
+  }
   [_bookmarks addIndex:line];
   [self didChangeValueForKey:@"bookmarks"];
+  [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (void)removeBookmarkAtLine:(NSUInteger)line {
   [self willChangeValueForKey:@"bookmarks"];
+  if (!_bookmarks) {
+    _bookmarks = [NSMutableIndexSet indexSet];
+  }
   [_bookmarks removeIndex:line];
   [self didChangeValueForKey:@"bookmarks"];
+  [self updateChangeCount:UIDocumentChangeDone];
 }
 
 @end
