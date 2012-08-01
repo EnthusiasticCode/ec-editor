@@ -18,13 +18,10 @@
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
-		5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
-		5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
-		5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
@@ -33,11 +30,8 @@
 		B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B7072BD31511479B00580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
 		B715B33F154577B8004DCD63 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
-		B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		B715B3E2154965AF004DCD63 /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
-		B715B3E3154965BC004DCD63 /* Text.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C38144B53FE0084B050 /* Text.tmbundle */; };
 		B715B3FB154977DB004DCD63 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
-		B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BD11511443E00580855 /* NSString+CStringCaching.m */; };
 		B71A1DE71435112700672F65 /* NewFileController.m in Sources */ = {isa = PBXBuildFile; fileRef = B71A1DE61435112700672F65 /* NewFileController.m */; };
 		B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
 		B72CEBFB151B467100757F94 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
@@ -45,20 +39,13 @@
 		B757C0031519CF1400AE6AC3 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
 		B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B75B5B451532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
-		B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B75B5B441532423E00A576A9 /* ArtCodeTests.m */; };
 		B75B5B8C15337A0500A576A9 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
-		B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
 		B75B5B8E15337A4800A576A9 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
 		B75B5B8F15337A4800A576A9 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
 		B75B5B9015337A4800A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
 		B75B5B9115337A4800A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
-		B75B5B9215337A6400A576A9 /* C.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1E144B53FE0084B050 /* C.tmbundle */; };
-		B75B5B9315337A6400A576A9 /* HTML.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C22144B53FE0084B050 /* HTML.tmbundle */; };
-		B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C68144B54120084B050 /* Amy.tmTheme */; };
-		B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C72144B54120084B050 /* Mac Classic.tmTheme */; };
 		B75F658414D868EB008B88C5 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
 		B762B78C158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
-		B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		B7656C40144B53FE0084B050 /* ActionScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C19144B53FE0084B050 /* ActionScript.tmbundle */; };
 		B7656C41144B53FE0084B050 /* Apache.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1A144B53FE0084B050 /* Apache.tmbundle */; };
 		B7656C42144B53FE0084B050 /* AppleScript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7656C1B144B53FE0084B050 /* AppleScript.tmbundle */; };
@@ -129,26 +116,18 @@
 		B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
 		B771014E1506E340006AF1FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B77101541506E76F006AF1FB /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
-		B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
 		B7728C5F15286ED3005EA98A /* TMUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79B214D602F10080A714 /* TMUnit.m */; };
-		B7728C6015286EE3005EA98A /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
 		B7728C6115286EE4005EA98A /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7728C6215286EE8005EA98A /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
 		B7728C6315286EE9005EA98A /* TMScope.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79AE14D602F10080A714 /* TMScope.m */; };
-		B7728C6415286EF5005EA98A /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7728C6515286EF5005EA98A /* TMBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79A714D602F10080A714 /* TMBundle.m */; };
 		B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
-		B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
 		B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
 		B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
-		B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
 		B78D136F15AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
 		B78D137015AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
-		B78D137115AB4D5D0022C93B /* TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* TextFile.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -157,25 +136,18 @@
 		B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */; };
 		B7BEA43A159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
 		B7BEA43B159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
-		B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA42F159B0BAE0095C9D1 /* DiffMatchPatch.m */; };
 		B7BEA43D159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
 		B7BEA43E159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
-		B7BEA43F159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA430159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c */; };
 		B7BEA440159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
 		B7BEA441159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
-		B7BEA442159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA433159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m */; };
 		B7BEA443159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
 		B7BEA444159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
-		B7BEA445159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA435159B0BAE0095C9D1 /* NSString+JavaSubstring.m */; };
 		B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
 		B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
-		B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA437159B0BAE0095C9D1 /* NSString+UnicharUtilities.m */; };
 		B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
 		B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
-		B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA439159B0BAE0095C9D1 /* NSString+UriCompatibility.m */; };
 		B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
 		B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
-		B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = B7BEA461159B1A7F0095C9D1 /* TMSymbol.m */; };
 		B7CEF85714ED924D00E71CFF /* Active4D.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F814ED924D00E71CFF /* Active4D.tmbundle */; };
 		B7CEF85814ED924D00E71CFF /* Ada.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7F914ED924D00E71CFF /* Ada.tmbundle */; };
 		B7CEF85914ED924D00E71CFF /* ANTLR.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF7FA14ED924D00E71CFF /* ANTLR.tmbundle */; };
@@ -277,28 +249,7 @@
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
 		B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */; };
 		B7DD43E514E1F3CF0057DDB4 /* TMSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */; };
-		B7EB5795151B9B7B0031C977 /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
-		B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
-		B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
-		B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
-		B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
-		B7EB57A0151B9B7B0031C977 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
-		B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
-		B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
-		B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B757C0021519CF1400AE6AC3 /* libKiwi.a */; };
-		B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */; };
-		B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B77101451506E336006AF1FB /* SenTestingKit.framework */; };
-		B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
-		B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
-		B7EB57B1151B9B7B0031C977 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2B0113C0CD9D00B889EE /* CoreText.framework */; };
-		B7EB57B2151B9B7B0031C977 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */; };
-		B7EB57B3151B9B7B0031C977 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE313C0CD2600B889EE /* UIKit.framework */; };
-		B7EB57B4151B9B7B0031C977 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE513C0CD2600B889EE /* Foundation.framework */; };
-		B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */; };
-		B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
-		B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B771012B1506E20F006AF1FB /* InfoPlist.strings */; };
 		B7F3A82F156EAF6800954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
-		B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
 		B7FB799514D5FF590080A714 /* NSURL+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799414D5FF580080A714 /* NSURL+Utilities.m */; };
 		B7FB79A014D602C60080A714 /* NSArray+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */; };
 		B7FB79A214D602C60080A714 /* NSString+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */; };
@@ -805,7 +756,6 @@
 		B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		B7DD43E314E1F3CF0057DDB4 /* TMSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSyntaxNode.h; sourceTree = "<group>"; };
 		B7DD43E414E1F3CF0057DDB4 /* TMSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSyntaxNode.m; sourceTree = "<group>"; };
-		B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ArtCodeTests-RunOnBuild.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7FB799314D5FF580080A714 /* NSURL+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Utilities.h"; sourceTree = "<group>"; };
 		B7FB799414D5FF580080A714 /* NSURL+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Utilities.m"; sourceTree = "<group>"; };
 		B7FB799614D602C60080A714 /* NSArray+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -1147,25 +1097,6 @@
 				B771014C1506E340006AF1FB /* Foundation.framework in Frameworks */,
 				B771014D1506E340006AF1FB /* CoreGraphics.framework in Frameworks */,
 				B771014E1506E340006AF1FB /* Security.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B7EB57AB151B9B7B0031C977 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B7F3A830156EAF6D00954D48 /* libReactiveCocoa-iOS.a in Frameworks */,
-				B7EB57AC151B9B7B0031C977 /* libKiwi.a in Frameworks */,
-				B7EB57AD151B9B7B0031C977 /* libCocoaOniguruma.a in Frameworks */,
-				B7EB57AE151B9B7B0031C977 /* SenTestingKit.framework in Frameworks */,
-				B7EB57AF151B9B7B0031C977 /* CFNetwork.framework in Frameworks */,
-				B7EB57B0151B9B7B0031C977 /* MessageUI.framework in Frameworks */,
-				B7EB57B1151B9B7B0031C977 /* CoreText.framework in Frameworks */,
-				B7EB57B2151B9B7B0031C977 /* QuartzCore.framework in Frameworks */,
-				B7EB57B3151B9B7B0031C977 /* UIKit.framework in Frameworks */,
-				B7EB57B4151B9B7B0031C977 /* Foundation.framework in Frameworks */,
-				B7EB57B5151B9B7B0031C977 /* CoreGraphics.framework in Frameworks */,
-				B7EB57B6151B9B7B0031C977 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1933,7 +1864,6 @@
 			children = (
 				CD7D2ADF13C0CD2600B889EE /* ArtCode.app */,
 				B77101211506E20F006AF1FB /* ArtCodeTests.octest */,
-				B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2372,24 +2302,6 @@
 			productReference = B77101211506E20F006AF1FB /* ArtCodeTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B7EB57BA151B9B7B0031C977 /* Build configuration list for PBXNativeTarget "ArtCodeTests-RunOnBuild" */;
-			buildPhases = (
-				B7EB5794151B9B7B0031C977 /* Sources */,
-				B7EB57AB151B9B7B0031C977 /* Frameworks */,
-				B7EB57B7151B9B7B0031C977 /* Resources */,
-				B7EB57B9151B9B7B0031C977 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "ArtCodeTests-RunOnBuild";
-			productName = "ArtCode Tests";
-			productReference = B7EB57BD151B9B7B0031C977 /* ArtCodeTests-RunOnBuild.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 		CD7D2ADE13C0CD2600B889EE /* ArtCode */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CD7D2AF713C0CD2600B889EE /* Build configuration list for PBXNativeTarget "ArtCode" */;
@@ -2436,7 +2348,6 @@
 			targets = (
 				CD7D2ADE13C0CD2600B889EE /* ArtCode */,
 				B77101201506E20F006AF1FB /* ArtCodeTests */,
-				B7EB5793151B9B7B0031C977 /* ArtCodeTests-RunOnBuild */,
 			);
 		};
 /* End PBXProject section */
@@ -2462,19 +2373,6 @@
 				B75B5B9015337A4800A576A9 /* Amy.tmTheme in Resources */,
 				B75B5B9115337A4800A576A9 /* Mac Classic.tmTheme in Resources */,
 				B771012D1506E20F006AF1FB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B7EB57B7151B9B7B0031C977 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B715B3E3154965BC004DCD63 /* Text.tmbundle in Resources */,
-				B75B5B9215337A6400A576A9 /* C.tmbundle in Resources */,
-				B75B5B9315337A6400A576A9 /* HTML.tmbundle in Resources */,
-				B75B5B9415337A6400A576A9 /* Amy.tmTheme in Resources */,
-				B75B5B9515337A6400A576A9 /* Mac Classic.tmTheme in Resources */,
-				B7EB57B8151B9B7B0031C977 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2777,19 +2675,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
-		B7EB57B9151B9B7B0031C977 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2828,44 +2713,6 @@
 				5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B7EB5794151B9B7B0031C977 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B7EB5795151B9B7B0031C977 /* ArtCodeProject.m in Sources */,
-				B7EB579C151B9B7B0031C977 /* NSURL+Utilities.m in Sources */,
-				B7EB579D151B9B7B0031C977 /* UIColor+HexColor.m in Sources */,
-				B7EB579E151B9B7B0031C977 /* Keychain.m in Sources */,
-				B7EB579F151B9B7B0031C977 /* ArtCodeURLSpec.m in Sources */,
-				B7EB57A0151B9B7B0031C977 /* ArtCodeLocation.m in Sources */,
-				B7EB57A1151B9B7B0031C977 /* ACProjectSpec.m in Sources */,
-				B78C156A1521A17C00C66DDC /* NSString+Utilities.m in Sources */,
-				B7EB57A7151B9B7B0031C977 /* NSString+UUID.m in Sources */,
-				B7728C5E15286ED3005EA98A /* TMUnit.m in Sources */,
-				B7728C6015286EE3005EA98A /* TMSyntaxNode.m in Sources */,
-				B7728C6215286EE8005EA98A /* TMScope.m in Sources */,
-				B7728C6415286EF5005EA98A /* TMBundle.m in Sources */,
-				B7728CC415289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
-				B75B5B461532423F00A576A9 /* ArtCodeTests.m in Sources */,
-				B75B5B8D15337A0600A576A9 /* TMTheme.m in Sources */,
-				B715B340154577B9004DCD63 /* NSIndexSet+StringRanges.m in Sources */,
-				B715B3FC154977DB004DCD63 /* NSString+CStringCaching.m in Sources */,
-				B762B78D158A6516005EC6E3 /* TMPreference.m in Sources */,
-				B7BEA43C159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,
-				B7BEA43F159B0BAE0095C9D1 /* DiffMatchPatchCFUtilities.c in Sources */,
-				B7BEA442159B0BAE0095C9D1 /* NSMutableDictionary+DMPExtensions.m in Sources */,
-				B7BEA445159B0BAE0095C9D1 /* NSString+JavaSubstring.m in Sources */,
-				B7BEA448159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
-				B7BEA44B159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
-				B7BEA464159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133215A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
-				B78D137115AB4D5D0022C93B /* TextFile.m in Sources */,
-				5F6539F215B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
-				5F6539FC15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
-				5F653A0115B0B33500FFCFEE /* TabPageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3052,40 +2899,6 @@
 			};
 			name = Release;
 		};
-		B7EB57BB151B9B7B0031C977 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		B7EB57BC151B9B7B0031C977 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ArtCodeTests/ArtCodeTests-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"TEST=1",
-					$inherited,
-				);
-				INFOPLIST_FILE = "ArtCodeTests/ArtCodeTests-Info.plist";
-				OTHER_LDFLAGS = "-all_load";
-				PRODUCT_NAME = $TARGET_NAME;
-				TEST_AFTER_BUILD = YES;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 		CD7D2AF513C0CD2600B889EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3255,15 +3068,6 @@
 			buildConfigurations = (
 				B77101331506E20F006AF1FB /* Debug */,
 				B77101341506E20F006AF1FB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B7EB57BA151B9B7B0031C977 /* Build configuration list for PBXNativeTarget "ArtCodeTests-RunOnBuild" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B7EB57BB151B9B7B0031C977 /* Debug */,
-				B7EB57BC151B9B7B0031C977 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
