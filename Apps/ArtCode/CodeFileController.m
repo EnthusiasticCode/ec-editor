@@ -414,6 +414,8 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - View lifecycle
 
 - (void)dealloc {
+  [self.textFile closeWithCompletionHandler:nil];
+  self.textFile = nil;
   self.artCodeTab = nil;
 }
 
@@ -441,6 +443,9 @@ static void drawStencilStar(CGContextRef myContext)
   if (self.artCodeTab.currentLocation.url) {
     self.textFile = [[TextFile alloc] initWithFileURL:self.artCodeTab.currentLocation.url];
     [self.textFile openWithCompletionHandler:^(BOOL success) {
+      // Load the contents
+      self.codeView.text = self.textFile.content;
+      
       // RAC
       NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
       schedulerQueue.maxConcurrentOperationCount = 1;

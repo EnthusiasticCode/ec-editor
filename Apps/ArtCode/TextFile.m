@@ -8,7 +8,9 @@
 
 #import "TextFile.h"
 
-@implementation TextFile
+@implementation TextFile {
+  NSMutableIndexSet *_bookmarks;
+}
 
 #pragma mark - UIDocument
 
@@ -32,6 +34,22 @@
   }
   _content = content;
   [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (BOOL)hasBookmarkAtLine:(NSUInteger)line {
+  return [self.bookmarks containsIndex:line];
+}
+
+- (void)addBookmarkAtLine:(NSUInteger)line {
+  [self willChangeValueForKey:@"bookmarks"];
+  [_bookmarks addIndex:line];
+  [self didChangeValueForKey:@"bookmarks"];
+}
+
+- (void)removeBookmarkAtLine:(NSUInteger)line {
+  [self willChangeValueForKey:@"bookmarks"];
+  [_bookmarks removeIndex:line];
+  [self didChangeValueForKey:@"bookmarks"];
 }
 
 @end

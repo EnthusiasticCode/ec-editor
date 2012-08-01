@@ -13,13 +13,13 @@
 
 #pragma mark Content
 
-@property (nonatomic, strong) NSString *content;
+@property (nonatomic, copy) NSString *content;
 
 @property (nonatomic) NSStringEncoding *explicitEncoding;
 
-@property (nonatomic, strong) NSString *explicitSyntaxIdentifier;
+@property (nonatomic, copy) NSString *explicitSyntaxIdentifier;
 
-@property (nonatomic, strong) NSArray *bookmarks;
+@property (nonatomic, copy) NSIndexSet *bookmarks;
 
 - (BOOL)hasBookmarkAtLine:(NSUInteger)line;
 
