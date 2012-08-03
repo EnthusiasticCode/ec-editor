@@ -129,4 +129,18 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   [self updateChangeCount:UIDocumentChangeDone];
 }
 
+#pragma mark - Helper Methods
+
++ (NSIndexSet *)bookmarksForFileURL:(NSURL *)fileURL {
+  void *bookmarksBytes = malloc(_bookmarksXattrMaxSize);
+  ssize_t bookmarksBytesCount = getxattr(fileURL.path.fileSystemRepresentation, _bookmarksXattrName, bookmarksBytes, _bookmarksXattrMaxSize, 0, 0);
+  if (bookmarksBytesCount == -1) {
+    free(bookmarksBytes);
+    return nil;
+  }
+  NSIndexSet *bookmarks = [NSKeyedUnarchiver unarchiveObjectWithData:[NSData dataWithBytesNoCopy:bookmarksBytes length:bookmarksBytesCount freeWhenDone:NO]];
+  free(bookmarksBytes);
+  return bookmarks;
+}
+
 @end
