@@ -473,6 +473,9 @@ static OnigRegexp *_namedCapturesRegexp;
 }
 
 - (void)_parsedTokenInRange:(NSRange)tokenRange withScope:(TMScope *)scope {
+  if (!tokenRange.length) {
+    return;
+  }
   if (_tokens) {
     TMToken *token = [[TMToken alloc] init];
     token.qualifiedIdentifier = scope.qualifiedIdentifier;
