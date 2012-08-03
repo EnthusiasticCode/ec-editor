@@ -239,13 +239,10 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (UIWebView *)webView
 {
-  if (!_webView)
-  {
+  if (!_webView && self.isViewLoaded) {
     _webView = [[UIWebView alloc] init];
     _webView.delegate = self;
     _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-    [self _loadWebPreviewContentAndTitle];
   }
   return _webView;
 }
@@ -536,6 +533,9 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self _layoutChildViews];
+  if ([self _isWebPreview]) {
+    [self _loadWebPreviewContentAndTitle];
+  }
 }
 
 #pragma mark - Controller Methods
@@ -870,26 +870,21 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Private Methods
 
-- (UIView *)_contentViewForEditingState:(BOOL)editingState
-{
-#warning TODO NIK better check for file type
-  if (editingState || ![self.artCodeTab.currentLocation.fileExtension isEqualToString:@"html"])
-  {
-    return self.codeView;
-  }
-  else
-  {
+- (UIView *)_contentViewForEditingState:(BOOL)editingState {
+  // TODO try another way to see if a file should have a web preview
+  NSString *ext = self.artCodeTab.currentLocation.fileExtension.lowercaseString;
+  if (!editingState && ([ext isEqualToString:@"html"] || [ext isEqualToString:@"htm"])) {
     return self.webView;
+  } else {
+    return self.codeView;
   }
 }
 
-- (UIView *)_contentView
-{
+- (UIView *)_contentView {
   return [self _contentViewForEditingState:self.isEditing];
 }
 
-- (BOOL)_isWebPreview
-{
+- (BOOL)_isWebPreview {
   return [self _contentViewForEditingState:self.isEditing] == _webView;
 }
 
