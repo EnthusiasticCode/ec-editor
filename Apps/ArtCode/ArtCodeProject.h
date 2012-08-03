@@ -22,7 +22,7 @@
 - (void)enumerateFilesWithBlock:(void(^)(NSURL *fileURL))block;
 
 /// Gets an array of ArtCodeProjectBookmark objects for all bookmarks found on all files in the project.
-- (void)enumerateBookmarksWithBlock:(void(^)(ArtCodeProjectBookmark *bookmark))block;
+- (void)bookmarksWithResultHandler:(void(^)(NSArray *bookmarks))resultHandler;
 
 #pragma mark Project-wide operations
 

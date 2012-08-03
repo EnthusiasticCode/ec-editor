@@ -24,6 +24,7 @@
 
 @implementation BookmarkBrowserController {
 @protected
+  BOOL _filteredItemsAreValid;
   NSArray *_filteredItems;
   NSArray *_filteredItemsHitMask;
 }
@@ -40,34 +41,46 @@
 
 - (NSArray *)filteredItems
 {
-  if (!_filteredItems)
-  {
-    if ([self.searchBar.text length])
-    {
-      NSArray *hitMasks = nil;
-      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
-        return bookmark.name;
-      }];
-      _filteredItemsHitMask = hitMasks;
+  if (!_filteredItemsAreValid) {
+    // Get the new bookmarks
+    [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
+      if ([self.searchBar.text length]) {
+        // Filter bookmarks
+        NSArray *hitMasks = nil;
+        _filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
+          return bookmark.name;
+        }];
+        _filteredItemsHitMask = hitMasks;
+        
+        if ([_filteredItems count] == 0) {
+          self.infoLabel.text = @"No bookmarks found.";
+        }
+      } else {
+        // Sort bookmarks
+        _filteredItems = [bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+          return [[obj1 name] compare:[obj2 name]];
+        }];
+        _filteredItemsHitMask = nil;
+        
+        if ([_filteredItems count] == 0) {
+          self.infoLabel.text = @"The project has no bookmarks.";
+        }
+      }
       
-      if ([_filteredItems count] == 0)
-        self.infoLabel.text = @"No bookmarks found.";
-    }
-    else
-    {
-      _filteredItems = [self.artCodeTab.currentLocation.project.allBookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [[obj1 name] compare:[obj2 name]];
-      }];
-      _filteredItemsHitMask = nil;
+      if ([_filteredItems count] != 0) {
+        self.infoLabel.text = @"";
+      }
       
-      if ([_filteredItems count] == 0)
-        self.infoLabel.text = @"The project has no bookmarks.";
-    }
-    
-    if ([_filteredItems count] != 0)
-      self.infoLabel.text = @"";
+      [self.tableView reloadData];
+    }];
+    // Set valid even if not valid yet but calculating
+    _filteredItemsAreValid = YES;
   }
   return _filteredItems;
+}
+
+- (void)invalidateFilteredItems {
+  _filteredItemsAreValid = NO;
 }
 
 #pragma mark - View lifecycle

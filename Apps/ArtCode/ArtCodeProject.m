@@ -73,8 +73,8 @@
   });
 }
 
-- (void)enumerateBookmarksWithBlock:(void (^)(ArtCodeProjectBookmark *))block {
-  ASSERT(block);
+- (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
+  ASSERT(resultHandler);
   NSMutableArray *files = [NSMutableArray array];
   [self enumerateFilesWithBlock:^(NSURL *fileURL) {
     [files addObject:fileURL];
@@ -98,9 +98,7 @@
       completionHandler();
     }];
     dispatch_async(dispatch_get_main_queue(), ^{
-      for (ArtCodeProjectBookmark *bookmark in bookmarks) {
-        block(bookmark);
-      }
+      resultHandler(bookmarks);
     });
   });
 }
