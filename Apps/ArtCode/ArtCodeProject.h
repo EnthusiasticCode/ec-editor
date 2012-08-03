@@ -7,6 +7,7 @@
 //
 
 #import "_ArtCodeProject.h"
+@class ArtCodeProjectBookmark;
 
 
 @interface ArtCodeProject : _ArtCodeProject
@@ -18,10 +19,10 @@
 @property (nonatomic, strong) UIColor *labelColor;
 
 /// Get an array of all NSURLs of files and folders in the project.
-- (NSArray *)allFiles;
+- (void)enumerateFilesWithBlock:(void(^)(NSURL *fileURL))block;
 
 /// Gets an array of ArtCodeProjectBookmark objects for all bookmarks found on all files in the project.
-- (NSArray *)allBookmarks;
+- (void)enumerateBookmarksWithBlock:(void(^)(ArtCodeProjectBookmark *bookmark))block;
 
 #pragma mark Project-wide operations
 

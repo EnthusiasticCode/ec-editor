@@ -15,6 +15,8 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProjectSet.h"
 
+#import "TextFile.h"
+
 
 @interface ArtCodeProjectBookmark ()
 
@@ -50,6 +52,59 @@
   [self setLabelColorString:[labelColor hexString]];
 }
 
+- (void)enumerateFilesWithBlock:(void (^)(NSURL *))block {
+  ASSERT(block);
+  NSURL *fileURL = self.fileURL;
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    NSMutableArray *files = [NSMutableArray array];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+      NSFileManager *fileManager = [[NSFileManager alloc] init];
+      NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil];
+      for (NSURL *url in enumerator) {
+        [files addObject:url];
+      }
+    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      for (NSURL *url in files) {
+        block(url);
+      }
+    });
+  });
+}
+
+- (void)enumerateBookmarksWithBlock:(void (^)(ArtCodeProjectBookmark *))block {
+  ASSERT(block);
+  NSMutableArray *files = [NSMutableArray array];
+  [self enumerateFilesWithBlock:^(NSURL *fileURL) {
+    [files addObject:fileURL];
+  }];
+  
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    NSMutableArray *bookmarks = [[NSMutableArray alloc] init];
+    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+    [fileCoordinator prepareForReadingItemsAtURLs:files options:0 writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void (^completionHandler)(void)) {
+      for (NSURL *fileURL in files) {
+        __block NSIndexSet *fileBookmarks = nil;
+        [fileCoordinator coordinateReadingItemAtURL:fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+          fileBookmarks = [TextFile bookmarksForFileURL:newURL];
+        }];
+        if (fileBookmarks) {
+          [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+            [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:fileURL lineNumber:idx]];
+          }];
+        }
+      }
+      completionHandler();
+    }];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      for (ArtCodeProjectBookmark *bookmark in bookmarks) {
+        block(bookmark);
+      }
+    });
+  });
+}
+
 #pragma mark - Project-wide operations
 
 - (void)duplicateWithCompletionHandler:(void (^)(ArtCodeProject *))completionHandler {
@@ -77,8 +132,6 @@
     }
   }];
 }
-
-#pragma mark - Private Methods
 
 @end
 

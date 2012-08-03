@@ -27,4 +27,10 @@
 
 - (void)removeBookmarkAtLine:(NSUInteger)line;
 
+#pragma mark Helper Methods
+
+/// Returns the bookmarks saved in the given file.
+/// Use this to read the bookmarks without instantiating and opening a TextFile.
++ (NSIndexSet *)bookmarksForFileURL:(NSURL *)fileURL;
+
 @end

@@ -70,12 +70,6 @@
   return _filteredItems;
 }
 
-- (void)invalidateFilteredItems
-{
-  _filteredItemsHitMask = nil;
-  _filteredItems = nil;
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -121,30 +115,5 @@
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }
-
-#pragma mark - Action Sheet Delegate
-
-// There's probably no way to delete a bookmark from the global bookmarks list with the new architecture
-//- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-//{
-//  if (actionSheet == _toolEditDeleteActionSheet)
-//  {
-//    if (buttonIndex == actionSheet.destructiveButtonIndex)
-//    {
-//      self.loading = YES;
-//      NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
-//      [self setEditing:NO animated:YES];
-//      for (NSIndexPath *indexPath in selectedRows)
-//      {
-//        ArtCodeBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
-//        [bookmark.set removeBookmark:bookmark];
-//      }
-//      self.loading = NO;
-//      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Bookmark deleted" plural:@"%u bookmarks deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
-//      [self invalidateFilteredItems];
-//      [self.tableView reloadData];
-//    }
-//  }
-//}
 
 @end
