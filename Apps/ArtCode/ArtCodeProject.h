@@ -18,9 +18,6 @@
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
 
-/// Get an array of all NSURLs of files and folders in the project.
-- (void)enumerateFilesWithBlock:(void(^)(NSURL *fileURL))block;
-
 /// Gets an array of ArtCodeProjectBookmark objects for all bookmarks found on all files in the project.
 - (void)bookmarksWithResultHandler:(void(^)(NSArray *bookmarks))resultHandler;
 

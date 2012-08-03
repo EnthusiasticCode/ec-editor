@@ -52,11 +52,12 @@
   [self setLabelColorString:[labelColor hexString]];
 }
 
-- (void)enumerateFilesWithBlock:(void (^)(NSURL *))block {
-  ASSERT(block);
+- (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
+  ASSERT(resultHandler);
   NSURL *fileURL = self.fileURL;
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSMutableArray *files = [NSMutableArray array];
+    NSMutableArray *bookmarks = [NSMutableArray array];
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
     [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
       NSFileManager *fileManager = [[NSFileManager alloc] init];
@@ -65,35 +66,17 @@
         [files addObject:url];
       }
     }];
-    dispatch_async(dispatch_get_main_queue(), ^{
-      for (NSURL *url in files) {
-        block(url);
-      }
-    });
-  });
-}
-
-- (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
-  ASSERT(resultHandler);
-  NSMutableArray *files = [NSMutableArray array];
-  [self enumerateFilesWithBlock:^(NSURL *fileURL) {
-    [files addObject:fileURL];
-  }];
-  
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    NSMutableArray *bookmarks = [[NSMutableArray alloc] init];
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
     [fileCoordinator prepareForReadingItemsAtURLs:files options:0 writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void (^completionHandler)(void)) {
-      for (NSURL *fileURL in files) {
+      for (NSURL *file in files) {
         __block NSIndexSet *fileBookmarks = nil;
-        [fileCoordinator coordinateReadingItemAtURL:fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+        [fileCoordinator coordinateReadingItemAtURL:file options:0 error:NULL byAccessor:^(NSURL *newURL) {
           fileBookmarks = [TextFile bookmarksForFileURL:newURL];
+          if (fileBookmarks) {
+            [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+              [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:newURL lineNumber:idx]];
+            }];
+          }
         }];
-        if (fileBookmarks) {
-          [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-            [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:fileURL lineNumber:idx]];
-          }];
-        }
       }
       completionHandler();
     }];
