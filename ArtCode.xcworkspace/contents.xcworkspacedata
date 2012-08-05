@@ -13,4 +13,7 @@
    <FileRef
       location = "group:ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:ThirdParty/file/file.xcodeproj">
+   </FileRef>
 </Workspace>

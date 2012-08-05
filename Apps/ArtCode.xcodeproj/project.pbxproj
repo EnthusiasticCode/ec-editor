@@ -24,6 +24,7 @@
 		5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
+		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -531,6 +532,7 @@
 		5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeTabPageViewController.m; sourceTree = "<group>"; };
 		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
 		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
+		5FA6148415CE814500A0932A /* libfile.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libfile.a; path = "../ThirdParty/file/build/Release-iphoneos/libfile.a"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -1104,6 +1106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FA6148515CE814500A0932A /* libfile.a in Frameworks */,
 				CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */,
 				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
@@ -1398,6 +1401,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				5FA6148415CE814500A0932A /* libfile.a */,
 				CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */,
 				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
