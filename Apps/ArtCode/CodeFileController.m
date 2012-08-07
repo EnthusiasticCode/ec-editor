@@ -871,7 +871,6 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Private Methods
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState {
-  // TODO try another way to see if a file should have a web preview
   NSString *ext = self.artCodeTab.currentLocation.fileExtension.lowercaseString;
   if (!editingState && ([ext isEqualToString:@"html"] || [ext isEqualToString:@"htm"])) {
     return self.webView;
