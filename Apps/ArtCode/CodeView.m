@@ -1755,7 +1755,7 @@ static void init(CodeView *self)
   }];
   
   // Line number background
-  if (parentCodeView.isLineNumbersEnabled)
+  if (parentCodeView.isLineNumbersEnabled && rect.origin.x == 0)
   {
     [parentCodeView.lineNumbersBackgroundColor setFill];
     CGContextFillRect(context, (CGRect){ rect.origin, CGSizeMake(parentCodeView.lineNumbersWidth, rect.size.height) });
@@ -1784,8 +1784,9 @@ static void init(CodeView *self)
   if (CGRectEqualToRect(frame, self.frame))
     return;
   
-  if (frame.size.width != self.frame.size.width)
+  if (frame.size.width != self.frame.size.width) {
     [(CATiledLayer *)self.layer setTileSize:CGSizeMake(frame.size.width, TILE_HEIGHT)];
+  }
   
   [super setFrame:frame];
 }
