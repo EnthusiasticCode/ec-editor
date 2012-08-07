@@ -24,7 +24,7 @@
   CGFloat rightArrow = (arrowSize.width > 0. ? arrowSize.width : 0); 
   CGSize imageSize = CGSizeMake(3 + 2 + 3 + leftArrow + rightArrow + borderInsets.left + borderInsets.right, 
                                 arrowSize.height ? arrowSize.height : 3 + 2 + 3 + borderInsets.top + borderInsets.bottom);
-  return [[UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
+  return [[UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     CGMutablePathRef path = CGPathCreateMutable();
     
     rect = UIEdgeInsetsInsetRect(rect, borderInsets);
@@ -141,7 +141,7 @@
 {
   if (!labelColor)
     labelColor = [UIColor styleForegroundColor];
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Removing one pixel to add shadow
     rect.size.height -= 1;
     
@@ -239,15 +239,13 @@
   }];
 }
 
-+ (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color
-{
++ (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color {
   if (!color)
     color = [UIColor styleForegroundColor];
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
-    // Removing one pixel to add shadow
-    rect.size.height -= 1;
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
+    // Removing one point to add shadow
+    rect.size.height -= scale;
     
-    //
     // Bookmark Path        
     CGFloat bookmarkWidth = rect.size.width - 0.5;
     CGFloat bookmarkHeight = rect.size.height - 0.5;
@@ -262,10 +260,10 @@
     CGPathCloseSubpath(bookmarkPath);
     
     // Draw bookmark
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor styleForegroundShadowColor].CGColor);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -scale), 0, [UIColor styleForegroundShadowColor].CGColor);
     CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
     CGContextSetFillColorWithColor(ctx, color.CGColor);
-    CGContextSetLineWidth(ctx, 1);
+    CGContextSetLineWidth(ctx, scale);
     
     CGContextAddPath(ctx, bookmarkPath);
     CGContextFillPath(ctx);
@@ -282,7 +280,7 @@
 {
   // Account for shadow
   size.height += 1;
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Resize for shadow and margins
     rect.size.height -= 1;
     rect = CGRectInset(rect, roundf(rect.size.width / 20.), 0);
@@ -393,7 +391,7 @@
 + (UIImage *)styleGroupImageWithSize:(CGSize)size
 {
   size.height += 1;
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     rect.size.height -= 1;
     CGFloat strokeWidth = ceilf(0.14 * rect.size.height);
     CGFloat strokeWidth_2 = strokeWidth / 2.;
@@ -427,7 +425,7 @@
 + (UIImage *)styleTableDisclosureImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
   CGSize size = CGSizeMake(9, shadowColor ? 14 : 13);
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Account for shadow
     if (shadowColor)
       rect.size.height -= 1;
@@ -465,7 +463,7 @@
   CGSize imageSize = (CGSize){ 14, 9 };
   if (orientation == UIImageOrientationLeft || orientation == UIImageOrientationRight)
     imageSize = (CGSize){ 9, 14 };
-  return [UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:imageSize block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     CGAffineTransform transform;
     switch (orientation) {
       case UIImageOrientationUp: { transform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(M_PI), -14, -9); break; }
@@ -494,7 +492,7 @@
 
 + (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
-  return [UIImage imageWithSize:(CGSize){ 14, shadowColor ? 15 : 14 } block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:(CGSize){ 14, shadowColor ? 15 : 14 } block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Accounting for shadow
     if (shadowColor)
       rect.size.height -= 1;
@@ -527,7 +525,7 @@
 
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor shadowColor:(UIColor *)shadowColor
 {
-  return [UIImage imageWithSize:(CGSize){16, shadowColor ? 17 : 16} block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:(CGSize){16, shadowColor ? 17 : 16} block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Accounting for shadow
     if (shadowColor)
     {
@@ -569,7 +567,7 @@
 
 + (UIImage *)styleSymbolImageWithSize:(CGSize)size color:(UIColor *)color letter:(NSString *)letter
 {
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     rect = CGRectInset(rect, .5, .5);
     CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:2].CGPath;
     
@@ -601,7 +599,7 @@
 + (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor
 {
   CGSize size = CGSizeMake(16, shadowColor ? 17 : 16);
-  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect) {
+  return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     if (shadowColor)
     {
       rect.size.height -= 1;
@@ -631,7 +629,7 @@
   static UIImage *_styleCheckMarkImage = nil;
   if (!_styleCheckMarkImage)
   {
-    _styleCheckMarkImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect) {
+    _styleCheckMarkImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
       CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
       
       CGContextAddArc(ctx, 29. / 2., 29. / 2., 10, -M_PI, M_PI, 0);
@@ -653,7 +651,7 @@
   static UIImage *_styleReorderControlImage = nil;
   if (!_styleReorderControlImage)
   {
-    _styleReorderControlImage = [UIImage imageWithSize:CGSizeMake(19, 17) block:^(CGContextRef ctx, CGRect rect) {
+    _styleReorderControlImage = [UIImage imageWithSize:CGSizeMake(19, 17) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
       CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 0, [UIColor whiteColor].CGColor);
       
       CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
@@ -678,7 +676,7 @@
   static UIImage *_styleDeleteActivationImage = nil;
   if (!_styleDeleteActivationImage)
   {
-    _styleDeleteActivationImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect) {
+    _styleDeleteActivationImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
       CGContextSetStrokeColorWithColor(ctx, [UIColor whiteColor].CGColor);
       CGContextSetFillColorWithColor(ctx, [UIColor colorWithRed:200./255. green:8./255. blue:21./255. alpha:1].CGColor);
       
