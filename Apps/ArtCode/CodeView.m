@@ -224,7 +224,7 @@ static const void *rendererContext;
 }
 
 - (NSString *)text {
-  return self.attributedText.string;
+  return self.attributedText.string.copy;
 }
 
 - (void)setText:(NSString *)text {

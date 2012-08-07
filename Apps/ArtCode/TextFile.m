@@ -87,8 +87,9 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   if (content == _content) {
     return;
   }
-  _content = content;
+  _content = content.copy;
   [self updateChangeCount:UIDocumentChangeDone];
+  ASSERT(self.hasUnsavedChanges);
 }
 
 - (NSIndexSet *)bookmarks {
