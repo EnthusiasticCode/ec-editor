@@ -100,7 +100,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 - (void)loadView
 {
   // View background image
-  UIImage *bezelBackgroundImage = [[UIImage imageWithSize:CGSizeMake(bezelCornerRadius * 2 + 2, bezelCornerRadius * 2 + 2) block:^(CGContextRef ctx, CGRect rect) {
+  UIImage *bezelBackgroundImage = [[UIImage imageWithSize:CGSizeMake(bezelCornerRadius * 2 + 2, bezelCornerRadius * 2 + 2) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0 alpha:0.5].CGColor);
     CGContextAddPath(ctx, [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:bezelCornerRadius].CGPath);
     CGContextFillPath(ctx);

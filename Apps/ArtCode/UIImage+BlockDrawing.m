@@ -12,7 +12,7 @@
 
 @implementation UIImage (BlockDrawing)
 
-+ (UIImage *)imageWithSize:(CGSize)size block:(void(^)(CGContextRef, CGRect))block
++ (UIImage *)imageWithSize:(CGSize)size block:(void(^)(CGContextRef, CGRect, CGFloat))block
 {
   // Check parameters
   if (CGSizeEqualToSize(size, CGSizeZero) || !block)
@@ -28,14 +28,14 @@
   // Render bitmap with block
   CGContextScaleCTM(context, 1, -1);
   CGContextTranslateCTM(context, 0, -pixelSize.height);
-  block(context, CGRectMake(0, 0, pixelSize.width, pixelSize.height));
+  block(context, CGRectMake(0, 0, pixelSize.width, pixelSize.height), screenScale);
   
   // Create bitmap
   CGImageRef bitmap = CGBitmapContextCreateImage(context);
   CGContextRelease(context);
   
   // Create new image
-  UIImage *image = [UIImage imageWithCGImage:bitmap];
+  UIImage *image = [UIImage imageWithCGImage:bitmap scale:screenScale orientation:UIImageOrientationUp];
   CGImageRelease(bitmap);
   return image;
 }
