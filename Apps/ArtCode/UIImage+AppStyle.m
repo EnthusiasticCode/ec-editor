@@ -698,12 +698,12 @@
   switch (state) {
     case UIControlStateNormal:
       if (images[0] == nil)
-        images[0] = [[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)];
+        images[0] = [[UIImage imageNamed:@"topBar_ToolButton_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(15, 10, 15, 10)];
       return images[0];
       
     default:
       if (images[1] == nil)
-        images[1] = [[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 10, 10)];
+        images[1] = [[UIImage imageNamed:@"topBar_ToolButton_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(15, 10, 15, 10)];
       return images[1];
   }
 }
