@@ -370,6 +370,12 @@
 		CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CD65F1D114F6C4A200E0C441 /* Keychain.m */; };
 		CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90214F1642000FCC987 /* NewRemoteViewController.m */; };
 		CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */; };
+		CD6A767615D19D1B00D1F4C9 /* topBar_Secondary_Background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767515D19D1B00D1F4C9 /* topBar_Secondary_Background@2x.png */; };
+		CD6A767D15D19D6600D1F4C9 /* searchBar_Background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767815D19D6600D1F4C9 /* searchBar_Background@2x.png */; };
+		CD6A767E15D19D6600D1F4C9 /* searchBar_Button_Normal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767915D19D6600D1F4C9 /* searchBar_Button_Normal@2x.png */; };
+		CD6A767F15D19D6600D1F4C9 /* searchBar_NextButton_Normal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767A15D19D6600D1F4C9 /* searchBar_NextButton_Normal@2x.png */; };
+		CD6A768015D19D6600D1F4C9 /* searchBar_OptionButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767B15D19D6600D1F4C9 /* searchBar_OptionButton@2x.png */; };
+		CD6A768115D19D6600D1F4C9 /* searchBar_PrevButton_Normal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A767C15D19D6600D1F4C9 /* searchBar_PrevButton_Normal@2x.png */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
 		CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */; };
@@ -945,6 +951,12 @@
 		CD69C90214F1642000FCC987 /* NewRemoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewRemoteViewController.m; sourceTree = "<group>"; };
 		CD69C90414F1649600FCC987 /* RemoteOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteOptionsViewController.h; sourceTree = "<group>"; };
 		CD69C90514F1649600FCC987 /* RemoteOptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteOptionsViewController.m; sourceTree = "<group>"; };
+		CD6A767515D19D1B00D1F4C9 /* topBar_Secondary_Background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBar_Secondary_Background@2x.png"; sourceTree = "<group>"; };
+		CD6A767815D19D6600D1F4C9 /* searchBar_Background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchBar_Background@2x.png"; sourceTree = "<group>"; };
+		CD6A767915D19D6600D1F4C9 /* searchBar_Button_Normal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchBar_Button_Normal@2x.png"; sourceTree = "<group>"; };
+		CD6A767A15D19D6600D1F4C9 /* searchBar_NextButton_Normal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchBar_NextButton_Normal@2x.png"; sourceTree = "<group>"; };
+		CD6A767B15D19D6600D1F4C9 /* searchBar_OptionButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchBar_OptionButton@2x.png"; sourceTree = "<group>"; };
+		CD6A767C15D19D6600D1F4C9 /* searchBar_PrevButton_Normal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchBar_PrevButton_Normal@2x.png"; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
@@ -1665,6 +1677,7 @@
 				CD174BD615D13D1D00F3EAF1 /* topBar_BackButton_Disabled@2x.png */,
 				CD174BD715D13D1D00F3EAF1 /* topBar_BackButton_Normal@2x.png */,
 				CD174BEC15D1627F00F3EAF1 /* topBar_BackButton@2x.png */,
+				CD6A767515D19D1B00D1F4C9 /* topBar_Secondary_Background@2x.png */,
 			);
 			name = "@2x";
 			sourceTree = "<group>";
@@ -1874,6 +1887,18 @@
 				CD69C90214F1642000FCC987 /* NewRemoteViewController.m */,
 			);
 			name = "New remote";
+			sourceTree = "<group>";
+		};
+		CD6A767715D19D5F00D1F4C9 /* @2x */ = {
+			isa = PBXGroup;
+			children = (
+				CD6A767815D19D6600D1F4C9 /* searchBar_Background@2x.png */,
+				CD6A767915D19D6600D1F4C9 /* searchBar_Button_Normal@2x.png */,
+				CD6A767A15D19D6600D1F4C9 /* searchBar_NextButton_Normal@2x.png */,
+				CD6A767B15D19D6600D1F4C9 /* searchBar_OptionButton@2x.png */,
+				CD6A767C15D19D6600D1F4C9 /* searchBar_PrevButton_Normal@2x.png */,
+			);
+			name = "@2x";
 			sourceTree = "<group>";
 		};
 		CD6E416D14614A2A00A9CE7F /* Minimap View */ = {
@@ -2297,6 +2322,7 @@
 		CDC1333114602F430028423F /* Search Bar */ = {
 			isa = PBXGroup;
 			children = (
+				CD6A767715D19D5F00D1F4C9 /* @2x */,
 				CDC1333A146030380028423F /* searchBar_OptionButton.png */,
 				CDC1333214602F5E0028423F /* searchBar_Background.png */,
 				CDC1333314602F5E0028423F /* searchBar_Button_Normal.png */,
@@ -2792,6 +2818,12 @@
 				CD174BFD15D167AB00F3EAF1 /* bottomToolBar_Icon_Files_Selected@2x.png in Resources */,
 				CD174BFE15D167AB00F3EAF1 /* bottomToolBar_Icon_Remotes_Normal@2x.png in Resources */,
 				CD174BFF15D167AB00F3EAF1 /* bottomToolBar_Icon_Remotes_Selected@2x.png in Resources */,
+				CD6A767615D19D1B00D1F4C9 /* topBar_Secondary_Background@2x.png in Resources */,
+				CD6A767D15D19D6600D1F4C9 /* searchBar_Background@2x.png in Resources */,
+				CD6A767E15D19D6600D1F4C9 /* searchBar_Button_Normal@2x.png in Resources */,
+				CD6A767F15D19D6600D1F4C9 /* searchBar_NextButton_Normal@2x.png in Resources */,
+				CD6A768015D19D6600D1F4C9 /* searchBar_OptionButton@2x.png in Resources */,
+				CD6A768115D19D6600D1F4C9 /* searchBar_PrevButton_Normal@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
