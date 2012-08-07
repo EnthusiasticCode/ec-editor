@@ -291,6 +291,11 @@
 		CD174BE115D15BAF00F3EAF1 /* tabBar_TabBackground_Selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BDD15D15BAF00F3EAF1 /* tabBar_TabBackground_Selected@2x.png */; };
 		CD174BE215D15BAF00F3EAF1 /* tabBar_TabCloseButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BDE15D15BAF00F3EAF1 /* tabBar_TabCloseButton@2x.png */; };
 		CD174BE415D15DA500F3EAF1 /* topBarItem_Edit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BE315D15DA500F3EAF1 /* topBarItem_Edit@2x.png */; };
+		CD174BE815D15F7800F3EAF1 /* projectsTableCell_BackgroundNormal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BE615D15F7800F3EAF1 /* projectsTableCell_BackgroundNormal@2x.png */; };
+		CD174BE915D15F7800F3EAF1 /* projectsTableCell_BackgroundSelected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BE715D15F7800F3EAF1 /* projectsTableCell_BackgroundSelected@2x.png */; };
+		CD174BEB15D161D200F3EAF1 /* projectsTableCell_NewBadge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BEA15D161D200F3EAF1 /* projectsTableCell_NewBadge@2x.png */; };
+		CD174BED15D1627F00F3EAF1 /* topBar_BackButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BEC15D1627F00F3EAF1 /* topBar_BackButton@2x.png */; };
+		CD174BEF15D163EA00F3EAF1 /* popover_Button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BEE15D163EA00F3EAF1 /* popover_Button@2x.png */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D6B1914F2B3B9007AC652 /* libConnection.a */; };
@@ -839,6 +844,11 @@
 		CD174BDD15D15BAF00F3EAF1 /* tabBar_TabBackground_Selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tabBar_TabBackground_Selected@2x.png"; sourceTree = "<group>"; };
 		CD174BDE15D15BAF00F3EAF1 /* tabBar_TabCloseButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tabBar_TabCloseButton@2x.png"; sourceTree = "<group>"; };
 		CD174BE315D15DA500F3EAF1 /* topBarItem_Edit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBarItem_Edit@2x.png"; sourceTree = "<group>"; };
+		CD174BE615D15F7800F3EAF1 /* projectsTableCell_BackgroundNormal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "projectsTableCell_BackgroundNormal@2x.png"; sourceTree = "<group>"; };
+		CD174BE715D15F7800F3EAF1 /* projectsTableCell_BackgroundSelected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "projectsTableCell_BackgroundSelected@2x.png"; sourceTree = "<group>"; };
+		CD174BEA15D161D200F3EAF1 /* projectsTableCell_NewBadge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "projectsTableCell_NewBadge@2x.png"; sourceTree = "<group>"; };
+		CD174BEC15D1627F00F3EAF1 /* topBar_BackButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBar_BackButton@2x.png"; sourceTree = "<group>"; };
+		CD174BEE15D163EA00F3EAF1 /* popover_Button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popover_Button@2x.png"; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD19920914F25F390059D1E8 /* RemoteBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBrowserController.h; sourceTree = "<group>"; };
@@ -1638,6 +1648,7 @@
 				CD174BD315D13CBA00F3EAF1 /* topBar_ForwardButton_Normal@2x.png */,
 				CD174BD615D13D1D00F3EAF1 /* topBar_BackButton_Disabled@2x.png */,
 				CD174BD715D13D1D00F3EAF1 /* topBar_BackButton_Normal@2x.png */,
+				CD174BEC15D1627F00F3EAF1 /* topBar_BackButton@2x.png */,
 			);
 			name = "@2x";
 			sourceTree = "<group>";
@@ -1649,6 +1660,16 @@
 				CD174BDC15D15BAF00F3EAF1 /* tabBar_TabBackground_Normal@2x.png */,
 				CD174BDD15D15BAF00F3EAF1 /* tabBar_TabBackground_Selected@2x.png */,
 				CD174BDE15D15BAF00F3EAF1 /* tabBar_TabCloseButton@2x.png */,
+			);
+			name = "@2x";
+			sourceTree = "<group>";
+		};
+		CD174BE515D15F6F00F3EAF1 /* @2x */ = {
+			isa = PBXGroup;
+			children = (
+				CD174BE615D15F7800F3EAF1 /* projectsTableCell_BackgroundNormal@2x.png */,
+				CD174BE715D15F7800F3EAF1 /* projectsTableCell_BackgroundSelected@2x.png */,
+				CD174BEA15D161D200F3EAF1 /* projectsTableCell_NewBadge@2x.png */,
 			);
 			name = "@2x";
 			sourceTree = "<group>";
@@ -2035,6 +2056,7 @@
 			isa = PBXGroup;
 			children = (
 				CD3D77F31570EFD000E51933 /* popover_Button.png */,
+				CD174BEE15D163EA00F3EAF1 /* popover_Button@2x.png */,
 				CDDC95061462E23F00E2B96C /* minimap_Background.png */,
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
@@ -2305,6 +2327,7 @@
 		CDEE0D7014BDA5790019FDEF /* Projects */ = {
 			isa = PBXGroup;
 			children = (
+				CD174BE515D15F6F00F3EAF1 /* @2x */,
 				CDA2EDAD157FD47900E979E9 /* projectsIcon_docSet.png */,
 				CD711ACF156B9A1500F30964 /* helpArrowUp.png */,
 				CD01C28F151DE6F900B3820B /* projectsTableCell_NewBadge.png */,
@@ -2732,6 +2755,11 @@
 				CD174BE115D15BAF00F3EAF1 /* tabBar_TabBackground_Selected@2x.png in Resources */,
 				CD174BE215D15BAF00F3EAF1 /* tabBar_TabCloseButton@2x.png in Resources */,
 				CD174BE415D15DA500F3EAF1 /* topBarItem_Edit@2x.png in Resources */,
+				CD174BE815D15F7800F3EAF1 /* projectsTableCell_BackgroundNormal@2x.png in Resources */,
+				CD174BE915D15F7800F3EAF1 /* projectsTableCell_BackgroundSelected@2x.png in Resources */,
+				CD174BEB15D161D200F3EAF1 /* projectsTableCell_NewBadge@2x.png in Resources */,
+				CD174BED15D1627F00F3EAF1 /* topBar_BackButton@2x.png in Resources */,
+				CD174BEF15D163EA00F3EAF1 /* popover_Button@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

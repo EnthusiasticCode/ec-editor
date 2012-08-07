@@ -143,7 +143,7 @@
     labelColor = [UIColor styleForegroundColor];
   return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Removing one pixel to add shadow
-    rect.size.height -= 1;
+    rect.size.height -= scale;
     
     CGRect orect = rect;        
     CGFloat marginLeft = ceilf(rect.size.width / 10);
@@ -211,7 +211,7 @@
     CGContextSetFillColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
     CGContextSaveGState(ctx);
     {
-      CGContextTranslateCTM(ctx, 0, 1);
+      CGContextTranslateCTM(ctx, 0, scale);
       CGContextAddPath(ctx, docPath);
       CGContextAddPath(ctx, bookmarkPath);
       CGContextFillPath(ctx);
@@ -226,7 +226,7 @@
     // Draw bookmark
     CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
     CGContextSetFillColorWithColor(ctx, labelColor.CGColor);
-    CGContextSetLineWidth(ctx, 1);
+    CGContextSetLineWidth(ctx, scale);
     
     CGContextAddPath(ctx, bookmarkPath);
     CGContextFillPath(ctx);
