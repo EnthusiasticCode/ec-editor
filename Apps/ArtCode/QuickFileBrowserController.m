@@ -66,7 +66,7 @@
   self = [super initWithTitle:L(@"Open quickly") searchBarStaticOnTop:YES];
   if (!self)
     return nil;
-  float iconSize = UIScreen.mainScreen.scale * 26;
+  float iconSize = 26;
   self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Files" image:[UIImage styleDocumentImageWithSize:CGSizeMake(iconSize, iconSize) color:[UIColor whiteColor] text:nil] tag:0];
   self.navigationItem.title = L(@"Open quickly");
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Show") style:UIBarButtonItemStyleDone target:self action:@selector(_showBrowserInTabAction:)];
