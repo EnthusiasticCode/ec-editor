@@ -36,6 +36,7 @@
 #import "ArtCodeProject.h"
 
 #import "TextFile.h"
+#import <file/FileMagic.h>
 
 #import "DiffMatchPatch.h"
 
@@ -868,11 +869,22 @@ static void drawStencilStar(CGContextRef myContext)
 //  [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
 //}
 
+#pragma mark - Displayable Content
+
++ (BOOL)canDisplayFileInCodeView:(NSURL *)fileURL {
+  FileMagic *magic = [FileMagic.alloc initWithFileURL:fileURL];
+  return [magic.mimeType hasPrefix:@"text"];
+}
+
++ (BOOL)canDisplayFileInWebView:(NSURL *)fileURL {
+  NSString *extension = fileURL.pathExtension.lowercaseString;
+  return [extension isEqualToString:@"html"] || [extension isEqualToString:@"htm"];
+}
+
 #pragma mark - Private Methods
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState {
-  NSString *ext = self.artCodeTab.currentLocation.fileExtension.lowercaseString;
-  if (!editingState && ([ext isEqualToString:@"html"] || [ext isEqualToString:@"htm"])) {
+  if (!editingState && [self.class canDisplayFileInWebView:self.artCodeTab.currentLocation.url]) {
     return self.webView;
   } else {
     return self.codeView;

@@ -39,6 +39,8 @@
 #import "UIViewController+Utilities.h"
 #import "NSFileCoordinator+CoordinatedFileManagement.h"
 
+#import "CodeFileController.h"
+
 
 @interface FileBrowserController ()
 
@@ -235,7 +237,12 @@
       _selectedItems = [NSMutableArray new];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
-    [self.artCodeTab pushFileURL:[self.filteredItems objectAtIndex:indexPath.row] withProject:self.artCodeTab.currentLocation.project];
+    NSURL *fileURL = [self.filteredItems objectAtIndex:indexPath.row];
+    if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+    } else {
+      // TODO: QLPreviewController
+    }
   }
 }
 

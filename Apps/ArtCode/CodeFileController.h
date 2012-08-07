@@ -15,6 +15,12 @@
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
+#pragma mark - Displayable Content
+
++ (BOOL)canDisplayFileInCodeView:(NSURL *)fileURL;
+
++ (BOOL)canDisplayFileInWebView:(NSURL *)fileURL;
+
 #pragma mark - Code viewing and editing
 
 /// The code view used to display code.
