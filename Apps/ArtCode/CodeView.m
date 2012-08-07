@@ -1174,15 +1174,6 @@ static void init(CodeView *self)
   carretRect.origin.x -= 1.0;
   carretRect.size.width = 2.0;
   
-  CGFloat scale = self.contentScaleFactor;
-  if (scale != 1.0) 
-  {
-    carretRect.origin.x *= scale;
-    carretRect.origin.y *= scale;
-    carretRect.size.width *= scale;
-    carretRect.size.height *= scale;
-  }
-  
   return carretRect;
 }
 
@@ -1193,14 +1184,7 @@ static void init(CodeView *self)
 
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
                                withinRange:(UITextRange *)range
-{
-  CGFloat scale = self.contentScaleFactor;
-  if (scale != 1.0)
-  {
-    point.x /= scale;
-    point.y /= scale;
-  }
-  
+{  
   NSUInteger location = [self.renderer closestStringLocationToPoint:point withinStringRange:range ? [(TextRange *)range range] : (NSRange){0, 0}];
   return [[TextPosition alloc] initWithIndex:location];
 }
