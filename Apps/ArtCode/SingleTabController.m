@@ -9,6 +9,7 @@
 #import "SingleTabController.h"
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
+#import "TabPageViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 
@@ -45,6 +46,9 @@
 - (void)_defaultToolbarTitleButtonAction:(id)sender;
 - (void)_historyBackAction:(id)sender;
 - (void)_historyForwardAction:(id)sender;
+
+/// Handle the gestures to hide and show the tab bar
+- (void)_handleTabBarToggleRecognizer:(UISwipeGestureRecognizer *)recognizer;
 
 @end
 
@@ -325,6 +329,14 @@
   [self.defaultToolbar removeFromSuperview];
   [self.view addSubview:self.currentToolbarView];
   [self.view addSubview:self.contentViewController.view];
+  
+  // Create and add swipe recognizers to show/hide tabs
+  UISwipeGestureRecognizer *showTabBarRecognizer = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
+  showTabBarRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+  [self.view addGestureRecognizer:showTabBarRecognizer];
+  UISwipeGestureRecognizer *hideTabBarRecognizer = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
+  hideTabBarRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+  [self.view addGestureRecognizer:hideTabBarRecognizer];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -506,6 +518,15 @@
 - (void)_historyForwardAction:(id)sender
 {
   [self.artCodeTab moveForwardInHistory];
+}
+
+- (void)_handleTabBarToggleRecognizer:(UISwipeGestureRecognizer *)recognizer {
+  if (recognizer.state == UIGestureRecognizerStateRecognized) {
+    CGPoint gestureLocation = [recognizer locationInView:self.view];
+    if (gestureLocation.y < _toolbarHeight) {
+      [self.tabPageViewController setTabBarVisible:(recognizer.direction == UISwipeGestureRecognizerDirectionDown) animated:YES];
+    }
+  }
 }
 
 @end

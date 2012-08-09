@@ -24,8 +24,6 @@
 
 #pragma mark - Properties
 
-@synthesize dataSource = _dataSource, tabBar = _tabBar, gestureRecognizers = _gestureRecognizers, tabBarVisible = _tabBarVisible;
-
 - (void)setTabBarVisible:(BOOL)tabBarVisible {
   [self setTabBarVisible:tabBarVisible animated:NO];
 }
@@ -36,7 +34,9 @@
   
   [self willChangeValueForKey:@"tabBarVisible"];
   _tabBarVisible = tabBarVisible;
-  // TODO animation
+  [UIView animateWithDuration:animated ? 0.2 : 0 animations:^{
+    [self _layoutSubviews];
+  }];
   [self didChangeValueForKey:@"tabBarVisible"];
 }
 
@@ -190,6 +190,20 @@
       }
     }
   }]; 
+}
+
+@end
+
+#pragma mark
+
+@implementation UIViewController (TabPageViewController)
+
+- (TabPageViewController *)tabPageViewController {
+  UIViewController *parentController = self.parentViewController;
+  while (parentController && ![parentController isKindOfClass:[TabPageViewController class]]) {
+    parentController = parentController.parentViewController;
+  }
+  return (TabPageViewController *)parentController;
 }
 
 @end

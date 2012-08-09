@@ -42,3 +42,11 @@
 @property (nonatomic, strong, readonly) NSArray *gestureRecognizers;
 
 @end
+
+
+@interface UIViewController (TabPageViewController)
+
+/// Gets the parent tab page view controller if any.
+- (TabPageViewController *)tabPageViewController;
+
+@end
