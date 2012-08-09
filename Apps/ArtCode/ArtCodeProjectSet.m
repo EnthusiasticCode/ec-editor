@@ -82,7 +82,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:[newURL lastPathComponent]];
     [project setProjectSet:self];
-    [(RACSubject *)self.objectsAdded sendNext:project];
+    [_objectsAddedSubject sendNext:project];
     completionHandler(project);
   }];
 }
@@ -94,7 +94,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
       return;
     }
     project.projectSet = nil;
-    [(RACSubject *)self.objectsRemoved sendNext:project];
+    [_objectsRemovedSubject sendNext:project];
     [[self managedObjectContext] deleteObject:project];
     completionHandler(nil);
   }];

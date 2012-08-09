@@ -11,7 +11,25 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 
-@implementation ArtCodeTabSet
+@implementation ArtCodeTabSet {
+  RACSubject *_objectsAddedSubject;
+}
+
+#pragma mark - RAC Support
+
+- (RACSubscribable *)objectsAdded {
+  if (!_objectsAddedSubject) {
+    _objectsAddedSubject = [RACSubject subject];
+  }
+  return _objectsAddedSubject;
+}
+
+- (void)willTurnIntoFault {
+  [super willTurnIntoFault];
+  _objectsAddedSubject = nil;
+}
+
+#pragma mark - Public Methods
 
 + (ArtCodeTabSet *)defaultSet {
   static NSString *defaultSetName = @"default";
@@ -42,14 +60,20 @@
 }
 
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab {
+  return [self addNewTabWithLocationType:tab.currentLocation.type project:tab.currentLocation.project remote:tab.currentLocation.remote data:tab.currentLocation.data];
+}
+
+- (ArtCodeTab *)addNewTabWithLocationType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data {
   ArtCodeTab *newTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
   newTab.tabSet = self;
   ArtCodeLocation *newLocation = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
-  newLocation.type = tab.currentLocation.type;
-  newLocation.project = tab.currentLocation.project;
-  newLocation.remote = tab.currentLocation.remote;
-  newLocation.data = tab.currentLocation.data;
+  newLocation.type = type;
+  newLocation.project = project;
+  newLocation.remote = remote;
+  newLocation.data = data;
   [newTab replaceCurrentLocationWithLocation:newLocation];
+  // inform rag
+  [_objectsAddedSubject sendNext:newTab];
   return newTab;
 }
 

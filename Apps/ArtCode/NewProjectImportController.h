@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class ArtCodeProject;
+
 @interface NewProjectImportController : UITableViewController
+
+- (void)createProjectFromZipAtURL:(NSURL *)zipURL completionHandler:(void(^)(ArtCodeProject *project))block;
 
 @end

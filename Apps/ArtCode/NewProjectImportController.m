@@ -101,7 +101,16 @@
 
 #pragma mark - Table view delegate
 
-- (void)_createProjectFromZipAtURL:(NSURL *)zipURL {
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  [self createProjectFromZipAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] completionHandler:^(ArtCodeProject *project) {
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+  }];
+}
+
+#pragma mark - Import method
+
+- (void)createProjectFromZipAtURL:(NSURL *)zipURL completionHandler:(void (^)(ArtCodeProject *))block {
   // Generate a unique name for the project
   NSString *zipFileName = [[zipURL lastPathComponent] stringByDeletingPathExtension];
   NSString *projectName = zipFileName;
@@ -141,24 +150,22 @@
         }];
         if (explodingURLs) {
           [NSFileCoordinator coordinatedMoveItemsAtURLs:explodingURLs toURL:createdProject.fileURL completionHandler:^(NSError *er) {
-            [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             // TODO error handling
+            if (block) {
+              block(createdProject);
+            }
           }];
         } else {
-          [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
           // TODO error handling
+          if (block) {
+            block(createdProject);
+          }
         }
       }];
     } else {
       ASSERT(NO); // TODO error handling
     }
   }];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self _createProjectFromZipAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row]];
 }
 
 @end

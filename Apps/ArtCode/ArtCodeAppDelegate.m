@@ -22,7 +22,7 @@
 #import "PopoverButton.h"
 #import "NewProjectImportController.h"
 
-#import "ArtCodeTab.h"
+#import "ArtCodeTabSet.h"
 #import "ArtCodeTabPageViewController.h"
 
 #import "ArtCodeDatastore.h"
@@ -113,41 +113,17 @@
   // Creating main tab controllers
   _tabPageController = [ArtCodeTabPageViewController new];
   _tabPageController.definesPresentationContext = YES;
-  // Add tab button
-//  UIButton *addTabButton = [UIButton new];
-//  [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
-//  [addTabButton setActionBlock:^(id sender) {
-//    // Duplicate current tab
-//    SingleTabController *singleTabController = [[SingleTabController alloc] init];
-//    singleTabController.artCodeTab = [ArtCodeTab duplicateTab:self.tabController.selectedViewController.artCodeTab];
-//    [self.tabController addChildViewController:singleTabController animated:YES];
-//  } forControlEvent:UIControlEventTouchUpInside];
-//  self.tabController.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
-//  self.tabController.contentScrollView.accessibilityIdentifier = @"tabs scrollview";
+  _tabPageController.artCodeTabSet = [ArtCodeTabSet defaultSet];
   
   ////////////////////////////////////////////////////////////////////////////
   // Setup window
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   self.window.rootViewController = _tabPageController;
   
-  ////////////////////////////////////////////////////////////////////////////
-  // Resume tabs
-//  for (ArtCodeTab *tab in [ArtCodeTab allTabs])
-//  {
-//    SingleTabController *singleTabController = [[SingleTabController alloc] init];
-//    singleTabController.artCodeTab = tab;
-//    [self.tabController addChildViewController:singleTabController];
-//  }
-//  [self.tabController setSelectedViewControllerIndex:[ArtCodeTab currentTabIndex]];
-//  [RACAbleSelf(tabController.selectedViewControllerIndex) subscribeNext:^(NSNumber *x) {
-//    [ArtCodeTab setCurrentTabIndex:x.unsignedIntegerValue];
-//  }];
-//  [self.tabController setTabBarVisible:NO];
-  
   // Start the application
   [self.window makeKeyAndVisible];
   
-  // Open the file if needed
+  // Open the file if needed to account for open with...
   if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]) {
     return [self application:[UIApplication sharedApplication] openURL:[launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] sourceApplication:[launchOptions objectForKey:UIApplicationLaunchOptionsSourceApplicationKey] annotation:[launchOptions objectForKey:UIApplicationLaunchOptionsAnnotationKey]];
   }
@@ -156,11 +132,16 @@
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  // Handles open with... by creating a new project from the opened file and opening a new tab with that project.
+  // TODO account for opening a non-archive type
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
-  [projectImportController performSelector:@selector(_createProjectFromZipAtURL:) withObject:url];
-  // TODO make method pubblic
-  // TODO delete imported file
-  // TODO open tab with imported project
+  [projectImportController createProjectFromZipAtURL:url completionHandler:^(ArtCodeProject *project) {
+    if (project) {
+      [[NSFileManager defaultManager] removeItemAtURL:url error:NULL];
+      ArtCodeTab *tab = [[ArtCodeTabSet defaultSet] addNewTabWithLocationType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
+      [_tabPageController.tabBar setSelectedTabIndex:[tab.tabSet.tabs indexOfObject:tab]];
+    }
+  }];
   return YES;
 }
 

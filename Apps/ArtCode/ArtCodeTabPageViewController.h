@@ -8,6 +8,10 @@
 
 #import "TabPageViewController.h"
 
+@class ArtCodeTabSet;
+
 @interface ArtCodeTabPageViewController : TabPageViewController
+
+@property (nonatomic, strong) ArtCodeTabSet *artCodeTabSet;
 
 @end

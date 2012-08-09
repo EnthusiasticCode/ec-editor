@@ -19,7 +19,9 @@
 
 @end
 
-@implementation ArtCodeTabPageViewController
+@implementation ArtCodeTabPageViewController {
+  RACDisposable *_artCodeTabSetDisposable;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -27,6 +29,17 @@
     return nil;
   self.dataSource = self;
   return self;
+}
+
+- (void)setArtCodeTabSet:(ArtCodeTabSet *)artCodeTabSet {
+  if (artCodeTabSet == _artCodeTabSet)
+    return;
+  
+  [_artCodeTabSetDisposable dispose];
+  _artCodeTabSet = artCodeTabSet;
+  _artCodeTabSetDisposable = [artCodeTabSet.objectsAdded subscribeNext:^(ArtCodeTab *tab) {
+    [self.tabBar addTabWithTitle:tab.currentLocation.name animated:YES];
+  }];
 }
 
 #pragma mark - View lifecycle
@@ -46,18 +59,18 @@
   [addTabButton addTarget:self action:@selector(_addButtonAction:) forControlEvents:UIControlEventTouchUpInside];
   self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
   
-  for (ArtCodeTab *tab in [[ArtCodeTabSet defaultSet] tabs]) {
+  for (ArtCodeTab *tab in [self.artCodeTabSet tabs]) {
     [self.tabBar addTabWithTitle:tab.currentLocation.name animated:NO];
   }
   // Get selected tab from persisted user defaults
-  [self.tabBar setSelectedTabIndex:[[ArtCodeTabSet defaultSet] activeTabIndexValue]];
+  [self.tabBar setSelectedTabIndex:[self.artCodeTabSet activeTabIndexValue]];
 }
 
 #pragma mark - TabPage data source
 
 - (UIViewController *)tabPageViewController:(TabPageViewController *)tabPageController viewControllerForTabAtIndex:(NSUInteger)tabIndex {
   // Get the corresponding ArtCodeTab
-  ArtCodeTab *artCodeTab = [[[ArtCodeTabSet defaultSet] tabs] objectAtIndex:tabIndex];
+  ArtCodeTab *artCodeTab = [[self.artCodeTabSet tabs] objectAtIndex:tabIndex];
   
   // Search in controllers already presents as child
   for (SingleTabController *controller in self.childViewControllers) {
@@ -105,7 +118,7 @@
   }
   
   // Get the art code tab to remove
-  ArtCodeTab *artCodeTab = [[[ArtCodeTabSet defaultSet] tabs] objectAtIndex:tabIndex];
+  ArtCodeTab *artCodeTab = [[self.artCodeTabSet tabs] objectAtIndex:tabIndex];
   
   // Clear the controller state to avoid RAC problems
   for (SingleTabController *controller in self.childViewControllers) {
@@ -125,27 +138,24 @@
 
 - (void)tabBar:(TabBar *)tabBar didRemoveTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
   // Update stored selected index
-  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabBar.selectedTabIndex];
+  [self.artCodeTabSet setActiveTabIndexValue:tabBar.selectedTabIndex];
 }
 
 - (void)tabBar:(TabBar *)tabBar didSelectTabControl:(UIControl *)tabControl atIndex:(NSUInteger)tabIndex {
-  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabIndex];
+  [self.artCodeTabSet setActiveTabIndexValue:tabIndex];
 }
 
 - (void)tabBar:(TabBar *)tabBar didMoveTabControl:(UIControl *)tabControl fromIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex {
-  [[[ArtCodeTabSet defaultSet] mutableOrderedSetValueForKey:@"tabs"] moveObjectsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] toIndex:toIndex];
+  [[self.artCodeTabSet mutableOrderedSetValueForKey:@"tabs"] moveObjectsAtIndexes:[NSIndexSet indexSetWithIndex:fromIndex] toIndex:toIndex];
   // Update stored selected index
-  [[ArtCodeTabSet defaultSet] setActiveTabIndexValue:tabBar.selectedTabIndex];
+  [self.artCodeTabSet setActiveTabIndexValue:tabBar.selectedTabIndex];
 }
 
 #pragma mark - Private methods
 
 - (void)_addButtonAction:(id)sender {
   SingleTabController *currentSingleTabController = (SingleTabController *)[self tabPageViewController:self viewControllerForTabAtIndex:self.tabBar.selectedTabIndex];
-  
-  [[ArtCodeTabSet defaultSet] addNewTabByDuplicatingTab:currentSingleTabController.artCodeTab];
-  
-  [self.tabBar addTabWithTitle:currentSingleTabController.title animated:YES];
+  [self.artCodeTabSet addNewTabByDuplicatingTab:currentSingleTabController.artCodeTab];
 }
 
 @end
