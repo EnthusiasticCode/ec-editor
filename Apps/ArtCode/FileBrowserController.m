@@ -365,7 +365,7 @@
     [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     
     _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-    _toolNormalAddPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _toolNormalAddPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     popoverViewController.presentingPopoverController = _toolNormalAddPopover;
   }
   [(UINavigationController *)_toolNormalAddPopover.contentViewController popToRootViewControllerAnimated:NO];

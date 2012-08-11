@@ -507,7 +507,7 @@
     [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     newProjectNavigationController.artCodeTab = self.artCodeTab;
     _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
-    _toolItemPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _toolItemPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     newProjectNavigationController.presentingPopoverController = _toolItemPopover;
   }
   [(UINavigationController *)_toolItemPopover.contentViewController popToRootViewControllerAnimated:NO];

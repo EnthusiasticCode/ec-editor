@@ -9,7 +9,7 @@
 #import "SearchableTableBrowserController.h"
 #import "SingleTabController.h"
 #import "QuickBrowsersContainerController.h"
-#import "ShapePopoverBackgroundView.h"
+#import "ImagePopoverBackgroundView.h"
 #import "NSTimer+BlockTimer.h"
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
@@ -274,7 +274,7 @@
   if (!_quickBrowsersPopover)
   {
     _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
   }
   else
   {

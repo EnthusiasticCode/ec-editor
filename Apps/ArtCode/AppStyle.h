@@ -9,6 +9,6 @@
 #import "UIFont+AppStyle.h"
 #import "UIColor+AppStyle.h"
 #import "UIImage+AppStyle.h"
-#import "ShapePopoverBackgroundView.h"
+#import "ImagePopoverBackgroundView.h"
 
 #define STYLE_ANIMATION_DURATION 0.15

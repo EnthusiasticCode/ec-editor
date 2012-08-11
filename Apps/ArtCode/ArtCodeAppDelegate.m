@@ -44,13 +44,11 @@
   
   ////////////////////////////////////////////////////////////////////////////
   // Generic popover
-  id popoverAppearance = [ShapePopoverBackgroundView appearance];
-  //    [popoverAppearance setBackgroundColor:[UIColor colorWithRed:57.0/255.0 green:58.0/255.0 blue:62.0/255.0 alpha:1.0]];
-  [(ShapePopoverBackgroundView *)popoverAppearance setBackgroundColor:[UIColor colorWithRed:67.0/255.0 green:68.0/255.0 blue:72.0/255.0 alpha:1.0]];
-  [(ShapePopoverBackgroundView *)popoverAppearance setStrokeColor:[UIColor colorWithWhite:0.34 alpha:1]];
-  [popoverAppearance setShadowOpacity:0.7];
-  [popoverAppearance setShadowRadius:4];
-  [popoverAppearance setShadowOffsetForArrowDirectionUpToAutoOrient:CGSizeMake(0, 1)];
+  [ImagePopoverBackgroundView.appearance setBackgroundImage:[[UIImage imageNamed:@"popover_background"] resizableImageWithCapInsets:UIEdgeInsetsMake(15, 15, 15, 15)]];
+  [ImagePopoverBackgroundView.appearance setBackgroundInsets:UIEdgeInsetsMake(-9, -9, -9, -9)];
+  [ImagePopoverBackgroundView.appearance setUpArrowImage:[UIImage imageNamed:@"popover_arrow"]];
+  [ImagePopoverBackgroundView.appearance setArrowInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
+  [ImagePopoverBackgroundView.appearance setArrowLimitsInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
   
   ////////////////////////////////////////////////////////////////////////////
   // Button in generic navigation controller

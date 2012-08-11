@@ -16,7 +16,7 @@
 
 #import "NSArray+ScoreForAbbreviation.h"
 #import "HighlightTableViewCell.h"
-#import "ShapePopoverBackgroundView.h"
+#import "ImagePopoverBackgroundView.h"
 #import "NewRemoteViewController.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
@@ -175,7 +175,7 @@
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newRemote];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _toolAddPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _toolAddPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _toolAddPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     newRemote.presentingPopoverController = _toolAddPopover;
   }
   [_toolAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

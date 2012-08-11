@@ -535,6 +535,11 @@
 		CDF4C012144F2C7900475F6B /* TopBarToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C010144F2C7900475F6B /* TopBarToolbar.m */; };
 		CDF4C015144F2C8A00475F6B /* SingleTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4C014144F2C8A00475F6B /* SingleTabController.m */; };
 		CDF87A9D14CD85E500EED579 /* topBar_Secondary_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */; };
+		CDFAAA5115D6946D00835D86 /* popover_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFAAA4F15D6946D00835D86 /* popover_arrow@2x.png */; };
+		CDFAAA5215D6946D00835D86 /* popover_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFAAA5015D6946D00835D86 /* popover_background@2x.png */; };
+		CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDFAAA5415D6950200835D86 /* ImagePopoverBackgroundView.m */; };
+		CDFAAA5815D6C61E00835D86 /* popover_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFAAA5615D6C61E00835D86 /* popover_arrow.png */; };
+		CDFAAA5915D6C61E00835D86 /* popover_background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDFAAA5715D6C61E00835D86 /* popover_background.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1172,6 +1177,12 @@
 		CDF4C013144F2C8A00475F6B /* SingleTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleTabController.h; sourceTree = "<group>"; };
 		CDF4C014144F2C8A00475F6B /* SingleTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingleTabController.m; sourceTree = "<group>"; };
 		CDF87A9C14CD85E500EED579 /* topBar_Secondary_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Secondary_Background.png; sourceTree = "<group>"; };
+		CDFAAA4F15D6946D00835D86 /* popover_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popover_arrow@2x.png"; sourceTree = "<group>"; };
+		CDFAAA5015D6946D00835D86 /* popover_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popover_background@2x.png"; sourceTree = "<group>"; };
+		CDFAAA5315D6950200835D86 /* ImagePopoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePopoverBackgroundView.h; sourceTree = "<group>"; };
+		CDFAAA5415D6950200835D86 /* ImagePopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePopoverBackgroundView.m; sourceTree = "<group>"; };
+		CDFAAA5615D6C61E00835D86 /* popover_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popover_arrow.png; sourceTree = "<group>"; };
+		CDFAAA5715D6C61E00835D86 /* popover_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popover_background.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2138,8 +2149,7 @@
 		CD7D2B0A13C0CEFF00B889EE /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				CD3D77F31570EFD000E51933 /* popover_Button.png */,
-				CD174BEE15D163EA00F3EAF1 /* popover_Button@2x.png */,
+				CDFAAA4E15D6946500835D86 /* popover */,
 				CDDC95061462E23F00E2B96C /* minimap_Background.png */,
 				CDC2A6B81459D9C600978008 /* Tab Bar */,
 				CDC2828E14508D250054358D /* Top Bar */,
@@ -2201,6 +2211,8 @@
 				CD7D2B1F13C0D47C00B889EE /* UIImage+AppStyle.m */,
 				CDE8065E147F949300C94BFD /* ShapePopoverBackgroundView.h */,
 				CDE8065F147F949300C94BFD /* ShapePopoverBackgroundView.m */,
+				CDFAAA5315D6950200835D86 /* ImagePopoverBackgroundView.h */,
+				CDFAAA5415D6950200835D86 /* ImagePopoverBackgroundView.m */,
 			);
 			name = Styles;
 			sourceTree = "<group>";
@@ -2442,6 +2454,19 @@
 				CDEFDE341570E6E500DBB528 /* UITabBar_info.png */,
 			);
 			name = UITabBar;
+			sourceTree = "<group>";
+		};
+		CDFAAA4E15D6946500835D86 /* popover */ = {
+			isa = PBXGroup;
+			children = (
+				CD3D77F31570EFD000E51933 /* popover_Button.png */,
+				CD174BEE15D163EA00F3EAF1 /* popover_Button@2x.png */,
+				CDFAAA5615D6C61E00835D86 /* popover_arrow.png */,
+				CDFAAA5715D6C61E00835D86 /* popover_background.png */,
+				CDFAAA4F15D6946D00835D86 /* popover_arrow@2x.png */,
+				CDFAAA5015D6946D00835D86 /* popover_background@2x.png */,
+			);
+			name = popover;
 			sourceTree = "<group>";
 		};
 		CDFF3DF613C0DA1100108DE2 /* Icons */ = {
@@ -2884,6 +2909,10 @@
 				CD40792115D3CA1B007E2DF3 /* accessoryView_backgroundDocked@2x.png in Resources */,
 				CD40792815D3CF07007E2DF3 /* accessoryView_backgroundSplitLeftTop@2x.png in Resources */,
 				CD40792915D3CF07007E2DF3 /* accessoryView_backgroundSplitRightTop@2x.png in Resources */,
+				CDFAAA5115D6946D00835D86 /* popover_arrow@2x.png in Resources */,
+				CDFAAA5215D6946D00835D86 /* popover_background@2x.png in Resources */,
+				CDFAAA5815D6C61E00835D86 /* popover_arrow.png in Resources */,
+				CDFAAA5915D6C61E00835D86 /* popover_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3062,6 +3091,7 @@
 				5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */,
 				5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */,
 				5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */,
+				CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

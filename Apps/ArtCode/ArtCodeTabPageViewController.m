@@ -35,8 +35,11 @@
   if (artCodeTabSet == _artCodeTabSet)
     return;
   
+  // RAC
   [_artCodeTabSetDisposable dispose];
+  
   _artCodeTabSet = artCodeTabSet;
+  
   _artCodeTabSetDisposable = [artCodeTabSet.objectsAdded subscribeNext:^(ArtCodeTab *tab) {
     [self.tabBar addTabWithTitle:tab.currentLocation.name animated:YES];
   }];
@@ -131,6 +134,7 @@
   }
   
   // Remove the tab
+  artCodeTab.tabSet = nil;
   [artCodeTab.managedObjectContext deleteObject:artCodeTab];
   
   return YES;

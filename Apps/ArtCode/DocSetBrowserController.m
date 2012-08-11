@@ -15,7 +15,7 @@
 #import "DocSetContentController.h"
 #import "DocSetOutlineController.h"
 #import "DocSetBookmarksController.h"
-#import "ShapePopoverBackgroundView.h"
+#import "ImagePopoverBackgroundView.h"
 #import "BezelAlert.h"
 
 #import "DocSet.h"
@@ -132,7 +132,7 @@
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     
     _outlinePopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
-    _outlinePopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _outlinePopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     
     outlineController.presentingPopoverController = _outlinePopoverController;
   }
@@ -288,7 +288,7 @@
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:contentController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
-    _contentPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _contentPopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     navigationController.presentingPopoverController = _contentPopoverController;
   }
   _contentPopoverController.contentViewController.artCodeTab = self.artCodeTab;
@@ -302,7 +302,7 @@
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:bookmarkController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _bookmarkPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
-    _bookmarkPopoverController.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _bookmarkPopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     navigationController.presentingPopoverController = _bookmarkPopoverController;
   }
   _bookmarkPopoverController.contentViewController.artCodeTab = self.artCodeTab;

@@ -212,7 +212,7 @@ static const void *rendererContext;
 @dynamic delegate;
 @synthesize attributedText = _attributedText;
 @synthesize renderer = _renderer, editing;
-@synthesize keyboardAccessoryView, magnificationPopoverControllerClass;
+@synthesize keyboardAccessoryView, magnificationPopoverBackgroundViewClass;
 @synthesize selectionView = _selectionView;
 @synthesize pairingStringDictionary = _pairingStringDictionary;
 
@@ -468,13 +468,6 @@ static const void *rendererContext;
   if (_selectionView.selection.length == 0)
     return [RectSet rectSetWithRect:[self caretRectForPosition:_selectionView.selectionPosition]];
   return _selectionView.selectionRects;
-}
-
-- (Class)magnificationPopoverControllerClass
-{
-  if (!magnificationPopoverControllerClass)
-    magnificationPopoverControllerClass = [UIPopoverController class];
-  return magnificationPopoverControllerClass;
 }
 
 #pragma mark UIView Methods
@@ -2140,7 +2133,10 @@ static void init(CodeView *self)
     magnificationViewController.view = self.magnificationView;
     magnificationViewController.contentSizeForViewInPopover = CGSizeMake(600, 40);
     
-    magnificationPopover = [[parent.magnificationPopoverControllerClass alloc] initWithContentViewController:magnificationViewController];
+    magnificationPopover = [[UIPopoverController alloc] initWithContentViewController:magnificationViewController];
+    if (parent.magnificationPopoverBackgroundViewClass) {
+      magnificationPopover.popoverBackgroundViewClass = parent.magnificationPopoverBackgroundViewClass;
+    }
   }
   return magnificationPopover;
 }

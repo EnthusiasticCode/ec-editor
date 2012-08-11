@@ -119,8 +119,8 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
 #pragma mark Accessories
 
-/// The popover controller to use to show magnifications.
-@property (nonatomic, strong) Class magnificationPopoverControllerClass;
+/// The popover backgorund view for the popover used to show magnifications.
+@property (nonatomic, strong) Class magnificationPopoverBackgroundViewClass;
 
 /// Gets the receiver's accessory view.
 @property (nonatomic, strong) KeyboardAccessoryView *keyboardAccessoryView;

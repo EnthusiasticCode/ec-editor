@@ -24,7 +24,7 @@
 #import "CodeFileKeyboardAccessoryPopoverView.h"
 //#import "CodeFileCompletionsController.h"
 
-#import "ShapePopoverBackgroundView.h"
+#import "ImagePopoverBackgroundView.h"
 
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
@@ -139,7 +139,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     _codeView = [CodeView new];
     _codeView.delegate = self;
-    _codeView.magnificationPopoverControllerClass = [ShapePopoverController class];
+    _codeView.magnificationPopoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     
     _codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
     _codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
@@ -330,7 +330,7 @@ static void drawStencilStar(CGContextRef myContext)
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     
     _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _quickBrowsersPopover.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+    _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
   }
   quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
   quickBrowserContainerController.openingButton = sender;
