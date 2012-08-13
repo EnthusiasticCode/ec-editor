@@ -130,8 +130,7 @@ static NSDictionary *_sharedAttributes = nil;
         [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
       }
       else if ([key isEqualToString:@"background"]) {
-// TODO: adding this couples TMTheme with TextRenderer, a bit excessive
-        //[styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:TextRendererRunBackgroundColorAttributeName];
+        [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:@"runBackground"];
       }
       else {
         [styleSettings setObject:value forKey:key];
@@ -146,37 +145,35 @@ static NSDictionary *_sharedAttributes = nil;
   return self;
 }
 
-- (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier
-{
+- (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier {
+  // Try to serve cached attributes first
   NSDictionary *resultAttributes = nil;
   resultAttributes = [_scopeAttribuesCache objectForKey:qualifiedIdentifier];
   if (resultAttributes) {
     return resultAttributes;
   }
-  
-  __block NSDictionary *scopeAttributes = nil;
-  __block float maxScore = 0;
+
+  // Get all relevant attributes dictionaries
+  NSMutableDictionary *scoreForAttributes = [NSMutableDictionary new];
   [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:settingScope];
-    if (score > maxScore)
-    {
-      scopeAttributes = attributes;
-      maxScore = score;
+    if (score > 0) {
+      [scoreForAttributes setObject:attributes forKey:@(score)];
     }
   }];
   
-  NSMutableDictionary *newResultAttributes = [[NSMutableDictionary alloc] init];
+  // Build result attributes
+  NSMutableDictionary *newResultAttributes = [NSMutableDictionary new];
   if (self.commonAttributes) {
     [newResultAttributes addEntriesFromDictionary:self.commonAttributes];
   }
-  if (scopeAttributes) {
-    [newResultAttributes addEntriesFromDictionary:scopeAttributes];
+  for (NSNumber *score in [scoreForAttributes.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
+    [newResultAttributes addEntriesFromDictionary:[scoreForAttributes objectForKey:score]];
   }
   
+  // Cache results
   resultAttributes = [newResultAttributes copy];
-  
   [_scopeAttribuesCache setObject:resultAttributes forKey:qualifiedIdentifier];
-
   return resultAttributes;
 }
 

@@ -466,6 +466,7 @@ static void drawStencilStar(CGContextRef myContext)
         TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:self.textFile.fileURL syntax:syntax index:nil];
         [[RACScheduler mainQueueScheduler] schedule:^{
           this.codeUnit = codeUnit;
+          // RAC
           [[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
             CodeFileController *strongSelf = this;
             if (!strongSelf) {
