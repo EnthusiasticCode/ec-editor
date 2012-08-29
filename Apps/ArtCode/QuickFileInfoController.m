@@ -15,6 +15,8 @@
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
 
+#import "QuickFileHighlightTableController.h"
+
 @implementation QuickFileInfoController
 
 + (id)new {
@@ -41,4 +43,12 @@
   [self setFileHighlightTypeLabel:nil];
   [super viewDidUnload];
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.destinationViewController isKindOfClass:[QuickFileHighlightTableController class]]) {
+    ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);
+    [(QuickFileHighlightTableController *)segue.destinationViewController setCodeFileController:(CodeFileController *)self.quickBrowsersContainerController.contentController];
+  }
+}
+
 @end

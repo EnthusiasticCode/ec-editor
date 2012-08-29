@@ -313,11 +313,11 @@
             </objects>
             <point key="canvasLocation" x="1293" y="-724"/>
         </scene>
-        <!--Table View Controller-->
+        <!--Quick File Highlight Table Controller-->
         <scene sceneID="zh9-gR-6xt">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LyR-KY-q42" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="FTO-G4-DWd" sceneMemberID="viewController">
+                <tableViewController id="FTO-G4-DWd" customClass="QuickFileHighlightTableController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="s5W-xs-jBe">
                         <rect key="frame" x="0.0" y="20" width="540" height="551"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -349,35 +349,6 @@
     <resources>
         <image name="UITabBar_info.png" width="26" height="26"/>
     </resources>
-    <classes>
-        <class className="ColorSelectionControl" superclassName="UIControl">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ColorSelectionControl.h"/>
-        </class>
-        <class className="QuickFileInfoController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickFileInfoController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="fileHighlightTypeLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fileNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fileSizeLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="QuickFolderInfoController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickFolderInfoController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="folderFileCountLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="folderNameTextField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="folderSizeLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="QuickProjectInfoController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/QuickProjectInfoController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="labelColorSelectionControl" candidateClass="ColorSelectionControl"/>
-                <relationship kind="outlet" name="projectFileCountLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

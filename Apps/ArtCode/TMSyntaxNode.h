@@ -19,6 +19,12 @@
 
 + (TMSyntaxNode *)defaultSyntax;
 
+/// A dictionary containing all the loaded syntaxes as values for syntax identifier as key.
++ (NSDictionary *)allSyntaxes;
+
+/// A dictionary connecting humna readable names to syntax itentifiers.
++ (NSDictionary *)allSyntaxesNames;
+
 @property (nonatomic, weak, readonly) TMSyntaxNode *rootSyntax;
 
 @property (nonatomic, strong, readonly) NSString *identifier;

@@ -324,6 +324,7 @@
 		CD2DB608157934FF009E4026 /* DocSetBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD2DB607157934FF009E4026 /* DocSetBrowserController.m */; };
 		CD3045B214E1B3B900F216BB /* UIColor+Contrast.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */; };
 		CD333CF814C031A900E0EEE2 /* NewProjectImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */; };
+		CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD3692FD15EE5D4200F40410 /* QuickFileHighlightTableController.m */; };
 		CD3D69E114C45B9300325970 /* topBar_BackButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D69E014C45B9300325970 /* topBar_BackButton.png */; };
 		CD3D77F41570EFD000E51933 /* popover_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CD3D77F31570EFD000E51933 /* popover_Button.png */; };
 		CD40791F15D3CA13007E2DF3 /* accessoryView_itemBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD40791E15D3CA13007E2DF3 /* accessoryView_itemBackground@2x.png */; };
@@ -927,6 +928,8 @@
 		CD3045B114E1B3B900F216BB /* UIColor+Contrast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Contrast.m"; sourceTree = "<group>"; };
 		CD333CF614C031A900E0EEE2 /* NewProjectImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectImportController.h; sourceTree = "<group>"; };
 		CD333CF714C031A900E0EEE2 /* NewProjectImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewProjectImportController.m; sourceTree = "<group>"; };
+		CD3692FC15EE5D4200F40410 /* QuickFileHighlightTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFileHighlightTableController.h; sourceTree = "<group>"; };
+		CD3692FD15EE5D4200F40410 /* QuickFileHighlightTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickFileHighlightTableController.m; sourceTree = "<group>"; };
 		CD3D69E014C45B9300325970 /* topBar_BackButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton.png; sourceTree = "<group>"; };
 		CD3D77F31570EFD000E51933 /* popover_Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popover_Button.png; sourceTree = "<group>"; };
 		CD40791E15D3CA13007E2DF3 /* accessoryView_itemBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accessoryView_itemBackground@2x.png"; sourceTree = "<group>"; };
@@ -1718,6 +1721,8 @@
 				B7B15C8314D7735B00A67C02 /* QuickFolderInfoController.m */,
 				B7B15C8014D7735B00A67C02 /* QuickFileInfoController.h */,
 				B7B15C8114D7735B00A67C02 /* QuickFileInfoController.m */,
+				CD3692FC15EE5D4200F40410 /* QuickFileHighlightTableController.h */,
+				CD3692FD15EE5D4200F40410 /* QuickFileHighlightTableController.m */,
 			);
 			name = "Quick Info";
 			sourceTree = "<group>";
@@ -3140,6 +3145,7 @@
 				5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */,
 				5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */,
 				CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */,
+				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
