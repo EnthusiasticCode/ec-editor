@@ -109,6 +109,9 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
+  // Used in _updateCodeUnitWithAutoDetectedSyntax
+  RACDisposable *_codeUnitDisposable;
+  
   // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
   UIColor *_minimapSymbolColor;
   UIColor *_minimapCommentColor;
@@ -454,47 +457,20 @@ static void drawStencilStar(CGContextRef myContext)
   if (self.artCodeTab.currentLocation.url) {
     self.textFile = [[TextFile alloc] initWithFileURL:self.artCodeTab.currentLocation.url];
     [self.textFile openWithCompletionHandler:^(BOOL success) {
-      __weak CodeFileController *this = self;
       NSOperationQueue *schedulerQueue = [NSOperationQueue alloc].init;
       schedulerQueue.maxConcurrentOperationCount = 1;
       _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
       // Load the contents
       self.codeView.text = self.textFile.content;
-      
-      // Selecting the syntax to use
-      TMSyntaxNode *syntax = nil;
-      if (self.textFile.explicitSyntaxIdentifier) {
-        syntax = [TMSyntaxNode syntaxWithScopeIdentifier:self.textFile.explicitSyntaxIdentifier];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode syntaxForFirstLine:[self.textFile.content substringWithRange:[self.textFile.content lineRangeForRange:NSMakeRange(0, 0)]]];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode syntaxForFileName:self.textFile.fileURL.lastPathComponent];
-      }
-      if (!syntax) {
-        syntax = [TMSyntaxNode defaultSyntax];
-      }
-      ASSERT(syntax && self.textFile.content);
-      [_codeScheduler schedule:^{
-        TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:self.textFile.fileURL syntax:syntax index:nil];
-        [[RACScheduler mainQueueScheduler] schedule:^{
-          this.codeUnit = codeUnit;
-          // RAC
-          [[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
-            CodeFileController *strongSelf = this;
-            if (!strongSelf) {
-              return;
-            }
-            [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
-          }];
-          [_codeScheduler schedule:^{
-            [this.codeUnit reparseWithUnsavedContent:this.textFile.content];
-          }];
-        }];
-      }];
 
       // RAC
+      __weak CodeFileController *this = self;
+      
+      // Update the code unit
+      [RACAbleSelf(textFile.explicitSyntaxIdentifier) subscribeNext:^(id x) {
+        [this _updateCodeUnitWithAutoDetectedSyntax];
+      }];
+      [self _updateCodeUnitWithAutoDetectedSyntax];
       
       // Update the code when contents change
       [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
@@ -900,6 +876,46 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 #pragma mark - Private Methods
+
+- (void)_updateCodeUnitWithAutoDetectedSyntax {
+  // Selecting the syntax to use
+  __weak CodeFileController *this = self;
+  TMSyntaxNode *syntax = nil;
+  if (self.textFile.explicitSyntaxIdentifier) {
+    syntax = [TMSyntaxNode syntaxWithScopeIdentifier:self.textFile.explicitSyntaxIdentifier];
+  }
+  if (!syntax) {
+    syntax = [TMSyntaxNode syntaxForFirstLine:[self.textFile.content substringWithRange:[self.textFile.content lineRangeForRange:NSMakeRange(0, 0)]]];
+  }
+  if (!syntax) {
+    syntax = [TMSyntaxNode syntaxForFileName:self.textFile.fileURL.lastPathComponent];
+  }
+  if (!syntax) {
+    syntax = [TMSyntaxNode defaultSyntax];
+  }
+  ASSERT(syntax && self.textFile.content);
+  
+  // Create the code unit
+  [_codeScheduler schedule:^{
+    TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:self.textFile.fileURL syntax:syntax index:nil];
+    
+    [[RACScheduler mainQueueScheduler] schedule:^{
+      this.codeUnit = codeUnit;
+      // RAC
+      [_codeUnitDisposable dispose];
+      _codeUnitDisposable = [[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+        CodeFileController *strongSelf = this;
+        if (!strongSelf) {
+          return;
+        }
+        [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+      }];
+      [_codeScheduler schedule:^{
+        [this.codeUnit reparseWithUnsavedContent:this.textFile.content];
+      }];
+    }];
+  }];
+}
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState {
   if (!editingState && [self.class canDisplayFileInWebView:self.artCodeTab.currentLocation.url]) {

@@ -7,11 +7,11 @@
 //
 
 #import "QuickFileHighlightTableController.h"
-#import "QuickBrowsersContainerController.h"
 
 #import "CodeFileController.h"
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
+#import "TextFile.h"
 
 @interface QuickFileHighlightTableController ()
 
@@ -51,6 +51,8 @@
   cell.textLabel.text = [self.syntaxNames objectAtIndex:indexPath.row];
   if ([cell.textLabel.text isEqualToString:self.currentSyntaxName]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
+  } else {
+    cell.accessoryType = UITableViewCellAccessoryNone;
   }
     
   return cell;
@@ -58,15 +60,10 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  self.currentSyntaxName = [self.syntaxNames objectAtIndex:indexPath.row];
+  self.codeFileController.textFile.explicitSyntaxIdentifier = [[TMSyntaxNode allSyntaxesNames] objectForKey:self.currentSyntaxName];
+  [self.tableView reloadData];
 }
 
 @end
