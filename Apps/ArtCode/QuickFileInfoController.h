@@ -10,8 +10,8 @@
 
 @interface QuickFileInfoController : UITableViewController <UITextFieldDelegate>
 
-@property (strong, nonatomic) IBOutlet UITextField *fileNameTextField;
-@property (strong, nonatomic) IBOutlet UILabel *fileSizeLabel;
-@property (strong, nonatomic) IBOutlet UILabel *fileLineCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fileNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fileSizeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *fileHighlightTypeLabel;
 
 @end

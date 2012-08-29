@@ -104,7 +104,8 @@ static void drawStencilStar(CGContextRef myContext)
 
 
 @implementation CodeFileController {
-  UIActionSheet *_toolsActionSheet;
+  UIActionSheet *_editToolsActionSheet;
+  UIActionSheet *_webToolsActionSheet;
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
@@ -358,53 +359,66 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Toolbar Items Actions
 
-- (void)toolButtonAction:(id)sender
-{
-  if (!_toolsActionSheet)
-    _toolsActionSheet = [[UIActionSheet alloc] initWithTitle:@"Select action" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Toggle find and replace", @"Toggle minimap", @"Show/hide tabs", nil];
+- (void)toolButtonAction:(id)sender {
+  UIActionSheet *actionSheet = nil;
+  if (self._isWebPreview) {
+    if (!_webToolsActionSheet) {
+      _webToolsActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Reload", nil];
+    }
+    actionSheet = _webToolsActionSheet;
+  } else {
+    if (!_editToolsActionSheet) {
+      _editToolsActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:@"Find and replace", @"Minimap", nil];
+    }
+    actionSheet = _editToolsActionSheet;
+  }
   
-  [_toolsActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+  [actionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-  switch (buttonIndex) {
-    case 0: // toggle find/replace
-    {
-      if (!_searchBarController)
+  if (actionSheet == _editToolsActionSheet) {
+    switch (buttonIndex) {
+      case 0: // toggle find/replace
       {
-        _searchBarController = [[UIStoryboard storyboardWithName:@"SearchBar" bundle:nil] instantiateInitialViewController];
-        _searchBarController.targetCodeFileController = self;
+        if (!_searchBarController)
+        {
+          _searchBarController = [[UIStoryboard storyboardWithName:@"SearchBar" bundle:nil] instantiateInitialViewController];
+          _searchBarController.targetCodeFileController = self;
+        }
+        if (self.singleTabController.toolbarViewController != _searchBarController)
+        {
+          [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
+          [_searchBarController.findTextField becomeFirstResponder];
+        }
+        else
+        {
+          [self.singleTabController setToolbarViewController:nil animated:YES];
+        }
+        break;
       }
-      if (self.singleTabController.toolbarViewController != _searchBarController)
+        
+      case 1: // toggle minimap
       {
-        [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
-        [_searchBarController.findTextField becomeFirstResponder];
+        [self setMinimapVisible:!self.minimapVisible animated:YES];
+        if (self.minimapVisible)
+          self.minimapView.selectionRectangle = self.codeView.bounds;
+        break;
       }
-      else
-      {
-        [self.singleTabController setToolbarViewController:nil animated:YES];
-      }
-      break;
+        
+      default:
+        break;
     }
-      
-    case 1: // toggle minimap
-    {
-      [self setMinimapVisible:!self.minimapVisible animated:YES];
-      if (self.minimapVisible)
-        self.minimapView.selectionRectangle = self.codeView.bounds;
-      break;
+  } else if (actionSheet == _webToolsActionSheet) {
+    switch (buttonIndex) {
+      case 0: // Reload
+        [self.webView reload];
+        break;
+        
+      default:
+        break;
     }
-      
-    case 2: // toggle tabs
-    {
-      // TODO
-      //      [self.tabCollectionController setTabBarVisible:!self.tabCollectionController.isTabBarVisible animated:YES];
-      break;
-    }
-      
-    default:
-      break;
   }
 }
 
@@ -528,7 +542,7 @@ static void drawStencilStar(CGContextRef myContext)
   _minimapView = nil;
   _codeView = nil;
   
-  _toolsActionSheet = nil;
+  _editToolsActionSheet = nil;
   _searchBarController = nil;
 }
 

@@ -11,31 +11,25 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 
+#import "CodeFileController.h"
+#import "TMUnit.h"
+#import "TMSyntaxNode.h"
+
 @implementation QuickFileInfoController
 
-@synthesize fileNameTextField;
-@synthesize fileSizeLabel;
-@synthesize fileLineCountLabel;
-
-+ (id)new
-{
++ (id)new {
   return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"];
 }
 
 #pragma mark - View lifecycle
 
-- (void)viewDidUnload
-{
-  [self setFileNameTextField:nil];
-  [self setFileSizeLabel:nil];
-  [self setFileLineCountLabel:nil];
-  [super viewDidUnload];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  self.fileNameTextField.text = [self.artCodeTab.currentLocation name];
+  self.fileNameLabel.text = [self.artCodeTab.currentLocation name];
+  self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f KB", (double)[[[[NSFileManager defaultManager] attributesOfItemAtPath:self.artCodeTab.currentLocation.url.path error:NULL] objectForKey:NSFileSize] unsignedIntValue] / 1024.0];
+  ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);
+  self.fileHighlightTypeLabel.text = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].syntax.name;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -43,4 +37,8 @@
 	return YES;
 }
 
+- (void)viewDidUnload {
+  [self setFileHighlightTypeLabel:nil];
+  [super viewDidUnload];
+}
 @end

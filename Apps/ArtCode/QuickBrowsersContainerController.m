@@ -98,14 +98,12 @@
 
 #pragma mark - Properties
 
-@synthesize contentController, openingButton;
-
 - (void)setContentController:(UIViewController *)value
 {
-  if (value == contentController)
+  if (value == _contentController)
     return;
-  contentController = value;
-  self.artCodeTab = contentController.artCodeTab;
+  _contentController = value;
+  self.artCodeTab = _contentController.artCodeTab;
 }
 
 - (void)setSelectedViewController:(UIViewController *)selectedViewController
