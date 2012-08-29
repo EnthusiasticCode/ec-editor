@@ -26,7 +26,7 @@
 
 - (NSArray *)syntaxNames {
   if (!_syntaxNames) {
-    _syntaxNames = [[TMSyntaxNode allSyntaxesNames].allKeys sortedArrayUsingSelector:@selector(compare:)];
+    _syntaxNames = [@[ @"Automatic" ] arrayByAddingObjectsFromArray:[[TMSyntaxNode allSyntaxesNames].allKeys sortedArrayUsingSelector:@selector(compare:)]];
   }
   return _syntaxNames;
 }
@@ -49,7 +49,7 @@
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
   cell.textLabel.text = [self.syntaxNames objectAtIndex:indexPath.row];
-  if ([cell.textLabel.text isEqualToString:self.currentSyntaxName]) {
+  if ((indexPath.row == 0 && self.currentSyntaxName == nil) || [cell.textLabel.text isEqualToString:self.currentSyntaxName]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
   } else {
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -62,7 +62,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   self.currentSyntaxName = [self.syntaxNames objectAtIndex:indexPath.row];
-  self.codeFileController.textFile.explicitSyntaxIdentifier = [[TMSyntaxNode allSyntaxesNames] objectForKey:self.currentSyntaxName];
+  if (indexPath.row == 0) {
+    self.codeFileController.textFile.explicitSyntaxIdentifier = nil;
+  } else {
+    self.codeFileController.textFile.explicitSyntaxIdentifier = [[TMSyntaxNode allSyntaxesNames] objectForKey:self.currentSyntaxName];
+  }
   [self.tableView reloadData];
 }
 
