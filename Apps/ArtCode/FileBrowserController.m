@@ -41,8 +41,9 @@
 
 #import "CodeFileController.h"
 
+#import <QuickLook/QuickLook.h>
 
-@interface FileBrowserController ()
+@interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
 @property (nonatomic, strong) NSURL *directoryURL;
 
@@ -55,6 +56,18 @@
 - (void)_remoteBrowserWithRightButton:(UIBarButtonItem *)rightButton;
 - (void)_remoteDirectoryBrowserUploadAction:(id)sender;
 - (void)_remoteDirectoryBrowserSyncAction:(id)sender;
+
+- (void)_previewFileAtIndex:(NSUInteger)index;
+- (NSArray *)_previewItems;
+- (void)_clearPreviewItems;
+
+@end
+
+#pragma mark -
+
+@interface FilePreviewItem : NSObject <QLPreviewItem>
+
++ (id)filePreviewItemWithFileURL:(NSURL *)fileURL;
 
 @end
 
@@ -70,6 +83,7 @@
   UIActionSheet *_toolEditItemExportActionSheet;
   
   NSMutableArray *_selectedItems;
+  NSMutableArray *_previewItems;
 }
 
 - (id)init
@@ -241,7 +255,10 @@
     if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
     } else {
-      // TODO: QLPreviewController
+      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
+      if ([QLPreviewController canPreviewItem:item]) {
+        [self _previewFileAtIndex:indexPath.row];
+      }
     }
   }
 }
@@ -253,6 +270,22 @@
   {
     [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
   }
+}
+
+#pragma mark - QLPreviewControllerDataSource
+
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller {
+  return [[self _previewItems] count];
+}
+
+- (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index {
+  return [[self _previewItems] objectAtIndex:index];
+}
+
+#pragma mark - QLPreviewControllerDelegate
+
+- (void)previewControllerWillDismiss:(QLPreviewController *)controller {
+  [self _clearPreviewItems];
 }
 
 #pragma mark - Action Sheet Delegate
@@ -515,6 +548,48 @@
   [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentLocation.url withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
     [self modalNavigationControllerDismissAction:sender];
   }];
+}
+
+- (void)_previewFileAtIndex:(NSUInteger)index {
+  QLPreviewController *previewer = [[QLPreviewController alloc] init];
+  [previewer setDataSource:self];
+  [previewer setCurrentPreviewItemIndex:index];
+  [self presentModalViewController:previewer animated:YES];
+}
+
+- (NSArray *)_previewItems {
+  if (!_previewItems) {
+    _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
+    for (NSURL *fileURL in [self filteredItems]) {
+      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
+      if (![CodeFileController canDisplayFileInCodeView:fileURL] && [QLPreviewController canPreviewItem:item]) {
+        [_previewItems addObject:item];
+      }
+    }
+  }
+  return _previewItems;
+}
+
+- (void)_clearPreviewItems {
+  _previewItems = nil;
+}
+
+@end
+
+#pragma mark -
+
+@implementation FilePreviewItem {
+  NSURL *_fileURL;
+}
+
++ (id)filePreviewItemWithFileURL:(NSURL *)fileURL {
+  FilePreviewItem *filePreviewItem = [[self alloc] init];
+  filePreviewItem->_fileURL = fileURL;
+  return filePreviewItem;
+}
+
+- (NSURL *)previewItemURL {
+  return _fileURL;
 }
 
 @end

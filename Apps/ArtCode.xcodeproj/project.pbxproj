@@ -16,6 +16,7 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
+		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
@@ -586,6 +587,7 @@
 		5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTab.m; sourceTree = "<group>"; };
 		5F16583715B6DA7100F0DEDC /* _ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ArtCodeTabSet.h; sourceTree = "<group>"; };
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
+		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -1227,6 +1229,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */,
 				5FA6148515CE814500A0932A /* libfile.a in Frameworks */,
 				CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */,
 				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
@@ -2111,6 +2114,7 @@
 		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F2345A915EE4B0E000220C5 /* QuickLook.framework */,
 				CD2DB5FE1578C506009E4026 /* CoreData.framework */,
 				B77101451506E336006AF1FB /* SenTestingKit.framework */,
 				B7DD437214E098BE0057DDB4 /* CFNetwork.framework */,
