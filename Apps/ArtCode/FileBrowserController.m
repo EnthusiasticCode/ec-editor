@@ -57,7 +57,7 @@
 - (void)_remoteDirectoryBrowserUploadAction:(id)sender;
 - (void)_remoteDirectoryBrowserSyncAction:(id)sender;
 
-- (void)_previewFileAtIndex:(NSUInteger)index;
+- (void)_previewFile:(NSURL *)fileURL;
 - (NSArray *)_previewItems;
 - (void)_clearPreviewItems;
 
@@ -257,7 +257,7 @@
     } else {
       FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
       if ([QLPreviewController canPreviewItem:item]) {
-        [self _previewFileAtIndex:indexPath.row];
+        [self _previewFile:fileURL];
       }
     }
   }
@@ -550,10 +550,12 @@
   }];
 }
 
-- (void)_previewFileAtIndex:(NSUInteger)index {
+- (void)_previewFile:(NSURL *)fileURL {
   QLPreviewController *previewer = [[QLPreviewController alloc] init];
   [previewer setDataSource:self];
-  [previewer setCurrentPreviewItemIndex:index];
+  [previewer setCurrentPreviewItemIndex:[[self _previewItems] indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
+    return [item.previewItemURL isEqual:fileURL];
+  }]];
   [self presentModalViewController:previewer animated:YES];
 }
 

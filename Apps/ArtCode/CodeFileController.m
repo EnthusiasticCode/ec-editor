@@ -888,6 +888,9 @@ static void drawStencilStar(CGContextRef myContext)
 
 + (BOOL)canDisplayFileInCodeView:(NSURL *)fileURL {
   FileMagic *magic = [FileMagic.alloc initWithFileURL:fileURL];
+  if ([magic.mimeType isEqualToString:@"application/x-empty"] || [magic.mimeType isEqualToString:@"inode/x-empty"]) {
+    return YES;
+  }
   return [magic.mimeType hasPrefix:@"text"];
 }
 
