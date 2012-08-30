@@ -10,8 +10,8 @@
 
 @interface QuickFolderInfoController : UITableViewController <UITextFieldDelegate>
 
-@property (strong, nonatomic) IBOutlet UITextField *folderNameTextField;
-@property (strong, nonatomic) IBOutlet UILabel *folderFileCountLabel;
-@property (strong, nonatomic) IBOutlet UILabel *folderSizeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *folderNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *folderFileCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *folderSubfolderCountLabel;
 
 @end
