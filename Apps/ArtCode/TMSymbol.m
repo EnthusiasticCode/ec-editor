@@ -7,28 +7,81 @@
 //
 
 #import "TMSymbol.h"
+#import "TMScope.h"
+#import "TMPreference.h"
 
-@implementation TMSymbol
+static NSString *(^_identityTransformation)(NSString *) = ^(NSString *string){
+  return string;
+};
+static NSUInteger (^_indentationForRawTitle)(NSString *) = ^(NSString *rawTitle){
+  NSUInteger titleLength = [rawTitle length];
+  NSUInteger indentation = 0;
+  for (; indentation < titleLength; ++indentation)
+  {
+    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[rawTitle characterAtIndex:indentation]])
+      break;
+  }
+  return indentation;
+};
+static UIImage *_TMScopeBlankImage = nil;
 
-@synthesize qualifiedIdentifier = _qualifiedIdentifier, title = _title, icon = _icon, range = _range, indentation = _indentation, separator = _separator;
 
-- (id)initWithQualifiedIdentifier:(NSString *)qualifiedIdentifier title:(NSString *)title icon:(UIImage *)icon range:(NSRange)range
+@interface TMSymbol ()
+
+- (NSString *)_rawTitle;
+
+@end
+
+@implementation TMSymbol {
+  TMScope *_scope;
+  NSString *(^_transformation)(NSString *);
+}
+
+@synthesize icon = _icon, separator = _separator;
+
+- (NSString *)_rawTitle {
+  if (!_transformation) {
+    _transformation = [TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey qualifiedIdentifier:self.qualifiedIdentifier] ?: (id)_identityTransformation;
+  }
+  return _transformation(_scope.spelling);
+}
+
+- (NSString *)title {
+  NSString *rawTitle = [self _rawTitle];
+  NSUInteger indentation = _indentationForRawTitle(rawTitle);
+  return indentation ? [rawTitle substringFromIndex:indentation] : rawTitle;
+}
+
+- (NSUInteger)indentation {
+  NSString *rawTitle = [self _rawTitle];
+  return _indentationForRawTitle(rawTitle);
+}
+
+- (UIImage *)icon {
+  if (!_icon) {
+    UIImage *icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
+    if (!icon) {
+      icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
+    }
+  }
+  return _icon;
+}
+
+- (NSString *)qualifiedIdentifier {
+  return _scope.qualifiedIdentifier;
+}
+
+- (NSRange)range {
+  return NSMakeRange(_scope.location, _scope.length);
+}
+
+- (id)initWithScope:(TMScope *)scope
 {
-  ASSERT(qualifiedIdentifier && title && icon);
+  ASSERT(scope);
   self = [super init];
   if (!self)
     return nil;
-  // Get indentation level and modify title
-  NSUInteger titleLength = [_title length];
-  for (; _indentation < titleLength; ++_indentation)
-  {
-    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[title characterAtIndex:_indentation]])
-      break;
-  }
-  _qualifiedIdentifier = qualifiedIdentifier;
-  _title = _indentation ? [title substringFromIndex:_indentation] : title;
-  _icon = icon;
-  _range = range;
+  _scope = scope;
   return self;
 }
 

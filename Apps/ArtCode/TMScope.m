@@ -11,8 +11,6 @@
 #import "TMSymbol.h"
 
 
-static UIImage *_TMScopeBlankImage = nil;
-
 @interface TMScope ()
 - (id)_initWithParent:(TMScope *)parent identifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode type:(TMScopeType)type;
 @end
@@ -22,6 +20,7 @@ static UIImage *_TMScopeBlankImage = nil;
 @implementation TMScope {
   NSRange _identifierRange;
   NSMutableArray *_children;
+  TMSymbol *_symbol;
 }
 
 #pragma mark - Properties
@@ -36,9 +35,6 @@ static UIImage *_TMScopeBlankImage = nil;
 }
 
 - (NSString *)spelling {
-  if (self.parent) {
-    return [self.parent.content substringWithRange:NSMakeRange(_location, _length)];
-  }
   return [self.content substringWithRange:NSMakeRange(_location, _length)];
 }
 
@@ -64,7 +60,7 @@ static UIImage *_TMScopeBlankImage = nil;
   self = [super init];
   if (!self)
     return nil;
-  NSString *parentQualifiedIdentifier = parent.qualifiedIdentifier;    
+  NSString *parentQualifiedIdentifier = parent.qualifiedIdentifier;
   _identifierRange.location = [parentQualifiedIdentifier length];
   if (_identifierRange.location > 0)
   {
@@ -196,13 +192,13 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 #define CHECK_IF_WITHIN_PARENT_BOUNDS(scope) ASSERT(scope->_parent ? scope->_location >= scope->_parent->_location && scope->_location + scope->_length <= scope->_parent->_location + scope->_parent->_length : YES);
 
-- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange
+- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange onRemove:(void(^)(TMScope *scope))block
 {
   ASSERT(oldRange.location == newRange.location);
   ASSERT(!_parent);
   
   // First of all remove all the child scopes in the old range.
-  [self removeChildScopesInRange:oldRange];
+  [self removeChildScopesInRange:oldRange onRemove:block];
   
   // Adjust the root scope
   ASSERT(_length + newRange.length >= oldRange.length);
@@ -248,12 +244,31 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       }
     }
     [scopeEnumeratorStack removeLastObject];
-  }    
+  }
 }
 
-- (void)removeChildScopesInRange:(NSRange)range
+- (void)removeChildScopesInRange:(NSRange)range onRemove:(void(^)(TMScope *))block
 {
   ASSERT(!_parent);
+  static void(^emptyBlock)(TMScope *) = ^(TMScope *scope){
+  };
+  block = block ?: emptyBlock;
+  
+  static void(^callBlockOnDescendantsOfScope)(void(^)(TMScope *), TMScope *) = ^(void(^calledBlock)(TMScope *), TMScope *scope){
+    calledBlock(scope);
+    if ([scope->_children count]){
+      NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[scope->_children objectEnumerator]];
+      while ([scopeEnumeratorStack count]) {
+        while (scope = [[scopeEnumeratorStack lastObject] nextObject]) {
+          calledBlock(scope);
+          if (scope->_children.count) {
+            [scopeEnumeratorStack addObject:[scope->_children objectEnumerator]];
+          }
+        }
+        [scopeEnumeratorStack removeLastObject];
+      }
+    }
+  };
   
   NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
   TMScope *scope = self;
@@ -284,6 +299,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       else if ((range.location <= childScopeRange.location && rangeEnd >= childScopeEnd) || childScope->_type == TMScopeTypeMatch || childScope->_type == TMScopeTypeBegin || childScope->_type == TMScopeTypeEnd)
       {
         // If the child scope is completely contained in the range, or it's a match scope and it overlaps since it didn't match the previous two cases
+        callBlockOnDescendantsOfScope(block, childScope);
         [scope->_children removeObjectAtIndex:childScopeIndex];
         if (childScope->_type == TMScopeTypeContent)
           scope->_flags &= ~TMScopeHasContentScope;
@@ -298,6 +314,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasBeginScope)
           {
+            callBlockOnDescendantsOfScope(block, [childScope->_children objectAtIndex:0]);
             [childScope->_children removeObjectAtIndex:0];
             childScope->_flags &= ~TMScopeHasBeginScope;
           }
@@ -317,6 +334,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasEndScope)
           {
+            callBlockOnDescendantsOfScope(block, [childScope->_children lastObject]);
             [childScope->_children removeLastObject];
             childScope->_flags &= ~TMScopeHasEndScope;
           }
@@ -338,6 +356,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             TMScope *beginScope = [childScope->_children objectAtIndex:0];
             if (range.location < beginScope->_location + beginScope->_length)
             {
+              callBlockOnDescendantsOfScope(block, [childScope->_children objectAtIndex:0]);
               [childScope->_children removeObjectAtIndex:0];
               childScope->_flags &= ~TMScopeHasBeginScope;
               childScope->_flags &= ~TMScopeHasBegin;
@@ -348,6 +367,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
             TMScope *endScope = [childScope->_children lastObject];
             if (NSMaxRange(range) > endScope->_location)
             {
+              callBlockOnDescendantsOfScope(block, [childScope->_children lastObject]);
               [childScope->_children removeLastObject];
               childScope->_flags &= ~TMScopeHasEndScope;
               childScope->_flags &= ~TMScopeHasEnd;
@@ -452,13 +472,14 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 }
 
 - (TMSymbol *)symbol {
-  NSString *(^transformation)(NSString *) = ((NSString *(^)(NSString *))[TMPreference preferenceValueForKey:TMPreferenceSymbolTransformationKey qualifiedIdentifier:self.qualifiedIdentifier]);
-  NSString *title = transformation ? transformation(self.spelling) : self.spelling;
-  UIImage *icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
-  if (!icon) {
-    icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
+  if (!_symbol) {
+    if (![[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier] isEqualToString:@"1"]) {
+      _symbol = (id)[NSNull null];
+      return nil;
+    }
+    _symbol = [[TMSymbol alloc] initWithScope:self];
   }
-  return [[TMSymbol alloc] initWithQualifiedIdentifier:self.qualifiedIdentifier title:title icon:icon range:NSMakeRange(self.location, self.length)];
+  return _symbol != (id)[NSNull null] ? _symbol : nil;
 }
 
 #pragma mark - Debug Methods

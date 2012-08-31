@@ -52,7 +52,7 @@ typedef enum
 /// The children scopes, if any exist
 @property (nonatomic, strong, readonly) NSArray *children;
 
-/// The content of the scope, only applicable to root scopes, the scopes' spelling will be derived from this
+/// The content of the scope's root scope
 @property (nonatomic, strong) NSString *content;
 
 /// Adds a new child scope with the given properties
@@ -67,12 +67,13 @@ typedef enum
 /// Method to query the scope tree. Can only be called on root scopes
 - (NSMutableArray *)scopeStackAtOffset:(NSUInteger)offset options:(TMScopeQueryOptions)options;
 
-/// Methods to apply changes to the scope tree. Can only be called on root scopes
-- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange;
-- (void)removeChildScopesInRange:(NSRange)range;
+/// Methods to apply changes to the scope tree. Can only be called on root scopes.
+- (void)shiftByReplacingRange:(NSRange)oldRange withRange:(NSRange)newRange onRemove:(void(^)(TMScope *scope))block;
+- (void)removeChildScopesInRange:(NSRange)range onRemove:(void(^)(TMScope *scope))block;
 /// Attempts to merge a broken scope tree at the specified offset. Returns YES if successful or if the tree is not broken
 - (BOOL)attemptMergeAtOffset:(NSUInteger)offset;
 
+/// Returns the symbol associated with the scope, or nil if the scope should not be shown in the symbol list
 - (TMSymbol *)symbol;
 
 @end

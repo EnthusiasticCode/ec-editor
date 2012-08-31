@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-@class UIImage;
+@class UIImage, TMScope;
 
 
 /// Represent a symbol returned by the symbolList method in TMUnit.
@@ -20,7 +20,7 @@
 @property (nonatomic, readonly) NSUInteger indentation;
 @property (nonatomic, readonly, getter = isSeparator) BOOL separator;
 
-- (id)initWithQualifiedIdentifier:(NSString *)qualifiedIdentifier title:(NSString *)title icon:(UIImage *)icon range:(NSRange)range;
+- (id)initWithScope:(TMScope *)scope;
 
 @end
 
