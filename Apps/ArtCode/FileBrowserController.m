@@ -253,7 +253,9 @@
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
     NSURL *fileURL = [self.filteredItems objectAtIndex:indexPath.row];
-    if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+    if ([fileURL isDirectory]) {
+      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+    }else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
     } else {
       FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
