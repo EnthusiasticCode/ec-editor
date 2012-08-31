@@ -473,7 +473,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMSymbol *)symbol {
   if (!_symbol) {
-    if (![[TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier] isEqualToString:@"1"]) {
+    if (![TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier]) {
       _symbol = (id)[NSNull null];
       return nil;
     }

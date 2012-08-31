@@ -226,7 +226,7 @@ static NSMutableDictionary *_includedNodesCaches;
             includedSyntax = [containerNode rootSyntax];
           else
             includedSyntax = [TMSyntaxNode syntaxWithScopeIdentifier:containerNode.include];
-          [includedNodes addObject:includedSyntax];
+          [includedNodes insertObject:includedSyntax atIndex:idx + offset];
         }
       }
       else
