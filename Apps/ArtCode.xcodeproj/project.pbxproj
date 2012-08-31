@@ -331,6 +331,7 @@
 		CD40792115D3CA1B007E2DF3 /* accessoryView_backgroundDocked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD40792015D3CA1B007E2DF3 /* accessoryView_backgroundDocked@2x.png */; };
 		CD40792815D3CF07007E2DF3 /* accessoryView_backgroundSplitLeftTop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD40792615D3CF07007E2DF3 /* accessoryView_backgroundSplitLeftTop@2x.png */; };
 		CD40792915D3CF07007E2DF3 /* accessoryView_backgroundSplitRightTop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD40792715D3CF07007E2DF3 /* accessoryView_backgroundSplitRightTop@2x.png */; };
+		CD42AAD215EFB36F00E9FC5B /* RenameModalView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */; };
 		CD4469D5150CE7A6004236D8 /* ArtCodeURLSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */; };
 		CD4469D6150CE7F6004236D8 /* ArtCodeLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = B75F658314D868EB008B88C5 /* ArtCodeLocation.m */; };
 		CD4469D7150CE944004236D8 /* ACProjectSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = B771014F1506E40B006AF1FB /* ACProjectSpec.m */; };
@@ -392,6 +393,7 @@
 		CD6A769115D1A01600D1F4C9 /* itemIcon_Duplicate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A768C15D1A01600D1F4C9 /* itemIcon_Duplicate@2x.png */; };
 		CD6A769215D1A01600D1F4C9 /* itemIcon_Replace@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6A768D15D1A01600D1F4C9 /* itemIcon_Replace@2x.png */; };
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
+		CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C44F615EFB8BE00D561BF /* RenameController.m */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
 		CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */; };
 		CD6D410615D71F79003EADC2 /* bezelAlert_cancelIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6D410115D71F79003EADC2 /* bezelAlert_cancelIcon@2x.png */; };
@@ -936,6 +938,7 @@
 		CD40792015D3CA1B007E2DF3 /* accessoryView_backgroundDocked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accessoryView_backgroundDocked@2x.png"; sourceTree = "<group>"; };
 		CD40792615D3CF07007E2DF3 /* accessoryView_backgroundSplitLeftTop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accessoryView_backgroundSplitLeftTop@2x.png"; sourceTree = "<group>"; };
 		CD40792715D3CF07007E2DF3 /* accessoryView_backgroundSplitRightTop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "accessoryView_backgroundSplitRightTop@2x.png"; sourceTree = "<group>"; };
+		CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RenameModalView.xib; sourceTree = "<group>"; };
 		CD4469D4150CE7A6004236D8 /* ArtCodeURLSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeURLSpec.m; sourceTree = "<group>"; };
 		CD4719A5145196CE00C7BCC5 /* tabBar_TabAddButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabAddButton.png; sourceTree = "<group>"; };
 		CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstantGestureRecognizer.h; sourceTree = "<group>"; };
@@ -1003,6 +1006,8 @@
 		CD6A768C15D1A01600D1F4C9 /* itemIcon_Duplicate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "itemIcon_Duplicate@2x.png"; sourceTree = "<group>"; };
 		CD6A768D15D1A01600D1F4C9 /* itemIcon_Replace@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "itemIcon_Replace@2x.png"; sourceTree = "<group>"; };
 		CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		CD6C44F515EFB8BE00D561BF /* RenameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenameController.h; sourceTree = "<group>"; };
+		CD6C44F615EFB8BE00D561BF /* RenameController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenameController.m; sourceTree = "<group>"; };
 		CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
 		CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportRemotesListController.h; sourceTree = "<group>"; };
@@ -1917,6 +1922,8 @@
 		CD69C8FE14F1638900FCC987 /* Export sheets */ = {
 			isa = PBXGroup;
 			children = (
+				CD6C44F515EFB8BE00D561BF /* RenameController.h */,
+				CD6C44F615EFB8BE00D561BF /* RenameController.m */,
 				CDB5DB6314C6F56A003DFD1F /* FolderBrowserController.h */,
 				CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
@@ -2183,6 +2190,7 @@
 				CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */,
 				CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */,
 				CDA51F41157E25E100DB034A /* DocSetHintsView.xib */,
+				CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -2966,6 +2974,7 @@
 				CD6D411015D720F0003EADC2 /* UITabBar_info@2x.png in Resources */,
 				CD6D411115D720F0003EADC2 /* UITabBar_star@2x.png in Resources */,
 				CD6D411215D720F0003EADC2 /* UITabBar_symbol@2x.png in Resources */,
+				CD42AAD215EFB36F00E9FC5B /* RenameModalView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3146,6 +3155,7 @@
 				5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */,
 				CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */,
 				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
+				CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

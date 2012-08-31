@@ -16,6 +16,7 @@
 #import "NewFileController.h"
 #import "FolderBrowserController.h"
 #import "MoveConflictController.h"
+#import "RenameController.h"
 
 #import "ExportRemotesListController.h"
 #import "RemoteDirectoryBrowserController.h"
@@ -323,59 +324,85 @@
   }
   else if (actionSheet == _toolEditItemExportActionSheet)
   {
-    if (buttonIndex == 0) // Move
-    {
-      FolderBrowserController *directoryBrowser = [FolderBrowserController new];
-      directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-      directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
-      [self modalNavigationControllerPresentViewController:directoryBrowser];
-    }
-    else if (buttonIndex == 1) // Upload
-    {
-      [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:L(@"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)]];
-    }
-    else if (buttonIndex == 2) // iTunes
-    {
-      self.loading = YES;
-      NSInteger selectedItemsCount = [_selectedItems count];
-      [NSFileCoordinator coordinatedCopyItemsAtURLs:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
-        self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-      }];
-      [self setEditing:NO animated:YES];
-    }
-    else if (buttonIndex == 3) // Mail
-    {
-      NSURL *temporaryDirectory = [NSURL temporaryDirectory];
-      NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
-      
-      // Compressing files to export
-      self.loading = YES;
-      
-      [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
-        // Create mail composer
-        MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
-        mailComposer.mailComposeDelegate = self;
-        mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-        mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+    switch (buttonIndex) {
+      case 0: // Rename
+      {
+        if (_selectedItems.count != 1) {
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+          break;
+        }
+        RenameController *renameController = [[RenameController alloc] initWithRenameItemAtURL:[_selectedItems objectAtIndex:0] completionHandler:^(NSUInteger renamedCount, NSError *err) {
+          [self modalNavigationControllerDismissAction:nil];
+          if (err) {
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+          } else {
+            if (renamedCount == 1) {
+              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Item renamed") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            } else {
+              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:L(@"%u items renamed"), renamedCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+            }
+          }
+        }];
+        [self modalNavigationControllerPresentViewController:renameController];
+      } break;
         
-        // Add attachement
-        [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
+      case 1: // Move
+      {
+        FolderBrowserController *directoryBrowser = [FolderBrowserController new];
+        directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
+        directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
+        [self modalNavigationControllerPresentViewController:directoryBrowser];
+      } break;
         
-        // Remove temporary folder
-        [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
+      case 2: // Upload
+      {
+        [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:L(@"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)]];
+      } break;
         
-        // Add precompiled mail fields
-        [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
-        [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+      case 3: // iTunes
+      {
+        self.loading = YES;
+        NSInteger selectedItemsCount = [_selectedItems count];
+        [NSFileCoordinator coordinatedCopyItemsAtURLs:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
+          self.loading = NO;
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+        }];
+        [self setEditing:NO animated:YES];
+      } break;
         
-        // Present mail composer
-        [self presentViewController:mailComposer animated:YES completion:nil];
-        [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-        self.loading = NO;
-      }];
-      
-      [self setEditing:NO animated:YES];
+      case 4: // Mail
+      {
+        NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+        NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
+        
+        // Compressing files to export
+        self.loading = YES;
+        
+        [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+          // Create mail composer
+          MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+          mailComposer.mailComposeDelegate = self;
+          mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+          mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+          
+          // Add attachement
+          [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
+          
+          // Remove temporary folder
+          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
+          
+          // Add precompiled mail fields
+          [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
+          [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+          
+          // Present mail composer
+          [self presentViewController:mailComposer animated:YES completion:nil];
+          [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+          self.loading = NO;
+        }];
+        
+        [self setEditing:NO animated:YES];
+      } break;
     }
   }
 }
@@ -408,7 +435,7 @@
 - (void)_toolEditExportAction:(id)sender {
   if (!_toolEditItemExportActionSheet)
   {
-    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Move to new location"), L(@"Upload to remote"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
+    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Move to new location"), L(@"Upload to remote"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
