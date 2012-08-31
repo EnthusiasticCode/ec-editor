@@ -908,7 +908,10 @@ static void drawStencilStar(CGContextRef myContext)
         if (!strongSelf) {
           return;
         }
-        [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+        // Check for range sanity since the text could have changed during the delivery
+        if (NSMaxRange(token.range) <= strongSelf.codeView.text.length) {
+          [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+        }
       }];
       [_codeScheduler schedule:^{
         [this.codeUnit reparseWithUnsavedContent:this.textFile.content];
