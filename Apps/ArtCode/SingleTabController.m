@@ -375,6 +375,7 @@
           
         // Files show the location in the project
         case ArtCodeLocationTypeTextFile:
+        case ArtCodeLocationTypeDirectory:
           if (location.url) {
             fragments = @[ [location.path stringByDeletingLastPathComponent], location.name ];
           }
