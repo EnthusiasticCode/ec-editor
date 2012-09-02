@@ -396,7 +396,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         lineRange.location += lineRange.length;
         
         // Save line
-        [_renderedLines addObject:[TextRendererLine textRendererLineWithCTLine:ctline font:lineLength ? nil : font isTruncation:truncation]];
+        [_renderedLines addObject:[TextRendererLine textRendererLineWithCTLine:ctline font:lineLength > 1 ? nil : font isTruncation:truncation]];
         truncation = YES;
         lineLength -= truncationLenght;
         CFRelease(ctline);
