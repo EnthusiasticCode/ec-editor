@@ -312,7 +312,7 @@ static const void *rendererContext;
   if (self.ownsRenderer)
     self.renderer.renderWidth = frame.size.width;
   
-  CGFloat contentHeight = self.renderer.renderHeight * self.contentScaleFactor;
+  CGFloat contentHeight = self.renderer.renderHeight;
   if (contentHeight == 0)
     contentHeight = frame.size.height;
   self.contentSize = CGSizeMake(frame.size.width, contentHeight);
@@ -561,7 +561,7 @@ static void init(CodeView *self)
     if (height == 0)
       height = boundsSize.height;
     CGFloat width = boundsSize.width;
-    self.contentSize = CGSizeMake(width, height * self.contentScaleFactor);
+    self.contentSize = CGSizeMake(width, height);
   }
   else 
   {
