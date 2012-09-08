@@ -339,6 +339,7 @@ static void drawStencilStar(CGContextRef myContext)
   quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
   quickBrowserContainerController.openingButton = sender;
   
+  [(UINavigationController *)_quickBrowsersPopover.contentViewController popToRootViewControllerAnimated:NO];
   [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
