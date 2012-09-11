@@ -11,9 +11,12 @@
 
 static NSString * const _contentKey = @"TextFileContent";
 static NSString * const _bookmarksKey = @"TextFileBookmarks";
+static NSString * const _explicitSyntaxKey = @"TextFileExplicitSyntax";
 
-static const char * const _bookmarksXattrName = "TextFileBookmarks";
+static const char * const _bookmarksXattrName = "com.enthusiasticcode.artcode.TextFileBookmarks";
 static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
+static const char * const _explicitSyntaxXattrName = "com.enthusiasticcode.artcode.ExplicitSyntax";
+static size_t _explicitSyntaxXattrMaxSize = 4 * 1024; // 4 kB
 
 @implementation TextFile {
   NSMutableIndexSet *_bookmarks;
@@ -31,6 +34,10 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   if (bookmarksData && bookmarksData != [NSNull null]) {
     self.bookmarks = [NSKeyedUnarchiver unarchiveObjectWithData:bookmarksData];
   }
+  id explicitSyntaxData = [contentsDictionary objectForKey:_explicitSyntaxKey];
+  if (explicitSyntaxData && explicitSyntaxData != [NSNull null]) {
+    self.explicitSyntaxIdentifier = [NSKeyedUnarchiver unarchiveObjectWithData:explicitSyntaxData];
+  }
   return YES;
 }
 
@@ -39,7 +46,11 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   if (self.bookmarks) {
     bookmarksData = [NSKeyedArchiver archivedDataWithRootObject:self.bookmarks];
   }
-  return @{ _contentKey : [self.content dataUsingEncoding:NSUTF8StringEncoding], _bookmarksKey : bookmarksData };
+  id explicitSyntaxData = [NSNull null];
+  if (self.explicitSyntaxIdentifier) {
+    explicitSyntaxData = [NSKeyedArchiver archivedDataWithRootObject:self.explicitSyntaxIdentifier];
+  }
+  return @{ _contentKey : [self.content dataUsingEncoding:NSUTF8StringEncoding], _bookmarksKey : bookmarksData, _explicitSyntaxKey : explicitSyntaxData };
 }
 
 - (BOOL)readFromURL:(NSURL *)url error:(NSError *__autoreleasing *)outError {
@@ -54,9 +65,16 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
     bookmarksData = [NSData dataWithBytes:bookmarksBytes length:bookmarksBytesCount];
   }
   free(bookmarksBytes);
+  void *explicitSyntaxBytes = malloc(_explicitSyntaxXattrMaxSize);
+  ssize_t explicitSyntaxBytesCount = getxattr(url.path.fileSystemRepresentation, _explicitSyntaxXattrName, explicitSyntaxBytes, _explicitSyntaxXattrMaxSize, 0, 0);
+  id explicitSyntaxData = [NSNull null];
+  if (explicitSyntaxBytesCount != -1) {
+    explicitSyntaxData = [NSData dataWithBytes:explicitSyntaxBytes length:explicitSyntaxBytesCount];
+  }
+  free(explicitSyntaxBytes);
   __block BOOL success;
   dispatch_sync(dispatch_get_main_queue(), ^{
-    success = [self loadFromContents:@{ _contentKey : content, _bookmarksKey : bookmarksData } ofType:nil error:outError];
+    success = [self loadFromContents:@{ _contentKey : content, _bookmarksKey : bookmarksData, _explicitSyntaxKey : explicitSyntaxData } ofType:nil error:outError];
   });
   return success;
 }
@@ -71,14 +89,24 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
     return NO;
   }
   id bookmarksData = [contentsDictionary objectForKey:_bookmarksKey];
+  id explicitSyntaxData = [contentsDictionary objectForKey:_explicitSyntaxKey];
   BOOL success = [fileContents writeToURL:url options:NSDataWritingAtomic error:outError];
   if (!success) {
     return NO;
   }
   if (bookmarksData && bookmarksData != [NSNull null]) {
     success = !setxattr(url.path.fileSystemRepresentation, _bookmarksXattrName, [bookmarksData bytes], [bookmarksData length], 0, 0);
+    if (!success) {
+      return NO;
+    }
   }
-  return success;
+  if (explicitSyntaxData && explicitSyntaxData != [NSNull null]) {
+    success = !setxattr(url.path.fileSystemRepresentation, _explicitSyntaxXattrName, [explicitSyntaxData bytes], [explicitSyntaxData length], 0, 0);
+    if (!success) {
+      return NO;
+    }
+  }
+  return YES;
 }
 
 #pragma mark - Public Methods
@@ -90,6 +118,14 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
   _content = content.copy;
   [self updateChangeCount:UIDocumentChangeDone];
   ASSERT(self.hasUnsavedChanges);
+}
+
+- (void)setExplicitSyntaxIdentifier:(NSString *)explicitSyntaxIdentifier {
+  if (explicitSyntaxIdentifier == _explicitSyntaxIdentifier) {
+    return;
+  }
+  _explicitSyntaxIdentifier = explicitSyntaxIdentifier;
+  [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (NSIndexSet *)bookmarks {
@@ -104,6 +140,7 @@ static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
     return;
   }
   _bookmarks = bookmarks.mutableCopy;
+  [self updateChangeCount:UIDocumentChangeDone];
 }
 
 - (BOOL)hasBookmarkAtLine:(NSUInteger)line {
