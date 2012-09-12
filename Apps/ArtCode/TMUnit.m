@@ -362,15 +362,9 @@ static OnigRegexp *_namedCapturesRegexp;
         }
         // Remove remaining child scopes
 #warning TODO: since the children are sorted this could be done better, also finding the index of the new end scope could be done on the insertion above
-        NSMutableArray *childrenToRemove = [NSMutableArray array];
-        for (TMScope *childScope in scope.children) {
-          if (childScope.location > resultRange.location) {
-            [childrenToRemove addObject:childScope];
-          }
-        }
-        for (TMScope *childScope in childrenToRemove) {
-          [childScope removeFromParent];
-        }
+        [[scope.children rac_where:^BOOL(TMScope *childScope) {
+          return childScope.location > resultRange.location;
+        }] makeObjectsPerformSelector:@selector(removeFromParent)];
       }
       ASSERT([scopeStack count]);
       [scopeStack removeLastObject];
