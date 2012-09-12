@@ -332,32 +332,45 @@ static OnigRegexp *_namedCapturesRegexp;
     ASSERT(!firstSyntaxNode || firstResult);
     
     // Handle the matches
+#warning TODO: decide if we want to keep 0 length scopes or not
     if (endResult && (!firstResult || [firstResult bodyRange].location >= [endResult bodyRange].location )) {
       // Handle end result first
       NSRange resultRange = [endResult bodyRange];
       resultRange.location += lineRange.location;
-      // Handle content name nested scope
-      if (scope.type == TMScopeTypeContent) {
-        [self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope];
-        previousTokenStart = resultRange.location;
-        scope.length = resultRange.location - scope.location;
-        if (!scope.length) {
-          [scope removeFromParent];
-        }
-        [scopeStack removeLastObject];
-        scope = [scopeStack lastObject];
-      }
-      [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:scope];
-      previousTokenStart = NSMaxRange(resultRange);
-      // Handle end captures
-      if (resultRange.length && syntaxNode.endCaptures) {
-        [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope];
-        scope.flags |= TMScopeHasEndScope;
-      }
       scope.length = NSMaxRange(resultRange) - scope.location;
       scope.flags |= TMScopeHasEnd;
       if (!scope.length) {
         [scope removeFromParent];
+      } else {
+        // Handle content name nested scope
+        if (scope.type == TMScopeTypeContent) {
+          [self _parsedTokenInRange:NSMakeRange(previousTokenStart, resultRange.location - previousTokenStart) withScope:scope];
+          previousTokenStart = resultRange.location;
+          scope.length = resultRange.location - scope.location;
+          if (!scope.length) {
+            [scope removeFromParent];
+          }
+          [scopeStack removeLastObject];
+          scope = [scopeStack lastObject];
+        }
+        [self _parsedTokenInRange:NSMakeRange(previousTokenStart, NSMaxRange(resultRange) - previousTokenStart) withScope:scope];
+        previousTokenStart = NSMaxRange(resultRange);
+        // Handle end captures
+        if (resultRange.length && syntaxNode.endCaptures) {
+          [self _generateScopesWithCaptures:syntaxNode.endCaptures result:endResult type:TMScopeTypeEnd offset:lineRange.location parentScope:scope];
+          scope.flags |= TMScopeHasEndScope;
+        }
+        // Remove remaining child scopes
+#warning TODO: since the children are sorted this could be done better, also finding the index of the new end scope could be done on the insertion above
+        NSMutableArray *childrenToRemove = [NSMutableArray array];
+        for (TMScope *childScope in scope.children) {
+          if (childScope.location > resultRange.location) {
+            [childrenToRemove addObject:childScope];
+          }
+        }
+        for (TMScope *childScope in childrenToRemove) {
+          [childScope removeFromParent];
+        }
       }
       ASSERT([scopeStack count]);
       [scopeStack removeLastObject];
@@ -456,6 +469,7 @@ static OnigRegexp *_namedCapturesRegexp;
     capturesScope = [scope newChildScopeWithIdentifier:[(NSDictionary *)[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
     [self _scopeAdded:capturesScope];
     capturesScope.length = [result bodyRange].length;
+#warning TODO: fix this to only account for the parts of the captures scope that aren't captures themselves
     [self _parsedTokenInRange:NSMakeRange(capturesScope.location, capturesScope.length) withScope:capturesScope];
   }
   NSMutableArray *capturesScopesStack = [NSMutableArray arrayWithObject:capturesScope];
