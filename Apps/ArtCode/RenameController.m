@@ -45,6 +45,10 @@
   [self _updateAlsoRenameTableForFileWithURL:_fileURL];
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+  return YES;
+}
+
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -69,20 +73,32 @@
 #pragma mark - Private methods
 
 - (void)_doneAction:(id)sender {
+  NSURL *destinationURL = [_fileURL URLByDeletingLastPathComponent];
+  NSString *renameAs = self.renameTextField.text;
+  // TODO checks on new name?
+  
   NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
   NSFileManager *fileManager = [NSFileManager new];
   // Rename original file
   __block NSError *err = nil;
   __block NSUInteger count = 0;
-  NSURL *destinationURL = [_fileURL URLByDeletingLastPathComponent];
-  [fileCoordinator coordinateReadingItemAtURL:_fileURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:self.renameTextField.text] options:0 error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+  [fileCoordinator coordinateReadingItemAtURL:_fileURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:renameAs] options:0 error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
     [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
     if (!err) {
       count++;
     }
   }];
   // Rename related files
-  // TODO
+  renameAs = renameAs.stringByDeletingPathExtension;
+  for (NSIndexPath *indexPath in self.alsoRenameTableView.indexPathsForSelectedRows) {
+    NSURL *renameURL = [_alsoRenameURLs objectAtIndex:indexPath.row];
+    [fileCoordinator coordinateReadingItemAtURL:renameURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:[renameAs stringByAppendingPathExtension:renameURL.pathExtension] isDirectory:NO] options:0 error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+      [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
+      if (!err) {
+        count++;
+      }
+    }];
+  }
   // Return to continuation
   if (_completionHandler) {
     _completionHandler(count, err);
@@ -110,10 +126,10 @@
   if (_alsoRenameURLs.count) {
     self.alsoRenameView.hidden = NO;
     self.alsoRenameTableView.editing = YES;
-    [self.alsoRenameTableView reloadData];
   } else {
     self.alsoRenameView.hidden = YES;
   }
+  [self.alsoRenameTableView reloadData];
 }
 
 @end
