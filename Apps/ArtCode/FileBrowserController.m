@@ -338,11 +338,15 @@
           if (err) {
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
           } else {
+            // Show alert to inform of successful rename
             if (renamedCount == 1) {
               [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Item renamed") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             } else {
               [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:L(@"%u items renamed"), renamedCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             }
+            // Manually update file listing instead of waiting for file coordination
+            [self invalidateFilteredItems];
+            [self.tableView reloadData];
           }
         }];
         [self modalNavigationControllerPresentViewController:renameController];
