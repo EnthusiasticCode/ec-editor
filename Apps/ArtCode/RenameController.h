@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 /// A controller to manage a controller to rename a file.
-@interface RenameController : UIViewController
+@interface RenameController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 - (id)initWithRenameItemAtURL:(NSURL *)fileURL completionHandler:(void(^)(NSUInteger renamedCount, NSError *err))completionHandler;
 
