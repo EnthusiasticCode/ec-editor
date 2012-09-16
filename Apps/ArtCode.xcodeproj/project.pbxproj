@@ -341,6 +341,11 @@
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
 		CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
+		CD54BD8F160607F70025B7CA /* EXTConcreteProtocol.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */; };
+		CD54BD90160607F70025B7CA /* EXTConcreteProtocol.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */; };
+		CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */; };
+		CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */; };
+		CD54BD93160607F70025B7CA /* metamacros.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8D160607F70025B7CA /* metamacros.h */; };
 		CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetContentController.m */; };
 		CD625943157A358A00B4669A /* docSet.mom in Resources */ = {isa = PBXBuildFile; fileRef = CD625942157A358A00B4669A /* docSet.mom */; };
 		CD62595C157BA57700B4669A /* Local.png in Resources */ = {isa = PBXBuildFile; fileRef = CD62594A157BA57700B4669A /* Local.png */; };
@@ -569,6 +574,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = B75F65A014D96366008B88C5;
 			remoteInfo = Connection;
+		};
+		CD54BDBA160608530025B7CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88037F8315056328001A5B19;
+			remoteInfo = ReactiveCocoa;
+		};
+		CD54BDBC160608530025B7CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88F440AB153DAC820097B4C3;
+			remoteInfo = "ReactiveCocoa-iOS";
+		};
+		CD54BDBE160608530025B7CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88CDF7DC15000FCF00163A9F;
+			remoteInfo = ReactiveCocoaTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -950,6 +976,12 @@
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
 		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
+		CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactiveCocoa.xcodeproj; path = /Users/Nikso/Projects/edit/edit/ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj; sourceTree = "<absolute>"; };
+		CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTConcreteProtocol.h; path = extobjc/EXTConcreteProtocol.h; sourceTree = "<group>"; };
+		CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTConcreteProtocol.m; path = extobjc/EXTConcreteProtocol.m; sourceTree = "<group>"; };
+		CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensions.h; path = extobjc/EXTRuntimeExtensions.h; sourceTree = "<group>"; };
+		CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
+		CD54BD8D160607F70025B7CA /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = extobjc/metamacros.h; sourceTree = "<group>"; };
 		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetContentController.h; sourceTree = "<group>"; };
 		CD625940157A2BAE00B4669A /* DocSetContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetContentController.m; sourceTree = "<group>"; };
 		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
@@ -1533,6 +1565,7 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				CD54BD8E160607F70025B7CA /* libextobjc */,
 				5FA6148415CE814500A0932A /* libfile.a */,
 				CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */,
 				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
@@ -1827,6 +1860,29 @@
 				CDC1A078147E6EC300E01B7A /* CodeFileCompletionCell.m */,
 			);
 			name = Completion;
+			sourceTree = "<group>";
+		};
+		CD54BD87160607B30025B7CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD54BDBB160608530025B7CA /* ReactiveCocoa.framework */,
+				CD54BDBD160608530025B7CA /* libReactiveCocoa-iOS.a */,
+				CD54BDBF160608530025B7CA /* ReactiveCocoaTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CD54BD8E160607F70025B7CA /* libextobjc */ = {
+			isa = PBXGroup;
+			children = (
+				CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */,
+				CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */,
+				CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */,
+				CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */,
+				CD54BD8D160607F70025B7CA /* metamacros.h */,
+			);
+			name = libextobjc;
+			path = ../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa/libextobjc;
 			sourceTree = "<group>";
 		};
 		CD625944157A358F00B4669A /* DocSet */ = {
@@ -2602,6 +2658,10 @@
 					ProductGroup = CD1D6B1514F2B3B9007AC652 /* Products */;
 					ProjectRef = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
 				},
+				{
+					ProductGroup = CD54BD87160607B30025B7CA /* Products */;
+					ProjectRef = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2617,6 +2677,27 @@
 			fileType = archive.ar;
 			path = libConnection.a;
 			remoteRef = CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD54BDBB160608530025B7CA /* ReactiveCocoa.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ReactiveCocoa.framework;
+			remoteRef = CD54BDBA160608530025B7CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD54BDBD160608530025B7CA /* libReactiveCocoa-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libReactiveCocoa-iOS.a";
+			remoteRef = CD54BDBC160608530025B7CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD54BDBF160608530025B7CA /* ReactiveCocoaTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ReactiveCocoaTests.octest;
+			remoteRef = CD54BDBE160608530025B7CA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2975,6 +3056,11 @@
 				CD6D411115D720F0003EADC2 /* UITabBar_star@2x.png in Resources */,
 				CD6D411215D720F0003EADC2 /* UITabBar_symbol@2x.png in Resources */,
 				CD42AAD215EFB36F00E9FC5B /* RenameModalView.xib in Resources */,
+				CD54BD8F160607F70025B7CA /* EXTConcreteProtocol.h in Resources */,
+				CD54BD90160607F70025B7CA /* EXTConcreteProtocol.m in Resources */,
+				CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */,
+				CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */,
+				CD54BD93160607F70025B7CA /* metamacros.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
