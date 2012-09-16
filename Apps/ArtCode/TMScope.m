@@ -129,8 +129,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 - (void)removeFromParent
 {
   ASSERT(_parent && _parent->_children && [_parent->_children containsObject:self]);
-  // We're only using it on span and content type scopes at the moment
-  ASSERT(_type == TMScopeTypeContent || _type == TMScopeTypeSpan);
   if (_type == TMScopeTypeContent)
     _parent->_flags &= ~TMScopeHasContentScope;
   [_parent->_children removeObject:self];
