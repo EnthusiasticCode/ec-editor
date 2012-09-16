@@ -39,6 +39,17 @@
   return nil;
 }
 
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  
+  // RAC
+  [self.renameTextField.rac_textSubscribable subscribeNext:^(id x) {
+    if (_alsoRenameURLs.count > 0) {
+      [self.alsoRenameTableView reloadData];
+    }
+  }];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   self.originalNameLabel.text = self.renameTextField.text = _fileURL.lastPathComponent;
@@ -61,10 +72,12 @@
   static NSString *cellIdentifier = @"default";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (!cell) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  cell.textLabel.text = [[_alsoRenameURLs objectAtIndex:indexPath.row] lastPathComponent];
+  NSString *text = [[_alsoRenameURLs objectAtIndex:indexPath.row] lastPathComponent];
+  cell.textLabel.text = text;
+  cell.detailTextLabel.text = [NSString stringWithFormat:L(@"Rename to: %@"), [self.renameTextField.text.stringByDeletingPathExtension stringByAppendingPathExtension:text.pathExtension]];
   // TODO add file icon
   
   return cell;
