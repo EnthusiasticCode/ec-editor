@@ -111,7 +111,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   childScope->_parent = self;
   if (!_children)
     _children = [NSMutableArray new];
-  NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex usingComparator:scopeComparator];
+  NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:scopeComparator];
   if (childInsertionIndex == [_children count])
     [_children addObject:childScope];
   else
@@ -489,15 +489,6 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   if (!_children.count)
     return;
   
-  // 0 length scopes should not exist in a consistent tree
-  ASSERT(_length);
-  
-  // Hacky check for overflow and weird values
-  ASSERT(_location < NSUIntegerMax - 100);
-  ASSERT(_location != NSNotFound);
-  ASSERT(_length < NSUIntegerMax - 100);
-  ASSERT(_length != NSNotFound);
-  
   // Scope must have a valid type
   ASSERT(_type == TMScopeTypeRoot || _type == TMScopeTypeMatch || _type == TMScopeTypeCapture || _type == TMScopeTypeSpan || _type == TMScopeTypeBegin || _type == TMScopeTypeEnd || _type == TMScopeTypeContent);
   
@@ -508,42 +499,33 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   ASSERT(_type != TMScopeTypeBegin || _parent->_type == TMScopeTypeSpan);
   ASSERT(_type != TMScopeTypeEnd || _parent->_type == TMScopeTypeSpan);
   
-  if (_type == TMScopeTypeSpan)
-  {
+  if (_type == TMScopeTypeSpan) {
     ASSERT(_flags & TMScopeHasBegin);
-    if (_flags & TMScopeHasBeginScope)
-    {
+    if (_flags & TMScopeHasBeginScope) {
       TMScope *beginScope = [_children objectAtIndex:0];
       ASSERT(beginScope->_type == TMScopeTypeBegin);
     }
-    if (_flags & TMScopeHasEndScope)
-    {
+    if (_flags & TMScopeHasEndScope) {
       TMScope *endScope = [_children lastObject];
       ASSERT(endScope->_type == TMScopeTypeEnd);
     }
-    if (_flags & TMScopeHasContentScope)
-    {
+    if (_flags & TMScopeHasContentScope) {
       TMScope *contentScope = [_children objectAtIndex:_flags & TMScopeHasBeginScope ? 1 : 0];
       ASSERT(contentScope->_type == TMScopeTypeContent);
     }
   }
   
-  // Children must be sorted, must not overlap, and must not extend beyond the parent's range, and must have non-zero length (this gets rechecked on recursion, but that's ok)
+  // Children must be sorted, must not overlap, and must not extend beyond the parent's range
   NSUInteger scopeEnd = _location + _length;
   NSUInteger previousChildLocation = NSUIntegerMax;
   NSUInteger previousChildEnd = NSUIntegerMax;
   BOOL isFirstChild = YES;
-  for (TMScope *childScope in _children)
-  {
-    ASSERT(childScope->_length);
+  for (TMScope *childScope in _children) {
     ASSERT(childScope->_location >= _location && childScope->_location + childScope->_length <= scopeEnd);
-    if (!isFirstChild)
-    {
-      ASSERT(previousChildLocation < childScope->_location);
+    if (!isFirstChild) {
+      ASSERT(previousChildLocation <= childScope->_location);
       ASSERT(previousChildEnd <= childScope->_location);
-    }
-    else
-    {
+    } else {
       isFirstChild = NO;
     }
     previousChildLocation = childScope->_location;
