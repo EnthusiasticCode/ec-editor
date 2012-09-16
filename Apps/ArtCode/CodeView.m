@@ -614,20 +614,19 @@ static void init(CodeView *self)
 
 #pragma mark - Text Renderer Delegate
 
-- (void)textRenderer:(TextRenderer *)sender didInvalidateRenderInRect:(CGRect)rect
-{
-  if (rect.size.height == 0)
+- (void)textRenderer:(TextRenderer *)sender willInvalidateRenderInRect:(CGRect)rect {
+  if (rect.size.height == 0) {
     [_contentView setNeedsDisplay];
-  else
+  } else {
     [_contentView setNeedsDisplayInRect:rect];
+  }
 }
 
 #pragma mark - Text Decoration Methods
 
 - (void)setAttributes:(NSDictionary *)attributes range:(NSRange)aRange {
   [_attributedText setAttributes:attributes range:aRange];
-  [self.renderer setNeedsUpdate];
-  [self setNeedsDisplay];
+  [self.renderer setNeedsUpdateInTextRange:aRange];
 }
 
 - (void)addPassLayerBlock:(TextRendererLayerPass)block underText:(BOOL)isUnderlay forKey:(NSString *)passKey
@@ -1354,14 +1353,15 @@ static void init(CodeView *self)
   
   [self unmarkText];
   
-  NSUInteger stringLenght = [string length];
+  NSRange stringRange = NSMakeRange(range.location, string.length);
+  
   // Register undo operation
   if (self.undoManager.groupingLevel == 0)
   {
     [self.undoManager beginUndoGrouping];
     [self.undoManager setActionName:@"Typing"];
   }
-  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:NSMakeRange(range.location, stringLenght) withString:range.length ? [self.text substringWithRange:range] : @"" selectionRange:range];
+  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:stringRange withString:range.length ? [self.text substringWithRange:range] : @"" selectionRange:range];
   
   [inputDelegate textWillChange:self];
   [self willChangeValueForKey:@"text"];
@@ -1369,15 +1369,15 @@ static void init(CodeView *self)
     // Commit string
     if (string.length == 0) {
       [self.attributedText deleteCharactersInRange:range];
+      [self.renderer setNeedsUpdateInTextRange:range];
     } else {
       if (self.attributedText.length > 0) {
         [self.attributedText replaceCharactersInRange:range withString:string];
       } else {
         [self.attributedText replaceCharactersInRange:range withAttributedString:[[NSAttributedString alloc] initWithString:string attributes:self.defaultTextAttributes]];
       }
+      [self.renderer setNeedsUpdateInTextRange:stringRange];
     }
-    [self.renderer setNeedsUpdate];
-    [self setNeedsDisplay];
     
     // Update caret location
     [self _setSelectedTextRange:selection notifyDelegate:NO];

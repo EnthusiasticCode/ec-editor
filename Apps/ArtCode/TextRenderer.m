@@ -24,10 +24,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 /// Gets the render width for the text considering the text insets
 - (CGFloat)_wrapWidth;
 
-/// Updates every segment wrap width with the given width accounting for text
-/// insets and inform the delegate that the old rendering rect has changed.
-- (void)_updateRenderWidth:(CGFloat)width;
-
 /// Retrieve the string for the given text segment. 
 /// lineCount is an output parameter, pass NULL if not interested.
 /// isFinalPart, if provided, will contain a value indicating if the input string has been exausted with the call. 
@@ -138,9 +134,9 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 /// Enumerate all the lines in the text segment within the given segment-relative 
 /// string range. The block will also receive the relative line string range.
-- (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
+- (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
-- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)range usingBlock:(void(^)(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
+- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)range usingBlock:(void(^)(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
 @end
 
@@ -555,13 +551,13 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   }
 }
 
-- (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
+- (void)enumerateLinesInStringRange:(NSRange)queryRange usingBlock:(void (^)(TextRendererLine *, NSUInteger, CGRect, NSRange, BOOL *))block
 {
   ASSERT(valid);
   
   NSUInteger queryRangeEnd = NSUIntegerMax;
   if (queryRange.length > 0)
-    queryRangeEnd = queryRange.location + queryRange.length;
+    queryRangeEnd = NSMaxRange(queryRange);
   
   CGFloat currentY = 0;
   CGRect bounds;
@@ -579,7 +575,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     
     if ((NSUInteger)(stringRange.location + stringRange.length) > queryRange.location) 
     {
-      block(line->CTLine, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+      block(line, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
       if (stop) break;
     }
     
@@ -588,7 +584,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   }
 }
 
-- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)queryRange usingBlock:(void (^)(CTLineRef, NSUInteger, CGRect, NSRange, BOOL *))block
+- (void)enumerateLinesInRenderedLineIndexRange:(NSRange)queryRange usingBlock:(void (^)(TextRendererLine *, NSUInteger, CGRect, NSRange, BOOL *))block
 {
   ASSERT(valid);
   
@@ -613,7 +609,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     
     if (lineIndex >= queryRange.location) 
     {
-      block(line->CTLine, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
+      block(line, lineIndex, bounds, (NSRange){ stringRange.location, stringRange.length }, &stop);
       if (stop) break;
     }
     
@@ -633,8 +629,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   NSMutableArray *textSegments;
   dispatch_semaphore_t textSegmentsSemaphore;
   
-  BOOL _needsUpdate;
-  BOOL delegateHasDidInvalidateRenderInRect;
+  BOOL delegateHasWillInvalidateRenderInRect;
   
   id _notificationCenterMemoryWarningObserver;
 }
@@ -645,15 +640,12 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 @synthesize renderWidth, renderHeight, renderTextHeight, textInsets, maximumStringLenghtPerSegment;
 @synthesize underlayRenderingPasses, overlayRenderingPasses;
 
-- (void)setText:(NSAttributedString *)text {
+- (void)setText:(NSMutableAttributedString *)text {
   if (text == _text)
     return;
   
   _text = text;
   [self setNeedsUpdate];
-  
-  if (delegateHasDidInvalidateRenderInRect) 
-    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
 }
 
 - (void)setDelegate:(id<TextRendererDelegate>)aDelegate
@@ -662,7 +654,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     return;
   
   delegate = aDelegate;
-  delegateHasDidInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:didInvalidateRenderInRect:)];
+  delegateHasWillInvalidateRenderInRect = [delegate respondsToSelector:@selector(textRenderer:willInvalidateRenderInRect:)];
 }
 
 - (void)setRenderWidth:(CGFloat)width
@@ -670,12 +662,9 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   if (width == renderWidth)
     return;
   
-  // Order here mater because the update will inform the delegate that the old rendering rect changed. Than we update that rect size itself.
-  [self _updateRenderWidth:width];
   renderWidth = width;
   
-  if (delegateHasDidInvalidateRenderInRect)
-    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
+  [self setNeedsUpdate];
 }
 
 - (void)setRenderTextHeight:(CGFloat)height
@@ -699,10 +688,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   
   // Order matter, update will use textInsets to evalue wrap with for segments
   textInsets = insets;
-  [self _updateRenderWidth:self.renderWidth];
-  
-  if (delegateHasDidInvalidateRenderInRect)
-    [delegate textRenderer:self didInvalidateRenderInRect:CGRectMake(0, 0, self.renderWidth, self.renderHeight)];
+
+  [self setNeedsUpdate];
 }
 
 #pragma mark NSObject Methods
@@ -747,20 +734,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 - (CGFloat)_wrapWidth
 {
   return renderWidth - textInsets.left - textInsets.right;
-}
-
-- (void)_updateRenderWidth:(CGFloat)width
-{
-  CGFloat wrapWidth = width - textInsets.left - textInsets.right;
-  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-  {
-    for (TextSegment *segment in textSegments) 
-    {
-      segment.renderWrapWidth = wrapWidth;
-    }
-    _needsUpdate = YES;
-  }
-  dispatch_semaphore_signal(textSegmentsSemaphore);
 }
 
 // Already locked in _generateTextSegmentsAndEnumerateUsingBlock
@@ -833,22 +806,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   return attributedString;
 }
 
-- (void)_generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block
-{
-  // Update if neccessary
-  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
-  {
-    if (_needsUpdate) {
-      for (TextSegment *segment in textSegments) {
-        [segment discardContent];
-      }
-      
-      [textSegments removeAllObjects];
-      _needsUpdate = NO;
-    }
-  }
-  dispatch_semaphore_signal(textSegmentsSemaphore);
-  
+- (void)_generateTextSegmentsAndEnumerateUsingBlock:(void (^)(TextSegment *, NSUInteger, NSUInteger, NSUInteger, CGFloat, BOOL *))block {
   // Enumeration
   BOOL stop = NO;
   TextSegment *segment = nil;
@@ -920,10 +878,10 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     segmentRelativeStringRange.location -= stringOffset;
     
     // Retrieve start position line index
-    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
+    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(TextRendererLine *line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
       renderedLineIndex += innerIdx;
       
-      positionX = CTLineGetOffsetForStringIndex(line, (position - stringOffset), NULL);
+      positionX = CTLineGetOffsetForStringIndex(line->CTLine, (position - stringOffset), NULL);
       positionX += lineBounds.origin.x;
       
       *stop = *innserStop = YES;
@@ -953,13 +911,13 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     segmentRelativeLineRange.location -= lineIndexOffset;
     
     // Retrieve start position line index
-    [segment enumerateLinesInRenderedLineIndexRange:segmentRelativeLineRange usingBlock:^(CTLineRef line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopInner) {
+    [segment enumerateLinesInRenderedLineIndexRange:segmentRelativeLineRange usingBlock:^(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopInner) {
       positionX -= lineBounds.origin.x;
       if (positionX >= CGRectGetMaxX(lineBounds))
         requestPosition = NSMaxRange(lineStringRange) - 1;
       else
         // TODO there may be problems summing cfindex to nsuinteger
-        requestPosition = CTLineGetStringIndexForPosition(line, (CGPoint){ positionX, 0 });
+        requestPosition = CTLineGetStringIndexForPosition(line->CTLine, (CGPoint){ positionX, 0 });
       requestPosition += stringOffset;
       *stop = *stopInner = YES;
     }];
@@ -970,12 +928,86 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 #pragma mark Public Methods
 
-- (void)setNeedsUpdate {
+- (CGRect)setNeedsUpdate {
+  CGRect updateRect = CGRectMake(0, 0, self.renderWidth, self.renderHeight);
+  
   dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
   {
-    _needsUpdate = YES;
+    // Remove all rendered segments
+    for (TextSegment *segment in textSegments) {
+      [segment discardContent];
+    }
+    [textSegments removeAllObjects];
   }
   dispatch_semaphore_signal(textSegmentsSemaphore);
+  
+  if (delegateHasWillInvalidateRenderInRect) {
+    [delegate textRenderer:self willInvalidateRenderInRect:updateRect];
+  }
+  return updateRect;
+}
+
+- (CGRect)setNeedsUpdateInTextRange:(NSRange)range {
+  __block CGRect updateRect = CGRectMake(0, 0, self.renderWidth, self.renderHeight);
+  
+  dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
+  {
+    // Calculate segments to remove
+    NSMutableIndexSet *segmentsToRemove = [NSMutableIndexSet new];
+    __block NSUInteger lastSegmentTextEnd = 0;
+    __block NSUInteger currentSegmentTextEnd = 0;
+    [textSegments enumerateObjectsUsingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stopSegments) {
+      // If a segment is not rendered, end the cycle prematurely
+      if (segment.isContentDiscarded) {
+        *stopSegments = YES;
+        return;
+      }
+      
+      currentSegmentTextEnd = lastSegmentTextEnd + segment.stringLength;
+      
+      // Skip non affected segments
+      if (range.location > currentSegmentTextEnd) {
+        updateRect.origin.y += segment.renderSegmentHeight;
+        updateRect.size.height -= segment.renderSegmentHeight;
+        lastSegmentTextEnd = currentSegmentTextEnd;
+        return;
+      }
+      
+      // If only one line is affected, stop the cycle
+      if (lastSegmentTextEnd < range.location && currentSegmentTextEnd >= NSMaxRange(range)) {
+        [segment beginContentAccess];
+        [segment enumerateLinesInStringRange:NSMakeRange(range.location - lastSegmentTextEnd, range.length) usingBlock:^(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopLines) {
+          // The update will need to start at the first line's top
+          updateRect.origin.y += lineBounds.origin.y;
+          
+          // If the update is contained in one line, just update that one
+          if (range.length <= lineStringRange.length) {
+            updateRect.size.height = lineBounds.size.height;
+          }
+          
+          // Only needed for first line
+          *stopLines = YES;
+        }];
+        [segment endContentAccess];
+      }
+      
+      // Remove the segment
+      [segment discardContent];
+      [segmentsToRemove addIndex:idx];
+      
+      lastSegmentTextEnd = currentSegmentTextEnd;
+    }];
+    // Remove affected rendered segments
+    if (segmentsToRemove.count > 0) {
+      [textSegments removeObjectsAtIndexes:segmentsToRemove];
+    }
+  }
+  dispatch_semaphore_signal(textSegmentsSemaphore);
+  
+  if (delegateHasWillInvalidateRenderInRect) {
+    [delegate textRenderer:self willInvalidateRenderInRect:updateRect];
+  }
+  return updateRect;
 }
 
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void (^)(TextRendererLine *, NSUInteger, NSUInteger, CGFloat, NSRange, BOOL *))block
@@ -1101,14 +1133,14 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     else if (queryStringRange.location >= stringOffset)
       segmentRelativeStringRange.location -= stringOffset;
     
-    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
-      lastLine = line;
+    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(TextRendererLine *line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innerStop) {
+      lastLine = line->CTLine;
       
       // Skip lines before point
       if (segmentRelativePoint.y >= lineBounds.origin.y + lineBounds.size.height)
         return;
       
-      result = CTLineGetStringIndexForPosition(line, segmentRelativePoint);
+      result = CTLineGetStringIndexForPosition(line->CTLine, segmentRelativePoint);
       if (result == (CFIndex)(lineStringRange.location + lineStringRange.length))
         result--;
       *stop = *innerStop = YES;
@@ -1149,13 +1181,13 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     NSUInteger segmentRelativeStringRangeEnd = segmentRelativeStringRange.location + segmentRelativeStringRange.length;
     
     __block NSUInteger stringEnd = stringOffset;
-    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(CTLineRef line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
+    [segment enumerateLinesInStringRange:segmentRelativeStringRange usingBlock:^(TextRendererLine *line, NSUInteger innerIdx, CGRect lineBounds, NSRange lineStringRange, BOOL *innserStop) {
       lineBounds.origin.y += positionOffset;
       
       // Query range start inside this line
       if (segmentRelativeStringRange.location > lineStringRange.location) 
       {
-        CGFloat offset = CTLineGetOffsetForStringIndex(line, segmentRelativeStringRange.location, NULL);
+        CGFloat offset = CTLineGetOffsetForStringIndex(line->CTLine, segmentRelativeStringRange.location, NULL);
         lineBounds.origin.x = offset;
         lineBounds.size.width -= offset;
       }
@@ -1163,7 +1195,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       // Query range end inside this line
       if (segmentRelativeStringRangeEnd <= lineStringRange.location + lineStringRange.length) 
       {
-        CGFloat offset = CTLineGetOffsetForStringIndex(line, segmentRelativeStringRangeEnd, NULL);
+        CGFloat offset = CTLineGetOffsetForStringIndex(line->CTLine, segmentRelativeStringRangeEnd, NULL);
         lineBounds.size.width = offset - lineBounds.origin.x;
       }
       

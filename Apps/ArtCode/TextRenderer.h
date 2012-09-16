@@ -35,7 +35,7 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 @optional
 
 /// Called when the renderer update a part of its content.
-- (void)textRenderer:(TextRenderer *)sender didInvalidateRenderInRect:(CGRect)rect;
+- (void)textRenderer:(TextRenderer *)sender willInvalidateRenderInRect:(CGRect)rect;
 
 @end
 
@@ -49,7 +49,8 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 
 #pragma mark Managing Text Input Data
 
-@property (nonatomic, strong) NSAttributedString *text;
+/// The text to be used to render. It is mutable to avoid copying, that has been found too slow in profiling.
+@property (nonatomic, strong) NSMutableAttributedString *text;
 
 /// A dictionary containing default text attributes that are applied to add an 
 /// additional tailing new-line.
@@ -102,9 +103,14 @@ typedef void (^TextRendererLayerPass)(CGContextRef context, TextRendererLine *li
 #pragma mark Rendering Content
 
 /// Indicate that the whole content should be re-rendered before the next draw.
-- (void)setNeedsUpdate;
+/// Returns the corresponding rect that will be updated on the next drawing.
+/// The same rect is passed to the delegate.
+- (CGRect)setNeedsUpdate;
 
-// TODO set needs update in rect
+/// Indicate that part of the text content should be re-rendered,
+/// Returns the corresponding rect that will be updated on the next drawing.
+/// The same rect is passed to the delegate.
+- (CGRect)setNeedsUpdateInTextRange:(NSRange)range;
 
 /// Renders the content text contained in the given rect to the specified 
 /// context. The given context will not be modified prior rendering. Lines
