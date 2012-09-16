@@ -125,7 +125,7 @@
     
     // RAC
     __weak FileBrowserController *this = self;
-    [RACAble(_directoryPresenter, fileURLs) subscribeNext:^(id x) {
+    [[_directoryPresenter rac_subscribableForKeyPath:RAC_KEYPATH(_directoryPresenter, fileURLs) onObject:_directoryPresenter] subscribeNext:^(id x) {
       [this.tableView reloadData];
     }];
   }
@@ -135,6 +135,12 @@
     // Preparing the filtered directory presenter
     if (!_filteredDirectoryPresenter) {
       _filteredDirectoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+      
+      // RAC
+      __weak FileBrowserController *this = self;
+      [[_filteredDirectoryPresenter rac_subscribableForKeyPath:RAC_KEYPATH(_filteredDirectoryPresenter, fileURLs) onObject:_filteredDirectoryPresenter] subscribeNext:^(id x) {
+        [this.tableView reloadData];
+      }];
     }
     _filteredDirectoryPresenter.filterString = self.searchBar.text;
     // Peparing hint message

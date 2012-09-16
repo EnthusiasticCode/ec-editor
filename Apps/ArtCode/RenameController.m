@@ -82,7 +82,7 @@
   // Rename original file
   __block NSError *err = nil;
   __block NSUInteger count = 0;
-  [fileCoordinator coordinateReadingItemAtURL:_fileURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:renameAs] options:0 error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+  [fileCoordinator coordinateReadingItemAtURL:_fileURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:renameAs] options:NSFileCoordinatorWritingForMoving error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
     [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
     if (!err) {
       count++;
@@ -92,7 +92,7 @@
   renameAs = renameAs.stringByDeletingPathExtension;
   for (NSIndexPath *indexPath in self.alsoRenameTableView.indexPathsForSelectedRows) {
     NSURL *renameURL = [_alsoRenameURLs objectAtIndex:indexPath.row];
-    [fileCoordinator coordinateReadingItemAtURL:renameURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:[renameAs stringByAppendingPathExtension:renameURL.pathExtension] isDirectory:NO] options:0 error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
+    [fileCoordinator coordinateReadingItemAtURL:renameURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:[renameAs stringByAppendingPathExtension:renameURL.pathExtension] isDirectory:NO] options:NSFileCoordinatorWritingForMoving error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
       [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
       if (!err) {
         count++;
