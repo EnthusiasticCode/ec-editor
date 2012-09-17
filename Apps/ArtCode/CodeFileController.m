@@ -38,8 +38,6 @@
 #import "TextFile.h"
 #import <file/FileMagic.h>
 
-#import "DiffMatchPatch.h"
-
 
 @interface CodeFileController ()
 
