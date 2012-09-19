@@ -97,6 +97,7 @@
   __block NSUInteger count = 0;
   [fileCoordinator coordinateReadingItemAtURL:_fileURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:renameAs] options:NSFileCoordinatorWritingForMoving error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
     [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
+    [fileCoordinator itemAtURL:newReadingURL didMoveToURL:newWritingURL];
     if (!err) {
       count++;
     }
@@ -107,6 +108,7 @@
     NSURL *renameURL = [_alsoRenameURLs objectAtIndex:indexPath.row];
     [fileCoordinator coordinateReadingItemAtURL:renameURL options:0 writingItemAtURL:[destinationURL URLByAppendingPathComponent:[renameAs stringByAppendingPathExtension:renameURL.pathExtension] isDirectory:NO] options:NSFileCoordinatorWritingForMoving error:&err byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
       [fileManager moveItemAtURL:newReadingURL toURL:newWritingURL error:&err];
+      [fileCoordinator itemAtURL:newReadingURL didMoveToURL:newWritingURL];
       if (!err) {
         count++;
       }
