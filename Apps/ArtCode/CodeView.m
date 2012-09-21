@@ -479,7 +479,7 @@ static void init(CodeView *self)
   self->_contentView = [CodeViewContentView new];
   self->_contentView.clearsContextBeforeDrawing = NO;
   self->_contentView.parentCodeView = self;
-  self->_contentView.contentMode = UIViewContentModeTopLeft;
+  self->_contentView.contentMode = UIViewContentModeRedraw;
   [self addSubview:self->_contentView];
   
   if (self.ownsRenderer) {
@@ -606,11 +606,13 @@ static void init(CodeView *self)
 #pragma mark - Text Renderer Delegate
 
 - (void)textRenderer:(TextRenderer *)sender willInvalidateRenderInRect:(CGRect)rect {
+  _contentView.contentMode = UIViewContentModeTopLeft;
   if (rect.size.height == 0) {
     [_contentView setNeedsDisplay];
   } else {
     [_contentView setNeedsDisplayInRect:rect];
   }
+  _contentView.contentMode = UIViewContentModeRedraw;
 }
 
 #pragma mark - Text Decoration Methods
@@ -1345,6 +1347,7 @@ static void init(CodeView *self)
   [self unmarkText];
   
   NSRange stringRange = NSMakeRange(range.location, string.length);
+  NSString *oldString = range.length ? [self.text substringWithRange:range] : @"";
   
   // Register undo operation
   if (self.undoManager.groupingLevel == 0)
@@ -1352,7 +1355,7 @@ static void init(CodeView *self)
     [self.undoManager beginUndoGrouping];
     [self.undoManager setActionName:@"Typing"];
   }
-  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:stringRange withString:range.length ? [self.text substringWithRange:range] : @"" selectionRange:range];
+  [[self.undoManager prepareWithInvocationTarget:self] _editDataSourceInRange:stringRange withString:oldString selectionRange:range];
   
   [inputDelegate textWillChange:self];
   [self willChangeValueForKey:@"text"];
@@ -1360,14 +1363,14 @@ static void init(CodeView *self)
     // Commit string
     if (string.length == 0) {
       [self.attributedText deleteCharactersInRange:range];
-      [self.renderer setNeedsUpdateInTextRange:range];
+      [self.renderer setNeedsUpdateInTextRange:([oldString rangeOfString:@"\n"].location != NSNotFound) ? NSMakeRange(range.location, NSNotFound) : range];
     } else {
       if (self.attributedText.length > 0) {
         [self.attributedText replaceCharactersInRange:range withString:string];
       } else {
         [self.attributedText replaceCharactersInRange:range withAttributedString:[[NSAttributedString alloc] initWithString:string attributes:self.defaultTextAttributes]];
       }
-      [self.renderer setNeedsUpdateInTextRange:stringRange];
+      [self.renderer setNeedsUpdateInTextRange:([string rangeOfString:@"\n"].location != NSNotFound) ? NSMakeRange(stringRange.location, NSNotFound) : stringRange];
     }
     
     // Update caret location

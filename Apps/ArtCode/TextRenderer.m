@@ -976,12 +976,13 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       // If only one line is affected, stop the cycle
       if (lastSegmentTextEnd < range.location && currentSegmentTextEnd >= NSMaxRange(range)) {
         [segment beginContentAccess];
-        [segment enumerateLinesInStringRange:NSMakeRange(range.location - lastSegmentTextEnd, range.length) usingBlock:^(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopLines) {
+        NSRange relativeRange = NSMakeRange(range.location - lastSegmentTextEnd, range.length);
+        [segment enumerateLinesInStringRange:relativeRange usingBlock:^(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stopLines) {
           // The update will need to start at the first line's top
           updateRect.origin.y += lineBounds.origin.y;
           
           // If the update is contained in one line, just update that one
-          if (range.length <= lineStringRange.length) {
+          if (NSMaxRange(relativeRange) <= NSMaxRange(lineStringRange)) {
             updateRect.size.height = lineBounds.size.height;
           }
           
