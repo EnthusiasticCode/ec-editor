@@ -54,8 +54,12 @@
 - (NSString *)hexString {
   CGFloat r, g, b, a;
   
-  if (![self getRed:&r green:&g blue:&b alpha:&a])
-    return nil;
+  if (![self getRed:&r green:&g blue:&b alpha:&a]) {
+    if (![self getWhite:&b alpha:&a]) {
+      return nil;
+    }
+    r = g = b;
+  }
   
   // Return alpha only if not 1
   return a < 1.0 ? [NSString stringWithFormat:@"#%02X%02X%02X%02X", (NSInteger)(r * 255.0), (NSInteger)(g * 255.0), (NSInteger)(b * 255.0), (NSInteger)(a * 255.0)] : [NSString stringWithFormat:@"#%02X%02X%02X", (NSInteger)(r * 255.0), (NSInteger)(g * 255.0), (NSInteger)(b * 255.0)];

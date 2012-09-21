@@ -44,6 +44,8 @@
 {
   [super viewWillAppear:animated];
   
+  projectColor = [UIColor styleForegroundColor];
+  
   self.projectColorButton.hidden = NO;
   self.projectNameTextField.enabled = YES;
   [self stopRightBarButtonItemActivityIndicator];
@@ -104,11 +106,7 @@
       [self.projectNameTextField selectAll:nil];
       self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
     } else {
-      if (projectColor) {
-        project.labelColor = projectColor;
-      } else {
-        project.labelColor = [UIColor styleForegroundColor];
-      }
+      project.labelColor = projectColor;
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }
