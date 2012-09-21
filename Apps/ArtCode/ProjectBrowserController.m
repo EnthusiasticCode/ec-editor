@@ -245,6 +245,13 @@
 {
   [super viewWillAppear:animated];
   [self.gridView reloadData];
+  
+  // Fix to show hint view on empty app start
+  if (self.gridElements.count > 0) {
+    [_hintView removeFromSuperview];
+  } else {
+    [self.view addSubview:self.hintView];
+  }
 }
 
 #pragma mark - Grid View Data Source
