@@ -479,12 +479,20 @@ static void init(CodeView *self)
   self->_contentView = [CodeViewContentView new];
   self->_contentView.clearsContextBeforeDrawing = NO;
   self->_contentView.parentCodeView = self;
-  self->_contentView.contentMode = UIViewContentModeRedraw;
+  self->_contentView.contentMode = UIViewContentModeTopLeft;
   [self addSubview:self->_contentView];
   
-  if (self.ownsRenderer)
+  if (self.ownsRenderer) {
     self.renderer.renderWidth = self.bounds.size.width;
-  [self.renderer addObserver:self forKeyPath:@"renderHeight" options:NSKeyValueObservingOptionNew context:&rendererContext];
+  }
+  
+  // RAC
+  __weak CodeView *this = self;
+  [RACAbleSelf(self.renderer.renderHeight) subscribeNext:^(NSNumber *heightNumber) {
+    CGSize boundsSize = this.bounds.size;
+    CGFloat height = [heightNumber floatValue];
+    this.contentSize = CGSizeMake(boundsSize.width, height ?: boundsSize.height);
+  }];
   
   // Setup keyboard and selection
   self->_selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
@@ -550,23 +558,6 @@ static void init(CodeView *self)
       aSelector == @selector(setDefaultTextAttributes:))
     return self.renderer;
   return nil;
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-  if (context == &rendererContext)
-  {
-    CGSize boundsSize = self.bounds.size;
-    CGFloat height = [[change valueForKey:NSKeyValueChangeNewKey] floatValue];
-    if (height == 0)
-      height = boundsSize.height;
-    CGFloat width = boundsSize.width;
-    self.contentSize = CGSizeMake(width, height);
-  }
-  else 
-  {
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-  }
 }
 
 - (void)willMoveToSuperview:(UIView *)newSuperview
