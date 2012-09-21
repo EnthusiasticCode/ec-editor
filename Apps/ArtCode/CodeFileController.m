@@ -326,18 +326,16 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
 {
   QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
-  if (!_quickBrowsersPopover)
-  {
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
-    [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    
-    _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
-  }
+  
+  UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
+  [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+  
+  _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+  _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+  
   quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
   quickBrowserContainerController.openingButton = sender;
   
-  [(UINavigationController *)_quickBrowsersPopover.contentViewController popToRootViewControllerAnimated:NO];
   [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
