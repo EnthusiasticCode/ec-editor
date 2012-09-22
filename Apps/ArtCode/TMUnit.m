@@ -508,12 +508,13 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   [self willChangeValueForKey:@"symbolList"];
   
   __block NSMutableArray *lastScopeStack = nil;
-  __block NSUInteger lastTokenEnd = 0;
+  __block NSUInteger lastTokenEnd = NSUIntegerMax;
   
   _rootScope = _generateRootScopeWithContent(content, _syntax, _previousContent, _rootScope, ^(TMScope *scope) {
     // Handle tokens
-    ASSERT([lastScopeStack count]);
+    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, scope.location - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
+    lastTokenEnd = scope.location;
     [lastScopeStack addObject:scope];
     
     // Add the symbol to the symbol list if needed
@@ -538,8 +539,9 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     }
   }, ^(TMScope *scope) {
     // Handle tokens
-    ASSERT([lastScopeStack count]);
+    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, scope.location + scope.length - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
+    lastTokenEnd = scope.location + scope.length;
     [lastScopeStack removeLastObject];
   }, ^(TMScope *scope) {
     // Remove the symbol from the symbol list if needed
@@ -548,11 +550,13 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
       [_symbolList removeObject:symbol];
     }
   }, ^(NSArray *scopeStack, NSUInteger position) {
+    ASSERT(!lastScopeStack && lastTokenEnd == NSUIntegerMax);
     lastTokenEnd = position;
     lastScopeStack = [NSMutableArray arrayWithArray:scopeStack];
   }, ^(NSArray *scopeStack, NSUInteger position) {
-    ASSERT([lastScopeStack count]);
+    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, position - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
+    lastTokenEnd = NSUIntegerMax;
     lastScopeStack = nil;
   });
 
