@@ -900,7 +900,7 @@ static void drawStencilStar(CGContextRef myContext)
       this.codeUnit = codeUnit;
       // RAC
       [_codeUnitDisposable dispose];
-      _codeUnitDisposable = [[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+      _codeUnitDisposable = [[[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] merge] subscribeNext:^(TMToken *token) {
         CodeFileController *strongSelf = this;
         if (!strongSelf) {
           return;
