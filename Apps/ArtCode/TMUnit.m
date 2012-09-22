@@ -242,18 +242,14 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
   }
 }
 
-TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSyntax, NSString *previousContent, TMScope *rootScope, void(^scopeStartHandler)(TMScope *scope), void(^scopeEndHandler)(TMScope *scope), void(^scopeRemoveHandler)(TMScope *scope), void(^parseStartHandler)(NSArray *scopeStack, NSUInteger position), void(^parseEndHandler)(NSArray *scopeStack, NSUInteger position)) {
-  ASSERT(content && rootSyntax && previousContent && scopeStartHandler && scopeEndHandler && scopeRemoveHandler && parseStartHandler && parseEndHandler);
+TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSyntax, NSArray *diffs, TMScope *rootScope, void(^scopeStartHandler)(TMScope *scope), void(^scopeEndHandler)(TMScope *scope), void(^scopeRemoveHandler)(TMScope *scope), void(^parseStartHandler)(NSArray *scopeStack, NSUInteger position), void(^parseEndHandler)(NSArray *scopeStack, NSUInteger position)) {
+  ASSERT(content && rootSyntax && scopeStartHandler && scopeEndHandler && scopeRemoveHandler && parseStartHandler && parseEndHandler);
   
   // Prepare and update the root scope
   if (!rootScope) {
     rootScope = [TMScope newRootScopeWithIdentifier:rootSyntax.identifier syntaxNode:rootSyntax];
   }
   rootScope.content = content;
-  
-  // Diff the last parsed content with the new one
-  DiffMatchPatch *diffMatchPatch = [[DiffMatchPatch alloc] init];
-  NSMutableArray *diffs = [diffMatchPatch diff_mainOfOldString:previousContent andNewString:content checkLines:YES deadline:1.0];
   
   // Convert the diff into a change set
   NSUInteger currentOffset = 0;
@@ -510,7 +506,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   __block NSMutableArray *lastScopeStack = nil;
   __block NSUInteger lastTokenEnd = NSUIntegerMax;
   
-  _rootScope = _generateRootScopeWithContent(content, _syntax, _previousContent, _rootScope, ^(TMScope *scope) {
+  _rootScope = _generateRootScopeWithContent(content, _syntax, diffs, _rootScope, ^(TMScope *scope) {
     // Handle tokens
     ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, scope.location - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
