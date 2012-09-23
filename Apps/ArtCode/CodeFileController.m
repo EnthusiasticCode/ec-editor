@@ -316,6 +316,19 @@ static void drawStencilStar(CGContextRef myContext)
   return NO;
 }
 
+- (TMUnit *)codeUnit {
+  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+  return _codeUnit;
+}
+
+- (void)setCodeUnit:(TMUnit *)codeUnit {
+  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+  if (codeUnit == _codeUnit) {
+    return;
+  }
+  _codeUnit = codeUnit;
+}
+
 #pragma mark - Single tab controller informal protocol
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
@@ -470,14 +483,22 @@ static void drawStencilStar(CGContextRef myContext)
       [self _updateCodeUnitWithAutoDetectedSyntax];
       
       // Update the code when contents change
-      [RACAbleSelf(textFile.content) subscribeNext:^(NSString *content) {
-        [this.codeUnit reparseWithUnsavedContent:content];
+      [[[RACAbleSelf(textFile.content) select:^RACTuple *(NSString *content) {
+        CodeFileController *strongSelf = this;
+        if (!strongSelf) {
+          return [RACTuple tupleWithObjects:[RACTupleNil tupleNil], content, nil];
+        }
+        return [RACTuple tupleWithObjects:strongSelf.codeUnit, content, nil];
+      }] deliverOn:_codeScheduler] subscribeNext:^(RACTuple *x) {
+        if (!x.first) {
+          return;
+        }
+        [x.first reparseWithUnsavedContent:x.second];
       }];
-            
+      
       // Update file content
       [RACAbleSelf(codeView.text) subscribeNext:^(NSString *x) {
         this.textFile.content = x;
-        [this.codeUnit reparseWithUnsavedContent:x];
       }];
       
       // Update title with current symbol and keyboard accessory based on current scope
@@ -894,24 +915,32 @@ static void drawStencilStar(CGContextRef myContext)
   
   // Create the code unit
   [_codeScheduler schedule:^{
+    ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
     TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:self.textFile.fileURL syntax:syntax index:nil];
     
     [[RACScheduler mainQueueScheduler] schedule:^{
-      this.codeUnit = codeUnit;
+      ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+      CodeFileController *strongSelf = this;
+      if (!strongSelf) {
+        return;
+      }
+      strongSelf.codeUnit = codeUnit;
       // RAC
-      [_codeUnitDisposable dispose];
-      _codeUnitDisposable = [[[[this.codeUnit.tokens subscribeOn:this.codeScheduler] deliverOn:[RACScheduler mainQueueScheduler]] merge] subscribeNext:^(TMToken *token) {
-        CodeFileController *strongSelf = this;
-        if (!strongSelf) {
+      [strongSelf->_codeUnitDisposable dispose];
+      strongSelf->_codeUnitDisposable = [[[[codeUnit.tokens subscribeOn:strongSelf.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+        ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
+        CodeFileController *innerStrongSelf = this;
+        if (!innerStrongSelf) {
           return;
         }
         // Check for range sanity since the text could have changed during the delivery
-        if (NSMaxRange(token.range) <= strongSelf.codeView.text.length) {
-          [strongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+        if (NSMaxRange(token.range) <= innerStrongSelf.codeView.text.length) {
+          [innerStrongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
         }
       }];
-      [_codeScheduler schedule:^{
-        [this.codeUnit reparseWithUnsavedContent:this.textFile.content];
+      [strongSelf->_codeScheduler schedule:^{
+        ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
+        [codeUnit reparseWithUnsavedContent:this.textFile.content];
       }];
     }];
   }];

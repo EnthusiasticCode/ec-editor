@@ -451,6 +451,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
 }
 
 - (void)reparseWithUnsavedContent:(NSString *)content {
+  ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue]);
   if (content == _previousContent) {
     return;
   }
