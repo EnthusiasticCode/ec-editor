@@ -18,6 +18,7 @@
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "UIColor+AppStyle.h"
 
 
 @interface NewProjectImportController ()
@@ -130,7 +131,7 @@
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName completionHandler:^(ArtCodeProject *createdProject) {
+  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName labelColor:[UIColor styleForegroundColor] completionHandler:^(ArtCodeProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed

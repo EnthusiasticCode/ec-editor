@@ -95,7 +95,7 @@
 /// Recursive method to create a duplicated project
 - (void)_duplicateWithDuplicationNumber:(NSUInteger)duplicationNumber completionHandler:(void (^)(ArtCodeProject *))completionHandler {
   __weak ArtCodeProject *this = self;
-  [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] completionHandler:^(ArtCodeProject *project) {
+  [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] labelColor:self.labelColor completionHandler:^(ArtCodeProject *project) {
     if (project) {
       // The project has been successfuly created, copying files
       NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];

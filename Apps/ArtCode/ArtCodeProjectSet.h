@@ -17,7 +17,7 @@
 /// The location of the project set on the filesystem
 @property (nonatomic, strong, readonly) NSURL *fileURL;
 
-- (void)addNewProjectWithName:(NSString *)name completionHandler:(void(^)(ArtCodeProject *project))completionHandler;
+- (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void(^)(ArtCodeProject *project))completionHandler;
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void(^)(NSError *error))completionHandler;
 

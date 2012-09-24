@@ -27,6 +27,14 @@
 @synthesize projectNameTextField;
 @synthesize descriptionLabel;
 
+- (id)initWithCoder:(NSCoder *)coder {
+  self = [super initWithCoder:coder];
+  if (self) {
+    projectColor = [UIColor styleForegroundColor];
+  }
+  return self;
+}
+
 - (void)viewDidLoad {
   [super viewDidLoad];
   self.projectColorButton.accessibilityIdentifier = @"Label color";
@@ -43,8 +51,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  
-  projectColor = [UIColor styleForegroundColor];
   
   self.projectColorButton.hidden = NO;
   self.projectNameTextField.enabled = YES;
@@ -98,7 +104,7 @@
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorButton.enabled = NO;
   self.projectNameTextField.enabled = NO;
-  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName completionHandler:^(ArtCodeProject *project) {
+  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName labelColor:projectColor completionHandler:^(ArtCodeProject *project) {
     [self stopRightBarButtonItemActivityIndicator];
     self.projectColorButton.enabled = YES;
     self.projectNameTextField.enabled = YES;
@@ -106,7 +112,6 @@
       [self.projectNameTextField selectAll:nil];
       self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
     } else {
-      project.labelColor = projectColor;
       [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }

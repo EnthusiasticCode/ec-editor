@@ -73,7 +73,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
   return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:[self name]];
 }
 
-- (void)addNewProjectWithName:(NSString *)name completionHandler:(void (^)(ArtCodeProject *))completionHandler {
+- (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
   [NSFileCoordinator coordinatedMakeDirectoryAtURL:[[self fileURL] URLByAppendingPathComponent:name] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
     if (error) {
       completionHandler(nil);
@@ -81,6 +81,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
     }
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:[newURL lastPathComponent]];
+    [project setLabelColor:labelColor];
     [project setProjectSet:self];
     [_objectsAddedSubject sendNext:project];
     completionHandler(project);
