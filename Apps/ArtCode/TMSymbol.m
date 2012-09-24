@@ -35,9 +35,10 @@ static UIImage *_TMScopeBlankImage = nil;
 @implementation TMSymbol {
   TMScope *_scope;
   NSString *(^_transformation)(NSString *);
+  NSNumber *_separator;
 }
 
-@synthesize icon = _icon, separator = _separator;
+@synthesize icon = _icon;
 
 - (NSString *)_rawTitle {
   if (!_transformation) {
@@ -59,12 +60,22 @@ static UIImage *_TMScopeBlankImage = nil;
 
 - (UIImage *)icon {
   if (!_icon) {
-    UIImage *icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
-    if (!icon) {
-      icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
+    _icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
+    if (!_icon) {
+      _icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
     }
   }
   return _icon;
+}
+
+- (BOOL)isSeparator {
+  if (!_separator) {
+    _separator = [TMPreference preferenceValueForKey:TMPreferenceSymbolIsSeparatorKey qualifiedIdentifier:self.qualifiedIdentifier];
+    if (!_separator) {
+      _separator = [NSNumber numberWithBool:NO];
+    }
+  }
+  return [_separator boolValue];
 }
 
 - (NSString *)qualifiedIdentifier {
