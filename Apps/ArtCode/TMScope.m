@@ -473,12 +473,21 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMSymbol *)symbol {
   if (!_symbol) {
-    // Calculate the score using the identifier instead of the qualified identifier, because the qualified identifier would match all child scopes
-    if (![TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.identifier]) {
-      _symbol = (id)[NSNull null];
-      return nil;
+    _symbol = (id)[NSNull null];
+    if ([TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier]) {
+      BOOL ancestorHasSymbol = NO;
+      TMScope *ancestor = self.parent;
+      while (ancestor) {
+        if (ancestor.symbol) {
+          ancestorHasSymbol = YES;
+          break;
+        }
+        ancestor = ancestor.parent;
+      }
+      if (!ancestorHasSymbol) {
+        _symbol = [[TMSymbol alloc] initWithScope:self];
+      }
     }
-    _symbol = [[TMSymbol alloc] initWithScope:self];
   }
   return _symbol != (id)[NSNull null] ? _symbol : nil;
 }
