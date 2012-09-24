@@ -473,7 +473,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMSymbol *)symbol {
   if (!_symbol) {
-    if (![TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier]) {
+    // Calculate the score using the identifier instead of the qualified identifier, because the qualified identifier would match all child scopes
+    if (![TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.identifier]) {
       _symbol = (id)[NSNull null];
       return nil;
     }

@@ -517,7 +517,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     // Add the symbol to the symbol list if needed
     TMSymbol *symbol = scope.symbol;
     if (symbol) {
-      NSUInteger insertionIndex = [_symbolList indexOfObject:symbol inSortedRange:NSMakeRange(0, [_symbolList count]) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(TMSymbol *symbol1, TMSymbol *symbol2) {
+      NSUInteger insertionIndex = [_symbolList indexOfObject:symbol inSortedRange:NSMakeRange(0, [_symbolList count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:^NSComparisonResult(TMSymbol *symbol1, TMSymbol *symbol2) {
         if (symbol1.range.location < symbol2.range.location) {
           return NSOrderedAscending;
         } else if (symbol1.range.location > symbol2.range.location) {
