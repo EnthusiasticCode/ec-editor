@@ -4,8 +4,12 @@
 #import "_ArtCodeRemote.h"
 
 const struct ArtCodeRemoteAttributes ArtCodeRemoteAttributes = {
+	.host = @"host",
 	.name = @"name",
-	.urlString = @"urlString",
+	.path = @"path",
+	.port = @"port",
+	.schema = @"schema",
+	.user = @"user",
 };
 
 const struct ArtCodeRemoteRelationships ArtCodeRemoteRelationships = {
@@ -42,9 +46,20 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 + (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
+	if ([key isEqualToString:@"portValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"port"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+	}
 
 	return keyPaths;
 }
+
+
+
+
+@dynamic host;
+
+
 
 
 
@@ -56,7 +71,47 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 
 
 
-@dynamic urlString;
+@dynamic path;
+
+
+
+
+
+
+@dynamic port;
+
+
+
+- (int16_t)portValue {
+	NSNumber *result = [self port];
+	return [result shortValue];
+}
+
+- (void)setPortValue:(int16_t)value_ {
+	[self setPort:[NSNumber numberWithShort:value_]];
+}
+
+- (int16_t)primitivePortValue {
+	NSNumber *result = [self primitivePort];
+	return [result shortValue];
+}
+
+- (void)setPrimitivePortValue:(int16_t)value_ {
+	[self setPrimitivePort:[NSNumber numberWithShort:value_]];
+}
+
+
+
+
+
+@dynamic schema;
+
+
+
+
+
+
+@dynamic user;
 
 
 
