@@ -64,7 +64,7 @@
   }
   remote.name = self.remoteName.text;
   
-  [self.artCodeTab.currentLocation.project addRemotes:[NSSet setWithObject:remote]];
+  [[self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"] addObject:remote];
   
   if (remote)
   {
