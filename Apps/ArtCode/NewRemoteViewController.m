@@ -41,33 +41,30 @@
 
 #pragma mark - Private methods
 
-- (void)_createAction:(id)sender
-{
-  NSMutableString *remoteURLString = [NSMutableString new];
+- (void)_createAction:(id)sender {
+  ArtCodeRemote *remote = [ArtCodeRemote insertInManagedObjectContext:self.artCodeTab.currentLocation.project.managedObjectContext];
+  
   switch (self.remoteType.selectedSegmentIndex) {
     case 0:
-      [remoteURLString appendString:@"ftp://"];
+      remote.scheme = @"ftp";
       break;
       
     case 1:
-      [remoteURLString appendString:@"ssh://"];
+      remote.scheme = @"ssh";
       break;
       
     case 2:
-      [remoteURLString appendString:@"http://"];
+      remote.scheme = @"http";
       break;
   }
-  if ([self.remoteUser.text length])
-    [remoteURLString appendFormat:@"%@@", self.remoteUser.text];
-  [remoteURLString appendString:self.remoteHost.text];
-  if ([self.remotePort.text length])
-    [remoteURLString appendFormat:@":%d", [self.remotePort.text integerValue]];
-  
-  ArtCodeRemote *remote = [[ArtCodeRemote alloc] init];
+  remote.user = self.remoteUser.text;
+  remote.host = self.remoteHost.text;
+  if ([self.remotePort.text length]) {
+    remote.portValue = [self.remotePort.text intValue];
+  }
   remote.name = self.remoteName.text;
-  remote.url = [NSURL URLWithString:remoteURLString];
   
-  [self.artCodeTab.currentLocation.project addRemotesObject:remote];
+  [self.artCodeTab.currentLocation.project addRemotes:[NSSet setWithObject:remote]];
   
   if (remote)
   {

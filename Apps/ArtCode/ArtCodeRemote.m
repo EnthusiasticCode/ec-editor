@@ -11,15 +11,19 @@
 @implementation ArtCodeRemote
 
 + (NSSet *)keyPathsForValuesAffectingUrl {
-  return [NSSet setWithObject:@"urlString"];
+  return [NSSet setWithObjects:@"scheme", @"user", @"host", @"port", nil];
 }
 
 - (NSURL *)url {
-  return [NSURL URLWithString:self.urlString];
-}
-
-- (void)setUrl:(NSURL *)url {
-  self.urlString = url.absoluteString;
+  NSMutableString *urlString = [NSMutableString stringWithFormat:@"%@://", self.scheme];
+  if (self.user) {
+    [urlString appendFormat:@"%@@", self.user];
+  }
+  [urlString appendString:self.host];
+  if (self.port) {
+    [urlString appendFormat:@":%u", self.portValue];
+  }
+  return [NSURL URLWithString:urlString];
 }
 
 @end

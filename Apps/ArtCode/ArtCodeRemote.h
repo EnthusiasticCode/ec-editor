@@ -10,6 +10,6 @@
 
 @interface ArtCodeRemote : _ArtCodeRemote
 
-@property (nonatomic, strong) NSURL *url;
+@property (nonatomic, strong, readonly) NSURL *url;
 
 @end

@@ -8,7 +8,7 @@ const struct ArtCodeRemoteAttributes ArtCodeRemoteAttributes = {
 	.name = @"name",
 	.path = @"path",
 	.port = @"port",
-	.schema = @"schema",
+	.scheme = @"scheme",
 	.user = @"user",
 };
 
@@ -104,7 +104,7 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 
 
 
-@dynamic schema;
+@dynamic scheme;
 
 
 

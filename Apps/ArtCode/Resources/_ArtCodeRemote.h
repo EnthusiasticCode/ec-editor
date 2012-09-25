@@ -9,7 +9,7 @@ extern const struct ArtCodeRemoteAttributes {
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *path;
 	__unsafe_unretained NSString *port;
-	__unsafe_unretained NSString *schema;
+	__unsafe_unretained NSString *scheme;
 	__unsafe_unretained NSString *user;
 } ArtCodeRemoteAttributes;
 
@@ -79,10 +79,10 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSString* schema;
+@property (nonatomic, strong) NSString* scheme;
 
 
-//- (BOOL)validateSchema:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateScheme:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -152,8 +152,8 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
-- (NSString*)primitiveSchema;
-- (void)setPrimitiveSchema:(NSString*)value;
+- (NSString*)primitiveScheme;
+- (void)setPrimitiveScheme:(NSString*)value;
 
 
 
