@@ -115,27 +115,19 @@
   // Animate view in position
   if (self._isViewVisible)
   {
-    if (_contentViewController != nil && animated)
+    if (_contentViewController != nil)
     {
       UIViewController *oldViewController = _contentViewController;
       contentViewController.view.alpha = 0;
       contentViewController.view.frame = CGRectMake(0, self.toolbarHeight, self.view.frame.size.width, self.view.frame.size.height - self.toolbarHeight);
       [self.view addSubview:contentViewController.view];
-      [UIView animateWithDuration:0.2 animations:^{
+      [UIView animateWithDuration:animated ? 0.2 : 0 animations:^{
         contentViewController.view.alpha = 1;
-        oldViewController.view.alpha = 0;
       } completion:^(BOOL finished) {
         [oldViewController.view removeFromSuperview];
         [oldViewController viewDidDisappear:YES];
         [contentViewController viewDidAppear:YES];
       }];
-    }
-    else
-    {
-      if (_contentViewController)
-        contentViewController.view.frame = _contentViewController.view.frame;
-      [self.view addSubview:contentViewController.view];
-      [_contentViewController.view removeFromSuperview];
     }
   }
   
@@ -287,7 +279,7 @@
   [RACAbleSelf(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
     if (!x)
       return;
-    [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:YES];
+    [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:NO];
   }];
   
   // Content view controller binds
@@ -296,7 +288,7 @@
   }];
   
   [RACAbleSelf(self.contentViewController.toolbarItems) subscribeNext:^(id x) {
-    [this _setupDefaultToolbarItemsAnimated:YES];
+    [this _setupDefaultToolbarItemsAnimated:NO];
   }];
   
   // Update tool bar title when project changes
