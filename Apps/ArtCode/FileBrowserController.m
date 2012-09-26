@@ -29,8 +29,8 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
-#import "DirectoryPresenter.h"
-#import "SmartFilteredDirectoryPresenter.h"
+#import "FileSystemDirectory+FilterByAbbreviation.h"
+#import "RACTableViewDataSource.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
@@ -45,8 +45,6 @@
 #import <QuickLook/QuickLook.h>
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
-
-@property (nonatomic, strong) NSURL *directoryURL;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -76,9 +74,6 @@
 #pragma mark -
 
 @implementation FileBrowserController {
-  DirectoryPresenter *_directoryPresenter;
-  SmartFilteredDirectoryPresenter *_filteredDirectoryPresenter;
-  
   UIPopoverController *_toolNormalAddPopover;
   UIActionSheet *_toolEditItemDuplicateActionSheet;
   UIActionSheet *_toolEditItemExportActionSheet;
@@ -94,76 +89,42 @@
     return nil;
   
   // RAC
-  [self rac_bind:RAC_KEYPATH_SELF(self.directoryURL) to:RACAbleSelf(self.artCodeTab.currentLocation.url)];
-  
-  return self;
-}
-
-- (void)dealloc {
-  self.artCodeTab = nil;
-}
-
-#pragma mark - Properties
-
-@synthesize directoryURL = _directoryURL;
-@synthesize bottomToolBarDetailLabel, bottomToolBarSyncButton;
-
-- (void)setDirectoryURL:(NSURL *)directoryURL {
-  if (directoryURL == _directoryURL)
-    return;
-  
-  _directoryURL = directoryURL;
-  
-  [self invalidateFilteredItems];
-  [self.tableView reloadData];
-}
-
-- (NSArray *)filteredItems {
-  // Generating the default directory presenter if needed
-  if (!_directoryPresenter) {
-    _directoryPresenter = [[DirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-    
-    // RAC
-    __weak FileBrowserController *this = self;
-    [[_directoryPresenter rac_subscribableForKeyPath:RAC_KEYPATH(_directoryPresenter, fileURLs) onObject:_directoryPresenter] subscribeNext:^(id x) {
-      [this.tableView reloadData];
+  __weak FileBrowserController *weakSelf = self;
+  [RACAbleSelf(artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
+    FileBrowserController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    [[FileSystemDirectory readItemAtURL:strongSelf.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+      FileBrowserController *anotherStrongSelf = weakSelf;
+      if (!anotherStrongSelf) {
+        return;
+      }
+     RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject]];
+     [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
     }];
-  }
-  
-  // Select the appropriate presenter in case of search string
-  if (self.searchBar.text.length) {
-    // Preparing the filtered directory presenter
-    if (!_filteredDirectoryPresenter) {
-      _filteredDirectoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.directoryURL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-      
-      // RAC
-      __weak FileBrowserController *this = self;
-      [[_filteredDirectoryPresenter rac_subscribableForKeyPath:RAC_KEYPATH(_filteredDirectoryPresenter, fileURLs) onObject:_filteredDirectoryPresenter] subscribeNext:^(id x) {
-        [this.tableView reloadData];
-      }];
+  }];
+  [RACAbleSelf(filteredItems) subscribeNext:^(NSArray *items) {
+    FileBrowserController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
     }
-    _filteredDirectoryPresenter.filterString = self.searchBar.text;
-    // Peparing hint message
-    if (_filteredDirectoryPresenter.fileURLs.count == 0) {
-      self.infoLabel.text = L(@"No items in this folder match the filter.");
+    if (strongSelf.searchBar.text.length) {
+      if (items.count == 0) {
+        strongSelf.infoLabel.text = L(@"No items in this folder match the filter.");
+      } else {
+        strongSelf.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items"), items.count];
+      }
     } else {
-      self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items out of %u."), _filteredDirectoryPresenter.fileURLs.count, _directoryPresenter.fileURLs.count];
+      if (items.count == 0) {
+        strongSelf.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
+      } else {
+        strongSelf.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:items.count];
+      }
     }
-    return _filteredDirectoryPresenter.fileURLs;
-  } else {
-    // Peparing hint message
-    if (_directoryPresenter.fileURLs.count == 0) {
-      self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
-    } else {
-      self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:_directoryPresenter.fileURLs.count];
-    }
-    return _directoryPresenter.fileURLs;
-  }
-}
+  }];
 
-- (void)invalidateFilteredItems {
-  _directoryPresenter = nil;
-  _filteredDirectoryPresenter = nil;
+  return self;
 }
 
 #pragma mark - View lifecycle
@@ -233,7 +194,7 @@
   NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
+  cell.textLabelHighlightedCharacters = [itemURL hitMask];
   
   if ([itemURL isDirectory]) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];

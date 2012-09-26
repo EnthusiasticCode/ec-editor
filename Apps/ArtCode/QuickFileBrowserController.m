@@ -9,7 +9,8 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import "SmartFilteredDirectoryPresenter.h"
+#import "FileSystemDirectory+FilterByAbbreviation.h"
+#import "RACTableViewDataSource.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
@@ -26,38 +27,15 @@
 
 @interface QuickFileBrowserController ()
 
+@property (nonatomic, copy) NSArray *filteredItems;
+
 - (void)_showBrowserInTabAction:(id)sender;
 - (void)_showProjectsInTabAction:(id)sender;
 
 @end
 
 
-@implementation QuickFileBrowserController {
-  SmartFilteredDirectoryPresenter *_filteredDirectoryPresenter;
-}
-
-#pragma mark - Properties
-
-- (NSArray *)filteredItems {
-  if (!_filteredDirectoryPresenter) {
-    _filteredDirectoryPresenter = [[SmartFilteredDirectoryPresenter alloc] initWithDirectoryURL:self.artCodeTab.currentLocation.project.fileURL options:0];
-  }
-  
-  _filteredDirectoryPresenter.filterString = self.searchBar.text;
-  
-  if (self.searchBar.text.length == 0) {
-    self.infoLabel.text = L(@"Type a file name to open.");
-  } else if (_filteredDirectoryPresenter.fileURLs.count == 0) {
-    self.infoLabel.text = L(@"Nothing found.");
-  } else {
-    self.infoLabel.text = @"";
-  }
-  return _filteredDirectoryPresenter.fileURLs;
-}
-
-- (void)invalidateFilteredItems {
-  _filteredDirectoryPresenter = nil;
-}
+@implementation QuickFileBrowserController
 
 #pragma mark - Controller lifecycle
 
@@ -73,6 +51,28 @@
   UIBarButtonItem *backToProjectsItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Projects") style:UIBarButtonItemStylePlain target:self action:@selector(_showProjectsInTabAction:)];
   [backToProjectsItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   self.navigationItem.leftBarButtonItem = backToProjectsItem;
+  
+  // RAC
+  __weak QuickFileBrowserController *weakSelf = self;
+  [[FileSystemDirectory readItemAtURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+    QuickFileBrowserController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject]];
+    [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
+  }];
+  [RACAbleSelf(filteredItems) subscribeNext:^(NSArray *items) {
+    QuickFileBrowserController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    if (items.count == 0) {
+      strongSelf.infoLabel.text = L(@"Nothing found.");
+    } else {
+      strongSelf.infoLabel.text = @"";
+    }
+  }];
   return self;
 }
 
@@ -87,7 +87,6 @@
 {
   [super viewDidLoad];
   self.searchBar.placeholder = L(@"Search for file");
-  self.infoLabel.text = L(@"Type a file name to open.");
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -109,7 +108,7 @@
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [_filteredDirectoryPresenter hitMaskForFileURL:itemURL];
+  cell.textLabelHighlightedCharacters = [itemURL hitMask];
   cell.detailTextLabel.text = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:itemURL].prettyPath;
   
   return cell;

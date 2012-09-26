@@ -21,6 +21,7 @@
 		5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F594161271C6005D8A4F /* FileSystemDirectory.m */; };
 		5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F597161271D7005D8A4F /* FileSystemTextFile.m */; };
 		5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */; };
+		5F18F5A11613820E005D8A4F /* RACTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -251,7 +252,6 @@
 		B7CEF8B314ED924D00E71CFF /* Txt2tags.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85414ED924D00E71CFF /* Txt2tags.tmbundle */; };
 		B7CEF8B414ED924D00E71CFF /* Vectorscript.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85514ED924D00E71CFF /* Vectorscript.tmbundle */; };
 		B7CEF8B514ED924D00E71CFF /* Widget Creator.tmbundle in Resources */ = {isa = PBXBuildFile; fileRef = B7CEF85614ED924D00E71CFF /* Widget Creator.tmbundle */; };
-		B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */; };
 		B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */ = {isa = PBXBuildFile; fileRef = B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */; };
 		B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD436E14E098020057DDB4 /* Security.framework */; };
 		B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7DD437214E098BE0057DDB4 /* CFNetwork.framework */; };
@@ -269,7 +269,6 @@
 		B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79BD14D6033D0080A714 /* UIImage+BlockDrawing.m */; };
 		B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */; };
 		B7FB79C914D604FA0080A714 /* RectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79C614D604FA0080A714 /* RectSet.m */; };
-		B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */; };
 		B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D314D605FA0080A714 /* CodeView.m */; };
 		B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D714D605FA0080A714 /* KeyboardAccessoryView.m */; };
 		B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = B7FB79D914D605FA0080A714 /* TextPosition.m */; };
@@ -631,6 +630,8 @@
 		5F18F597161271D7005D8A4F /* FileSystemTextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemTextFile.m; sourceTree = "<group>"; };
 		5F18F5991612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemDirectory+FilterByAbbreviation.h"; sourceTree = "<group>"; };
 		5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemDirectory+FilterByAbbreviation.m"; sourceTree = "<group>"; };
+		5F18F59F1613820E005D8A4F /* RACTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACTableViewDataSource.h; sourceTree = "<group>"; };
+		5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACTableViewDataSource.m; sourceTree = "<group>"; };
 		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
@@ -856,8 +857,6 @@
 		B7CEF85414ED924D00E71CFF /* Txt2tags.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Txt2tags.tmbundle; sourceTree = "<group>"; };
 		B7CEF85514ED924D00E71CFF /* Vectorscript.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Vectorscript.tmbundle; sourceTree = "<group>"; };
 		B7CEF85614ED924D00E71CFF /* Widget Creator.tmbundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Widget Creator.tmbundle"; sourceTree = "<group>"; };
-		B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartFilteredDirectoryPresenter.h; sourceTree = "<group>"; };
-		B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartFilteredDirectoryPresenter.m; sourceTree = "<group>"; };
 		B7D9C79814D7294C0092AA04 /* NSURL+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+Compare.h"; sourceTree = "<group>"; };
 		B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+Compare.m"; sourceTree = "<group>"; };
 		B7DD436E14E098020057DDB4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -886,8 +885,6 @@
 		B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveUtilities.m; sourceTree = "<group>"; };
 		B7FB79C514D604FA0080A714 /* RectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectSet.h; sourceTree = "<group>"; };
 		B7FB79C614D604FA0080A714 /* RectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RectSet.m; sourceTree = "<group>"; };
-		B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectoryPresenter.h; sourceTree = "<group>"; };
-		B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectoryPresenter.m; sourceTree = "<group>"; };
 		B7FB79D214D605FA0080A714 /* CodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeView.h; sourceTree = "<group>"; };
 		B7FB79D314D605FA0080A714 /* CodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeView.m; sourceTree = "<group>"; };
 		B7FB79D614D605FA0080A714 /* KeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardAccessoryView.h; sourceTree = "<group>"; };
@@ -1692,6 +1689,8 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
+				5F18F59F1613820E005D8A4F /* RACTableViewDataSource.h */,
+				5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1699,10 +1698,6 @@
 		B7FB79CA14D605050080A714 /* Filesystem */ = {
 			isa = PBXGroup;
 			children = (
-				B7FB79CB14D6056B0080A714 /* DirectoryPresenter.h */,
-				B7FB79CC14D6056B0080A714 /* DirectoryPresenter.m */,
-				B7D9C79114D713530092AA04 /* SmartFilteredDirectoryPresenter.h */,
-				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
 				B78D136D15AB4D5D0022C93B /* TextFile.h */,
 				B78D136E15AB4D5D0022C93B /* TextFile.m */,
 				5F18F58D161271A5005D8A4F /* FileSystemItem.h */,
@@ -3193,7 +3188,6 @@
 				B7FB79BF14D6033D0080A714 /* UIImage+BlockDrawing.m in Sources */,
 				B7FB79C714D604FA0080A714 /* ArchiveUtilities.m in Sources */,
 				B7FB79C914D604FA0080A714 /* RectSet.m in Sources */,
-				B7FB79CF14D6056B0080A714 /* DirectoryPresenter.m in Sources */,
 				B7FB79DE14D605FA0080A714 /* CodeView.m in Sources */,
 				B7FB79E014D605FA0080A714 /* KeyboardAccessoryView.m in Sources */,
 				B7FB79E114D605FA0080A714 /* TextPosition.m in Sources */,
@@ -3205,7 +3199,6 @@
 				B7FB7A2214D60C360080A714 /* UIView+ReuseIdentifier.m in Sources */,
 				CD49924E14D6C7480046CD19 /* InstantGestureRecognizer.m in Sources */,
 				CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */,
-				B7D9C79314D713530092AA04 /* SmartFilteredDirectoryPresenter.m in Sources */,
 				B7D9C79A14D7294C0092AA04 /* NSURL+Compare.m in Sources */,
 				B7B15C8414D7735B00A67C02 /* QuickFileInfoController.m in Sources */,
 				B7B15C8514D7735B00A67C02 /* QuickFolderInfoController.m in Sources */,
@@ -3272,6 +3265,7 @@
 				5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */,
 				5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */,
 				5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */,
+				5F18F5A11613820E005D8A4F /* RACTableViewDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

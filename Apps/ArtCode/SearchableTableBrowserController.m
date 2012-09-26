@@ -211,9 +211,13 @@
     }
   }];
   
-  // Reload the table data when the search bar text changes
+  // Invalidate the table data when the search bar text changes
   [disposables addObject:[[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
     [this invalidateFilteredItems];
+  }]];
+  
+  // Reload the table when the table data changes
+  [disposables addObject:[RACAbleSelf(filteredItems) subscribeNext:^(id x) {
     [this.tableView reloadData];
   }]];
   
