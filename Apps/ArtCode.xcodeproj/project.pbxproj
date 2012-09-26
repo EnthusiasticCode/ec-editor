@@ -16,6 +16,11 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
+		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
+		5F18F592161271B8005D8A4F /* FileSystemFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F591161271B8005D8A4F /* FileSystemFile.m */; };
+		5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F594161271C6005D8A4F /* FileSystemDirectory.m */; };
+		5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F597161271D7005D8A4F /* FileSystemTextFile.m */; };
+		5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -616,6 +621,16 @@
 		5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTab.m; sourceTree = "<group>"; };
 		5F16583715B6DA7100F0DEDC /* _ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ArtCodeTabSet.h; sourceTree = "<group>"; };
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
+		5F18F58D161271A5005D8A4F /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
+		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
+		5F18F590161271B8005D8A4F /* FileSystemFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemFile.h; sourceTree = "<group>"; };
+		5F18F591161271B8005D8A4F /* FileSystemFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemFile.m; sourceTree = "<group>"; };
+		5F18F593161271C6005D8A4F /* FileSystemDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectory.h; sourceTree = "<group>"; };
+		5F18F594161271C6005D8A4F /* FileSystemDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemDirectory.m; sourceTree = "<group>"; };
+		5F18F596161271D7005D8A4F /* FileSystemTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemTextFile.h; sourceTree = "<group>"; };
+		5F18F597161271D7005D8A4F /* FileSystemTextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemTextFile.m; sourceTree = "<group>"; };
+		5F18F5991612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemDirectory+FilterByAbbreviation.h"; sourceTree = "<group>"; };
+		5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemDirectory+FilterByAbbreviation.m"; sourceTree = "<group>"; };
 		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
@@ -1690,6 +1705,16 @@
 				B7D9C79214D713530092AA04 /* SmartFilteredDirectoryPresenter.m */,
 				B78D136D15AB4D5D0022C93B /* TextFile.h */,
 				B78D136E15AB4D5D0022C93B /* TextFile.m */,
+				5F18F58D161271A5005D8A4F /* FileSystemItem.h */,
+				5F18F58E161271A5005D8A4F /* FileSystemItem.m */,
+				5F18F590161271B8005D8A4F /* FileSystemFile.h */,
+				5F18F591161271B8005D8A4F /* FileSystemFile.m */,
+				5F18F593161271C6005D8A4F /* FileSystemDirectory.h */,
+				5F18F594161271C6005D8A4F /* FileSystemDirectory.m */,
+				5F18F5991612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.h */,
+				5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */,
+				5F18F596161271D7005D8A4F /* FileSystemTextFile.h */,
+				5F18F597161271D7005D8A4F /* FileSystemTextFile.m */,
 			);
 			name = Filesystem;
 			sourceTree = "<group>";
@@ -3242,6 +3267,11 @@
 				CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */,
 				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
 				CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */,
+				5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */,
+				5F18F592161271B8005D8A4F /* FileSystemFile.m in Sources */,
+				5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */,
+				5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */,
+				5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
