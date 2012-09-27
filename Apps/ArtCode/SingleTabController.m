@@ -482,6 +482,10 @@
       controllerClass = [RemoteBrowserController class];
       break;
     }
+      
+    default:
+      ASSERT(NO); // Unknown location type
+      break;
   }
   if ([self.contentViewController isKindOfClass:controllerClass] && recycleController) {
     result = self.contentViewController;
