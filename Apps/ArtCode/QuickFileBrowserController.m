@@ -108,7 +108,7 @@
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [itemURL hitMask];
+  cell.textLabelHighlightedCharacters = [itemURL abbreviationHitMask];
   cell.detailTextLabel.text = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:itemURL].prettyPath;
   
   return cell;

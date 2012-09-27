@@ -100,7 +100,7 @@
       if (!anotherStrongSelf) {
         return;
       }
-     RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject]];
+     RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentFilteredByAbbreviation:strongSelf.searchBarTextSubject]];
      [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
     }];
   }];
@@ -194,7 +194,7 @@
   NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [itemURL hitMask];
+  cell.textLabelHighlightedCharacters = [itemURL abbreviationHitMask];
   
   if ([itemURL isDirectory]) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];

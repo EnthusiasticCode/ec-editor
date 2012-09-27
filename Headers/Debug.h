@@ -29,6 +29,9 @@ NSStringFromSelector(_cmd), [[self class] description]]
 
 #define UNIMPLEMENTED() UNIMPLEMENTED_VOID(); return 0
 
+#define ASSERT_MAIN_QUEUE() ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue])
+#define ASSERT_NOT_MAIN_QUEUE() ASSERT([NSOperationQueue currentQueue] != [NSOperationQueue mainQueue])
+
 // TODO move to a more appropriate header
 #define L(key) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
 

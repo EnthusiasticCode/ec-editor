@@ -11,6 +11,7 @@
 @interface FileSystemItem : NSObject
 
 /// Returns a subscribable that sends an existing item at \a URL, then completes
+/// Cannot be sent to \c FileSystemItem, must be sent to a subclass
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url;
 
 /// Returns a subscribable that sends a new item created at \a URL, then completes
@@ -24,6 +25,9 @@
 /// Returns a subscribable that sends the URL of the item as it changes.
 /// This subscribable does not complete.
 - (id<RACSubscribable>)itemURL;
+
+/// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver, then completes
+- (id<RACSubscribable>)itemType;
 
 /// Returns a subscribable that sends the content of the item as it changes.
 /// This subscribable does not complete.

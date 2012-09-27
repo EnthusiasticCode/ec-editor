@@ -23,6 +23,6 @@
 
 @interface NSURL (Abbreviation)
 
-- (NSIndexSet *)hitMask;
+- (NSIndexSet *)abbreviationHitMask;
 
 @end

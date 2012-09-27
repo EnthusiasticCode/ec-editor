@@ -10,4 +10,13 @@
 
 @implementation RACTableViewDataSource
 
+- (instancetype)initWithSubscribable:(id<RACSubscribable>)subscribable {
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
+  [self rac_deriveProperty:RAC_KEYPATH_SELF(items) from:subscribable];
+  return self;
+}
+
 @end
