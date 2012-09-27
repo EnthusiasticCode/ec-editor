@@ -32,7 +32,7 @@
   __weak NewFileFolderController *this = self;
   
   // Subscribable to get the latest folder name or nil if the name is not valid
-  [[[[[[[RACAbleSelf(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
+  [[[[[[[RACAble(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
     if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
       return x;
     } else {

@@ -272,22 +272,22 @@
   __weak SingleTabController *this = self;
   
   // Back and forward buttons to tab history
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveBackInHistory)];
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAbleSelf(self.artCodeTab.canMoveForwardInHistory)];
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAble(self.artCodeTab.canMoveBackInHistory)];
+  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAble(self.artCodeTab.canMoveForwardInHistory)];
   
   // Changing current tab URL re-route the content view controller
-  [RACAbleSelf(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
+  [RACAble(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
     if (!x)
       return;
     [this setContentViewController:[this _routeViewControllerForTab:this.artCodeTab] animated:NO];
   }];
   
   // Content view controller binds
-  [RACAbleSelf(self.contentViewController.editing) subscribeNext:^(id x) {
+  [RACAble(self.contentViewController.editing) subscribeNext:^(id x) {
     [(UIButton *)this.defaultToolbar.editItem.customView setSelected:[x boolValue]];
   }];
   
-  [RACAbleSelf(self.contentViewController.toolbarItems) subscribeNext:^(id x) {
+  [RACAble(self.contentViewController.toolbarItems) subscribeNext:^(id x) {
     [this _setupDefaultToolbarItemsAnimated:NO];
   }];
   

@@ -477,13 +477,13 @@ static void drawStencilStar(CGContextRef myContext)
       __weak CodeFileController *this = self;
       
       // Update the code unit
-      [RACAbleSelf(textFile.explicitSyntaxIdentifier) subscribeNext:^(id x) {
+      [RACAble(self.textFile.explicitSyntaxIdentifier) subscribeNext:^(id x) {
         [this _updateCodeUnitWithAutoDetectedSyntax];
       }];
       [self _updateCodeUnitWithAutoDetectedSyntax];
       
       // Update the code when contents change
-      [[[RACAbleSelf(textFile.content) select:^RACTuple *(NSString *content) {
+      [[[RACAble(self.textFile.content) select:^RACTuple *(NSString *content) {
         CodeFileController *strongSelf = this;
         if (!strongSelf) {
           return [RACTuple tupleWithObjects:[RACTupleNil tupleNil], content, nil];
@@ -497,12 +497,12 @@ static void drawStencilStar(CGContextRef myContext)
       }];
       
       // Update file content
-      [RACAbleSelf(codeView.text) subscribeNext:^(NSString *x) {
+      [RACAble(self.codeView.text) subscribeNext:^(NSString *x) {
         this.textFile.content = x;
       }];
       
       // Update title with current symbol and keyboard accessory based on current scope
-      [[RACAbleSelf(codeView.selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
+      [[RACAble(self.codeView.selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
         NSRange selectionRange = [selectionValue rangeValue];
         
         // Select current scope

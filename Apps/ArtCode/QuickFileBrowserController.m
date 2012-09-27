@@ -62,7 +62,7 @@
     RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject]];
     [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
   }];
-  [RACAbleSelf(filteredItems) subscribeNext:^(NSArray *items) {
+  [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     QuickFileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;

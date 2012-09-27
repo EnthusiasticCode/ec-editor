@@ -488,7 +488,7 @@ static void init(CodeView *self)
   
   // RAC
   __weak CodeView *this = self;
-  [RACAbleSelf(self.renderer.renderHeight) subscribeNext:^(NSNumber *heightNumber) {
+  [RACAble(self.renderer.renderHeight) subscribeNext:^(NSNumber *heightNumber) {
     CGSize boundsSize = this.bounds.size;
     CGFloat height = [heightNumber floatValue];
     this.contentSize = CGSizeMake(boundsSize.width, height ?: boundsSize.height);

@@ -9,6 +9,7 @@
 #import "ArtCodeDatastore.h"
 #import <CoreData/CoreData.h>
 #import "NSURL+Utilities.h"
+#import "NSNotificationCenter+RACSupport.h"
 
 @interface ArtCodeDatastore ()
 

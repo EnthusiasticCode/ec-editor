@@ -8,8 +8,7 @@
 
 #import "BezelAlert.h"
 #import <QuartzCore/QuartzCore.h>
-#import <ReactiveCocoa/ReactiveCocoa.h>
-
+#import "NSNotificationCenter+RACSupport.h"
 #import "UIImage+BlockDrawing.h"
 
 static CGRect UIKeyboardFrame;

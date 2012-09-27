@@ -90,7 +90,7 @@
   
   // RAC
   __weak FileBrowserController *weakSelf = self;
-  [RACAbleSelf(artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
+  [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
     FileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
@@ -104,7 +104,7 @@
      [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
     }];
   }];
-  [RACAbleSelf(filteredItems) subscribeNext:^(NSArray *items) {
+  [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     FileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;

@@ -18,7 +18,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 
-#import <ReactiveCocoa/ReactiveCocoa.h>
+#import "NSNotificationCenter+RACSupport.h"
 
 
 @implementation SearchableTableBrowserController {
@@ -217,7 +217,7 @@
   }]];
   
   // Reload the table when the table data changes
-  [disposables addObject:[RACAbleSelf(filteredItems) subscribeNext:^(id x) {
+  [disposables addObject:[RACAble(self.filteredItems) subscribeNext:^(id x) {
     [this.tableView reloadData];
   }]];
   

@@ -61,7 +61,7 @@ static void init(RemoteBrowserController *self) {
   // RAC
   __weak RemoteBrowserController *this = self;
   
-  [[[RACAbleSelf(self.artCodeTab.currentLocation) distinctUntilChanged] where:^BOOL(id x) {
+  [[[RACAble(self.artCodeTab.currentLocation) distinctUntilChanged] where:^BOOL(id x) {
     return this.artCodeTab.currentLocation.type == ArtCodeLocationTypeRemoteDirectory;
   }] subscribeNext:^(NSURL *currentLocation) {
     this.remoteURL = this.artCodeTab.currentLocation.url;

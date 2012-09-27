@@ -7,7 +7,7 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
-#import <ReactiveCocoa/NSObject+RACKVOWrapper.h>
+#import "NSNotificationCenter+RACSupport.h"
 
 #import "ProjectBrowserController.h"
 #import "AppStyle.h"

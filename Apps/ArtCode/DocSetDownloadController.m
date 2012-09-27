@@ -10,6 +10,7 @@
 #import "DocSetDownloadManager.h"
 #import "BezelAlert.h"
 #import "PopoverButton.h"
+#import "NSNotificationCenter+RACSupport.h"
 
 @interface DocSetDownloadController ()
 

@@ -46,7 +46,7 @@
   // RAC
   __weak RemotesListController *this = self;
   
-  [RACAbleSelf(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(id x) {
+  [RACAble(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(id x) {
     [this invalidateFilteredItems];
     [this.tableView reloadData];
   }];
