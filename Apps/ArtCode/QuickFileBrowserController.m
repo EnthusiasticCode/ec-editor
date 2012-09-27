@@ -10,7 +10,6 @@
 #import "QuickBrowsersContainerController.h"
 
 #import "FileSystemDirectory+FilterByAbbreviation.h"
-#import "RACTableViewDataSource.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
@@ -59,8 +58,7 @@
     if (!strongSelf) {
       return;
     }
-    RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject]];
-    [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
+    RAC(strongSelf, filteredItems) = [directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     QuickFileBrowserController *strongSelf = weakSelf;

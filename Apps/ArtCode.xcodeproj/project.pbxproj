@@ -21,7 +21,6 @@
 		5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F594161271C6005D8A4F /* FileSystemDirectory.m */; };
 		5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F597161271D7005D8A4F /* FileSystemTextFile.m */; };
 		5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */; };
-		5F18F5A11613820E005D8A4F /* RACTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */; };
 		5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -631,8 +630,6 @@
 		5F18F597161271D7005D8A4F /* FileSystemTextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemTextFile.m; sourceTree = "<group>"; };
 		5F18F5991612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemDirectory+FilterByAbbreviation.h"; sourceTree = "<group>"; };
 		5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemDirectory+FilterByAbbreviation.m"; sourceTree = "<group>"; };
-		5F18F59F1613820E005D8A4F /* RACTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACTableViewDataSource.h; sourceTree = "<group>"; };
-		5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACTableViewDataSource.m; sourceTree = "<group>"; };
 		5F18F5A21613AE36005D8A4F /* FileSystemItem_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSystemItem_Internal.h; sourceTree = "<group>"; };
 		5F18F5A31614A1FD005D8A4F /* FileSystemDirectory_Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectory_Internal.h; sourceTree = "<group>"; };
 		5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
@@ -1712,8 +1709,6 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
-				5F18F59F1613820E005D8A4F /* RACTableViewDataSource.h */,
-				5F18F5A01613820E005D8A4F /* RACTableViewDataSource.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -3290,7 +3285,6 @@
 				5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */,
 				5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */,
 				5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */,
-				5F18F5A11613820E005D8A4F /* RACTableViewDataSource.m in Sources */,
 				5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

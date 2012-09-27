@@ -30,7 +30,6 @@
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
 #import "FileSystemDirectory+FilterByAbbreviation.h"
-#import "RACTableViewDataSource.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
@@ -100,8 +99,7 @@
       if (!anotherStrongSelf) {
         return;
       }
-     RACTableViewDataSource *dataSource = [[RACTableViewDataSource alloc] initWithSubscribable:[directory contentFilteredByAbbreviation:strongSelf.searchBarTextSubject]];
-     [RACAble(dataSource, items) toProperty:RAC_KEYPATH(strongSelf, filteredItems) onObject:strongSelf];
+      RAC(strongSelf, filteredItems) = [directory contentFilteredByAbbreviation:strongSelf.searchBarTextSubject];
     }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
