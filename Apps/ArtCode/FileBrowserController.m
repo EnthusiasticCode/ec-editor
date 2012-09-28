@@ -45,6 +45,8 @@
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
+@property (nonatomic, copy) NSArray *filteredItems;
+
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
@@ -81,6 +83,15 @@
   NSMutableArray *_previewItems;
 }
 
+@synthesize filteredItems = _filteredItems;
+
+- (void)setFilteredItems:(NSArray *)filteredItems {
+  if (filteredItems == _filteredItems) {
+    return;
+  }
+  _filteredItems = filteredItems;
+}
+
 - (id)init
 {
   self = [super initWithTitle:nil searchBarStaticOnTop:NO];
@@ -99,7 +110,7 @@
       if (!anotherStrongSelf) {
         return;
       }
-      RAC(strongSelf, filteredItems) = [directory contentFilteredByAbbreviation:strongSelf.searchBarTextSubject];
+      RAC(anotherStrongSelf, filteredItems) = [directory contentFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
     }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {

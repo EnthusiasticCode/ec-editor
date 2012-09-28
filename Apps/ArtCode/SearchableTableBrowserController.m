@@ -34,7 +34,8 @@
 
 - (RACSubject *)searchBarTextSubject {
   if (!_searchBarTextSubject) {
-    _searchBarTextSubject = [RACSubject subject];
+    _searchBarTextSubject = [RACReplaySubject replaySubjectWithCapacity:1];
+    [_searchBarTextSubject sendNext:self.searchBar.text];
   }
   return _searchBarTextSubject;
 }
