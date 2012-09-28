@@ -21,25 +21,27 @@
 
 @implementation FileSystemDirectory (FilterByAbbreviation)
 
-static NSArray *(^_filterByAbbreviation)(RACTuple *) = ^NSArray *(RACTuple *tuple) {
+static NSArray *(^_filterAndSortByAbbreviation)(RACTuple *) = ^NSArray *(RACTuple *tuple) {
   NSArray *content = tuple.first;
   NSString *abbreviation = tuple.second;
-
+  
+  // No abbreviation, no need to filter
   if (![abbreviation length]) {
-    return content;
+    return [[[content rac_toSubscribable] select:^id(NSURL *url) {
+      return [RACTuple tupleWithObjectsFromArray:@[url, [RACTupleNil tupleNil]]];
+    }] toArray];
   }
   
-  NSMutableArray *filteredContent = [NSMutableArray array];
-  for (NSURL *childURL in content) {
+  // Filter the content
+  NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(NSURL *url) {
     NSIndexSet *hitMask = nil;
-    float score = [[childURL lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-    if (!score) {
-      continue;
-    }
-    [childURL setAbbreviationScore:score];
-    [childURL setAbbreviationHitMask:hitMask];
-    [filteredContent addObject:childURL];
-  }
+    float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
+    return [RACTuple tupleWithObjectsFromArray:@[url, hitMask ? : [RACTupleNil tupleNil], @(score)]];
+  }] where:^BOOL(RACTuple *item) {
+    return [item.third floatValue] > 0;
+  }] toArray] mutableCopy];
+
+  // Sort the filtered content
   [filteredContent sortUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
     float score1 = [url1 abbreviationScore];
     float score2 = [url2 abbreviationScore];
@@ -55,38 +57,11 @@ static NSArray *(^_filterByAbbreviation)(RACTuple *) = ^NSArray *(RACTuple *tupl
 };
 
 - (id<RACSubscribable>)contentFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[self class] coordinateSubscribable:[RACSubscribable combineLatest:@[[self internalContent], abbreviationSubscribable] reduce:_filterByAbbreviation]];
+  return [[self class] coordinateSubscribable:[RACSubscribable combineLatest:@[[self internalContent], abbreviationSubscribable] reduce:_filterAndSortByAbbreviation]];
 }
 
 - (id<RACSubscribable>)contentWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[self class] coordinateSubscribable:[RACSubscribable combineLatest:@[[self internalContentWithOptions:options], abbreviationSubscribable] reduce:_filterByAbbreviation]];
-}
-
-@end
-
-static void *_NSURLAbbreviationScoreKey;
-static void *_NSURLAbbreviationHitMaskKey;
-
-@implementation NSURL (Abbreviation)
-
-- (NSIndexSet *)abbreviationHitMask {
-  return objc_getAssociatedObject(self, &_NSURLAbbreviationHitMaskKey);
-}
-
-@end
-
-@implementation NSURL (Abbreviation_Internal)
-
-- (void)setAbbreviationHitMask:(NSIndexSet *)hitMask {
-  objc_setAssociatedObject(self, &_NSURLAbbreviationHitMaskKey, hitMask, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (float)abbreviationScore {
-  return [objc_getAssociatedObject(self, &_NSURLAbbreviationScoreKey) floatValue];
-}
-
-- (void)setAbbreviationScore:(float)score {
-  objc_setAssociatedObject(self, &_NSURLAbbreviationScoreKey, @(score), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  return [[self class] coordinateSubscribable:[RACSubscribable combineLatest:@[[self internalContentWithOptions:options], abbreviationSubscribable] reduce:_filterAndSortByAbbreviation]];
 }
 
 @end

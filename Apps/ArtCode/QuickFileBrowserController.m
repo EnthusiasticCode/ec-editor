@@ -99,14 +99,15 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
+  NSURL *itemURL = item.first;
   if (itemURL.isDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [itemURL abbreviationHitMask];
+  cell.textLabelHighlightedCharacters = item.second;
   cell.detailTextLabel.text = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:itemURL].prettyPath;
   
   return cell;

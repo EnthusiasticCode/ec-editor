@@ -200,10 +200,11 @@
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
   
   // Configure the cell
-  NSURL *itemURL = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
+  NSURL *itemURL = item.first;
   
   cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = [itemURL abbreviationHitMask];
+  cell.textLabelHighlightedCharacters = item.second;
   
   if ([itemURL isDirectory]) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
