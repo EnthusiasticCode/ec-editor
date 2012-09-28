@@ -13,5 +13,6 @@
 #ifdef __OBJC__
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
+#import "NSNotificationCenter+RACSupport.h"
 
 #endif
