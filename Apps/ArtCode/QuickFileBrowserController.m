@@ -53,12 +53,12 @@
   
   // RAC
   __weak QuickFileBrowserController *weakSelf = self;
-  [RACAble(self.parentViewController) subscribeNext:^(id x) {
+  [RACAble(self.artCodeTab.currentLocation.project.fileURL) subscribeNext:^(NSURL *projectURL) {
     QuickFileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
-    [[FileSystemDirectory readItemAtURL:strongSelf.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+    [[FileSystemDirectory readItemAtURL:projectURL] subscribeNext:^(FileSystemDirectory *directory) {
       QuickFileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;

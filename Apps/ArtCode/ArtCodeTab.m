@@ -120,4 +120,8 @@ static void *artCodeTabKey;
   objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
++ (NSSet *)keyPathsForValuesAffectingArtCodeTab {
+  return [NSSet setWithObject:@"parentViewController.artCodeTab"];
+}
+
 @end

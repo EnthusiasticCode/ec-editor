@@ -155,4 +155,8 @@
   return (QuickBrowsersContainerController *)parentController;
 }
 
++ (NSSet *)keyPathsForValuesAffectingQuickBrowsersContainerController {
+  return [NSSet setWithObject:@"parentViewController"];
+}
+
 @end
