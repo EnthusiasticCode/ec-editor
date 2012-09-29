@@ -79,10 +79,6 @@
   return infoLabel;
 }
 
-- (NSArray *)filteredItems {
-  return nil;
-}
-
 - (void)invalidateFilteredItems {
 }
 

@@ -45,8 +45,6 @@
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
-@property (nonatomic, copy) NSArray *filteredItems;
-
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
@@ -81,15 +79,6 @@
   
   NSMutableArray *_selectedItems;
   NSMutableArray *_previewItems;
-}
-
-@synthesize filteredItems = _filteredItems;
-
-- (void)setFilteredItems:(NSArray *)filteredItems {
-  if (filteredItems == _filteredItems) {
-    return;
-  }
-  _filteredItems = filteredItems;
 }
 
 - (id)init
@@ -179,8 +168,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [_selectedItems removeAllObjects];
-  
-  //    [self invalidateFilteredItems];
   [super viewWillAppear:animated];
     
   // Hide sync button if no remotes
@@ -321,9 +308,6 @@
             } else {
               [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:L(@"%u items renamed"), renamedCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             }
-            // Manually update file listing instead of waiting for file coordination
-            [self invalidateFilteredItems];
-            [self.tableView reloadData];
           }
         }];
         [self modalNavigationControllerPresentViewController:renameController];

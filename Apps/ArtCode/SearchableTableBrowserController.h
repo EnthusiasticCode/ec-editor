@@ -21,7 +21,7 @@
 #pragma mark Provide items for the table view
 
 /// Override this property getter to provide filtered items.
-@property (nonatomic, readonly, strong) NSArray *filteredItems;
+@property (nonatomic, copy) NSArray *filteredItems;
 
 /// Called when the filtered items should be invalidated.
 - (void)invalidateFilteredItems;

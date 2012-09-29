@@ -53,12 +53,18 @@
   
   // RAC
   __weak QuickFileBrowserController *weakSelf = self;
-  [[FileSystemDirectory readItemAtURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+  [RACAble(self.parentViewController) subscribeNext:^(id x) {
     QuickFileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
-    RAC(strongSelf, filteredItems) = [directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:strongSelf.searchBarTextSubject];
+    [[FileSystemDirectory readItemAtURL:strongSelf.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+      QuickFileBrowserController *anotherStrongSelf = weakSelf;
+      if (!anotherStrongSelf) {
+        return;
+      }
+      RAC(anotherStrongSelf, filteredItems) = [directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
+    }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     QuickFileBrowserController *strongSelf = weakSelf;
