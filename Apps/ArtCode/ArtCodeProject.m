@@ -53,37 +53,39 @@
 }
 
 - (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
-  ASSERT(resultHandler);
-  NSURL *fileURL = self.fileURL;
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    NSMutableArray *files = [NSMutableArray array];
-    NSMutableArray *bookmarks = [NSMutableArray array];
-    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-      NSFileManager *fileManager = [[NSFileManager alloc] init];
-      NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil];
-      for (NSURL *url in enumerator) {
-        [files addObject:url];
-      }
-    }];
-    [fileCoordinator prepareForReadingItemsAtURLs:files options:0 writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void (^completionHandler)(void)) {
-      for (NSURL *file in files) {
-        __block NSIndexSet *fileBookmarks = nil;
-        [fileCoordinator coordinateReadingItemAtURL:file options:0 error:NULL byAccessor:^(NSURL *newURL) {
-          fileBookmarks = [TextFile bookmarksForFileURL:newURL];
-          if (fileBookmarks) {
-            [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-              [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:newURL lineNumber:idx]];
-            }];
-          }
-        }];
-      }
-      completionHandler();
-    }];
-    dispatch_async(dispatch_get_main_queue(), ^{
-      resultHandler(bookmarks);
-    });
-  });
+  // TODO: port to rac_fs
+  resultHandler([NSArray array]);
+//  ASSERT(resultHandler);
+//  NSURL *fileURL = self.fileURL;
+//  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//    NSMutableArray *files = [NSMutableArray array];
+//    NSMutableArray *bookmarks = [NSMutableArray array];
+//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+//    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+//      NSFileManager *fileManager = [[NSFileManager alloc] init];
+//      NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil];
+//      for (NSURL *url in enumerator) {
+//        [files addObject:url];
+//      }
+//    }];
+//    [fileCoordinator prepareForReadingItemsAtURLs:files options:0 writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void (^completionHandler)(void)) {
+//      for (NSURL *file in files) {
+//        __block NSIndexSet *fileBookmarks = nil;
+//        [fileCoordinator coordinateReadingItemAtURL:file options:0 error:NULL byAccessor:^(NSURL *newURL) {
+//          fileBookmarks = [TextFile bookmarksForFileURL:newURL];
+//          if (fileBookmarks) {
+//            [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+//              [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:newURL lineNumber:idx]];
+//            }];
+//          }
+//        }];
+//      }
+//      completionHandler();
+//    }];
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//      resultHandler(bookmarks);
+//    });
+//  });
 }
 
 #pragma mark - Project-wide operations

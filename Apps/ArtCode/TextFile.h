@@ -6,31 +6,40 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "FileSystemTextFile.h"
 
 
-@interface TextFile : UIDocument
+@interface TextFile : FileSystemTextFile
 
-#pragma mark Content
+- (id<RACSubscribable>)explicitSyntaxIdentifier;
+- (id<RACSubscribable>)bindExplicitSyntaxIdentifierTo:(id<RACSubscribable>)explicitSyntaxIdentifierSubscribable;
 
-@property (nonatomic, copy) NSString *content;
+- (id<RACSubscribable>)explicitEncoding;
+- (id<RACSubscribable>)bindExplicitEncodingTo:(id<RACSubscribable>)explicitEncodingSubscribable;
 
-@property (nonatomic) NSStringEncoding *explicitEncoding;
+- (id<RACSubscribable>)bookmarks;
+- (id<RACSubscribable>)bindBookmarksTo:(id<RACSubscribable>)bookmarksSubscribable;
 
-@property (nonatomic, copy) NSString *explicitSyntaxIdentifier;
-
-@property (nonatomic, copy) NSIndexSet *bookmarks;
-
-- (BOOL)hasBookmarkAtLine:(NSUInteger)line;
-
-- (void)addBookmarkAtLine:(NSUInteger)line;
-
-- (void)removeBookmarkAtLine:(NSUInteger)line;
-
-#pragma mark Helper Methods
-
-/// Returns the bookmarks saved in the given file.
-/// Use this to read the bookmarks without instantiating and opening a TextFile.
-+ (NSIndexSet *)bookmarksForFileURL:(NSURL *)fileURL;
+//#pragma mark Content
+//
+//@property (nonatomic, copy) NSString *content;
+//
+//@property (nonatomic) NSStringEncoding *explicitEncoding;
+//
+//@property (nonatomic, copy) NSString *explicitSyntaxIdentifier;
+//
+//@property (nonatomic, copy) NSIndexSet *bookmarks;
+//
+//- (BOOL)hasBookmarkAtLine:(NSUInteger)line;
+//
+//- (void)addBookmarkAtLine:(NSUInteger)line;
+//
+//- (void)removeBookmarkAtLine:(NSUInteger)line;
+//
+//#pragma mark Helper Methods
+//
+///// Returns the bookmarks saved in the given file.
+///// Use this to read the bookmarks without instantiating and opening a TextFile.
+//+ (NSIndexSet *)bookmarksForFileURL:(NSURL *)fileURL;
 
 @end

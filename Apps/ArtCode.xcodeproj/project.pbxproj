@@ -23,6 +23,7 @@
 		5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F59A1612F916005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m */; };
 		5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
+		5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
@@ -635,6 +636,8 @@
 		5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
 		5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
 		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
+		5F24A84B161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+PersistentDataStructure.h"; sourceTree = "<group>"; };
+		5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+PersistentDataStructure.m"; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -1667,6 +1670,8 @@
 				B7D9C79914D7294C0092AA04 /* NSURL+Compare.m */,
 				CD7BD9EF14D83C850048A48A /* UIViewController+Utilities.h */,
 				CD7BD9F014D83C850048A48A /* UIViewController+Utilities.m */,
+				5F24A84B161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.h */,
+				5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */,
 				CD7D2B1713C0D3A600B889EE /* Styles */,
 			);
 			name = Additions;
@@ -3286,6 +3291,7 @@
 				5F18F598161271D7005D8A4F /* FileSystemTextFile.m in Sources */,
 				5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */,
 				5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */,
+				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

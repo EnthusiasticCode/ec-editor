@@ -22,7 +22,6 @@
 
 #import "CodeFileKeyboardAccessoryView.h"
 #import "CodeFileKeyboardAccessoryPopoverView.h"
-//#import "CodeFileCompletionsController.h"
 
 #import "ImagePopoverBackgroundView.h"
 
@@ -35,6 +34,7 @@
 
 #import "ArtCodeProject.h"
 
+#import "NSIndexSet+PersistentDataStructure.h"
 #import "TextFile.h"
 #import <file/FileMagic.h>
 
@@ -44,8 +44,9 @@
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
 
+@property (nonatomic, strong) NSIndexSet *bookmarks;
+
 @property (nonatomic, strong, readonly) CodeFileKeyboardAccessoryView *_keyboardAccessoryView;
-//@property (nonatomic, strong, readonly) CodeFileCompletionsController *_keyboardAccessoryItemCompletionsController;
 
 @property (nonatomic, strong) RACScheduler *codeScheduler;
 
@@ -107,9 +108,6 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
-  // Used in _updateCodeUnitWithAutoDetectedSyntax
-  RACDisposable *_codeUnitDisposable;
-  
   // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
   UIColor *_minimapSymbolColor;
   UIColor *_minimapCommentColor;
@@ -133,7 +131,7 @@ static void drawStencilStar(CGContextRef myContext)
 #pragma mark - Properties
 
 @synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize /*_keyboardAccessoryItemCompletionsController, */codeUnit = _codeUnit, codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
+@synthesize codeUnit = _codeUnit, codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
 
 - (CodeView *)codeView {
   if (!_codeView && self.isViewLoaded) {
@@ -166,7 +164,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     // Bookmark markers
     [_codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-      if (!line.isTruncation && [this.textFile hasBookmarkAtLine:lineNumber + 1]) {
+      if (!line.isTruncation && [this.bookmarks containsIndex:lineNumber +1]) {
         CodeFileController *strongSelf = this;
         if (!strongSelf)
           return;
@@ -203,36 +201,10 @@ static void drawStencilStar(CGContextRef myContext)
     [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarRight];
     [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
     accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
-    // Prepare handlers to show and hide controllers in keyboard accessory item popover
-    //    accessoryView.willPresentPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSUInteger itemIndex, CGRect popoverContentRect, NSTimeInterval animationDuration) {
-    //      UIView *presentedView = nil;
-    //      UIView *presentingView = sender.superview;
-    //      presentedView = this._keyboardAccessoryItemCompletionsController.view;
-    //      CGRect popoverContentFrame = CGRectIntegral([presentingView convertRect:sender.itemPopoverView.contentView.frame fromView:sender.itemPopoverView]);
-    //      presentedView.frame = popoverContentFrame;
-    //      [presentingView addSubview:presentedView];
-    //      presentedView.alpha = 0;
-    //      [UIView animateWithDuration:animationDuration animations:^{
-    //        presentedView.alpha = 1;
-    //      }];
-    //    };
-    //    accessoryView.willDismissPopoverForItemBlock = ^(CodeFileKeyboardAccessoryView *sender, NSTimeInterval animationDuration) {
-    //      [UIView animateWithDuration:animationDuration animations:^{
-    //        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-    //          this._keyboardAccessoryItemCompletionsController.view.alpha = 0;
-    //      } completion:^(BOOL finished) {
-    //        if (this._keyboardAccessoryItemCompletionsController.isViewLoaded)
-    //          [this._keyboardAccessoryItemCompletionsController.view removeFromSuperview];
-    //      }];
-    //    };
     
     UIView *accessoryPopoverContentView = [UIView new];
     accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
     accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
-    
-    
-    _codeView.text = self.textFile.content;
-    
   }
   
   _codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
@@ -240,8 +212,7 @@ static void drawStencilStar(CGContextRef myContext)
   return _codeView;
 }
 
-- (UIWebView *)webView
-{
+- (UIWebView *)webView {
   if (!_webView && self.isViewLoaded) {
     _webView = [[UIWebView alloc] init];
     _webView.delegate = self;
@@ -250,10 +221,8 @@ static void drawStencilStar(CGContextRef myContext)
   return _webView;
 }
 
-- (CodeFileMinimapView *)minimapView
-{
-  if (!_minimapView)
-  {
+- (CodeFileMinimapView *)minimapView {
+  if (!_minimapView) {
     _minimapView = [CodeFileMinimapView new];
     _minimapView.delegate = self;
     _minimapView.renderer = self.codeView.renderer;
@@ -270,28 +239,27 @@ static void drawStencilStar(CGContextRef myContext)
   return _minimapView;
 }
 
-- (CGFloat)minimapWidth
-{
-  if (_minimapWidth == 0)
+- (CGFloat)minimapWidth {
+  if (_minimapWidth == 0) {
     _minimapWidth = 124;
+  }
   return _minimapWidth;
 }
 
-- (void)setMinimapVisible:(BOOL)minimapVisible
-{
+- (void)setMinimapVisible:(BOOL)minimapVisible {
   [self setMinimapVisible:minimapVisible animated:NO];
 }
 
-- (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated
-{
-  if (_minimapVisible == minimapVisible || [self _isWebPreview])
+- (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated {
+  if (_minimapVisible == minimapVisible || [self _isWebPreview]) {
     return;
+  }
   
   [self willChangeValueForKey:@"minimapVisible"];
-  if (minimapVisible)
+  if (minimapVisible) {
     [self.view addSubview:self.minimapView];
-  if (animated)
-  {
+  }
+  if (animated) {
     [self _layoutChildViews];
     _minimapVisible = minimapVisible;
     [UIView animateWithDuration:0.25 animations:^{
@@ -300,9 +268,7 @@ static void drawStencilStar(CGContextRef myContext)
       if (!_minimapVisible)
         [_minimapView removeFromSuperview];
     }];
-  }
-  else
-  {
+  } else {
     _minimapVisible = minimapVisible;
     if (!_minimapVisible)
       [_minimapView removeFromSuperview];
@@ -311,8 +277,7 @@ static void drawStencilStar(CGContextRef myContext)
   [self didChangeValueForKey:@"minimapVisible"];
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfMinimapVisible
-{
++ (BOOL)automaticallyNotifiesObserversOfMinimapVisible {
   return NO;
 }
 
@@ -331,13 +296,11 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Single tab controller informal protocol
 
-- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
-{
+- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
   return YES;
 }
 
-- (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender
-{
+- (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender {
   QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
   
   UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
@@ -352,17 +315,12 @@ static void drawStencilStar(CGContextRef myContext)
   [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
-- (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl
-{
-  if (self.currentSymbol)
-  {
+- (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl {
+  if (self.currentSymbol) {
     NSString *path = [self.artCodeTab.currentLocation path];
-    if (self.currentSymbol.icon)
-    {
+    if (self.currentSymbol.icon) {
       [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
-    }
-    else
-    {
+    } else {
       [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     }
     return YES;
@@ -389,24 +347,19 @@ static void drawStencilStar(CGContextRef myContext)
   [actionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (actionSheet == _editToolsActionSheet) {
     switch (buttonIndex) {
       case 0: // toggle find/replace
       {
-        if (!_searchBarController)
-        {
+        if (!_searchBarController) {
           _searchBarController = [[UIStoryboard storyboardWithName:@"SearchBar" bundle:nil] instantiateInitialViewController];
           _searchBarController.targetCodeFileController = self;
         }
-        if (self.singleTabController.toolbarViewController != _searchBarController)
-        {
+        if (self.singleTabController.toolbarViewController != _searchBarController) {
           [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
           [_searchBarController.findTextField becomeFirstResponder];
-        }
-        else
-        {
+        } else {
           [self.singleTabController setToolbarViewController:nil animated:YES];
         }
         break;
@@ -415,8 +368,9 @@ static void drawStencilStar(CGContextRef myContext)
       case 1: // toggle minimap
       {
         [self setMinimapVisible:!self.minimapVisible animated:YES];
-        if (self.minimapVisible)
+        if (self.minimapVisible) {
           self.minimapView.selectionRectangle = self.codeView.bounds;
+        }
         break;
       }
         
@@ -437,32 +391,11 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - View lifecycle
 
-- (void)dealloc {
-  [self.textFile closeWithCompletionHandler:nil];
-  self.textFile = nil;
-  self.artCodeTab = nil;
-}
-
-- (void)loadView
-{
-  [super loadView];
-  
-  self.editButtonItem.title = @"";
-  self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
-}
-
-- (void)viewDidLoad
-{
-  [self.view addSubview:[self _contentView]];
-  
-  self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
-  
-  // Keyboard notifications
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
-  _keyboardFrame = CGRectNull;
-  _keyboardRotationFrame = CGRectNull;
+- (id)init {
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
   
   if (self.artCodeTab.currentLocation.url) {
     self.textFile = [[TextFile alloc] initWithFileURL:self.artCodeTab.currentLocation.url];
@@ -472,7 +405,7 @@ static void drawStencilStar(CGContextRef myContext)
       _codeScheduler = [RACScheduler schedulerWithOperationQueue:schedulerQueue];
       // Load the contents
       self.codeView.text = self.textFile.content;
-
+      
       // RAC
       __weak CodeFileController *this = self;
       
@@ -525,377 +458,7 @@ static void drawStencilStar(CGContextRef myContext)
       
     }];
   }
-}
 
-- (void)viewDidUnload
-{
-  [super viewDidUnload];
-  
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-  
-  _minimapView = nil;
-  _codeView = nil;
-  
-  _editToolsActionSheet = nil;
-  _searchBarController = nil;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  [self _layoutChildViews];
-  if ([self _isWebPreview]) {
-    [self _loadWebPreviewContentAndTitle];
-  }
-}
-
-#pragma mark - Controller Methods
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-  [_quickBrowsersPopover dismissPopoverAnimated:YES];
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-  [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-  if (self.minimapVisible)
-    self.minimapView.selectionRectangle = self.codeView.bounds;
-}
-
-- (void)didReceiveMemoryWarning
-{
-  [super didReceiveMemoryWarning];
-  
-  if (!_minimapVisible)
-    _minimapView = nil;
-  
-  if ([self _isWebPreview])
-    self.codeView = nil;
-  else
-    self.webView = nil;
-}
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-  UIView *oldContentView = [self _contentView];
-  
-  [self willChangeValueForKey:@"editing"];
-  
-  [super setEditing:editing animated:animated];
-  self.editButtonItem.title = @"";
-  
-  UIView *currentContentView = [self _contentView];
-  if ([currentContentView isKindOfClass:[CodeView class]])
-    [(CodeView *)currentContentView setEditing:editing];
-  
-  if (editing)
-  {
-    // Set keyboard for main scope
-    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:nil];
-  }
-  
-  if (oldContentView != currentContentView)
-  {
-    [self _loadWebPreviewContentAndTitle];
-    
-    [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
-      [self _layoutChildViews];
-      [self didChangeValueForKey:@"editing"];
-    }];
-  }
-  else
-  {
-    [self didChangeValueForKey:@"editing"];
-  }
-}
-
-+ (BOOL)automaticallyNotifiesObserversOfEditing
-{
-  return NO;
-}
-
-#pragma mark - Minimap Delegate Methods
-
-- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView
-           shouldRenderLine:(TextRendererLine *)line
-                     number:(NSUInteger)lineNumber
-                      range:(NSRange)range
-                  withColor:(UIColor *__autoreleasing *)lineColor
-                 decoration:(CodeFileMinimapLineDecoration *)decoration
-            decorationColor:(UIColor *__autoreleasing *)decorationColor
-{
-  // Set bookmark decoration
-  if (!line.isTruncation && [self.textFile hasBookmarkAtLine:lineNumber + 1])
-  {
-    *decoration = CodeFileMinimapLineDecorationDisc;
-    *decorationColor = [UIColor whiteColor];
-  }
-  
-  // Don't draw if line is too small
-  if (*decoration == 0 && line.width <= line.height)
-    return NO;
-  
-  // Color symbols
-  for (TMSymbol *symbol in self.codeUnit.symbolList) {
-    if (NSLocationInRange(symbol.range.location, range)) {
-      if (!_minimapSymbolColor) {
-        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:symbol.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
-      }
-      *lineColor = _minimapSymbolColor;
-      return YES;
-    }
-  }
-  
-  // Color comments and preprocessor
-  __block UIColor *color = *lineColor;
-  [self.codeUnit enumerateQualifiedScopeIdentifiersInRange:range withBlock:^(NSString *qualifiedIdentifier, NSRange scopeRange, BOOL *stop) {
-    if (scopeRange.length < 2)
-      return;
-    
-    if ([qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound) {
-      if (!_minimapPreprocessorColor) {
-        _minimapPreprocessorColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
-      }
-      color = _minimapPreprocessorColor;
-      *stop = YES;
-      return;
-    }
-    
-    if ([qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound) {
-      if (!_minimapCommentColor) {
-        _minimapCommentColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
-      }
-      color = _minimapCommentColor;
-      *stop = YES;
-      return;
-    }
-  }];
-  *lineColor = color;
-  
-  return YES;
-}
-
-- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection
-{
-  [self.codeView scrollRectToVisible:newSelection animated:YES];
-  return NO;
-}
-
-#pragma mark - Code View DataSource Methods
-
-//- (NSUInteger)stringLengthForTextRenderer:(TextRenderer *)sender
-//{
-//  return self.code.length;
-//}
-//
-//- (NSAttributedString *)textRenderer:(TextRenderer *)sender attributedStringInRange:(NSRange)stringRange
-//{
-//  NSMutableAttributedString *attributedString = [self.code attributedSubstringFromRange:stringRange].mutableCopy;
-//  if (attributedString.length) {
-//    static NSRegularExpression *placeholderRegExp = nil;
-//    if (!placeholderRegExp)
-//      placeholderRegExp = [NSRegularExpression regularExpressionWithPattern:@"<#(.+?)#>" options:0 error:NULL];
-//    // Add placeholders styles
-//    [placeholderRegExp enumerateMatchesInString:[attributedString string] options:0 range:NSMakeRange(0, [attributedString length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-//      NSString *placeHolderName = [self.textFile.content substringWithRange:[result rangeAtIndex:1]];
-//      [self _markPlaceholderWithName:placeHolderName inAttributedString:attributedString range:result.range];
-//    }];
-//  }
-//  return attributedString;
-//}
-//
-//- (NSDictionary *)defaultTextAttributesForTextRenderer:(TextRenderer *)sender
-//{
-//  return [[TMTheme currentTheme] commonAttributes];
-//}
-//
-//- (void)codeView:(CodeView *)codeView commitString:(NSString *)commitString forTextInRange:(NSRange)range
-//{
-//  ASSERT(NSOperationQueue.currentQueue == NSOperationQueue.mainQueue);
-//  NSAttributedString *changedCode = [self.code attributedStringByReplacingCharactersInRange:range withString:commitString];
-//  self.textFile.content = [self.textFile.content stringByReplacingCharactersInRange:range withString:commitString];
-//  self.code = changedCode;
-//}
-
-#pragma mark - Code View Delegate Methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-  if (_minimapVisible && scrollView == _codeView)
-  {
-    _minimapView.selectionRectangle = _codeView.bounds;
-  }
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-  if (_minimapVisible && scrollView == _codeView)
-  {
-    [_minimapView scrollToSelection];
-  }
-}
-
-- (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
-  if ([self.textFile hasBookmarkAtLine:lineNumber]) {
-    [self.textFile removeBookmarkAtLine:lineNumber];
-  } else {
-    [self.textFile addBookmarkAtLine:lineNumber];
-  }
-  [codeView setNeedsDisplay];
-  [_minimapView setNeedsDisplay];
-}
-
-- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame
-{
-  ASSERT(view && frame);
-  
-  if ([_keyboardAccessoryItemActions count] != 11)
-    return NO;
-  
-  /// Set keyboard position specific accessory popover properties
-  if (codeView.keyboardAccessoryView.isSplit)
-  {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  }
-  else if (_keyboardFrame.size.width > 768)
-  {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  }
-  else
-  {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  }
-  
-  if ((*frame).origin.y - (*view).bounds.origin.y < (*view).bounds.size.height / 4)
-    codeView.keyboardAccessoryView.flipped = YES;
-  
-  UIView *targetView = self.view.window.rootViewController.view;
-  *frame = [targetView convertRect:*frame fromView:*view];
-  *view = targetView;
-  
-  return YES;
-}
-
-- (void)codeView:(CodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)accessoryFrame
-{
-  if (!codeView.keyboardAccessoryView.isSplit)
-  {
-    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
-      CGRect frame = self.view.frame;
-      if (!CGRectIsNull(_keyboardFrame))
-      {
-        frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
-      }
-      else if (!CGRectIsNull(_keyboardRotationFrame))
-      {
-        frame.size.height = _keyboardRotationFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
-      }
-      else
-      {
-        frame.size.height = frame.size.height - codeView.keyboardAccessoryView.frame.size.height;
-      }
-      self.view.frame = frame;
-    } completion:^(BOOL finished) {
-      // Scroll to selection
-      RectSet *selectionRects = self.codeView.selectionRects;
-      if (selectionRects == nil)
-        return;
-      [self.codeView scrollRectToVisible:CGRectInset(selectionRects.bounds, 0, -50) animated:YES];
-    }];
-  }
-}
-
-- (BOOL)codeViewShouldHideKeyboardAccessoryView:(CodeView *)codeView
-{
-  [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
-  
-  if (!codeView.keyboardAccessoryView.isSplit)
-  {
-    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
-      CGRect frame = self.view.frame;
-      if (!CGRectIsNull(_keyboardFrame))
-      {
-        frame.size.height = _keyboardFrame.origin.y;
-      }
-      else if (!CGRectIsNull(_keyboardRotationFrame))
-      {
-        frame.size.height = _keyboardRotationFrame.origin.y;
-      }
-      else
-      {
-        frame.size.height = frame.size.height + codeView.keyboardAccessoryView.frame.size.height;
-      }
-      _keyboardFrame = CGRectNull;
-      _keyboardRotationFrame = CGRectNull;
-      self.view.frame = frame;
-    } completion:nil];
-  }
-  return YES;
-}
-
-#pragma mark - Webview delegate methods
-
-- (void)webViewDidStartLoad:(UIWebView *)webView
-{
-  self.loading = YES;
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-  self.loading = NO;
-  if ([self _isWebPreview])
-    self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-}
-
-#pragma mark - Public Methods
-
-//- (void)showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:(NSUInteger)accessoryItemIndex
-//{
-//  ASSERT(self._keyboardAccessoryView.superview);
-//
-//  self._keyboardAccessoryItemCompletionsController.offsetInDocumentForCompletions = self.codeView.selectionRange.location;
-//  if (![self._keyboardAccessoryItemCompletionsController hasCompletions])
-//  {
-//    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"No completions" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
-//    return;
-//  }
-//
-//  [self._keyboardAccessoryView presentPopoverForItemAtIndex:accessoryItemIndex permittedArrowDirection:(self.codeView.keyboardAccessoryView.isFlipped ? UIPopoverArrowDirectionUp : UIPopoverArrowDirectionDown) animated:YES];
-//}
-
-#pragma mark - Displayable Content
-
-+ (BOOL)canDisplayFileInCodeView:(NSURL *)fileURL {
-  FileMagic *magic = [FileMagic.alloc initWithFileURL:fileURL];
-  if ([magic.mimeType isEqualToString:@"application/x-empty"] || [magic.mimeType isEqualToString:@"inode/x-empty"]) {
-    return YES;
-  }
-  return [magic.mimeType hasPrefix:@"text"];
-}
-
-+ (BOOL)canDisplayFileInWebView:(NSURL *)fileURL {
-  NSString *extension = fileURL.pathExtension.lowercaseString;
-  return [extension isEqualToString:@"html"] || [extension isEqualToString:@"htm"];
-}
-
-#pragma mark - Private Methods
-
-- (void)_updateCodeUnitWithAutoDetectedSyntax {
   // Selecting the syntax to use
   __weak CodeFileController *this = self;
   TMSyntaxNode *syntax = nil;
@@ -944,7 +507,310 @@ static void drawStencilStar(CGContextRef myContext)
       }];
     }];
   }];
+  
+  return self;
 }
+
+- (void)loadView {
+  [super loadView];
+  
+  self.editButtonItem.title = @"";
+  self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
+}
+
+- (void)viewDidLoad {
+  [self.view addSubview:[self _contentView]];
+  
+  self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
+  
+  // Keyboard notifications
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+  _keyboardFrame = CGRectNull;
+  _keyboardRotationFrame = CGRectNull;
+}
+
+- (void)viewDidUnload {
+  [super viewDidUnload];
+  
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  
+  _minimapView = nil;
+  _codeView = nil;
+  
+  _editToolsActionSheet = nil;
+  _searchBarController = nil;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [self _layoutChildViews];
+  if ([self _isWebPreview]) {
+    [self _loadWebPreviewContentAndTitle];
+  }
+}
+
+#pragma mark - Controller Methods
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+	return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+  [_quickBrowsersPopover dismissPopoverAnimated:YES];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+  [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+  if (self.minimapVisible) {
+    self.minimapView.selectionRectangle = self.codeView.bounds;
+  }
+}
+
+- (void)didReceiveMemoryWarning {
+  [super didReceiveMemoryWarning];
+  
+  if (!_minimapVisible) {
+    _minimapView = nil;
+  }
+  
+  if ([self _isWebPreview]) {
+    self.codeView = nil;
+  } else {
+    self.webView = nil;
+  }
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+  UIView *oldContentView = [self _contentView];
+  
+  [self willChangeValueForKey:@"editing"];
+  
+  [super setEditing:editing animated:animated];
+  self.editButtonItem.title = @"";
+  
+  UIView *currentContentView = [self _contentView];
+  if ([currentContentView isKindOfClass:[CodeView class]]) {
+    [(CodeView *)currentContentView setEditing:editing];
+  }
+  
+  if (editing) {
+    // Set keyboard for main scope
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:nil];
+  }
+  
+  if (oldContentView != currentContentView) {
+    [self _loadWebPreviewContentAndTitle];
+    
+    [UIView transitionFromView:oldContentView toView:currentContentView duration:animated ? 0.2 : 0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve completion:^(BOOL finished) {
+      [self _layoutChildViews];
+      [self didChangeValueForKey:@"editing"];
+    }];
+  } else {
+    [self didChangeValueForKey:@"editing"];
+  }
+}
+
++ (BOOL)automaticallyNotifiesObserversOfEditing {
+  return NO;
+}
+
+#pragma mark - Minimap Delegate Methods
+
+- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView
+           shouldRenderLine:(TextRendererLine *)line
+                     number:(NSUInteger)lineNumber
+                      range:(NSRange)range
+                  withColor:(UIColor *__autoreleasing *)lineColor
+                 decoration:(CodeFileMinimapLineDecoration *)decoration
+            decorationColor:(UIColor *__autoreleasing *)decorationColor {
+  // Set bookmark decoration
+  if (!line.isTruncation && [self.bookmarks containsIndex:lineNumber + 1]) {
+    *decoration = CodeFileMinimapLineDecorationDisc;
+    *decorationColor = [UIColor whiteColor];
+  }
+  
+  // Don't draw if line is too small
+  if (*decoration == 0 && line.width <= line.height)
+    return NO;
+  
+  // Color symbols
+  for (TMSymbol *symbol in self.codeUnit.symbolList) {
+    if (NSLocationInRange(symbol.range.location, range)) {
+      if (!_minimapSymbolColor) {
+        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:symbol.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      *lineColor = _minimapSymbolColor;
+      return YES;
+    }
+  }
+  
+  // Color comments and preprocessor
+  __block UIColor *color = *lineColor;
+  [self.codeUnit enumerateQualifiedScopeIdentifiersInRange:range withBlock:^(NSString *qualifiedIdentifier, NSRange scopeRange, BOOL *stop) {
+    if (scopeRange.length < 2)
+      return;
+    
+    if ([qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound) {
+      if (!_minimapPreprocessorColor) {
+        _minimapPreprocessorColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      color = _minimapPreprocessorColor;
+      *stop = YES;
+      return;
+    }
+    
+    if ([qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound) {
+      if (!_minimapCommentColor) {
+        _minimapCommentColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+      }
+      color = _minimapCommentColor;
+      *stop = YES;
+      return;
+    }
+  }];
+  *lineColor = color;
+  
+  return YES;
+}
+
+- (BOOL)codeFileMinimapView:(CodeFileMinimapView *)minimapView shouldChangeSelectionRectangle:(CGRect)newSelection {
+  [self.codeView scrollRectToVisible:newSelection animated:YES];
+  return NO;
+}
+
+#pragma mark - Code View Delegate Methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+  if (_minimapVisible && scrollView == _codeView) {
+    _minimapView.selectionRectangle = _codeView.bounds;
+  }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+  if (_minimapVisible && scrollView == _codeView) {
+    [_minimapView scrollToSelection];
+  }
+}
+
+- (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
+  if ([self.bookmarks containsIndex:lineNumber]) {
+    self.bookmarks = [self.bookmarks indexSetByRemovingIndex:lineNumber];
+  } else {
+    self.bookmarks = [self.bookmarks indexSetByAddingIndex:lineNumber];
+  }
+  [codeView setNeedsDisplay];
+  [_minimapView setNeedsDisplay];
+}
+
+- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame {
+  ASSERT(view && frame);
+  
+  if ([_keyboardAccessoryItemActions count] != 11)
+    return NO;
+  
+  /// Set keyboard position specific accessory popover properties
+  if (codeView.keyboardAccessoryView.isSplit) {
+    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+  } else if (_keyboardFrame.size.width > 768) {
+    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+  } else {
+    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+  }
+  
+  if ((*frame).origin.y - (*view).bounds.origin.y < (*view).bounds.size.height / 4)
+    codeView.keyboardAccessoryView.flipped = YES;
+  
+  UIView *targetView = self.view.window.rootViewController.view;
+  *frame = [targetView convertRect:*frame fromView:*view];
+  *view = targetView;
+  
+  return YES;
+}
+
+- (void)codeView:(CodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)accessoryFrame {
+  if (!codeView.keyboardAccessoryView.isSplit) {
+    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+      CGRect frame = self.view.frame;
+      if (!CGRectIsNull(_keyboardFrame)) {
+        frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
+      } else if (!CGRectIsNull(_keyboardRotationFrame)) {
+        frame.size.height = _keyboardRotationFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
+      } else {
+        frame.size.height = frame.size.height - codeView.keyboardAccessoryView.frame.size.height;
+      }
+      self.view.frame = frame;
+    } completion:^(BOOL finished) {
+      // Scroll to selection
+      RectSet *selectionRects = self.codeView.selectionRects;
+      if (selectionRects == nil)
+        return;
+      [self.codeView scrollRectToVisible:CGRectInset(selectionRects.bounds, 0, -50) animated:YES];
+    }];
+  }
+}
+
+- (BOOL)codeViewShouldHideKeyboardAccessoryView:(CodeView *)codeView {
+  [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
+  
+  if (!codeView.keyboardAccessoryView.isSplit) {
+    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+      CGRect frame = self.view.frame;
+      if (!CGRectIsNull(_keyboardFrame)) {
+        frame.size.height = _keyboardFrame.origin.y;
+      } else if (!CGRectIsNull(_keyboardRotationFrame)) {
+        frame.size.height = _keyboardRotationFrame.origin.y;
+      } else {
+        frame.size.height = frame.size.height + codeView.keyboardAccessoryView.frame.size.height;
+      }
+      _keyboardFrame = CGRectNull;
+      _keyboardRotationFrame = CGRectNull;
+      self.view.frame = frame;
+    } completion:nil];
+  }
+  return YES;
+}
+
+#pragma mark - Webview delegate methods
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+  self.loading = YES;
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+  self.loading = NO;
+  if ([self _isWebPreview]) {
+    self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+  }
+}
+
+#pragma mark - Displayable Content
+
++ (BOOL)canDisplayFileInCodeView:(NSURL *)fileURL {
+  FileMagic *magic = [FileMagic.alloc initWithFileURL:fileURL];
+  if ([magic.mimeType isEqualToString:@"application/x-empty"] || [magic.mimeType isEqualToString:@"inode/x-empty"]) {
+    return YES;
+  }
+  return [magic.mimeType hasPrefix:@"text"];
+}
+
++ (BOOL)canDisplayFileInWebView:(NSURL *)fileURL {
+  NSString *extension = fileURL.pathExtension.lowercaseString;
+  return [extension isEqualToString:@"html"] || [extension isEqualToString:@"htm"];
+}
+
+#pragma mark - Private Methods
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState {
   if (!editingState && [self.class canDisplayFileInWebView:self.artCodeTab.currentLocation.url]) {
@@ -962,62 +828,47 @@ static void drawStencilStar(CGContextRef myContext)
   return [self _contentViewForEditingState:self.isEditing] == _webView;
 }
 
-- (void)_loadWebPreviewContentAndTitle
-{
-  if ([self _isWebPreview] && self.textFile)
-  {
-    [self.textFile savePresentedItemChangesWithCompletionHandler:^(NSError *errorOrNil) {
-      [[[NSFileCoordinator alloc] initWithFilePresenter:nil] coordinateReadingItemAtURL:self.artCodeTab.currentLocation.url options:0 error:NULL byAccessor:^(NSURL *newURL) {
-        [self.webView loadRequest:[NSURLRequest requestWithURL:newURL]];
+- (void)_loadWebPreviewContentAndTitle {
+  if ([self _isWebPreview] && self.textFile) {
+    [[self.textFile save] subscribeCompleted:^{
+      [self.textFile.itemURL subscribeNext:^(NSURL *itemURL) {
+        [self.webView loadRequest:[NSURLRequest requestWithURL:itemURL]];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
       }];
     }];
-  }
-  else
-  {
+  } else {
     self.title = nil;
   }
 }
 
-- (void)_layoutChildViews
-{
+- (void)_layoutChildViews {
   CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
-  if ([self _isWebPreview])
-  {
+  if ([self _isWebPreview]) {
     self.webView.frame = frame;
-  }
-  else
-  {
-    if (self.minimapVisible)
-    {
+  } else {
+    if (self.minimapVisible) {
       self.codeView.frame = CGRectMake(0, 0, frame.size.width - self.minimapWidth, frame.size.height);
       self.minimapView.frame = CGRectMake(frame.size.width - self.minimapWidth, 0, self.minimapWidth, frame.size.height);
-    }
-    else
-    {
+    } else {
       self.codeView.frame = frame;
       _minimapView.frame = CGRectMake(frame.size.width, 0, self.minimapWidth, frame.size.height);
     }
   }
 }
 
-- (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer
-{
+- (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer {
   [_codeView.undoManager undo];
 }
 
-- (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer
-{
+- (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer {
   [_codeView.undoManager redo];
 }
 
-- (void)_keyboardWillChangeFrame:(NSNotification *)notification
-{
+- (void)_keyboardWillChangeFrame:(NSNotification *)notification {
   _keyboardRotationFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
 }
 
-- (void)_keyboardWillShow:(NSNotification *)notification
-{
+- (void)_keyboardWillShow:(NSNotification *)notification {
   _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
   _keyboardRotationFrame = CGRectNull;
   [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
@@ -1029,37 +880,23 @@ static void drawStencilStar(CGContextRef myContext)
   [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
 }
 
-- (void)_keyboardWillHide:(NSNotification *)notification
-{
+- (void)_keyboardWillHide:(NSNotification *)notification {
   [self _keyboardWillShow:notification];
 }
 
 #pragma mark - Keyboard Accessory Item Methods
 
-- (CodeFileKeyboardAccessoryView *)_keyboardAccessoryView
-{
+- (CodeFileKeyboardAccessoryView *)_keyboardAccessoryView {
   return (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
 }
 
-//- (CodeFileCompletionsController *)_keyboardAccessoryItemCompletionsController
-//{
-//  if (!_keyboardAccessoryItemCompletionsController)
-//  {
-//    _keyboardAccessoryItemCompletionsController = [[CodeFileCompletionsController alloc] initWithStyle:UITableViewStylePlain];
-//    _keyboardAccessoryItemCompletionsController.targetCodeFileController = self;
-//    _keyboardAccessoryItemCompletionsController.targetKeyboardAccessoryView = self._keyboardAccessoryView;
-//    _keyboardAccessoryItemCompletionsController.contentSizeForViewInPopover = CGSizeMake(300, 300);
-//  }
-//  return _keyboardAccessoryItemCompletionsController;
-//}
-
-- (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier
-{
+- (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier {
   NSArray *configuration = [TMKeyboardAction keyboardActionsConfigurationForQualifiedIdentifier:qualifiedIdentifier];
   ASSERT(configuration);
   
-  if (_keyboardAccessoryItemActions == configuration)
+  if (_keyboardAccessoryItemActions == configuration) {
     return;
+  }
   
   _keyboardAccessoryItemActions = configuration;
   ASSERT([_keyboardAccessoryItemActions count] == 11);
@@ -1067,28 +904,21 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
   
   // Items
-  if (accessoryView.items == nil)
-  {
+  if (accessoryView.items == nil) {
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:11];
     CodeFileKeyboardAccessoryItem *item = nil;
     TMKeyboardAction *action = nil;
     
-    for (NSInteger i = 0; i < 11; ++i)
-    {
+    for (NSInteger i = 0; i < 11; ++i) {
       item = [[CodeFileKeyboardAccessoryItem alloc] initWithTitle:[NSString stringWithFormat:@"%d", i] style:UIBarButtonItemStylePlain target:self action:@selector(_keyboardAccessoryItemAction:)];
       
-      if (i == 0)
-      {
+      if (i == 0) {
         [item setWidth:44 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating];
-      }
-      else if (i == 10)
-      {
+      } else if (i == 10) {
         [item setWidth:63 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
         [item setWidth:82 + 4 forAccessoryPosition:KeyboardAccessoryPositionLandscape];
         [item setWidth:44 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating];
-      }
-      else
-      {
+      } else {
         if (i % 2)
           [item setWidth:60 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
       }
@@ -1101,9 +931,7 @@ static void drawStencilStar(CGContextRef myContext)
     }
     
     accessoryView.items = items;
-  }
-  else
-  {
+  } else {
     NSArray *items = accessoryView.items;
     [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
       TMKeyboardAction *action = [_keyboardAccessoryItemActions objectAtIndex:itemIndex];
@@ -1115,15 +943,13 @@ static void drawStencilStar(CGContextRef myContext)
   [_codeView setKeyboardAccessoryViewVisible:([_keyboardAccessoryItemActions count] == 11) animated:YES];
 }
 
-- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item
-{
+- (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item {
   _keyboardAccessoryItemCurrentActionIndex = item.tag;
   [[_keyboardAccessoryItemActions objectAtIndex:item.tag] executeActionOnTarget:self];
 }
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
-  if (refcon)
-  {
+  if (refcon) {
     CGFloat height = CTFontGetXHeight(refcon);
     return height / 2.0;
   }
@@ -1138,17 +964,18 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   &placeholderEndingsWidthCallback
 };
 
-- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
-{
+- (void)_markPlaceholderWithName:(NSString *)name inAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range {
   ASSERT(range.length > 4);
   
   static CGColorRef placeholderFillColor = NULL;
-  if (!placeholderFillColor)
+  if (!placeholderFillColor) {
     placeholderFillColor = CGColorRetain([UIColor colorWithRed:234.0/255.0 green:240.0/255.0 blue:250.0/255.0 alpha:1].CGColor);
+  }
   
   static CGColorRef placeholderStrokeColor = NULL;
-  if (!placeholderStrokeColor)
+  if (!placeholderStrokeColor) {
     placeholderStrokeColor = CGColorRetain([UIColor colorWithRed:197.0/255.0 green:216.0/255.0 blue:243.0/255.0 alpha:1].CGColor);
+  }
   
   static TextRendererRunBlock placeHolderBodyBlock = ^(CGContextRef context, CTRunRef run, CGRect rect, CGFloat baselineOffset) {
     rect.origin.y += 1;
@@ -1220,29 +1047,23 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 #pragma mark Keyboard Actions Target Methods
 
-- (BOOL)keyboardAction:(TMKeyboardAction *)keyboardAction canPerformSelector:(SEL)selector
-{
-  if ([self forwardingTargetForSelector:selector] != nil)
+- (BOOL)keyboardAction:(TMKeyboardAction *)keyboardAction canPerformSelector:(SEL)selector {
+  if ([self forwardingTargetForSelector:selector] != nil) {
     return YES;
-  if (selector == @selector(showCompletionsAtCursor))
-    return YES;
+  }
   ASSERT(NO && "An action called a not supported selector");
   return NO;
 }
 
-- (id)forwardingTargetForSelector:(SEL)aSelector
-{
-  if (aSelector == @selector(insertText:) || aSelector == @selector(deleteBackward))
+- (id)forwardingTargetForSelector:(SEL)aSelector {
+  if (aSelector == @selector(insertText:) || aSelector == @selector(deleteBackward)) {
     return self.codeView;
-  if (aSelector == @selector(undo) || aSelector == @selector(redo))
+  }
+  if (aSelector == @selector(undo) || aSelector == @selector(redo)) {
     return self.codeView.undoManager;
+  }
   return nil;
 }
-
-//- (void)showCompletionsAtCursor
-//{
-//  [self showCompletionPopoverForCurrentSelectionAtKeyboardAccessoryItemIndex:_keyboardAccessoryItemCurrentActionIndex];
-//}
 
 - (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
   UIColor *color = nil;

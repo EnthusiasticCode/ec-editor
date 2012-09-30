@@ -33,9 +33,29 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  self.currentSyntaxName = self.codeFileController.codeUnit.syntax.name;
+- (id)initWithStyle:(UITableViewStyle)style {
+  self = [super initWithStyle:style];
+  if (!self) {
+    return nil;
+  }
+  __weak QuickFileHighlightTableController *weakSelf = self;
+  [RACAble(self.codeFileController.textFile) subscribeNext:^(TextFile *textFile) {
+    QuickFileHighlightTableController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    RAC(strongSelf, currentSyntaxName) = textFile.explicitSyntaxIdentifier;
+    [textFile bindExplicitSyntaxIdentifierTo:RACAble(strongSelf, currentSyntaxName)];
+  }];
+  [RACAble(self.currentSyntaxName) subscribeNext:^(id x) {
+    QuickFileHighlightTableController *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    [strongSelf.tableView reloadData];
+  }];
+  
+  return self;
 }
 
 #pragma mark - Table view data source
@@ -61,13 +81,11 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  self.currentSyntaxName = [self.syntaxNames objectAtIndex:indexPath.row];
   if (indexPath.row == 0) {
-    self.codeFileController.textFile.explicitSyntaxIdentifier = nil;
+    self.currentSyntaxName = nil;
   } else {
-    self.codeFileController.textFile.explicitSyntaxIdentifier = [[TMSyntaxNode allSyntaxesNames] objectForKey:self.currentSyntaxName];
+    self.currentSyntaxName = [self.syntaxNames objectAtIndex:indexPath.row];
   }
-  [self.tableView reloadData];
 }
 
 @end
