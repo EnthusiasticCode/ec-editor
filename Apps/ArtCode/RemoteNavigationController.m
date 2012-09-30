@@ -9,12 +9,12 @@
 #import "RemoteNavigationController.h"
 #import "ArtCodeRemote.h"
 #import <Connection/CKConnectionRegistry.h>
-#import "RemoteLoginController.h"
+#import "RemoteFileListController.h"
 
 @implementation RemoteNavigationController
 
 - (id)initWithArtCodeRemote:(ArtCodeRemote *)remote {
-  self = [super initWithRootViewController:[[RemoteLoginController alloc] initAndConnectToArtCodeRemote:remote]];
+  self = [super initWithRootViewController:[[RemoteFileListController alloc] initWithArtCodeRemote:remote connection:nil path:remote.path]];
   if (!self)
     return nil;
   _remote = remote;
@@ -39,7 +39,7 @@
     return;
   }
   
-  ASSERT(_connection == nil); // The connection should be set only once
+  ASSERT(_connection == nil || connection == _connection); // The connection should be set only once
   _connection = connection;
 }
 
