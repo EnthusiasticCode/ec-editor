@@ -26,7 +26,7 @@
 }
 
 - (void)sendNext:(id)value {
-  [self.echo sendNext:[RACTuple tupleWithObjectsFromArray:@[value, [RACTupleNil tupleNil]]]];
+  [self.echo sendNext:[RACTuple tupleWithObjectsFromArray:@[value ? : [RACTupleNil tupleNil], [RACTupleNil tupleNil]]]];
 }
 
 - (void)sendError:(NSError *)error {

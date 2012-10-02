@@ -12,6 +12,21 @@ static RACScheduler *_fileSystemScheduler;
 
 @implementation FileSystemItem
 
++ (RACScheduler *)fileSystemScheduler {
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
+    operationQueue.name = @"FileSystemItem file system queue";
+    operationQueue.maxConcurrentOperationCount = 1;
+    _fileSystemScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
+  });
+  return _fileSystemScheduler;
+}
+
++ (id<RACSubscribable>)coordinateSubscribable:(id<RACSubscribable>)subscribable {
+  return [[subscribable subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
   return [self coordinateSubscribable:[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
     ASSERT_NOT_MAIN_QUEUE();
@@ -26,21 +41,12 @@ static RACScheduler *_fileSystemScheduler;
   }]];
 }
 
-#pragma mark - Internal Methods
-
-+ (RACScheduler *)fileSystemScheduler {
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.name = @"FileSystemItem file system queue";
-    operationQueue.maxConcurrentOperationCount = 1;
-    _fileSystemScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
-  });
-  return _fileSystemScheduler;
+- (id<RACSubscribable>)internalItemURL {
+  return RACAble(self.itemURLBacking);
 }
 
-+ (id<RACSubscribable>)coordinateSubscribable:(id<RACSubscribable>)subscribable {
-  return [[subscribable subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+- (id<RACSubscribable>)itemURL {
+  return [[self class] coordinateSubscribable:[self internalItemURL]];
 }
 
 - (instancetype)initByReadingItemAtURL:(NSURL *)url {

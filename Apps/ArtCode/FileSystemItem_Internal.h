@@ -19,6 +19,9 @@
 // Only called/bound/observed on fileSystemScheduler
 @property (nonatomic, strong) NSURL *itemURLBacking;
 
+// Only called / delivers on fileSystemScheduler
+- (id<RACSubscribable>)internalItemURL;
+
 // Only called on fileSystemScheduler
 - (instancetype)initByReadingItemAtURL:(NSURL *)url;
 

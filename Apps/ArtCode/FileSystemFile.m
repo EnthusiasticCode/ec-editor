@@ -59,13 +59,17 @@
 }
 
 - (id<RACSubscribable>)internalContent {
-  ASSERT_NOT_MAIN_QUEUE();
-  return self.contentEcho;
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    return self.contentEcho;
+  }];
 }
 
 - (id<RACSubscribable>)internalBindContentTo:(id<RACSubscribable>)internalContentSubscribable {
-  ASSERT_NOT_MAIN_QUEUE();
-  return [self.contentEcho echoSubscribable:internalContentSubscribable];
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    return [self.contentEcho echoSubscribable:internalContentSubscribable];
+  }];
 }
 
 - (NSMutableDictionary *)extendedAttributesBacking {
@@ -108,13 +112,17 @@
 }
 
 - (id<RACSubscribable>)internalExtendedAttributeForKey:(NSString *)key {
-  ASSERT_NOT_MAIN_QUEUE();
-  return [self extendedAttributeEchoForKey:key];
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    return [self extendedAttributeEchoForKey:key];
+  }];
 }
 
 - (id<RACSubscribable>)internalBindExtendedAttributeForKey:(NSString *)key to:(id<RACSubscribable>)internalExtendedAttributeSubscribable {
-  ASSERT_NOT_MAIN_QUEUE();
-  return [[self extendedAttributeEchoForKey:key] echoSubscribable:internalExtendedAttributeSubscribable];
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    return [[self extendedAttributeEchoForKey:key] echoSubscribable:internalExtendedAttributeSubscribable];
+  }];
 }
 
 - (id<RACSubscribable>)content {
