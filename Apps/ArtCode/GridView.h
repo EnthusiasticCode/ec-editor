@@ -38,7 +38,8 @@
 #pragma mark Managing the Delegate and the Data Source
 
 @property (nonatomic, weak) id<GridViewDataSource> dataSource;
-@property (nonatomic, weak) id<GridViewDelegate> delegate;
+// @warning: delegate is the UIScrollView delegate, so it's non-ARC assign
+@property (nonatomic, assign) id<GridViewDelegate> delegate;
 
 #pragma mark Configuring a Grid View
 

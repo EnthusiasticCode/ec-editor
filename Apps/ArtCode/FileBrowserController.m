@@ -216,7 +216,7 @@
       _selectedItems = [NSMutableArray new];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
-    NSURL *fileURL = [self.filteredItems objectAtIndex:indexPath.row];
+    NSURL *fileURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
     if ([fileURL isDirectory]) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
     }else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
