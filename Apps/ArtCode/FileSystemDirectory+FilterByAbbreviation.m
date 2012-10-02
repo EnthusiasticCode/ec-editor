@@ -11,13 +11,6 @@
 #import "FileSystemItem_Internal.h"
 #import "NSString+ScoreForAbbreviation.h"
 
-@interface NSURL (Abbreviation_Internal)
-
-- (void)setAbbreviationHitMask:(NSIndexSet *)hitMask;
-- (float)abbreviationScore;
-- (void)setAbbreviationScore:(float)score;
-
-@end
 
 @implementation FileSystemDirectory (FilterByAbbreviation)
 
@@ -42,9 +35,9 @@ static NSArray *(^_filterAndSortByAbbreviation)(RACTuple *) = ^NSArray *(RACTupl
   }] toArray] mutableCopy];
 
   // Sort the filtered content
-  [filteredContent sortUsingComparator:^NSComparisonResult(NSURL *url1, NSURL *url2) {
-    float score1 = [url1 abbreviationScore];
-    float score2 = [url2 abbreviationScore];
+  [filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+    float score1 = [[tuple1 third] floatValue];
+    float score2 = [[tuple2 third] floatValue];
     if (score1 < score2) {
       return NSOrderedAscending;
     } else if (score1 > score2) {

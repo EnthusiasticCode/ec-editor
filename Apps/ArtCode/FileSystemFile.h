@@ -16,7 +16,7 @@
 
 /// Returns a subscribable that sends the value of the extended attribute for \a key as it changes.
 /// This subscribable does not complete.
-- (id<RACSubscribable>)extendedAttributeValueForKey:(NSString *)key;
+- (id<RACSubscribable>)extendedAttributeForKey:(NSString *)key;
 
 /// Subscribes the receiver to \a contentSubscribable, updating the extended attribute as needed.
 /// The returned subscribable sends content updates triggered by other means.

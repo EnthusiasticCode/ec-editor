@@ -16,7 +16,8 @@
 // Wrap the subscribable so it's run on the fileSystemScheduler
 + (id<RACSubscribable>)coordinateSubscribable:(id<RACSubscribable>)subscribable;
 
-@property (nonatomic, strong) NSURL *internalItemURL;
+// Only called/bound/observed on fileSystemScheduler
+@property (nonatomic, strong) NSURL *itemURLBacking;
 
 // Only called on fileSystemScheduler
 - (instancetype)initByReadingItemAtURL:(NSURL *)url;

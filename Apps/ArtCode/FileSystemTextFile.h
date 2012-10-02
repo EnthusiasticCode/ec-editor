@@ -10,4 +10,7 @@
 
 @interface FileSystemTextFile : FileSystemFile
 
+- (id<RACSubscribable>)contentWithEncoding:(NSStringEncoding)encoding;
+- (id<RACSubscribable>)bindContentTo:(id<RACSubscribable>)contentSubscribable withEncoding:(NSStringEncoding)encoding;
+
 @end

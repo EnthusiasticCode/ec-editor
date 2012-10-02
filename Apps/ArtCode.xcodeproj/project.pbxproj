@@ -16,6 +16,7 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
+		5F18E23C161A0C4A005BBB84 /* RACEchoSubject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18E23B161A0C4A005BBB84 /* RACEchoSubject.m */; };
 		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
 		5F18F592161271B8005D8A4F /* FileSystemFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F591161271B8005D8A4F /* FileSystemFile.m */; };
 		5F18F595161271C6005D8A4F /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F594161271C6005D8A4F /* FileSystemDirectory.m */; };
@@ -621,6 +622,8 @@
 		5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTab.m; sourceTree = "<group>"; };
 		5F16583715B6DA7100F0DEDC /* _ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ArtCodeTabSet.h; sourceTree = "<group>"; };
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
+		5F18E23A161A0C4A005BBB84 /* RACEchoSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACEchoSubject.h; sourceTree = "<group>"; };
+		5F18E23B161A0C4A005BBB84 /* RACEchoSubject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACEchoSubject.m; sourceTree = "<group>"; };
 		5F18F58D161271A5005D8A4F /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
 		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
 		5F18F590161271B8005D8A4F /* FileSystemFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemFile.h; sourceTree = "<group>"; };
@@ -1714,6 +1717,8 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
+				5F18E23A161A0C4A005BBB84 /* RACEchoSubject.h */,
+				5F18E23B161A0C4A005BBB84 /* RACEchoSubject.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -3292,6 +3297,7 @@
 				5F18F59B1612F917005D8A4F /* FileSystemDirectory+FilterByAbbreviation.m in Sources */,
 				5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */,
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
+				5F18E23C161A0C4A005BBB84 /* RACEchoSubject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

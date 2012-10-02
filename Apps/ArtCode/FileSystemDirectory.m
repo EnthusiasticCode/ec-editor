@@ -19,7 +19,7 @@
 - (id<RACSubscribable>)internalContentWithOptions:(NSDirectoryEnumerationOptions)options {
   return [RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_NOT_MAIN_QUEUE();
-    if (!self.internalItemURL) {
+    if (!self.itemURLBacking) {
       return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
         [subscriber sendError:[[NSError alloc] init]];
         return [RACDisposable disposableWithBlock:nil];
@@ -27,7 +27,7 @@
     }
     RACReplaySubject *subject = [RACReplaySubject replaySubjectWithCapacity:1];
     NSMutableArray *content = [NSMutableArray array];
-    for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:self.internalItemURL includingPropertiesForKeys:nil options:options errorHandler:nil]) {
+    for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:self.itemURLBacking includingPropertiesForKeys:nil options:options errorHandler:nil]) {
       [content addObject:childURL];
     }
     [subject sendNext:content];

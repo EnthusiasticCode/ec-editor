@@ -52,7 +52,7 @@ static RACScheduler *_fileSystemScheduler;
   if (!url) {
     return nil;
   }
-  self.internalItemURL = url;
+  self.itemURLBacking = url;
   return self;
 }
 
