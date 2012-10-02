@@ -89,17 +89,21 @@
   
   // RAC
   __weak FileBrowserController *weakSelf = self;
+  __block RACDisposable *filteredItemsBindingDisposable = nil;
+  
   [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
     FileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
-    [[FileSystemDirectory readItemAtURL:strongSelf.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *directory) {
+    [[FileSystemDirectory readItemAtURL:url] subscribeNext:^(FileSystemDirectory *directory) {
       FileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;
       }
-      RAC(anotherStrongSelf, filteredItems) = [directory contentFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
+      // TODO: not quite sure this is needed, test it when directory auto updating is in
+//      [filteredItemsBindingDisposable dispose];
+      filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:RAC_KEYPATH(anotherStrongSelf, filteredItems) from:[directory contentFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
     }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
@@ -556,7 +560,8 @@
 - (NSArray *)_previewItems {
   if (!_previewItems) {
     _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
-    for (NSURL *fileURL in [self filteredItems]) {
+    for (RACTuple *tuple in [self filteredItems]) {
+      NSURL *fileURL = tuple.first;
       FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
       if (![CodeFileController canDisplayFileInCodeView:fileURL] && [QLPreviewController canPreviewItem:item]) {
         [_previewItems addObject:item];

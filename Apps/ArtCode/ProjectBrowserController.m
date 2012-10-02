@@ -306,18 +306,6 @@
 
 #pragma mark - Grid View Delegate
 
-- (void)gridView:(GridView *)gridView willSelectCellAtIndex:(NSInteger)cellIndex {
-  if (!self.isEditing) {
-    id element = [self.gridElements objectAtIndex:cellIndex];
-    if ([element isKindOfClass:[ArtCodeProject class]]) {
-      [(ArtCodeProject *)element setNewlyCreatedValue:NO];
-      [self.artCodeTab pushProject:element];
-    } else if ([element isKindOfClass:[DocSet class]]) {
-      [self.artCodeTab pushDocSetURL:[(DocSet *)element docSetURLForNode:nil]];
-    }
-  }
-}
-
 - (void)gridView:(GridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
 {
   if (self.isEditing) {
@@ -325,6 +313,14 @@
     [_toolItemsEditing enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger idx, BOOL *stop) {
       [(UIButton *)item.customView setEnabled:enable];
     }];
+  } else {
+    id element = [self.gridElements objectAtIndex:cellIndex];
+    if ([element isKindOfClass:[ArtCodeProject class]]) {
+      [(ArtCodeProject *)element setNewlyCreatedValue:NO];
+      [self.artCodeTab pushProject:element];
+    } else if ([element isKindOfClass:[DocSet class]]) {
+      [self.artCodeTab pushDocSetURL:[(DocSet *)element docSetURLForNode:nil]];
+    }
   }
 }
 

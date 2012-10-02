@@ -20,7 +20,7 @@
 
 @interface GridViewCell (/*Private Methods*/)
 
-- (void)_setSelected:(BOOL)selected animated:(BOOL)animated complitionHandler:(void(^)(void))completionHandler;
+- (void)_setSelected:(BOOL)selected animated:(BOOL)animated completionHandler:(void(^)(void))completionHandler;
 
 @end
 
@@ -268,7 +268,7 @@
   if (NSLocationInRange(cellIndex, _cellsLoadedRange))
   {
     GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
-    [cell _setSelected:YES animated:animated complitionHandler:^{
+    [cell _setSelected:YES animated:animated completionHandler:^{
       if (_flags.delegateHasDidSelectCellAtIndex)
         [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
     }];
@@ -303,7 +303,7 @@
   if (NSLocationInRange(cellIndex, _cellsLoadedRange))
   {
     GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
-    [cell _setSelected:NO animated:animated complitionHandler:^{
+    [cell _setSelected:NO animated:animated completionHandler:^{
       if (_flags.delegateHasDidDeselectCellAtIndex)
         [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
     }];
@@ -854,10 +854,10 @@ static void _init(GridView *self)
 
 - (void)setSelected:(BOOL)value animated:(BOOL)animated
 {
-  [self _setSelected:value animated:animated complitionHandler:nil];
+  [self _setSelected:value animated:animated completionHandler:nil];
 }
 
-- (void)_setSelected:(BOOL)value animated:(BOOL)animated complitionHandler:(void (^)(void))completionHandler
+- (void)_setSelected:(BOOL)value animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
   if (value == selected)
     return;
