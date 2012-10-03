@@ -47,9 +47,7 @@
   /// Caches path to array of directory contents.
   NSMutableDictionary *_directoryContentCache;
   
-  NSURLCredential *_loginCredential;
-  /// Indicates that a keychain password has been used for authentication. If authentication fails and _keychainUsed is YES, the login view is shown.
-  BOOL _keychainUsed;
+  NSURLAuthenticationChallenge *_authChallenge;
 }
 
 @synthesize loginLabel = _loginLabel;
@@ -106,6 +104,8 @@ static void init(RemoteBrowserController *self) {
   if (value == _remoteURL)
     return;
   
+  _remoteURL = value;
+  
   if (_connection && [value.host isEqualToString:_remoteURL.host])
   {
     // If already connected to the host, just change directory
@@ -113,14 +113,15 @@ static void init(RemoteBrowserController *self) {
   }
   else if (value != nil)
   {
-    [self _connectToURL:value];
-    [self _changeToDirectory:value.path];
+    if (self.isViewLoaded) {
+      [self _connectToURL:value];
+      [self _changeToDirectory:value.path];
+    }
   }
   else
   {
     [self _closeConnection];
   }
-  _remoteURL = value;
 }
 
 - (NSArray *)filteredItems
@@ -181,11 +182,19 @@ static void init(RemoteBrowserController *self) {
   [super viewDidUnload];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  
+  if (self.remoteURL) {
+    [self _connectToURL:self.remoteURL];
+//    [self _changeToDirectory:self.remoteURL.path];
+  }
+}
+
 - (void)viewDidDisappear:(BOOL)animated
 {
   self.remoteURL = nil;
   _directoryItems = nil;
-  _loginCredential = nil;
   [super viewDidDisappear:animated];
 }
 
@@ -266,15 +275,30 @@ static void init(RemoteBrowserController *self) {
   if(con == _connection)
     _connection = nil;
   
+  ASSERT(NO); // disconnected
+}
+
+- (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error
+{
+  NSLog(@"%@", [error localizedDescription]);
+}
+
+#pragma mark Connection Authentication
+
+- (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+  _authChallenge = challenge;
+  
+  self.loading = YES;
+  
   // Show login form to let the user log back in
   self.tableView.tableHeaderView = [[[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil] objectAtIndex:0];
   self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", self.remoteURL.host];
   [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
-  if (_keychainUsed)
-  {
-    self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.remoteURL.user];
-    self.loginAlwaysAskPassword.on = NO;
-  }
+
+  self.loginPassword.text = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.remoteURL.user];
+  self.loginAlwaysAskPassword.on = self.loginPassword.text.length == 0;
+  
   if (self.remoteURL.user)
   {
     self.loginUser.text = self.remoteURL.user;
@@ -287,53 +311,8 @@ static void init(RemoteBrowserController *self) {
   _directoryItems = nil;
   [self invalidateFilteredItems];
   [self.tableView reloadData];
-}
-
-- (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error
-{
-  NSLog(@"%@", [error localizedDescription]);
-}
-
-#pragma mark Connection Authentication
-
-- (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-  self.loading = YES;
   
-  // Check for keychain password
-  if (!_loginCredential && !_keychainUsed && self.remoteURL.user)
-  {
-    NSString *password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.remoteURL.user];
-    if (password)
-    {
-      _loginCredential = [NSURLCredential credentialWithUser:self.remoteURL.user password:password persistence:NSURLCredentialPersistenceForSession];
-      _keychainUsed = YES;
-    }
-  }
-  
-  // Login with credentials created in login view
-  if (_loginCredential)
-  {
-    [[challenge sender] useCredential:_loginCredential forAuthenticationChallenge:challenge];
-    _loginCredential = nil;
-    self.tableView.tableHeaderView = nil;
-    [self setLoginLabel:nil];
-    [self setLoginUser:nil];
-    [self setLoginPassword:nil];
-    [self setLoginAlwaysAskPassword:nil];
-    // Set directory
-    [self _changeToDirectory:self.remoteURL.path];
-    return;
-  }
-  
-  // Disable non-editing buttons, they will be re-enabled when receiving directory content
-  for (UIBarButtonItem *barItem in self.toolNormalItems)
-  {
-    [(UIButton *)barItem.customView setEnabled:NO];
-  }
-  
-  // Cancel authentication (and show login view uppon disconnection)
-  [[challenge sender] cancelAuthenticationChallenge:challenge];
+  // TODO atumatically try first attempt if password in keychain
 }
 
 //- (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -375,6 +354,11 @@ static void init(RemoteBrowserController *self) {
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error
 {
+  // Ignore on error
+  if  (error) {
+    return;
+  }
+  
   // Cache results
   if (!_directoryContentCache)
     _directoryContentCache = [NSMutableDictionary new];
@@ -404,23 +388,52 @@ static void init(RemoteBrowserController *self) {
 
 #pragma mark Connection Transcript
 
-//- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
-//{
-//    NSLog(@"transcript: %@", string);
-//}
+- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript
+{
+    NSLog(@"transcript: %@", string);
+}
 
 #pragma mark - Login Screen
 
 - (IBAction)loginAction:(id)sender
 {
+  if (!_authChallenge) {
+    ASSERT(NO);// there should be a challenge
+  }
+  
   self.loading = YES;
   if (!self.loginAlwaysAskPassword.isOn)
   {
     [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:self.remoteURL.scheme host:self.remoteURL.host port:[self.remoteURL.port integerValue]] account:self.loginUser.text];
   }
   // Create a temporary login credential and try to connect again
-  _loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
-  [self _connectToURL:self.remoteURL];
+  NSURLCredential *_loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
+  
+  // Login with credentials created in login view
+  if (_loginCredential)
+  {
+    [[_authChallenge sender] useCredential:_loginCredential forAuthenticationChallenge:_authChallenge];
+    _authChallenge = nil;
+    
+    self.tableView.tableHeaderView = nil;
+    [self setLoginLabel:nil];
+    [self setLoginUser:nil];
+    [self setLoginPassword:nil];
+    [self setLoginAlwaysAskPassword:nil];
+    // Set directory
+    [self _changeToDirectory:self.remoteURL.path];
+    return;
+  }
+  
+  // Disable non-editing buttons, they will be re-enabled when receiving directory content
+  for (UIBarButtonItem *barItem in self.toolNormalItems)
+  {
+    [(UIButton *)barItem.customView setEnabled:NO];
+  }
+  
+  // Cancel authentication (and show login view uppon disconnection)
+  [[_authChallenge sender] cancelAuthenticationChallenge:_authChallenge];
+  _authChallenge = nil;
 }
 
 #pragma mark - Action Sheed Delegate
@@ -452,7 +465,6 @@ static void init(RemoteBrowserController *self) {
 {
   ASSERT(!_connection && "This should only be called once.");
   self.loading = YES;
-  _keychainUsed = NO;
   [self _closeConnection];
   NSURLRequest *request = [NSURLRequest requestWithURL:url];
   _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
@@ -462,7 +474,7 @@ static void init(RemoteBrowserController *self) {
 
 - (void)_changeToDirectory:(NSString *)directory
 {
-  if (![_connection isConnected])
+  if (!_connection)
     return;
   self.loading = YES;
   [_connection setDelegate:self];

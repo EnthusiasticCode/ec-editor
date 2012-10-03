@@ -314,7 +314,6 @@
 		CD174BFF15D167AB00F3EAF1 /* bottomToolBar_Icon_Remotes_Selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BF715D167AB00F3EAF1 /* bottomToolBar_Icon_Remotes_Selected@2x.png */; };
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
-		CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1D6B1914F2B3B9007AC652 /* libConnection.a */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */; };
@@ -482,6 +481,7 @@
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
 		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
 		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
+		CD8F59B8161C53910080494E /* libconnectionkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8F59AF161C53820080494E /* libconnectionkit.a */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
 		CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */; };
@@ -567,20 +567,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B75F65A114D96366008B88C5;
-			remoteInfo = Connection;
-		};
-		CD1D6B1A14F2B3C0007AC652 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = B75F65A014D96366008B88C5;
-			remoteInfo = Connection;
-		};
 		CD54BDBA160608530025B7CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
@@ -601,6 +587,41 @@
 			proxyType = 2;
 			remoteGlobalIDString = 88CDF7DC15000FCF00163A9F;
 			remoteInfo = ReactiveCocoaTests;
+		};
+		CD8F59A6161C53820080494E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 79CFD12609F702BE00172CDD;
+			remoteInfo = Framework;
+		};
+		CD8F59A8161C53820080494E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 795FF4F10B0C013200EA9292;
+			remoteInfo = DropletHelper;
+		};
+		CD8F59AA161C53820080494E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7983E6D20B0C4DF000F5078E;
+			remoteInfo = DropletLauncher;
+		};
+		CD8F59AC161C53820080494E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 220AD7981509019B00748655;
+			remoteInfo = UnitTests;
+		};
+		CD8F59AE161C53820080494E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CD8AE62B1618889F0095DC1B;
+			remoteInfo = connectionkit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -954,7 +975,6 @@
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD19920914F25F390059D1E8 /* RemoteBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBrowserController.h; sourceTree = "<group>"; };
 		CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteBrowserController.m; sourceTree = "<group>"; };
-		CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Connection.xcodeproj; path = ../ThirdParty/Connection/Connection.xcodeproj; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
@@ -1159,6 +1179,7 @@
 		CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteDirectoryBrowserController.m; sourceTree = "<group>"; };
 		CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
 		CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
+		CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Connection-for-iOS.xcodeproj"; path = "../ThirdParty/Connection/Connection-for-iOS.xcodeproj"; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
 		CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Selected.png; sourceTree = "<group>"; };
@@ -1289,12 +1310,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD8F59B8161C53910080494E /* libconnectionkit.a in Frameworks */,
 				5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */,
 				5FA6148515CE814500A0932A /* libfile.a in Frameworks */,
 				CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */,
 				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
 				B72CEBEA151B43C200757F94 /* libCocoaOniguruma.a in Frameworks */,
-				CD1D6B2914F2B403007AC652 /* libConnection.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
 				B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */,
@@ -1603,10 +1624,10 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
+				CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */,
 				5F18F5F31614F833005D8A4F /* ReactiveCocoa */,
 				CD54BD8E160607F70025B7CA /* libextobjc */,
 				5FA6148415CE814500A0932A /* libfile.a */,
-				CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */,
@@ -1863,14 +1884,6 @@
 				CD174BE315D15DA500F3EAF1 /* topBarItem_Edit@2x.png */,
 			);
 			name = Items;
-			sourceTree = "<group>";
-		};
-		CD1D6B1514F2B3B9007AC652 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CD1D6B1914F2B3B9007AC652 /* libConnection.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CD2DB6051579342B009E4026 /* DocSet Browser */ = {
@@ -2411,6 +2424,18 @@
 			name = "Views and Controls";
 			sourceTree = "<group>";
 		};
+		CD8F5985161C53810080494E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CD8F59A7161C53820080494E /* Connection.framework */,
+				CD8F59A9161C53820080494E /* DropletHelper.app */,
+				CD8F59AB161C53820080494E /* DropletLauncher */,
+				CD8F59AD161C53820080494E /* UnitTests.octest */,
+				CD8F59AF161C53820080494E /* libconnectionkit.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CD9ED8DC1466BE5000A517A5 /* Accessory View */ = {
 			isa = PBXGroup;
 			children = (
@@ -2678,7 +2703,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */,
 			);
 			name = ArtCode;
 			productName = ArtCode;
@@ -2705,8 +2729,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CD1D6B1514F2B3B9007AC652 /* Products */;
-					ProjectRef = CD1D6B1414F2B3B9007AC652 /* Connection.xcodeproj */;
+					ProductGroup = CD8F5985161C53810080494E /* Products */;
+					ProjectRef = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
 				},
 				{
 					ProductGroup = CD54BD87160607B30025B7CA /* Products */;
@@ -2722,13 +2746,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		CD1D6B1914F2B3B9007AC652 /* libConnection.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libConnection.a;
-			remoteRef = CD1D6B1814F2B3B9007AC652 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CD54BDBB160608530025B7CA /* ReactiveCocoa.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -2748,6 +2765,41 @@
 			fileType = wrapper.cfbundle;
 			path = ReactiveCocoaTests.octest;
 			remoteRef = CD54BDBE160608530025B7CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD8F59A7161C53820080494E /* Connection.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Connection.framework;
+			remoteRef = CD8F59A6161C53820080494E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD8F59A9161C53820080494E /* DropletHelper.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = DropletHelper.app;
+			remoteRef = CD8F59A8161C53820080494E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD8F59AB161C53820080494E /* DropletLauncher */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = DropletLauncher;
+			remoteRef = CD8F59AA161C53820080494E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD8F59AD161C53820080494E /* UnitTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UnitTests.octest;
+			remoteRef = CD8F59AC161C53820080494E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CD8F59AF161C53820080494E /* libconnectionkit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libconnectionkit.a;
+			remoteRef = CD8F59AE161C53820080494E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -3302,14 +3354,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CD1D6B1B14F2B3C0007AC652 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Connection;
-			targetProxy = CD1D6B1A14F2B3C0007AC652 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B771012B1506E20F006AF1FB /* InfoPlist.strings */ = {
