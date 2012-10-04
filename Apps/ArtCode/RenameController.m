@@ -7,6 +7,7 @@
 //
 
 #import "RenameController.h"
+#import "UIImage+AppStyle.h"
 
 
 @implementation RenameController {
@@ -43,16 +44,20 @@
   [super viewDidLoad];
   
   // RAC
-  [self.renameTextField.rac_textSubscribable subscribeNext:^(id x) {
+  [[[self.renameTextField.rac_textSubscribable throttle:0.2] distinctUntilChanged] subscribeNext:^(NSString *x) {
+    // Update 'also rename' table
     if (_alsoRenameURLs.count > 0) {
       [self.alsoRenameTableView reloadData];
     }
+    // Update file icon
+    self.renameFileIcon.image = [UIImage styleDocumentImageWithFileExtension:x.pathExtension];
   }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   self.originalNameLabel.text = self.renameTextField.text = _fileURL.lastPathComponent;
+  self.renameFileIcon.image = [UIImage styleDocumentImageWithFileExtension:_fileURL.pathExtension];
   [self _updateAlsoRenameTableForFileWithURL:_fileURL];
 }
 
@@ -78,7 +83,7 @@
   NSString *text = [[_alsoRenameURLs objectAtIndex:indexPath.row] lastPathComponent];
   cell.textLabel.text = text;
   cell.detailTextLabel.text = [NSString stringWithFormat:L(@"Rename to: %@"), [self.renameTextField.text.stringByDeletingPathExtension stringByAppendingPathExtension:text.pathExtension]];
-  // TODO add file icon
+  cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:text.pathExtension];
   
   return cell;
 }
@@ -147,4 +152,8 @@
   [self.alsoRenameTableView reloadData];
 }
 
+- (void)viewDidUnload {
+  [self setRenameFileIcon:nil];
+  [super viewDidUnload];
+}
 @end

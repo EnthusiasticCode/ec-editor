@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *originalNameLabel;
 @property (weak, nonatomic) IBOutlet UITextField *renameTextField;
+@property (weak, nonatomic) IBOutlet UIImageView *renameFileIcon;
 @property (weak, nonatomic) IBOutlet UIView *alsoRenameView;
 @property (weak, nonatomic) IBOutlet UITableView *alsoRenameTableView;
 
