@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "TextFile.h"
+#import "FileSystemItem+ExtendedAttributes.h"
 
 static NSString * const _explicitSyntaxIdentifierKey = @"com.enthusiasticcode.artcode.TextFile.ExplicitSyntaxIdentifier";
 static NSString * const _explicitEncodingKey = @"com.enthusiasticcode.artcode.TextFile.ExplicitEncoding";
@@ -17,7 +17,7 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
 //static const char * const _explicitSyntaxXattrName = ;
 //static size_t _explicitSyntaxXattrMaxSize = 4 * 1024; // 4 kB
 
-@implementation TextFile
+@implementation FileSystemItem (TextFile)
 
 - (id<RACSubscribable>)explicitSyntaxIdentifier {
   return [self extendedAttributeForKey:_explicitSyntaxIdentifierKey];

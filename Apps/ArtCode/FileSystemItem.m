@@ -7,6 +7,7 @@
 //
 
 #import "FileSystemItem_Internal.h"
+#import "RACEchoSubject.h"
 
 static RACScheduler *_fileSystemScheduler;
 static NSMutableDictionary *_itemCache;
@@ -84,6 +85,40 @@ static NSMutableDictionary *_itemCache;
   }
   self.itemURLBacking = url;
   return self;
+}
+
+#pragma mark - Internal state backing and echoes
+
+@synthesize contentEcho = _contentEcho;
+
+- (RACEchoSubject *)contentEcho {
+  ASSERT_NOT_MAIN_QUEUE();
+  if (!_contentEcho) {
+    _contentEcho = [RACEchoSubject replaySubjectWithCapacity:1];
+    [_contentEcho sendNext:self.contentBacking];
+    RAC(self.contentBacking) = _contentEcho;
+  }
+  return _contentEcho;
+}
+
+@synthesize extendedAttributesBacking = _extendedAttributesBacking;
+
+- (NSMutableDictionary *)extendedAttributesBacking {
+  ASSERT_NOT_MAIN_QUEUE();
+  if (!_extendedAttributesBacking) {
+    _extendedAttributesBacking = [NSMutableDictionary dictionary];
+  }
+  return _extendedAttributesBacking;
+}
+
+@synthesize extendedAttributesEchoes = _extendedAttributesEchoes;
+
+- (NSMutableDictionary *)extendedAttributesEchoes {
+  ASSERT_NOT_MAIN_QUEUE();
+  if (!_extendedAttributesEchoes) {
+    _extendedAttributesEchoes = [NSMutableDictionary dictionary];
+  }
+  return _extendedAttributesEchoes;
 }
 
 @end

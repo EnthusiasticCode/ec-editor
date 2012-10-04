@@ -11,7 +11,7 @@
 #import "CodeFileController.h"
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
-#import "TextFile.h"
+#import "FileSystemItem+TextFile.h"
 
 @interface QuickFileHighlightTableController ()
 
@@ -39,7 +39,7 @@
     return nil;
   }
   __weak QuickFileHighlightTableController *weakSelf = self;
-  [RACAble(self.codeFileController.textFile) subscribeNext:^(TextFile *textFile) {
+  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemItem *textFile) {
     QuickFileHighlightTableController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;

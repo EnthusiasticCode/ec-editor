@@ -35,7 +35,7 @@
 #import "ArtCodeProject.h"
 
 #import "NSIndexSet+PersistentDataStructure.h"
-#import "TextFile.h"
+#import "FileSystemItem+TextFile.h"
 #import <file/FileMagic.h>
 
 
@@ -322,7 +322,7 @@ static void drawStencilStar(CGContextRef myContext)
 
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
-    [[TextFile readItemAtURL:url] subscribeNext:^(TextFile *textFile) {
+    [[FileSystemItem readItemAtURL:url] subscribeNext:^(FileSystemItem *textFile) {
       CodeFileController *strongSelf = weakSelf;
       if (!strongSelf) {
         return;
@@ -335,7 +335,7 @@ static void drawStencilStar(CGContextRef myContext)
   // When the text file or the code view change, bind their texts together
   [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
-    TextFile *textFile = tuple.second;
+    FileSystemItem *textFile = tuple.second;
     if (!codeView || !textFile) {
       return;
     }
@@ -343,7 +343,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, reload the code unit
-  [RACAble(self.textFile) subscribeNext:^(TextFile *textFile) {
+  [RACAble(self.textFile) subscribeNext:^(FileSystemItem *textFile) {
     if (!textFile) {
       // No file, remove the code unit
       weakSelf.codeUnit = nil;

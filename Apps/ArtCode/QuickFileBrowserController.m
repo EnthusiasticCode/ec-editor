@@ -9,7 +9,7 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import "FileSystemDirectory+FilterByAbbreviation.h"
+#import "FileSystemItem+Directory.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
@@ -58,12 +58,12 @@
     if (!strongSelf) {
       return;
     }
-    [[FileSystemDirectory readItemAtURL:projectURL] subscribeNext:^(FileSystemDirectory *directory) {
+    [[FileSystemItem readItemAtURL:projectURL] subscribeNext:^(FileSystemItem *directory) {
       QuickFileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;
       }
-      RAC(anotherStrongSelf, filteredItems) = [directory contentWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
+      RAC(anotherStrongSelf, filteredItems) = [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
     }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {

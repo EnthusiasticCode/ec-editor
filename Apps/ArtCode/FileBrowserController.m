@@ -29,7 +29,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
-#import "FileSystemDirectory+FilterByAbbreviation.h"
+#import "FileSystemItem+Directory.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
@@ -96,14 +96,14 @@
     if (!strongSelf) {
       return;
     }
-    [[FileSystemDirectory readItemAtURL:url] subscribeNext:^(FileSystemDirectory *directory) {
+    [[FileSystemItem readItemAtURL:url] subscribeNext:^(FileSystemItem *directory) {
       FileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;
       }
       // TODO: not quite sure this is needed, test it when directory auto updating is in
 //      [filteredItemsBindingDisposable dispose];
-      filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:RAC_KEYPATH(anotherStrongSelf, filteredItems) from:[directory contentFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
+      filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:RAC_KEYPATH(anotherStrongSelf, filteredItems) from:[directory childrenFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
     }];
   }];
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {

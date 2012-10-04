@@ -15,8 +15,6 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProjectSet.h"
 
-#import "TextFile.h"
-
 
 @interface ArtCodeProjectBookmark ()
 
