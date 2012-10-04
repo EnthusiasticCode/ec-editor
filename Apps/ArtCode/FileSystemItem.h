@@ -26,6 +26,9 @@
 /// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver, then completes
 - (id<RACSubscribable>)itemType;
 
+/// Attempts to save the receiver to disk, within a certain time, then sends error or completed to the returned subscribable
+- (id<RACSubscribable>)save;
+
 /// Attempts to delete the receiver, then sends error or completed to the returned subscribable.
 - (id<RACSubscribable>)delete;
 

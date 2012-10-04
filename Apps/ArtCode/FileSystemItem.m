@@ -48,12 +48,17 @@ static NSMutableDictionary *_itemCache;
 }
 
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
+  if (!url) {
+    return [RACSubscribable error:[[NSError alloc] init]];
+  }
   return [self coordinateSubscribable:[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
     ASSERT_NOT_MAIN_QUEUE();
     FileSystemItem *item = [_itemCache objectForKey:url];
     if (!item) {
       item = [[self alloc] initByReadingItemAtURL:url];
-      [self cacheItem:item];
+      if (item) {
+        [self cacheItem:item];
+      }
     }
     if (!item) {
       [subscriber sendError:[[NSError alloc] init]];
@@ -75,15 +80,19 @@ static NSMutableDictionary *_itemCache;
 }
 
 - (instancetype)initByReadingItemAtURL:(NSURL *)url {
+  ASSERT(url);
   ASSERT_NOT_MAIN_QUEUE();
   self = [super init];
   if (!self) {
     return nil;
   }
-  if (!url) {
+  self.itemURLBacking = url;
+  NSString *itemType = nil;
+  [url getResourceValue:&itemType forKey:NSURLFileResourceTypeKey error:NULL];
+  if (!itemType) {
     return nil;
   }
-  self.itemURLBacking = url;
+  self.itemTypeBacking = itemType;
   return self;
 }
 

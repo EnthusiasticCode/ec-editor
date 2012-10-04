@@ -23,7 +23,4 @@
 - (id<RACSubscribable>)bindContentWithDefaultEncodingTo:(id<RACSubscribable>)contentSubscribable;
 - (id<RACSubscribable>)bindContentWithEncoding:(NSStringEncoding)encoding to:(id<RACSubscribable>)contentSubscribable;
 
-/// Attempts to save the receiver to disk, within a certain time, then sends error or completed to the returned subscribable
-- (id<RACSubscribable>)save;
-
 @end
