@@ -29,6 +29,7 @@
     return;
   
   _currentFolderURL = currentFolderURL;
+  self.navigationItem.title = currentFolderURL.lastPathComponent;
   _currentFolderSubfolders = nil;
   [self.tableView reloadData];
 }
