@@ -9,8 +9,16 @@
 #import "FileSystemItem_Internal.h"
 
 static RACScheduler *_fileSystemScheduler;
+static NSMutableDictionary *_itemCache;
 
 @implementation FileSystemItem
+
++ (void)initialize {
+  if (self != [FileSystemItem class]) {
+    return;
+  }
+  _itemCache = [NSMutableDictionary dictionary];
+}
 
 + (RACScheduler *)fileSystemScheduler {
   static dispatch_once_t onceToken;
@@ -27,17 +35,33 @@ static RACScheduler *_fileSystemScheduler;
   return [[subscribable subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
++ (instancetype)cachedItemWithURL:(NSURL *)url {
+  ASSERT_NOT_MAIN_QUEUE();
+  return [_itemCache objectForKey:url];
+}
+
++ (void)cacheItem:(FileSystemItem *)item {
+  ASSERT_NOT_MAIN_QUEUE();
+  ASSERT(![_itemCache objectForKey:item.itemURLBacking]);
+  [_itemCache setObject:item forKey:item.itemURLBacking];
+}
+
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
   return [self coordinateSubscribable:[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
     ASSERT_NOT_MAIN_QUEUE();
-    FileSystemItem *item = [[self alloc] initByReadingItemAtURL:url];
-    if (item) {
-      [subscriber sendNext:item];
-      [subscriber sendCompleted];
-    } else {
-      [subscriber sendError:[[NSError alloc] init]];
+    FileSystemItem *item = [_itemCache objectForKey:url];
+    if (!item) {
+      item = [[self alloc] initByReadingItemAtURL:url];
+      [self cacheItem:item];
     }
-    return [RACDisposable disposableWithBlock:nil];
+    if (!item) {
+      [subscriber sendError:[[NSError alloc] init]];
+      return nil;
+    }
+    ASSERT([item.itemURLBacking isEqual:url]);
+    [subscriber sendNext:item];
+    [subscriber sendCompleted];
+    return nil;
   }]];
 }
 

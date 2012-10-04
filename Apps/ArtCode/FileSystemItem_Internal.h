@@ -16,6 +16,12 @@
 // Wrap the subscribable so it's run on the fileSystemScheduler
 + (id<RACSubscribable>)coordinateSubscribable:(id<RACSubscribable>)subscribable;
 
+// Returns the item with the given url if it's cached. Used to guarantee uniquing of items
++ (instancetype)cachedItemWithURL:(NSURL *)url;
+
+// Adds \a item to the cache. Cannot be called with items already in the cache.
++ (void)cacheItem:(FileSystemItem *)item;
+
 // Only called/bound/observed on fileSystemScheduler
 @property (nonatomic, strong) NSURL *itemURLBacking;
 
