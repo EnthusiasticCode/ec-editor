@@ -34,8 +34,8 @@
 
 #pragma mark - View lifecycle
 
-- (id)initWithStyle:(UITableViewStyle)style {
-  self = [super initWithStyle:style];
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
   if (!self) {
     return nil;
   }
