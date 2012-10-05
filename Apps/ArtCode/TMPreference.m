@@ -18,6 +18,9 @@ NSString * const TMPreferenceSymbolTransformationKey = @"symbolTransformation";
 NSString * const TMPreferenceSymbolIconKey = @"symbolIcon";
 NSString * const TMPreferenceSymbolIsSeparatorKey = @"symbolIsSeparator";
 NSString * const TMPreferenceSmartTypingPairsKey = @"smartTypingPairs";
+NSString * const TMPreferenceIncreaseIndentKey = @"increaseIndentPattern";
+NSString * const TMPreferenceDecreaseIndentKey = @"decreaseIndentPattern";
+NSString * const TMPreferenceIndentNextLineKey = @"indentNextLinePattern";
 
 /// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
@@ -25,12 +28,6 @@ static TMPreference *systemGlobalPreferences;
 static NSMutableDictionary *scopeToPreferenceCache;
 static NSMutableDictionary *symbolIconsCache;
 
-@interface TMPreference ()
-
-- (void)_addSettingsDictionary:(NSDictionary *)settingsDictionary;
-- (NSString*(^)(NSString *))_createBlockForSymbolTransformation:(NSString *)transformation;
-
-@end
 
 @interface TMPreferenceSymbolTransformation : NSObject {
 @public
@@ -240,6 +237,17 @@ static NSMutableDictionary *symbolIconsCache;
       }
       [_settings setObject:pairs forKey:TMPreferenceSmartTypingPairsKey];
     }
+    
+    // Indentation
+    else if ([settingName isEqualToString:TMPreferenceIncreaseIndentKey]) {
+      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceIncreaseIndentKey];
+    }
+    else if ([settingName isEqualToString:TMPreferenceDecreaseIndentKey]) {
+      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceDecreaseIndentKey];
+    }
+    else if ([settingName isEqualToString:TMPreferenceIndentNextLineKey]) {
+      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceIndentNextLineKey];
+    }
   }];
 }
 
@@ -267,6 +275,14 @@ static NSMutableDictionary *symbolIconsCache;
         [t->regExp sub:result string:t->templateString];
     }
     return result;
+  } copy];
+}
+
+- (bool(^)(NSString*))_createBlockForIndentPattern:(NSString *)pattern {
+  OnigRegexp *patternRegexp = [OnigRegexp compile:pattern];
+  return [^bool(NSString *line) {
+    // TODO use a direct boolean method?
+    return [[patternRegexp match:line] count] > 0;
   } copy];
 }
 

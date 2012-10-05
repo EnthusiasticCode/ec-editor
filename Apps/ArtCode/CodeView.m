@@ -766,30 +766,8 @@ static void init(CodeView *self)
   if (_flags.delegateHasReplaceInsertedTextSelectionAfterInsertion)
     insertString = [self.delegate codeView:self replaceInsertedText:string selectionAfterInsertion:&selectionAfterInsertion];
   
+  // TODO move pairing match in delegate call
   if (insertString == nil) {
-//    insertString = string;
-//    if ([string length] == 1)
-//    {
-//      unichar ch = [string characterAtIndex:0];
-//      switch (ch) {
-//          //                case NSLeftArrowFunctionKey:
-//          //                    [self _moveInDirection:UITextLayoutDirectionLeft];
-//          //                    return;
-//          //                case NSRightArrowFunctionKey:
-//          //                    [self _moveInDirection:UITextLayoutDirectionRight];
-//          //                    return;
-//          //                case NSUpArrowFunctionKey:
-//          //                    [self _moveInDirection:UITextLayoutDirectionUp];
-//          //                    return;
-//          //                case NSDownArrowFunctionKey:
-//          //                    [self _moveInDirection:UITextLayoutDirectionDown];
-//          //                    return;
-//        case 0x20: // Space
-//        {
-//          break;
-//        }
-//      }
-//    }
     // Smart string pairing
     if (_pairingStringDictionary.count) {
       if (selection.length > 0

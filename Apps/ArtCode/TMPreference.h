@@ -19,6 +19,10 @@ extern NSString * const TMPreferenceSymbolIconKey;
 extern NSString * const TMPreferenceSymbolIsSeparatorKey;
 /// Returns an NSDictionary of string to pair string.
 extern NSString * const TMPreferenceSmartTypingPairsKey;
+/// Returns a blok (NSString * -> bool) that returns if the line should increment the indetation
+extern NSString * const TMPreferenceIncreaseIndentKey;
+extern NSString * const TMPreferenceDecreaseIndentKey;
+extern NSString * const TMPreferenceIndentNextLineKey;
 
 
 /// Load and present all the preferences of a textmate bundle. 
