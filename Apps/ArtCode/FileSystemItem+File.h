@@ -7,20 +7,17 @@
 //
 
 #import "FileSystemItem.h"
+@class RACPropertySyncSubject;
 
 @interface FileSystemItem (File)
 
-/// Returns a subscribable that sends the content of the item as it changes.
-/// This subscribable does not complete.
-- (id<RACSubscribable>)content;
+/// Returns a RACPropertySyncSubject for NSData properties
+- (RACPropertySyncSubject *)content;
 
-/// Subscribes the receiver to \a contentSubscribable, updating it's content as needed.
-/// The returned subscribable sends content updates triggered by other means.
-- (id<RACSubscribable>)bindContentTo:(id<RACSubscribable>)contentSubscribable;
+/// Returns a RACPropertySyncSubject for NSString properties with the default encoding
+- (RACPropertySyncSubject *)contentWithDefaultEncoding;
 
-- (id<RACSubscribable>)contentWithDefaultEncoding;
-- (id<RACSubscribable>)contentWithEncoding:(NSStringEncoding)encoding;
-- (id<RACSubscribable>)bindContentWithDefaultEncodingTo:(id<RACSubscribable>)contentSubscribable;
-- (id<RACSubscribable>)bindContentWithEncoding:(NSStringEncoding)encoding to:(id<RACSubscribable>)contentSubscribable;
+/// Returns a RACPropertySyncSubject for NSString properties with the given encoding
+- (RACPropertySyncSubject *)contentWithEncoding:(NSStringEncoding)encoding;
 
 @end

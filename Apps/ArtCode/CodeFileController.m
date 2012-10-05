@@ -37,6 +37,7 @@
 #import "NSIndexSet+PersistentDataStructure.h"
 #import "FileSystemItem+TextFile.h"
 #import <file/FileMagic.h>
+#import "RACPropertySyncSubject.h"
 
 
 @interface CodeFileController ()
@@ -328,7 +329,7 @@ static void drawStencilStar(CGContextRef myContext)
         return;
       }
       strongSelf.textFile = textFile;
-      RAC(strongSelf, bookmarks) = textFile.bookmarks;
+      [textFile.bookmarks syncProperty:RAC_KEYPATH(strongSelf, bookmarks) ofObject:strongSelf];
     }];
   }];
   
@@ -339,7 +340,7 @@ static void drawStencilStar(CGContextRef myContext)
     if (!codeView || !textFile) {
       return;
     }
-    RAC(codeView, text) = [textFile bindContentTo:RACAble(codeView, text)];
+    [textFile.contentWithDefaultEncoding syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
   }];
   
   // When the text file changes, reload the code unit
@@ -356,7 +357,7 @@ static void drawStencilStar(CGContextRef myContext)
         return;
       }
       [[textFile explicitSyntaxIdentifier] subscribeNext:^(NSString *explicitSyntaxIdentifier) {
-        [[[textFile content] take:1] subscribeNext:^(NSString *content) {
+        [[[textFile contentWithDefaultEncoding] take:1] subscribeNext:^(NSString *content) {
           CodeFileController *strongSelf = weakSelf;
           if (!strongSelf) {
             return;
@@ -405,7 +406,7 @@ static void drawStencilStar(CGContextRef myContext)
               }];
               
               // subscribe to the text file's content to reparse
-              [[textFile.content deliverOn:anotherStrongSelf->_codeScheduler] subscribeNext:^(NSString *changedContent) {
+              [[textFile.contentWithDefaultEncoding deliverOn:anotherStrongSelf->_codeScheduler] subscribeNext:^(NSString *changedContent) {
                 [codeUnit reparseWithUnsavedContent:changedContent];
               }];
             }];

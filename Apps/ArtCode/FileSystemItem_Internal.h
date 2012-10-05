@@ -7,7 +7,7 @@
 //
 
 #import "FileSystemItem.h"
-@class RACEchoSubject;
+@class RACPropertySyncSubject;
 
 @interface FileSystemItem ()
 
@@ -43,17 +43,19 @@
 // Only called/bound/observed on fileSystemScheduler
 @property (nonatomic, strong) NSString *itemTypeBacking;
 
+// RACPropertySyncSubject for NSData content
+@property (nonatomic, strong) RACPropertySyncSubject *contentSubject;
+
+// Cache of RACPropertySyncSubjects for NSString contents
+@property (nonatomic, strong, readonly) NSMutableDictionary *contentSubjects;
+
 // Only called/bound/observed on fileSystemScheduler
 @property (nonatomic, strong) NSData *contentBacking;
 
-// Only called/subscribed/delivers on fileSystemScheduler
-@property (nonatomic, strong, readonly) RACEchoSubject *contentEcho;
+// Cache of RACPropertySyncSubjects for extended attributes
+@property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributeSubjects;
 
 // Only called/bound/observed on fileSystemScheduler
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
-
-// Only called/bound/observed on fileSystemScheduler
-// Contained subjects: only called/subscribed/delivers on fileSystemScheduler
-@property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesEchoes;
 
 @end

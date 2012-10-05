@@ -7,17 +7,15 @@
 //
 
 #import "FileSystemItem+File.h"
+@class RACPropertySyncSubject;
 
 
 @interface FileSystemItem (TextFile)
 
-- (id<RACSubscribable>)explicitSyntaxIdentifier;
-- (id<RACSubscribable>)bindExplicitSyntaxIdentifierTo:(id<RACSubscribable>)explicitSyntaxIdentifierSubscribable;
+- (RACPropertySyncSubject *)explicitSyntaxIdentifier;
 
-- (id<RACSubscribable>)explicitEncoding;
-- (id<RACSubscribable>)bindExplicitEncodingTo:(id<RACSubscribable>)explicitEncodingSubscribable;
+- (RACPropertySyncSubject *)explicitEncoding;
 
-- (id<RACSubscribable>)bookmarks;
-- (id<RACSubscribable>)bindBookmarksTo:(id<RACSubscribable>)bookmarksSubscribable;
+- (RACPropertySyncSubject *)bookmarks;
 
 @end

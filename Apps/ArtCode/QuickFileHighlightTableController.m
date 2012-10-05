@@ -12,6 +12,7 @@
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
 #import "FileSystemItem+TextFile.h"
+#import "RACPropertySyncSubject.h"
 
 @interface QuickFileHighlightTableController ()
 
@@ -44,8 +45,7 @@
     if (!strongSelf) {
       return;
     }
-    RAC(strongSelf, currentSyntaxName) = textFile.explicitSyntaxIdentifier;
-    [textFile bindExplicitSyntaxIdentifierTo:RACAble(strongSelf, currentSyntaxName)];
+    [textFile.explicitSyntaxIdentifier syncProperty:RAC_KEYPATH(strongSelf, currentSyntaxName) ofObject:strongSelf];
   }];
   [RACAble(self.currentSyntaxName) subscribeNext:^(id x) {
     QuickFileHighlightTableController *strongSelf = weakSelf;

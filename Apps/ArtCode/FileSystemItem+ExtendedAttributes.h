@@ -7,15 +7,11 @@
 //
 
 #import "FileSystemItem.h"
+@class RACPropertySyncSubject;
 
 @interface FileSystemItem (ExtendedAttributes)
 
-/// Returns a subscribable that sends the value of the extended attribute for \a key as it changes.
-/// This subscribable does not complete.
-- (id<RACSubscribable>)extendedAttributeForKey:(NSString *)key;
-
-/// Subscribes the receiver to \a contentSubscribable, updating the extended attribute as needed.
-/// The returned subscribable sends content updates triggered by other means.
-- (id<RACSubscribable>)bindExtendedAttributeForKey:(NSString *)key to:(id<RACSubscribable>)extendedAttributeSubscribable;
+/// Returns a RACPropertySyncSubject for the extended attribute identified by the given key
+- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key;
 
 @end

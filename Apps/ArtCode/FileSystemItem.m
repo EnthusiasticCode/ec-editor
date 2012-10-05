@@ -7,7 +7,7 @@
 //
 
 #import "FileSystemItem_Internal.h"
-#import "RACEchoSubject.h"
+#import "RACPropertySyncSubject.h"
 
 static RACScheduler *_fileSystemScheduler;
 static NSMutableDictionary *_itemCache;
@@ -98,16 +98,22 @@ static NSMutableDictionary *_itemCache;
 
 #pragma mark - Internal state backing and echoes
 
-@synthesize contentEcho = _contentEcho;
+@synthesize contentSubjects = _contentSubjects;
 
-- (RACEchoSubject *)contentEcho {
-  ASSERT_NOT_MAIN_QUEUE();
-  if (!_contentEcho) {
-    _contentEcho = [RACEchoSubject replaySubjectWithCapacity:1];
-    [_contentEcho sendNext:self.contentBacking];
-    RAC(self.contentBacking) = _contentEcho;
+- (NSMutableDictionary *)contentSubjects {
+  if (!_contentSubjects) {
+    _contentSubjects = [NSMutableDictionary dictionary];
   }
-  return _contentEcho;
+  return _contentSubjects;
+}
+
+@synthesize extendedAttributeSubjects = _extendedAttributeSubjects;
+
+- (NSMutableDictionary *)extendedAttributeSubjects {
+  if (!_extendedAttributeSubjects) {
+    _extendedAttributeSubjects = [NSMutableDictionary dictionary];
+  }
+  return _extendedAttributeSubjects;
 }
 
 @synthesize extendedAttributesBacking = _extendedAttributesBacking;
@@ -118,16 +124,6 @@ static NSMutableDictionary *_itemCache;
     _extendedAttributesBacking = [NSMutableDictionary dictionary];
   }
   return _extendedAttributesBacking;
-}
-
-@synthesize extendedAttributesEchoes = _extendedAttributesEchoes;
-
-- (NSMutableDictionary *)extendedAttributesEchoes {
-  ASSERT_NOT_MAIN_QUEUE();
-  if (!_extendedAttributesEchoes) {
-    _extendedAttributesEchoes = [NSMutableDictionary dictionary];
-  }
-  return _extendedAttributesEchoes;
 }
 
 @end

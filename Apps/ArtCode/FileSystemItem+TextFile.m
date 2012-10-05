@@ -19,28 +19,16 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
 
 @implementation FileSystemItem (TextFile)
 
-- (id<RACSubscribable>)explicitSyntaxIdentifier {
+- (RACPropertySyncSubject *)explicitSyntaxIdentifier {
   return [self extendedAttributeForKey:_explicitSyntaxIdentifierKey];
 }
 
-- (id<RACSubscribable>)bindExplicitSyntaxIdentifierTo:(id<RACSubscribable>)explicitSyntaxIdentifierSubscribable {
-  return [self bindExtendedAttributeForKey:_explicitSyntaxIdentifierKey to:explicitSyntaxIdentifierSubscribable];
-}
-
-- (id<RACSubscribable>)explicitEncoding {
+- (RACPropertySyncSubject *)explicitEncoding {
   return [self extendedAttributeForKey:_explicitEncodingKey];
 }
 
-- (id<RACSubscribable>)bindExplicitEncodingTo:(id<RACSubscribable>)explicitEncodingSubscribable {
-  return [self bindExtendedAttributeForKey:_explicitEncodingKey to:explicitEncodingSubscribable];
-}
-
-- (id<RACSubscribable>)bookmarks {
+- (RACPropertySyncSubject *)bookmarks {
   return [self extendedAttributeForKey:_bookmarksKey];
-}
-
-- (id<RACSubscribable>)bindBookmarksTo:(id<RACSubscribable>)bookmarksSubscribable {
-  return [self bindExtendedAttributeForKey:_bookmarksKey to:bookmarksSubscribable];
 }
 
 //- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {
