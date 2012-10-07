@@ -49,6 +49,8 @@
   _connection = connection;
   self.remotePath = remotePath ?: @"/";
   
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)];
+  
   // RAC
   __weak RemoteFileListController *this = self;
   
@@ -66,10 +68,12 @@
   }];
   
   // Connected refresh reaction
-  [[RACAble(self.connection.connected) where:^BOOL(id x) {
-    return [x boolValue];
-  }] subscribeNext:^(id x) {
-    [this.connection directoryContentsForPath:this.remotePath];
+  [RACAble(self.connection.connected) subscribeNext:^(id x) {
+    if ([x boolValue]) {
+      [this.connection directoryContentsForPath:this.remotePath];
+    } else {
+      this.showLogin = YES;
+    }
   }];
   
   // Login reaction
@@ -242,6 +246,10 @@
   } else {
     [self.loadingView removeFromSuperview];
   }
+}
+
+- (void)dismiss {
+  [self.remoteNavigationController dismiss];
 }
 
 @end

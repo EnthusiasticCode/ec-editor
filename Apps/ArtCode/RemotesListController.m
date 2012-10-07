@@ -138,7 +138,9 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  RemoteNavigationController *remoteNavigationController = [[RemoteNavigationController alloc] initWithArtCodeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
+  RemoteNavigationController *remoteNavigationController = [[RemoteNavigationController alloc] initWithArtCodeRemote:[self.filteredItems objectAtIndex:indexPath.row] dismissBlock:^(RemoteNavigationController *sender) {
+    [self dismissModalViewControllerAnimated:YES];
+  }];
   remoteNavigationController.artCodeTab = self.artCodeTab;
   [self presentModalViewController:remoteNavigationController animated:YES];
   

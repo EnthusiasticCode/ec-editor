@@ -20,6 +20,7 @@
   RACAsyncSubject *_connectedSubject;
   RACSubject *_transcriptSubject;
   RACSubject *_directoryContentsSubject;
+  RACReplaySubject *_connectionStatusSubject;
 }
 
 + (ReactiveConnection *)reactiveConnectionWithURL:(NSURL *)url {
@@ -38,11 +39,40 @@
 }
 
 - (void)dealloc {
+  [_connection setDelegate:nil];
   [_connection disconnect];
+}
+
+#pragma mark - Properties
+
+- (void)setConnected:(BOOL)connected {
+  if (connected == _connected) {
+    return;
+  }
+  
+  _connected = connected;
+  
+  if (connected) {
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusConnected)];
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
+  } else {
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusDisconnected)];
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusUnavailable)];
+  }
+}
+
+#pragma mark - Public Methods
+
+- (RACSubscribable *)connectionStatus {
+  if (!_connectionStatusSubject) {
+    _connectionStatusSubject = [RACReplaySubject replaySubjectWithCapacity:1];
+  }
+  return _connectionStatusSubject;
 }
 
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
   if (!_connectedSubject) {
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
     _connectCredentials = credentials;
     _connectedSubject = [RACAsyncSubject subject];
     [_connection connect];
@@ -61,6 +91,7 @@
   if (!_directoryContentsSubject) {
     _directoryContentsSubject = [RACSubject subject];
   }
+  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
   [_connection changeToDirectory:path];
   [_connection directoryContents];
   return _directoryContentsSubject;
@@ -71,11 +102,13 @@
 - (void)connection:(id <CKPublishingConnection>)con didConnectToHost:(NSString *)host error:(NSError *)error {
   if (error) {
     [_connectedSubject sendError:error];
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusUnavailable)];
   } else {
     [_connectedSubject sendNext:@YES];
     [_connectedSubject sendCompleted];
+    self.connected = YES;
   }
-  self.connected = YES;
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didDisconnectFromHost:(NSString *)host {
@@ -88,6 +121,8 @@
 - (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error {
   // TODO manage error
   NSLog(@"%@", [error localizedDescription]);
+  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
+  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusUnavailable)];
 }
 
 #pragma mark Connection Authentication
@@ -109,13 +144,16 @@
 
 #pragma mark Connection Directory Management
 
-- (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error {
-
-}
+//- (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error {
+//
+//}
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error {
   if (!error) {
     [_directoryContentsSubject sendNext:[RACTuple tupleWithObjects:dirPath, contents, nil]];
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
+  } else {
+    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
   }
 }
 
