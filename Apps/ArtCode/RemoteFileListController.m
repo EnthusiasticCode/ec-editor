@@ -9,6 +9,7 @@
 #import "RemoteFileListController.h"
 
 #import "ArtCodeRemote.h"
+#import "ReactiveConnection.h"
 #import <Connection/CKConnectionRegistry.h>
 #import "NSArray+ScoreForAbbreviation.h"
 #import "Keychain.h"
@@ -17,29 +18,68 @@
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
 
+@interface RemoteFileListController ()
+@property (nonatomic, strong) ReactiveConnection *connection;
+@property (nonatomic, strong) NSURLCredential *authenticationCredentials;
+@property (nonatomic, strong) NSString *remotePath;
+@property (nonatomic, strong) NSArray *directoryContent;
+@property (nonatomic) BOOL showLogin;
+@end
+
 
 @implementation RemoteFileListController {
   ArtCodeRemote *_remote;
-  id<CKConnection> _connection;
-  NSString *_remotePath;
   
   BOOL _keychianAttemptUsed;
   NSURLAuthenticationChallenge *_authenticationChallenge;
   
-  NSArray *_directoryContent;
   NSArray *_filteredItems;
   NSArray *_filteredItemsHitMasks;
 
   NSMutableArray *_selectedItems;
 }
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote connection:(id<CKConnection>)connection path:(NSString *)remotePath {
+- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote connection:(ReactiveConnection *)connection path:(NSString *)remotePath {
   self = [super init];
   if (!self)
     return nil;
+  ASSERT(remote && connection);
   _remote = remote;
   _connection = connection;
-  _remotePath = remotePath;
+  self.remotePath = remotePath ?: @"/";
+  
+  // RAC
+  __weak RemoteFileListController *this = self;
+  
+  // Directory content update reaction
+  RAC(self.directoryContent) = [[[self.connection directoryContentsForPath:self.remotePath]
+                                 where:^BOOL(RACTuple *pathAndContent) {
+                                   return [this.remotePath isEqualToString:pathAndContent.first];
+                                 }]
+                                select:^id(RACTuple *pathAndContent) {
+                                  return pathAndContent.second;
+                                }];
+  
+  [RACAble(self.directoryContent) subscribeNext:^(id x) {
+    [this invalidateFilteredItems];
+  }];
+  
+  // Connected refresh reaction
+  [[RACAble(self.connection.connected) where:^BOOL(id x) {
+    return [x boolValue];
+  }] subscribeNext:^(id x) {
+    [this.connection directoryContentsForPath:this.remotePath];
+  }];
+  
+  // Login reaction
+  [RACAble(self.authenticationCredentials) subscribeNext:^(NSURLCredential *credentials) {
+    [[[this.connection connectWithCredentials:credentials]
+      select:^id(NSNumber *x) {
+        return @(![x boolValue]);
+      }]
+     toProperty:RAC_KEYPATH(this, showLogin) onObject:this];
+  }];
+  
   return self;
 }
 
@@ -56,20 +96,16 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   self.searchBar.placeholder = @"Filter files in this remote folder";
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-  [super viewWillAppear:animated];
-  [self _connectToURL:_remote.url];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-  if (_authenticationChallenge) {
-    [[_authenticationChallenge sender] cancelAuthenticationChallenge:_authenticationChallenge];
-    _authenticationChallenge = nil;
-    _connection = nil;
+  
+  // Connect immediatly if we have a stored keychain password for the remote
+  if (!self.connection.isConnected) {
+    NSString *password;
+    if (_remote.scheme && _remote.host && (password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:_remote.user])) {
+      self.authenticationCredentials = [NSURLCredential credentialWithUser:_remote.user password:password persistence:NSURLCredentialPersistenceForSession];
+    } else {
+      self.showLogin = YES;
+    }
   }
-  [super viewWillDisappear:animated];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -104,111 +140,6 @@
   _filteredItems = nil;
   _filteredItemsHitMasks = nil;
   [self didChangeValueForKey:@"filteredItems"];
-}
-
-#pragma mark - Connection delegate
-
-- (void)connection:(id <CKPublishingConnection>)con didConnectToHost:(NSString *)host error:(NSError *)error {
-  [self _connectionSuccessfull];
-}
-
-- (void)connection:(id <CKPublishingConnection>)con didDisconnectFromHost:(NSString *)host {
-  self.loading = NO;
-  
-  if(con == _connection) {
-    _connection = nil;
-    _keychianAttemptUsed = NO;
-  }
-  
-  // TODO!!! send disconnect message
-}
-
-- (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error {
-  // TODO manage error
-  NSLog(@"%@", [error localizedDescription]);
-}
-
-#pragma mark Connection Authentication
-
-- (void)connection:(id <CKPublishingConnection>)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-  [self setLoading:YES];
-  
-  // Check if we can login out of keychain informations
-  if (!_keychianAttemptUsed) {
-    _keychianAttemptUsed = YES;
-    NSString *password = nil;
-    if (_remote.scheme && _remote.host && (password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:_remote.user])) {
-      // TODO also come here if there is no user/password
-      NSURLCredential *loginCredential = [NSURLCredential credentialWithUser:_remote.user password:password persistence:NSURLCredentialPersistenceForSession];
-      [[challenge sender] useCredential:loginCredential forAuthenticationChallenge:challenge];
-      return;
-    }
-  }
-  
-  // Set the authentication challenge to respond to
-  _authenticationChallenge = challenge;
-  
-  // Show login form to let the user log back in
-  [self.view addSubview:self.loginView];
-  self.loginView.frame = self.view.bounds;
-  self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", _remote.host];
-  if (_remote.user) {
-    self.loginUser.text = _remote.user;
-    [self.loginPassword becomeFirstResponder];
-  } else {
-    [self.loginUser becomeFirstResponder];
-  }
-}
-
-//- (void)connection:(id <CKPublishingConnection>)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-//{
-//}
-
-- (NSString *)connection:(id <CKConnection>)con passphraseForHost:(NSString *)host username:(NSString *)username publicKeyPath:(NSString *)publicKeyPath
-{
-  // For SFTP passphrase support
-  return nil;
-}
-
-#pragma mark Connection Directory Management
-
-- (void)connection:(id <CKPublishingConnection>)con didChangeToDirectory:(NSString *)dirPath error:(NSError *)error {
-  [con directoryContents];
-}
-
-- (void)connection:(id <CKPublishingConnection>)con didReceiveContents:(NSArray *)contents ofDirectory:(NSString *)dirPath error:(NSError *)error {
-  [self setLoading:NO];
-  
-  // Cache results
-  _directoryContent = contents;
-  [self invalidateFilteredItems];
-  
-  // Enable non-editing buttons
-  for (UIBarButtonItem *barItem in self.toolNormalItems)
-  {
-    [(UIButton *)barItem.customView setEnabled:YES];
-  }
-}
-
-//- (void)connection:(id <CKPublishingConnection>)con didCreateDirectory:(NSString *)dirPath error:(NSError *)error
-//{
-//
-//}
-//
-//- (void)connection:(id <CKConnection>)con didRename:(NSString *)fromPath to:(NSString *)toPath error:(NSError *)error
-//{
-//
-//}
-//
-//- (void)connection:(id <CKConnection>)con didSetPermissionsForFile:(NSString *)path error:(NSError *)error
-//{
-//
-//}
-
-#pragma mark Connection Transcript
-
-- (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript {
-  NSLog(@"transcript: %@", string);
 }
 
 #pragma mark - Table view data source
@@ -264,20 +195,37 @@
 #pragma mark - Public Methods
 
 - (IBAction)loginAction:(id)sender {
-  self.loading = YES;
-  if (!self.loginAlwaysAskPassword.isOn)
-  {
+//  self.loading = YES;
+  if (!self.loginAlwaysAskPassword.isOn) {
     [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:self.loginUser.text];
   }
   // Create a temporary login credential and try to connect again
-  NSURLCredential *loginCredential = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
-  [[_authenticationChallenge sender] useCredential:loginCredential forAuthenticationChallenge:_authenticationChallenge];
-  _authenticationChallenge = nil;
-  // Refresh UI
-  [self.loginView removeFromSuperview];
+  self.authenticationCredentials = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
 }
 
 #pragma mark - Private Methods
+
+- (void)setShowLogin:(BOOL)showLogin {
+  if (_showLogin == showLogin) {
+    return;
+  }
+  
+  _showLogin = showLogin;
+  
+  if (showLogin) {
+    [self.view addSubview:self.loginView];
+    self.loginView.frame = self.view.bounds;
+    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", _remote.host];
+    if (_remote.user) {
+      self.loginUser.text = _remote.user;
+      [self.loginPassword becomeFirstResponder];
+    } else {
+      [self.loginUser becomeFirstResponder];
+    }
+  } else {
+    [self.loginView removeFromSuperview];
+  }
+}
 
 - (void)setLoading:(BOOL)loading {
   if (loading) {
@@ -287,40 +235,6 @@
   } else {
     [self.loadingView removeFromSuperview];
   }
-}
-
-- (void)_connectToURL:(NSURL *)url {
-  // If already connected, return
-  if (_connection) {
-    return;
-  }
-  
-  // Start connection procedure
-  [self setLoading:YES];
-  _keychianAttemptUsed = NO;
-  NSURLRequest *request = [NSURLRequest requestWithURL:url];
-  _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:request];
-  [_connection setDelegate:self];
-  [_connection connect];
-}
-
-/// This methos setup the connection to the underlying navigation controller and pushes the brwser controller
-- (void)_connectionSuccessfull {
-  ASSERT(_connection);
-  [self setLoading:NO];
-  self.remoteNavigationController.connection = _connection;
-  [self _listContentOfDirectoryWithFullPath:_remotePath];
-}
-
-- (void)_listContentOfDirectoryWithFullPath:(NSString *)fullPath {
-  [self setLoading:YES];
-  
-  if (!_connection) {
-    return;
-  }
-  
-  [_connection setDelegate:self];
-  [_connection changeToDirectory:fullPath.length ? fullPath : @"/"];
 }
 
 @end

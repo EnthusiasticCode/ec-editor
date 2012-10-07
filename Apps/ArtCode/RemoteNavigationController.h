@@ -8,15 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@class ArtCodeRemote;
-@protocol CKConnection;
+@class ArtCodeRemote, ReactiveConnection;
 
 @interface RemoteNavigationController : UINavigationController
 
 - (id)initWithArtCodeRemote:(ArtCodeRemote *)remote;
 
 @property (nonatomic, strong, readonly) ArtCodeRemote *remote;
-@property (nonatomic, strong) id<CKConnection> connection;
+@property (nonatomic, strong, readonly) ReactiveConnection *connection;
 
 @end
 
