@@ -316,7 +316,6 @@
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
 		CD217EB514D41D95001AEA41 /* QuickProjectInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */; };
 		CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */; };
-		CD227E6E1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416714E9C4120045ADFD /* itemIcon_Accept.png */; };
@@ -481,6 +480,7 @@
 		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
 		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		CD8F59B8161C53910080494E /* libconnectionkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8F59AF161C53820080494E /* libconnectionkit.a */; };
+		CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9C811D162090500086D2F1 /* ReactiveConnection.m */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
 		CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */; };
@@ -512,6 +512,8 @@
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
 		CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */; };
+		CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB2FFCB161F3635009F2FDB /* RemoteFileListController.m */; };
+		CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB2FFCD161F3635009F2FDB /* RemoteNavigationController.m */; };
 		CDB5DB6514C6F56A003DFD1F /* FolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
@@ -975,7 +977,6 @@
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
 		CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileBrowserBottomToolBar.xib; sourceTree = "<group>"; };
-		CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteBrowserBottomToolBar.xib; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD27416714E9C4120045ADFD /* itemIcon_Accept.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Accept.png; sourceTree = "<group>"; };
@@ -1176,6 +1177,8 @@
 		CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
 		CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
 		CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Connection-for-iOS.xcodeproj"; path = "../ThirdParty/Connection/Connection-for-iOS.xcodeproj"; sourceTree = "<group>"; };
+		CD9C811C162090500086D2F1 /* ReactiveConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactiveConnection.h; sourceTree = "<group>"; };
+		CD9C811D162090500086D2F1 /* ReactiveConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactiveConnection.m; sourceTree = "<group>"; };
 		CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabCloseButton.png; sourceTree = "<group>"; };
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
 		CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Selected.png; sourceTree = "<group>"; };
@@ -1212,6 +1215,10 @@
 		CDA9B66F1524A0620063D76F /* ipad_icon@2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ipad_icon@2.png"; sourceTree = "<group>"; };
 		CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverButton.h; sourceTree = "<group>"; };
 		CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverButton.m; sourceTree = "<group>"; };
+		CDB2FFCA161F3635009F2FDB /* RemoteFileListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteFileListController.h; sourceTree = "<group>"; };
+		CDB2FFCB161F3635009F2FDB /* RemoteFileListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteFileListController.m; sourceTree = "<group>"; };
+		CDB2FFCC161F3635009F2FDB /* RemoteNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNavigationController.h; sourceTree = "<group>"; };
+		CDB2FFCD161F3635009F2FDB /* RemoteNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteNavigationController.m; sourceTree = "<group>"; };
 		CDB5DB6314C6F56A003DFD1F /* FolderBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderBrowserController.h; sourceTree = "<group>"; };
 		CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderBrowserController.m; sourceTree = "<group>"; };
 		CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveConflictController.h; sourceTree = "<group>"; };
@@ -2053,6 +2060,10 @@
 			children = (
 				CD12A98214F14F0F0005F603 /* RemotesListController.h */,
 				CD12A98314F14F0F0005F603 /* RemotesListController.m */,
+				CDB2FFCC161F3635009F2FDB /* RemoteNavigationController.h */,
+				CDB2FFCD161F3635009F2FDB /* RemoteNavigationController.m */,
+				CDB2FFCA161F3635009F2FDB /* RemoteFileListController.h */,
+				CDB2FFCB161F3635009F2FDB /* RemoteFileListController.m */,
 				CD19920914F25F390059D1E8 /* RemoteBrowserController.h */,
 				CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */,
 				CD69C90014F163EA00FCC987 /* New remote */,
@@ -2281,6 +2292,8 @@
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 				B7FB799214D5FE680080A714 /* Additions */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
+				CD9C811C162090500086D2F1 /* ReactiveConnection.h */,
+				CD9C811D162090500086D2F1 /* ReactiveConnection.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -2299,7 +2312,6 @@
 				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
 				CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */,
 				CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */,
-				CD227E6D1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib */,
 				CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */,
 				CDA51F41157E25E100DB034A /* DocSetHintsView.xib */,
 				CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */,
@@ -3043,7 +3055,6 @@
 				CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */,
 				CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */,
 				CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */,
-				CD227E6E1504F7AC0053AEEF /* RemoteBrowserBottomToolBar.xib in Resources */,
 				CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */,
 				CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */,
 				CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */,
@@ -3342,6 +3353,9 @@
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
 				5F18E23C161A0C4A005BBB84 /* RACPropertySyncSubject.m in Sources */,
 				5F126457161DA83100718B8B /* FileSystemItem+ExtendedAttributes.m in Sources */,
+				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
+				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
+				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,6 +22,8 @@
 #import "NSString+PluralFormat.h"
 #import "BezelAlert.h"
 
+#import "RemoteNavigationController.h"
+
 @class SingleTabController, TopBarToolbar;
 
 @interface RemotesListController ()
@@ -136,9 +138,10 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  if (!self.isEditing) {
-    [self.artCodeTab pushRemotePath:@"/" withRemote:[self.filteredItems objectAtIndex:indexPath.row]];
-  }
+  RemoteNavigationController *remoteNavigationController = [[RemoteNavigationController alloc] initWithArtCodeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
+  remoteNavigationController.artCodeTab = self.artCodeTab;
+  [self presentModalViewController:remoteNavigationController animated:YES];
+  
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 

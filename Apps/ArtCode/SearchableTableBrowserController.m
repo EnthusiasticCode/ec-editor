@@ -135,6 +135,12 @@
   return NO;
 }
 
+- (void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
+  [self invalidateFilteredItems];
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
