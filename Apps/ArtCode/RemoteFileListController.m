@@ -249,7 +249,7 @@
 }
 
 - (void)dismiss {
-  [self.remoteNavigationController dismiss];
+  [self dismissModalViewControllerAnimated:YES];
 }
 
 @end

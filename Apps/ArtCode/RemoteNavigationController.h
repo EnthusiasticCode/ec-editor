@@ -12,12 +12,10 @@
 
 @interface RemoteNavigationController : UINavigationController
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote dismissBlock:(void(^)(RemoteNavigationController* sender))dismissBlock;
+- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote;
 
 @property (nonatomic, strong, readonly) ArtCodeRemote *remote;
 @property (nonatomic, strong, readonly) ReactiveConnection *connection;
-
-- (void)dismiss;
 
 @end
 
