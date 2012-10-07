@@ -10,7 +10,7 @@
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
 #import "NSString+PluralFormat.h"
-#import "FileSystemItem+Directory.h"
+#import "FileSystemItem.h"
 
 @interface FolderBrowserController ()
 

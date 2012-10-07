@@ -6,124 +6,205 @@
 //
 //
 
-#import "FileSystemItem_Internal.h"
+#import "FileSystemItem.h"
 #import "RACPropertySyncSubject.h"
+#import "NSString+ScoreForAbbreviation.h"
 
-static RACScheduler *_fileSystemScheduler;
-static NSMutableDictionary *_itemCache;
+
+@interface FileSystemItem ()
+
+// All filesystem operations must be done on this scheduler
++ (RACScheduler *)fileSystemScheduler;
++ (NSMutableDictionary *)itemCache;
+
+
+@property (nonatomic, strong) RACReplaySubject *itemURLBacking;
+@property (nonatomic, strong) RACReplaySubject *itemTypeBacking;
+
+@property (nonatomic, strong) RACPropertySyncSubject *stringContent;
+
+@property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
+
+@end
+
+@interface FileSystemItem (Directory_Private)
+
++ (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
+- (id<RACSubscribable>)internalChildren;
+- (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options;
+
+@end
 
 @implementation FileSystemItem
 
-+ (void)initialize {
-  if (self != [FileSystemItem class]) {
-    return;
-  }
-  _itemCache = [NSMutableDictionary dictionary];
-}
-
 + (RACScheduler *)fileSystemScheduler {
+  static RACScheduler *fileSystemScheduler = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
     operationQueue.name = @"FileSystemItem file system queue";
     operationQueue.maxConcurrentOperationCount = 1;
-    _fileSystemScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
+    fileSystemScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
   });
-  return _fileSystemScheduler;
+  return fileSystemScheduler;
 }
 
-+ (id<RACSubscribable>)coordinateSubscribable:(id<RACSubscribable>)subscribable {
-  return [[subscribable subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
-}
-
-+ (instancetype)cachedItemWithURL:(NSURL *)url {
++ (NSMutableDictionary *)itemCache {
   ASSERT_NOT_MAIN_QUEUE();
-  return [_itemCache objectForKey:url];
-}
-
-+ (void)cacheItem:(FileSystemItem *)item {
-  ASSERT_NOT_MAIN_QUEUE();
-  ASSERT(![_itemCache objectForKey:item.itemURLBacking]);
-  [_itemCache setObject:item forKey:item.itemURLBacking];
+  static NSMutableDictionary *itemCache = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    itemCache = [NSMutableDictionary dictionary];
+  });
+  return itemCache;
 }
 
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
   if (!url) {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
-  return [self coordinateSubscribable:[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
-    ASSERT_NOT_MAIN_QUEUE();
-    FileSystemItem *item = [_itemCache objectForKey:url];
-    if (!item) {
-      item = [[self alloc] initByReadingItemAtURL:url];
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+      ASSERT_NOT_MAIN_QUEUE();
+      FileSystemItem *item = [[self itemCache] objectForKey:url];
       if (item) {
-        [self cacheItem:item];
+        ASSERT([[item.itemURLBacking first] isEqual:url]);
+        [subscriber sendNext:item];
+        [subscriber sendCompleted];
+        return nil;
       }
-    }
-    if (!item) {
-      [subscriber sendError:[[NSError alloc] init]];
+      NSString *itemType = nil;
+      if (![url getResourceValue:&itemType forKey:NSURLFileResourceTypeKey error:NULL]) {
+        [subscriber sendError:[[NSError alloc] init]];
+        return nil;
+      }
+      item = [[self alloc] init];
+      item.itemURLBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+      [item.itemURLBacking sendNext:url];
+      item.itemTypeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+      [item.itemTypeBacking sendNext:itemType];
+      if (itemType == NSURLFileResourceTypeRegular) {
+        item.stringContent = [RACPropertySyncSubject subject];
+        NSError *error;
+        [item.stringContent sendNext:[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error]];
+        if (error) {
+          [subscriber sendError:error];
+          return nil;
+        }
+      }
+      item.extendedAttributes = [NSMutableDictionary dictionary];
+      [[self itemCache] setObject:item forKey:url];
+      [subscriber sendNext:item];
+      [subscriber sendCompleted];
       return nil;
-    }
-    ASSERT([item.itemURLBacking isEqual:url]);
-    [subscriber sendNext:item];
-    [subscriber sendCompleted];
-    return nil;
-  }]];
-}
-
-- (id<RACSubscribable>)internalItemURL {
-  return RACAble(self.itemURLBacking);
+    }];
+  }] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)itemURL {
-  return [[self class] coordinateSubscribable:[self internalItemURL]];
+  return [self.itemURLBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-- (instancetype)initByReadingItemAtURL:(NSURL *)url {
-  ASSERT(url);
-  ASSERT_NOT_MAIN_QUEUE();
-  self = [super init];
-  if (!self) {
-    return nil;
-  }
-  self.itemURLBacking = url;
-  NSString *itemType = nil;
-  [url getResourceValue:&itemType forKey:NSURLFileResourceTypeKey error:NULL];
-  if (!itemType) {
-    return nil;
-  }
-  self.itemTypeBacking = itemType;
-  return self;
+@end
+
+@implementation FileSystemItem (Directory)
+
+- (id<RACSubscribable>)children {
+  return [[[self internalChildren] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-#pragma mark - Internal state backing and echoes
-
-@synthesize contentSubjects = _contentSubjects;
-
-- (NSMutableDictionary *)contentSubjects {
-  if (!_contentSubjects) {
-    _contentSubjects = [NSMutableDictionary dictionary];
-  }
-  return _contentSubjects;
+- (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
+  return [[[self internalChildrenWithOptions:options] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-@synthesize extendedAttributeSubjects = _extendedAttributeSubjects;
-
-- (NSMutableDictionary *)extendedAttributeSubjects {
-  if (!_extendedAttributeSubjects) {
-    _extendedAttributeSubjects = [NSMutableDictionary dictionary];
-  }
-  return _extendedAttributeSubjects;
+- (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
+  return [[[RACSubscribable combineLatest:@[[self internalChildren], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-@synthesize extendedAttributesBacking = _extendedAttributesBacking;
+- (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
+  return [[[RACSubscribable combineLatest:@[[self internalChildrenWithOptions:options], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
 
-- (NSMutableDictionary *)extendedAttributesBacking {
-  ASSERT_NOT_MAIN_QUEUE();
-  if (!_extendedAttributesBacking) {
-    _extendedAttributesBacking = [NSMutableDictionary dictionary];
+@end
+
+@implementation FileSystemItem (ExtendedAttributes)
+
+- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
+  ASSERT(self.extendedAttributes);
+  @synchronized(self.extendedAttributes) {
+    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
+    if (!extendedAttribute) {
+      extendedAttribute = [RACPropertySyncSubject subject];
+      [self.extendedAttributes setObject:extendedAttribute forKey:key];
+    }
+    return extendedAttribute;
   }
-  return _extendedAttributesBacking;
+}
+
+@end
+
+@implementation FileSystemItem (Directory_Private)
+
++ (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
+  static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *) = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    filterAndSortByAbbreviationBlock = ^NSArray *(RACTuple *tuple) {
+      NSArray *content = tuple.first;
+      NSString *abbreviation = tuple.second;
+      
+      // No abbreviation, no need to filter
+      if (![abbreviation length]) {
+        return [[[content rac_toSubscribable] select:^id(NSURL *url) {
+          return [RACTuple tupleWithObjectsFromArray:@[url, [RACTupleNil tupleNil]]];
+        }] toArray];
+      }
+      
+      // Filter the content
+      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(NSURL *url) {
+        NSIndexSet *hitMask = nil;
+        float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
+        return [RACTuple tupleWithObjectsFromArray:@[url, hitMask ? : [RACTupleNil tupleNil], @(score)]];
+      }] where:^BOOL(RACTuple *item) {
+        return [item.third floatValue] > 0;
+      }] toArray] mutableCopy];
+      
+      // Sort the filtered content
+      [filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+        float score1 = [[tuple1 third] floatValue];
+        float score2 = [[tuple2 third] floatValue];
+        if (score1 < score2) {
+          return NSOrderedAscending;
+        } else if (score1 > score2) {
+          return NSOrderedDescending;
+        } else {
+          return NSOrderedSame;
+        }
+      }];
+      return filteredContent;
+    };
+  });
+  return filterAndSortByAbbreviationBlock;
+}
+
+- (id<RACSubscribable>)internalChildren {
+  return [self internalChildrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+}
+
+- (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    if (!self.itemURLBacking || ![[self.itemTypeBacking first] isEqualToString:NSURLFileResourceTypeDirectory]) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    RACReplaySubject *subject = [RACReplaySubject replaySubjectWithCapacity:1];
+    NSMutableArray *content = [NSMutableArray array];
+    for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.itemURLBacking first] includingPropertiesForKeys:nil options:options errorHandler:nil]) {
+      [content addObject:childURL];
+    }
+    [subject sendNext:content];
+    return subject;
+  }];
 }
 
 @end

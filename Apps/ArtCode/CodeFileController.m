@@ -340,7 +340,7 @@ static void drawStencilStar(CGContextRef myContext)
     if (!codeView || !textFile) {
       return;
     }
-    [textFile.contentWithDefaultEncoding syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
+    [textFile.stringContent syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
   }];
   
   // When the text file changes, reload the code unit
@@ -357,7 +357,7 @@ static void drawStencilStar(CGContextRef myContext)
         return;
       }
       [[textFile explicitSyntaxIdentifier] subscribeNext:^(NSString *explicitSyntaxIdentifier) {
-        [[[textFile contentWithDefaultEncoding] take:1] subscribeNext:^(NSString *content) {
+        [[[textFile stringContent] take:1] subscribeNext:^(NSString *content) {
           CodeFileController *strongSelf = weakSelf;
           if (!strongSelf) {
             return;
@@ -406,7 +406,7 @@ static void drawStencilStar(CGContextRef myContext)
               }];
               
               // subscribe to the text file's content to reparse
-              [[textFile.contentWithDefaultEncoding deliverOn:anotherStrongSelf->_codeScheduler] subscribeNext:^(NSString *changedContent) {
+              [[textFile.stringContent deliverOn:anotherStrongSelf->_codeScheduler] subscribeNext:^(NSString *changedContent) {
                 [codeUnit reparseWithUnsavedContent:changedContent];
               }];
             }];

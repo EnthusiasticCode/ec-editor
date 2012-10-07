@@ -29,7 +29,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
-#import "FileSystemItem+Directory.h"
+#import "FileSystemItem.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"

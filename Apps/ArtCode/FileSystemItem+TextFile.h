@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileSystemItem+File.h"
+#import "FileSystemItem.h"
 @class RACPropertySyncSubject;
 
 

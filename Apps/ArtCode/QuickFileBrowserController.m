@@ -9,7 +9,7 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import "FileSystemItem+Directory.h"
+#import "FileSystemItem.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"

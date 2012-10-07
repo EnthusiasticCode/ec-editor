@@ -14,7 +14,7 @@
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
-#import "FileSystemItem+Directory.h"
+#import "FileSystemItem.h"
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "NSFileCoordinator+CoordinatedFileManagement.h"
