@@ -72,7 +72,6 @@
 
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
   if (!_connectedSubject) {
-    [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
     _connectCredentials = credentials;
     _connectedSubject = [RACAsyncSubject subject];
     [_connection connect];

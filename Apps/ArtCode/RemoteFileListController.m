@@ -49,6 +49,8 @@
   _connection = connection;
   self.remotePath = remotePath ?: @"/";
   
+  // Preparing view
+  [[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil];
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)];
   
   // RAC
@@ -76,6 +78,12 @@
     }
   }];
   
+  // Connection status reaction
+  [self.connection.connectionStatus subscribeNext:^(id x) {
+    enum ReactiveConnectionStatus status = [x intValue];
+    self.showLoading = status != ReactiveConnectionStatusLoading;
+  }];
+  
   // Login reaction
   [RACAble(self.authenticationCredentials) subscribeNext:^(NSURLCredential *credentials) {
     this.showLoading = YES;
@@ -91,11 +99,6 @@
 - (void)didReceiveMemoryWarning {
   [super didReceiveMemoryWarning];
   _directoryContent = nil;
-}
-
-- (void)loadView {
-  [super loadView];
-  [[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil];
 }
 
 - (void)viewDidLoad {
@@ -179,7 +182,7 @@
   if (!self.isEditing) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
-      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithArtCodeRemote:_remote connection:_connection path:[_remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithArtCodeRemote:_remote connection:self.connection path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
       [self.remoteNavigationController pushViewController:remoteFileListController animated:YES];
     } else {
       //[self _toolEditExportAction:nil];
