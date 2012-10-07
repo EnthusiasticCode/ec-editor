@@ -24,6 +24,7 @@
 @property (nonatomic, strong) NSString *remotePath;
 @property (nonatomic, strong) NSArray *directoryContent;
 @property (nonatomic) BOOL showLogin;
+@property (nonatomic) BOOL showLoading;
 @end
 
 
@@ -73,11 +74,11 @@
   
   // Login reaction
   [RACAble(self.authenticationCredentials) subscribeNext:^(NSURLCredential *credentials) {
-    [[[this.connection connectWithCredentials:credentials]
-      select:^id(NSNumber *x) {
-        return @(![x boolValue]);
-      }]
-     toProperty:RAC_KEYPATH(this, showLogin) onObject:this];
+    this.showLoading = YES;
+    [[this.connection connectWithCredentials:credentials] subscribeNext:^(id x) {
+      this.showLoading = NO;
+      this.showLogin = ![x boolValue];
+    }];
   }];
   
   return self;
@@ -195,7 +196,6 @@
 #pragma mark - Public Methods
 
 - (IBAction)loginAction:(id)sender {
-//  self.loading = YES;
   if (!self.loginAlwaysAskPassword.isOn) {
     [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:self.loginUser.text];
   }
@@ -213,6 +213,7 @@
   _showLogin = showLogin;
   
   if (showLogin) {
+    ASSERT(self.loginView);
     [self.view addSubview:self.loginView];
     self.loginView.frame = self.view.bounds;
     self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", _remote.host];
@@ -227,7 +228,13 @@
   }
 }
 
-- (void)setLoading:(BOOL)loading {
+- (void)setShowLoading:(BOOL)loading {
+  if (_showLoading == loading) {
+    return;
+  }
+  
+  _showLoading = loading;
+  
   if (loading) {
     ASSERT(self.loadingView);
     [self.view addSubview:self.loadingView];
