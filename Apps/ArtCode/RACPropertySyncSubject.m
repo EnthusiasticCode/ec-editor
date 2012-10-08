@@ -50,6 +50,7 @@
 }
 
 - (RACDisposable *)syncProperty:(NSString *)keyPath ofObject:(NSObject *)target {
+  ASSERT_MAIN_QUEUE();
   __block BOOL suppressEcho = NO;
   RACDisposable *propertySubscribingDisposable = nil;
   RACDisposable *propertyUpdatingDisposable = nil;
@@ -63,7 +64,7 @@
       [self.switchboard sendNext:[RACTuple tupleWithObjectsFromArray:@[x ? : [RACTupleNil tupleNil], target, keyPath]]];
     }
   }];
-  propertyUpdatingDisposable = [self.switchboard subscribeNext:^(RACTuple *x) {
+  propertyUpdatingDisposable = [[self.switchboard deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(RACTuple *x) {
     if (x.second != target || x.third != keyPath) {
       suppressEcho = YES;
       [target setValue:x.first forKeyPath:keyPath];

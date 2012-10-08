@@ -13,6 +13,7 @@
 @interface RACPropertySyncSubject : RACReplaySubject
 
 // Synchronize the property of `target` identified by `keyPath`
+// Only works on the main queue
 - (RACDisposable *)syncProperty:(NSString *)keyPath ofObject:(NSObject *)target;
 
 @end

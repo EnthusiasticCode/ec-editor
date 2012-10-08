@@ -330,110 +330,87 @@ static void drawStencilStar(CGContextRef myContext)
   }
   
   @weakify(self);
-
+  
   // When the currentLocation's url changes, bind the text file and the bookmarks
-  [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
-    [[FileSystemItem readItemAtURL:url] subscribeNext:^(FileSystemItem *textFile) {
-      @strongify(self);
-      if (!self) {
-        return;
-      }
-      self.textFile = textFile;
-      [textFile.bookmarks syncProperty:RAC_KEYPATH_SELF(bookmarks) ofObject:self];
-    }];
+  [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
+    return [FileSystemItem readItemAtURL:url];
+  }] switch] toProperty:RAC_KEYPATH_SELF(self.textFile) onObject:self];
+  
+  __block RACDisposable *bookmarksDisposable = nil;
+  [RACAble(self.textFile) subscribeNext:^(FileSystemItem *textFile) {
+    @strongify(self);
+    if (!self) { return; }
+    [bookmarksDisposable dispose];
+    bookmarksDisposable = [textFile.bookmarks syncProperty:RAC_KEYPATH_SELF(bookmarks) ofObject:self];
   }];
   
   // When the text file or the code view change, bind their texts together
+  __block RACDisposable *textDisposable = nil;
   [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
     FileSystemItem *textFile = tuple.second;
-    if (!codeView || !textFile) {
-      return;
-    }
-    [textFile.stringContent syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
+    [textDisposable dispose];
+    if (!codeView || !textFile) { return; }
+    textDisposable = [textFile.stringContent syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
   }];
   
-  // When the text file changes, reload the code unit
-  [RACAble(self.textFile) subscribeNext:^(FileSystemItem *textFile) {
-    if (!textFile) {
-      // No file, remove the code unit
-      @strongify(self);
-      self.codeUnit = nil;
-      return;
+  // When the text file changes, moves or selects another syntax, reload the code unit
+  [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.itemURL) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
+    NSURL *fileURL = tuple.first;
+    NSString *explicitSyntaxIdentifier = tuple.second;
+    FileSystemItem *textFile = tuple.third;
+    ASSERT_NOT_MAIN_QUEUE();
+    @strongify(self);
+    if (!self || !fileURL) {
+      return nil;
     }
-    [[textFile itemURL] subscribeNext:^(NSURL *fileURL) {
-      if (!fileURL) {
-        // File was deleted, remove the code unit
-        @strongify(self);
-        self.codeUnit = nil;
-        return;
-      }
-      [[textFile explicitSyntaxIdentifier] subscribeNext:^(NSString *explicitSyntaxIdentifier) {
-        [[[textFile stringContent] take:1] subscribeNext:^(NSString *content) {
-          @strongify(self);
-          if (!self) {
-            return;
-          }
-          // Selecting the syntax to use
-          TMSyntaxNode *syntax = nil;
-          if (explicitSyntaxIdentifier) {
-            syntax = [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier];
-          }
-          if (!syntax) {
-            syntax = [TMSyntaxNode syntaxForFirstLine:[content substringWithRange:[content lineRangeForRange:NSMakeRange(0, 0)]]];
-          }
-          if (!syntax) {
-            syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-          }
-          if (!syntax) {
-            syntax = [TMSyntaxNode defaultSyntax];
-          }
-          ASSERT(syntax);
-          
-          // Create the code unit
-          [self.codeScheduler schedule:^{
-            ASSERT_NOT_MAIN_QUEUE();
-            TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
-            
-            [[RACScheduler mainQueueScheduler] schedule:^{
-              ASSERT_MAIN_QUEUE();
-              @strongify(self);
-              if (!self) {
-                return;
-              }
-              self.codeUnit = codeUnit;
-              
-              // subscribe to the tokens for syntax coloring
-              [[[[codeUnit.tokens subscribeOn:self.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
-                ASSERT_MAIN_QUEUE();
-                @strongify(self);
-                if (!self) {
-                  return;
-                }
-                // Check for range sanity since the text could have changed during the delivery
-                if (NSMaxRange(token.range) <= self.codeView.text.length) {
-                  [self.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
-                }
-              }];
-              
-              // subscribe to the text file's content to reparse
-              [[textFile.stringContent deliverOn:self.codeScheduler] subscribeNext:^(NSString *changedContent) {
-                [codeUnit reparseWithUnsavedContent:changedContent];
-              }];
-            }];
-          }];
-        }];
-      }];
-    }];
-  }];
+    // Selecting the syntax to use
+    TMSyntaxNode *syntax = nil;
+    if (explicitSyntaxIdentifier) {
+      syntax = [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier];
+    }
+    if (!syntax) {
+      NSString *content = textFile.stringContent.first;
+      syntax = [TMSyntaxNode syntaxForFirstLine:[content substringWithRange:[content lineRangeForRange:NSMakeRange(0, 0)]]];
+    }
+    if (!syntax) {
+      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+    }
+    if (!syntax) {
+      syntax = [TMSyntaxNode defaultSyntax];
+    }
+    ASSERT(syntax);
+    
+    return [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
+  }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:RAC_KEYPATH_SELF(self.codeUnit) onObject:self];
   
-  // Update title with current symbol and keyboard accessory based on current scope
-  [[RACAble(self.codeView.selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
+  // subscribe to the tokens for syntax coloring
+  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+    ASSERT_MAIN_QUEUE();
     @strongify(self);
     if (!self) {
       return;
     }
-    NSRange selectionRange = [selectionValue rangeValue];
+    // Check for range sanity since the text could have changed during the delivery
+    if (NSMaxRange(token.range) <= self.codeView.text.length) {
+      [self.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+    }
+  }];
+  
+  // subscribe to the text file's content to reparse
+  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.stringContent) switch], RACAble(self.codeUnit)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+    NSString *changedContent = tuple.first;
+    TMUnit *codeUnit = tuple.second;
+    [codeUnit reparseWithUnsavedContent:changedContent];
+  }];
+  
+  // Update title with current symbol and keyboard accessory based on current scope
+  [[[RACSubscribable combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.stringContent) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+    @strongify(self);
+    if (!self) {
+      return;
+    }
+    NSRange selectionRange = [tuple.first rangeValue];
     
     // Select current scope
     TMSymbol *currentSymbol = nil;
@@ -530,7 +507,7 @@ static void drawStencilStar(CGContextRef myContext)
   accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
   
   codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
-
+  
   self.codeView = codeView;
   [self _setCodeViewAttributesForTheme:nil];
 }
