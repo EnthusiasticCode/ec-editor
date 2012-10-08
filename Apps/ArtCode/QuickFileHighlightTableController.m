@@ -45,7 +45,17 @@
     if (!strongSelf) {
       return;
     }
-    [textFile.explicitSyntaxIdentifier syncProperty:RAC_KEYPATH(strongSelf, currentSyntaxName) ofObject:strongSelf];
+    [[[textFile.explicitSyntaxIdentifier distinctUntilChanged] select:^NSString *(NSString *explicitSyntaxIdentifier) {
+      return [[TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier] name];
+    }] toProperty:RAC_KEYPATH(strongSelf, currentSyntaxName) onObject:strongSelf];
+    [[[RACAble(strongSelf, currentSyntaxName) distinctUntilChanged] select:^NSString *(NSString *syntaxName) {
+      if ([syntaxName isEqualToString:@"Automatic"]) {
+        return nil;
+      }
+      return [[TMSyntaxNode allSyntaxesNames] objectForKey:syntaxName];
+    }] subscribeNext:^(NSString *syntaxIdentifier) {
+      [textFile.explicitSyntaxIdentifier sendNext:syntaxIdentifier];
+    }];    
   }];
   [RACAble(self.currentSyntaxName) subscribeNext:^(id x) {
     QuickFileHighlightTableController *strongSelf = weakSelf;

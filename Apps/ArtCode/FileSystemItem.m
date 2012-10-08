@@ -135,6 +135,7 @@
     RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
     if (!extendedAttribute) {
       extendedAttribute = [RACPropertySyncSubject subject];
+      [extendedAttribute sendNext:nil];
       [self.extendedAttributes setObject:extendedAttribute forKey:key];
     }
     return extendedAttribute;

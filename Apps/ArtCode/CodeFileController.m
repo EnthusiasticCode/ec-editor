@@ -362,7 +362,6 @@ static void drawStencilStar(CGContextRef myContext)
           if (!strongSelf) {
             return;
           }
-          
           // Selecting the syntax to use
           TMSyntaxNode *syntax = nil;
           if (explicitSyntaxIdentifier) {
