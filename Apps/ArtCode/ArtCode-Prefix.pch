@@ -14,5 +14,6 @@
 
 #import <ReactiveCocoa/ReactiveCocoa.h>
 #import "NSNotificationCenter+RACSupport.h"
+#import "EXTScope.h"
 
 #endif

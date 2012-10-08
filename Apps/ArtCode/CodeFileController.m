@@ -319,17 +319,17 @@ static void drawStencilStar(CGContextRef myContext)
     return nil;
   }
   
-  __weak CodeFileController *weakSelf = self;
+  @weakify(self);
 
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
     [[FileSystemItem readItemAtURL:url] subscribeNext:^(FileSystemItem *textFile) {
-      CodeFileController *strongSelf = weakSelf;
-      if (!strongSelf) {
+      @strongify(self);
+      if (!self) {
         return;
       }
-      strongSelf.textFile = textFile;
-      [textFile.bookmarks syncProperty:RAC_KEYPATH(strongSelf, bookmarks) ofObject:strongSelf];
+      self.textFile = textFile;
+      [textFile.bookmarks syncProperty:RAC_KEYPATH_SELF(bookmarks) ofObject:self];
     }];
   }];
   
@@ -347,19 +347,21 @@ static void drawStencilStar(CGContextRef myContext)
   [RACAble(self.textFile) subscribeNext:^(FileSystemItem *textFile) {
     if (!textFile) {
       // No file, remove the code unit
-      weakSelf.codeUnit = nil;
+      @strongify(self);
+      self.codeUnit = nil;
       return;
     }
     [[textFile itemURL] subscribeNext:^(NSURL *fileURL) {
       if (!fileURL) {
         // File was deleted, remove the code unit
-        weakSelf.codeUnit = nil;
+        @strongify(self);
+        self.codeUnit = nil;
         return;
       }
       [[textFile explicitSyntaxIdentifier] subscribeNext:^(NSString *explicitSyntaxIdentifier) {
         [[[textFile stringContent] take:1] subscribeNext:^(NSString *content) {
-          CodeFileController *strongSelf = weakSelf;
-          if (!strongSelf) {
+          @strongify(self);
+          if (!self) {
             return;
           }
           // Selecting the syntax to use
@@ -379,33 +381,33 @@ static void drawStencilStar(CGContextRef myContext)
           ASSERT(syntax);
           
           // Create the code unit
-          [strongSelf->_codeScheduler schedule:^{
+          [self->_codeScheduler schedule:^{
             ASSERT_NOT_MAIN_QUEUE();
             TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
             
             [[RACScheduler mainQueueScheduler] schedule:^{
               ASSERT_MAIN_QUEUE();
-              CodeFileController *anotherStrongSelf = weakSelf;
-              if (!anotherStrongSelf) {
+              @strongify(self);
+              if (!self) {
                 return;
               }
-              anotherStrongSelf.codeUnit = codeUnit;
+              self.codeUnit = codeUnit;
               
               // subscribe to the tokens for syntax coloring
-              [[[[codeUnit.tokens subscribeOn:anotherStrongSelf.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+              [[[[codeUnit.tokens subscribeOn:self.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
                 ASSERT_MAIN_QUEUE();
-                CodeFileController *yetAnotherStrongSelf = weakSelf;
-                if (!yetAnotherStrongSelf) {
+                @strongify(self);
+                if (!self) {
                   return;
                 }
                 // Check for range sanity since the text could have changed during the delivery
-                if (NSMaxRange(token.range) <= yetAnotherStrongSelf.codeView.text.length) {
-                  [yetAnotherStrongSelf.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
+                if (NSMaxRange(token.range) <= self.codeView.text.length) {
+                  [self.codeView setAttributes:[[TMTheme currentTheme] attributesForQualifiedIdentifier:token.qualifiedIdentifier] range:token.range];
                 }
               }];
               
               // subscribe to the text file's content to reparse
-              [[textFile.stringContent deliverOn:anotherStrongSelf->_codeScheduler] subscribeNext:^(NSString *changedContent) {
+              [[textFile.stringContent deliverOn:self->_codeScheduler] subscribeNext:^(NSString *changedContent) {
                 [codeUnit reparseWithUnsavedContent:changedContent];
               }];
             }];
@@ -417,24 +419,28 @@ static void drawStencilStar(CGContextRef myContext)
   
   // Update title with current symbol and keyboard accessory based on current scope
   [[RACAble(self.codeView.selectionRange) throttle:0.3] subscribeNext:^(NSValue *selectionValue) {
+    @strongify(self);
+    if (!self) {
+      return;
+    }
     NSRange selectionRange = [selectionValue rangeValue];
     
     // Select current scope
     TMSymbol *currentSymbol = nil;
-    for (TMSymbol *symbol in weakSelf.codeUnit.symbolList) {
+    for (TMSymbol *symbol in self.codeUnit.symbolList) {
       if (symbol.range.location > selectionRange.location)
         break;
       currentSymbol = symbol;
     }
-    if (currentSymbol != weakSelf.currentSymbol) {
-      weakSelf.currentSymbol = currentSymbol;
-      [weakSelf.singleTabController updateDefaultToolbarTitle];
+    if (currentSymbol != self.currentSymbol) {
+      self.currentSymbol = currentSymbol;
+      [self.singleTabController updateDefaultToolbarTitle];
     }
     
     // Update the keyboard accessory view and other preferences
-    NSString *qualifiedIdentifier = [weakSelf.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
-    [weakSelf _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
-    weakSelf.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
+    NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
+    [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
+    self.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
   }];
   
   return self;

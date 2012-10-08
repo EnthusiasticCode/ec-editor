@@ -19,6 +19,7 @@
 		5F18E23C161A0C4A005BBB84 /* RACPropertySyncSubject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18E23B161A0C4A005BBB84 /* RACPropertySyncSubject.m */; };
 		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
 		5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */; };
+		5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F20ABD216230BE40051FC86 /* EXTScope.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
@@ -647,6 +648,8 @@
 		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
 		5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
 		5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
+		5F20ABD116230BE40051FC86 /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTScope.h; path = extobjc/EXTScope.h; sourceTree = "<group>"; };
+		5F20ABD216230BE40051FC86 /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTScope.m; path = extobjc/EXTScope.m; sourceTree = "<group>"; };
 		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		5F24A84B161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+PersistentDataStructure.h"; sourceTree = "<group>"; };
 		5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+PersistentDataStructure.m"; sourceTree = "<group>"; };
@@ -1921,6 +1924,8 @@
 		CD54BD8E160607F70025B7CA /* libextobjc */ = {
 			isa = PBXGroup;
 			children = (
+				5F20ABD116230BE40051FC86 /* EXTScope.h */,
+				5F20ABD216230BE40051FC86 /* EXTScope.m */,
 				CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */,
 				CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */,
 				CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */,
@@ -3336,6 +3341,7 @@
 				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
 				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
 				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,
+				5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3425,7 +3431,6 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -3487,7 +3492,6 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
