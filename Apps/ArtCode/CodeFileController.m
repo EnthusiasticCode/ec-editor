@@ -216,6 +216,16 @@ static void drawStencilStar(CGContextRef myContext)
   _codeUnit = codeUnit;
 }
 
+- (RACScheduler *)codeScheduler {
+  if (!_codeScheduler) {
+    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
+    operationQueue.maxConcurrentOperationCount = 1;
+    operationQueue.name = @"CodeFileController code queue";
+    _codeScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
+  }
+  return _codeScheduler;
+}
+
 #pragma mark - Single tab controller informal protocol
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
@@ -381,7 +391,7 @@ static void drawStencilStar(CGContextRef myContext)
           ASSERT(syntax);
           
           // Create the code unit
-          [self->_codeScheduler schedule:^{
+          [self.codeScheduler schedule:^{
             ASSERT_NOT_MAIN_QUEUE();
             TMUnit *codeUnit = [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
             
@@ -407,7 +417,7 @@ static void drawStencilStar(CGContextRef myContext)
               }];
               
               // subscribe to the text file's content to reparse
-              [[textFile.stringContent deliverOn:self->_codeScheduler] subscribeNext:^(NSString *changedContent) {
+              [[textFile.stringContent deliverOn:self.codeScheduler] subscribeNext:^(NSString *changedContent) {
                 [codeUnit reparseWithUnsavedContent:changedContent];
               }];
             }];
