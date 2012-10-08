@@ -60,7 +60,7 @@
   
   propertySubscribingDisposable = [[target rac_subscribableForKeyPath:keyPath onObject:self] subscribeNext:^(id x) {
     if (!suppressEcho) {
-      [self.switchboard sendNext:[RACTuple tupleWithObjectsFromArray:@[x, target, keyPath]]];
+      [self.switchboard sendNext:[RACTuple tupleWithObjectsFromArray:@[x ? : [RACTupleNil tupleNil], target, keyPath]]];
     }
   }];
   propertyUpdatingDisposable = [self.switchboard subscribeNext:^(RACTuple *x) {

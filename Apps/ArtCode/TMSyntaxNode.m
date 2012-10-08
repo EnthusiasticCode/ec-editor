@@ -191,8 +191,8 @@ static NSMutableDictionary *_includedNodesCaches;
   if (!self.patterns)
     return nil;
   includedNodes = [NSMutableArray arrayWithArray:self.patterns];
-  NSMutableSet *dereferencedNodes = [NSMutableSet set];
-  NSMutableIndexSet *containerNodesIndexes = [NSMutableIndexSet indexSet];
+  NSMutableSet *dereferencedNodes = [[NSMutableSet alloc] init];
+  NSMutableIndexSet *containerNodesIndexes = [[NSMutableIndexSet alloc] init];
   do
   {
     [containerNodesIndexes removeAllIndexes];

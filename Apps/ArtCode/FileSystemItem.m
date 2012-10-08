@@ -105,6 +105,10 @@
   return [self.itemURLBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
+- (id<RACSubscribable>)itemType {
+  return [self.itemTypeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
 @end
 
 @implementation FileSystemItem (Directory)
