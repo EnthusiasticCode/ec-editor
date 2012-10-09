@@ -103,6 +103,11 @@
   
   [self willChangeValueForKey:@"contentViewController"];
   
+  // Reset the toolbar view controller if needed
+  if (self.toolbarViewController) {
+    [self setToolbarViewController:nil animated:YES];
+  }
+  
   [_contentViewController willMoveToParentViewController:nil];
   [_contentViewController removeFromParentViewController];
   if (contentViewController)

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ArtCodeRemote, ReactiveConnection;
+@class ArtCodeRemote, ReactiveConnection, RemoteNavigationToolbarController;
 
 @interface RemoteNavigationController : UIViewController
 
@@ -20,6 +20,6 @@
 #pragma mark UI related properties
 
 /// The toolbar that will be set in place of the default navigation toolbar in the \c SingleTabController
-@property (nonatomic, strong) IBOutlet UIViewController *toolbarController;
+@property (nonatomic, strong) IBOutlet RemoteNavigationToolbarController *toolbarController;
 
 @end

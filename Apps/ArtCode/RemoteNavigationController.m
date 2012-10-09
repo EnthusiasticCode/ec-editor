@@ -7,6 +7,7 @@
 //
 
 #import "RemoteNavigationController.h"
+#import "RemoteNavigationToolbarController.h"
 #import "SingleTabController.h"
 
 #import "ArtCodeRemote.h"
@@ -39,6 +40,31 @@ static void _init(RemoteNavigationController *self) {
   RAC(self.remote) = [RACAble(self.artCodeTab) select:^id(ArtCodeTab *tab) {
     return tab.currentLocation.remote;
   }];
+  
+  [[[RACAble(self.toolbarController)
+   select:^id(RemoteNavigationToolbarController *x) {
+     return [x buttonsActionSubscribable];
+   }] switch] subscribeNext:^(UIButton *x) {
+     switch (x.tag) {
+       case 1: // Local back
+         [self.localBrowserNavigationController popViewControllerAnimated:YES];
+         break;
+         
+       case 2: // Upload
+         break;
+         
+       case 3: // Remote back
+         [self.remoteBrowserNavigationController popViewControllerAnimated:YES];
+         break;
+         
+       case 4: // Download
+         break;
+         
+       default: // Close
+         [self.artCodeTab moveBackInHistory];
+         break;
+     }
+   }];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -59,7 +85,7 @@ static void _init(RemoteNavigationController *self) {
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-  [self.singleTabController setToolbarViewController:self.toolbarController animated:YES];
+  [self.singleTabController setToolbarViewController:(UIViewController *)self.toolbarController animated:YES];
   [super viewDidAppear:animated];
 }
 

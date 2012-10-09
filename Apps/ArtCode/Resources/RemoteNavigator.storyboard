@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1929"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Remote Navigation Toolbar Controller-->
         <scene sceneID="omb-Ao-Y5Z">
             <objects>
-                <viewController storyboardIdentifier="Toolbar" id="PrT-kV-pxd" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Toolbar" id="PrT-kV-pxd" customClass="RemoteNavigationToolbarController" sceneMemberID="viewController">
                     <view key="view" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="gVP-Yt-jQW" customClass="CodeFileSearchBarView">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -15,7 +15,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDo-g3-Yro">
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="searchBar_Background.png" translatesAutoresizingMaskIntoConstraints="NO" id="6Pe-Hb-bjP"/>
-                                    <button opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nT3-Xn-oZP">
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nT3-Xn-oZP">
                                         <constraints>
                                             <constraint firstAttribute="height" constant="31" id="9ox-xf-nVR"/>
                                             <constraint firstAttribute="width" constant="48" type="user" id="CKE-gL-9ej"/>
@@ -28,6 +28,9 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="N05-Mw-mS5"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RSQ-LU-H1f">
                                         <constraints>
@@ -39,7 +42,7 @@
                                         <color key="shadowColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                                         <size key="shadowOffset" width="0.0" height="1"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qqd-Bn-dGA" customClass="TopBarToolButton">
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qqd-Bn-dGA" customClass="TopBarToolButton">
                                         <constraints>
                                             <constraint firstAttribute="width" constant="48" type="user" id="6hO-1F-eVk"/>
                                         </constraints>
@@ -51,6 +54,9 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="ycm-Zc-k00"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -84,8 +90,11 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="AKp-qi-oPM"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uuz-VE-1ZN" customClass="TopBarToolButton">
+                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uuz-VE-1ZN" customClass="TopBarToolButton">
                                         <constraints>
                                             <constraint firstAttribute="width" constant="48" id="z3f-6c-00H"/>
                                         </constraints>
@@ -97,8 +106,11 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="rxf-VF-Xg8"/>
+                                        </connections>
                                     </button>
-                                    <button opaque="NO" tag="-1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X0F-oB-BxA">
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X0F-oB-BxA">
                                         <constraints>
                                             <constraint firstAttribute="height" constant="31" id="apT-Pz-Sya"/>
                                             <constraint firstAttribute="width" constant="48" id="jv8-bg-skA"/>
@@ -111,6 +123,9 @@
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="LbO-pz-WaM"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qwx-7I-IPv">
                                         <constraints>
@@ -160,6 +175,8 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="localTitleLabel" destination="RSQ-LU-H1f" id="lrZ-LD-Dxu"/>
+                        <outlet property="remoteTitleLabel" destination="qwx-7I-IPv" id="Nzb-Jz-psQ"/>
                         <outlet property="view" destination="gVP-Yt-jQW" id="Llx-z1-ET0"/>
                     </connections>
                 </viewController>
