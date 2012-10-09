@@ -346,6 +346,7 @@
 		CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */; };
 		CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */; };
 		CD54BD93160607F70025B7CA /* metamacros.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8D160607F70025B7CA /* metamacros.h */; };
+		CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596CC41625808400B95B49 /* TextSelectionRect.m */; };
 		CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetContentController.m */; };
 		CD625943157A358A00B4669A /* docSet.mom in Resources */ = {isa = PBXBuildFile; fileRef = CD625942157A358A00B4669A /* docSet.mom */; };
 		CD62595C157BA57700B4669A /* Local.png in Resources */ = {isa = PBXBuildFile; fileRef = CD62594A157BA57700B4669A /* Local.png */; };
@@ -1010,6 +1011,8 @@
 		CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensions.h; path = extobjc/EXTRuntimeExtensions.h; sourceTree = "<group>"; };
 		CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
 		CD54BD8D160607F70025B7CA /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = extobjc/metamacros.h; sourceTree = "<group>"; };
+		CD596CC31625808400B95B49 /* TextSelectionRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextSelectionRect.h; sourceTree = "<group>"; };
+		CD596CC41625808400B95B49 /* TextSelectionRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextSelectionRect.m; sourceTree = "<group>"; };
 		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetContentController.h; sourceTree = "<group>"; };
 		CD625940157A2BAE00B4669A /* DocSetContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetContentController.m; sourceTree = "<group>"; };
 		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
@@ -1772,6 +1775,8 @@
 				B7FB79D914D605FA0080A714 /* TextPosition.m */,
 				B7FB79DA14D605FA0080A714 /* TextRange.h */,
 				B7FB79DB14D605FA0080A714 /* TextRange.m */,
+				CD596CC31625808400B95B49 /* TextSelectionRect.h */,
+				CD596CC41625808400B95B49 /* TextSelectionRect.m */,
 				B7FB79DC14D605FA0080A714 /* TextRenderer.h */,
 				B7FB79DD14D605FA0080A714 /* TextRenderer.m */,
 			);
@@ -3346,6 +3351,7 @@
 				5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */,
 				CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */,
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
+				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

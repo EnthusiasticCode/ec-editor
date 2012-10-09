@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "TextPosition.h"
 #import "TextRange.h"
+#import "TextSelectionRect.h"
 #import "NSTimer+BlockTimer.h"
 #import "KeyboardAccessoryView.h"
 #import "BezelAlert.h"
@@ -23,7 +24,6 @@
 
 NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 
-static const void *rendererContext;
 
 #pragma mark - Interfaces
 
@@ -1165,6 +1165,18 @@ static void init(CodeView *self)
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point
 {
   return [self closestPositionToPoint:point withinRange:nil];
+}
+
+- (NSArray *)selectionRectsForRange:(UITextRange *)range {
+  RectSet *rects = [self.renderer rectsForStringRange:[(TextRange *)range range] limitToFirstLine:NO];
+  NSUInteger rectsCount = rects.count;
+  NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:rectsCount];
+  __block NSUInteger count = 0;
+  [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
+    // TODO!!! text range is not returned by our API
+    [result addObject:[[TextSelectionRect alloc] initWithRect:rect textRange:nil isStart:count == 0 isEnd:++count == rectsCount]];
+  }];
+  return [result copy];
 }
 
 - (UITextPosition *)closestPositionToPoint:(CGPoint)point 
