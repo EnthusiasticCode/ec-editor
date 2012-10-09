@@ -23,6 +23,9 @@
 @interface RemoteNavigationController ()
 @property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
 @property (nonatomic, strong, readwrite) ReactiveConnection *connection;
+
+@property (nonatomic, weak) UINavigationController *localBrowserNavigationController;
+@property (nonatomic, weak) UINavigationController *remoteBrowserNavigationController;
 @end
 
 @implementation RemoteNavigationController
@@ -63,7 +66,9 @@ static void _init(RemoteNavigationController *self) {
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([segue.identifier isEqualToString:@"LocalBrowser"]) {
     // Set the initial location for the local file browser
-    [(BaseFileBrowserController *)[(UINavigationController *)segue.destinationViewController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
+    self.localBrowserNavigationController = segue.destinationViewController;
+    self.localBrowserNavigationController.editing = YES;
+    [(BaseFileBrowserController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
   } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
     ASSERT(self.connection && self.remote);
     [(RemoteFileListController *)[(UINavigationController *)segue.destinationViewController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];

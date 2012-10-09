@@ -56,7 +56,7 @@
   __weak RemoteFileListController *this = self;
   
   // Directory content update reaction
-  RAC(self.directoryContent) = [[[self.connection directoryContentsForPath:self.remotePath]
+  RAC(self.directoryContent) = [[[self.connection directoryContents]
                                  where:^BOOL(RACTuple *pathAndContent) {
                                    return [this.remotePath isEqualToString:pathAndContent.first];
                                  }]
@@ -71,7 +71,7 @@
   // Connected refresh reaction
   [RACAble(self.connection.connected) subscribeNext:^(id x) {
     if ([x boolValue]) {
-      [this.connection directoryContentsForPath:this.remotePath];
+      [this.connection changeToDirectory:this.remotePath];
     } else {
       this.showLogin = YES;
     }
@@ -113,6 +113,8 @@
     } else {
       self.showLogin = YES;
     }
+  } else {
+    [self.connection changeToDirectory:self.remotePath];
   }
 }
 

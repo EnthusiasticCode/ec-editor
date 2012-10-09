@@ -86,14 +86,17 @@
   return _transcriptSubject;
 }
 
-- (RACSubscribable *)directoryContentsForPath:(NSString *)path {
+- (RACSubscribable *)directoryContents {
   if (!_directoryContentsSubject) {
     _directoryContentsSubject = [RACSubject subject];
   }
+  return _directoryContentsSubject;
+}
+
+- (void)changeToDirectory:(NSString *)path {
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
   [_connection changeToDirectory:path];
   [_connection directoryContents];
-  return _directoryContentsSubject;
 }
 
 #pragma mark - Connection delegate

@@ -33,7 +33,8 @@ enum ReactiveConnectionStatus {
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials;
 
 /// A subscribable that returns \c RACTuple of path to array of dictionaries with directory item informations
-- (RACSubscribable *)directoryContentsForPath:(NSString *)path;
+- (RACSubscribable *)directoryContents;
+- (void)changeToDirectory:(NSString *)path;
 
 /// A subscribable yielding the transcript records as \c RACTuples containing \c CKTranscriptType and the string for that transcript.
 - (RACSubscribable *)transcript;

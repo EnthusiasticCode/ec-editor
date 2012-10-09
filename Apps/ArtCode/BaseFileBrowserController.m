@@ -36,6 +36,15 @@ static void _init(BaseFileBrowserController *self) {
   return self;
 }
 
+- (id)init {
+  self = [super initWithNibName:nil bundle:nil];
+  if (!self) {
+    return nil;
+  }
+  _init(self);
+  return self;
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -52,9 +61,11 @@ static void _init(BaseFileBrowserController *self) {
   if ([itemURL isDirectory]) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
   } else {
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
     cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.editingAccessoryType = UITableViewCellAccessoryNone;
   }
   // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
 //  if ([_selectedItems containsObject:itemURL])
@@ -63,5 +74,12 @@ static void _init(BaseFileBrowserController *self) {
   return cell;
 }
 
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+  NSURL *itemURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  BaseFileBrowserController *nextFileBrowserController = [[BaseFileBrowserController alloc] init];
+  nextFileBrowserController.locationURL = itemURL;
+  nextFileBrowserController.editing = self.editing;
+  [self.navigationController pushViewController:nextFileBrowserController animated:YES];
+}
 
 @end
