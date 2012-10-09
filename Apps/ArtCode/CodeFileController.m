@@ -398,7 +398,8 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // subscribe to the text file's content to reparse
-  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.stringContent) switch], RACAble(self.codeUnit)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.stringContent) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+    ASSERT_NOT_MAIN_QUEUE();
     NSString *changedContent = tuple.first;
     TMUnit *codeUnit = tuple.second;
     [codeUnit reparseWithUnsavedContent:changedContent];
