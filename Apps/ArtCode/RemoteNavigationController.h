@@ -10,18 +10,16 @@
 
 @class ArtCodeRemote, ReactiveConnection;
 
-@interface RemoteNavigationController : UINavigationController
+@interface RemoteNavigationController : UIViewController
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote;
+#pragma mark Remote related properties
 
 @property (nonatomic, strong, readonly) ArtCodeRemote *remote;
 @property (nonatomic, strong, readonly) ReactiveConnection *connection;
 
-@end
+#pragma mark UI related properties
 
-
-@interface UIViewController (RemoteNavigationController)
-
-- (RemoteNavigationController *)remoteNavigationController;
+/// The toolbar that will be set in place of the default navigation toolbar in the \c SingleTabController
+@property (nonatomic, strong) IBOutlet UIViewController *toolbarController;
 
 @end

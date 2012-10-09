@@ -40,11 +40,10 @@
   NSMutableArray *_selectedItems;
 }
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote connection:(ReactiveConnection *)connection path:(NSString *)remotePath {
-  self = [super init];
-  if (!self)
-    return nil;
-  ASSERT(remote && connection);
+
+- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
+  ASSERT(!_connection); // This prepare can happen only once
+  ASSERT(remote && connection); // Connection and remote need to be specified
   _remote = remote;
   _connection = connection;
   self.remotePath = remotePath ?: @"/";
@@ -81,19 +80,20 @@
   // Connection status reaction
   [self.connection.connectionStatus subscribeNext:^(id x) {
     enum ReactiveConnectionStatus status = [x intValue];
-    self.showLoading = status != ReactiveConnectionStatusLoading;
+    if (!self.showLogin) {
+      self.showLoading = status == ReactiveConnectionStatusLoading;
+    }
   }];
   
   // Login reaction
-  [RACAble(self.authenticationCredentials) subscribeNext:^(NSURLCredential *credentials) {
-    this.showLoading = YES;
-    [[this.connection connectWithCredentials:credentials] subscribeNext:^(id x) {
-      this.showLoading = NO;
-      this.showLogin = ![x boolValue];
-    }];
-  }];
-  
-  return self;
+  [[[RACAble(self.authenticationCredentials)
+   select:^id(NSURLCredential *credentials) {
+     this.showLoading = YES;
+     return [this.connection connectWithCredentials:credentials];
+   }] switch] subscribeNext:^(id x) {
+     this.showLoading = NO;
+     this.showLogin = ![x boolValue];
+   }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -182,8 +182,9 @@
   if (!self.isEditing) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
-      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithArtCodeRemote:_remote connection:self.connection path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
-      [self.remoteNavigationController pushViewController:remoteFileListController animated:YES];
+      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
+      [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+      [self.navigationController pushViewController:remoteFileListController animated:YES];
     } else {
       //[self _toolEditExportAction:nil];
     }

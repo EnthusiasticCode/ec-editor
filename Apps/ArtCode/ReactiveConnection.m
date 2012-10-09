@@ -119,7 +119,7 @@
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error {
   // TODO manage error
-  NSLog(@"%@", [error localizedDescription]);
+  NSLog(@"connection error: %@", [error localizedDescription]);
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusUnavailable)];
 }
@@ -152,6 +152,7 @@
     [_directoryContentsSubject sendNext:[RACTuple tupleWithObjects:dirPath, contents, nil]];
     [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
   } else {
+    NSLog(@"connection receive content: %@", [error localizedDescription]);
     [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
   }
 }
@@ -174,6 +175,7 @@
 #pragma mark Connection Transcript
 
 - (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript {
+  NSLog(@"transcript: %@", string);
   [_transcriptSubject sendNext:[RACTuple tupleWithObjects:[NSNumber numberWithInt:transcript], string, nil]];
 }
 @end

@@ -111,7 +111,6 @@
     if (!strongSelf) {
       return;
     }
-    [strongSelf.tableView reloadData];
     if (strongSelf.searchBar.text.length) {
       if (items.count == 0) {
         strongSelf.infoLabel.text = L(@"No items in this folder match the filter.");

@@ -7,29 +7,67 @@
 //
 
 #import "RemoteNavigationController.h"
+#import "SingleTabController.h"
+
 #import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
+
+#import "BaseFileBrowserController.h"
 #import "RemoteFileListController.h"
+
+#import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
+#import "ArtCodeProject.h"
+
+
+@interface RemoteNavigationController ()
+@property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
+@property (nonatomic, strong, readwrite) ReactiveConnection *connection;
+@end
 
 @implementation RemoteNavigationController
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote {
-  ASSERT(remote && remote.url);
-  ReactiveConnection *connection = [ReactiveConnection reactiveConnectionWithURL:remote.url];
-  self = [super initWithRootViewController:[[RemoteFileListController alloc] initWithArtCodeRemote:remote connection:connection path:remote.path]];
-  if (!self)
+static void _init(RemoteNavigationController *self) {
+  // RAC
+  RAC(self.connection) = [RACAble(self.remote) select:^id(ArtCodeRemote *remote) {
+    return [ReactiveConnection reactiveConnectionWithURL:remote.url];
+  }];
+  
+  RAC(self.remote) = [RACAble(self.artCodeTab) select:^id(ArtCodeTab *tab) {
+    return tab.currentLocation.remote;
+  }];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self) {
     return nil;
-  _remote = remote;
-  _connection = connection;
+  }
+  _init(self);
   return self;
 }
 
-@end
+- (void)loadView {
+  [super loadView];
+  
+  if (!self.toolbarController) {
+    self.toolbarController = [[UIStoryboard storyboardWithName:@"RemoteNavigator" bundle:nil] instantiateViewControllerWithIdentifier:@"Toolbar"];
+  }
+}
 
-@implementation UIViewController (RemoteNavigationController)
+- (void)viewDidAppear:(BOOL)animated {
+  [self.singleTabController setToolbarViewController:self.toolbarController animated:YES];
+  [super viewDidAppear:animated];
+}
 
-- (RemoteNavigationController *)remoteNavigationController {
-  return (RemoteNavigationController *)self.navigationController;
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:@"LocalBrowser"]) {
+    // Set the initial location for the local file browser
+    [(BaseFileBrowserController *)[(UINavigationController *)segue.destinationViewController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
+  } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
+    ASSERT(self.connection && self.remote);
+    [(RemoteFileListController *)[(UINavigationController *)segue.destinationViewController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
+  }
 }
 
 @end
