@@ -65,6 +65,12 @@ static void _init(RemoteNavigationController *self) {
          break;
      }
    }];
+  
+  // Upload button activation reaction
+  // TODO!! visibleViewController is not KVO
+  [[self rac_subscribableForKeyPath:@"localBrowserNavigationController.visibleViewController.selectedItems" onObject:self] subscribeNext:^(NSArray *x) {
+    self.toolbarController.uploadButton.enabled = x.count != 0;
+  }];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {

@@ -13,4 +13,7 @@
 /// The location shown by the browser
 @property (nonatomic, strong) NSURL* locationURL;
 
+/// An array with the selected items. Items are \c NSURL.
+@property (nonatomic, readonly, copy) NSArray *selectedItems;
+
 @end

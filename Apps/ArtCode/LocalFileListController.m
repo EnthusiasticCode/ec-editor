@@ -12,7 +12,9 @@
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
 
-@implementation LocalFileListController
+@implementation LocalFileListController {
+  NSMutableArray *_selectedItems;
+}
 
 static void _init(LocalFileListController *self) {
   // RAC
@@ -45,6 +47,17 @@ static void _init(LocalFileListController *self) {
   return self;
 }
 
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+  [super setEditing:editing animated:animated];
+  [self willChangeValueForKey:@"selectedItems"];
+  if (editing) {
+    _selectedItems = [[NSMutableArray alloc] init];
+  } else {
+    _selectedItems = nil;
+  }
+  [self didChangeValueForKey:@"selectedItems"];
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -68,8 +81,8 @@ static void _init(LocalFileListController *self) {
     cell.editingAccessoryType = UITableViewCellAccessoryNone;
   }
   // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-//  if ([_selectedItems containsObject:itemURL])
-//    [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+  if ([_selectedItems containsObject:itemURL])
+    [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   
   return cell;
 }
@@ -80,6 +93,24 @@ static void _init(LocalFileListController *self) {
   nextFileBrowserController.locationURL = itemURL;
   nextFileBrowserController.editing = self.editing;
   [self.navigationController pushViewController:nextFileBrowserController animated:YES];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (self.isEditing) {
+    [self willChangeValueForKey:@"selectedItems"];
+    [_selectedItems addObject:[(RACTuple *)[self.filteredItems objectAtIndex:indexPath.row] first]];
+    [self didChangeValueForKey:@"selectedItems"];
+  }
+  [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (self.isEditing) {
+    [self willChangeValueForKey:@"selectedItems"];
+    [_selectedItems removeObject:[(RACTuple *)[self.filteredItems objectAtIndex:indexPath.row] first]];
+    [self didChangeValueForKey:@"selectedItems"];
+  }
+  [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }
 
 @end
