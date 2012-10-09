@@ -89,7 +89,7 @@
   if (symbol.isSeparator)
   {
     if (!cell.backgroundView)
-      cell.backgroundView = [UIView new];
+      cell.backgroundView = [[UIView alloc] init];
     cell.backgroundView.backgroundColor = [UIColor lightGrayColor];
   }
   else

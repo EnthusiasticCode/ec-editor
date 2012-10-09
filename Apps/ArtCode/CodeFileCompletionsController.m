@@ -114,7 +114,7 @@
   
   // Definition
   NSInteger parenDepth = 0;
-  NSMutableString *definition = [NSMutableString new];
+  NSMutableString *definition = [[NSMutableString alloc] init];
   NSString *resultType = nil;
   for (id<TMCompletionChunk> chunk in [[result completionString] completionChunks])
   {
@@ -185,7 +185,7 @@
 {
   // Insert selected completion
   id<TMCompletionResult> result = [self._completionResults completionResultAtIndex:[indexPath indexAtPosition:1]];
-  NSMutableString *completionString = [NSMutableString new];
+  NSMutableString *completionString = [[NSMutableString alloc] init];
   for (id<TMCompletionChunk> chunk in [[result completionString] completionChunks])
   {
     NSLog(@"%d - %@", [chunk kind], [chunk text]);

@@ -48,7 +48,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   if (_bookmarksPlistURL && [[NSFileManager defaultManager] fileExistsAtPath:_bookmarksPlistURL.path]) {
     _bookmarksArray =[NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:_bookmarksPlistURL] options:NSPropertyListMutableContainers format:nil error:NULL];
   } else {
-    _bookmarksArray = [NSMutableArray new];
+    _bookmarksArray = [[NSMutableArray alloc] init];
   }
   [self.tableView reloadData];
 }

@@ -90,7 +90,7 @@ static NSDictionary *_sharedAttributes = nil;
   
   // Preprocess settings
   NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)[plist objectForKey:_themeSettingsKey] count]];
-  NSMutableDictionary *environmentAttributes = [NSMutableDictionary new];
+  NSMutableDictionary *environmentAttributes = [[NSMutableDictionary alloc] init];
   for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
   {
     // TODO manage default settings for background, caret
@@ -140,7 +140,7 @@ static NSDictionary *_sharedAttributes = nil;
     [themeSettings setObject:styleSettings forKey:settingScopes];
   }
   _settings = themeSettings;    
-  _scopeAttribuesCache = [NSCache new];
+  _scopeAttribuesCache = [[NSCache alloc] init];
   
   return self;
 }
@@ -154,7 +154,7 @@ static NSDictionary *_sharedAttributes = nil;
   }
 
   // Get all relevant attributes dictionaries
-  NSMutableDictionary *scoreForAttributes = [NSMutableDictionary new];
+  NSMutableDictionary *scoreForAttributes = [[NSMutableDictionary alloc] init];
   [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:settingScope];
     if (score > 0) {
@@ -163,7 +163,7 @@ static NSDictionary *_sharedAttributes = nil;
   }];
   
   // Build result attributes
-  NSMutableDictionary *newResultAttributes = [NSMutableDictionary new];
+  NSMutableDictionary *newResultAttributes = [[NSMutableDictionary alloc] init];
   if (self.commonAttributes) {
     [newResultAttributes addEntriesFromDictionary:self.commonAttributes];
   }

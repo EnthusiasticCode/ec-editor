@@ -34,8 +34,8 @@ static NSString * const docSetContentsPath = @"Contents/Resources/Documents";
 	self = [super init];
 	if (self) {
 		[self reloadAvailableDocSets];
-		_downloadsByURL = [NSMutableDictionary new];
-		_downloadQueue = [NSMutableArray new];
+		_downloadsByURL = [[NSMutableDictionary alloc] init];
+		_downloadQueue = [[NSMutableArray alloc] init];
 		[self reloadDownloadedDocSets];
 	}
 	return self;

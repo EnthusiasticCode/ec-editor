@@ -675,7 +675,7 @@ typedef enum {
   _connectionPath = remotePath;
   
   _items = items;
-  _itemsConflicts = [NSMutableArray new];
+  _itemsConflicts = [[NSMutableArray alloc] init];
   _localFolderURL = localFolderURL;
   _completionHandler = [completionHandler copy];
   
@@ -693,7 +693,7 @@ typedef enum {
     return _localTemporaryDirectoryURL;
   @synchronized (self) {
     _localTemporaryDirectoryURL = [NSURL temporaryDirectory];
-    [[NSFileManager new] createDirectoryAtURL:_localTemporaryDirectoryURL withIntermediateDirectories:YES attributes:0 error:NULL];
+    [[[NSFileManager alloc] init] createDirectoryAtURL:_localTemporaryDirectoryURL withIntermediateDirectories:YES attributes:0 error:NULL];
   }
   return _localTemporaryDirectoryURL;
 }

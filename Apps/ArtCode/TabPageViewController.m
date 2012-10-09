@@ -66,7 +66,7 @@
   _tabBar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
   [self.view addSubview:_tabBar];
   
-  _childContainerView = [UIView new];
+  _childContainerView = [[UIView alloc] init];
   _childContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.view addSubview:_childContainerView];
   

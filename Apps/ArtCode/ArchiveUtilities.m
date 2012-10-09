@@ -14,7 +14,7 @@
 @implementation ArchiveUtilities
 
 + (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
-  NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     // Prepare to execute the extracting operation
     __block NSError *error = nil;
@@ -31,13 +31,13 @@
 + (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)archiveURL renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void (^)(NSError *, NSURL *))completionHandler {
   ASSERT(urls.count);
   ASSERT(archiveURL);
-  NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     __block NSError *error = nil;
     NSURL *newArchiveURL = archiveURL;
     // Generate valid archiveURL if needed
     if (renameIfNeeded) {
-      NSFileManager *fileManager = [NSFileManager new];
+      NSFileManager *fileManager = [[NSFileManager alloc] init];
       NSUInteger duplicateCount = 0;
       __block BOOL alreadyExisting = NO;
       do {

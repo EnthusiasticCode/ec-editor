@@ -218,7 +218,7 @@
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
   if (self.isEditing) {
     if (!_selectedItems)
-      _selectedItems = [NSMutableArray new];
+      _selectedItems = [[NSMutableArray alloc] init];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
   } else {
     NSURL *fileURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
@@ -278,7 +278,7 @@
   {
     if (buttonIndex == 0) // Copy
     {
-      FolderBrowserController *directoryBrowser = [FolderBrowserController new];
+      FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
       directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -320,7 +320,7 @@
         
       case 1: // Move
       {
-        FolderBrowserController *directoryBrowser = [FolderBrowserController new];
+        FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
         directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
         [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -352,7 +352,7 @@
         
         [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
           // Create mail composer
-          MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+          MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
           mailComposer.mailComposeDelegate = self;
           mailComposer.navigationBar.barStyle = UIBarStyleDefault;
           mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -491,7 +491,7 @@
     }
       
     case 1: {
-      RemoteDirectoryBrowserController *syncController = [RemoteDirectoryBrowserController new];
+      RemoteDirectoryBrowserController *syncController = [[RemoteDirectoryBrowserController alloc] init];
       syncController.remoteURL = [(ArtCodeRemote *)[self.artCodeTab.currentLocation.project.remotes objectAtIndex:0] url];
       syncController.navigationItem.rightBarButtonItem = rightButton;
       [self modalNavigationControllerPresentViewController:syncController];
@@ -499,11 +499,11 @@
     }
       
     default: {
-      ExportRemotesListController *remotesListController = [ExportRemotesListController new];
+      ExportRemotesListController *remotesListController = [[ExportRemotesListController alloc] init];
       remotesListController.remotes = self.artCodeTab.currentLocation.project.remotes;
       remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ArtCodeRemote *remote) {
         // Shows the remote directory browser
-        RemoteDirectoryBrowserController *uploadController = [RemoteDirectoryBrowserController new];
+        RemoteDirectoryBrowserController *uploadController = [[RemoteDirectoryBrowserController alloc] init];
         uploadController.remoteURL = remote.url;
         uploadController.navigationItem.rightBarButtonItem = rightButton;
         [senderController.navigationController pushViewController:uploadController animated:YES];
@@ -520,7 +520,7 @@
   NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
   
   // Initialize transfer/conflict controller
-  RemoteTransferController *remoteTransferController = [RemoteTransferController new];
+  RemoteTransferController *remoteTransferController = [[RemoteTransferController alloc] init];
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start upload
@@ -540,7 +540,7 @@
   NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
   
   // Initialize transfer/conflict controller
-  RemoteTransferController *remoteTransferController = [RemoteTransferController new];
+  RemoteTransferController *remoteTransferController = [[RemoteTransferController alloc] init];
   [self modalNavigationControllerPresentViewController:remoteTransferController];
   
   // Start sync

@@ -62,7 +62,7 @@ static UIImage *_TMScopeBlankImage = nil;
   if (!_icon) {
     _icon = [TMPreference preferenceValueForKey:TMPreferenceSymbolIconKey qualifiedIdentifier:self.qualifiedIdentifier];
     if (!_icon) {
-      _icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [UIImage new]);
+      _icon = _TMScopeBlankImage ?: (_TMScopeBlankImage = [[UIImage alloc] init]);
     }
   }
   return _icon;

@@ -87,7 +87,7 @@
 #pragma mark - Public Methods
 
 - (void)moveItems:(NSArray *)items toFolder:(NSURL *)toFolderURL usingBlock:(void (^)(NSURL *))processingBlock completion:(void (^)(void))completionBlock {
-  _conflictItems = [NSMutableArray new];
+  _conflictItems = [[NSMutableArray alloc] init];
   _resolvedItems = [NSMutableArray arrayWithArray:items];
   _processingBlock = [processingBlock copy];
   _completionBlock = [completionBlock copy];
@@ -136,7 +136,7 @@
   self.navigationItem.title = @"Replacing";
   
   // Adding selected items to list of resolved and removing from conflict table
-  NSMutableIndexSet *selectedIndexSet = [NSMutableIndexSet new];
+  NSMutableIndexSet *selectedIndexSet = [[NSMutableIndexSet alloc] init];
   for (NSIndexPath *selectedIndexPath in [self.conflictTableView indexPathsForSelectedRows]) {
     [selectedIndexSet addIndex:selectedIndexPath.row];
   }

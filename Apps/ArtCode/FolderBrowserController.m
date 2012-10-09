@@ -36,7 +36,7 @@
 
 - (NSArray *)currentFolderSubfolders {
   if (!_currentFolderSubfolders) {
-    NSMutableArray *result = [NSMutableArray new];
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     NSNumber *isDirectory;
     for (NSURL *subfolderURL in [[NSFileManager defaultManager] enumeratorAtURL:self.currentFolderURL includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsDirectoryKey, nil] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
       [subfolderURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];

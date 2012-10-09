@@ -371,7 +371,7 @@
 {
   static NSCache *documentImageCache = nil;
   if (!documentImageCache)
-    documentImageCache = [NSCache new];
+    documentImageCache = [[NSCache alloc] init];
   UIImage *documentImage = [documentImageCache objectForKey:extension];
   if (documentImage)
     return documentImage;

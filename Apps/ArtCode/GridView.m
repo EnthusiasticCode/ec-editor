@@ -135,7 +135,7 @@
 - (void)_enqueueReusableCells:(NSArray *)cells
 {
   if (!_reusableCells)
-    _reusableCells = [NSMutableDictionary new];
+    _reusableCells = [[NSMutableDictionary alloc] init];
   
   [cells enumerateObjectsUsingBlock:^(GridViewCell *cell, NSUInteger idx, BOOL *stop) {
     ASSERT(cell && cell.reuseIdentifier);
@@ -146,7 +146,7 @@
     NSMutableArray *reuseArray = [_reusableCells objectForKey:cell.reuseIdentifier];
     if (!reuseArray)
     {
-      reuseArray = [NSMutableArray new];
+      reuseArray = [[NSMutableArray alloc] init];
       [_reusableCells setObject:reuseArray forKey:cell.reuseIdentifier];
     }
     
@@ -237,7 +237,7 @@
     
     // Add selection
     if (!_selectedEditingCells)
-      _selectedEditingCells = [NSMutableIndexSet new];
+      _selectedEditingCells = [[NSMutableIndexSet alloc] init];
     [_selectedEditingCells addIndex:cellIndex];
   }
   else
@@ -257,7 +257,7 @@
     
     // Add selection
     if (!_selectedCells)
-      _selectedCells = [NSMutableIndexSet new];
+      _selectedCells = [[NSMutableIndexSet alloc] init];
     [_selectedCells addIndex:cellIndex];
   }
   
@@ -336,7 +336,7 @@
   CGRect bounds = UIEdgeInsetsInsetRect([self bounds], self.contentInset);
   NSMutableArray *cellsAfterUpdate = [_cells mutableCopy];
   if (!cellsAfterUpdate)
-    cellsAfterUpdate = [NSMutableArray new];
+    cellsAfterUpdate = [[NSMutableArray alloc] init];
   NSInteger cellCountAfterUpdate = [self.dataSource numberOfCellsForGridView:self];
   NSRange cellsLoadedAfterUpdate = NSIntersectionRange(NSMakeRange((NSUInteger)floorf(bounds.origin.y / self.rowHeight) * self.columnNumber, (NSUInteger)(floorf(bounds.size.height / self.rowHeight) + 1) * self.columnNumber), (NSRange){ 0, cellCountAfterUpdate });
   
@@ -492,13 +492,13 @@
   if (animated)
   {
     if (!_updateInsertAnimated)
-      _updateInsertAnimated = [NSMutableIndexSet new];
+      _updateInsertAnimated = [[NSMutableIndexSet alloc] init];
     [_updateInsertAnimated addIndexes:indexes];
   }
   else
   {
     if (_updateInsert)
-      _updateInsert = [NSMutableIndexSet new];
+      _updateInsert = [[NSMutableIndexSet alloc] init];
     [_updateInsert addIndexes:indexes];
   }
   [self endUpdates];
@@ -510,13 +510,13 @@
   if (animated)
   {
     if (!_updateDeleteAnimated)
-      _updateDeleteAnimated = [NSMutableIndexSet new];
+      _updateDeleteAnimated = [[NSMutableIndexSet alloc] init];
     [_updateDeleteAnimated addIndexes:indexes];
   }
   else
   {
     if (_updateDelete)
-      _updateDelete = [NSMutableIndexSet new];
+      _updateDelete = [[NSMutableIndexSet alloc] init];
     [_updateDelete addIndexes:indexes];
   }
   [self endUpdates];
@@ -528,13 +528,13 @@
   if (animated)
   {
     if (!_updateReloadAnimated)
-      _updateReloadAnimated = [NSMutableIndexSet new];
+      _updateReloadAnimated = [[NSMutableIndexSet alloc] init];
     [_updateReloadAnimated addIndexes:indexes];
   }
   else
   {
     if (_updateReload)
-      _updateReload = [NSMutableIndexSet new];
+      _updateReload = [[NSMutableIndexSet alloc] init];
     [_updateReload addIndexes:indexes];
   }
   [self endUpdates];

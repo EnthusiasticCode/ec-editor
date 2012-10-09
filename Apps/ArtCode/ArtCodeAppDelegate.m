@@ -109,7 +109,7 @@
   
   ////////////////////////////////////////////////////////////////////////////
   // Creating main tab controllers
-  _tabPageController = [ArtCodeTabPageViewController new];
+  _tabPageController = [[ArtCodeTabPageViewController alloc] init];
   _tabPageController.definesPresentationContext = YES;
   _tabPageController.artCodeTabSet = [ArtCodeTabSet defaultSet];
   

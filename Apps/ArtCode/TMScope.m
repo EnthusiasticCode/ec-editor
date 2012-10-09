@@ -110,7 +110,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   childScope->_location = location;
   childScope->_parent = self;
   if (!_children)
-    _children = [NSMutableArray new];
+    _children = [[NSMutableArray alloc] init];
   NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:scopeComparator];
   if (childInsertionIndex == [_children count])
     [_children addObject:childScope];

@@ -271,7 +271,7 @@
 - (NSString *)accessibilityLabel {
   if (!_currentViews)
     [self _setupTitle];
-  NSMutableString *label = [NSMutableString new];
+  NSMutableString *label = [[NSMutableString alloc] init];
   NSString *sep = nil;
   for (UIView *view in _currentViews) {
     if (sep)
@@ -312,7 +312,7 @@
   [titleFragments enumerateObjectsAtIndexes:fragmentIndexes options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
     if ([obj isKindOfClass:[NSString class]])
     {
-      UILabel *label = [UILabel new];
+      UILabel *label = [[UILabel alloc] init];
       label.lineBreakMode = UILineBreakModeMiddleTruncation;
       label.backgroundColor = [UIColor clearColor];
       

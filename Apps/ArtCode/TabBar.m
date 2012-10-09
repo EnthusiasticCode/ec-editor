@@ -122,7 +122,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   
   if (!additionalControlsContainerView)
   {
-    additionalControlsContainerView = [UIView new];
+    additionalControlsContainerView = [[UIView alloc] init];
     additionalControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
     additionalControlsContainerView.backgroundColor = [UIColor clearColor];
     [self addSubview:additionalControlsContainerView];
@@ -196,7 +196,7 @@ static void preinit(TabBar *self)
 static void init(TabBar *self)
 {
   // Tab container
-  self->tabControlsContainerView = [TabBarScrollView new];
+  self->tabControlsContainerView = [[TabBarScrollView alloc] init];
   self->tabControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   self->tabControlsContainerView.backgroundColor = [UIColor clearColor];
   self->tabControlsContainerView.contentInset = UIEdgeInsetsMake(0, 4, 0, 4);
@@ -340,7 +340,7 @@ static void init(TabBar *self)
     return;
   
   if (!tabControls)
-    tabControls = [NSMutableArray new];
+    tabControls = [[NSMutableArray alloc] init];
   
   // Creating new tab control
   [self willChangeValueForKey:@"tabsCount"];
@@ -613,7 +613,7 @@ static void init(TabBar *self)
   if (tabControl.reuseIdentifier)
   {
     if (!reusableTabControls)
-      reusableTabControls = [NSMutableArray new];
+      reusableTabControls = [[NSMutableArray alloc] init];
     [reusableTabControls addObject:tabControl];
   }
   

@@ -173,7 +173,7 @@
 {
   if (!_toolAddPopover)
   {
-    NewRemoteViewController *newRemote = [NewRemoteViewController new];
+    NewRemoteViewController *newRemote = [[NewRemoteViewController alloc] init];
     newRemote.artCodeTab = self.artCodeTab;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newRemote];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];

@@ -66,7 +66,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   static BezelAlert *_centerBezelAlert = nil;
   if (_centerBezelAlert == nil)
   {
-    _centerBezelAlert = [BezelAlert new];
+    _centerBezelAlert = [[BezelAlert alloc] init];
     _centerBezelAlert.presentationAnimationType = BezelAlertAnimationFade | BezelAlertAnimationPop;
   }
   return _centerBezelAlert;
@@ -77,7 +77,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   static BezelAlert *_bottomBezelAlert = nil;
   if (_bottomBezelAlert == nil)
   {
-    _bottomBezelAlert = [BezelAlert new];
+    _bottomBezelAlert = [[BezelAlert alloc] init];
     _bottomBezelAlert.margins = UIEdgeInsetsMake(-1, -1, 20, -1);
   }
   return _bottomBezelAlert;
@@ -290,7 +290,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   UILabel *label = nil;
   if (text)
   {
-    label = [UILabel new];
+    label = [[UILabel alloc] init];
     label.font = [UIFont boldSystemFontOfSize:16];
     label.backgroundColor = [UIColor clearColor];
     label.textColor = [UIColor whiteColor];
@@ -326,7 +326,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   [view addSubview:imageView];
   [view addSubview:label];
   
-  UIViewController *viewController = [UIViewController new];
+  UIViewController *viewController = [[UIViewController alloc] init];
   viewController.view = view;
   viewController.contentSizeForViewInPopover = viewFrame.size;
   

@@ -405,7 +405,7 @@
     }
     else if (buttonIndex == 1) // send mail
     {
-      MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+      MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
       mailComposer.mailComposeDelegate = self;
       mailComposer.navigationBar.barStyle = UIBarStyleDefault;
       mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -415,7 +415,7 @@
       NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
       [self setEditing:NO animated:YES];
       
-      NSMutableString *subject = [NSMutableString new];
+      NSMutableString *subject = [[NSMutableString alloc] init];
       NSInteger cellsToExportCount = [cellsToExport count];
       __block NSInteger progress = 0;
       NSURL *temporaryDirectory = [NSURL temporaryDirectory];
@@ -492,7 +492,7 @@
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _gridView.alwaysBounceVertical = YES;
     _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
-    _gridView.backgroundView = [UIView new];
+    _gridView.backgroundView = [[UIView alloc] init];
     _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
     _gridView.accessibilityIdentifier = @"projects grid";
   }

@@ -280,7 +280,7 @@ static const void *rendererContext;
 {
   if (_renderer == nil)
   {
-    _renderer = [TextRenderer new];
+    _renderer = [[TextRenderer alloc] init];
     _renderer.delegate = self;
     _renderer.maximumStringLenghtPerSegment = MAX_RENDERER_STRING_LENGTH_PER_SEGMENT;
   }
@@ -476,7 +476,7 @@ static void init(CodeView *self)
 {
   self.contentMode = UIViewContentModeRedraw;
   self.clearsContextBeforeDrawing = NO;
-  self->_contentView = [CodeViewContentView new];
+  self->_contentView = [[CodeViewContentView alloc] init];
   self->_contentView.clearsContextBeforeDrawing = NO;
   self->_contentView.parentCodeView = self;
   self->_contentView.contentMode = UIViewContentModeRedraw;
@@ -520,7 +520,7 @@ static void init(CodeView *self)
   self->_longDoublePressRecognizer.numberOfTouchesRequired = 2;
   [self addGestureRecognizer:self->_longDoublePressRecognizer];
   
-  self.attributedText = [NSMutableAttributedString new];
+  self.attributedText = [[NSMutableAttributedString alloc] init];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -632,7 +632,7 @@ static void init(CodeView *self)
   if (isUnderlay)
   {
     if (!underlayPasses)
-      underlayPasses = [NSMutableDictionary new];
+      underlayPasses = [[NSMutableDictionary alloc] init];
     [underlayPasses setObject:[block copy] forKey:passKey];
     
     self.renderer.underlayRenderingPasses = [underlayPasses allValues];
@@ -640,7 +640,7 @@ static void init(CodeView *self)
   else
   {
     if (!overlayPasses)
-      overlayPasses = [NSMutableDictionary new];
+      overlayPasses = [[NSMutableDictionary alloc] init];
     [overlayPasses setObject:[block copy] forKey:passKey];
     
     self.renderer.overlayRenderingPasses = [overlayPasses allValues];
@@ -649,14 +649,14 @@ static void init(CodeView *self)
   if (setupBlock)
   {
     if (!setupPasses)
-      setupPasses = [NSMutableDictionary new];
+      setupPasses = [[NSMutableDictionary alloc] init];
     [setupPasses setObject:[setupBlock copy] forKey:passKey];
   }
   
   if (cleanupBlock)
   {
     if (!cleanupPasses)
-      cleanupPasses = [NSMutableDictionary new];
+      cleanupPasses = [[NSMutableDictionary alloc] init];
     [cleanupPasses setObject:[cleanupBlock copy] forKey:passKey];
   }
 }
@@ -681,7 +681,7 @@ static void init(CodeView *self)
     [self scrollRectToVisible:CGRectInset(rects.bounds, -100, -100) animated:NO];
   } completion:^(BOOL finished) {
     [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
-      [[CodeFlashView new] flashInRect:rect view:self withDuration:0.25];
+      [[[CodeFlashView alloc] init] flashInRect:rect view:self withDuration:0.25];
     }];
   }];
 }
@@ -1332,7 +1332,7 @@ static void init(CodeView *self)
 {
   if (!_undoManager)
   {
-    _undoManager = [CodeViewUndoManager new];
+    _undoManager = [[CodeViewUndoManager alloc] init];
     // TODO fill the manager with stored stacks?
   }
   return _undoManager;
@@ -1980,7 +1980,7 @@ static void init(CodeView *self)
     // Left knob
     if (!leftKnob) 
     {
-      leftKnob = [TextSelectionKnobView new];
+      leftKnob = [[TextSelectionKnobView alloc] init];
       leftKnob.caretColor = caretColor;
       leftKnob.knobDirection = UITextLayoutDirectionLeft;
     }
@@ -1999,7 +1999,7 @@ static void init(CodeView *self)
     // Right knob
     if (!rightKnob) 
     {
-      rightKnob = [TextSelectionKnobView new];
+      rightKnob = [[TextSelectionKnobView alloc] init];
       rightKnob.caretColor = caretColor;
       rightKnob.knobDirection = UITextLayoutDirectionRight;
     }
@@ -2256,7 +2256,7 @@ static void init(CodeView *self)
     return;
   if (!_backgroundImageView)
   {
-    _backgroundImageView = [UIImageView new];
+    _backgroundImageView = [[UIImageView alloc] init];
     _backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _backgroundImageView.frame = self.bounds;
     [self addSubview:_backgroundImageView];

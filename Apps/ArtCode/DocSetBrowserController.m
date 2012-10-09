@@ -126,7 +126,7 @@
 
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender {
   if (!_outlinePopoverController) {
-    DocSetOutlineController *outlineController = [DocSetOutlineController new];
+    DocSetOutlineController *outlineController = [[DocSetOutlineController alloc] init];
     
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:outlineController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
@@ -297,7 +297,7 @@
 
 - (void)_toolNormalBookmarksAction:(id)sender {
   if (!_bookmarkPopoverController) {
-    DocSetBookmarksController *bookmarkController = [DocSetBookmarksController new];
+    DocSetBookmarksController *bookmarkController = [[DocSetBookmarksController alloc] init];
     bookmarkController.delegate = self;
     UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:bookmarkController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];

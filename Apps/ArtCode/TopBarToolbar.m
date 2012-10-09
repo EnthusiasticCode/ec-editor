@@ -34,7 +34,7 @@ static const void *editItemContext;
 {
   if (!backButton)
   {
-    backButton = [UIButton new];
+    backButton = [[UIButton alloc] init];
     [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Normal"] forState:UIControlStateNormal];
     [backButton setImage:[UIImage imageNamed:@"topBar_BackButton_Disabled"] forState:UIControlStateDisabled];
     backButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
@@ -47,7 +47,7 @@ static const void *editItemContext;
 {
   if (!forwardButton)
   {
-    forwardButton = [UIButton new];
+    forwardButton = [[UIButton alloc] init];
     [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Normal"] forState:UIControlStateNormal];
     [forwardButton setImage:[UIImage imageNamed:@"topBar_ForwardButton_Disabled"] forState:UIControlStateDisabled];
     forwardButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
@@ -60,7 +60,7 @@ static const void *editItemContext;
 {
   if (!titleControl)
   {
-    titleControl = [TopBarTitleControl new];
+    titleControl = [[TopBarTitleControl alloc] init];
     titleControl.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   }
   return titleControl;
@@ -82,7 +82,7 @@ static const void *editItemContext;
     [editItem addObserver:self forKeyPath:@"title" options:NSKeyValueObservingOptionNew context:&editItemContext];
     
     if (!editItem.customView)
-      [self _setupButton:[TopBarEditButton new] withBarButtonItem:editItem];
+      [self _setupButton:[[TopBarEditButton alloc] init] withBarButtonItem:editItem];
     [self addSubview:editItem.customView];
   }
   
@@ -98,7 +98,7 @@ static const void *editItemContext;
   toolItems = [items copy];
   for (UIBarButtonItem *item in toolItems) {
     if (!item.customView)
-      [self _setupButton:[TopBarToolButton new] withBarButtonItem:item];
+      [self _setupButton:[[TopBarToolButton alloc] init] withBarButtonItem:item];
     if (animated)
       item.customView.alpha = 0;
     [self addSubview:item.customView];

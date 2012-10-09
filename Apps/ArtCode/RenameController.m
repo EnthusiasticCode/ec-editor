@@ -95,8 +95,8 @@
   NSString *renameAs = self.renameTextField.text;
   // TODO checks on new name?
   
-  NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
-  NSFileManager *fileManager = [NSFileManager new];
+  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
   // Rename original file
   __block NSError *err = nil;
   __block NSUInteger count = 0;
@@ -126,12 +126,12 @@
 }
 
 - (void)_updateAlsoRenameTableForFileWithURL:(NSURL *)fileURL {
-  NSMutableArray *alsoRename = [NSMutableArray new];
-  [[NSFileCoordinator new] coordinateReadingItemAtURL:fileURL.URLByDeletingLastPathComponent options:0 error:NULL byAccessor:^(NSURL *newURL) {
+  NSMutableArray *alsoRename = [[NSMutableArray alloc] init];
+  [[[NSFileCoordinator alloc] init] coordinateReadingItemAtURL:fileURL.URLByDeletingLastPathComponent options:0 error:NULL byAccessor:^(NSURL *newURL) {
     // Get the name of the file to find similar files
     NSString *fileName = fileURL.lastPathComponent.stringByDeletingPathExtension;
     // Enumerate all files in the original file directory
-    for (NSURL *otherFileURL in [[NSFileManager new] enumeratorAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:NULL]) {
+    for (NSURL *otherFileURL in [[[NSFileManager alloc] init] enumeratorAtURL:newURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:NULL]) {
       // Skip renamed file
       if ([otherFileURL isEqual:fileURL])
         continue;

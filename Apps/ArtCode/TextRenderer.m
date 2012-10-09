@@ -163,7 +163,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 {
   ASSERT(line != NULL);
   
-  TextRendererLine *result = [TextRendererLine new];
+  TextRendererLine *result = [[TextRendererLine alloc] init];
   result->CTLine = CFRetain(line);
   result->width = CTLineGetTypographicBounds(line, &result->ascent, &result->descent, &result->leading);
   result->isTruncation = truncation;
@@ -699,7 +699,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   if (!(self = [super init])) 
     return nil;
   
-  textSegments = [NSMutableArray new];
+  textSegments = [[NSMutableArray alloc] init];
   textSegmentsSemaphore = dispatch_semaphore_create(1);
   
   __weak TextRenderer *this = self;
@@ -953,7 +953,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
   {
     // Calculate segments to remove
-    NSMutableIndexSet *segmentsToRemove = [NSMutableIndexSet new];
+    NSMutableIndexSet *segmentsToRemove = [[NSMutableIndexSet alloc] init];
     __block NSUInteger lastSegmentTextEnd = 0;
     __block NSUInteger currentSegmentTextEnd = 0;
     [textSegments enumerateObjectsUsingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stopSegments) {

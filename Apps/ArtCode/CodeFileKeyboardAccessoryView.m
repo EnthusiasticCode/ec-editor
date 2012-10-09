@@ -60,7 +60,7 @@ static const void *itemContext;
 {
   if (!itemPopoverView)
   {
-    itemPopoverView = [CodeFileKeyboardAccessoryPopoverView new];
+    itemPopoverView = [[CodeFileKeyboardAccessoryPopoverView alloc] init];
     itemPopoverView.alpha = 0;
   }
   return itemPopoverView;
@@ -202,7 +202,7 @@ static const void *itemContext;
   items = [value copy];
   [items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
     // Creating button for item
-    UIButton *itemButton = [UIButton new];
+    UIButton *itemButton = [[UIButton alloc] init];
     itemButton.tag = itemIndex;
     [itemButton addTarget:self action:@selector(_itemButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     [itemButton setBackgroundImage:self.itemBackgroundImage forState:UIControlStateNormal];

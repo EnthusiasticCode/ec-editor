@@ -93,7 +93,7 @@ static void init(RemoteBrowserController *self) {
 - (NSMutableArray *)_selectedItems
 {
   if (!_selectedItems)
-    _selectedItems = [NSMutableArray new];
+    _selectedItems = [[NSMutableArray alloc] init];
   return _selectedItems;
 }
 
@@ -361,7 +361,7 @@ static void init(RemoteBrowserController *self) {
   
   // Cache results
   if (!_directoryContentCache)
-    _directoryContentCache = [NSMutableDictionary new];
+    _directoryContentCache = [[NSMutableDictionary alloc] init];
   [_directoryContentCache setObject:contents forKey:dirPath];
   
   self.loading = NO;
@@ -445,7 +445,7 @@ static void init(RemoteBrowserController *self) {
   {
     if (buttonIndex != actionSheet.destructiveButtonIndex)
       return;
-    RemoteTransferController *transferController = [RemoteTransferController new];
+    RemoteTransferController *transferController = [[RemoteTransferController alloc] init];
     transferController.navigationItem.rightBarButtonItem = nil;
     [self modalNavigationControllerPresentViewController:transferController];
     [transferController deleteConnectionItems:self._selectedItems fromConnection:(id<CKConnection>)_connection path:self.remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
@@ -497,7 +497,7 @@ static void init(RemoteBrowserController *self) {
 
 - (IBAction)syncAction:(id)sender
 {
-  FolderBrowserController *directoryBrowser = [FolderBrowserController new];
+  FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerSyncAction:)];
   directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -507,7 +507,7 @@ static void init(RemoteBrowserController *self) {
 - (void)_toolEditExportAction:(id)sender
 {
   // Show directory browser presenter to select where to download
-  FolderBrowserController *directoryBrowser = [FolderBrowserController new];
+  FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
   directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Download" style:UIBarButtonItemStyleDone target:self action:@selector(_modalNavigationControllerDownloadAction:)];
   directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
   [self modalNavigationControllerPresentViewController:directoryBrowser];
@@ -550,7 +550,7 @@ static void init(RemoteBrowserController *self) {
   NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
   
   // Show conflit resolution controller
-  RemoteTransferController *transferController = [RemoteTransferController new];
+  RemoteTransferController *transferController = [[RemoteTransferController alloc] init];
   UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
   [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   transferController.navigationItem.leftBarButtonItem = cancelItem;
@@ -572,7 +572,7 @@ static void init(RemoteBrowserController *self) {
   NSURL *localFolderURL = directoryBrowser.selectedFolderURL;
   
   // Show sync controller
-  RemoteTransferController *transferController = [RemoteTransferController new];
+  RemoteTransferController *transferController = [[RemoteTransferController alloc] init];
   UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(modalNavigationControllerDismissAction:)];
   [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   transferController.navigationItem.leftBarButtonItem = cancelItem;

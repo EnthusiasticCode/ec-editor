@@ -74,7 +74,7 @@ static const void *rendererContext;
 {
   if (!selectionView)
   {
-    selectionView = [UIView new];
+    selectionView = [[UIView alloc] init];
     selectionView.backgroundColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:0.1];
     selectionView.layer.borderWidth = 1;
     selectionView.layer.borderColor = [UIColor colorWithRed:0 green:113.0/255.0 blue:188.0/255.0 alpha:1].CGColor;

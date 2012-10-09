@@ -87,7 +87,7 @@
     [colorSelectionControl addTarget:self action:@selector(_selectColorAction:) forControlEvents:UIControlEventTouchUpInside];
     colorSelectionControl.accessibilityIdentifier = @"color selector";
     
-    changeColorController = [UIViewController new];
+    changeColorController = [[UIViewController alloc] init];
     changeColorController.view = colorSelectionControl;
     changeColorController.contentSizeForViewInPopover = CGSizeMake(400, 200);
   }

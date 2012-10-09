@@ -98,9 +98,9 @@
   [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] labelColor:self.labelColor completionHandler:^(ArtCodeProject *project) {
     if (project) {
       // The project has been successfuly created, copying files
-      NSFileCoordinator *fileCoordinator = [NSFileCoordinator new];
+      NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
       [fileCoordinator coordinateReadingItemAtURL:this.fileURL options:0 writingItemAtURL:project.fileURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        NSFileManager *fileManager = [NSFileManager new];
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
         for (NSURL *url in [fileManager enumeratorAtURL:newReadingURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:NULL]) {
           [fileManager copyItemAtURL:url toURL:[newWritingURL URLByAppendingPathComponent:url.lastPathComponent] error:NULL];
         }

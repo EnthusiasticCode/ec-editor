@@ -57,7 +57,7 @@
   // TODO change child container view background to white
   
   // Add tab button
-  UIButton *addTabButton = [UIButton new];
+  UIButton *addTabButton = [[UIButton alloc] init];
   [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
   [addTabButton addTarget:self action:@selector(_addButtonAction:) forControlEvents:UIControlEventTouchUpInside];
   self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
@@ -83,7 +83,7 @@
   }
   
   // Generate a new controller
-  SingleTabController *singleTabController = [SingleTabController new];
+  SingleTabController *singleTabController = [[SingleTabController alloc] init];
   singleTabController.artCodeTab = artCodeTab;
   
   // RAC 

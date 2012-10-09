@@ -32,7 +32,7 @@
   static NSMutableDictionary *systemScopesScoreCache = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    systemScopesScoreCache = [NSMutableDictionary new];
+    systemScopesScoreCache = [[NSMutableDictionary alloc] init];
   });
   @synchronized(systemScopesScoreCache) {
     NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
@@ -77,7 +77,7 @@
     NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
     if (!scopeToScore)
     {
-      scopeToScore = [NSMutableDictionary new];
+      scopeToScore = [[NSMutableDictionary alloc] init];
       [systemScopesScoreCache setObject:scopeToScore forKey:scopeSelector];
     }
     [scopeToScore setObject:[NSNumber numberWithFloat:score] forKey:self];

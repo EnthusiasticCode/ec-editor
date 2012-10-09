@@ -94,7 +94,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
-    [[NSFileManager new] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
+    [[[NSFileManager alloc] init] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
     _documentsArchiveURLs = nil;
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
@@ -141,8 +141,8 @@
         
         // Explode single folder if present
         __block NSArray *explodingURLs = nil;
-        [[NSFileCoordinator new] coordinateReadingItemAtURL:createdProject.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-          NSFileManager *fileManager = [NSFileManager new];
+        [[[NSFileCoordinator alloc] init] coordinateReadingItemAtURL:createdProject.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
+          NSFileManager *fileManager = [[NSFileManager alloc] init];
           NSArray *projectContents = [fileManager contentsOfDirectoryAtURL:createdProject.fileURL includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
           NSNumber *isDirectory = nil;
           if (projectContents.count == 1 && [[projectContents objectAtIndex:0] getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && isDirectory.boolValue) {

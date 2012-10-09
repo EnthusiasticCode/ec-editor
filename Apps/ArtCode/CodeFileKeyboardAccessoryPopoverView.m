@@ -123,14 +123,14 @@
 - (UIImageView *)arrowView
 {
   if (arrowView == nil)
-    arrowView = [UIImageView new];
+    arrowView = [[UIImageView alloc] init];
   return arrowView;
 }
 
 - (UIImageView *)backgroundView
 {
   if (backgroundView == nil)
-    backgroundView = [UIImageView new];
+    backgroundView = [[UIImageView alloc] init];
   return backgroundView;
 }
 

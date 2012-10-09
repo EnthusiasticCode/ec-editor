@@ -145,7 +145,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (CodeFileMinimapView *)minimapView {
   if (!_minimapView) {
-    _minimapView = [CodeFileMinimapView new];
+    _minimapView = [[CodeFileMinimapView alloc] init];
     _minimapView.delegate = self;
     _minimapView.renderer = self.codeView.renderer;
     
@@ -442,7 +442,7 @@ static void drawStencilStar(CGContextRef myContext)
   // Load the codeview
   __weak CodeFileController *this = self;
   
-  CodeView *codeView = [CodeView new];
+  CodeView *codeView = [[CodeView alloc] init];
   codeView.delegate = self;
   codeView.magnificationPopoverBackgroundViewClass = [ImagePopoverBackgroundView class];
   
@@ -475,7 +475,7 @@ static void drawStencilStar(CGContextRef myContext)
   } underText:NO forKey:@"bookmarkMarkers"];
   
   // Accessory view
-  CodeFileKeyboardAccessoryView *accessoryView = [CodeFileKeyboardAccessoryView new];
+  CodeFileKeyboardAccessoryView *accessoryView = [[CodeFileKeyboardAccessoryView alloc] init];
   accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
   
   [accessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
@@ -502,7 +502,7 @@ static void drawStencilStar(CGContextRef myContext)
   [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
   accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
   
-  UIView *accessoryPopoverContentView = [UIView new];
+  UIView *accessoryPopoverContentView = [[UIView alloc] init];
   accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
   accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
   
