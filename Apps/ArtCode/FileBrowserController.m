@@ -19,7 +19,6 @@
 #import "RenameController.h"
 
 #import "ExportRemotesListController.h"
-#import "RemoteDirectoryBrowserController.h"
 #import "RemoteTransferController.h"
 
 #import "NSString+PluralFormat.h"
@@ -51,9 +50,6 @@
 
 - (void)_directoryBrowserCopyAction:(id)sender;
 - (void)_directoryBrowserMoveAction:(id)sender;
-- (void)_remoteBrowserWithRightButton:(UIBarButtonItem *)rightButton;
-- (void)_remoteDirectoryBrowserUploadAction:(id)sender;
-- (void)_remoteDirectoryBrowserSyncAction:(id)sender;
 
 - (void)_previewFile:(NSURL *)fileURL;
 - (NSArray *)_previewItems;
@@ -325,12 +321,7 @@
         [self modalNavigationControllerPresentViewController:directoryBrowser];
       } break;
         
-      case 2: // Upload
-      {
-        [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:L(@"Upload") style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserUploadAction:)]];
-      } break;
-        
-      case 3: // iTunes
+      case 2: // iTunes
       {
         self.loading = YES;
         NSInteger selectedItemsCount = [_selectedItems count];
@@ -341,7 +332,7 @@
         [self setEditing:NO animated:YES];
       } break;
         
-      case 4: // Mail
+      case 3: // Mail
       {
         NSURL *temporaryDirectory = [NSURL temporaryDirectory];
         NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
@@ -406,7 +397,7 @@
 - (void)_toolEditExportAction:(id)sender {
   if (!_toolEditItemExportActionSheet)
   {
-    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Move to new location"), L(@"Upload to remote"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
+    _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Move to new location"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolEditItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
@@ -478,73 +469,6 @@
     if (items.count) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }
-  }];
-}
-
-- (void)_remoteBrowserWithRightButton:(UIBarButtonItem *)rightButton {
-  switch ([self.artCodeTab.currentLocation.project.remotes count]) {
-    case 0: {
-      // Show error
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"No remotes present") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
-      break;
-    }
-      
-    case 1: {
-      RemoteDirectoryBrowserController *syncController = [[RemoteDirectoryBrowserController alloc] init];
-      syncController.remoteURL = [(ArtCodeRemote *)[self.artCodeTab.currentLocation.project.remotes objectAtIndex:0] url];
-      syncController.navigationItem.rightBarButtonItem = rightButton;
-      [self modalNavigationControllerPresentViewController:syncController];
-      break;
-    }
-      
-    default: {
-      ExportRemotesListController *remotesListController = [[ExportRemotesListController alloc] init];
-      remotesListController.remotes = self.artCodeTab.currentLocation.project.remotes;
-      remotesListController.remoteSelectedBlock = ^(ExportRemotesListController *senderController, ArtCodeRemote *remote) {
-        // Shows the remote directory browser
-        RemoteDirectoryBrowserController *uploadController = [[RemoteDirectoryBrowserController alloc] init];
-        uploadController.remoteURL = remote.url;
-        uploadController.navigationItem.rightBarButtonItem = rightButton;
-        [senderController.navigationController pushViewController:uploadController animated:YES];
-      };
-      [self modalNavigationControllerPresentViewController:remotesListController];
-      break;
-    }
-  }
-}
-
-- (void)_remoteDirectoryBrowserUploadAction:(id)sender {
-  // Retrieve remote URL to upload to
-  RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
-  NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
-  
-  // Initialize transfer/conflict controller
-  RemoteTransferController *remoteTransferController = [[RemoteTransferController alloc] init];
-  [self modalNavigationControllerPresentViewController:remoteTransferController];
-  
-  // Start upload
-  [remoteTransferController uploadItemURLs:[_selectedItems copy] toConnection:remoteDirectoryBrowser.connection path:remoteURL.path completion:^(id<CKConnection> connection, NSError *error) {
-    [self setEditing:NO animated:YES];
-    [self modalNavigationControllerDismissAction:sender];
-  }];
-}
-
-- (IBAction)syncAction:(id)sender {
-  [self _remoteBrowserWithRightButton:[[UIBarButtonItem alloc] initWithTitle:L(@"Sync") style:UIBarButtonItemStyleDone target:self action:@selector(_remoteDirectoryBrowserSyncAction:)]];
-}
-
-- (void)_remoteDirectoryBrowserSyncAction:(id)sender {
-  // Retrieve remote URL to upload to
-  RemoteDirectoryBrowserController *remoteDirectoryBrowser = (RemoteDirectoryBrowserController *)_modalNavigationController.topViewController;
-  NSURL *remoteURL = remoteDirectoryBrowser.selectedURL;
-  
-  // Initialize transfer/conflict controller
-  RemoteTransferController *remoteTransferController = [[RemoteTransferController alloc] init];
-  [self modalNavigationControllerPresentViewController:remoteTransferController];
-  
-  // Start sync
-  [remoteTransferController synchronizeLocalDirectoryURL:self.artCodeTab.currentLocation.url withConnection:remoteDirectoryBrowser.connection path:remoteURL.path options:nil completion:^(id<CKConnection> connection, NSError *error) {
-    [self modalNavigationControllerDismissAction:sender];
   }];
 }
 

@@ -23,7 +23,6 @@
 #import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 #import "RemotesListController.h"
-#import "RemoteBrowserController.h"
 #import "DocSetBrowserController.h"
 
 #import "UIImage+AppStyle.h"
