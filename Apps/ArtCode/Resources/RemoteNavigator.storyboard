@@ -29,7 +29,7 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
-                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="N05-Mw-mS5"/>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="jdv-Xh-bhJ"/>
                                         </connections>
                                     </button>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RSQ-LU-H1f">
@@ -175,8 +175,12 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="downloadButton" destination="uuz-VE-1ZN" id="zKx-pY-686"/>
+                        <outlet property="localBackButton" destination="nT3-Xn-oZP" id="Kxj-yb-RlY"/>
                         <outlet property="localTitleLabel" destination="RSQ-LU-H1f" id="lrZ-LD-Dxu"/>
+                        <outlet property="remoteBackButton" destination="X0F-oB-BxA" id="az5-Hm-2Ei"/>
                         <outlet property="remoteTitleLabel" destination="qwx-7I-IPv" id="Nzb-Jz-psQ"/>
+                        <outlet property="uploadButton" destination="qqd-Bn-dGA" id="p77-jx-9Qf"/>
                         <outlet property="view" destination="gVP-Yt-jQW" id="Llx-z1-ET0"/>
                     </connections>
                 </viewController>
@@ -199,10 +203,10 @@
             </objects>
             <point key="canvasLocation" x="1108" y="-417"/>
         </scene>
-        <!--Base File Browser Controller-->
+        <!--Local File List Controller-->
         <scene sceneID="zic-oi-eJ1">
             <objects>
-                <viewController id="ZEa-kt-3h2" customClass="BaseFileBrowserController" sceneMemberID="viewController">
+                <viewController id="ZEa-kt-3h2" customClass="LocalFileListController" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="klE-Ru-kC9"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hun-ER-hP5" userLabel="First Responder" sceneMemberID="firstResponder"/>

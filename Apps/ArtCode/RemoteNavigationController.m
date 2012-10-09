@@ -13,7 +13,7 @@
 #import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
 
-#import "BaseFileBrowserController.h"
+#import "LocalFileListController.h"
 #import "RemoteFileListController.h"
 
 #import "ArtCodeTab.h"
@@ -94,7 +94,7 @@ static void _init(RemoteNavigationController *self) {
     // Set the initial location for the local file browser
     self.localBrowserNavigationController = segue.destinationViewController;
     self.localBrowserNavigationController.editing = YES;
-    [(BaseFileBrowserController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
+    [(LocalFileListController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
   } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
     ASSERT(self.connection && self.remote);
     [(RemoteFileListController *)[(UINavigationController *)segue.destinationViewController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];

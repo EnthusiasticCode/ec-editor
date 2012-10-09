@@ -8,7 +8,7 @@
 
 #import "SearchableTableBrowserController.h"
 
-@interface BaseFileBrowserController : SearchableTableBrowserController
+@interface LocalFileListController : SearchableTableBrowserController
 
 /// The location shown by the browser
 @property (nonatomic, strong) NSURL* locationURL;

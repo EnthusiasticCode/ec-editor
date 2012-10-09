@@ -10,9 +10,15 @@
 
 @interface RemoteNavigationToolbarController : UIViewController
 
-#pragma mark Editable outlets
+#pragma mark Local browser outlets
+@property (weak, nonatomic) IBOutlet UIButton *localBackButton;
 @property (weak, nonatomic) IBOutlet UILabel *localTitleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *uploadButton;
+
+#pragma mark Remote browser outlets
+@property (weak, nonatomic) IBOutlet UIButton *remoteBackButton;
 @property (weak, nonatomic) IBOutlet UILabel *remoteTitleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *downloadButton;
 
 #pragma mark Actions
 - (IBAction)taggedButtonAction:(id)sender;

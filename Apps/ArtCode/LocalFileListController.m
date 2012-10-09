@@ -6,17 +6,17 @@
 //
 //
 
-#import "BaseFileBrowserController.h"
+#import "LocalFileListController.h"
 #import "FileSystemItem.h"
 #import "HighlightTableViewCell.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
 
-@implementation BaseFileBrowserController
+@implementation LocalFileListController
 
-static void _init(BaseFileBrowserController *self) {
+static void _init(LocalFileListController *self) {
   // RAC
-  __weak BaseFileBrowserController *this = self;
+  __weak LocalFileListController *this = self;
   
   RAC(self.filteredItems) = [[[[RACAble(self.locationURL)
                              select:^id(NSURL *url) {
@@ -76,7 +76,7 @@ static void _init(BaseFileBrowserController *self) {
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   NSURL *itemURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
-  BaseFileBrowserController *nextFileBrowserController = [[BaseFileBrowserController alloc] init];
+  LocalFileListController *nextFileBrowserController = [[LocalFileListController alloc] init];
   nextFileBrowserController.locationURL = itemURL;
   nextFileBrowserController.editing = self.editing;
   [self.navigationController pushViewController:nextFileBrowserController animated:YES];
