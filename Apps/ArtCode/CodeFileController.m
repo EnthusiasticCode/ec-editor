@@ -109,12 +109,15 @@ static void drawStencilStar(CGContextRef myContext)
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
   
+  // Text insertion state for modifiers
+  NSUInteger _preferenceCurrentIndentationLevel;
+  
   // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
   UIColor *_minimapSymbolColor;
   UIColor *_minimapCommentColor;
   UIColor *_minimapPreprocessorColor;
   
-  // Keyboard manahement
+  // Keyboard management
   CGRect _keyboardFrame;
   CGRect _keyboardRotationFrame;
   
@@ -689,6 +692,54 @@ static void drawStencilStar(CGContextRef myContext)
     [_minimapView scrollToSelection];
   }
 }
+
+//- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion {
+//  
+//  // Adjusting indentation
+//  if ([insertedText isEqualToString:@"\n"]) {
+//    // Keep previous spacing
+//    
+//    // Get the indentation patterns
+//    NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location];
+//    bool(^increaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceIncreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
+//    if (increaseBlock) {    
+//      // Get the line
+//      NSRange lineRange = [codeView.text lineRangeForRange:codeView.selectionRange];
+//      lineRange.length = codeView.selectionRange.location - lineRange.location;
+//      NSString *line = [codeView.text substringWithRange:lineRange];
+//      
+//      // Apply increase indetantion
+//      if (increaseBlock(line)) {
+//        _preferenceCurrentIndentationLevel++;
+//      } else {
+//        // Apply decrease indentation
+//        bool(^decreaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceDecreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
+//        if (decreaseBlock) {
+//          if (decreaseBlock(line)) {
+//            if (_preferenceCurrentIndentationLevel > 0) {
+//              _preferenceCurrentIndentationLevel--;
+//            }
+//          }
+//          // TODO else single line indent
+//        }
+//      }
+//    }
+//    
+//    // Return indented newline
+//    if (_preferenceCurrentIndentationLevel > 0) {
+//      NSString *indentString = @"    "; // TODO parametrize indentation string
+//      NSUInteger level = _preferenceCurrentIndentationLevel;
+//      (*selectionAfterInsertion).location += _preferenceCurrentIndentationLevel * [indentString length];
+//      while (--level) {
+//        indentString = [indentString stringByAppendingString:@"    "];
+//      }
+//      return [@"\n" stringByAppendingString:indentString];
+//    }
+//  }
+//  
+//  // By returning nil, this method have no effects
+//  return nil;
+//}
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
   if ([self.bookmarks containsIndex:lineNumber]) {

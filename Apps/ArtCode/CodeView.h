@@ -15,6 +15,16 @@ extern NSString * const CodeViewPlaceholderAttributeName;
 
 typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 
+/// The result of an autoindentation block
+typedef enum {
+  CodeViewAutoIndentKeep,         // Keep the current indentation
+  CodeViewAutoIndentIncrease,     // Increase the indentation by one level
+  CodeViewAutoIndentDecrease,     // Decrese one level of indentation
+  CodeViewAutoIndentIncreaseOnce, // Increase the level of indentation only for one line
+  CodeViewAutoIndentIgnoreOnce    // Remove all indentation for the line
+} CodeViewAutoIndentResult;
+typedef CodeViewAutoIndentResult (^CodeViewAutoIndentationForLineBlock)(NSString *line);
+
 @class CodeView, KeyboardAccessoryView;
 
 @protocol CodeViewDelegate <UIScrollViewDelegate>
@@ -69,6 +79,10 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// String pairing will insert the paired string and position the cursor before it. 
 /// Deleting the input string with backspace will result in also removin the paired string.
 @property (nonatomic, strong) NSDictionary *pairingStringDictionary;
+
+/// A block that will be used to determine how a line of text should be indented.
+/// This block will be automatically used when a single new line will be inserted.
+@property (nonatomic, strong) CodeViewAutoIndentationForLineBlock autoIndentationBlock;
 
 #pragma mark Managing Text Content
 
