@@ -52,8 +52,8 @@
 - (RACDisposable *)syncProperty:(NSString *)keyPath ofObject:(NSObject *)target {
   ASSERT_MAIN_QUEUE();
   __block BOOL suppressEcho = NO;
-  RACDisposable *propertySubscribingDisposable = nil;
-  RACDisposable *propertyUpdatingDisposable = nil;
+  __block RACDisposable *propertySubscribingDisposable = nil;
+  __block RACDisposable *propertyUpdatingDisposable = nil;
   void (^stopSyncing)(void) = ^{
     [propertySubscribingDisposable dispose];
     [propertyUpdatingDisposable dispose];
