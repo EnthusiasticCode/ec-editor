@@ -539,10 +539,8 @@ static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
 
 - (SingleTabController *)singleTabController
 {
-  UIViewController *parent = self;
-  while (parent && ![parent isKindOfClass:[SingleTabController class]])
-    parent = parent.parentViewController;
-  return (SingleTabController *)parent;
+  ASSERT([self.parentViewController isKindOfClass:[SingleTabController class]])
+  return (SingleTabController *)self.parentViewController;
 }
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar

@@ -22,69 +22,39 @@
 @implementation QuickBrowsersContainerController
 
 + (id)defaultQuickBrowsersContainerControllerForContentController:(UIViewController *)contentController {
-  static QuickBrowsersContainerController *_commonController = nil;
-  static QuickBrowsersContainerController *_projectController = nil;
-  static QuickBrowsersContainerController *_folderController = nil;
-  static QuickBrowsersContainerController *_fileController = nil;
+  
+  QuickBrowsersContainerController *container = [[QuickBrowsersContainerController alloc] init];
+  NSArray *quickBrowsers = nil;
   
   if (contentController.artCodeTab.currentLocation.type == ArtCodeLocationTypeBookmarksList) {
-    if (!_commonController) {
-      _commonController = [[QuickBrowsersContainerController alloc] init];
-      _commonController.contentController = contentController;
-      [_commonController setViewControllers:[NSArray arrayWithObjects:[[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
-    } else {
-      _commonController.contentController = contentController;
-    }
-    return _commonController;
-  }
-  else
-  {
+    quickBrowsers = @[[[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+  } else {
     switch (contentController.artCodeTab.currentLocation.type) {
       case ArtCodeLocationTypeProject:
-        if (!_projectController)
-        {
-          _projectController = [[QuickBrowsersContainerController alloc] init];
-          _projectController.contentController = contentController;
-          [_projectController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
-        }
-        else
-        {
-          _projectController.contentController = contentController;
-        }
-        return _projectController;
-        
+        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+        break;
       case ArtCodeLocationTypeDirectory:
-        if (!_folderController)
-        {
-          _folderController = [[QuickBrowsersContainerController alloc] init];
-          _folderController.contentController = contentController;
-          [_folderController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
-        }
-        else
-        {
-          _folderController.contentController = contentController;
-        }
-        return _folderController;
-        
+        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+        break;
       case ArtCodeLocationTypeTextFile:
-        if (!_fileController)
-        {
-          _fileController = [[QuickBrowsersContainerController alloc] init];
-          _fileController.contentController = contentController;
-          [_fileController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"], [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
-        }
-        else
-        {
-          _fileController.contentController = contentController;
-        }
-        return _fileController;
-        
+        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"], [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+        break;
       default:
-        ASSERT(NO); // Not handled type
         break;
     }
   }
-  return nil;
+  
+  // Check that we actually have a case handling the contentController
+  ASSERT(quickBrowsers);
+  
+  container.contentController = contentController;
+  container.artCodeTab = contentController.artCodeTab;
+  [container setViewControllers:quickBrowsers];
+  for (UIViewController *quickBrowser in quickBrowsers) {
+    quickBrowser.artCodeTab = contentController.artCodeTab;
+  }
+  
+  return container;
 }
 
 - (id)init
@@ -148,15 +118,8 @@
 
 - (QuickBrowsersContainerController *)quickBrowsersContainerController
 {
-  UIViewController *parentController = self.parentViewController;
-  while (![parentController isKindOfClass:[QuickBrowsersContainerController class]]) {
-    parentController = parentController.parentViewController;
-  }
-  return (QuickBrowsersContainerController *)parentController;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingQuickBrowsersContainerController {
-  return [NSSet setWithObject:@"parentViewController"];
+  ASSERT([self.parentViewController isKindOfClass:[QuickBrowsersContainerController class]]);
+  return (QuickBrowsersContainerController *)self.parentViewController;
 }
 
 @end

@@ -103,26 +103,11 @@
 static void *artCodeTabKey;
 
 - (ArtCodeTab *)artCodeTab {
-  ArtCodeTab *tab = objc_getAssociatedObject(self, &artCodeTabKey);
-  if (tab) {
-    return tab;
-  }
-  
-  UIViewController *controller = self;
-  do {
-    controller = controller.parentViewController;
-    tab = objc_getAssociatedObject(controller, &artCodeTabKey);
-  } while (tab == nil && controller != nil);
-  return tab;
+  return objc_getAssociatedObject(self, &artCodeTabKey);
 }
 
 - (void)setArtCodeTab:(ArtCodeTab *)artCodeTab {
   objc_setAssociatedObject(self, &artCodeTabKey, artCodeTab, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-// TODO: find out why this messes up KVO causing opening text files to crash
-+ (NSSet *)keyPathsForValuesAffectingArtCodeTab {
-  return [NSSet setWithObject:@"parentViewController.artCodeTab"];
 }
 
 @end

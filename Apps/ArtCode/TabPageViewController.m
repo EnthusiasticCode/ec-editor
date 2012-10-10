@@ -199,11 +199,8 @@
 @implementation UIViewController (TabPageViewController)
 
 - (TabPageViewController *)tabPageViewController {
-  UIViewController *parentController = self.parentViewController;
-  while (parentController && ![parentController isKindOfClass:[TabPageViewController class]]) {
-    parentController = parentController.parentViewController;
-  }
-  return (TabPageViewController *)parentController;
+  ASSERT([self.parentViewController isKindOfClass:[TabPageViewController class]]);
+  return (TabPageViewController *)self.parentViewController;
 }
 
 @end
