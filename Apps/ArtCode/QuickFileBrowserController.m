@@ -52,29 +52,22 @@
   self.navigationItem.leftBarButtonItem = backToProjectsItem;
   
   // RAC
-  __weak QuickFileBrowserController *weakSelf = self;
-  [RACAble(self.artCodeTab.currentLocation.project.fileURL) subscribeNext:^(NSURL *projectURL) {
-    QuickFileBrowserController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    [[FileSystemItem readItemAtURL:projectURL] subscribeNext:^(FileSystemItem *directory) {
-      QuickFileBrowserController *anotherStrongSelf = weakSelf;
-      if (!anotherStrongSelf) {
-        return;
-      }
-      RAC(anotherStrongSelf, filteredItems) = [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:anotherStrongSelf.searchBarTextSubject];
-    }];
-  }];
+  @weakify(self);
+  [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) select:^id<RACSubscribable>(NSURL *projectURL) {
+    return [FileSystemItem readItemAtURL:projectURL];
+  }] switch] select:^id<RACSubscribable>(FileSystemItem *directory) {
+    @strongify(self);
+    if (!self) { return nil; }
+    return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:self.searchBarTextSubject];
+  }] switch] toProperty:RAC_KEYPATH_SELF(filteredItems) onObject:self];
+  
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
-    QuickFileBrowserController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
+    @strongify(self);
+    if (!self) { return; }
     if (items.count == 0) {
-      strongSelf.infoLabel.text = L(@"Nothing found.");
+      self.infoLabel.text = L(@"Nothing found.");
     } else {
-      strongSelf.infoLabel.text = @"";
+      self.infoLabel.text = @"";
     }
   }];
   return self;
