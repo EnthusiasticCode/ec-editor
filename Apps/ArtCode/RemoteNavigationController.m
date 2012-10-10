@@ -37,6 +37,9 @@
 
 static void _init(RemoteNavigationController *self) {
   // RAC
+  
+  // TODO!!! use weakify, storngify
+  
   RAC(self.connection) = [RACAble(self.remote) select:^id(ArtCodeRemote *remote) {
     return [ReactiveConnection reactiveConnectionWithURL:remote.url];
   }];
@@ -75,9 +78,9 @@ static void _init(RemoteNavigationController *self) {
     self.toolbarController.uploadButton.enabled = x.count != 0;
   }];
   
-//  [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
-//    self.toolbarController.downloadButton.enabled = x.count != 0;
-//  }];
+  [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+    self.toolbarController.downloadButton.enabled = x.count != 0;
+  }];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -128,6 +131,12 @@ static void _init(RemoteNavigationController *self) {
   } else if (navigationController == self.remoteBrowserNavigationController) {
     self.remoteFileListController = (RemoteFileListController *)viewController;
   }
+}
+
+#pragma mark Private methods
+
+- (void)_downloadAllConnectionItems:(NSArray *)items {
+  
 }
 
 @end

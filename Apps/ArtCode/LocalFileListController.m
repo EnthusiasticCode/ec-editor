@@ -87,6 +87,8 @@ static void _init(LocalFileListController *self) {
   return cell;
 }
 
+#pragma mark - Table view delegate
+
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   NSURL *itemURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
   LocalFileListController *nextFileBrowserController = [[LocalFileListController alloc] init];

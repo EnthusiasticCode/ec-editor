@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSArray *directoryContent;
 @property (nonatomic) BOOL showLogin;
 @property (nonatomic) BOOL showLoading;
+@property (nonatomic, readwrite, copy) NSArray *selectedItems;
 @end
 
 
@@ -121,7 +122,13 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
   [super setEditing:editing animated:animated];
-  [_selectedItems removeAllObjects];
+  [self willChangeValueForKey:@"selectedItems"];
+  if (editing) {
+    _selectedItems = [[NSMutableArray alloc] init];
+  } else {
+    _selectedItems = nil;
+  }
+  [self didChangeValueForKey:@"selectedItems"];
 }
 
 - (NSArray *)filteredItems {
@@ -180,25 +187,35 @@
 
 #pragma mark - Table view delegate
 
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
+  [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+  [self.navigationController pushViewController:remoteFileListController animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
-      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
-      [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
-      [self.navigationController pushViewController:remoteFileListController animated:YES];
+      // Same action as accessory button
+      [self tableView:tableView accessoryButtonTappedForRowWithIndexPath:indexPath];
     } else {
       //[self _toolEditExportAction:nil];
     }
   } else {
+    [self willChangeValueForKey:@"selectedItems"];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
+    [self willChangeValueForKey:@"selectedItems"];
     [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }
