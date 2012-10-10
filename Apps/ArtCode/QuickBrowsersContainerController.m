@@ -45,7 +45,7 @@
         {
           _projectController = [[QuickBrowsersContainerController alloc] init];
           _projectController.contentController = contentController;
-          [_projectController setViewControllers:[NSArray arrayWithObjects:[[QuickProjectInfoController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
+          [_projectController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
         }
         else
         {
@@ -58,7 +58,7 @@
         {
           _folderController = [[QuickBrowsersContainerController alloc] init];
           _folderController.contentController = contentController;
-          [_folderController setViewControllers:[NSArray arrayWithObjects:[[QuickFolderInfoController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
+          [_folderController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
         }
         else
         {
@@ -71,7 +71,7 @@
         {
           _fileController = [[QuickBrowsersContainerController alloc] init];
           _fileController.contentController = contentController;
-          [_fileController setViewControllers:[NSArray arrayWithObjects:[[QuickFileInfoController alloc] init], [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
+          [_fileController setViewControllers:[NSArray arrayWithObjects:[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"], [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], nil] animated:NO];
         }
         else
         {

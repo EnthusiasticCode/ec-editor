@@ -13,10 +13,6 @@
 
 @implementation QuickFolderInfoController
 
-+ (id)new {
-  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"];
-}
-
 #pragma mark - View lifecycle
 
 - (void)viewWillAppear:(BOOL)animated

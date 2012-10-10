@@ -27,11 +27,6 @@
 
 #pragma mark - Controller lifecycle
 
-+ (id)new
-{
-  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"];
-}
-
 - (id)initWithCoder:(NSCoder *)aDecoder {
   self = [super initWithCoder:aDecoder];
   if (!self)

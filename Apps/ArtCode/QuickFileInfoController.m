@@ -19,10 +19,6 @@
 
 @implementation QuickFileInfoController
 
-+ (id)new {
-  return [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"];
-}
-
 #pragma mark - View lifecycle
 
 - (void)viewWillAppear:(BOOL)animated
