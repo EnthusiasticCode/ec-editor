@@ -158,6 +158,7 @@
     self.tableView.contentOffset = CGPointMake(0, 45);
   }
   [self.view addSubview:self.tableView];
+  [self.tableView setEditing:self.editing animated:NO];
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];

@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSArray *directoryContent;
 @property (nonatomic) BOOL showLogin;
 @property (nonatomic) BOOL showLoading;
+@property (nonatomic, readwrite, copy) NSArray *selectedItems;
 @end
 
 
@@ -40,11 +41,10 @@
   NSMutableArray *_selectedItems;
 }
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote connection:(ReactiveConnection *)connection path:(NSString *)remotePath {
-  self = [super init];
-  if (!self)
-    return nil;
-  ASSERT(remote && connection);
+
+- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
+  ASSERT(!_connection); // This prepare can happen only once
+  ASSERT(remote && connection); // Connection and remote need to be specified
   _remote = remote;
   _connection = connection;
   self.remotePath = remotePath ?: @"/";
@@ -57,7 +57,7 @@
   __weak RemoteFileListController *this = self;
   
   // Directory content update reaction
-  RAC(self.directoryContent) = [[[self.connection directoryContentsForPath:self.remotePath]
+  RAC(self.directoryContent) = [[[self.connection directoryContents]
                                  where:^BOOL(RACTuple *pathAndContent) {
                                    return [this.remotePath isEqualToString:pathAndContent.first];
                                  }]
@@ -72,7 +72,7 @@
   // Connected refresh reaction
   [RACAble(self.connection.connected) subscribeNext:^(id x) {
     if ([x boolValue]) {
-      [this.connection directoryContentsForPath:this.remotePath];
+      [this.connection changeToDirectory:this.remotePath];
     } else {
       this.showLogin = YES;
     }
@@ -81,19 +81,20 @@
   // Connection status reaction
   [self.connection.connectionStatus subscribeNext:^(id x) {
     enum ReactiveConnectionStatus status = [x intValue];
-    self.showLoading = status != ReactiveConnectionStatusLoading;
+    if (!self.showLogin) {
+      self.showLoading = status == ReactiveConnectionStatusLoading;
+    }
   }];
   
   // Login reaction
-  [RACAble(self.authenticationCredentials) subscribeNext:^(NSURLCredential *credentials) {
-    this.showLoading = YES;
-    [[this.connection connectWithCredentials:credentials] subscribeNext:^(id x) {
-      this.showLoading = NO;
-      this.showLogin = ![x boolValue];
-    }];
-  }];
-  
-  return self;
+  [[[RACAble(self.authenticationCredentials)
+   select:^id(NSURLCredential *credentials) {
+     this.showLoading = YES;
+     return [this.connection connectWithCredentials:credentials];
+   }] switch] subscribeNext:^(id x) {
+     this.showLoading = NO;
+     this.showLogin = ![x boolValue];
+   }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -113,13 +114,21 @@
     } else {
       self.showLogin = YES;
     }
+  } else {
+    [self.connection changeToDirectory:self.remotePath];
   }
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
   [super setEditing:editing animated:animated];
-  [_selectedItems removeAllObjects];
+  [self willChangeValueForKey:@"selectedItems"];
+  if (editing) {
+    _selectedItems = [[NSMutableArray alloc] init];
+  } else {
+    _selectedItems = nil;
+  }
+  [self didChangeValueForKey:@"selectedItems"];
 }
 
 - (NSArray *)filteredItems {
@@ -178,24 +187,35 @@
 
 #pragma mark - Table view delegate
 
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
+  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
+  [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+  [self.navigationController pushViewController:remoteFileListController animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
     NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
     if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
-      RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithArtCodeRemote:_remote connection:self.connection path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
-      [self.remoteNavigationController pushViewController:remoteFileListController animated:YES];
+      // Same action as accessory button
+      [self tableView:tableView accessoryButtonTappedForRowWithIndexPath:indexPath];
     } else {
       //[self _toolEditExportAction:nil];
     }
   } else {
+    [self willChangeValueForKey:@"selectedItems"];
     [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
+    [self willChangeValueForKey:@"selectedItems"];
     [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
 }

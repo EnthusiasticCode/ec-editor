@@ -7,29 +7,138 @@
 //
 
 #import "RemoteNavigationController.h"
+#import "RemoteNavigationToolbarController.h"
+#import "SingleTabController.h"
+
 #import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
+
+#import "LocalFileListController.h"
 #import "RemoteFileListController.h"
+
+#import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
+#import "ArtCodeProject.h"
+
+
+@interface RemoteNavigationController () <UINavigationControllerDelegate>
+@property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
+@property (nonatomic, strong, readwrite) ReactiveConnection *connection;
+
+@property (nonatomic, weak) UINavigationController *localBrowserNavigationController;
+@property (nonatomic, weak) LocalFileListController *localFileListController;
+@property (nonatomic, weak) UINavigationController *remoteBrowserNavigationController;
+@property (nonatomic, weak) RemoteFileListController *remoteFileListController;
+@end
 
 @implementation RemoteNavigationController
 
-- (id)initWithArtCodeRemote:(ArtCodeRemote *)remote {
-  ASSERT(remote && remote.url);
-  ReactiveConnection *connection = [ReactiveConnection reactiveConnectionWithURL:remote.url];
-  self = [super initWithRootViewController:[[RemoteFileListController alloc] initWithArtCodeRemote:remote connection:connection path:remote.path]];
-  if (!self)
+#pragma mark Controller lifecycle
+
+static void _init(RemoteNavigationController *self) {
+  // RAC
+  @weakify(self);
+  
+  RAC(self.connection) = [RACAble(self.remote) select:^id(ArtCodeRemote *remote) {
+    return [ReactiveConnection reactiveConnectionWithURL:remote.url];
+  }];
+  
+  RAC(self.remote) = [RACAble(self.artCodeTab) select:^id(ArtCodeTab *tab) {
+    return tab.currentLocation.remote;
+  }];
+  
+  [[[RACAble(self.toolbarController)
+   select:^id(RemoteNavigationToolbarController *x) {
+     return [x buttonsActionSubscribable];
+   }] switch] subscribeNext:^(UIButton *x) {
+     @strongify(self);
+     switch (x.tag) {
+       case 1: // Local back
+         [self.localBrowserNavigationController popViewControllerAnimated:YES];
+         break;
+         
+       case 2: // Upload
+         break;
+         
+       case 3: // Remote back
+         [self.remoteBrowserNavigationController popViewControllerAnimated:YES];
+         break;
+         
+       case 4: // Download
+         break;
+         
+       default: // Close
+         [self.artCodeTab moveBackInHistory];
+         break;
+     }
+   }];
+  
+  // Upload button activation reaction
+  [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+    @strongify(self);
+    self.toolbarController.uploadButton.enabled = x.count != 0;
+  }];
+  
+  [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+    @strongify(self);
+    self.toolbarController.downloadButton.enabled = x.count != 0;
+  }];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self) {
     return nil;
-  _remote = remote;
-  _connection = connection;
+  }
+  _init(self);
   return self;
 }
 
-@end
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:@"LocalBrowser"]) {
+    // Set the initial location for the local file browser
+    self.localBrowserNavigationController = segue.destinationViewController;
+    self.localBrowserNavigationController.editing = YES;
+    self.localBrowserNavigationController.delegate = self;
+    [(LocalFileListController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
+  } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
+    ASSERT(self.connection && self.remote);
+    self.remoteBrowserNavigationController = (UINavigationController *)segue.destinationViewController;
+    self.remoteBrowserNavigationController.delegate = self;
+    [(RemoteFileListController *)[self.remoteBrowserNavigationController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
+  }
+}
 
-@implementation UIViewController (RemoteNavigationController)
+#pragma mark View lifecycle
 
-- (RemoteNavigationController *)remoteNavigationController {
-  return (RemoteNavigationController *)self.navigationController;
+- (void)loadView {
+  [super loadView];
+  
+  if (!self.toolbarController) {
+    self.toolbarController = [[UIStoryboard storyboardWithName:@"RemoteNavigator" bundle:nil] instantiateViewControllerWithIdentifier:@"Toolbar"];
+  }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [self.singleTabController setToolbarViewController:(UIViewController *)self.toolbarController animated:YES];
+  [super viewDidAppear:animated];
+}
+
+#pragma mark UINavigationControllerDelegate
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  // This is done because UIViewController is not KVO compliant on visibleViewController
+  if (navigationController == self.localBrowserNavigationController) {
+    self.localFileListController = (LocalFileListController *)viewController;
+  } else if (navigationController == self.remoteBrowserNavigationController) {
+    self.remoteFileListController = (RemoteFileListController *)viewController;
+  }
+}
+
+#pragma mark Private methods
+
+- (void)_downloadAllConnectionItems:(NSArray *)items {
+  
 }
 
 @end

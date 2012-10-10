@@ -23,7 +23,6 @@
 #import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 #import "RemotesListController.h"
-#import "RemoteBrowserController.h"
 #import "DocSetBrowserController.h"
 
 #import "UIImage+AppStyle.h"
@@ -103,6 +102,11 @@
     return;
   
   [self willChangeValueForKey:@"contentViewController"];
+  
+  // Reset the toolbar view controller if needed
+  if (self.toolbarViewController) {
+    [self setToolbarViewController:nil animated:YES];
+  }
   
   [_contentViewController willMoveToParentViewController:nil];
   [_contentViewController removeFromParentViewController];
@@ -410,6 +414,7 @@
   contentFrame.origin.y += toolbarFrame.size.height;
   contentFrame.size.height -= toolbarFrame.size.height;
   
+  self.contentViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   if (animated)
   {
     [UIView animateWithDuration:0.2 animations:^{
@@ -439,10 +444,7 @@
 {
   ArtCodeLocation *currentLocation = tab.currentLocation;
   UIViewController *result = nil;
-  
-  // ArtCode URLs routing
   Class controllerClass = nil;
-  BOOL recycleController = YES;
   
   switch (currentLocation.type) {
     case ArtCodeLocationTypeProjectsList:
@@ -462,8 +464,7 @@
     }
     case ArtCodeLocationTypeTextFile:
     {
-      controllerClass = [CodeFileController class];
-      recycleController = NO;
+      result = [[CodeFileController alloc] init];
       break;
     }
     case ArtCodeLocationTypeProject:
@@ -479,7 +480,7 @@
     }
     case ArtCodeLocationTypeRemoteDirectory:
     {
-      controllerClass = [RemoteBrowserController class];
+      result = [[UIStoryboard storyboardWithName:@"RemoteNavigator" bundle:nil] instantiateInitialViewController];
       break;
     }
       
@@ -487,10 +488,12 @@
       ASSERT(NO); // Unknown location type
       break;
   }
-  if ([self.contentViewController isKindOfClass:controllerClass] && recycleController) {
-    result = self.contentViewController;
-  } else {
-    result = [[controllerClass alloc] init];
+  if (!result) {
+    if ([self.contentViewController isKindOfClass:controllerClass]) {
+      result = self.contentViewController;
+    } else {
+      result = [[controllerClass alloc] init];
+    }
   }
   
   // Set the tab if needed

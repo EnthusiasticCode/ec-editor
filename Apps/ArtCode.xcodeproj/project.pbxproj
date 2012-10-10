@@ -28,7 +28,6 @@
 		5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0015B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
-		5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
 		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
@@ -475,7 +474,8 @@
 		CD7FDD5514BEFBA0002B1122 /* itemIcon_Duplicate.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7FDD5314BEFBA0002B1122 /* itemIcon_Duplicate.png */; };
 		CD8108D513E31A28000E1941 /* ColorSelectionControl.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8108D413E31A28000E1941 /* ColorSelectionControl.m */; };
 		CD8609F614CC515E00BF90CB /* bookmarkTable_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */; };
-		CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */; };
+		CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD870E4E16257CC20038EC7F /* RemoteNavigationToolbarController.m */; };
+		CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD870E8C16257D490038EC7F /* LocalFileListController.m */; };
 		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
 		CD8F59B8161C53910080494E /* libconnectionkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8F59AF161C53820080494E /* libconnectionkit.a */; };
 		CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9C811D162090500086D2F1 /* ReactiveConnection.m */; };
@@ -964,8 +964,6 @@
 		CD174BF715D167AB00F3EAF1 /* bottomToolBar_Icon_Remotes_Selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottomToolBar_Icon_Remotes_Selected@2x.png"; sourceTree = "<group>"; };
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
-		CD19920914F25F390059D1E8 /* RemoteBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteBrowserController.h; sourceTree = "<group>"; };
-		CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteBrowserController.m; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
 		CD217EB314D41D95001AEA41 /* QuickProjectInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickProjectInfoController.h; sourceTree = "<group>"; };
 		CD217EB414D41D95001AEA41 /* QuickProjectInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickProjectInfoController.m; sourceTree = "<group>"; };
@@ -1165,6 +1163,10 @@
 		CD8108D313E31A28000E1941 /* ColorSelectionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSelectionControl.h; sourceTree = "<group>"; };
 		CD8108D413E31A28000E1941 /* ColorSelectionControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorSelectionControl.m; sourceTree = "<group>"; };
 		CD8609F514CC515E00BF90CB /* bookmarkTable_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bookmarkTable_Icon.png; sourceTree = "<group>"; };
+		CD870E4B16257CC20038EC7F /* LocalFileListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalFileListController.h; sourceTree = "<group>"; };
+		CD870E4D16257CC20038EC7F /* RemoteNavigationToolbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNavigationToolbarController.h; sourceTree = "<group>"; };
+		CD870E4E16257CC20038EC7F /* RemoteNavigationToolbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteNavigationToolbarController.m; sourceTree = "<group>"; };
+		CD870E8C16257D490038EC7F /* LocalFileListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalFileListController.m; sourceTree = "<group>"; };
 		CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteDirectoryBrowserController.h; sourceTree = "<group>"; };
 		CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteDirectoryBrowserController.m; sourceTree = "<group>"; };
 		CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
@@ -2050,12 +2052,16 @@
 				CD12A98314F14F0F0005F603 /* RemotesListController.m */,
 				CDB2FFCC161F3635009F2FDB /* RemoteNavigationController.h */,
 				CDB2FFCD161F3635009F2FDB /* RemoteNavigationController.m */,
+				CD870E4D16257CC20038EC7F /* RemoteNavigationToolbarController.h */,
+				CD870E4E16257CC20038EC7F /* RemoteNavigationToolbarController.m */,
 				CDB2FFCA161F3635009F2FDB /* RemoteFileListController.h */,
 				CDB2FFCB161F3635009F2FDB /* RemoteFileListController.m */,
-				CD19920914F25F390059D1E8 /* RemoteBrowserController.h */,
-				CD19920A14F25F390059D1E8 /* RemoteBrowserController.m */,
+				CD870E4B16257CC20038EC7F /* LocalFileListController.h */,
+				CD870E8C16257D490038EC7F /* LocalFileListController.m */,
 				CD69C90014F163EA00FCC987 /* New remote */,
 				CD05149714F7FAEE003CED2F /* Transfer */,
+				CD9C811C162090500086D2F1 /* ReactiveConnection.h */,
+				CD9C811D162090500086D2F1 /* ReactiveConnection.m */,
 			);
 			name = "Remotes Browsers";
 			sourceTree = "<group>";
@@ -2280,8 +2286,6 @@
 				CD7D2B1813C0D3B100B889EE /* Editor */,
 				B7FB799214D5FE680080A714 /* Additions */,
 				B7FB79C014D6048E0080A714 /* Utilities */,
-				CD9C811C162090500086D2F1 /* ReactiveConnection.h */,
-				CD9C811D162090500086D2F1 /* ReactiveConnection.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -3291,7 +3295,6 @@
 				CD69C90314F1642000FCC987 /* NewRemoteViewController.m in Sources */,
 				CD69C90614F1649600FCC987 /* RemoteOptionsViewController.m in Sources */,
 				CD65F1D214F6C4A200E0C441 /* Keychain.m in Sources */,
-				CD8A047E14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m in Sources */,
 				CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */,
 				B77100EF1506DAFF006AF1FB /* ArtCodeProject.m in Sources */,
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
@@ -3319,7 +3322,6 @@
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
-				5F653A0215B0B35800FFCFEE /* RemoteBrowserController.m in Sources */,
 				5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */,
 				5F13322B15B462C000964FD4 /* Global.xcdatamodeld in Sources */,
 				5F13323E15B468FF00964FD4 /* ArtCodeTabSet.m in Sources */,
@@ -3342,6 +3344,8 @@
 				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
 				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,
 				5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */,
+				CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */,
+				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
