@@ -693,51 +693,53 @@ static void drawStencilStar(CGContextRef myContext)
   }
 }
 
-- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion {
-  
-  // Adjusting indentation
-  if ([insertedText isEqualToString:@"\n"]) {
-    // Get the indentation patterns
-    NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location];
-    bool(^increaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceIncreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
-    if (increaseBlock) {    
-      // Get the line
-      NSRange lineRange = [codeView.text lineRangeForRange:codeView.selectionRange];
-      lineRange.length = codeView.selectionRange.location - lineRange.location;
-      NSString *line = [codeView.text substringWithRange:lineRange];
-      
-      // Apply increase indetantion
-      if (increaseBlock(line)) {
-        _preferenceCurrentIndentationLevel++;
-      } else {
-        // Apply decrease indentation
-        bool(^decreaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceDecreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
-        if (decreaseBlock) {
-          if (decreaseBlock(line)) {
-            if (_preferenceCurrentIndentationLevel > 0) {
-              _preferenceCurrentIndentationLevel--;
-            }
-          }
-          // TODO else single line indent
-        }
-      }
-    }
-    
-    // Return indented newline
-    if (_preferenceCurrentIndentationLevel > 0) {
-      NSString *indentString = @"    "; // TODO parametrize indentation string
-      NSUInteger level = _preferenceCurrentIndentationLevel;
-      (*selectionAfterInsertion).length += _preferenceCurrentIndentationLevel * [indentString length];
-      while (--level) {
-        [indentString stringByAppendingString:@"    "];
-      }
-      return [indentString stringByAppendingString:@"\n"];
-    }
-  }
-  
-  // By returning nil, this method have no effects
-  return nil;
-}
+//- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion {
+//  
+//  // Adjusting indentation
+//  if ([insertedText isEqualToString:@"\n"]) {
+//    // Keep previous spacing
+//    
+//    // Get the indentation patterns
+//    NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location];
+//    bool(^increaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceIncreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
+//    if (increaseBlock) {    
+//      // Get the line
+//      NSRange lineRange = [codeView.text lineRangeForRange:codeView.selectionRange];
+//      lineRange.length = codeView.selectionRange.location - lineRange.location;
+//      NSString *line = [codeView.text substringWithRange:lineRange];
+//      
+//      // Apply increase indetantion
+//      if (increaseBlock(line)) {
+//        _preferenceCurrentIndentationLevel++;
+//      } else {
+//        // Apply decrease indentation
+//        bool(^decreaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceDecreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
+//        if (decreaseBlock) {
+//          if (decreaseBlock(line)) {
+//            if (_preferenceCurrentIndentationLevel > 0) {
+//              _preferenceCurrentIndentationLevel--;
+//            }
+//          }
+//          // TODO else single line indent
+//        }
+//      }
+//    }
+//    
+//    // Return indented newline
+//    if (_preferenceCurrentIndentationLevel > 0) {
+//      NSString *indentString = @"    "; // TODO parametrize indentation string
+//      NSUInteger level = _preferenceCurrentIndentationLevel;
+//      (*selectionAfterInsertion).location += _preferenceCurrentIndentationLevel * [indentString length];
+//      while (--level) {
+//        indentString = [indentString stringByAppendingString:@"    "];
+//      }
+//      return [@"\n" stringByAppendingString:indentString];
+//    }
+//  }
+//  
+//  // By returning nil, this method have no effects
+//  return nil;
+//}
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
   if ([self.bookmarks containsIndex:lineNumber]) {
