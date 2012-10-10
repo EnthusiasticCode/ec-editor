@@ -33,7 +33,7 @@ static UIImage *_TMScopeBlankImage = nil;
 @end
 
 @implementation TMSymbol {
-  TMScope *_scope;
+  __weak TMScope *_scope;
   NSString *(^_transformation)(NSString *);
   NSNumber *_separator;
 }
