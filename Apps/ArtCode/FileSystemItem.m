@@ -131,6 +131,30 @@
 
 @end
 
+@implementation FileSystemItem (FileManagement)
+
+- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination {
+  
+}
+
+- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination {
+  
+}
+
+- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
+  
+}
+
+- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
+  
+}
+
+- (id<RACSubscribable>)delete {
+  
+}
+
+@end
+
 @implementation FileSystemItem (ExtendedAttributes)
 
 - (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {

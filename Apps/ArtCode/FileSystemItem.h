@@ -31,9 +31,6 @@
 /// Attempts to save the receiver to disk, within a certain time, then sends error or completed to the returned subscribable
 - (id<RACSubscribable>)save;
 
-/// Attempts to delete the receiver, then sends error or completed to the returned subscribable.
-- (id<RACSubscribable>)delete;
-
 @end
 
 @interface FileSystemItem (File)
@@ -64,6 +61,25 @@
 /// Sends tuples where the first element is the url and the second element is the filter hitmask, if applicable
 /// This subscribable does not complete.
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
+
+@end
+
+@interface FileSystemItem (FileManagement)
+
+/// Attempts to move the receiver to the destination, then sends error or completed to the returned subscribable.
+- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination;
+
+/// Attempts to copy the receiver to the destination, then sends error or completed to the returned subscribable.
+- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination;
+
+/// Attempts to rename or create a renamed copy of the receiver, then sends error or completed to the returned subscribable.
+- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy;
+
+/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends error or completed to the returned subscribable.
+- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy;
+
+/// Attempts to delete the receiver, then sends error or completed to the returned subscribable.
+- (id<RACSubscribable>)delete;
 
 @end
 
