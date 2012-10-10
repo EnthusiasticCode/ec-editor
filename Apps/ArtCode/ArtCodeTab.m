@@ -121,8 +121,8 @@ static void *artCodeTabKey;
 }
 
 // TODO: find out why this messes up KVO causing opening text files to crash
-//+ (NSSet *)keyPathsForValuesAffectingArtCodeTab {
-//  return [NSSet setWithObject:@"parentViewController.artCodeTab"];
-//}
++ (NSSet *)keyPathsForValuesAffectingArtCodeTab {
+  return [NSSet setWithObject:@"parentViewController.artCodeTab"];
+}
 
 @end
