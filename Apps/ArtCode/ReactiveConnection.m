@@ -21,6 +21,9 @@
   RACSubject *_transcriptSubject;
   RACSubject *_directoryContentsSubject;
   RACReplaySubject *_connectionStatusSubject;
+  
+  NSMutableDictionary *_downloadProgressSubscribables;
+  NSMutableDictionary *_uploadProgressSubscribables;
 }
 
 + (ReactiveConnection *)reactiveConnectionWithURL:(NSURL *)url {
@@ -64,10 +67,7 @@
 #pragma mark - Public Methods
 
 - (RACSubscribable *)connectionStatus {
-  if (!_connectionStatusSubject) {
-    _connectionStatusSubject = [RACReplaySubject replaySubjectWithCapacity:1];
-  }
-  return _connectionStatusSubject;
+  return _connectionStatusSubject ?: (_connectionStatusSubject = [RACReplaySubject replaySubjectWithCapacity:1]);
 }
 
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
@@ -80,23 +80,40 @@
 }
 
 - (RACSubscribable *)transcript {
-  if (!_transcriptSubject) {
-    _transcriptSubject = [RACSubject subject];
-  }
-  return _transcriptSubject;
+  return _transcriptSubject ?: (_transcriptSubject = [RACSubject subject]);
 }
 
 - (RACSubscribable *)directoryContents {
-  if (!_directoryContentsSubject) {
-    _directoryContentsSubject = [RACSubject subject];
-  }
-  return _directoryContentsSubject;
+  return _directoryContentsSubject ?: (_directoryContentsSubject = [RACSubject subject]);
 }
 
 - (void)changeToDirectory:(NSString *)path {
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
   [_connection changeToDirectory:path];
   [_connection directoryContents];
+}
+
+- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
+  // TODO recursive option
+  if (!_downloadProgressSubscribables) {
+    _downloadProgressSubscribables = [[NSMutableDictionary alloc] init];
+  }
+  RACSubject *downloadSubscribable = [RACSubject subject];
+  [_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
+  [_connection downloadFile:remotePath toDirectory:localURL.absoluteString overwrite:YES delegate:nil];
+  return downloadSubscribable;
+}
+
+- (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
+  // TODO recursive option
+  if (!_uploadProgressSubscribables) {
+    _uploadProgressSubscribables = [[NSMutableDictionary alloc] init];
+  }
+  RACSubject *uploadSubscribable = [RACSubject subject];
+  [_uploadProgressSubscribables setObject:uploadSubscribable forKey:remotePath];
+  // TODO use proper permissions
+  [_connection uploadFileAtURL:localURL toPath:remotePath openingPosixPermissions:0];
+  return uploadSubscribable;
 }
 
 #pragma mark - Connection delegate
@@ -181,4 +198,50 @@
   NSLog(@"transcript: %@", string);
   [_transcriptSubject sendNext:[RACTuple tupleWithObjects:[NSNumber numberWithInt:transcript], string, nil]];
 }
+
+#pragma mark Connection Downloads
+
+- (void)connection:(id<CKConnection>)con downloadDidBegin:(NSString *)remotePath {
+  // TODO check if needed
+  [self connection:con download:remotePath progressedTo:@0];
+}
+
+- (void)connection:(id<CKConnection>)con download:(NSString *)remotePath progressedTo:(NSNumber *)percent {
+  [[_downloadProgressSubscribables objectForKey:remotePath] sendNext:percent];
+}
+
+- (void)connection:(id<CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error {
+  RACSubject *subject = [_downloadProgressSubscribables objectForKey:remotePath];
+  if (error) {
+    [subject sendError:error];
+  } else {
+    [subject sendCompleted];
+  }
+  [_downloadProgressSubscribables removeObjectForKey:remotePath];
+}
+
+//- (void)connection:(id<CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length {
+//  
+//}
+
+#pragma mark Connection Uploads
+
+- (void)connection:(id<CKPublishingConnection>)con uploadDidBegin:(NSString *)remotePath {
+  [self connection:(id<CKConnection>)con upload:remotePath progressedTo:@0];
+}
+
+- (void)connection:(id<CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent {
+  [[_uploadProgressSubscribables objectForKey:remotePath] sendNext:percent];
+}
+
+- (void)connection:(id<CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error {
+  RACSubject *subject = [_uploadProgressSubscribables objectForKey:remotePath];
+  if (error) {
+    [subject sendError:error];
+  } else {
+    [subject sendCompleted];
+  }
+  [_uploadProgressSubscribables removeObjectForKey:remotePath];
+}
+
 @end
