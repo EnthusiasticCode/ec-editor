@@ -60,11 +60,15 @@
   };
   
   propertySubscribingDisposable = [[target rac_subscribableForKeyPath:keyPath onObject:self] subscribeNext:^(id x) {
-    if (!suppressEcho) {
-      [self.switchboard sendNext:[RACTuple tupleWithObjectsFromArray:@[x ? : [RACTupleNil tupleNil], target, keyPath]]];
+    if (suppressEcho) {
+      return;
     }
+    [self.switchboard sendNext:[RACTuple tupleWithObjectsFromArray:@[x ? : [RACTupleNil tupleNil], target, keyPath]]];
   }];
   propertyUpdatingDisposable = [[self.switchboard deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(RACTuple *x) {
+    if (suppressEcho) {
+      return;
+    }
     if (x.second != target || x.third != keyPath) {
       suppressEcho = YES;
       [target setValue:x.first forKeyPath:keyPath];
