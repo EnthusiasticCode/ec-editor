@@ -21,15 +21,19 @@
 #import "ArtCodeProject.h"
 
 
-@interface RemoteNavigationController ()
+@interface RemoteNavigationController () <UINavigationControllerDelegate>
 @property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
 @property (nonatomic, strong, readwrite) ReactiveConnection *connection;
 
 @property (nonatomic, weak) UINavigationController *localBrowserNavigationController;
+@property (nonatomic, weak) LocalFileListController *localFileListController;
 @property (nonatomic, weak) UINavigationController *remoteBrowserNavigationController;
+@property (nonatomic, weak) RemoteFileListController *remoteFileListController;
 @end
 
 @implementation RemoteNavigationController
+
+#pragma mark Controller lifecycle
 
 static void _init(RemoteNavigationController *self) {
   // RAC
@@ -67,10 +71,13 @@ static void _init(RemoteNavigationController *self) {
    }];
   
   // Upload button activation reaction
-  // TODO!! visibleViewController is not KVO
-  [[self rac_subscribableForKeyPath:@"localBrowserNavigationController.visibleViewController.selectedItems" onObject:self] subscribeNext:^(NSArray *x) {
+  [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     self.toolbarController.uploadButton.enabled = x.count != 0;
   }];
+  
+//  [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+//    self.toolbarController.downloadButton.enabled = x.count != 0;
+//  }];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -81,6 +88,23 @@ static void _init(RemoteNavigationController *self) {
   _init(self);
   return self;
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+  if ([segue.identifier isEqualToString:@"LocalBrowser"]) {
+    // Set the initial location for the local file browser
+    self.localBrowserNavigationController = segue.destinationViewController;
+    self.localBrowserNavigationController.editing = YES;
+    self.localBrowserNavigationController.delegate = self;
+    [(LocalFileListController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
+  } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
+    ASSERT(self.connection && self.remote);
+    self.remoteBrowserNavigationController = (UINavigationController *)segue.destinationViewController;
+    self.remoteBrowserNavigationController.delegate = self;
+    [(RemoteFileListController *)[self.remoteBrowserNavigationController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
+  }
+}
+
+#pragma mark View lifecycle
 
 - (void)loadView {
   [super loadView];
@@ -95,15 +119,14 @@ static void _init(RemoteNavigationController *self) {
   [super viewDidAppear:animated];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([segue.identifier isEqualToString:@"LocalBrowser"]) {
-    // Set the initial location for the local file browser
-    self.localBrowserNavigationController = segue.destinationViewController;
-    self.localBrowserNavigationController.editing = YES;
-    [(LocalFileListController *)[self.localBrowserNavigationController topViewController] setLocationURL:self.artCodeTab.currentLocation.project.fileURL];
-  } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
-    ASSERT(self.connection && self.remote);
-    [(RemoteFileListController *)[(UINavigationController *)segue.destinationViewController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
+#pragma mark UINavigationControllerDelegate
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+  // This is done because UIViewController is not KVO compliant on visibleViewController
+  if (navigationController == self.localBrowserNavigationController) {
+    self.localFileListController = (LocalFileListController *)viewController;
+  } else if (navigationController == self.remoteBrowserNavigationController) {
+    self.remoteFileListController = (RemoteFileListController *)viewController;
   }
 }
 
