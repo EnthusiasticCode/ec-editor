@@ -37,8 +37,7 @@
 
 static void _init(RemoteNavigationController *self) {
   // RAC
-  
-  // TODO!!! use weakify, storngify
+  @weakify(self);
   
   RAC(self.connection) = [RACAble(self.remote) select:^id(ArtCodeRemote *remote) {
     return [ReactiveConnection reactiveConnectionWithURL:remote.url];
@@ -52,6 +51,7 @@ static void _init(RemoteNavigationController *self) {
    select:^id(RemoteNavigationToolbarController *x) {
      return [x buttonsActionSubscribable];
    }] switch] subscribeNext:^(UIButton *x) {
+     @strongify(self);
      switch (x.tag) {
        case 1: // Local back
          [self.localBrowserNavigationController popViewControllerAnimated:YES];
@@ -75,10 +75,12 @@ static void _init(RemoteNavigationController *self) {
   
   // Upload button activation reaction
   [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+    @strongify(self);
     self.toolbarController.uploadButton.enabled = x.count != 0;
   }];
   
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
+    @strongify(self);
     self.toolbarController.downloadButton.enabled = x.count != 0;
   }];
 }
