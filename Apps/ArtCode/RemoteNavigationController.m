@@ -20,6 +20,8 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 
+#import <Connection/CKConnectionRegistry.h>
+
 
 @interface RemoteNavigationController () <UINavigationControllerDelegate>
 @property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
@@ -137,8 +139,27 @@ static void _init(RemoteNavigationController *self) {
 
 #pragma mark Private methods
 
-- (void)_downloadAllConnectionItems:(NSArray *)items {
-  
+- (void)_downloadConnectionItems:(NSArray *)items {
+  // RAC
+  @weakify(self);
+  [[[items rac_toSubscribable] select:^id(NSDictionary *item) {
+    @strongify(self);
+    NSString *itemName = [item objectForKey:cxFilenameKey];
+    // Generate local destination URL and start the download
+    NSURL *localURL = [self.localFileListController.locationURL URLByAppendingPathComponent:itemName];
+    RACSubscribable *progressSubscribable = [self.connection downloadFileWithRemotePath:[self.remoteFileListController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
+    
+    // Side effect to start the progress indicator in the local file list
+    [self.localFileListController addProgressItemWithURL:localURL progressSubscribable:progressSubscribable];
+    
+    // Return a subscribable that yields tuple of temporary URL and local destination URL
+    return [[progressSubscribable takeLast:1] select:^id(NSURL *tempURL) {
+      return [RACTuple tupleWithObjects:tempURL, localURL, nil];
+    }];
+  }] subscribeNext:^(RACTuple *urlTuple) {
+    // Move the temporary file to the destination URL
+    [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
+  }];
 }
 
 @end

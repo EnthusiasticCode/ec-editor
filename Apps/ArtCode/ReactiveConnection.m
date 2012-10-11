@@ -8,6 +8,7 @@
 
 #import "ReactiveConnection.h"
 #import <Connection/CKConnectionRegistry.h>
+#import "NSURL+Utilities.h"
 
 @interface ReactiveConnection ()
 @property (nonatomic, readwrite, getter = isConnected) BOOL connected;
@@ -93,15 +94,31 @@
   [_connection directoryContents];
 }
 
-- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
-  // TODO recursive option
+- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirecotry {
   if (!_downloadProgressSubscribables) {
     _downloadProgressSubscribables = [[NSMutableDictionary alloc] init];
   }
-  RACSubject *downloadSubscribable = [RACSubject subject];
+  // Generate the temporary download URL
+  NSURL *tempDownloadURL = isDirecotry ? [NSURL temporaryDirectory] : [NSURL temporaryFileURL];
+  RACSubject *downloadSubscribable = [RACReplaySubject replaySubjectWithCapacity:1];
   [_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
-  [_connection downloadFile:remotePath toDirectory:localURL.absoluteString overwrite:YES delegate:nil];
-  return downloadSubscribable;
+  // Run download
+  if (isDirecotry) {
+    [_connection recursivelyDownload:remotePath to:tempDownloadURL.absoluteString overwrite:YES];
+  } else {
+    [_connection downloadFile:remotePath toDirectory:tempDownloadURL.absoluteString overwrite:YES delegate:nil];
+  }
+  // Retun an 'endWith:tempDownloadURL' subscribable
+  return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+		return [downloadSubscribable subscribeNext:^(id x) {
+			[subscriber sendNext:x];
+		} error:^(NSError *error) {
+			[subscriber sendError:error];
+		} completed:^{
+      [subscriber sendNext:tempDownloadURL];
+			[subscriber sendCompleted];
+		}];
+	}];
 }
 
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {

@@ -44,9 +44,12 @@ enum ReactiveConnectionStatus {
 #pragma mark Managin file transfers
 
 /// Returns a subscribable that send next when a download update is available.
-/// An update is sent in the form of a \c RACTuple containing (remote file path, NSNumber progress)
-- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL;
+/// An update can be either an NSNumber containing the percentage of download complete of an NSURL of the localy downloaded file.
+- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirecotry;
 
+/// The local URL will be querried to see if it's a directory to enable recursive upload.
+/// Returns a subscribable that send next when an upload update is available.
+/// An update is an NSNumber containing the percentage of upload completed.
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath;
 
 @end

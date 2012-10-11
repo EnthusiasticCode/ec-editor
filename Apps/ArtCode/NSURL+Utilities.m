@@ -27,17 +27,11 @@
 }
 
 + (NSURL *)temporaryDirectory {
-  return [self uniqueDirectoryInDirectory:[NSURL fileURLWithPath:NSTemporaryDirectory()]];
+  return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
 }
 
-+ (NSURL *)uniqueDirectoryInDirectory:(NSURL *)directoryURL {
-  NSURL *uniqueDirectory;
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  do {
-    uniqueDirectory = [directoryURL URLByAppendingPathComponent:[[NSString alloc] initWithGeneratedUUID]];
-  }
-  while ([fileManager fileExistsAtPath:[uniqueDirectory path]]);
-  return uniqueDirectory;
++ (NSURL *)temporaryFileURL {
+  return [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:NO] URLByAppendingPathExtension:@"tmp"];
 }
 
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL {

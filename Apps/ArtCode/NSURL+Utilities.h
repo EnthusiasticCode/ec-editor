@@ -19,8 +19,8 @@
 /// Returns a non-existing temporary directory
 + (NSURL *)temporaryDirectory;
 
-/// Returns a URL to a non-existing hidden directory within the specified directory
-+ (NSURL *)uniqueDirectoryInDirectory:(NSURL *)directoryURL;
+/// Returns a non-existing file URL with .tmp extension
++ (NSURL *)temporaryFileURL;
 
 /// Returns whether the receiver is a descendant of a subdirectory of the given directory
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL;
