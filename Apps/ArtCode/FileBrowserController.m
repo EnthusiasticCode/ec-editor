@@ -347,32 +347,31 @@
         
       case 3: // Mail
       {
-        NSURL *temporaryDirectory = [NSURL temporaryDirectory];
-        NSURL *archiveURL = [[temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
-        
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:_selectedItems toArchiveAtURL:archiveURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
-          // Create mail composer
-          MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
-          mailComposer.mailComposeDelegate = self;
-          mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-          mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-          
-          // Add attachement
-          [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
-          
-          // Remove temporary folder
-//          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
-          
-          // Add precompiled mail fields
-          [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
-          [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
-          
-          // Present mail composer
-          [self presentViewController:mailComposer animated:YES completion:nil];
-          [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+        [ArchiveUtilities compressFileAtURLs:_selectedItems completionHandler:^(NSURL *temporaryDirectoryURL) {
+          if (temporaryDirectoryURL) {
+            NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
+            [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
+            // Create mail composer
+            MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+            mailComposer.mailComposeDelegate = self;
+            mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+            mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+            
+            // Add attachement
+            [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
+            
+            // Add precompiled mail fields
+            [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
+            [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+            
+            // Present mail composer
+            [self presentViewController:mailComposer animated:YES completion:nil];
+            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+            [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+          }
           self.loading = NO;
         }];
         

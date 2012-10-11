@@ -10,8 +10,13 @@
 
 @interface ArchiveUtilities : NSObject
 
-+ (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void(^)(NSError *error))completionHandler;
-+ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)archiveURL renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void(^)(NSError *error, NSURL *newURL))completionHandler;
+/// Extracts the given archive, and returns the url of a temporary directory with the archive's contents on success or nil on error
+/// Caller is responsible for deleting the temporary directory
++ (void)extractArchiveAtURL:(NSURL *)archiveURL completionHandler:(void(^)(NSURL *temporaryDirectoryURL))completionHandler;
+
+/// Compresses the given files, and returns the url of a temporary directory containing an archive named "Archive.zip" on success or nil on error
+/// Caller is responsible for deleting the temporary directory
++ (void)compressFileAtURLs:(NSArray *)urls completionHandler:(void(^)(NSURL *temporaryDirectoryURL))completionHandler;
 
 @end
 

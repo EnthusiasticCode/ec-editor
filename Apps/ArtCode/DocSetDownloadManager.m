@@ -293,7 +293,12 @@ static NSString * const docSetContentsPath = @"Contents/Resources/Documents";
   NSURL *extractionTargetURL = [[self.downloadTargetURL URLByDeletingLastPathComponent] URLByAppendingPathComponent:@"docset_extract"];
   self.extractedURL = extractionTargetURL;
   
-  [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:self.downloadTargetURL toURL:extractionTargetURL completionHandler:^(NSError *error) {
+  @weakify(self);
+  [ArchiveUtilities extractArchiveAtURL:self.downloadTargetURL completionHandler:^(NSURL *temporaryDirectoryURL) {
+    @strongify(self);
+    if (temporaryDirectoryURL) {
+      [[NSFileManager defaultManager] moveItemAtURL:temporaryDirectoryURL toURL:extractionTargetURL error:NULL];
+    }
     self.status = DocSetDownloadStatusFinished;
     [[DocSetDownloadManager sharedDownloadManager] downloadFinished:self];
     

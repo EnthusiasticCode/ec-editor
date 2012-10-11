@@ -13,121 +13,29 @@
 
 @implementation ArchiveUtilities
 
-+ (void)coordinatedExtractionOfArchiveAtURL:(NSURL *)archiveURL toURL:(NSURL *)url completionHandler:(void (^)(NSError *))completionHandler {
-  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
++ (void)extractArchiveAtURL:(NSURL *)archiveURL completionHandler:(void (^)(NSURL *))completionHandler {
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    // Prepare to execute the extracting operation
-    __block NSError *error = nil;
-    [fileCoordinator coordinateReadingItemAtURL:archiveURL options:0 writingItemAtURL:url options:0 error:&error byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-      [self extractArchiveAtURL:newReadingURL toDirectory:newWritingURL error:&error];
-    }];
-    // Call the external completion handler
+    __block NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+    if (![self extractArchiveAtURL:archiveURL toDirectory:temporaryDirectory error:NULL]) {
+      [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
+      temporaryDirectory = nil;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
-      completionHandler(error);
+      completionHandler(temporaryDirectory);
     });
   });
 }
 
-+ (void)coordinatedCompressionOfFilesAtURLs:(NSArray *)urls toArchiveAtURL:(NSURL *)archiveURL renameIfNeeded:(BOOL)renameIfNeeded completionHandler:(void (^)(NSError *, NSURL *))completionHandler {
-  ASSERT(urls.count);
-  ASSERT(archiveURL);
-  NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
++ (void)compressFileAtURLs:(NSArray *)urls completionHandler:(void (^)(NSURL *))completionHandler {
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    __block NSError *error = nil;
-    NSURL *newArchiveURL = archiveURL;
-    // Generate valid archiveURL if needed
-    if (renameIfNeeded) {
-      NSFileManager *fileManager = [[NSFileManager alloc] init];
-      NSUInteger duplicateCount = 0;
-      __block BOOL alreadyExisting = NO;
-      do {
-        // Check for existance
-        [fileCoordinator coordinateReadingItemAtURL:newArchiveURL options:0 error:&error byAccessor:^(NSURL *newURL) {
-          alreadyExisting = [fileManager fileExistsAtPath:newURL.path];
-        }];
-        // Create a new destination URL if needed
-        if (alreadyExisting) {
-          newArchiveURL = [archiveURL URLByAddingDuplicateNumber:++duplicateCount];
-        }
-      } while (alreadyExisting);
+    __block NSURL *temporaryDirectory = [NSURL temporaryDirectory];
+    NSURL *archiveURL = [temporaryDirectory URLByAppendingPathComponent:@"Archive.zip"];
+    if (![self compressFileAtURLs:urls toArchiveURL:archiveURL error:NULL]) {
+      [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
+      temporaryDirectory = nil;
     }
-    // Prepare to execute the extracting operation
-    __block int returnCode = ARCHIVE_FATAL;
-    [fileCoordinator prepareForReadingItemsAtURLs:urls options:0 writingItemsAtURLs:@[ newArchiveURL ] options:0 error:&error byAccessor:^(void (^batchCompletionHandler)(void)) {
-      // Start the new archive
-      struct archive *archive = archive_write_new();
-      archive_write_set_compression_lzma(archive);
-      archive_write_set_format_zip(archive);
-      if (archive_write_open_filename(archive, newArchiveURL.path.fileSystemRepresentation) < 0) {
-        archive_write_free(archive);
-        return; // no success
-      }
-      // Support variables
-      NSFileManager *fileManager = [[NSFileManager alloc] init];
-      NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
-      NSString *relativeFilePath = nil;
-      // Cycle for every requested file to compress
-      for (NSURL *fileURL in urls) {
-        // Change directory to the current file's one
-        [fileManager changeCurrentDirectoryPath:fileURL.path.stringByDeletingLastPathComponent];
-        relativeFilePath = fileURL.lastPathComponent;
-        // Actuall compress
-        [fileCoordinator coordinateReadingItemAtURL:fileURL options:0 error:&error byAccessor:^(NSURL *newURL) {
-          struct archive *disk = archive_read_disk_new();
-          archive_read_disk_set_standard_lookup(disk);
-          if (archive_read_disk_open(disk, [relativeFilePath fileSystemRepresentation]) < 0) {
-            archive_write_free(archive);
-            archive_read_free(disk);
-            return;
-          }
-          for (;;) {
-            struct archive_entry *entry = archive_entry_new();
-            returnCode = archive_read_next_header2(disk, entry);
-            if (returnCode == ARCHIVE_EOF)
-              break;
-            archive_read_disk_descend(disk);
-            returnCode = archive_write_header(archive, entry);
-            if (returnCode == ARCHIVE_FATAL) {
-              archive_entry_free(entry);
-              break;
-            }
-            if (returnCode >= 0) {
-              FILE *file = fopen(archive_entry_sourcepath(entry), "rb");
-              // workaround for a bug in libarchive where an entry can have a path relative to the working directory before archive_read_disk_descend was called
-              if (!file)
-                file = fopen(strstr(archive_entry_sourcepath(entry), "/") + 1, "rb");
-              ASSERT(file);
-              char buff[8192];
-              size_t length = fread(buff, sizeof(char), sizeof(buff), file);
-              while (length > 0) {
-                archive_write_data(archive, buff, length);
-                length = fread(buff, sizeof(char), sizeof(buff), file);
-              }
-              fclose(file);
-            }
-            archive_entry_free(entry);
-          }
-          
-          archive_read_close(disk);
-          archive_read_free(disk);
-        }];
-      }
-      // Write the archive to disk
-      [fileCoordinator coordinateWritingItemAtURL:newArchiveURL options:0 error:&error byAccessor:^(NSURL *newURL) {
-        archive_write_close(archive);
-        archive_write_free(archive);
-        
-        if (returnCode == ARCHIVE_FATAL) {
-          [fileManager removeItemAtURL:newURL error:&error];
-        }
-      }];
-      // Restore previous directory
-      [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
-      batchCompletionHandler();
-    }];
-    // Call the external completion handler
     dispatch_async(dispatch_get_main_queue(), ^{
-      completionHandler(error, newArchiveURL);
+      completionHandler(temporaryDirectory);
     });
   });
 }
@@ -136,12 +44,11 @@
 {
   ASSERT(archiveURL && directoryURL);
   
-  NSFileManager *fileManager = [[NSFileManager alloc] init];
-  NSURL *workingDirectory = [NSURL uniqueDirectoryInDirectory:directoryURL];
-  if (![fileManager createDirectoryAtURL:workingDirectory withIntermediateDirectories:YES attributes:nil error:error])
+  NSString *previousWorkingDirectory = [[NSFileManager defaultManager] currentDirectoryPath];
+  [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:NULL];
+  if (![[NSFileManager defaultManager] changeCurrentDirectoryPath:[directoryURL path]]) {
     return NO;
-  NSString *previousWorkingDirectory = [fileManager currentDirectoryPath];
-  [fileManager changeCurrentDirectoryPath:[workingDirectory path]];
+  }
   
   struct archive *archive = archive_read_new();
   archive_read_support_compression_all(archive);
@@ -184,20 +91,81 @@
     if (returnCode < 0)
       break;
   }
-  for (NSURL *fileURL in [fileManager contentsOfDirectoryAtURL:workingDirectory includingPropertiesForKeys:nil options:0 error:error])
-  {
-    NSURL *destinationURL = [directoryURL URLByAppendingPathComponent:[fileURL lastPathComponent]];
-    [fileManager moveItemAtURL:fileURL toURL:destinationURL error:error];
-  }
   archive_write_close(output);
   archive_write_free(output);
   archive_read_close(archive);
   archive_read_free(archive);
   
-  [fileManager removeItemAtURL:workingDirectory error:error];
-  [fileManager changeCurrentDirectoryPath:previousWorkingDirectory];
+  [[NSFileManager defaultManager] changeCurrentDirectoryPath:previousWorkingDirectory];
   
   return returnCode >= 0 ? YES : NO;
+}
+
++ (BOOL)compressFileAtURLs:(NSArray *)urls toArchiveURL:(NSURL *)archiveURL error:(NSError **)error {
+  __block int returnCode = ARCHIVE_FATAL;
+  // Start the new archive
+  struct archive *archive = archive_write_new();
+  archive_write_set_compression_lzma(archive);
+  archive_write_set_format_zip(archive);
+  if (archive_write_open_filename(archive, archiveURL.path.fileSystemRepresentation) < 0) {
+    archive_write_free(archive);
+    return NO; // no success
+  }
+  // Support variables
+  NSString *previousWorkingDirectory = [[NSFileManager defaultManager] currentDirectoryPath];
+  NSString *relativeFilePath = nil;
+  // Cycle for every requested file to compress
+  for (NSURL *fileURL in urls) {
+    // Change directory to the current file's one
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:fileURL.path.stringByDeletingLastPathComponent];
+    relativeFilePath = fileURL.lastPathComponent;
+    // Actuall compress
+    struct archive *disk = archive_read_disk_new();
+    archive_read_disk_set_standard_lookup(disk);
+    if (archive_read_disk_open(disk, [relativeFilePath fileSystemRepresentation]) < 0) {
+      archive_write_free(archive);
+      archive_read_free(disk);
+      return NO;
+    }
+    for (;;) {
+      struct archive_entry *entry = archive_entry_new();
+      returnCode = archive_read_next_header2(disk, entry);
+      if (returnCode == ARCHIVE_EOF)
+        break;
+      archive_read_disk_descend(disk);
+      returnCode = archive_write_header(archive, entry);
+      if (returnCode == ARCHIVE_FATAL) {
+        archive_entry_free(entry);
+        break;
+      }
+      if (returnCode >= 0) {
+        FILE *file = fopen(archive_entry_sourcepath(entry), "rb");
+        // workaround for a bug in libarchive where an entry can have a path relative to the working directory before archive_read_disk_descend was called
+        if (!file)
+          file = fopen(strstr(archive_entry_sourcepath(entry), "/") + 1, "rb");
+        ASSERT(file);
+        char buff[8192];
+        size_t length = fread(buff, sizeof(char), sizeof(buff), file);
+        while (length > 0) {
+          archive_write_data(archive, buff, length);
+          length = fread(buff, sizeof(char), sizeof(buff), file);
+        }
+        fclose(file);
+      }
+      archive_entry_free(entry);
+    }
+    
+    archive_read_close(disk);
+    archive_read_free(disk);
+  }
+  // Write the archive to disk
+  archive_write_close(archive);
+  archive_write_free(archive);
+  
+  // Restore previous directory
+  [[NSFileManager defaultManager] changeCurrentDirectoryPath:previousWorkingDirectory];
+  
+  return returnCode != ARCHIVE_FATAL;
 }
 
 @end
@@ -207,10 +175,10 @@
 
 - (BOOL)isArchiveURL {
   NSString *ext = self.pathExtension;
-  return [ext isEqualToString:@"zip"] 
-  || [ext isEqualToString:@"rar"] 
-  || [ext isEqualToString:@"tar"] 
-  || [ext isEqualToString:@"7zip"] 
+  return [ext isEqualToString:@"zip"]
+  || [ext isEqualToString:@"rar"]
+  || [ext isEqualToString:@"tar"]
+  || [ext isEqualToString:@"7zip"]
   || [ext isEqualToString:@"cab"];
 }
 

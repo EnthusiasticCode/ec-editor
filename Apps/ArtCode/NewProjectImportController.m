@@ -134,24 +134,37 @@
     if (createdProject) {
       // Import the zip file
       // Extract files if needed
-      [ArchiveUtilities coordinatedExtractionOfArchiveAtURL:zipURL toURL:createdProject.fileURL completionHandler:^(NSError *error) {
-        [self stopRightBarButtonItemActivityIndicator];
-        self.tableView.userInteractionEnabled = YES;
-        
-        // Explode single folder if present
-        __block NSArray *explodingURLs = nil;
-        [[[NSFileCoordinator alloc] init] coordinateReadingItemAtURL:createdProject.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-          NSFileManager *fileManager = [[NSFileManager alloc] init];
-          NSArray *projectContents = [fileManager contentsOfDirectoryAtURL:createdProject.fileURL includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
-          NSNumber *isDirectory = nil;
-          if (projectContents.count == 1 && [[projectContents objectAtIndex:0] getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL] && isDirectory.boolValue) {
-            explodingURLs = [fileManager contentsOfDirectoryAtURL:[projectContents objectAtIndex:0] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
+      [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
+        // Get the extracted directories
+        [[[[RACSubscribable combineLatest:@[[[[[FileSystemItem directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemItem *temporaryDirectory) {
+          return [temporaryDirectory children];
+        }] switch] select:^id<RACSubscribable>(NSArray *children) {
+          // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
+          FileSystemItem *onlyChild = [children lastObject];
+          if (children.count == 1 && onlyChild.itemType.first == NSURLFileResourceTypeDirectory) {
+            return [[children lastObject] children];
+          } else {
+            return [RACSubscribable return:children];
+          }
+        }], [FileSystemItem directoryWithURL:createdProject.fileURL]] reduce:^id(RACTuple *xs) {
+          FileSystemItem *child = xs.first;
+          FileSystemItem *projectDirectory = xs.second;
+          return [child moveTo:projectDirectory];
+        }] merge] finally:^{
+          [self stopRightBarButtonItemActivityIndicator];
+          self.tableView.userInteractionEnabled = YES;
+          [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+        }] subscribeError:^(NSError *error) {
+          // TODO error handling
+          ASSERT(NO);
+          if (block) {
+            block(nil);
+          }
+        } completed:^{
+          if (block) {
+            block(createdProject);
           }
         }];
-        // TODO error handling
-        if (block) {
-          block(createdProject);
-        }
       }];
     } else {
       ASSERT(NO); // TODO error handling

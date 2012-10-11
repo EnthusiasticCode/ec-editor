@@ -392,8 +392,11 @@
         if ([obj isKindOfClass:[ArtCodeProject class]]) {
           ArtCodeProject *project = obj;
           NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:@[ project.fileURL ] toArchiveAtURL:zipURL renameIfNeeded:YES completionHandler:^(NSError *error, NSURL *newURL) {
-            // TODO error handling?
+          [ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+            if (temporaryDirectoryURL) {
+              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+            }
             progressBlock();
           }];
         } else {
@@ -418,8 +421,6 @@
       NSMutableString *subject = [[NSMutableString alloc] init];
       NSInteger cellsToExportCount = [cellsToExport count];
       __block NSInteger progress = 0;
-      NSURL *temporaryDirectory = [NSURL temporaryDirectory];
-      [[NSFileManager defaultManager] createDirectoryAtURL:temporaryDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
       // Complete process block
       void (^progressCompletion)() = ^ {
         if (++progress == cellsToExportCount) {
@@ -440,7 +441,6 @@
           // Present
           [self presentViewController:mailComposer animated:YES completion:nil];
           [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-          [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
           self.loading = NO;
         }
       };
@@ -453,12 +453,15 @@
           [subject appendFormat:@"%@, ", project.name];
           
           // Process project
-          NSURL *zipURL = [temporaryDirectory URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities coordinatedCompressionOfFilesAtURLs:@[ project.fileURL ] toArchiveAtURL:zipURL renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
-            // Add attachment
-            [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-            [[NSFileManager defaultManager] removeItemAtURL:zipURL error:NULL];
-            progressCompletion();
+          [ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+            if (temporaryDirectoryURL) {
+              // Add attachment
+              NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+              progressCompletion();
+            }
           }];
         } else {
           // Ignore non projects
