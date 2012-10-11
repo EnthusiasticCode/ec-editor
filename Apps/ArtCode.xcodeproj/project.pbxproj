@@ -131,8 +131,6 @@
 		B7728CC315289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
 		B78C15691521A17500C66DDC /* NSString+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */; };
-		B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
-		B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */; };
 		B78D136F15AB4D5D0022C93B /* FileSystemItem+TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* FileSystemItem+TextFile.m */; };
 		B78D137015AB4D5D0022C93B /* FileSystemItem+TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* FileSystemItem+TextFile.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
@@ -755,8 +753,6 @@
 		B78C160415245F6000C66DDC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160615245F6000C66DDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B78D132E15A9C0070022C93B /* NSFileCoordinator+CoordinatedFileManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileCoordinator+CoordinatedFileManagement.h"; sourceTree = "<group>"; };
-		B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileCoordinator+CoordinatedFileManagement.m"; sourceTree = "<group>"; };
 		B78D136D15AB4D5D0022C93B /* FileSystemItem+TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemItem+TextFile.h"; sourceTree = "<group>"; };
 		B78D136E15AB4D5D0022C93B /* FileSystemItem+TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemItem+TextFile.m"; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
@@ -1663,8 +1659,6 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B78D132E15A9C0070022C93B /* NSFileCoordinator+CoordinatedFileManagement.h */,
-				B78D132F15A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
@@ -3216,7 +3210,6 @@
 				B7BEA447159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA44A159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA463159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133115A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D137015AB4D5D0022C93B /* FileSystemItem+TextFile.m in Sources */,
 				5F6539F115B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FB15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
@@ -3322,7 +3315,6 @@
 				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D133015A9C0080022C93B /* NSFileCoordinator+CoordinatedFileManagement.m in Sources */,
 				B78D136F15AB4D5D0022C93B /* FileSystemItem+TextFile.m in Sources */,
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,

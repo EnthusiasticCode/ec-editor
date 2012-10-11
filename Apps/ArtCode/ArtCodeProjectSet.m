@@ -9,7 +9,7 @@
 #import "ArtCodeProjectSet.h"
 #import "ArtCodeDatastore.h"
 #import "NSURL+Utilities.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "FileSystemItem.h"
 #import "ArtCodeProject.h"
 
 
@@ -74,26 +74,24 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [NSFileCoordinator coordinatedMakeDirectoryAtURL:[[self fileURL] URLByAppendingPathComponent:name] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
-    if (error) {
-      completionHandler(nil);
-      return;
-    }
+  [[FileSystemItem directoryWithURL:[[self fileURL] URLByAppendingPathComponent:name]] subscribeNext:^(FileSystemItem *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
-    [project setName:[newURL lastPathComponent]];
+    [project setName:[directory.itemURL.first lastPathComponent]];
     [project setLabelColor:labelColor];
     [project setProjectSet:self];
     [_objectsAddedSubject sendNext:project];
     completionHandler(project);
+  } error:^(NSError *error) {
+    completionHandler(nil);
   }];
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:[project fileURL]] completionHandler:^(NSError *error) {
-    if (error) {
-      completionHandler(error);
-      return;
-    }
+  [[[[FileSystemItem directoryWithURL:project.fileURL] select:^id<RACSubscribable>(FileSystemItem *directory) {
+    return [directory delete];
+  }] switch] subscribeError:^(NSError *error) {
+    completionHandler(error);
+  } completed:^{
     project.projectSet = nil;
     [_objectsRemovedSubject sendNext:project];
     [[self managedObjectContext] deleteObject:project];

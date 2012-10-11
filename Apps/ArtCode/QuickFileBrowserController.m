@@ -54,7 +54,7 @@
   // RAC
   @weakify(self);
   [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) select:^id<RACSubscribable>(NSURL *projectURL) {
-    return [FileSystemItem readItemAtURL:projectURL];
+    return [FileSystemItem directoryWithURL:projectURL];
   }] switch] select:^id<RACSubscribable>(FileSystemItem *directory) {
     @strongify(self);
     if (!self) { return nil; }

@@ -17,7 +17,6 @@
 #import "FileSystemItem.h"
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
 #import "UIColor+AppStyle.h"
 
 
@@ -149,18 +148,9 @@
             explodingURLs = [fileManager contentsOfDirectoryAtURL:[projectContents objectAtIndex:0] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL];
           }
         }];
-        if (explodingURLs) {
-          [NSFileCoordinator coordinatedMoveItemsAtURLs:explodingURLs toURL:createdProject.fileURL completionHandler:^(NSError *er) {
-            // TODO error handling
-            if (block) {
-              block(createdProject);
-            }
-          }];
-        } else {
-          // TODO error handling
-          if (block) {
-            block(createdProject);
-          }
+        // TODO error handling
+        if (block) {
+          block(createdProject);
         }
       }];
     } else {

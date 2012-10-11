@@ -26,7 +26,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "FileSystemItem.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"

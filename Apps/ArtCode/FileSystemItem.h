@@ -12,14 +12,15 @@
 
 @interface FileSystemItem : NSObject
 
-/// Returns a subscribable that sends an existing item at \a URL, then completes
-+ (id<RACSubscribable>)readItemAtURL:(NSURL *)url;
+/// Return a subscribable that sends the item with the given URL, then completes
+/// Note that if the item doesn't exist, it won't be possible to create it
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends a new file item created at \a URL, then completes
-+ (id<RACSubscribable>)createFileAtURL:(NSURL *)url;
+/// Return a subscribable that sends the file item with the given URL, then completes
++ (id<RACSubscribable>)fileWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends a new directory item created at \a URL, then completes
-+ (id<RACSubscribable>)createDirectoryAtURL:(NSURL *)url;
+/// Return a subscribable that sends the directory item with the given URL, then completes
++ (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
 
 /// Returns a subscribable that sends the URL of the item as it changes.
 /// This subscribable does not complete.
@@ -28,8 +29,14 @@
 /// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver, then completes
 - (id<RACSubscribable>)itemType;
 
-/// Attempts to save the receiver to disk, within a certain time, then sends error or completed to the returned subscribable
+/// Attempts to create the receiver, then sends a next and an error or completed to the returned subscribable
+- (id<RACSubscribable>)create;
+
+/// Attempts to save the receiver to disk, then sends a next and an error or completed to the returned subscribable
 - (id<RACSubscribable>)save;
+
+/// Attempts to duplicate the receiver, then sends a next and an error or completed to the returned subscribable
+- (id<RACSubscribable>)duplicate;
 
 @end
 
@@ -66,19 +73,19 @@
 
 @interface FileSystemItem (FileManagement)
 
-/// Attempts to move the receiver to the destination, then sends error or completed to the returned subscribable.
+/// Attempts to move the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)moveTo:(FileSystemItem *)destination;
 
-/// Attempts to copy the receiver to the destination, then sends error or completed to the returned subscribable.
+/// Attempts to copy the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)copyTo:(FileSystemItem *)destination;
 
-/// Attempts to rename or create a renamed copy of the receiver, then sends error or completed to the returned subscribable.
+/// Attempts to rename or create a renamed copy of the receiver, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy;
 
-/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends error or completed to the returned subscribable.
+/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy;
 
-/// Attempts to delete the receiver, then sends error or completed to the returned subscribable.
+/// Attempts to delete the receiver, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)delete;
 
 @end

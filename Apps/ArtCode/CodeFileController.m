@@ -336,7 +336,7 @@ static void drawStencilStar(CGContextRef myContext)
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
-    return [FileSystemItem readItemAtURL:url];
+    return [FileSystemItem fileWithURL:url];
   }] switch] toProperty:RAC_KEYPATH_SELF(self.textFile) onObject:self];
   
   __block RACDisposable *bookmarksDisposable = nil;

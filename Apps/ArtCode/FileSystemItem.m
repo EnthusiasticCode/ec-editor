@@ -109,6 +109,10 @@
   return [self.itemTypeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
+- (id<RACSubscribable>)save {
+  
+}
+
 @end
 
 @implementation FileSystemItem (Directory)

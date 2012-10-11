@@ -36,7 +36,7 @@
 #import "ArtCodeProject.h"
 
 #import "UIViewController+Utilities.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "FileSystemItem.h"
 
 #import "CodeFileController.h"
 
@@ -92,7 +92,7 @@
     if (!strongSelf) {
       return;
     }
-    [[FileSystemItem readItemAtURL:url] subscribeNext:^(FileSystemItem *directory) {
+    [[FileSystemItem directoryWithURL:url] subscribeNext:^(FileSystemItem *directory) {
       FileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;
@@ -263,7 +263,13 @@
   {
     if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
     {
-      [NSFileCoordinator coordinatedDeleteItemsAtURLs:_selectedItems completionHandler:^(NSError *error) {
+      self.loading = YES;
+      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
+        return [FileSystemItem itemWithURL:url];
+      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
+        return [item delete];
+      }] merge] subscribeCompleted:^{
+        self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
@@ -281,9 +287,13 @@
     else if (buttonIndex == 1) // Duplicate
     {
       self.loading = YES;
-      NSInteger selectedItemsCount = [_selectedItems count];
-      [NSFileCoordinator coordinatedDuplicateItemsAtURLs:_selectedItems completionHandler:^(NSError *error) {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
+        return [FileSystemItem itemWithURL:url];
+      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
+        return [item duplicate];
+      }] merge] subscribeCompleted:^{
+        self.loading = NO;
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -324,10 +334,13 @@
       case 2: // iTunes
       {
         self.loading = YES;
-        NSInteger selectedItemsCount = [_selectedItems count];
-        [NSFileCoordinator coordinatedCopyItemsAtURLs:_selectedItems toURL:[NSURL applicationDocumentsDirectory] completionHandler:^(NSError *error) {
+        [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
+          return [FileSystemItem itemWithURL:url];
+        }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
+          return [item exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
+        }] merge] subscribeCompleted:^{
           self.loading = NO;
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:[_selectedItems count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
       } break;
@@ -351,7 +364,7 @@
           [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
           
           // Remove temporary folder
-          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
+//          [NSFileCoordinator coordinatedDeleteItemsAtURLs:[NSArray arrayWithObject:temporaryDirectory] completionHandler:nil];
           
           // Add precompiled mail fields
           [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];

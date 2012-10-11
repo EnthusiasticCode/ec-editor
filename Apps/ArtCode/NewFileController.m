@@ -8,14 +8,13 @@
 
 #import "NewFileController.h"
 #import "UIViewController+Utilities.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
+#import "FileSystemItem.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
 #import "BezelAlert.h"
 
 #import "ArtCodeLocation.h"
-#import "NSFileCoordinator+CoordinatedFileManagement.h"
 
 
 @implementation NewFileController
@@ -94,11 +93,12 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [NSFileCoordinator coordinatedTouchItemAtURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName] renameIfNeeded:NO completionHandler:^(NSError *error, NSURL *newURL) {
+  [[[[FileSystemItem fileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] select:^id<RACSubscribable>(FileSystemItem *file) {
+    return [file create];
+  }] switch] subscribeNext:^(id x) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    if (!error) {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    }
+  } completed:^{
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 

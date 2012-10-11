@@ -22,7 +22,7 @@ static void _init(LocalFileListController *self) {
   
   RAC(self.filteredItems) = [[[[RACAble(self.locationURL)
                              select:^id(NSURL *url) {
-                               return [FileSystemItem readItemAtURL:url];
+                               return [FileSystemItem directoryWithURL:url];
                              }] switch]
                              select:^id(FileSystemItem *directory) {
                                return [directory childrenFilteredByAbbreviation:this.searchBarTextSubject];
