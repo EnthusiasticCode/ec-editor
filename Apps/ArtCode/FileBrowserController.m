@@ -307,7 +307,7 @@
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
-        RenameController *renameController = [[RenameController alloc] initWithRenameItemAtURL:[[_selectedItems objectAtIndex:0] first] completionHandler:^(NSUInteger renamedCount, NSError *err) {
+        RenameController *renameController = [[RenameController alloc] initWithRenameItem:[[_selectedItems objectAtIndex:0] first] completionHandler:^(NSUInteger renamedCount, NSError *err) {
           [self modalNavigationControllerDismissAction:nil];
           if (err || renamedCount == 0) {
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
