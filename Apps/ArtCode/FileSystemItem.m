@@ -59,6 +59,18 @@
   return itemCache;
 }
 
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url {
+  return [self readItemAtURL:url];
+}
+
++ (id<RACSubscribable>)fileWithURL:(NSURL *)url {
+  return [self readItemAtURL:url];
+}
+
++ (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
+  return [self readItemAtURL:url];
+}
+
 + (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
   if (!url) {
     return [RACSubscribable error:[[NSError alloc] init]];
