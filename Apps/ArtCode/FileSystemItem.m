@@ -27,7 +27,7 @@
 
 @end
 
-@interface FileSystemItem (Directory_Private)
+@interface FileSystemDirectory ()
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
 - (id<RACSubscribable>)internalChildren;
@@ -60,14 +60,6 @@
 }
 
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
-}
-
-+ (id<RACSubscribable>)fileWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
-}
-
-+ (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
   return [self readItemAtURL:url];
 }
 
@@ -127,7 +119,19 @@
 
 @end
 
-@implementation FileSystemItem (Directory)
+@implementation FileSystemFile
+
++ (id<RACSubscribable>)fileWithURL:(NSURL *)url {
+  return [self readItemAtURL:url];
+}
+
+@end
+
+@implementation FileSystemDirectory
+
++ (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
+  return [self readItemAtURL:url];
+}
 
 - (id<RACSubscribable>)children {
   return [[[self internalChildren] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];

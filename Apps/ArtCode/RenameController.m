@@ -61,7 +61,7 @@
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
-  [[[RACSubscribable combineLatest:@[[[[item parent] select:^id<RACSubscribable>(FileSystemItem *parent) {
+  [[[RACSubscribable combineLatest:@[[[[item parent] select:^id<RACSubscribable>(FileSystemDirectory *parent) {
     return [parent children];
   }] switch], [item name]]] select:^NSArray *(RACTuple *xs) {
     NSArray *children = xs.first;

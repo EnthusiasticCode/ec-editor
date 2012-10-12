@@ -92,7 +92,7 @@
     if (!strongSelf) {
       return;
     }
-    [[FileSystemItem directoryWithURL:url] subscribeNext:^(FileSystemItem *directory) {
+    [[FileSystemDirectory directoryWithURL:url] subscribeNext:^(FileSystemDirectory *directory) {
       FileBrowserController *anotherStrongSelf = weakSelf;
       if (!anotherStrongSelf) {
         return;

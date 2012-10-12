@@ -54,8 +54,8 @@
   // RAC
   @weakify(self);
   [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) select:^id<RACSubscribable>(NSURL *projectURL) {
-    return [FileSystemItem directoryWithURL:projectURL];
-  }] switch] select:^id<RACSubscribable>(FileSystemItem *directory) {
+    return [FileSystemDirectory directoryWithURL:projectURL];
+  }] switch] select:^id<RACSubscribable>(FileSystemDirectory *directory) {
     @strongify(self);
     if (!self) { return nil; }
     return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:self.searchBarTextSubject];

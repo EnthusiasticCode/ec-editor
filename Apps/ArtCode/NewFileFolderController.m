@@ -79,7 +79,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [[[[FileSystemItem directoryWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] select:^id<RACSubscribable>(FileSystemItem *directory) {
+  [[[[FileSystemDirectory directoryWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] select:^id<RACSubscribable>(FileSystemItem *directory) {
     return [directory create];
   }] switch] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];

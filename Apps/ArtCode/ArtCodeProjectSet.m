@@ -74,7 +74,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [[FileSystemItem directoryWithURL:[[self fileURL] URLByAppendingPathComponent:name]] subscribeNext:^(FileSystemItem *directory) {
+  [[FileSystemDirectory directoryWithURL:[[self fileURL] URLByAppendingPathComponent:name]] subscribeNext:^(FileSystemDirectory *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:[directory.url.first lastPathComponent]];
     [project setLabelColor:labelColor];
@@ -87,7 +87,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [[[[FileSystemItem directoryWithURL:project.fileURL] select:^id<RACSubscribable>(FileSystemItem *directory) {
+  [[[[FileSystemDirectory directoryWithURL:project.fileURL] select:^id<RACSubscribable>(FileSystemDirectory *directory) {
     return [directory delete];
   }] switch] subscribeError:^(NSError *error) {
     completionHandler(error);

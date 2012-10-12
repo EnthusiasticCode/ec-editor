@@ -16,12 +16,6 @@
 /// Note that if the item doesn't exist on the file system, it won't be possible to create it with the item returned from this call
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url;
 
-/// Return a subscribable that sends the file item with the given URL, then completes
-+ (id<RACSubscribable>)fileWithURL:(NSURL *)url;
-
-/// Return a subscribable that sends the directory item with the given URL, then completes
-+ (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
-
 /// Returns a subscribable that sends the name of the item
 - (id<RACSubscribable>)name;
 
@@ -45,14 +39,20 @@
 
 @end
 
-@interface FileSystemItem (File)
+@interface FileSystemFile : FileSystemItem
+
+/// Return a subscribable that sends the file item with the given URL, then completes
++ (id<RACSubscribable>)fileWithURL:(NSURL *)url;
 
 /// Returns a RACPropertySyncSubject for the content of the file as an NSString
 - (RACPropertySyncSubject *)stringContent;
 
 @end
 
-@interface FileSystemItem (Directory)
+@interface FileSystemDirectory : FileSystemItem
+
+/// Return a subscribable that sends the directory item with the given URL, then completes
++ (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
 
 /// Returns a subscribable that sends the contents of the directory as it changes.
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles

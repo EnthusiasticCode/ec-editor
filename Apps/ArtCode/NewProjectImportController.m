@@ -136,7 +136,7 @@
       // Extract files if needed
       [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
         // Get the extracted directories
-        [[[[[RACSubscribable combineLatest:@[[[[[FileSystemItem directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemItem *temporaryDirectory) {
+        [[[[[RACSubscribable combineLatest:@[[[[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
           return [temporaryDirectory children];
         }] switch] select:^id<RACSubscribable>(NSArray *children) {
           // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
@@ -146,7 +146,7 @@
           } else {
             return [RACSubscribable return:children];
           }
-        }], [FileSystemItem directoryWithURL:createdProject.fileURL]] reduce:^id(RACTuple *xs) {
+        }], [FileSystemDirectory directoryWithURL:createdProject.fileURL]] reduce:^id(RACTuple *xs) {
           NSArray *children = xs.first;
           FileSystemItem *projectDirectory = xs.second;
           return [[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *child) {

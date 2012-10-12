@@ -32,9 +32,9 @@ static void _init(LocalFileListController *self) {
                               // Subscribable to get filtered files
                               [[[[RACAble(self.locationURL)
                                   select:^id(NSURL *url) {
-                                    return [FileSystemItem directoryWithURL:url];
+                                    return [FileSystemDirectory directoryWithURL:url];
                                   }] switch]
-                                select:^id(FileSystemItem *directory) {
+                                select:^id(FileSystemDirectory *directory) {
                                   return [directory childrenFilteredByAbbreviation:this.searchBarTextSubject];
                                 }] switch],
                               // Subscribable with progress items

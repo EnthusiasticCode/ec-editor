@@ -93,7 +93,7 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [[[[FileSystemItem fileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] select:^id<RACSubscribable>(FileSystemItem *file) {
+  [[[[FileSystemFile fileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] select:^id<RACSubscribable>(FileSystemItem *file) {
     return [file create];
   }] switch] subscribeNext:^(id x) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];

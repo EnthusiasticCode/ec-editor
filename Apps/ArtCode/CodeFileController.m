@@ -336,11 +336,11 @@ static void drawStencilStar(CGContextRef myContext)
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
-    return [FileSystemItem fileWithURL:url];
+    return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:RAC_KEYPATH_SELF(self.textFile) onObject:self];
   
   __block RACDisposable *bookmarksDisposable = nil;
-  [RACAble(self.textFile) subscribeNext:^(FileSystemItem *textFile) {
+  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
     @strongify(self);
     if (!self) { return; }
     [bookmarksDisposable dispose];
@@ -351,7 +351,7 @@ static void drawStencilStar(CGContextRef myContext)
   __block RACDisposable *textDisposable = nil;
   [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
-    FileSystemItem *textFile = tuple.second;
+    FileSystemFile *textFile = tuple.second;
     [textDisposable dispose];
     if (!codeView || !textFile) { return; }
     textDisposable = [textFile.stringContent syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
@@ -361,7 +361,7 @@ static void drawStencilStar(CGContextRef myContext)
   [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
-    FileSystemItem *textFile = tuple.third;
+    FileSystemFile *textFile = tuple.third;
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !fileURL) {

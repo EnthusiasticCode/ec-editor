@@ -40,7 +40,7 @@
     return nil;
   }
   __weak QuickFileHighlightTableController *weakSelf = self;
-  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemItem *textFile) {
+  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemFile *textFile) {
     QuickFileHighlightTableController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;

@@ -10,7 +10,7 @@
 @class RACPropertySyncSubject;
 
 
-@interface FileSystemItem (TextFile)
+@interface FileSystemFile (TextFile)
 
 - (RACPropertySyncSubject *)explicitSyntaxIdentifier;
 
