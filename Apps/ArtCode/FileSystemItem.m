@@ -16,7 +16,7 @@
 // All filesystem operations must be done on this scheduler
 + (RACScheduler *)fileSystemScheduler;
 + (NSMutableDictionary *)itemCache;
-
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type;
 
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
@@ -24,6 +24,8 @@
 @property (nonatomic, strong) RACPropertySyncSubject *stringContent;
 
 @property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type;
 
 @end
 
@@ -60,49 +62,57 @@
 }
 
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:nil];
 }
 
-+ (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
-  if (!url) {
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type {
+  if (!url || ![url isFileURL]) {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
   return [[[RACSubscribable defer:^id<RACSubscribable>{
-    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
-      ASSERT_NOT_MAIN_QUEUE();
-      FileSystemItem *item = [[self itemCache] objectForKey:url];
-      if (item) {
-        ASSERT([[item.urlBacking first] isEqual:url]);
-        [subscriber sendNext:item];
-        [subscriber sendCompleted];
-        return nil;
+    ASSERT_NOT_MAIN_QUEUE();
+    FileSystemItem *item = [[self itemCache] objectForKey:url];
+    if (item) {
+      ASSERT([item.urlBacking.first isEqual:url]);
+      if (![item.typeBacking.first isEqual:type]) {
+        return [RACSubscribable error:[[NSError alloc] init]];
       }
-      NSString *type = nil;
-      if (![url getResourceValue:&type forKey:NSURLFileResourceTypeKey error:NULL]) {
-        [subscriber sendError:[[NSError alloc] init]];
-        return nil;
-      }
-      item = [[self alloc] init];
-      item.urlBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-      [item.urlBacking sendNext:url];
-      item.typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-      [item.typeBacking sendNext:type];
-      if (type == NSURLFileResourceTypeRegular) {
-        item.stringContent = [RACPropertySyncSubject subject];
-        NSError *error;
-        [item.stringContent sendNext:[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error]];
-        if (error) {
-          [subscriber sendError:error];
-          return nil;
-        }
-      }
-      item.extendedAttributes = [NSMutableDictionary dictionary];
-      [[self itemCache] setObject:item forKey:url];
-      [subscriber sendNext:item];
-      [subscriber sendCompleted];
-      return nil;
-    }];
+      return [RACSubscribable return:item];
+    }
+    NSString *detectedType = nil;
+    [url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
+    if (detectedType && type && ![detectedType isEqual:type]) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    item = [[self alloc] initWithURL:url type:type ? : detectedType];
+    if (!item) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    [[self itemCache] setObject:item forKey:url];
+    return [RACSubscribable return:item];
   }] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  ASSERT_NOT_MAIN_QUEUE();
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
+  self.urlBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [self.urlBacking sendNext:url];
+  self.typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [self.typeBacking sendNext:type];
+  self.extendedAttributes = [NSMutableDictionary dictionary];
+  if (type == NSURLFileResourceTypeRegular) {
+    self.stringContent = [RACPropertySyncSubject subject];
+    NSError *error;
+    [self.stringContent sendNext:[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error]];
+    if (error) {
+      return nil;
+    }
+  }
+  return self;
 }
 
 - (id<RACSubscribable>)url {
@@ -122,7 +132,7 @@
 @implementation FileSystemFile
 
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
 }
 
 @end
@@ -130,7 +140,7 @@
 @implementation FileSystemDirectory
 
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
 }
 
 - (id<RACSubscribable>)children {
