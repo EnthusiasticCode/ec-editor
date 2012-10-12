@@ -15,6 +15,8 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProjectSet.h"
 
+#import "FileSystemItem.h"
+
 
 @interface ArtCodeProjectBookmark ()
 
@@ -53,37 +55,6 @@
 - (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
   // TODO: port to rac_fs
   resultHandler([NSArray array]);
-//  ASSERT(resultHandler);
-//  NSURL *fileURL = self.fileURL;
-//  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//    NSMutableArray *files = [NSMutableArray array];
-//    NSMutableArray *bookmarks = [NSMutableArray array];
-//    NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-//    [fileCoordinator coordinateReadingItemAtURL:self.fileURL options:0 error:NULL byAccessor:^(NSURL *newURL) {
-//      NSFileManager *fileManager = [[NSFileManager alloc] init];
-//      NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL:fileURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil];
-//      for (NSURL *url in enumerator) {
-//        [files addObject:url];
-//      }
-//    }];
-//    [fileCoordinator prepareForReadingItemsAtURLs:files options:0 writingItemsAtURLs:nil options:0 error:NULL byAccessor:^(void (^completionHandler)(void)) {
-//      for (NSURL *file in files) {
-//        __block NSIndexSet *fileBookmarks = nil;
-//        [fileCoordinator coordinateReadingItemAtURL:file options:0 error:NULL byAccessor:^(NSURL *newURL) {
-//          fileBookmarks = [TextFile bookmarksForFileURL:newURL];
-//          if (fileBookmarks) {
-//            [fileBookmarks enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-//              [bookmarks addObject:[ArtCodeProjectBookmark bookmarkWithFileURL:newURL lineNumber:idx]];
-//            }];
-//          }
-//        }];
-//      }
-//      completionHandler();
-//    }];
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//      resultHandler(bookmarks);
-//    });
-//  });
 }
 
 #pragma mark - Project-wide operations
@@ -94,22 +65,26 @@
 
 /// Recursive method to create a duplicated project
 - (void)_duplicateWithDuplicationNumber:(NSUInteger)duplicationNumber completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  __weak ArtCodeProject *this = self;
+  @weakify(self);
   [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] labelColor:self.labelColor completionHandler:^(ArtCodeProject *project) {
+    @strongify(self);
     if (project) {
       // The project has been successfuly created, copying files
-      NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] init];
-      [fileCoordinator coordinateReadingItemAtURL:this.fileURL options:0 writingItemAtURL:project.fileURL options:0 error:NULL byAccessor:^(NSURL *newReadingURL, NSURL *newWritingURL) {
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-        for (NSURL *url in [fileManager enumeratorAtURL:newReadingURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:NULL]) {
-          [fileManager copyItemAtURL:url toURL:[newWritingURL URLByAppendingPathComponent:url.lastPathComponent] error:NULL];
+      [[[[RACSubscribable combineLatest:@[[[[FileSystemItem directoryWithURL:self.fileURL] select:^id<RACSubscribable>(FileSystemItem *projectDirectory) {
+        return [projectDirectory children];
+      }] switch], [FileSystemItem directoryWithURL:project.fileURL]] reduce:^id<RACSubscribable>(RACTuple *xs) {
+        NSArray *children = xs.first;
+        FileSystemItem *projectDirectory = xs.second;
+        return [[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *child) {
+          return [child copyTo:projectDirectory];
+        }];
+      }] switch] merge] subscribeCompleted:^{
+        if (completionHandler) {
+          completionHandler(project);
         }
       }];
-      if (completionHandler) {
-        completionHandler(project);
-      }
     } else {
-      [this _duplicateWithDuplicationNumber:duplicationNumber + 1 completionHandler:completionHandler];
+      [self _duplicateWithDuplicationNumber:duplicationNumber + 1 completionHandler:completionHandler];
     }
   }];
 }

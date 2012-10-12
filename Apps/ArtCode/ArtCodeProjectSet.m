@@ -76,7 +76,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
   [[FileSystemItem directoryWithURL:[[self fileURL] URLByAppendingPathComponent:name]] subscribeNext:^(FileSystemItem *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
-    [project setName:[directory.itemURL.first lastPathComponent]];
+    [project setName:[directory.url.first lastPathComponent]];
     [project setLabelColor:labelColor];
     [project setProjectSet:self];
     [_objectsAddedSubject sendNext:project];

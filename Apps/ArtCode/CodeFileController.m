@@ -358,7 +358,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.itemURL) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
+  [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemItem *textFile = tuple.third;
@@ -877,8 +877,8 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
     [[self.textFile save] subscribeCompleted:^{
-      [self.textFile.itemURL subscribeNext:^(NSURL *itemURL) {
-        [self.webView loadRequest:[NSURLRequest requestWithURL:itemURL]];
+      [self.textFile.url subscribeNext:^(NSURL *url) {
+        [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
         self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
       }];
     }];
