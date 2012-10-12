@@ -138,12 +138,10 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//  RemoteNavigationController *remoteNavigationController = [[RemoteNavigationController alloc] initWithArtCodeRemote:[self.filteredItems objectAtIndex:indexPath.row]];
-//  remoteNavigationController.artCodeTab = self.artCodeTab;
-//  [self presentModalViewController:remoteNavigationController animated:YES];
-  
-  ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
-  [self.artCodeTab pushRemotePath:remote.path ?: @"" withRemote:remote];
+  if (!self.isEditing) {
+    ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+    [self.artCodeTab pushRemotePath:remote.path ?: @"" withRemote:remote];
+  }
   
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
@@ -160,7 +158,10 @@
       NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows) {
-        [self.artCodeTab.currentLocation.project removeRemotesObject:[self.filteredItems objectAtIndex:indexPath.row]];
+        NSMutableOrderedSet *remotes = [self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"];
+        ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+        [remotes removeObject:remote];
+        [remote.managedObjectContext deleteObject:remote];
       }
       self.loading = NO;
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

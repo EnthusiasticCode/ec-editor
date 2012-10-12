@@ -81,9 +81,10 @@ static void _init(RemoteNavigationController *self) {
   // Upload button activation reaction
   [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
-    self.toolbarController.uploadButton.enabled = x.count != 0;
+    self.toolbarController.uploadButton.enabled = x.count != 0; // TODO && connected
   }];
   
+  // Download button activation reaction
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
     self.toolbarController.downloadButton.enabled = x.count != 0;
