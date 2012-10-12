@@ -539,7 +539,7 @@ static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
 
 - (SingleTabController *)singleTabController
 {
-  ASSERT([self.parentViewController isKindOfClass:[SingleTabController class]])
+  ASSERT([self.parentViewController isKindOfClass:[SingleTabController class]]);
   return (SingleTabController *)self.parentViewController;
 }
 

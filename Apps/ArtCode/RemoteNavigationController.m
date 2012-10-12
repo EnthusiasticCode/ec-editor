@@ -31,6 +31,8 @@
 @property (nonatomic, weak) LocalFileListController *localFileListController;
 @property (nonatomic, weak) UINavigationController *remoteBrowserNavigationController;
 @property (nonatomic, weak) RemoteFileListController *remoteFileListController;
+
+- (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController;
 @end
 
 @implementation RemoteNavigationController
@@ -67,6 +69,7 @@ static void _init(RemoteNavigationController *self) {
          break;
          
        case 4: // Download
+         [self _downloadSelectedItemsOfRemoteController:self.remoteFileListController toLocationOfLocalController:self.localFileListController];
          break;
          
        default: // Close
@@ -139,18 +142,17 @@ static void _init(RemoteNavigationController *self) {
 
 #pragma mark Private methods
 
-- (void)_downloadConnectionItems:(NSArray *)items {
+- (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController {
   // RAC
-  @weakify(self);
-  [[[items rac_toSubscribable] select:^id(NSDictionary *item) {
-    @strongify(self);
+  ReactiveConnection *connection = self.connection;
+  [[remoteController.selectedItems.rac_toSubscribable select:^id(NSDictionary *item) {
     NSString *itemName = [item objectForKey:cxFilenameKey];
     // Generate local destination URL and start the download
-    NSURL *localURL = [self.localFileListController.locationURL URLByAppendingPathComponent:itemName];
-    RACSubscribable *progressSubscribable = [self.connection downloadFileWithRemotePath:[self.remoteFileListController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
+    NSURL *localURL = [localController.locationURL URLByAppendingPathComponent:itemName];
+    RACSubscribable *progressSubscribable = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
     
     // Side effect to start the progress indicator in the local file list
-    [self.localFileListController addProgressItemWithURL:localURL progressSubscribable:progressSubscribable];
+    [localController addProgressItemWithURL:localURL progressSubscribable:progressSubscribable];
     
     // Return a subscribable that yields tuple of temporary URL and local destination URL
     return [[progressSubscribable takeLast:1] select:^id(NSURL *tempURL) {
@@ -161,5 +163,9 @@ static void _init(RemoteNavigationController *self) {
     [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
   }];
 }
+
+//- (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
+//  [localController.selectedItems.rac_toSubscribable ];
+//}
 
 @end

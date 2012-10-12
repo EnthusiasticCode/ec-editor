@@ -150,7 +150,8 @@ static void _init(LocalFileListController *self) {
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-  
+  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
+  return ![item.second isKindOfClass:[RACSubscribable class]];
 }
 
 #pragma mark - Table view delegate
@@ -173,7 +174,7 @@ static void _init(LocalFileListController *self) {
 }
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  // Do not select temporary progress rows
+  return [self tableView:tableView canEditRowAtIndexPath:indexPath] ? indexPath : nil;
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
