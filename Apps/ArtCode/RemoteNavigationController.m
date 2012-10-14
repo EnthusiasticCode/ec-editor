@@ -33,6 +33,7 @@
 @property (nonatomic, weak) RemoteFileListController *remoteFileListController;
 
 - (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController;
+- (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController;
 @end
 
 @implementation RemoteNavigationController
@@ -62,6 +63,7 @@ static void _init(RemoteNavigationController *self) {
          break;
          
        case 2: // Upload
+         [self _uploadSelectedItemsOfLocalController:self.localFileListController toLocationOfRemoteController:self.remoteFileListController];
          break;
          
        case 3: // Remote back
@@ -81,9 +83,10 @@ static void _init(RemoteNavigationController *self) {
   // Upload button activation reaction
   [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
-    self.toolbarController.uploadButton.enabled = x.count != 0;
+    self.toolbarController.uploadButton.enabled = x.count != 0; // TODO && connected
   }];
   
+  // Download button activation reaction
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
     self.toolbarController.downloadButton.enabled = x.count != 0;
@@ -109,6 +112,7 @@ static void _init(RemoteNavigationController *self) {
   } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
     ASSERT(self.connection && self.remote);
     self.remoteBrowserNavigationController = (UINavigationController *)segue.destinationViewController;
+    self.remoteBrowserNavigationController.editing = YES;
     self.remoteBrowserNavigationController.delegate = self;
     [(RemoteFileListController *)[self.remoteBrowserNavigationController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
   }
@@ -164,8 +168,16 @@ static void _init(RemoteNavigationController *self) {
   }];
 }
 
-//- (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
-//  [localController.selectedItems.rac_toSubscribable ];
-//}
+- (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
+  // RAC
+  ReactiveConnection *connection = self.connection;
+  [localController.selectedItems.rac_toSubscribable subscribeNext:^void(NSURL *itemURL) {
+    // Start upload
+    RACSubscribable *progressSubscribable = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
+    
+    // Start progress indicator in the remote file list
+    [remoteController addProgressItemWithURL:itemURL progressSubscribable:progressSubscribable];
+  }];
+}
 
 @end

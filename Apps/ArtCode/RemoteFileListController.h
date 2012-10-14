@@ -22,6 +22,11 @@
 /// An array of Connection items currently selected
 @property (nonatomic, readonly, copy) NSArray *selectedItems;
 
+/// Adds an item to the list that will be presented as non-selectable files with download progress.
+/// The subscribable is expected to yield NSNumbers with percent progress, any other kind of value will be ignored.
+/// When the subscribable completes, the item will be removed.
+- (void)addProgressItemWithURL:(NSURL *)url progressSubscribable:(RACSubscribable *)progressSubscribable;
+
 #pragma mark Login panel outlets
 
 @property (strong, nonatomic) IBOutlet UIView *loginView;
