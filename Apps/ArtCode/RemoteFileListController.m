@@ -16,7 +16,10 @@
 
 #import "RemoteNavigationController.h"
 #import "HighlightTableViewCell.h"
+#import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
+
+static NSString * const progressSubscribableKey = @"progressSibscribable";
 
 @interface RemoteFileListController ()
 @property (nonatomic, strong) ReactiveConnection *connection;
@@ -26,6 +29,8 @@
 @property (nonatomic) BOOL showLogin;
 @property (nonatomic) BOOL showLoading;
 @property (nonatomic, readwrite, copy) NSArray *selectedItems;
+/// An array of NSDictionaries with keys: cxFilenameKey, progressSubscribableKey
+@property (nonatomic, strong) NSArray *progressItems;
 @end
 
 
@@ -39,6 +44,7 @@
   NSArray *_filteredItemsHitMasks;
 
   NSMutableArray *_selectedItems;
+  NSMutableArray *_progressItems;
 }
 
 
@@ -65,7 +71,9 @@
                                   return pathAndContent.second;
                                 }];
   
-  [RACAble(self.directoryContent) subscribeNext:^(id x) {
+  [[self rac_whenAny:@[RAC_KEYPATH_SELF(directoryContent), RAC_KEYPATH_SELF(progressItems)] reduce:^id(RACTuple *xs) {
+    return xs;
+  }] subscribeNext:^(id x) {
     [this invalidateFilteredItems];
   }];
   
@@ -102,6 +110,12 @@
   _directoryContent = nil;
 }
 
+- (void)loadView {
+  [super loadView];
+  
+  [self.tableView registerNib:[UINib nibWithNibName:@"ProgressTableViewCell" bundle:nil] forCellReuseIdentifier:@"progressCell"];
+}
+
 - (void)viewDidLoad {
   [super viewDidLoad];
   self.searchBar.placeholder = @"Filter files in this remote folder";
@@ -132,21 +146,30 @@
 }
 
 - (NSArray *)filteredItems {
-  if (!_directoryContent) {
+  if (!_directoryContent && self.progressItems.count == 0) {
     return nil;
   }
+  
+  NSArray *contentsArray = [(_directoryContent ?: [[NSArray alloc] init]) arrayByAddingObjectsFromArray:self.progressItems];
   
   // Filtering
   if ([self.searchBar.text length] != 0) {
     NSArray *hitsMask = nil;
-    _filteredItems = [_directoryContent sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitsMask extrapolateTargetStringBlock:^NSString *(NSDictionary *element) {
+    _filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitsMask extrapolateTargetStringBlock:^NSString *(NSDictionary *element) {
       return [element objectForKey:cxFilenameKey];
     }];
     _filteredItemsHitMasks = hitsMask;
   }
   else
   {
-    _filteredItems = _directoryContent;
+    if (self.progressItems.count == 0) {
+      _filteredItems = _directoryContent;
+    } else {
+      _filteredItems = [contentsArray sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2){
+        // Both elements are in any case NSDictionaries with a cxFilenameKey
+        return [(NSString *)[obj1 objectForKey:cxFilenameKey] compare:(NSString *)[obj2 objectForKey:cxFilenameKey]];
+      }];
+    }
     _filteredItemsHitMasks = nil;
   }
   return _filteredItems;
@@ -159,22 +182,61 @@
   [self didChangeValueForKey:@"filteredItems"];
 }
 
+#pragma mark - Public methods
+
+- (void)addProgressItemWithURL:(NSURL *)url progressSubscribable:(RACSubscribable *)progressSubscribable {
+  [self willChangeValueForKey:@"progressItems"];
+  if (!_progressItems) {
+    _progressItems = [[NSMutableArray alloc] init];
+  }
+  NSDictionary *progressItem = @{
+    cxFilenameKey : url.lastPathComponent,
+    progressSubscribableKey : progressSubscribable
+  };
+  [_progressItems addObject:progressItem];
+  
+  [self didChangeValueForKey:@"progressItems"];
+  
+  // RAC
+  @weakify(self);
+  [[progressSubscribable finally:^{
+    @strongify(self);
+    // Remove the progress item when it completes
+    [self willChangeValueForKey:@"progressItems"];
+    [self->_progressItems removeObject:progressItem];
+    [self didChangeValueForKey:@"progressItems"];
+  }] subscribeCompleted:^{
+    // TODO bezel alert with successful downlad
+  }];
+}
+
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
-  
   NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  UITableViewCell *cell = nil;
+  
+  if ([directoryItem objectForKey:progressSubscribableKey] == nil) {
+    HighlightTableViewCell *highlightCell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
+    cell = highlightCell;
+    highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
+  } else {
+    ProgressTableViewCell *progressCell = [tableView dequeueReusableCellWithIdentifier:@"progressCell"];
+    cell = progressCell;
+    [progressCell setProgressSubscribable:[directoryItem objectForKey:progressSubscribableKey]];
+  }
+  
   cell.textLabel.text = [directoryItem objectForKey:cxFilenameKey];
-  cell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
   if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
   {
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   }
   else
   {
     cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.editingAccessoryType = UITableViewCellAccessoryNone;
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
   }
   // TODO also use NSFileSize
@@ -185,12 +247,18 @@
   return cell;
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  return [directoryItem objectForKey:progressSubscribableKey] == nil;
+}
+
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
   RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
   [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+  [remoteFileListController setEditing:self.editing animated:NO];
   [self.navigationController pushViewController:remoteFileListController animated:YES];
 }
 
@@ -218,6 +286,10 @@
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
+}
+
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  return [self tableView:tableView canEditRowAtIndexPath:indexPath] ? indexPath : nil;
 }
 
 #pragma mark - Public Methods
