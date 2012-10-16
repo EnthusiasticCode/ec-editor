@@ -281,7 +281,7 @@
     {
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
+      directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     }
     else if (buttonIndex == 1) // Duplicate
@@ -327,7 +327,7 @@
       {
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
+        directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
         [self modalNavigationControllerPresentViewController:directoryBrowser];
       } break;
         
@@ -441,7 +441,7 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
+  NSURL *moveFolderURL = directoryBrowser.selectedFolder.url.first;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -465,7 +465,7 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
+  NSURL *moveFolderURL = directoryBrowser.selectedFolder.url.first;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];

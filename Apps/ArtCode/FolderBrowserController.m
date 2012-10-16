@@ -33,7 +33,7 @@
   // RAC
   
   // Update table content
-  [[[[RACAble(self.currentFolder) select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder children];
   }] switch] select:^NSArray *(NSArray *children) {
     return [[[children rac_toSubscribable] where:^BOOL(FileSystemItem *child) {
@@ -42,7 +42,7 @@
   }] toProperty:RAC_KEYPATH_SELF(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[RACAble(self.currentFolder) select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder name];
   }] switch] toProperty:RAC_KEYPATH_SELF(self.navigationItem.title) onObject:self];
   
@@ -104,7 +104,7 @@
   ASSERT(self.navigationController != nil);
   
   FolderBrowserController *nextBrowser = [[FolderBrowserController alloc] initWithStyle:self.tableView.style];
-  nextBrowser.currentFolder = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  nextBrowser.currentFolderSubscribable = [RACSubscribable return:[self.currentFolderSubfolders objectAtIndex:indexPath.row]];
   nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
   [self.navigationController pushViewController:nextBrowser animated:YES];
 }

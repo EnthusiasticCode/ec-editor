@@ -14,7 +14,7 @@
 @interface FolderBrowserController : UITableViewController
 
 /// The folder that the browser is currently displaying.
-@property (nonatomic, strong) FileSystemDirectory *currentFolder;
+@property (nonatomic, strong) id<RACSubscribable> currentFolderSubscribable;
 
 /// The ArtCodeLocation selected by the user.
 @property (nonatomic, strong, readonly) FileSystemDirectory *selectedFolder;
