@@ -89,7 +89,16 @@
     if (detectedType && type && ![detectedType isEqual:type]) {
       return [RACSubscribable error:[[NSError alloc] init]];
     }
-    item = [[self alloc] initWithURL:url type:type ? : detectedType];
+    NSString *finalType = type ? : detectedType;
+    Class finalClass = nil;
+    if (finalType == NSURLFileResourceTypeRegular) {
+      finalClass = [FileSystemFile class];
+    } else if (finalType == NSURLFileResourceTypeDirectory) {
+      finalClass = [FileSystemDirectory class];
+    } else {
+      finalClass = [FileSystemItem class];
+    }
+    item = [[finalClass alloc] initWithURL:url type:finalType];
     if (!item) {
       return [RACSubscribable error:[[NSError alloc] init]];
     }
