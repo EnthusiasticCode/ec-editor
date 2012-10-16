@@ -71,10 +71,9 @@ static void _init(LocalFileListController *self) {
   return self;
 }
 
-- (void)loadView {
-  [super loadView];
-  
-  [self.tableView registerNib:[UINib nibWithNibName:@"ProgressTableViewCell" bundle:nil] forCellReuseIdentifier:@"progressCell"];
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  self.searchBar.placeholder = L(@"Filter files in this folder");
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
@@ -119,7 +118,11 @@ static void _init(LocalFileListController *self) {
   NSURL *itemURL = item.first;
   UITableViewCell *cell = nil;
   if ([item.second isKindOfClass:[RACSubscribable class]]) {
-    ProgressTableViewCell *progressCell = (ProgressTableViewCell *)[tView dequeueReusableCellWithIdentifier:@"progressCell"];
+    static NSString * const progressCellIdentifier = @"progressCell";
+    ProgressTableViewCell *progressCell = (ProgressTableViewCell *)[tView dequeueReusableCellWithIdentifier:progressCellIdentifier];
+    if (!progressCell) {
+      progressCell = [[ProgressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:progressCellIdentifier];
+    }
     cell = progressCell;
     
     [progressCell setProgressSubscribable:item.second];
