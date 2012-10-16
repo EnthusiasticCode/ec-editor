@@ -266,14 +266,13 @@
   {
     if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
     {
+      NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-        return [FileSystemItem itemWithURL:url];
-      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-        return [item delete];
-      }] merge] subscribeCompleted:^{
+      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        return [x delete];
+      }] subscribeCompleted:^{
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -289,14 +288,13 @@
     }
     else if (buttonIndex == 1) // Duplicate
     {
+      NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-        return [FileSystemItem itemWithURL:url];
-      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-        return [item duplicate];
-      }] merge] subscribeCompleted:^{
+      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        return [x duplicate];
+      }] subscribeCompleted:^{
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -336,14 +334,13 @@
         
       case 2: // iTunes
       {
+        NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-          return [FileSystemItem itemWithURL:url];
-        }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-          return [item exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
-        }] merge] subscribeCompleted:^{
+        [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+          return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
+        }] subscribeCompleted:^{
           self.loading = NO;
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:[_selectedItems count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
       } break;
@@ -353,7 +350,9 @@
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities compressFileAtURLs:_selectedItems completionHandler:^(NSURL *temporaryDirectoryURL) {
+        [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] select:^id(FileSystemItem *x) {
+          return x.url.first;
+        }] toArray] completionHandler:^(NSURL *temporaryDirectoryURL) {
           if (temporaryDirectoryURL) {
             NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
             [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
