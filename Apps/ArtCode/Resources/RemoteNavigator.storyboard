@@ -15,9 +15,25 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDo-g3-Yro">
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="searchBar_Background.png" translatesAutoresizingMaskIntoConstraints="NO" id="6Pe-Hb-bjP"/>
+                                    <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cw2-IW-bgg" customClass="TopBarEditButton">
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="31" id="2w7-3S-k1P"/>
+                                            <constraint firstAttribute="width" constant="48" type="user" id="9Yq-3A-MGP"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="itemIcon_Accept.png">
+                                            <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="a4J-C2-Cxm"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nT3-Xn-oZP">
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="31" id="9ox-xf-nVR"/>
                                             <constraint firstAttribute="width" constant="48" type="user" id="CKE-gL-9ej"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
@@ -61,42 +77,29 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="nT3-Xn-oZP" firstAttribute="leading" secondItem="sDo-g3-Yro" secondAttribute="leading" type="user" id="3mM-CU-HGj"/>
+                                    <constraint firstItem="RSQ-LU-H1f" firstAttribute="centerY" secondItem="6Pe-Hb-bjP" secondAttribute="centerY" type="default" id="431-J2-0Ea"/>
                                     <constraint firstItem="6Pe-Hb-bjP" firstAttribute="leading" secondItem="sDo-g3-Yro" secondAttribute="leading" type="user" id="5mv-y3-NMS"/>
                                     <constraint firstItem="qqd-Bn-dGA" firstAttribute="leading" secondItem="RSQ-LU-H1f" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="I5h-q8-uzd"/>
+                                    <constraint firstItem="RSQ-LU-H1f" firstAttribute="centerY" secondItem="nT3-Xn-oZP" secondAttribute="centerY" type="default" id="JcU-Tp-FU3"/>
+                                    <constraint firstItem="cw2-IW-bgg" firstAttribute="leading" secondItem="sDo-g3-Yro" secondAttribute="leading" constant="7" type="user" id="LB0-kd-iF2"/>
+                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="trailing" secondItem="sDo-g3-Yro" secondAttribute="trailing" constant="-7" type="user" id="Les-n9-ue8"/>
                                     <constraint firstAttribute="trailing" secondItem="6Pe-Hb-bjP" secondAttribute="trailing" type="user" id="QXC-4t-Rjj"/>
-                                    <constraint firstItem="6Pe-Hb-bjP" firstAttribute="centerY" secondItem="qqd-Bn-dGA" secondAttribute="centerY" type="default" id="dsU-rT-gl6"/>
-                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="trailing" secondItem="sDo-g3-Yro" secondAttribute="trailing" constant="-7" type="user" id="hrk-ep-GA7"/>
-                                    <constraint firstItem="RSQ-LU-H1f" firstAttribute="leading" secondItem="nT3-Xn-oZP" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="itK-FS-cHN"/>
+                                    <constraint firstItem="nT3-Xn-oZP" firstAttribute="top" secondItem="qqd-Bn-dGA" secondAttribute="top" type="default" id="bhZ-X7-you"/>
+                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="bottom" secondItem="nT3-Xn-oZP" secondAttribute="bottom" type="default" id="f9C-Ti-Du9"/>
+                                    <constraint firstItem="nT3-Xn-oZP" firstAttribute="leading" secondItem="cw2-IW-bgg" secondAttribute="trailing" constant="7" type="user" id="hJw-wE-gnb"/>
+                                    <constraint firstItem="nT3-Xn-oZP" firstAttribute="top" secondItem="cw2-IW-bgg" secondAttribute="top" type="default" id="hRz-dp-9zN"/>
+                                    <constraint firstItem="cw2-IW-bgg" firstAttribute="bottom" secondItem="nT3-Xn-oZP" secondAttribute="bottom" type="default" id="i1U-Ua-l4Q"/>
                                     <constraint firstItem="6Pe-Hb-bjP" firstAttribute="top" secondItem="sDo-g3-Yro" secondAttribute="top" type="default" id="kAa-Z0-i6C"/>
-                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="top" secondItem="nT3-Xn-oZP" secondAttribute="top" type="default" id="tKP-Hd-Zm1"/>
-                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="centerY" secondItem="RSQ-LU-H1f" secondAttribute="centerY" type="user" id="xzR-zh-c3h"/>
-                                    <constraint firstItem="qqd-Bn-dGA" firstAttribute="centerY" secondItem="nT3-Xn-oZP" secondAttribute="centerY" type="user" id="yxF-js-bAM"/>
+                                    <constraint firstItem="RSQ-LU-H1f" firstAttribute="leading" secondItem="nT3-Xn-oZP" secondAttribute="trailing" constant="7" type="user" id="s06-df-KOu"/>
                                     <constraint firstItem="6Pe-Hb-bjP" firstAttribute="bottom" secondItem="sDo-g3-Yro" secondAttribute="bottom" type="default" id="zKV-f6-u9G"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zjl-G3-B1l">
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="searchBar_Background.png" translatesAutoresizingMaskIntoConstraints="NO" id="2sY-Tq-9r7"/>
-                                    <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CVw-0Y-NYb" customClass="TopBarEditButton">
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="48" id="qCv-4B-eDl"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" image="itemIcon_Accept.png">
-                                            <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="AKp-qi-oPM"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" tag="4" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uuz-VE-1ZN" customClass="TopBarToolButton">
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="48" id="z3f-6c-00H"/>
+                                            <constraint firstAttribute="width" constant="48" type="user" id="z3f-6c-00H"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" image="itemIcon_Replace.png">
@@ -110,10 +113,26 @@
                                             <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="rxf-VF-Xg8"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" tag="5" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eE3-4H-xGs" customClass="TopBarToolButton">
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="48" type="user" id="7OG-sM-pMP"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="itemIcon_Replace.png">
+                                            <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="taggedButtonAction:" destination="PrT-kV-pxd" eventType="touchUpInside" id="HlU-dt-JBW"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X0F-oB-BxA">
                                         <constraints>
                                             <constraint firstAttribute="height" constant="31" id="apT-Pz-Sya"/>
-                                            <constraint firstAttribute="width" constant="48" id="jv8-bg-skA"/>
+                                            <constraint firstAttribute="width" constant="48" type="user" id="jv8-bg-skA"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" image="searchBar_PrevButton_Normal.png">
@@ -140,20 +159,21 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="uuz-VE-1ZN" firstAttribute="top" secondItem="CVw-0Y-NYb" secondAttribute="top" type="default" id="7Zi-Io-CgG"/>
-                                    <constraint firstItem="X0F-oB-BxA" firstAttribute="leading" secondItem="Zjl-G3-B1l" secondAttribute="leading" type="default" id="AmC-ay-fEl"/>
+                                    <constraint firstItem="eE3-4H-xGs" firstAttribute="leading" secondItem="uuz-VE-1ZN" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="2ZG-5S-Rlf"/>
+                                    <constraint firstItem="eE3-4H-xGs" firstAttribute="top" secondItem="uuz-VE-1ZN" secondAttribute="top" type="default" id="7iX-kv-nLb"/>
+                                    <constraint firstItem="X0F-oB-BxA" firstAttribute="leading" secondItem="Zjl-G3-B1l" secondAttribute="leading" type="user" id="AmC-ay-fEl"/>
                                     <constraint firstItem="X0F-oB-BxA" firstAttribute="top" secondItem="uuz-VE-1ZN" secondAttribute="top" type="default" id="CC3-ng-Ttk"/>
-                                    <constraint firstItem="qwx-7I-IPv" firstAttribute="leading" secondItem="X0F-oB-BxA" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="CUn-sF-AqS"/>
-                                    <constraint firstItem="CVw-0Y-NYb" firstAttribute="leading" secondItem="uuz-VE-1ZN" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="KQJ-Ab-1N4"/>
+                                    <constraint firstItem="qwx-7I-IPv" firstAttribute="leading" secondItem="X0F-oB-BxA" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="CUn-sF-AqS"/>
+                                    <constraint firstItem="uuz-VE-1ZN" firstAttribute="baseline" secondItem="eE3-4H-xGs" secondAttribute="baseline" type="default" id="FBP-Fg-IF4"/>
+                                    <constraint firstAttribute="centerY" secondItem="uuz-VE-1ZN" secondAttribute="centerY" type="user" id="LNS-R0-Njm"/>
                                     <constraint firstItem="X0F-oB-BxA" firstAttribute="centerY" secondItem="qwx-7I-IPv" secondAttribute="centerY" type="user" id="LzF-eg-Ptd"/>
-                                    <constraint firstItem="uuz-VE-1ZN" firstAttribute="leading" secondItem="qwx-7I-IPv" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="QoG-Ad-DSg"/>
-                                    <constraint firstItem="CVw-0Y-NYb" firstAttribute="trailing" secondItem="Zjl-G3-B1l" secondAttribute="trailing" constant="-7" type="user" id="TCU-QB-Q2L"/>
+                                    <constraint firstItem="uuz-VE-1ZN" firstAttribute="leading" secondItem="qwx-7I-IPv" secondAttribute="trailing" constant="8" symbolic="YES" type="user" id="QoG-Ad-DSg"/>
+                                    <constraint firstAttribute="centerY" secondItem="eE3-4H-xGs" secondAttribute="centerY" type="user" id="TzT-Bk-xto"/>
                                     <constraint firstItem="2sY-Tq-9r7" firstAttribute="top" secondItem="Zjl-G3-B1l" secondAttribute="top" type="default" id="Uxg-Uu-JZC"/>
                                     <constraint firstItem="2sY-Tq-9r7" firstAttribute="bottom" secondItem="Zjl-G3-B1l" secondAttribute="bottom" type="default" id="W7C-ud-wms"/>
                                     <constraint firstItem="2sY-Tq-9r7" firstAttribute="trailing" secondItem="Zjl-G3-B1l" secondAttribute="trailing" type="default" id="cJY-LC-lXx"/>
-                                    <constraint firstItem="X0F-oB-BxA" firstAttribute="centerY" secondItem="CVw-0Y-NYb" secondAttribute="centerY" type="user" id="eJR-C6-6rI"/>
                                     <constraint firstItem="2sY-Tq-9r7" firstAttribute="leading" secondItem="Zjl-G3-B1l" secondAttribute="leading" type="default" id="lSw-sp-FH8"/>
-                                    <constraint firstItem="2sY-Tq-9r7" firstAttribute="centerY" secondItem="uuz-VE-1ZN" secondAttribute="centerY" type="default" id="sTr-Ph-QWv"/>
+                                    <constraint firstAttribute="trailing" secondItem="eE3-4H-xGs" secondAttribute="trailing" constant="7" type="user" id="quU-rl-Qdv"/>
                                     <constraint firstItem="X0F-oB-BxA" firstAttribute="centerY" secondItem="uuz-VE-1ZN" secondAttribute="centerY" type="user" id="uQr-jK-QY7"/>
                                 </constraints>
                             </view>
@@ -179,6 +199,7 @@
                         <outlet property="localBackButton" destination="nT3-Xn-oZP" id="Kxj-yb-RlY"/>
                         <outlet property="localTitleLabel" destination="RSQ-LU-H1f" id="lrZ-LD-Dxu"/>
                         <outlet property="remoteBackButton" destination="X0F-oB-BxA" id="az5-Hm-2Ei"/>
+                        <outlet property="remoteDeleteButton" destination="eE3-4H-xGs" id="9wf-vd-3JZ"/>
                         <outlet property="remoteTitleLabel" destination="qwx-7I-IPv" id="Nzb-Jz-psQ"/>
                         <outlet property="uploadButton" destination="qqd-Bn-dGA" id="p77-jx-9Qf"/>
                         <outlet property="view" destination="gVP-Yt-jQW" id="Llx-z1-ET0"/>
@@ -283,61 +304,6 @@
         <image name="searchBar_Background.png" width="10" height="88"/>
         <image name="searchBar_PrevButton_Normal.png" width="18" height="23"/>
     </resources>
-    <classes>
-        <class className="CodeFileSearchBarView" superclassName="UIView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CodeFileSearchBarView.h"/>
-        </class>
-        <class className="LocalFileListController" superclassName="SearchableTableBrowserController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalFileListController.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="RemoteFileListController" superclassName="SearchableTableBrowserController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteFileListController.h"/>
-            <relationships>
-                <relationship kind="action" name="loginAction:"/>
-                <relationship kind="outlet" name="loadingView" candidateClass="UIView"/>
-                <relationship kind="outlet" name="loginAlwaysAskPassword" candidateClass="UISwitch"/>
-                <relationship kind="outlet" name="loginLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="loginPassword" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="loginUser" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="loginView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="RemoteNavigationController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteNavigationController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="toolbarController" candidateClass="RemoteNavigationToolbarController"/>
-            </relationships>
-        </class>
-        <class className="RemoteNavigationToolbarController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteNavigationToolbarController.h"/>
-            <relationships>
-                <relationship kind="action" name="taggedButtonAction:"/>
-                <relationship kind="outlet" name="downloadButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="localBackButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="localTitleLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="remoteBackButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="remoteTitleLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="uploadButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="SearchableTableBrowserController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SearchableTableBrowserController.h"/>
-            <relationships>
-                <relationship kind="action" name="toolEditDeleteAction:"/>
-                <relationship kind="action" name="toolPushUrlForTagAction:"/>
-                <relationship kind="outlet" name="bottomToolBar" candidateClass="UIView"/>
-            </relationships>
-        </class>
-        <class className="TopBarEditButton" superclassName="TopBarToolButton">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TopBarEditButton.h"/>
-        </class>
-        <class className="TopBarToolButton" superclassName="UIButton">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TopBarToolButton.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

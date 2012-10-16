@@ -76,6 +76,10 @@ static void _init(RemoteNavigationController *self) {
          [self _downloadSelectedItemsOfRemoteController:self.remoteFileListController toLocationOfLocalController:self.localFileListController];
          break;
          
+       case 5: // Delete
+         ASSERT(NO); // TODO
+         break;
+         
        default: // Close
          [self.artCodeTab moveBackInHistory];
          break;
@@ -91,7 +95,8 @@ static void _init(RemoteNavigationController *self) {
   // Download button activation reaction
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
-    self.toolbarController.downloadButton.enabled = x.count != 0;
+    self.toolbarController.downloadButton.enabled =
+    self.toolbarController.remoteDeleteButton.enabled = x.count != 0;
   }];
 }
 
@@ -132,6 +137,8 @@ static void _init(RemoteNavigationController *self) {
 
 - (void)viewDidAppear:(BOOL)animated {
   [self.singleTabController setToolbarViewController:(UIViewController *)self.toolbarController animated:YES];
+  self.toolbarController.localTitleLabel.text = self.localFileListController.locationURL.lastPathComponent;
+  self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
   [super viewDidAppear:animated];
 }
 
@@ -141,8 +148,10 @@ static void _init(RemoteNavigationController *self) {
   // This is done because UIViewController is not KVO compliant on visibleViewController
   if (navigationController == self.localBrowserNavigationController) {
     self.localFileListController = (LocalFileListController *)viewController;
+    self.toolbarController.localTitleLabel.text = self.localFileListController.locationURL.lastPathComponent;
   } else if (navigationController == self.remoteBrowserNavigationController) {
     self.remoteFileListController = (RemoteFileListController *)viewController;
+    self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
   }
 }
 
@@ -178,7 +187,7 @@ static void _init(RemoteNavigationController *self) {
 - (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[localController.selectedItems.rac_toSubscribable select:^id(NSURL *itemURL) {
+  [[[[localController.selectedItems.rac_toSubscribable select:^id(NSURL *itemURL) {
     // Start upload
     RACSubscribable *progressSubscribable = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
     
@@ -186,7 +195,10 @@ static void _init(RemoteNavigationController *self) {
     [remoteController addProgressItemWithURL:itemURL progressSubscribable:progressSubscribable];
     
     return progressSubscribable;
-  }] merge] subscribeError:^(NSError *error) {
+  }] merge] finally:^{
+    // Refresh remote list
+    [remoteController invalidateFilteredItems];
+  }] subscribeError:^(NSError *error) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors uploading files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Upload completed" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

@@ -20,6 +20,7 @@
     self.accessoryView = self.progressView;
     self.editingAccessoryView = self.progressView;
   }
+  self.textLabel.textColor = [UIColor grayColor];
   return self;
 }
 
