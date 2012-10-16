@@ -345,9 +345,8 @@
 		CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */; };
 		CD54BD93160607F70025B7CA /* metamacros.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8D160607F70025B7CA /* metamacros.h */; };
 		CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596CC41625808400B95B49 /* TextSelectionRect.m */; };
-		CD596D8C16283D2300B95B49 /* ProgressTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD596D8A16283D2300B95B49 /* ProgressTableViewCell.xib */; };
 		CD596D8D16283D2300B95B49 /* RemoteNavigator.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD596D8B16283D2300B95B49 /* RemoteNavigator.storyboard */; };
-		CD596D9016283D4600B95B49 /* ProgressTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596D8F16283D4600B95B49 /* ProgressTableViewCell.m */; };
+		CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */; };
 		CD625941157A2BAE00B4669A /* DocSetContentController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD625940157A2BAE00B4669A /* DocSetContentController.m */; };
 		CD625943157A358A00B4669A /* docSet.mom in Resources */ = {isa = PBXBuildFile; fileRef = CD625942157A358A00B4669A /* docSet.mom */; };
 		CD62595C157BA57700B4669A /* Local.png in Resources */ = {isa = PBXBuildFile; fileRef = CD62594A157BA57700B4669A /* Local.png */; };
@@ -1012,10 +1011,9 @@
 		CD54BD8D160607F70025B7CA /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = extobjc/metamacros.h; sourceTree = "<group>"; };
 		CD596CC31625808400B95B49 /* TextSelectionRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextSelectionRect.h; sourceTree = "<group>"; };
 		CD596CC41625808400B95B49 /* TextSelectionRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextSelectionRect.m; sourceTree = "<group>"; };
-		CD596D8A16283D2300B95B49 /* ProgressTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProgressTableViewCell.xib; sourceTree = "<group>"; };
 		CD596D8B16283D2300B95B49 /* RemoteNavigator.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RemoteNavigator.storyboard; sourceTree = "<group>"; };
-		CD596D8E16283D4600B95B49 /* ProgressTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressTableViewCell.h; sourceTree = "<group>"; };
-		CD596D8F16283D4600B95B49 /* ProgressTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressTableViewCell.m; sourceTree = "<group>"; };
+		CD596E20162D668D00B95B49 /* ProgressTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressTableViewCell.h; sourceTree = "<group>"; };
+		CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProgressTableViewCell.m; sourceTree = "<group>"; };
 		CD62593F157A2BAE00B4669A /* DocSetContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetContentController.h; sourceTree = "<group>"; };
 		CD625940157A2BAE00B4669A /* DocSetContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetContentController.m; sourceTree = "<group>"; };
 		CD625942157A358A00B4669A /* docSet.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = docSet.mom; sourceTree = "<group>"; };
@@ -2299,7 +2297,6 @@
 		CD7D2B0913C0CEE100B889EE /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				CD596D8A16283D2300B95B49 /* ProgressTableViewCell.xib */,
 				CD596D8B16283D2300B95B49 /* RemoteNavigator.storyboard */,
 				B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */,
 				B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */,
@@ -2423,8 +2420,8 @@
 				CD8108D413E31A28000E1941 /* ColorSelectionControl.m */,
 				CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */,
 				CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */,
-				CD596D8E16283D4600B95B49 /* ProgressTableViewCell.h */,
-				CD596D8F16283D4600B95B49 /* ProgressTableViewCell.m */,
+				CD596E20162D668D00B95B49 /* ProgressTableViewCell.h */,
+				CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */,
 				CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */,
 				CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */,
 			);
@@ -3169,7 +3166,6 @@
 				CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */,
 				CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */,
 				CD54BD93160607F70025B7CA /* metamacros.h in Resources */,
-				CD596D8C16283D2300B95B49 /* ProgressTableViewCell.xib in Resources */,
 				CD596D8D16283D2300B95B49 /* RemoteNavigator.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3357,7 +3353,7 @@
 				CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */,
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
-				CD596D9016283D4600B95B49 /* ProgressTableViewCell.m in Sources */,
+				CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

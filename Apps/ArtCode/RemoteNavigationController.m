@@ -21,6 +21,8 @@
 #import "ArtCodeProject.h"
 
 #import <Connection/CKConnectionRegistry.h>
+#import "BezelAlert.h"
+#import "NSString+PluralFormat.h"
 
 
 @interface RemoteNavigationController () <UINavigationControllerDelegate>
@@ -74,6 +76,10 @@ static void _init(RemoteNavigationController *self) {
          [self _downloadSelectedItemsOfRemoteController:self.remoteFileListController toLocationOfLocalController:self.localFileListController];
          break;
          
+       case 5: // Delete
+         ASSERT(NO); // TODO
+         break;
+         
        default: // Close
          [self.artCodeTab moveBackInHistory];
          break;
@@ -89,7 +95,8 @@ static void _init(RemoteNavigationController *self) {
   // Download button activation reaction
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
-    self.toolbarController.downloadButton.enabled = x.count != 0;
+    self.toolbarController.downloadButton.enabled =
+    self.toolbarController.remoteDeleteButton.enabled = x.count != 0;
   }];
 }
 
@@ -130,6 +137,8 @@ static void _init(RemoteNavigationController *self) {
 
 - (void)viewDidAppear:(BOOL)animated {
   [self.singleTabController setToolbarViewController:(UIViewController *)self.toolbarController animated:YES];
+  self.toolbarController.localTitleLabel.text = self.localFileListController.locationURL.lastPathComponent;
+  self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
   [super viewDidAppear:animated];
 }
 
@@ -139,8 +148,10 @@ static void _init(RemoteNavigationController *self) {
   // This is done because UIViewController is not KVO compliant on visibleViewController
   if (navigationController == self.localBrowserNavigationController) {
     self.localFileListController = (LocalFileListController *)viewController;
+    self.toolbarController.localTitleLabel.text = self.localFileListController.locationURL.lastPathComponent;
   } else if (navigationController == self.remoteBrowserNavigationController) {
     self.remoteFileListController = (RemoteFileListController *)viewController;
+    self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
   }
 }
 
@@ -149,7 +160,7 @@ static void _init(RemoteNavigationController *self) {
 - (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController {
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[remoteController.selectedItems.rac_toSubscribable select:^id(NSDictionary *item) {
+  [[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
     NSString *itemName = [item objectForKey:cxFilenameKey];
     // Generate local destination URL and start the download
     NSURL *localURL = [localController.locationURL URLByAppendingPathComponent:itemName];
@@ -159,24 +170,42 @@ static void _init(RemoteNavigationController *self) {
     [localController addProgressItemWithURL:localURL progressSubscribable:progressSubscribable];
     
     // Return a subscribable that yields tuple of temporary URL and local destination URL
-    return [[progressSubscribable takeLast:1] select:^id(NSURL *tempURL) {
-      return [RACTuple tupleWithObjects:tempURL, localURL, nil];
-    }];
-  }] subscribeNext:^(RACTuple *urlTuple) {
-    // Move the temporary file to the destination URL
-    [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
+    return [[[[progressSubscribable
+               where:^BOOL(id x) {
+                 return [x isKindOfClass:[NSURL class]];
+               }]
+               select:^id(NSURL *tempURL) {
+                 return [RACTuple tupleWithObjects:tempURL, localURL, nil];
+               }] asMaybes] take:1];
+  }] subscribeNext:^(RACMaybe *maybeTuple) {
+    if ([maybeTuple hasObject]) {
+      RACTuple *urlTuple = [maybeTuple object];
+      // Move the temporary file to the destination URL
+      [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
+    } else {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error downloading file" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    }
   }];
 }
 
 - (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
   // RAC
   ReactiveConnection *connection = self.connection;
-  [localController.selectedItems.rac_toSubscribable subscribeNext:^void(NSURL *itemURL) {
+  [[[localController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSURL *itemURL) {
     // Start upload
     RACSubscribable *progressSubscribable = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
     
     // Start progress indicator in the remote file list
     [remoteController addProgressItemWithURL:itemURL progressSubscribable:progressSubscribable];
+    
+    return progressSubscribable;
+  }] finally:^{
+    // Refresh remote list
+    [remoteController invalidateFilteredItems];
+  }] subscribeError:^(NSError *error) {
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors uploading files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+  } completed:^{
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Upload completed" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 

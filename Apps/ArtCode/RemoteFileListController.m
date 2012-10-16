@@ -110,12 +110,6 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   _directoryContent = nil;
 }
 
-- (void)loadView {
-  [super loadView];
-  
-  [self.tableView registerNib:[UINib nibWithNibName:@"ProgressTableViewCell" bundle:nil] forCellReuseIdentifier:@"progressCell"];
-}
-
 - (void)viewDidLoad {
   [super viewDidLoad];
   self.searchBar.placeholder = @"Filter files in this remote folder";
@@ -206,7 +200,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     [self->_progressItems removeObject:progressItem];
     [self didChangeValueForKey:@"progressItems"];
   }] subscribeCompleted:^{
-    // TODO bezel alert with successful downlad
+    // Nothing
   }];
 }
 
@@ -221,7 +215,11 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     cell = highlightCell;
     highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
   } else {
-    ProgressTableViewCell *progressCell = [tableView dequeueReusableCellWithIdentifier:@"progressCell"];
+    static NSString * const progressCellIdentifier = @"progressCell";
+    ProgressTableViewCell *progressCell = [tableView dequeueReusableCellWithIdentifier:progressCellIdentifier];
+    if (!progressCell) {
+      progressCell = [[ProgressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:progressCellIdentifier];
+    }
     cell = progressCell;
     [progressCell setProgressSubscribable:[directoryItem objectForKey:progressSubscribableKey]];
   }
