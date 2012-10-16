@@ -113,8 +113,11 @@
 		return [downloadSubscribable subscribeNext:^(id x) {
 			[subscriber sendNext:x];
 		} error:^(NSError *error) {
+      // Remove temporary file
+      [[NSFileManager defaultManager] removeItemAtURL:tempDownloadURL error:&error];
 			[subscriber sendError:error];
 		} completed:^{
+      // Send temporary download URL uppon completion
       [subscriber sendNext:tempDownloadURL];
 			[subscriber sendCompleted];
 		}];

@@ -193,14 +193,14 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   
   // RAC
   @weakify(self);
-  [progressSubscribable subscribeError:^(NSError *error) {
-    NSLog(@"Upload error: %@", error.localizedDescription);
-  } completed:^{
+  [[progressSubscribable finally:^{
     @strongify(self);
     // Remove the progress item when it completes
     [self willChangeValueForKey:@"progressItems"];
     [self->_progressItems removeObject:progressItem];
     [self didChangeValueForKey:@"progressItems"];
+  }] subscribeCompleted:^{
+    // Nothing
   }];
 }
 
