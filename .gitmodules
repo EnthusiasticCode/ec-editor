@@ -1,6 +1,3 @@
-[submodule "ThirdParty/Kiwi"]
-	path = ThirdParty/Kiwi
-	url = https://github.com/allending/Kiwi.git
 [submodule "ThirdParty/cocoaoniguruma"]
 	path = ThirdParty/cocoaoniguruma
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/cocoaoniguruma.git
@@ -10,9 +7,6 @@
 [submodule "ThirdParty/Connection"]
 	path = ThirdParty/Connection
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
-[submodule "ThirdParty/jasmine"]
-	path = ThirdParty/jasmine
-	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/UIAutomation-jasmine-iphone.git
 [submodule "ThirdParty/ReactiveCocoa"]
 	path = ThirdParty/ReactiveCocoa
 	url = https://github.com/github/ReactiveCocoa.git
