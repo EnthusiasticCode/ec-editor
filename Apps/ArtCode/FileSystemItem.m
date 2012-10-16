@@ -22,7 +22,7 @@
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
 
-@property (nonatomic, strong) RACPropertySyncSubject *stringContent;
+@property (nonatomic, strong) RACPropertySyncSubject *stringContentBacking;
 
 @property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
 
@@ -30,7 +30,7 @@
 
 @end
 
-@interface FileSystemDirectory ()
+@interface FileSystemDirectory (Private)
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
 - (id<RACSubscribable>)internalChildren;
@@ -119,13 +119,13 @@
   [self.typeBacking sendNext:type];
   self.extendedAttributes = [NSMutableDictionary dictionary];
   if (type == NSURLFileResourceTypeRegular) {
-    self.stringContent = [RACPropertySyncSubject subject];
+    self.stringContentBacking = [RACPropertySyncSubject subject];
     NSError *error;
     NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
     if (!error) {
-      [self.stringContent sendNext:content];
+      [self.stringContentBacking sendNext:content];
     } else {
-      [self.stringContent sendError:error];
+      [self.stringContentBacking sendError:error];
     }
   }
   return self;
@@ -145,7 +145,19 @@
   }] distinctUntilChanged];
 }
 
+- (id<RACSubscribable>)parent {
+  
+}
+
+- (id<RACSubscribable>)create {
+  
+}
+
 - (id<RACSubscribable>)save {
+  
+}
+
+- (id<RACSubscribable>)duplicate {
   
 }
 
@@ -155,6 +167,10 @@
 
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
+}
+
+- (RACPropertySyncSubject *)stringContent {
+  return self.stringContentBacking;
 }
 
 @end
@@ -224,7 +240,7 @@
 
 @end
 
-@implementation FileSystemItem (Directory_Private)
+@implementation FileSystemDirectory (Private)
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
   static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *) = nil;

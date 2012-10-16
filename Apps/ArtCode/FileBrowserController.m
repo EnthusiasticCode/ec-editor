@@ -500,10 +500,11 @@
   if (!_previewItems) {
     _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
     for (RACTuple *tuple in [self filteredItems]) {
-      NSURL *fileURL = tuple.first;
-      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
-      if (![CodeFileController canDisplayFileInCodeView:fileURL] && [QLPreviewController canPreviewItem:item]) {
-        [_previewItems addObject:item];
+      FileSystemItem *item = tuple.first;
+      NSURL *itemURL = item.url.first;
+      FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
+      if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
+        [_previewItems addObject:previewItem];
       }
     }
   }
