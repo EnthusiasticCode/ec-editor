@@ -17,6 +17,7 @@
 + (RACScheduler *)fileSystemScheduler;
 + (NSMutableDictionary *)itemCache;
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type;
++ (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type;
 
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
@@ -66,15 +67,19 @@
 }
 
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type {
+  return [[[self internalItemWithURL:url type:type] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
++ (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type {
   if (!url || ![url isFileURL]) {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
-  return [[[RACSubscribable defer:^id<RACSubscribable>{
+  return [RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_NOT_MAIN_QUEUE();
     FileSystemItem *item = [[self itemCache] objectForKey:url];
     if (item) {
       ASSERT([item.urlBacking.first isEqual:url]);
-      if (![item.typeBacking.first isEqual:type]) {
+      if (type && ![item.typeBacking.first isEqual:type]) {
         return [RACSubscribable error:[[NSError alloc] init]];
       }
       return [RACSubscribable return:item];
@@ -90,7 +95,7 @@
     }
     [[self itemCache] setObject:item forKey:url];
     return [RACSubscribable return:item];
-  }] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  }];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -107,20 +112,28 @@
   if (type == NSURLFileResourceTypeRegular) {
     self.stringContent = [RACPropertySyncSubject subject];
     NSError *error;
-    [self.stringContent sendNext:[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error]];
-    if (error) {
-      return nil;
+    NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    if (!error) {
+      [self.stringContent sendNext:content];
+    } else {
+      [self.stringContent sendError:error];
     }
   }
   return self;
 }
 
 - (id<RACSubscribable>)url {
-  return [self.urlBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return self.urlBacking;
 }
 
 - (id<RACSubscribable>)type {
-  return [self.typeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return self.typeBacking;
+}
+
+- (id<RACSubscribable>)name {
+  return [[self.url select:^NSString *(NSURL *url) {
+    return url.lastPathComponent;
+  }] distinctUntilChanged];
 }
 
 - (id<RACSubscribable>)save {
@@ -214,16 +227,16 @@
       
       // No abbreviation, no need to filter
       if (![abbreviation length]) {
-        return [[[content rac_toSubscribable] select:^id(NSURL *url) {
-          return [RACTuple tupleWithObjectsFromArray:@[url, [RACTupleNil tupleNil]]];
+        return [[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
+          return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
         }] toArray];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(NSURL *url) {
+      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
-        float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-        return [RACTuple tupleWithObjectsFromArray:@[url, hitMask ? : [RACTupleNil tupleNil], @(score)]];
+        float score = [item.name.first scoreForAbbreviation:abbreviation hitMask:&hitMask];
+        return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
       }] where:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
       }] toArray] mutableCopy];
@@ -256,13 +269,14 @@
     if (!self.urlBacking || ![[self.typeBacking first] isEqualToString:NSURLFileResourceTypeDirectory]) {
       return [RACSubscribable error:[[NSError alloc] init]];
     }
-    RACReplaySubject *subject = [RACReplaySubject replaySubjectWithCapacity:1];
     NSMutableArray *content = [NSMutableArray array];
     for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:options errorHandler:nil]) {
-      [content addObject:childURL];
+      FileSystemItem *item = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
+      if (item) {
+        [content addObject:item];
+      }
     }
-    [subject sendNext:content];
-    return subject;
+    return [RACSubscribable return:content];
   }];
 }
 

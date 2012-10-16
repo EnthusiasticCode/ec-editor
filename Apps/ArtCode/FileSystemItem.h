@@ -16,14 +16,14 @@
 /// Note that if the item doesn't exist on the file system, it won't be possible to create it with the item returned from this call
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends the name of the item
-- (id<RACSubscribable>)name;
-
 /// Returns a subscribable that sends the URL of the item
 - (id<RACSubscribable>)url;
 
 /// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver
 - (id<RACSubscribable>)type;
+
+/// Returns a subscribable that sends the name of the item
+- (id<RACSubscribable>)name;
 
 /// Returns a subscribable that sends the parent directory of the receiver
 - (id<RACSubscribable>)parent;
@@ -54,20 +54,20 @@
 /// Return a subscribable that sends the directory item with the given URL, then completes
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends the contents of the directory as it changes.
+/// Returns a subscribable that sends the children of the directory as they change.
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
 - (id<RACSubscribable>)children;
 
-/// Returns a subscribable that sends the content of the directory as it changes.
+/// Returns a subscribable that sends the children of the directory as they change.
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options;
 
-/// Returns a subscribable that sends the contents of the directory as it changes filtered by the abbreviations sent by \a abbreviationSubscribable.
-/// Sends tuples where the first element is the url and the second element is the filter hitmask, if applicable
+/// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
+/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:abbreviationSubscribable
 - (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
 
-/// Returns a subscribable that sends the content of the directory as it changes filtered by the abbreviations sent by \a abbreviationSubscribable.
-/// Sends tuples where the first element is the url and the second element is the filter hitmask, if applicable
+/// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
+/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
 
 @end

@@ -102,6 +102,7 @@
       filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:RAC_KEYPATH(anotherStrongSelf, filteredItems) from:[directory childrenFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
     }];
   }];
+  
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     FileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
@@ -187,21 +188,22 @@
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
   
   // Configure the cell
-  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
-  NSURL *itemURL = item.first;
+  RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
+  FileSystemItem *item = filteredItem.first;
+  NSString *itemName = item.name.first;
   
-  cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = item.second;
+  cell.textLabel.text = itemName;
+  cell.textLabelHighlightedCharacters = filteredItem.second;
   
-  if ([itemURL isDirectory]) {
+  if (item.type.first == NSURLFileResourceTypeDirectory) {
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemName.pathExtension];
     cell.accessoryType = UITableViewCellAccessoryNone;
   }
     // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-  if ([_selectedItems containsObject:itemURL])
+  if ([_selectedItems containsObject:item])
     [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   
   return cell;
@@ -211,13 +213,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
   if (self.isEditing) {
     if (!_selectedItems)
       _selectedItems = [[NSMutableArray alloc] init];
-    [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [_selectedItems addObject:item];
   } else {
-    NSURL *fileURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
-    if ([fileURL isDirectory]) {
+    NSURL *fileURL = item.url.first;
+    if (item.type.first == NSURLFileResourceTypeDirectory) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
     }else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
