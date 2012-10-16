@@ -100,13 +100,13 @@
   }
   // Generate the temporary download URL
   NSURL *tempDownloadURL = isDirecotry ? [NSURL temporaryDirectory] : [NSURL temporaryFileURL];
-  RACSubject *downloadSubscribable = [RACReplaySubject replaySubjectWithCapacity:1];
+  RACSubject *downloadSubscribable = [RACSubject subject];
   [_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
   // Run download
   if (isDirecotry) {
-    [_connection recursivelyDownload:remotePath to:tempDownloadURL.absoluteString overwrite:YES];
+    [_connection recursivelyDownload:remotePath to:tempDownloadURL.path overwrite:YES];
   } else {
-    [_connection downloadFile:remotePath toDirectory:tempDownloadURL.absoluteString overwrite:YES delegate:nil];
+    [_connection downloadFile:remotePath toDirectory:tempDownloadURL.path overwrite:YES delegate:nil];
   }
   // Retun an 'endWith:tempDownloadURL' subscribable
   return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {

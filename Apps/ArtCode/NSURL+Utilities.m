@@ -31,7 +31,29 @@
 }
 
 + (NSURL *)temporaryFileURL {
-  return [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:NO] URLByAppendingPathExtension:@"tmp"];
+  NSString *tempFileTemplate =
+  [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpfile.XXXXXX"];
+  const char *tempFileTemplateCString =
+  [tempFileTemplate fileSystemRepresentation];
+  char *tempFileNameCString = (char *)malloc(strlen(tempFileTemplateCString) + 1);
+  strcpy(tempFileNameCString, tempFileTemplateCString);
+  int fileDescriptor = mkstemp(tempFileNameCString);
+  
+  if (fileDescriptor == -1)
+  {
+    // handle file creation failure
+  }
+  
+  // This is the file name if you need to access the file by name, otherwise you can remove
+  // this line.
+  NSString *tempFileName =
+  [[NSFileManager defaultManager]
+   stringWithFileSystemRepresentation:tempFileNameCString
+   length:strlen(tempFileNameCString)];
+  
+  free(tempFileNameCString);
+  
+  return [NSURL fileURLWithPath:tempFileName];
 }
 
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL {
