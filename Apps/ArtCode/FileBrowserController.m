@@ -443,7 +443,7 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolder.url.first;
+  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -451,10 +451,10 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
-    if (![[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL]) {
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
+    [[item copyTo:moveFolder] subscribeError:^(NSError *error) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-    };
+    }];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -467,7 +467,7 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolder.url.first;
+  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -475,8 +475,10 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
-    [[NSFileManager defaultManager] moveItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL];
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
+    [[item moveTo:moveFolder] subscribeError:^(NSError *error) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    }];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];

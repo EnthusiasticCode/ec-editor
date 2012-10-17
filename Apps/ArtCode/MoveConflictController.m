@@ -10,11 +10,13 @@
 #import "NSURL+Utilities.h"
 #import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
+#import "FileSystemItem.h"
+
 
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  void (^_processingBlock)(NSURL *);
+  void (^_processingBlock)(FileSystemItem *);
   void (^_completionBlock)(void);
 }
 
@@ -73,56 +75,61 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  NSURL *itemURL = [_conflictItems objectAtIndex:indexPath.row];
-  cell.textLabel.text = itemURL.lastPathComponent;
-  if (itemURL.isDirectory)
+  FileSystemItem *item = [_conflictItems objectAtIndex:indexPath.row];
+  cell.textLabel.text = item.name.first;
+  if (item.type.first == NSURLFileResourceTypeDirectory)
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   else
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
-  cell.detailTextLabel.text = itemURL.prettyPath;
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[item.name.first pathExtension]];
+  cell.detailTextLabel.text = [item.url.first prettyPath];
   
   return cell;
 }
 
 #pragma mark - Public Methods
 
-- (void)moveItems:(NSArray *)items toFolder:(NSURL *)toFolderURL usingBlock:(void (^)(NSURL *))processingBlock completion:(void (^)(void))completionBlock {
+- (void)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingBlock:(void (^)(FileSystemItem *))processingBlock completion:(void (^)(void))completionBlock {
   _conflictItems = [[NSMutableArray alloc] init];
   _resolvedItems = [NSMutableArray arrayWithArray:items];
   _processingBlock = [processingBlock copy];
   _completionBlock = [completionBlock copy];
   
   // Processing
-  NSURL *conflictItemURL;
-  for (NSURL *toItemURL in [[NSFileManager defaultManager] enumeratorAtURL:toFolderURL includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
-    conflictItemURL = nil;
-    // Check if current toItem has a conflict with a fromItem
-    for (NSURL *fromItemURL in _resolvedItems) {
-      if ([toItemURL.lastPathComponent isEqualToString:fromItemURL.lastPathComponent]) {
-        conflictItemURL = fromItemURL;
+  @weakify(self);
+  [[[destinationFolder children] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+    return [x.name take:1];
+  }] subscribeNext:^(NSString *x) {
+    @strongify(self);
+    if (!self) {
+      return;
+    }
+    FileSystemItem *conflict = nil;
+    for (FileSystemItem *item in self->_resolvedItems) {
+      if ([item.name.first isEqual:x]) {
+        conflict = item;
         break;
       }
     }
-    // Put in conflict list if conflict spotted
-    if (conflictItemURL) {
-      [_resolvedItems removeObject:conflictItemURL];
-      [_conflictItems addObject:conflictItemURL];
+    if (conflict) {
+      [self->_resolvedItems removeObject:conflict];
+      [self->_conflictItems addObject:conflict];
     }
-  }
-  
-  // If there are no conflict items we are done
-  if ([_conflictItems count] == 0) {
-    [self doneAction:nil];
-    return;
-  }
-  
-  // Prepare to show conflict resolution UI
-  self.conflictTableView.hidden = NO;
-  self.toolbar.hidden = NO;
-  self.progressView.hidden = YES;
-  [self.conflictTableView reloadData];
-  [self.conflictTableView setEditing:YES animated:NO];
-  self.navigationItem.title = @"Select files to replace";
+  } completed:^{
+    @strongify(self);
+    // If there are no conflict items we are done
+    if ([self->_conflictItems count] == 0) {
+      [self doneAction:nil];
+      return;
+    }
+    
+    // Prepare to show conflict resolution UI
+    self.conflictTableView.hidden = NO;
+    self.toolbar.hidden = NO;
+    self.progressView.hidden = YES;
+    [self.conflictTableView reloadData];
+    [self.conflictTableView setEditing:YES animated:NO];
+    self.navigationItem.title = @"Select files to replace";
+  }];
 }
 
 #pragma mark - Interface Actions and Outlets
@@ -147,8 +154,8 @@
   // Processing
   ASSERT(_processingBlock);
   float resolvedCount = [_resolvedItems count];
-  [_resolvedItems enumerateObjectsUsingBlock:^(NSURL *itemURL, NSUInteger idx, BOOL *stop) {
-    _processingBlock(itemURL);
+  [_resolvedItems enumerateObjectsUsingBlock:^(FileSystemItem *item, NSUInteger idx, BOOL *stop) {
+    _processingBlock(item);
     self.progressView.progress = (float)(idx + 1) / resolvedCount;
   }];
   
