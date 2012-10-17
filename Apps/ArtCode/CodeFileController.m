@@ -134,17 +134,8 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Properties
 
-@synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize codeUnit = _codeUnit, codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
-
-- (UIWebView *)webView {
-  if (!_webView && self.isViewLoaded) {
-    _webView = [[UIWebView alloc] init];
-    _webView.delegate = self;
-    _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  }
-  return _webView;
-}
+@synthesize minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
 
 - (CodeFileMinimapView *)minimapView {
   if (!_minimapView) {
@@ -204,19 +195,6 @@ static void drawStencilStar(CGContextRef myContext)
 
 + (BOOL)automaticallyNotifiesObserversOfMinimapVisible {
   return NO;
-}
-
-- (TMUnit *)codeUnit {
-  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-  return _codeUnit;
-}
-
-- (void)setCodeUnit:(TMUnit *)codeUnit {
-  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-  if (codeUnit == _codeUnit) {
-    return;
-  }
-  _codeUnit = codeUnit;
 }
 
 - (RACScheduler *)codeScheduler {
@@ -434,6 +412,12 @@ static void drawStencilStar(CGContextRef myContext)
     self.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
   }];
   
+  // load the web preview if needed
+  [[RACSubscribable combineLatest:@[RACAble(self.textFile), RACAble(self.webView)]] subscribeNext:^(id x) {
+    @strongify(self);
+    [self _loadWebPreviewContentAndTitle];
+  }];
+  
   return self;
 }
 
@@ -514,6 +498,11 @@ static void drawStencilStar(CGContextRef myContext)
   
   self.codeView = codeView;
   [self _setCodeViewAttributesForTheme:nil];
+  
+  UIWebView *webView = [[UIWebView alloc] init];
+  webView.delegate = self;
+  webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  self.webView = webView;
 }
 
 - (void)viewDidLoad {
@@ -564,20 +553,6 @@ static void drawStencilStar(CGContextRef myContext)
   [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
   if (self.minimapVisible) {
     self.minimapView.selectionRectangle = self.codeView.bounds;
-  }
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  
-  if (!_minimapVisible) {
-    _minimapView = nil;
-  }
-  
-  if ([self _isWebPreview]) {
-    self.codeView = nil;
-  } else {
-    self.webView = nil;
   }
 }
 
