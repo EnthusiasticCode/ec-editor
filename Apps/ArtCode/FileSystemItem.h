@@ -75,10 +75,10 @@
 @interface FileSystemItem (FileManagement)
 
 /// Attempts to move the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
-- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination;
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination;
 
 /// Attempts to copy the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
-- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination;
+- (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination;
 
 /// Attempts to rename or create a renamed copy of the receiver, then sends a next and an error or completed to the returned subscribable.
 - (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy;

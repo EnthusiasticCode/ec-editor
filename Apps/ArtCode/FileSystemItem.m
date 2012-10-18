@@ -22,15 +22,21 @@
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
 
-@property (nonatomic, strong) RACPropertySyncSubject *stringContentBacking;
-
 @property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type;
 
 @end
 
-@interface FileSystemDirectory (Private)
+@interface FileSystemFile ()
+
+@property (nonatomic, strong) RACPropertySyncSubject *stringContentBacking;
+
+@end
+
+@interface FileSystemDirectory ()
+
+@property (nonatomic, strong) RACReplaySubject *childrenBacking;
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
 - (id<RACSubscribable>)internalChildren;
@@ -118,16 +124,6 @@
   self.typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   [self.typeBacking sendNext:type];
   self.extendedAttributes = [NSMutableDictionary dictionary];
-  if (type == NSURLFileResourceTypeRegular) {
-    self.stringContentBacking = [RACPropertySyncSubject subject];
-    NSError *error;
-    NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-    if (!error) {
-      [self.stringContentBacking sendNext:content];
-    } else {
-      [self.stringContentBacking sendError:error];
-    }
-  }
   return self;
 }
 
@@ -146,7 +142,7 @@
 }
 
 - (id<RACSubscribable>)parent {
-  
+  return [FileSystemItem itemWithURL:[self.url.first URLByDeletingLastPathComponent] type:NSURLFileResourceTypeDirectory];
 }
 
 - (id<RACSubscribable>)create {
@@ -169,6 +165,22 @@
   return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
 }
 
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  self = [super initWithURL:url type:type];
+  if (!self) {
+    return nil;
+  }
+  self.stringContentBacking = [RACPropertySyncSubject subject];
+  NSError *error;
+  NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+  if (!error) {
+    [self.stringContentBacking sendNext:content];
+  } else {
+    [self.stringContentBacking sendError:error];
+  }
+  return self;
+}
+
 - (RACPropertySyncSubject *)stringContent {
   return self.stringContentBacking;
 }
@@ -179,6 +191,23 @@
 
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
+}
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  self = [super initWithURL:url type:type];
+  if (!self) {
+    return nil;
+  }
+  NSMutableArray *children = [[NSMutableArray alloc] init];
+  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:0 errorHandler:nil]) {
+    FileSystemItem *child = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
+    if (child) {
+      [children addObject:child];
+    }
+  }
+  _childrenBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [_childrenBacking sendNext:children.copy];
+  return self;
 }
 
 - (id<RACSubscribable>)children {
@@ -196,51 +225,6 @@
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
   return [[[RACSubscribable combineLatest:@[[self internalChildrenWithOptions:options], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
-
-@end
-
-@implementation FileSystemItem (FileManagement)
-
-- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination {
-  
-}
-
-- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination {
-  
-}
-
-- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
-  
-}
-
-- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
-  
-}
-
-- (id<RACSubscribable>)delete {
-  
-}
-
-@end
-
-@implementation FileSystemItem (ExtendedAttributes)
-
-- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
-  ASSERT(self.extendedAttributes);
-  @synchronized(self.extendedAttributes) {
-    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
-    if (!extendedAttribute) {
-      extendedAttribute = [RACPropertySyncSubject subject];
-      [extendedAttribute sendNext:nil];
-      [self.extendedAttributes setObject:extendedAttribute forKey:key];
-    }
-    return extendedAttribute;
-  }
-}
-
-@end
-
-@implementation FileSystemDirectory (Private)
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
   static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *) = nil;
@@ -289,20 +273,61 @@
 }
 
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
-  return [RACSubscribable defer:^id<RACSubscribable>{
+  return self.childrenBacking;
+}
+
+@end
+
+@implementation FileSystemItem (FileManagement)
+
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination {
+  
+}
+
+- (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination {
+  
+}
+
+- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_NOT_MAIN_QUEUE();
-    if (!self.urlBacking || ![[self.typeBacking first] isEqualToString:NSURLFileResourceTypeDirectory]) {
-      return [RACSubscribable error:[[NSError alloc] init]];
+    NSURL *url = self.urlBacking.first;
+    NSError *error = nil;
+    if (!copy) {
+      [[NSFileManager defaultManager] moveItemAtURL:url toURL:[[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName] error:&error];
+    } else {
+      [[NSFileManager defaultManager] copyItemAtURL:url toURL:[[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName] error:&error];
     }
-    NSMutableArray *content = [NSMutableArray array];
-    for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:options errorHandler:nil]) {
-      FileSystemItem *item = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
-      if (item) {
-        [content addObject:item];
-      }
+    if (error) {
+      return [RACSubscribable error:error];
     }
-    return [RACSubscribable return:content];
-  }];
+    return [RACSubscribable return:[RACUnit defaultUnit]];
+  }] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
+  
+}
+
+- (id<RACSubscribable>)delete {
+  
+}
+
+@end
+
+@implementation FileSystemItem (ExtendedAttributes)
+
+- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
+  ASSERT(self.extendedAttributes);
+  @synchronized(self.extendedAttributes) {
+    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
+    if (!extendedAttribute) {
+      extendedAttribute = [RACPropertySyncSubject subject];
+      [extendedAttribute sendNext:nil];
+      [self.extendedAttributes setObject:extendedAttribute forKey:key];
+    }
+    return extendedAttribute;
+  }
 }
 
 @end
