@@ -336,7 +336,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
+  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -346,23 +346,22 @@ static void drawStencilStar(CGContextRef myContext)
       return nil;
     }
     // Selecting the syntax to use
-    TMSyntaxNode *syntax = nil;
     if (explicitSyntaxIdentifier) {
-      syntax = [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier];
+      return [RACSubscribable return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
-    if (!syntax) {
-      NSString *content = textFile.stringContent.first;
-      syntax = [TMSyntaxNode syntaxForFirstLine:[content substringWithRange:[content lineRangeForRange:NSMakeRange(0, 0)]]];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode defaultSyntax];
-    }
-    ASSERT(syntax);
-    
-    return [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
+    return [[textFile.stringContent take:1] select:^RACTuple *(NSString *x) {
+      TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode defaultSyntax];
+      }
+      ASSERT(syntax);
+      return [RACTuple tupleWithObjectsFromArray:@[fileURL, syntax]];
+    }];
+  }] switch] select:^TMUnit *(RACTuple *xs) {
+    return [[TMUnit alloc] initWithFileURL:xs.first syntax:xs.second index:nil];
   }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:RAC_KEYPATH_SELF(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
@@ -851,8 +850,12 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
-    [self.webView loadRequest:[NSURLRequest requestWithURL:self.textFile.url.first]];
-    self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    @weakify(self);
+    [[self.textFile.url take:1] subscribeNext:^(NSURL *x) {
+      @strongify(self);
+      [self.webView loadRequest:[NSURLRequest requestWithURL:x]];
+      self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
+    }];
   } else {
     self.title = nil;
   }
