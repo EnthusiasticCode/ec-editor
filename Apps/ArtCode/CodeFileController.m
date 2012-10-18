@@ -337,14 +337,14 @@ static void drawStencilStar(CGContextRef myContext)
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
-  }] switch] toProperty:RAC_KEYPATH_SELF(self.textFile) onObject:self];
+  }] switch] toProperty:@keypath(self.textFile) onObject:self];
   
   __block RACDisposable *bookmarksDisposable = nil;
   [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
     @strongify(self);
     if (!self) { return; }
     [bookmarksDisposable dispose];
-    bookmarksDisposable = [textFile.bookmarks syncProperty:RAC_KEYPATH_SELF(bookmarks) ofObject:self];
+    bookmarksDisposable = [textFile.bookmarks syncProperty:@keypath(self.bookmarks) ofObject:self];
   }];
   
   // When the text file or the code view change, bind their texts together
@@ -354,7 +354,7 @@ static void drawStencilStar(CGContextRef myContext)
     FileSystemFile *textFile = tuple.second;
     [textDisposable dispose];
     if (!codeView || !textFile) { return; }
-    textDisposable = [textFile.stringContent syncProperty:RAC_KEYPATH(codeView, text) ofObject:codeView];
+    textDisposable = [textFile.stringContent syncProperty:@keypath(codeView, text) ofObject:codeView];
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
@@ -385,7 +385,7 @@ static void drawStencilStar(CGContextRef myContext)
     ASSERT(syntax);
     
     return [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
-  }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:RAC_KEYPATH_SELF(self.codeUnit) onObject:self];
+  }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:@keypath(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
   [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {

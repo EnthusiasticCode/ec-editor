@@ -276,8 +276,8 @@
   __weak SingleTabController *this = self;
   
   // Back and forward buttons to tab history
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.backButton.enabled) to:RACAble(self.artCodeTab.canMoveBackInHistory)];
-  [self rac_bind:RAC_KEYPATH_SELF(self.defaultToolbar.forwardButton.enabled) to:RACAble(self.artCodeTab.canMoveForwardInHistory)];
+  [self rac_bind:@keypath(self.defaultToolbar.backButton.enabled) to:RACAble(self.artCodeTab.canMoveBackInHistory)];
+  [self rac_bind:@keypath(self.defaultToolbar.forwardButton.enabled) to:RACAble(self.artCodeTab.canMoveForwardInHistory)];
   
   // Changing current tab URL re-route the content view controller
   [RACAble(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
@@ -296,7 +296,7 @@
   }];
   
   // Update tool bar title when project changes
-  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.labelColor), RAC_KEYPATH_SELF(self.artCodeTab.currentLocation.project.name), RAC_KEYPATH_SELF(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
+  [[self rac_whenAny:[NSArray arrayWithObjects:@keypath(self.artCodeTab.currentLocation.project.labelColor), @keypath(self.artCodeTab.currentLocation.project.name), @keypath(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
     return nil;
   }] subscribeNext:^(id x) {
     [this updateDefaultToolbarTitle];

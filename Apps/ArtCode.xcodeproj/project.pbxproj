@@ -1198,6 +1198,7 @@
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Selected.png; sourceTree = "<group>"; };
+		CDCE7E0F1630449A00BE01D8 /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTKeyPathCoding.h; path = extobjc/EXTKeyPathCoding.h; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* PopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDDC95061462E23F00E2B96C /* minimap_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimap_Background.png; sourceTree = "<group>"; };
@@ -1833,6 +1834,7 @@
 		CD54BD8E160607F70025B7CA /* libextobjc */ = {
 			isa = PBXGroup;
 			children = (
+				CDCE7E0F1630449A00BE01D8 /* EXTKeyPathCoding.h */,
 				5F20ABD116230BE40051FC86 /* EXTScope.h */,
 				5F20ABD216230BE40051FC86 /* EXTScope.m */,
 				CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */,

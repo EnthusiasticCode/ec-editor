@@ -76,7 +76,7 @@
       [alsoRename addObject:item];
     }
     return alsoRename;
-  }] toProperty:RAC_KEYPATH_SELF(alsoRenameItems) onObject:self];
+  }] toProperty:@keypath(self.alsoRenameItems) onObject:self];
   
   // Hide or show the alsoRenameTableView when needed
   [[RACSubscribable combineLatest:@[RACAble(self.alsoRenameItems), RACAble(self.alsoRenameView), RACAble(self.alsoRenameTableView)]] subscribeNext:^(RACTuple *xs) {

@@ -105,7 +105,7 @@
   
   // RAC
   __weak ProjectBrowserController *this = self;
-  [self rac_bind:RAC_KEYPATH_SELF(projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
+  [self rac_bind:@keypath(self.projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
   
   // Update gird view
   [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {
@@ -114,7 +114,7 @@
       return;
     NSString *projectName = [proj name];
     __block NSUInteger index = strongSelf->_gridElements.count;
-    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
       if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
         index = idx;
         *stop = YES;

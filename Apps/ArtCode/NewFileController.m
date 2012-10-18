@@ -52,7 +52,7 @@
     }
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
-  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+  }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }
 
 - (void)viewDidUnload {
