@@ -42,7 +42,7 @@
     this.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", this.artCodeTab.currentLocation.prettyPath] : @"The speficied folder name already exists or is invalid.";
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
-  }] toProperty:RAC_KEYPATH_SELF(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+  }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
   
   return self;
 }

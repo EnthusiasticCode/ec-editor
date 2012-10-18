@@ -105,7 +105,7 @@
   
   // RAC
   __weak ProjectBrowserController *this = self;
-  [self rac_bind:RAC_KEYPATH_SELF(projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
+  [self rac_bind:@keypath(self.projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
   
   // Update gird view
   [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {

@@ -59,7 +59,7 @@
     @strongify(self);
     if (!self) { return nil; }
     return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:self.searchBarTextSubject];
-  }] switch] toProperty:RAC_KEYPATH_SELF(filteredItems) onObject:self];
+  }] switch] toProperty:@keypath(self.filteredItems) onObject:self];
   
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);

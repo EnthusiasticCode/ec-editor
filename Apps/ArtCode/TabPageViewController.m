@@ -79,7 +79,7 @@
   // RAC
   __weak TabPageViewController *this = self;
   
-  [[self rac_whenAny:[NSArray arrayWithObjects:RAC_KEYPATH_SELF(self.tabBar.selectedTabIndex), RAC_KEYPATH_SELF(self.tabBar.tabsCount), nil] reduce:^id(RACTuple *xs) {
+  [[self rac_whenAny:[NSArray arrayWithObjects:@keypath(self.tabBar.selectedTabIndex), @keypath(self.tabBar.tabsCount), nil] reduce:^id(RACTuple *xs) {
     return xs;
   }] subscribeNext:^(RACTuple *tuple) {
     [this _populateChildViewControllersUpToCount:[tuple.second unsignedIntegerValue]];

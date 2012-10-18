@@ -94,34 +94,99 @@
   [_connection directoryContents];
 }
 
-- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirecotry {
+- (RACSubscribable *)directoryContentsForDirectory:(NSString *)path {
+  @weakify(self);
+  return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+    @strongify(self);
+    [self changeToDirectory:path];
+    return [[[[[self directoryContents]
+               where:^BOOL(RACTuple *x) {
+                 return [x.first isEqualToString:path]; }]
+               select:^id(RACTuple *x) {
+                 return x.second; }]
+               take:1]
+               subscribe:subscriber];
+  }];
+}
+
+- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory {
   if (!_downloadProgressSubscribables) {
     _downloadProgressSubscribables = [[NSMutableDictionary alloc] init];
   }
-  // Generate the temporary download URL
-  NSURL *tempDownloadURL = isDirecotry ? [NSURL temporaryDirectory] : [NSURL temporaryFileURL];
-  RACSubject *downloadSubscribable = [RACSubject subject];
-  [_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
-  // Run download
-  if (isDirecotry) {
-    [_connection recursivelyDownload:remotePath to:tempDownloadURL.path overwrite:YES];
+  if (isDirectory) {
+    return [self _downloadDirectoryWithRemotePath:remotePath toLocalURL:[NSURL temporaryDirectory]];
   } else {
-    [_connection downloadFile:remotePath toDirectory:tempDownloadURL.path overwrite:YES delegate:nil];
+    return [self _downloadFileWithRemotePath:remotePath toLocalURL:[NSURL temporaryFileURL]];
   }
-  // Retun an 'endWith:tempDownloadURL' subscribable
+}
+
+- (RACSubscribable *)_downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
+  @weakify(self);
   return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
-		return [downloadSubscribable subscribeNext:^(id x) {
-			[subscriber sendNext:x];
-		} error:^(NSError *error) {
-      // Remove temporary file
-      [[NSFileManager defaultManager] removeItemAtURL:tempDownloadURL error:&error];
-			[subscriber sendError:error];
-		} completed:^{
-      // Send temporary download URL uppon completion
-      [subscriber sendNext:tempDownloadURL];
-			[subscriber sendCompleted];
-		}];
+    @strongify(self);
+    // On Subscription, start the download
+    RACSubject *downloadSubscribable = [RACSubject subject];
+    [self->_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
+    [self->_connection downloadFile:remotePath toDirectory:localURL.path overwrite:YES delegate:nil];
+    // Retun an 'endWith:localURL' subscribable
+		return [downloadSubscribable
+            subscribeNext:^(id x) {
+              [subscriber sendNext:x];
+            } error:^(NSError *error) {
+              // Remove temporary file
+              [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
+              [subscriber sendError:error];
+            } completed:^{
+              // Send temporary download URL uppon completion
+              [subscriber sendNext:localURL];
+              [subscriber sendCompleted];
+            }];
 	}];
+}
+
+- (RACSubscribable *)_downloadDirectoryWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
+  @weakify(self);
+  return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+    @strongify(self);
+    // Create destination directory
+    [[NSFileManager defaultManager] createDirectoryAtURL:localURL withIntermediateDirectories:YES attributes:nil error:NULL];
+    // Returning a subscribable that 'endWith:localURL'
+    __block NSUInteger totalExpected = 0;
+    __block NSUInteger totalAccumulator = 0;
+    return [[[[self directoryContentsForDirectory:remotePath]
+              // Transform the directory content into subscribable
+              selectMany:^id(NSArray *content) {
+                totalExpected = content.count;
+                return [content rac_toSubscribable];
+              }]
+              // Get a merge of all 
+              selectMany:^id(NSDictionary *item) {
+                @strongify(self);
+                NSString *itemName = [item objectForKey:cxFilenameKey];
+                NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
+                NSURL *itemLocalURL = [localURL URLByAppendingPathComponent:itemName isDirectory:YES];
+                // For every item in the directory, return the progress subscribable
+                if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
+                  return [self _downloadDirectoryWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
+                } else {
+                  return [self _downloadFileWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
+                }
+              }] subscribeNext:^(id x) {
+                // Ignore progress nexts, only consider completed files
+                if ([x isKindOfClass:[NSURL class]]) {
+                  totalAccumulator++;
+                  [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
+                }
+              } error:^(NSError *error) {
+                // Remove temporary file
+                [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
+                [subscriber sendError:error];
+              } completed:^{
+                // Send temporary download URL uppon completion
+                [subscriber sendNext:localURL];
+                [subscriber sendCompleted];
+              }];
+  }];
 }
 
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {

@@ -71,7 +71,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
                                   return pathAndContent.second;
                                 }];
   
-  [[self rac_whenAny:@[RAC_KEYPATH_SELF(directoryContent), RAC_KEYPATH_SELF(progressItems)] reduce:^id(RACTuple *xs) {
+  [[self rac_whenAny:@[@keypath(self.directoryContent), @keypath(self.progressItems)] reduce:^id(RACTuple *xs) {
     return xs;
   }] subscribeNext:^(id x) {
     [this invalidateFilteredItems];

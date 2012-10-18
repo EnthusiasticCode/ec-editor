@@ -27,7 +27,27 @@
 }
 
 + (NSURL *)temporaryDirectory {
-  return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+  NSString *tempDirectoryTemplate =
+  [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpdir.XXXXXX"];
+  const char *tempDirectoryTemplateCString =
+  [tempDirectoryTemplate fileSystemRepresentation];
+  char *tempDirectoryNameCString =
+  (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
+  strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
+  
+  char *result = mkdtemp(tempDirectoryNameCString);
+  if (!result)
+  {
+    // handle directory creation failure
+  }
+  
+  NSString *tempDirectoryPath =
+  [[NSFileManager defaultManager]
+   stringWithFileSystemRepresentation:tempDirectoryNameCString
+   length:strlen(result)];
+  free(tempDirectoryNameCString);
+  
+  return [NSURL fileURLWithPath:tempDirectoryPath isDirectory:YES];
 }
 
 + (NSURL *)temporaryFileURL {
@@ -53,7 +73,7 @@
   
   free(tempFileNameCString);
   
-  return [NSURL fileURLWithPath:tempFileName];
+  return [NSURL fileURLWithPath:tempFileName isDirectory:NO];
 }
 
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL {
