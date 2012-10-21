@@ -148,7 +148,7 @@
           }
         }], [FileSystemDirectory directoryWithURL:createdProject.fileURL]] reduce:^id(RACTuple *xs) {
           NSArray *children = xs.first;
-          FileSystemItem *projectDirectory = xs.second;
+          FileSystemDirectory *projectDirectory = xs.second;
           return [[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *child) {
             return [child moveTo:projectDirectory];
           }];

@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 
 #import "AppStyle.h"
-#import "HighlightTableViewCell.h"
+#import "FileSystemItemCell.h"
 #import "ArchiveUtilities.h"
 
 #import "NewFileController.h"
@@ -183,28 +183,26 @@
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
+  static NSString *cellIdentifier = @"Cell";
+  
+  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  if (!cell) {
+    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+  }
   
   // Configure the cell
   RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
   FileSystemItem *item = filteredItem.first;
-  NSString *itemName = item.name.first;
+  NSIndexSet *hitMask = filteredItem.second;
+  cell.item = item;
+  cell.hitMask = hitMask;
   
-  cell.textLabel.text = itemName;
-  cell.textLabelHighlightedCharacters = filteredItem.second;
-  
-  if (item.type.first == NSURLFileResourceTypeDirectory) {
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-  } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemName.pathExtension];
-    cell.accessoryType = UITableViewCellAccessoryNone;
-  }
-    // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
+  // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
   if ([_selectedItems containsObject:item])
-    [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   
   return cell;
 }
@@ -222,7 +220,7 @@
     NSURL *fileURL = item.url.first;
     if (item.type.first == NSURLFileResourceTypeDirectory) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-    }else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+    } else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
       [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
     } else {
       FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];

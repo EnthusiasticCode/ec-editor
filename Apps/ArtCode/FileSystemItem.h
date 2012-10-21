@@ -17,16 +17,16 @@
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url;
 
 /// Returns a subscribable that sends the URL of the item
-@property (nonatomic, strong, readonly) id<RACSubscribable>url;
+- (id<RACSubscribable>)url;
 
 /// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver
-@property (nonatomic, strong, readonly) id<RACSubscribable>type;
+- (id<RACSubscribable>)type;
 
 /// Returns a subscribable that sends the name of the item
-@property (nonatomic, strong, readonly) id<RACSubscribable>name;
+- (id<RACSubscribable>)name;
 
 /// Returns a subscribable that sends the parent directory of the receiver
-@property (nonatomic, strong, readonly) id<RACSubscribable>parent;
+- (id<RACSubscribable>)parent;
 
 /// Attempts to create the receiver, then sends the item and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)create;

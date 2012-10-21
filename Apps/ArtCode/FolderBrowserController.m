@@ -39,12 +39,12 @@
     return [[[children rac_toSubscribable] where:^BOOL(FileSystemItem *child) {
       return child.type.first == NSURLFileResourceTypeDirectory;
     }] toArray];
-  }] toProperty:RAC_KEYPATH_SELF(self.currentFolderSubfolders) onObject:self];
+  }] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
   [[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder name];
-  }] switch] toProperty:RAC_KEYPATH_SELF(self.navigationItem.title) onObject:self];
+  }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
   [[RACSubscribable combineLatest:@[RACAble(self.currentFolderSubfolders), RACAble(self.tableView)]] subscribeNext:^(RACTuple *xs) {

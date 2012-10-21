@@ -27,6 +27,7 @@
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
+		5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */; };
 		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
@@ -613,6 +614,8 @@
 		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
 		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
 		5F7047DF15D1D7D5005EF62D /* magic.mgc */ = {isa = PBXFileReference; lastKnownFileType = file; name = magic.mgc; path = "../../../ThirdParty/file/Supporting Files/magic.mgc"; sourceTree = "<group>"; };
+		5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItemCell.h; sourceTree = "<group>"; };
+		5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItemCell.m; sourceTree = "<group>"; };
 		5FA6148415CE814500A0932A /* libfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfile.a; path = "../ThirdParty/file/build/Release-iphoneos/libfile.a"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
@@ -2327,6 +2330,8 @@
 				CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */,
 				CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */,
 				CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */,
+				5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */,
+				5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */,
 			);
 			name = "Views and Controls";
 			sourceTree = "<group>";
@@ -3172,6 +3177,7 @@
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
 				CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */,
+				5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
