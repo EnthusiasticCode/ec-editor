@@ -25,7 +25,7 @@
 #import "NSString+PluralFormat.h"
 
 
-@interface RemoteNavigationController () <UINavigationControllerDelegate>
+@interface RemoteNavigationController () <UINavigationControllerDelegate, UIActionSheetDelegate>
 @property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
 @property (nonatomic, strong, readwrite) ReactiveConnection *connection;
 
@@ -36,9 +36,12 @@
 
 - (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController;
 - (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController;
+- (void)_presentRemoteDeleteConfirmationActionSheetWithSender:(id)sender;
 @end
 
-@implementation RemoteNavigationController
+@implementation RemoteNavigationController {
+  UIActionSheet *_remoteDeleteConfirmationActionSheet;
+}
 
 #pragma mark Controller lifecycle
 
@@ -77,7 +80,7 @@ static void _init(RemoteNavigationController *self) {
          break;
          
        case 5: // Delete
-         ASSERT(NO); // TODO
+         [self _presentRemoteDeleteConfirmationActionSheetWithSender:x];
          break;
          
        default: // Close
@@ -152,6 +155,23 @@ static void _init(RemoteNavigationController *self) {
   } else if (navigationController == self.remoteBrowserNavigationController) {
     self.remoteFileListController = (RemoteFileListController *)viewController;
     self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
+  }
+}
+
+#pragma mark UIActionSheetDelegate
+
+- (void)_presentRemoteDeleteConfirmationActionSheetWithSender:(id)sender {
+  if (!_remoteDeleteConfirmationActionSheet) {
+    _remoteDeleteConfirmationActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+  }
+  [_remoteDeleteConfirmationActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if (actionSheet == _remoteDeleteConfirmationActionSheet) {
+    if (buttonIndex == actionSheet.destructiveButtonIndex) {
+      // TODO destroy!
+    }
   }
 }
 

@@ -122,7 +122,7 @@
 
 - (RACSubscribable *)_downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
   @weakify(self);
-  return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+  return [[[RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
     @strongify(self);
     // On Subscription, start the download
     RACSubject *downloadSubscribable = [RACSubject subject];
@@ -141,12 +141,12 @@
               [subscriber sendNext:localURL];
               [subscriber sendCompleted];
             }];
-	}];
+	}] publish] autoconnect];
 }
 
 - (RACSubscribable *)_downloadDirectoryWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
   @weakify(self);
-  return [RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+  return [[[RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
     @strongify(self);
     // Create destination directory
     [[NSFileManager defaultManager] createDirectoryAtURL:localURL withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -186,7 +186,7 @@
                 [subscriber sendNext:localURL];
                 [subscriber sendCompleted];
               }];
-  }];
+  }] publish] autoconnect];
 }
 
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
