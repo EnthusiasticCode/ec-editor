@@ -21,7 +21,6 @@
 
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
-@property (nonatomic, strong) id<RACSubscribable>name;
 @property (nonatomic, strong) RACReplaySubject *parentBacking;
 
 @property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
@@ -89,8 +88,8 @@
     ASSERT_NOT_MAIN_QUEUE();
     FileSystemItem *item = [[self itemCache] objectForKey:url];
     if (item) {
-      ASSERT([item.url.first isEqual:url]);
-      if (type && ![item.type.first isEqual:type]) {
+      ASSERT([item.urlBacking.first isEqual:url]);
+      if (type && ![item.typeBacking.first isEqual:type]) {
         return [RACSubscribable error:[[NSError alloc] init]];
       }
       return [RACSubscribable return:item];
@@ -125,9 +124,6 @@
     return nil;
   }
   _urlBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-  _name = [[[[_urlBacking select:^NSString *(NSURL *url) {
-    return url.lastPathComponent;
-  }] distinctUntilChanged] publish] autoconnect];
   [_urlBacking sendNext:url];
   _typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   [_typeBacking sendNext:type];
@@ -137,11 +133,17 @@
 }
 
 - (id<RACSubscribable>)url {
-  return self.urlBacking;
+  return [self.urlBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)type {
-  return self.typeBacking;
+  return [self.typeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)name {
+  return [[self.urlBacking select:^NSString *(NSURL *url) {
+    return url.lastPathComponent;
+  }] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)parent {
@@ -364,6 +366,10 @@
   }];
   return result;
 }
+
+@end
+
+@implementation FileSystemItem (FileManagement_Private)
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
   

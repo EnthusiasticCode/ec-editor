@@ -108,6 +108,7 @@
     if (!strongSelf) {
       return;
     }
+    [strongSelf.tableView reloadData];
     if (strongSelf.searchBar.text.length) {
       if (items.count == 0) {
         strongSelf.infoLabel.text = L(@"No items in this folder match the filter.");
@@ -217,25 +218,28 @@
       _selectedItems = [[NSMutableArray alloc] init];
     [_selectedItems addObject:item];
   } else {
-    NSURL *fileURL = item.url.first;
-    if (item.type.first == NSURLFileResourceTypeDirectory) {
-      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-    } else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
-      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-    } else {
-      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
-      if ([QLPreviewController canPreviewItem:item]) {
-        [self _previewFile:fileURL];
+    @weakify(self);
+    [[[RACSubscribable combineLatest:@[item.url, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
+      @strongify(self);
+      NSURL *fileURL = xs.first;
+      NSString *type = xs.second;
+      if (type == NSURLFileResourceTypeDirectory) {
+        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+      } else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+      } else {
+        FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
+        if ([QLPreviewController canPreviewItem:item]) {
+          [self _previewFile:fileURL];
+        }
       }
-    }
+    }];
   }
 }
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
-  if (self.isEditing)
-  {
+  if (self.isEditing) {
     [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
   }
 }
@@ -258,50 +262,41 @@
 
 #pragma mark - Action Sheet Delegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-  if (actionSheet == _toolEditDeleteActionSheet)
-  {
-    if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
-    {
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if (actionSheet == _toolEditDeleteActionSheet) {
+    if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
       [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
         return [x delete];
       }] subscribeCompleted:^{
+        ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
-  }
-  else if (actionSheet == _toolEditItemDuplicateActionSheet)
-  {
-    if (buttonIndex == 0) // Copy
-    {
+  } else if (actionSheet == _toolEditItemDuplicateActionSheet) {
+    if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
       directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
       [self modalNavigationControllerPresentViewController:directoryBrowser];
-    }
-    else if (buttonIndex == 1) // Duplicate
-    {
+    } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
       [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
         return [x duplicate];
       }] subscribeCompleted:^{
+        ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
-  }
-  else if (actionSheet == _toolEditItemExportActionSheet)
-  {
+  } else if (actionSheet == _toolEditItemExportActionSheet) {
     switch (buttonIndex) {
-      case 0: // Rename
-      {
+      case 0: { // Rename
         if (_selectedItems.count != 1) {
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
@@ -320,37 +315,36 @@
           }
         }];
         [self modalNavigationControllerPresentViewController:renameController];
-      } break;
-        
-      case 1: // Move
-      {
+        break;
+      }
+      case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
         directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
         [self modalNavigationControllerPresentViewController:directoryBrowser];
-      } break;
-        
-      case 2: // iTunes
-      {
+        break;
+      }
+      case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
         [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
         }] subscribeCompleted:^{
+          ASSERT_MAIN_QUEUE();
           self.loading = NO;
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
-      } break;
-        
-      case 3: // Mail
-      {
+        break;
+      }
+      case 3: { // Mail
         // Compressing files to export
         self.loading = YES;
         
         [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] select:^id(FileSystemItem *x) {
           return x.url.first;
         }] toArray] completionHandler:^(NSURL *temporaryDirectoryURL) {
+          ASSERT_MAIN_QUEUE();
           if (temporaryDirectoryURL) {
             NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
             [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
@@ -376,7 +370,8 @@
         }];
         
         [self setEditing:NO animated:YES];
-      } break;
+        break;
+      }
     }
   }
 }
@@ -384,16 +379,16 @@
 #pragma mark - Mail composer Delegate
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-  if (result == MFMailComposeResultSent)
+  if (result == MFMailComposeResultSent) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+  }
   [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Private Methods
 
 - (void)_toolNormalAddAction:(id)sender {
-  if (!_toolNormalAddPopover)
-  {
+  if (!_toolNormalAddPopover) {
     UINavigationController *popoverViewController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"NewFilePopover" bundle:nil] instantiateInitialViewController];
     popoverViewController.artCodeTab = self.artCodeTab;
     [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
@@ -407,8 +402,7 @@
 }
 
 - (void)_toolEditExportAction:(id)sender {
-  if (!_toolEditItemExportActionSheet)
-  {
+  if (!_toolEditItemExportActionSheet) {
     _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Move to new location"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
@@ -416,8 +410,7 @@
 }
 
 - (void)_toolEditDuplicateAction:(id)sender {
-  if (!_toolEditItemDuplicateActionSheet)
-  {
+  if (!_toolEditItemDuplicateActionSheet) {
     _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Copy to new location"), L(@"Duplicate"), nil];
     _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
@@ -427,12 +420,9 @@
 #pragma mark Modal actions
 
 - (void)modalNavigationControllerDismissAction:(id)sender {
-  if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
-  {
+  if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished]) {
     [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
-  }
-  else
-  {
+  } else {
     [self setEditing:NO animated:YES];
     [super modalNavigationControllerDismissAction:sender];
   }
@@ -451,6 +441,7 @@
   NSArray *items = [_selectedItems copy];
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
     [[item copyTo:moveFolder] subscribeError:^(NSError *error) {
+      ASSERT_MAIN_QUEUE();
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
     }];
   } completion:^{
