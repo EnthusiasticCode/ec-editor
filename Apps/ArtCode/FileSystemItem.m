@@ -16,22 +16,35 @@
 // All filesystem operations must be done on this scheduler
 + (RACScheduler *)fileSystemScheduler;
 + (NSMutableDictionary *)itemCache;
-
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type;
++ (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type;
 
 @property (nonatomic, strong) RACReplaySubject *urlBacking;
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
-
-@property (nonatomic, strong) RACPropertySyncSubject *stringContent;
+@property (nonatomic, strong) RACReplaySubject *parentBacking;
 
 @property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type;
 
 @end
 
 @interface FileSystemDirectory ()
 
+@property (nonatomic, strong) RACReplaySubject *childrenBacking;
+
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
 - (id<RACSubscribable>)internalChildren;
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options;
+- (void)didChangeChildren;
+
+@end
+
+@interface FileSystemItem (FileManagement_Private)
+
++ (void)didMove:(NSURL *)source to:(NSURL *)destination;
++ (void)didCopy:(NSURL *)source to:(NSURL *)destination;
++ (void)didDelete:(NSURL *)target;
 
 @end
 
@@ -60,49 +73,63 @@
 }
 
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:nil];
 }
 
-+ (id<RACSubscribable>)readItemAtURL:(NSURL *)url {
-  if (!url) {
++ (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type {
+  return [[[self internalItemWithURL:url type:type] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
++ (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type {
+  if (!url || ![url isFileURL]) {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
-  return [[[RACSubscribable defer:^id<RACSubscribable>{
-    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
-      ASSERT_NOT_MAIN_QUEUE();
-      FileSystemItem *item = [[self itemCache] objectForKey:url];
-      if (item) {
-        ASSERT([[item.urlBacking first] isEqual:url]);
-        [subscriber sendNext:item];
-        [subscriber sendCompleted];
-        return nil;
+  return [RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    FileSystemItem *item = [[self itemCache] objectForKey:url];
+    if (item) {
+      ASSERT([item.urlBacking.first isEqual:url]);
+      if (type && ![item.typeBacking.first isEqual:type]) {
+        return [RACSubscribable error:[[NSError alloc] init]];
       }
-      NSString *type = nil;
-      if (![url getResourceValue:&type forKey:NSURLFileResourceTypeKey error:NULL]) {
-        [subscriber sendError:[[NSError alloc] init]];
-        return nil;
-      }
-      item = [[self alloc] init];
-      item.urlBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-      [item.urlBacking sendNext:url];
-      item.typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-      [item.typeBacking sendNext:type];
-      if (type == NSURLFileResourceTypeRegular) {
-        item.stringContent = [RACPropertySyncSubject subject];
-        NSError *error;
-        [item.stringContent sendNext:[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error]];
-        if (error) {
-          [subscriber sendError:error];
-          return nil;
-        }
-      }
-      item.extendedAttributes = [NSMutableDictionary dictionary];
-      [[self itemCache] setObject:item forKey:url];
-      [subscriber sendNext:item];
-      [subscriber sendCompleted];
-      return nil;
-    }];
-  }] subscribeOn:[self fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+      return [RACSubscribable return:item];
+    }
+    NSString *detectedType = nil;
+    [url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
+    if (detectedType && type && ![detectedType isEqual:type]) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    NSString *finalType = type ? : detectedType;
+    Class finalClass = nil;
+    if (finalType == NSURLFileResourceTypeRegular) {
+      finalClass = [FileSystemFile class];
+    } else if (finalType == NSURLFileResourceTypeDirectory) {
+      finalClass = [FileSystemDirectory class];
+    } else {
+      finalClass = [FileSystemItem class];
+    }
+    item = [[finalClass alloc] initWithURL:url type:finalType];
+    if (!item) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    [[self itemCache] setObject:item forKey:url];
+    return [RACSubscribable return:item];
+  }];
+}
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  ASSERT_NOT_MAIN_QUEUE();
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
+  _urlBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [_urlBacking sendNext:url];
+  _typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [_typeBacking sendNext:type];
+  _parentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  _extendedAttributes = [NSMutableDictionary dictionary];
+  return self;
 }
 
 - (id<RACSubscribable>)url {
@@ -111,6 +138,20 @@
 
 - (id<RACSubscribable>)type {
   return [self.typeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)name {
+  return [[self.urlBacking select:^NSString *(NSURL *url) {
+    return url.lastPathComponent;
+  }] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)parent {
+  return [FileSystemItem itemWithURL:[self.urlBacking.first URLByDeletingLastPathComponent] type:NSURLFileResourceTypeDirectory];
+}
+
+- (id<RACSubscribable>)create {
+  
 }
 
 - (id<RACSubscribable>)save {
@@ -122,7 +163,23 @@
 @implementation FileSystemFile
 
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
+}
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  self = [super initWithURL:url type:type];
+  if (!self) {
+    return nil;
+  }
+  _stringContent = [RACPropertySyncSubject subject];
+  NSError *error;
+  NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+  if (!error) {
+    [_stringContent sendNext:content];
+  } else {
+    [_stringContent sendError:error];
+  }
+  return self;
 }
 
 @end
@@ -130,7 +187,17 @@
 @implementation FileSystemDirectory
 
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
-  return [self readItemAtURL:url];
+  return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
+}
+
+- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
+  self = [super initWithURL:url type:type];
+  if (!self) {
+    return nil;
+  }
+  _childrenBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [self didChangeChildren];
+  return self;
 }
 
 - (id<RACSubscribable>)children {
@@ -149,51 +216,6 @@
   return [[[RACSubscribable combineLatest:@[[self internalChildrenWithOptions:options], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-@end
-
-@implementation FileSystemItem (FileManagement)
-
-- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination {
-  
-}
-
-- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination {
-  
-}
-
-- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
-  
-}
-
-- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
-  
-}
-
-- (id<RACSubscribable>)delete {
-  
-}
-
-@end
-
-@implementation FileSystemItem (ExtendedAttributes)
-
-- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
-  ASSERT(self.extendedAttributes);
-  @synchronized(self.extendedAttributes) {
-    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
-    if (!extendedAttribute) {
-      extendedAttribute = [RACPropertySyncSubject subject];
-      [extendedAttribute sendNext:nil];
-      [self.extendedAttributes setObject:extendedAttribute forKey:key];
-    }
-    return extendedAttribute;
-  }
-}
-
-@end
-
-@implementation FileSystemItem (Directory_Private)
-
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
   static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *) = nil;
   static dispatch_once_t onceToken;
@@ -204,16 +226,16 @@
       
       // No abbreviation, no need to filter
       if (![abbreviation length]) {
-        return [[[content rac_toSubscribable] select:^id(NSURL *url) {
-          return [RACTuple tupleWithObjectsFromArray:@[url, [RACTupleNil tupleNil]]];
+        return [[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
+          return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
         }] toArray];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(NSURL *url) {
+      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
-        float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-        return [RACTuple tupleWithObjectsFromArray:@[url, hitMask ? : [RACTupleNil tupleNil], @(score)]];
+        float score = [item.name.first scoreForAbbreviation:abbreviation hitMask:&hitMask];
+        return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
       }] where:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
       }] toArray] mutableCopy];
@@ -241,19 +263,142 @@
 }
 
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
-  return [RACSubscribable defer:^id<RACSubscribable>{
-    ASSERT_NOT_MAIN_QUEUE();
-    if (!self.urlBacking || ![[self.typeBacking first] isEqualToString:NSURLFileResourceTypeDirectory]) {
-      return [RACSubscribable error:[[NSError alloc] init]];
+  return self.childrenBacking;
+}
+
+- (void)didChangeChildren {
+  NSMutableArray *children = [[NSMutableArray alloc] init];
+  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:0 errorHandler:nil]) {
+    FileSystemItem *child = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
+    if (child) {
+      [children addObject:child];
     }
-    RACReplaySubject *subject = [RACReplaySubject replaySubjectWithCapacity:1];
-    NSMutableArray *content = [NSMutableArray array];
-    for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:options errorHandler:nil]) {
-      [content addObject:childURL];
+  }
+  [self.childrenBacking sendNext:children.copy];
+}
+
+@end
+
+@implementation FileSystemItem (FileManagement)
+
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination {
+  
+}
+
+- (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination {
+  
+}
+
+- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName];
+    NSError *error = nil;
+    if (!copy) {
+      if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newURL error:&error]) {
+        [result sendError:error];
+      } else {
+        [[self class] didMove:url to:newURL];
+        [result sendNext:self];
+        [result sendCompleted];
+      }
+    } else {
+      if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:newURL error:&error]) {
+        [result sendError:error];
+      } else {
+        [[self class] didCopy:url to:newURL];
+        [result sendNext:[[self class] internalItemWithURL:newURL type:nil]];
+        [result sendCompleted];
+      }
     }
-    [subject sendNext:content];
-    return subject;
   }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)duplicate {
+  
+}
+
+- (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSError *error = nil;
+    if (!copy) {
+      if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:destination error:&error]) {
+        [result sendError:error];
+      } else {
+        [[self class] didDelete:url];
+        [result sendNext:destination];
+        [result sendCompleted];
+      }
+    } else {
+      if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destination error:&error]) {
+        [result sendError:error];
+      } else {
+        [result sendNext:destination];
+        [result sendCompleted];
+      }
+    }
+  }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+- (id<RACSubscribable>)delete {
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtURL:url error:&error]) {
+      [result sendError:error];
+    } else {
+      [[self class] didDelete:url];
+      [result sendNext:self];
+      [result sendCompleted];
+    }
+  }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+}
+
+@end
+
+@implementation FileSystemItem (FileManagement_Private)
+
++ (void)didMove:(NSURL *)source to:(NSURL *)destination {
+  
+}
+
++ (void)didCopy:(NSURL *)source to:(NSURL *)destination {
+  
+}
+
++ (void)didDelete:(NSURL *)target {
+  [[[[self itemCache] objectForKey:target] urlBacking] sendNext:nil];
+  [[[self itemCache] objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
+}
+
+@end
+
+@implementation FileSystemItem (ExtendedAttributes)
+
+- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
+  ASSERT(self.extendedAttributes);
+  @synchronized(self.extendedAttributes) {
+    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
+    if (!extendedAttribute) {
+      extendedAttribute = [RACPropertySyncSubject subject];
+      [extendedAttribute sendNext:nil];
+      [self.extendedAttributes setObject:extendedAttribute forKey:key];
+    }
+    return extendedAttribute;
+  }
 }
 
 @end

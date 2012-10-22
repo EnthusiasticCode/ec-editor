@@ -12,9 +12,11 @@
 #import "NSString+PluralFormat.h"
 #import "FileSystemItem.h"
 
+
 @interface FolderBrowserController ()
 
-@property (nonatomic, strong, readonly) NSArray *currentFolderSubfolders;
+@property (nonatomic, strong) FileSystemDirectory *selectedFolder;
+@property (nonatomic, strong) NSArray *currentFolderSubfolders;
 
 @end
 
@@ -22,37 +24,34 @@
 
 @implementation FolderBrowserController
 
-@synthesize currentFolderURL = _currentFolderURL, currentFolderSubfolders = _currentFolderSubfolders;
-
-- (void)setCurrentFolderURL:(NSURL *)currentFolderURL {
-  if (currentFolderURL == _currentFolderURL)
-    return;
-  
-  _currentFolderURL = currentFolderURL;
-  self.navigationItem.title = currentFolderURL.lastPathComponent;
-  _currentFolderSubfolders = nil;
-  [self.tableView reloadData];
-}
-
-- (NSArray *)currentFolderSubfolders {
-  if (!_currentFolderSubfolders) {
-    NSMutableArray *result = [[NSMutableArray alloc] init];
-    NSNumber *isDirectory;
-    for (NSURL *subfolderURL in [[NSFileManager defaultManager] enumeratorAtURL:self.currentFolderURL includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsDirectoryKey, nil] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
-      [subfolderURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
-      if ([isDirectory boolValue]) {
-        [result addObject:subfolderURL];
-      }
-    }
-    _currentFolderSubfolders = [result copy];
+- (id)initWithStyle:(UITableViewStyle)style {
+  self = [super initWithStyle:style];
+  if (!self) {
+    return nil;
   }
-  return _currentFolderSubfolders;
-}
-
-- (NSURL *)selectedFolderURL {
-  if (self.tableView.indexPathForSelectedRow)
-    return [self.currentFolderSubfolders objectAtIndex:self.tableView.indexPathForSelectedRow.row];
-  return self.currentFolderURL;
+  
+  // RAC
+  
+  // Update table content
+  [[[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+    return [folder children];
+  }] switch] select:^NSArray *(NSArray *children) {
+    return [[[children rac_toSubscribable] where:^BOOL(FileSystemItem *child) {
+      return child.type.first == NSURLFileResourceTypeDirectory;
+    }] toArray];
+  }] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
+  
+  // Update title
+  [[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+    return [folder name];
+  }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
+  
+  // reload table
+  [[RACSubscribable combineLatest:@[RACAble(self.currentFolderSubfolders), RACAble(self.tableView)]] subscribeNext:^(RACTuple *xs) {
+    [xs.second reloadData];
+  }];
+  
+  return self;
 }
 
 #pragma mark - UIViewController
@@ -76,9 +75,9 @@
     cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
   }
   
-  NSURL *itemURL = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  FileSystemDirectory *subfolder = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
   cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-  cell.textLabel.text = itemURL.lastPathComponent;
+  cell.textLabel.text = subfolder.name.first;
   
   // TODO add child descriptions (number of files, folders)
 //  cell.detailTextLabel.text = [item childrenDescription];
@@ -97,11 +96,15 @@
 
 #pragma mark - UITableView Delegate
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  self.selectedFolder = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+}
+
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   ASSERT(self.navigationController != nil);
   
   FolderBrowserController *nextBrowser = [[FolderBrowserController alloc] initWithStyle:self.tableView.style];
-  nextBrowser.currentFolderURL = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  nextBrowser.currentFolderSubscribable = [RACSubscribable return:[self.currentFolderSubfolders objectAtIndex:indexPath.row]];
   nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
   [self.navigationController pushViewController:nextBrowser animated:YES];
 }

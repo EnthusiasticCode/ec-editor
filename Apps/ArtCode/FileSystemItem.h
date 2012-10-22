@@ -16,26 +16,23 @@
 /// Note that if the item doesn't exist on the file system, it won't be possible to create it with the item returned from this call
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends the name of the item
-- (id<RACSubscribable>)name;
-
 /// Returns a subscribable that sends the URL of the item
 - (id<RACSubscribable>)url;
 
 /// Returns a subscribable that sends the \c NSURLFileResourceTypeKey value of the receiver
 - (id<RACSubscribable>)type;
 
+/// Returns a subscribable that sends the name of the item
+- (id<RACSubscribable>)name;
+
 /// Returns a subscribable that sends the parent directory of the receiver
 - (id<RACSubscribable>)parent;
 
-/// Attempts to create the receiver, then sends a next and an error or completed to the returned subscribable
+/// Attempts to create the receiver, then sends the item and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)create;
 
-/// Attempts to save the receiver to disk, then sends a next and an error or completed to the returned subscribable
+/// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)save;
-
-/// Attempts to duplicate the receiver, then sends a next and an error or completed to the returned subscribable
-- (id<RACSubscribable>)duplicate;
 
 @end
 
@@ -45,7 +42,7 @@
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url;
 
 /// Returns a RACPropertySyncSubject for the content of the file as an NSString
-- (RACPropertySyncSubject *)stringContent;
+@property (nonatomic, strong, readonly) RACPropertySyncSubject *stringContent;
 
 @end
 
@@ -54,39 +51,42 @@
 /// Return a subscribable that sends the directory item with the given URL, then completes
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
 
-/// Returns a subscribable that sends the contents of the directory as it changes.
+/// Returns a subscribable that sends the children of the directory as they change.
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
 - (id<RACSubscribable>)children;
 
-/// Returns a subscribable that sends the content of the directory as it changes.
+/// Returns a subscribable that sends the children of the directory as they change.
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options;
 
-/// Returns a subscribable that sends the contents of the directory as it changes filtered by the abbreviations sent by \a abbreviationSubscribable.
-/// Sends tuples where the first element is the url and the second element is the filter hitmask, if applicable
+/// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
+/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:abbreviationSubscribable
 - (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
 
-/// Returns a subscribable that sends the content of the directory as it changes filtered by the abbreviations sent by \a abbreviationSubscribable.
-/// Sends tuples where the first element is the url and the second element is the filter hitmask, if applicable
+/// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
+/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
 
 @end
 
 @interface FileSystemItem (FileManagement)
 
-/// Attempts to move the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
-- (id<RACSubscribable>)moveTo:(FileSystemItem *)destination;
+/// Attempts to move the receiver to the destination, then sends the item and completed, or an error, to the returned subscribable.
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination;
 
-/// Attempts to copy the receiver to the destination, then sends a next and an error or completed to the returned subscribable.
-- (id<RACSubscribable>)copyTo:(FileSystemItem *)destination;
+/// Attempts to copy the receiver to the destination, then sends the copy and completed, or an error, to the returned subscribable.
+- (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination;
 
-/// Attempts to rename or create a renamed copy of the receiver, then sends a next and an error or completed to the returned subscribable.
+/// Attempts to rename or create a renamed copy of the receiver, then sends the item and completed, or an error, to the returned subscribable.
 - (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy;
 
-/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends a next and an error or completed to the returned subscribable.
+/// Attempts to duplicate the receiver, then sends the duplicate and completed, or an error, to the returned subscribable
+- (id<RACSubscribable>)duplicate;
+
+/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends the destination url and completed, or an error, to the returned subscribable.
 - (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy;
 
-/// Attempts to delete the receiver, then sends a next and an error or completed to the returned subscribable.
+/// Attempts to delete the receiver, then sends the item and completed, or an error, to the returned subscribable.
 - (id<RACSubscribable>)delete;
 
 @end

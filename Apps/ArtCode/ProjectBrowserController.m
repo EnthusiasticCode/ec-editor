@@ -69,7 +69,7 @@
   if (!_gridElements) {
     NSMutableArray *elements = [NSMutableArray arrayWithArray:[[ArtCodeProjectSet defaultSet] projects].array];
     [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
-    _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+    _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(ArtCodeProject *obj1, ArtCodeProject *obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
     }];
     
@@ -130,7 +130,7 @@
       return;
     NSString *projectName = [proj name];
     __block NSUInteger index = 0;
-    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
       if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
         index = idx;
         *stop = YES;

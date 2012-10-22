@@ -7,15 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+@class FileSystemDirectory;
 
 /// Controller used to manage a table view display a drill-down navigation
 /// in folders starting from the current project's content folder.
 @interface FolderBrowserController : UITableViewController
 
 /// The folder that the browser is currently displaying.
-@property (nonatomic, strong) NSURL *currentFolderURL;
+@property (nonatomic, strong) id<RACSubscribable> currentFolderSubscribable;
 
 /// The ArtCodeLocation selected by the user.
-@property (nonatomic, strong, readonly) NSURL *selectedFolderURL;
+@property (nonatomic, strong, readonly) FileSystemDirectory *selectedFolder;
 
 @end

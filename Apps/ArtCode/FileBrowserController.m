@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 
 #import "AppStyle.h"
-#import "HighlightTableViewCell.h"
+#import "FileSystemItemCell.h"
 #import "ArchiveUtilities.h"
 
 #import "NewFileController.h"
@@ -102,11 +102,13 @@
       filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:@keypath(anotherStrongSelf, filteredItems) from:[directory childrenFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
     }];
   }];
+  
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     FileBrowserController *strongSelf = weakSelf;
     if (!strongSelf) {
       return;
     }
+    [strongSelf.tableView reloadData];
     if (strongSelf.searchBar.text.length) {
       if (items.count == 0) {
         strongSelf.infoLabel.text = L(@"No items in this folder match the filter.");
@@ -182,27 +184,26 @@
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
+  static NSString *cellIdentifier = @"Cell";
+  
+  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  if (!cell) {
+    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+  }
   
   // Configure the cell
-  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
-  NSURL *itemURL = item.first;
+  RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
+  FileSystemItem *item = filteredItem.first;
+  NSIndexSet *hitMask = filteredItem.second;
+  cell.item = item;
+  cell.hitMask = hitMask;
   
-  cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = item.second;
-  
-  if ([itemURL isDirectory]) {
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-  } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
-    cell.accessoryType = UITableViewCellAccessoryNone;
-  }
-    // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-  if ([_selectedItems containsObject:itemURL])
-    [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+  // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
+  if ([_selectedItems containsObject:item])
+    [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   
   return cell;
 }
@@ -211,30 +212,34 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
   if (self.isEditing) {
     if (!_selectedItems)
       _selectedItems = [[NSMutableArray alloc] init];
-    [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [_selectedItems addObject:item];
   } else {
-    NSURL *fileURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
-    if ([fileURL isDirectory]) {
-      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-    }else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
-      [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-    } else {
-      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
-      if ([QLPreviewController canPreviewItem:item]) {
-        [self _previewFile:fileURL];
+    @weakify(self);
+    [[[RACSubscribable combineLatest:@[item.url, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
+      @strongify(self);
+      NSURL *fileURL = xs.first;
+      NSString *type = xs.second;
+      if (type == NSURLFileResourceTypeDirectory) {
+        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+      } else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+      } else {
+        FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
+        if ([QLPreviewController canPreviewItem:item]) {
+          [self _previewFile:fileURL];
+        }
       }
-    }
+    }];
   }
 }
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
-  if (self.isEditing)
-  {
+  if (self.isEditing) {
     [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
   }
 }
@@ -257,57 +262,46 @@
 
 #pragma mark - Action Sheet Delegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-  if (actionSheet == _toolEditDeleteActionSheet)
-  {
-    if (buttonIndex == actionSheet.destructiveButtonIndex) // Delete
-    {
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if (actionSheet == _toolEditDeleteActionSheet) {
+    if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
+      NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-        return [FileSystemItem itemWithURL:url];
-      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-        return [item delete];
-      }] merge] subscribeCompleted:^{
+      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        return [x delete];
+      }] subscribeCompleted:^{
+        ASSERT_MAIN_QUEUE();
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
-  }
-  else if (actionSheet == _toolEditItemDuplicateActionSheet)
-  {
-    if (buttonIndex == 0) // Copy
-    {
+  } else if (actionSheet == _toolEditItemDuplicateActionSheet) {
+    if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
+      directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
       [self modalNavigationControllerPresentViewController:directoryBrowser];
-    }
-    else if (buttonIndex == 1) // Duplicate
-    {
+    } else if (buttonIndex == 1) { // Duplicate
+      NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-        return [FileSystemItem itemWithURL:url];
-      }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-        return [item duplicate];
-      }] merge] subscribeCompleted:^{
+      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        return [x duplicate];
+      }] subscribeCompleted:^{
+        ASSERT_MAIN_QUEUE();
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:[_selectedItems count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
-  }
-  else if (actionSheet == _toolEditItemExportActionSheet)
-  {
+  } else if (actionSheet == _toolEditItemExportActionSheet) {
     switch (buttonIndex) {
-      case 0: // Rename
-      {
+      case 0: { // Rename
         if (_selectedItems.count != 1) {
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
-        RenameController *renameController = [[RenameController alloc] initWithRenameItem:[[_selectedItems objectAtIndex:0] first] completionHandler:^(NSUInteger renamedCount, NSError *err) {
+        RenameController *renameController = [[RenameController alloc] initWithRenameItem:[_selectedItems objectAtIndex:0] completionHandler:^(NSUInteger renamedCount, NSError *err) {
           [self modalNavigationControllerDismissAction:nil];
           if (err || renamedCount == 0) {
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -321,36 +315,36 @@
           }
         }];
         [self modalNavigationControllerPresentViewController:renameController];
-      } break;
-        
-      case 1: // Move
-      {
+        break;
+      }
+      case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderURL = self.artCodeTab.currentLocation.project.fileURL;
+        directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
         [self modalNavigationControllerPresentViewController:directoryBrowser];
-      } break;
-        
-      case 2: // iTunes
-      {
+        break;
+      }
+      case 2: { // iTunes
+        NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[[[[_selectedItems rac_toSubscribable] select:^id<RACSubscribable>(NSURL *url) {
-          return [FileSystemItem itemWithURL:url];
-        }] merge] select:^id<RACSubscribable>(FileSystemItem *item) {
-          return [item exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
-        }] merge] subscribeCompleted:^{
+        [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+          return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
+        }] subscribeCompleted:^{
+          ASSERT_MAIN_QUEUE();
           self.loading = NO;
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:[_selectedItems count]] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
-      } break;
-        
-      case 3: // Mail
-      {
+        break;
+      }
+      case 3: { // Mail
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities compressFileAtURLs:_selectedItems completionHandler:^(NSURL *temporaryDirectoryURL) {
+        [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] select:^id(FileSystemItem *x) {
+          return x.url.first;
+        }] toArray] completionHandler:^(NSURL *temporaryDirectoryURL) {
+          ASSERT_MAIN_QUEUE();
           if (temporaryDirectoryURL) {
             NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
             [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
@@ -376,7 +370,8 @@
         }];
         
         [self setEditing:NO animated:YES];
-      } break;
+        break;
+      }
     }
   }
 }
@@ -384,16 +379,16 @@
 #pragma mark - Mail composer Delegate
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-  if (result == MFMailComposeResultSent)
+  if (result == MFMailComposeResultSent) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+  }
   [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - Private Methods
 
 - (void)_toolNormalAddAction:(id)sender {
-  if (!_toolNormalAddPopover)
-  {
+  if (!_toolNormalAddPopover) {
     UINavigationController *popoverViewController = (UINavigationController *)[[UIStoryboard storyboardWithName:@"NewFilePopover" bundle:nil] instantiateInitialViewController];
     popoverViewController.artCodeTab = self.artCodeTab;
     [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
@@ -407,8 +402,7 @@
 }
 
 - (void)_toolEditExportAction:(id)sender {
-  if (!_toolEditItemExportActionSheet)
-  {
+  if (!_toolEditItemExportActionSheet) {
     _toolEditItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Move to new location"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolEditItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
@@ -416,8 +410,7 @@
 }
 
 - (void)_toolEditDuplicateAction:(id)sender {
-  if (!_toolEditItemDuplicateActionSheet)
-  {
+  if (!_toolEditItemDuplicateActionSheet) {
     _toolEditItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Copy to new location"), L(@"Duplicate"), nil];
     _toolEditItemDuplicateActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
@@ -427,12 +420,9 @@
 #pragma mark Modal actions
 
 - (void)modalNavigationControllerDismissAction:(id)sender {
-  if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished])
-  {
+  if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished]) {
     [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
-  }
-  else
-  {
+  } else {
     [self setEditing:NO animated:YES];
     [super modalNavigationControllerDismissAction:sender];
   }
@@ -441,7 +431,7 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
+  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -449,10 +439,11 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
-    if (![[NSFileManager defaultManager] copyItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL]) {
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
+    [[item copyTo:moveFolder] subscribeError:^(NSError *error) {
+      ASSERT_MAIN_QUEUE();
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-    };
+    }];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -465,7 +456,7 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  NSURL *moveFolderURL = directoryBrowser.selectedFolderURL;
+  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -473,8 +464,10 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolderURL usingBlock:^(NSURL *itemURL) {
-    [[NSFileManager defaultManager] moveItemAtURL:itemURL toURL:[moveFolderURL URLByAppendingPathComponent:itemURL.lastPathComponent] error:NULL];
+  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
+    [[item moveTo:moveFolder] subscribeError:^(NSError *error) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    }];
   } completion:^{
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
@@ -497,10 +490,11 @@
   if (!_previewItems) {
     _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
     for (RACTuple *tuple in [self filteredItems]) {
-      NSURL *fileURL = tuple.first;
-      FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
-      if (![CodeFileController canDisplayFileInCodeView:fileURL] && [QLPreviewController canPreviewItem:item]) {
-        [_previewItems addObject:item];
+      FileSystemItem *item = tuple.first;
+      NSURL *itemURL = item.url.first;
+      FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
+      if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
+        [_previewItems addObject:previewItem];
       }
     }
   }

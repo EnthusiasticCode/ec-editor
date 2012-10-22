@@ -134,17 +134,8 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Properties
 
-@synthesize codeView = _codeView, webView = _webView, minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize codeUnit = _codeUnit, codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
-
-- (UIWebView *)webView {
-  if (!_webView && self.isViewLoaded) {
-    _webView = [[UIWebView alloc] init];
-    _webView.delegate = self;
-    _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  }
-  return _webView;
-}
+@synthesize minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
+@synthesize codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
 
 - (CodeFileMinimapView *)minimapView {
   if (!_minimapView) {
@@ -204,19 +195,6 @@ static void drawStencilStar(CGContextRef myContext)
 
 + (BOOL)automaticallyNotifiesObserversOfMinimapVisible {
   return NO;
-}
-
-- (TMUnit *)codeUnit {
-  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-  return _codeUnit;
-}
-
-- (void)setCodeUnit:(TMUnit *)codeUnit {
-  ASSERT([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue]);
-  if (codeUnit == _codeUnit) {
-    return;
-  }
-  _codeUnit = codeUnit;
 }
 
 - (RACScheduler *)codeScheduler {
@@ -358,7 +336,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^TMUnit *(RACTuple *tuple) {
+  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -368,23 +346,22 @@ static void drawStencilStar(CGContextRef myContext)
       return nil;
     }
     // Selecting the syntax to use
-    TMSyntaxNode *syntax = nil;
     if (explicitSyntaxIdentifier) {
-      syntax = [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier];
+      return [RACSubscribable return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
-    if (!syntax) {
-      NSString *content = textFile.stringContent.first;
-      syntax = [TMSyntaxNode syntaxForFirstLine:[content substringWithRange:[content lineRangeForRange:NSMakeRange(0, 0)]]];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
-    }
-    if (!syntax) {
-      syntax = [TMSyntaxNode defaultSyntax];
-    }
-    ASSERT(syntax);
-    
-    return [[TMUnit alloc] initWithFileURL:fileURL syntax:syntax index:nil];
+    return [[textFile.stringContent take:1] select:^RACTuple *(NSString *x) {
+      TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
+      if (!syntax) {
+        syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
+      }
+      if (!syntax) {
+        syntax = [TMSyntaxNode defaultSyntax];
+      }
+      ASSERT(syntax);
+      return [RACTuple tupleWithObjectsFromArray:@[fileURL, syntax]];
+    }];
+  }] switch] select:^TMUnit *(RACTuple *xs) {
+    return [[TMUnit alloc] initWithFileURL:xs.first syntax:xs.second index:nil];
   }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:@keypath(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
@@ -432,6 +409,12 @@ static void drawStencilStar(CGContextRef myContext)
     NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
     [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
     self.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
+  }];
+  
+  // load the web preview if needed
+  [[RACSubscribable combineLatest:@[RACAble(self.textFile), RACAble(self.webView)]] subscribeNext:^(id x) {
+    @strongify(self);
+    [self _loadWebPreviewContentAndTitle];
   }];
   
   return self;
@@ -514,6 +497,11 @@ static void drawStencilStar(CGContextRef myContext)
   
   self.codeView = codeView;
   [self _setCodeViewAttributesForTheme:nil];
+  
+  UIWebView *webView = [[UIWebView alloc] init];
+  webView.delegate = self;
+  webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  self.webView = webView;
 }
 
 - (void)viewDidLoad {
@@ -564,20 +552,6 @@ static void drawStencilStar(CGContextRef myContext)
   [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
   if (self.minimapVisible) {
     self.minimapView.selectionRectangle = self.codeView.bounds;
-  }
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  
-  if (!_minimapVisible) {
-    _minimapView = nil;
-  }
-  
-  if ([self _isWebPreview]) {
-    self.codeView = nil;
-  } else {
-    self.webView = nil;
   }
 }
 
@@ -876,11 +850,11 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
-    [[self.textFile save] subscribeCompleted:^{
-      [self.textFile.url subscribeNext:^(NSURL *url) {
-        [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
-        self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-      }];
+    @weakify(self);
+    [[self.textFile.url take:1] subscribeNext:^(NSURL *x) {
+      @strongify(self);
+      [self.webView loadRequest:[NSURLRequest requestWithURL:x]];
+      self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     }];
   } else {
     self.title = nil;
