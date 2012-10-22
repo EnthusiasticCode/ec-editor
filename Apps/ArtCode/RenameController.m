@@ -41,7 +41,7 @@
   
   // Subscribable for the renameTextField contents
   id<RACSubscribable> renameTextFieldSubscribable = [[RACAble(self.renameTextField) select:^id<RACSubscribable>(UITextField *textField) {
-    return [[[textField rac_textSubscribable] throttle:0.2] distinctUntilChanged];
+    return [[[[textField rac_textSubscribable] throttle:0.2] distinctUntilChanged] startWith:textField.text];
   }] switch];
   
   // Update the file icon when the extension changes
@@ -61,22 +61,31 @@
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
-  [[[RACSubscribable combineLatest:@[[[[item parent] select:^id<RACSubscribable>(FileSystemDirectory *parent) {
+  [[[[RACSubscribable combineLatest:@[[[[item parent] select:^id<RACSubscribable>(FileSystemDirectory *parent) {
     return [parent children];
-  }] switch], [item name]]] select:^NSArray *(RACTuple *xs) {
-    NSArray *children = xs.first;
-    NSString *fullName = xs.second;
-    NSString *name = [fullName stringByDeletingPathExtension];
-    NSMutableArray *alsoRename = [[NSMutableArray alloc] init];
-    for (FileSystemItem *item in children) {
-      NSString *fileName = item.name.first;
-      if ([fileName isEqual:fullName] || ![fileName hasPrefix:name]) {
-        continue;
-      }
-      [alsoRename addObject:item];
-    }
-    return alsoRename;
-  }] toProperty:@keypath(self.alsoRenameItems) onObject:self];
+  }] switch], [item name]]] select:^id<RACSubscribable>(RACTuple *xs) {
+    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+      NSArray *children = xs.first;
+      NSString *fullName = xs.second;
+      NSString *name = [fullName stringByDeletingPathExtension];
+      NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
+      return [[[[children.rac_toSubscribable selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
+      }] where:^BOOL(RACTuple *ys) {
+        NSString *itemName = ys.second;
+        return ![itemName isEqualToString:fullName] && [itemName hasPrefix:name];
+      }] select:^id(RACTuple *ys) {
+        return ys.first;
+      }] subscribeNext:^(FileSystemItem *x) {
+        [alsoRenameItems addObject:x];
+      } error:^(NSError *error) {
+        [subscriber sendError:error];
+      } completed:^{
+        [subscriber sendNext:alsoRenameItems];
+        [subscriber sendCompleted];
+      }];
+    }];
+  }] switch] toProperty:@keypath(self.alsoRenameItems) onObject:self];
   
   // Hide or show the alsoRenameTableView when needed
   [[RACSubscribable combineLatest:@[RACAble(self.alsoRenameItems), RACAble(self.alsoRenameView), RACAble(self.alsoRenameTableView)]] subscribeNext:^(RACTuple *xs) {
@@ -120,7 +129,7 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  NSString *text = [[(FileSystemItem *)[self.alsoRenameItems objectAtIndex:indexPath.row] name] first];
+  NSString *text = @""; //[[(FileSystemItem *)[self.alsoRenameItems objectAtIndex:indexPath.row] name] first];
   cell.textLabel.text = text;
   cell.detailTextLabel.text = [NSString stringWithFormat:L(@"Rename to: %@"), [self.renameTextField.text.stringByDeletingPathExtension stringByAppendingPathExtension:text.pathExtension]];
   cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:text.pathExtension];
