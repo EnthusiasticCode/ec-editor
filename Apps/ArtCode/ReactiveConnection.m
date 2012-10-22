@@ -25,6 +25,7 @@
   
   NSMutableDictionary *_downloadProgressSubscribables;
   NSMutableDictionary *_uploadProgressSubscribables;
+  NSMutableDictionary *_deleteProgressSubscribables;
 }
 
 + (ReactiveConnection *)reactiveConnectionWithURL:(NSURL *)url {
@@ -196,9 +197,18 @@
   }
   RACSubject *uploadSubscribable = [RACSubject subject];
   [_uploadProgressSubscribables setObject:uploadSubscribable forKey:remotePath];
-  // TODO use proper permissions
   [_connection uploadFileAtURL:localURL toPath:remotePath openingPosixPermissions:0];
   return uploadSubscribable;
+}
+
+- (RACSubscribable *)deleteFileWithRemotePath:(NSString *)remotePath {
+  if (!_deleteProgressSubscribables) {
+    _deleteProgressSubscribables = [[NSMutableDictionary alloc] init];
+  }
+  RACSubject *deleteSubscribable = [RACSubject subject];
+  [_deleteProgressSubscribables setObject:deleteSubscribable forKey:remotePath];
+  [_connection deleteFile:remotePath];
+  return deleteSubscribable;
 }
 
 #pragma mark - Connection delegate
@@ -327,6 +337,18 @@
     [subject sendCompleted];
   }
   [_uploadProgressSubscribables removeObjectForKey:remotePath];
+}
+
+#pragma mark Connection Deletion
+
+- (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error {
+  RACSubject *subject = [_deleteProgressSubscribables objectForKey:path];
+  if (error) {
+    [subject sendError:error];
+  } else {
+    [subject sendCompleted];
+  }
+  [_deleteProgressSubscribables removeObjectForKey:path];
 }
 
 @end

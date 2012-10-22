@@ -80,7 +80,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   // Connected refresh reaction
   [RACAble(self.connection.connected) subscribeNext:^(id x) {
     if ([x boolValue]) {
-      [this.connection changeToDirectory:this.remotePath];
+      [this refresh];
     } else {
       this.showLogin = YES;
     }
@@ -202,6 +202,10 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   }] subscribeCompleted:^{
     // Nothing
   }];
+}
+
+- (void)refresh {
+  [self.connection changeToDirectory:self.remotePath];
 }
 
 #pragma mark - Table view data source

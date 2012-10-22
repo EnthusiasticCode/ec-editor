@@ -53,4 +53,7 @@ enum ReactiveConnectionStatus {
 /// An update is an NSNumber containing the percentage of upload completed.
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath;
 
+/// Returns a subscribable that send completed when a deleting operation ends.
+- (RACSubscribable *)deleteFileWithRemotePath:(NSString *)remotePath;
+
 @end

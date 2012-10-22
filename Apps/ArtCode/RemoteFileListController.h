@@ -27,6 +27,9 @@
 /// When the subscribable completes, the item will be removed.
 - (void)addProgressItemWithURL:(NSURL *)url progressSubscribable:(RACSubscribable *)progressSubscribable;
 
+/// Refresh the content of the list from the server.
+- (void)refresh;
+
 #pragma mark Login panel outlets
 
 @property (strong, nonatomic) IBOutlet UIView *loginView;

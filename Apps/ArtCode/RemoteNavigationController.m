@@ -170,7 +170,7 @@ static void _init(RemoteNavigationController *self) {
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
   if (actionSheet == _remoteDeleteConfirmationActionSheet) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) {
-      // TODO destroy!
+      [self _deleteSelectedItemsOfRemoteController:self.remoteFileListController];
     }
   }
 }
@@ -221,11 +221,25 @@ static void _init(RemoteNavigationController *self) {
     return progressSubscribable;
   }] finally:^{
     // Refresh remote list
-    [remoteController invalidateFilteredItems];
+    [remoteController refresh];
   }] subscribeError:^(NSError *error) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors uploading files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Upload completed" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+  }];
+}
+
+- (void)_deleteSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController {
+  // RAC
+  ReactiveConnection *connection = self.connection;
+  [[[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
+    return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+  }] finally:^{
+    [remoteController refresh];
+  }] subscribeError:^(NSError *error) {
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors deleting files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+  } completed:^{
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files deleted" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 
