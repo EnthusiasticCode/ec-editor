@@ -315,7 +315,7 @@
       }
     }
   }];
-  return result;
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)duplicate {
@@ -346,7 +346,7 @@
       }
     }
   }];
-  return result;
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)delete {
@@ -364,7 +364,7 @@
       [result sendCompleted];
     }
   }];
-  return result;
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 @end
