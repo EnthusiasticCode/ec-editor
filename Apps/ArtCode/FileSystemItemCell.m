@@ -21,7 +21,7 @@
   @weakify(self);
   [[RACSubscribable combineLatest:@[[[RACAble(item) select:^id<RACSubscribable>(FileSystemItem *x) {
     return [RACSubscribable combineLatest:@[x.name, x.type]];
-  }] switch], RACAble(hitMask)]] subscribeNext:^(RACTuple *xs) {
+  }] switch], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     RACTuple *ys = xs.first;

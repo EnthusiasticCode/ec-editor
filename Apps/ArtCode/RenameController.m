@@ -9,11 +9,18 @@
 #import "RenameController.h"
 #import "UIImage+AppStyle.h"
 #import "FileSystemItem.h"
+#import "FileSystemItemCell.h"
 
 
 @interface RenameController ()
 
 @property (nonatomic, strong) NSArray *alsoRenameItems;
+
+@end
+
+@interface RenameCell : FileSystemItemCell
+
+@property (nonatomic, strong) NSString *renameString;
 
 @end
 
@@ -58,6 +65,7 @@
     UITextField *renameTextField = xs.first;
     NSString *name = xs.second;
     renameTextField.text = name;
+    [renameTextField sendActionsForControlEvents:UIControlEventEditingChanged];
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
@@ -124,16 +132,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *cellIdentifier = @"default";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  RenameCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (!cell) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell = [[RenameCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  NSString *text = @""; //[[(FileSystemItem *)[self.alsoRenameItems objectAtIndex:indexPath.row] name] first];
-  cell.textLabel.text = text;
-  cell.detailTextLabel.text = [NSString stringWithFormat:L(@"Rename to: %@"), [self.renameTextField.text.stringByDeletingPathExtension stringByAppendingPathExtension:text.pathExtension]];
-  cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:text.pathExtension];
-  
+  cell.item = [self.alsoRenameItems objectAtIndex:indexPath.row];
+  cell.renameString = self.renameTextField.text;
+
   return cell;
 }
 
@@ -157,6 +163,27 @@
       _completionHandler(alsoRenameItems.count + 1, nil);
     }];
   }];
+}
+
+@end
+
+@implementation RenameCell
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+  self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+  if (!self) {
+    return nil;
+  }
+  
+  [[[RACSubscribable combineLatest:@[[[RACAble(item) select:^id<RACSubscribable>(FileSystemItem *x) {
+    return x.name;
+  }] switch], RACAble(renameString)]] select:^NSString *(RACTuple *xs) {
+    NSString *itemName = xs.first;
+    NSString *renameString = xs.second;
+    return [NSString stringWithFormat:L(@"Rename to: %@"), [renameString.stringByDeletingPathExtension stringByAppendingPathExtension:itemName.pathExtension]];
+  }] toProperty:@keypath(self.detailTextLabel.text) onObject:self];
+  
+  return self;
 }
 
 @end
