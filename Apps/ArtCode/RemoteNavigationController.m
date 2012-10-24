@@ -37,6 +37,8 @@
 - (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController;
 - (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController;
 - (void)_presentRemoteDeleteConfirmationActionSheetWithSender:(id)sender;
+
+@property (nonatomic) NSUInteger transfersInProgressCount;
 @end
 
 @implementation RemoteNavigationController {
@@ -83,8 +85,12 @@ static void _init(RemoteNavigationController *self) {
          [self _presentRemoteDeleteConfirmationActionSheetWithSender:x];
          break;
          
-       default: // Close
-         [self.artCodeTab moveBackInHistory];
+       default: // Cancel or Close
+         if (self.transfersInProgressCount == 0) {
+           [self.artCodeTab moveBackInHistory];
+         } else {
+           [self.connection cancelAll];
+         }
          break;
      }
    }];
@@ -178,6 +184,8 @@ static void _init(RemoteNavigationController *self) {
 #pragma mark Private methods
 
 - (void)_downloadSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController toLocationOfLocalController:(LocalFileListController *)localController {
+  @weakify(self);
+  self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
   [[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
@@ -203,12 +211,17 @@ static void _init(RemoteNavigationController *self) {
       // Move the temporary file to the destination URL
       [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
     } else {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error downloading file" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }
+  } completed:^{
+    @strongify(self);
+    self.transfersInProgressCount--;
   }];
 }
 
 - (void)_uploadSelectedItemsOfLocalController:(LocalFileListController *)localController toLocationOfRemoteController:(RemoteFileListController *)remoteController {
+  @weakify(self);
+  self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
   [[[localController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSURL *itemURL) {
@@ -220,26 +233,32 @@ static void _init(RemoteNavigationController *self) {
     
     return progressSubscribable;
   }] finally:^{
+    @strongify(self);
+    self.transfersInProgressCount--;
     // Refresh remote list
     [remoteController refresh];
   }] subscribeError:^(NSError *error) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors uploading files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Errors uploading files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Upload completed" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Upload completed") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 
 - (void)_deleteSelectedItemsOfRemoteController:(RemoteFileListController *)remoteController {
+  @weakify(self);
+  self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
   [[[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
     return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
   }] finally:^{
+    @strongify(self);
+    self.transfersInProgressCount--;
     [remoteController refresh];
   }] subscribeError:^(NSError *error) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Errors deleting files" imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Errors deleting files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files deleted" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files deleted") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 

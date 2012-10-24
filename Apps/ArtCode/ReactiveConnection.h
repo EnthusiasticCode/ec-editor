@@ -35,6 +35,9 @@ enum ReactiveConnectionStatus {
 /// A subscribable yielding the transcript records as \c RACTuples containing \c CKTranscriptType and the string for that transcript.
 - (RACSubscribable *)transcript;
 
+/// Cancel all the operations in progress.
+- (void)cancelAll;
+
 #pragma mark Managing directories
 
 /// A subscribable that returns \c RACTuple of path to array of dictionaries with directory item informations

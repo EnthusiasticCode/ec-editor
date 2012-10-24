@@ -10,6 +10,8 @@
 
 @interface RemoteNavigationToolbarController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UIButton *doneButton;
+
 #pragma mark Local browser outlets
 @property (weak, nonatomic) IBOutlet UIButton *localBackButton;
 @property (weak, nonatomic) IBOutlet UILabel *localTitleLabel;

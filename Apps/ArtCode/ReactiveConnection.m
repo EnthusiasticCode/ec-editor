@@ -85,6 +85,28 @@
   return _transcriptSubject ?: (_transcriptSubject = [RACSubject subject]);
 }
 
+- (void)cancelAll {
+  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
+  [_connection cancelAll];
+  NSError *cancelError = [[NSError alloc] init];
+  [_downloadProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+    [subject sendError:cancelError];
+  }];
+  [_downloadProgressSubscribables removeAllObjects];
+  [_uploadProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+    [subject sendError:cancelError];
+  }];
+  [_uploadProgressSubscribables removeAllObjects];
+  [_deleteProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+    [subject sendError:cancelError];
+  }];
+  [_deleteProgressSubscribables removeAllObjects];
+  for (NSURL *tempURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] includingPropertiesForKeys:nil options:0 error:NULL]) {
+    [[NSFileManager defaultManager] removeItemAtURL:tempURL error:NULL];
+  }
+  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
+}
+
 - (RACSubscribable *)directoryContents {
   return _directoryContentsSubject ?: (_directoryContentsSubject = [RACSubject subject]);
 }

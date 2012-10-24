@@ -195,6 +195,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
+                        <outlet property="doneButton" destination="cw2-IW-bgg" id="XJI-3t-ETq"/>
                         <outlet property="downloadButton" destination="uuz-VE-1ZN" id="zKx-pY-686"/>
                         <outlet property="localBackButton" destination="nT3-Xn-oZP" id="Kxj-yb-RlY"/>
                         <outlet property="localTitleLabel" destination="RSQ-LU-H1f" id="lrZ-LD-Dxu"/>

@@ -23,6 +23,7 @@
 
 - (void)viewDidUnload {
     [self setRemoteDeleteButton:nil];
+    [self setDoneButton:nil];
     [super viewDidUnload];
 }
 @end
