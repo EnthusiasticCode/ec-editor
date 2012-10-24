@@ -209,11 +209,11 @@
 }
 
 - (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[self internalChildren], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[[RACSubscribable combineLatest:@[[[self internalChildren] subscribeOn:[[self class] fileSystemScheduler]], abbreviationSubscribable]] deliverOn:[[self class] fileSystemScheduler]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[self internalChildrenWithOptions:options], abbreviationSubscribable] reduce:[[self class] filterAndSortByAbbreviationBlock]] subscribeOn:[[self class] fileSystemScheduler]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:[[self class] fileSystemScheduler]], abbreviationSubscribable]] deliverOn:[[self class] fileSystemScheduler]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
@@ -221,6 +221,7 @@
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     filterAndSortByAbbreviationBlock = ^NSArray *(RACTuple *tuple) {
+      ASSERT_NOT_MAIN_QUEUE();
       NSArray *content = tuple.first;
       NSString *abbreviation = tuple.second;
       
@@ -234,7 +235,7 @@
       // Filter the content
       NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
-        float score = [item.name.first scoreForAbbreviation:abbreviation hitMask:&hitMask];
+        float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
       }] where:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
@@ -244,9 +245,9 @@
       [filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
         float score1 = [[tuple1 third] floatValue];
         float score2 = [[tuple2 third] floatValue];
-        if (score1 < score2) {
+        if (score1 > score2) {
           return NSOrderedAscending;
-        } else if (score1 > score2) {
+        } else if (score1 < score2) {
           return NSOrderedDescending;
         } else {
           return NSOrderedSame;
