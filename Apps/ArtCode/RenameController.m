@@ -15,6 +15,7 @@
 @interface RenameController ()
 
 @property (nonatomic, strong) NSArray *alsoRenameItems;
+@property (nonatomic, strong) NSMutableSet *selectedAlsoRenameItems;
 
 @end
 
@@ -81,7 +82,7 @@
         return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
       }] where:^BOOL(RACTuple *ys) {
         NSString *itemName = ys.second;
-        return ![itemName isEqualToString:fullName] && [itemName hasPrefix:name];
+        return ![itemName isEqualToString:fullName] && [[itemName stringByDeletingPathExtension] isEqual:name];
       }] select:^id(RACTuple *ys) {
         return ys.first;
       }] subscribeNext:^(FileSystemItem *x) {
@@ -94,6 +95,11 @@
       }];
     }];
   }] switch] toProperty:@keypath(self.alsoRenameItems) onObject:self];
+  
+  // Reset the selectedAlsoRenameItems when alsoRenameItems change
+  [[RACAble(self.alsoRenameItems) select:^NSMutableSet *(NSArray *alsoRenameItems) {
+    return [[NSMutableSet alloc] init];
+  }] toProperty:@keypath(self.selectedAlsoRenameItems) onObject:self];
   
   // Hide or show the alsoRenameTableView when needed
   [[RACSubscribable combineLatest:@[RACAble(self.alsoRenameItems), RACAble(self.alsoRenameView), RACAble(self.alsoRenameTableView)]] subscribeNext:^(RACTuple *xs) {
@@ -138,9 +144,22 @@
   }
   
   cell.item = [self.alsoRenameItems objectAtIndex:indexPath.row];
+  if ([self.selectedAlsoRenameItems containsObject:cell.item]) {
+    [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+  }
   cell.renameString = self.renameTextField.text;
 
   return cell;
+}
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  [self.selectedAlsoRenameItems addObject:[self.alsoRenameItems objectAtIndex:indexPath.row]];
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+  [self.selectedAlsoRenameItems removeObject:[self.alsoRenameItems objectAtIndex:indexPath.row]];
 }
 
 #pragma mark - Private methods
@@ -149,19 +168,29 @@
   // TODO checks on new name?
   NSString *newFullName = self.renameTextField.text;
   NSString *newName = newFullName.stringByDeletingPathExtension;
-  NSString *oldName = [_item.name.first stringByDeletingPathExtension];
   NSArray *alsoRenameItems = self.alsoRenameItems;
   
-  [[_item renameTo:newFullName copy:NO] subscribeCompleted:^{
-    [[[[alsoRenameItems rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *item) {
-      NSString *oldFullName = item.name.first;
-      NSString *newFullName = [newName stringByAppendingString:[oldFullName substringFromIndex:oldName.length]];
-      return [item renameTo:newFullName copy:NO];
-    }] merge] subscribeError:^(NSError *error) {
-      _completionHandler(0, error);
-    } completed:^{
-      _completionHandler(alsoRenameItems.count + 1, nil);
+  @weakify(self);
+  [[[[_item.name take:1] selectMany:^id<RACSubscribable>(NSString *x) {
+    @strongify(self);
+    if (!self) {
+      return nil;
+    }
+    return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [self->_item renameTo:newFullName copy:NO]]];
+  }] selectMany:^id<RACSubscribable>(RACTuple *xs) {
+    @strongify(self);
+    NSString *oldFullName = xs.first;
+    NSString *oldName = [oldFullName stringByDeletingPathExtension];
+    return [[self.selectedAlsoRenameItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+      return [[x.name take:1] selectMany:^id<RACSubscribable>(NSString *y) {
+        NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
+        return [x renameTo:newFullName copy:NO];
+      }];
     }];
+  }] subscribeError:^(NSError *error) {
+    _completionHandler(0, error);
+  } completed:^{
+    _completionHandler(alsoRenameItems.count + 1, nil);
   }];
 }
 

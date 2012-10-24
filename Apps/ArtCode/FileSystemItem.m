@@ -372,11 +372,17 @@
 @implementation FileSystemItem (FileManagement_Private)
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
-  
+  [[[[self itemCache] objectForKey:source] urlBacking] sendNext:destination];
+  NSURL *sourceParent = [source URLByDeletingLastPathComponent];
+  NSURL *destinationParent = [destination URLByDeletingLastPathComponent];
+  if (![sourceParent isEqual:destinationParent]) {
+    [[[self itemCache] objectForKey:sourceParent] didChangeChildren];
+    [[[self itemCache] objectForKey:destinationParent] didChangeChildren];
+  }
 }
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
-  
+  [[[self itemCache] objectForKey:[destination URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {

@@ -240,7 +240,7 @@
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
   if (self.isEditing) {
-    [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [_selectedItems removeObject:[[self.filteredItems objectAtIndex:indexPath.row] first]];
   }
 }
 
