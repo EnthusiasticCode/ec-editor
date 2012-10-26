@@ -96,8 +96,10 @@
   
   // Processing
   @weakify(self);
-  [[[destinationFolder children] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
-    return [x.name take:1];
+  [[[destinationFolder children] selectMany:^id<RACSubscribable>(NSArray *x) {
+    return [RACSubscribable merge:[[[x rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *y) {
+      return [y.name take:1];
+    }] toArray]];
   }] subscribeNext:^(NSString *x) {
     @strongify(self);
     if (!self) {

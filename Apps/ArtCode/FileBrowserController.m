@@ -290,7 +290,7 @@
       }] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -445,6 +445,7 @@
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
     }];
   } completion:^{
+    ASSERT_MAIN_QUEUE();
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
     if (items.count) {
@@ -466,9 +467,11 @@
   NSArray *items = [_selectedItems copy];
   [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
     [[item moveTo:moveFolder] subscribeError:^(NSError *error) {
+      ASSERT_MAIN_QUEUE();
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
     }];
   } completion:^{
+    ASSERT_MAIN_QUEUE();
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
     if (items.count) {

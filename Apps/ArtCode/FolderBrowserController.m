@@ -11,6 +11,7 @@
 #import "ArtCodeTab.h"
 #import "NSString+PluralFormat.h"
 #import "FileSystemItem.h"
+#import "FileSystemItemCell.h"
 
 
 @interface FolderBrowserController ()
@@ -33,13 +34,27 @@
   // RAC
   
   // Update table content
-  [[[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder children];
-  }] switch] select:^NSArray *(NSArray *children) {
-    return [[[children rac_toSubscribable] where:^BOOL(FileSystemItem *child) {
-      return child.type.first == NSURLFileResourceTypeDirectory;
-    }] toArray];
-  }] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
+  }] switch] select:^id<RACSubscribable>(NSArray *children) {
+    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+      NSMutableArray *childFolders = [[NSMutableArray alloc] init];
+      return [[[[[[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *x) {
+        return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.type take:1]]];
+      }] merge] where:^BOOL(RACTuple *xs) {
+        return xs.second == NSURLFileResourceTypeDirectory;
+      }] select:^id(RACTuple *xs) {
+        return xs.first;
+      }] subscribeNext:^(FileSystemItem *x) {
+        [childFolders addObject:x];
+      } error:^(NSError *error) {
+        [subscriber sendError:error];
+      } completed:^{
+        [subscriber sendNext:childFolders];
+        [subscriber sendCompleted];
+      }];
+    }];
+  }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
   [[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
@@ -47,7 +62,7 @@
   }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
-  [[RACSubscribable combineLatest:@[RACAble(self.currentFolderSubfolders), RACAble(self.tableView)]] subscribeNext:^(RACTuple *xs) {
+  [[RACSubscribable combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
     [xs.second reloadData];
   }];
   
@@ -69,27 +84,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdentifier = @"Cell";
   
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
   }
   
-  FileSystemDirectory *subfolder = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  cell.item = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
   cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-  cell.textLabel.text = subfolder.name.first;
-  
-  // TODO add child descriptions (number of files, folders)
-//  cell.detailTextLabel.text = [item childrenDescription];
-//  // Generate string if empty
-//  if (fileCount == 0 && subDirectoryCount == 0)
-//    return @"Empty";
-//  
-//  // Generate string with plural form
-//  NSString *result = fileCount ? [NSString stringWithFormatForSingular:@"%u file" plural:@"%u files" count:fileCount] : nil;
-//  if (subDirectoryCount)
-//    result = result ? [result stringByAppendingFormatForSingular:@", %u folder" plural:@", %u folders" count:subDirectoryCount] : [NSString stringWithFormatForSingular:@"%u folder" plural:@"%u folders" count:subDirectoryCount];
-//  return result;
   
   return cell;
 }
