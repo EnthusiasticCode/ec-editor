@@ -21,7 +21,7 @@
 #import "ArtCodeProject.h"
 
 #import "AppStyle.h"
-#import "HighlightTableViewCell.h"
+#import "FileSystemItemCell.h"
 
 
 @interface QuickFileBrowserController ()
@@ -94,20 +94,22 @@
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
+  static NSString *cellIdentifier = @"Cell";
   
-  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
-  NSURL *itemURL = item.first;
-  if (itemURL.isDirectory)
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-  else
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemURL.pathExtension];
+  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  if (!cell) {
+    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+  }
   
-  cell.textLabel.text = itemURL.lastPathComponent;
-  cell.textLabelHighlightedCharacters = item.second;
-  cell.detailTextLabel.text = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:itemURL].prettyPath;
+  // Configure the cell
+  RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
+  FileSystemItem *item = filteredItem.first;
+  NSIndexSet *hitMask = filteredItem.second;
+  cell.item = item;
+  cell.hitMask = hitMask;
   
   return cell;
 }
@@ -115,10 +117,13 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushFileURL:[self.filteredItems objectAtIndex:indexPath.row] withProject:self.artCodeTab.currentLocation.project];
+  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  [[[item url] take:1] subscribeNext:^(NSURL *x) {
+    [self.artCodeTab pushFileURL:x withProject:self.artCodeTab.currentLocation.project];
+  }];
 }
 
 #pragma mark - Private methods
