@@ -283,11 +283,41 @@
 @implementation FileSystemItem (FileManagement)
 
 - (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination {
-  
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:[url lastPathComponent]];
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:destinationURL error:&error]) {
+      [result sendError:error];
+    } else {
+      [[self class] didMove:url to:destinationURL];
+      [result sendNext:self];
+      [result sendCompleted];
+    }
+  }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination {
-  
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:[url lastPathComponent]];
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destinationURL error:&error]) {
+      [result sendError:error];
+    } else {
+      [[self class] didCopy:url to:destinationURL];
+      [result sendNext:[[self class] internalItemWithURL:destinationURL type:nil]];
+      [result sendCompleted];
+    }
+  }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
@@ -320,7 +350,31 @@
 }
 
 - (id<RACSubscribable>)duplicate {
-  
+  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+  @weakify(self);
+  [[[self class] fileSystemScheduler] schedule:^{
+    @strongify(self);
+    NSURL *url = self.urlBacking.first;
+    NSString *name = [[url lastPathComponent] stringByDeletingPathExtension];
+    NSUInteger duplicateCount = 1;
+    NSString *extension = [url pathExtension];
+    for (;;) {
+      if (![[NSFileManager defaultManager] fileExistsAtPath:[[[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ (%d).%@", name, duplicateCount, extension]] path]]) {
+        break;
+      }
+      ++duplicateCount;
+    }
+    NSURL *destinationURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ (%d).%@", name, duplicateCount, extension]];
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destinationURL error:&error]) {
+      [result sendError:error];
+    } else {
+      [[self class] didCopy:url to:destinationURL];
+      [result sendNext:[[self class] internalItemWithURL:destinationURL type:nil]];
+      [result sendCompleted];
+    }
+  }];
+  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
