@@ -28,16 +28,27 @@
     NSString *itemName = ys.first;
     NSString *type = ys.second;
     NSIndexSet *hitMask = xs.second;
+    UITableViewCellAccessoryType accessoryType = self.accessoryType;
     self.textLabel.text = itemName;
     self.textLabelHighlightedCharacters = hitMask;
+    // Crazy hack because UITableViewCell doesn't redraw properly if you change certain properties after it was inserted in a table view, unless you change it's accessoryType
     if (type == NSURLFileResourceTypeDirectory) {
       self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-      self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+      if (accessoryType != UITableViewCellAccessoryNone) {
+        self.accessoryType = UITableViewCellAccessoryNone;
+        self.accessoryType = accessoryType;
+      } else {
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+      }
     } else {
       self.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemName.pathExtension];
-      // Crazy hack because UITableViewCell doesn't redraw properly if you change certain properties after it was inserted in a table view, unless you change it's accessoryType
-      self.accessoryType = UITableViewCellAccessoryCheckmark;
-      self.accessoryType = UITableViewCellAccessoryNone;
+      if (accessoryType != UITableViewCellAccessoryNone) {
+        self.accessoryType = UITableViewCellAccessoryNone;
+        self.accessoryType = accessoryType;
+      } else {
+        self.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.accessoryType = UITableViewCellAccessoryNone;
+      }
     }
   }];
   return self;
