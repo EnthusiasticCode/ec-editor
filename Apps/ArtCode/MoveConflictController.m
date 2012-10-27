@@ -11,13 +11,14 @@
 #import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
 #import "FileSystemItem.h"
+#import "FileSystemItemCell.h"
 
 
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  void (^_processingBlock)(FileSystemItem *);
-  void (^_completionBlock)(void);
+  id<RACSubscribable>(^_subscribableBlock)(FileSystemItem *);
+  RACSubject *_moveSubject;
 }
 
 @synthesize toolbar;
@@ -53,8 +54,7 @@
   [self setToolbar:nil];
   _conflictItems = nil;
   _resolvedItems = nil;
-  _processingBlock = nil;
-  _completionBlock = nil;
+  _subscribableBlock = nil;
   [super viewDidUnload];
 }
 
@@ -70,68 +70,94 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString * const cellIdentifier = @"Cell";
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
   FileSystemItem *item = [_conflictItems objectAtIndex:indexPath.row];
-  cell.textLabel.text = item.name.first;
-  if (item.type.first == NSURLFileResourceTypeDirectory)
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-  else
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[item.name.first pathExtension]];
-  cell.detailTextLabel.text = [item.url.first prettyPath];
+  cell.item = item;
   
   return cell;
 }
 
 #pragma mark - Public Methods
 
-- (void)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingBlock:(void (^)(FileSystemItem *))processingBlock completion:(void (^)(void))completionBlock {
-  _conflictItems = [[NSMutableArray alloc] init];
-  _resolvedItems = [NSMutableArray arrayWithArray:items];
-  _processingBlock = [processingBlock copy];
-  _completionBlock = [completionBlock copy];
-  
-  // Processing
+- (id<RACSubscribable>)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSubscribableBlock:(id<RACSubscribable> (^)(FileSystemItem *, FileSystemDirectory *))subscribableBlock {
+  ASSERT_MAIN_QUEUE();
+  _subscribableBlock = ^id<RACSubscribable>(FileSystemItem *item) {
+    return subscribableBlock(item, destinationFolder);
+  };
+  RACReplaySubject *moveSubject = [RACReplaySubject replaySubjectWithCapacity:1];
+  _moveSubject = moveSubject;
   @weakify(self);
-  [[[destinationFolder children] selectMany:^id<RACSubscribable>(NSArray *x) {
-    return [RACSubscribable merge:[[[x rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *y) {
-      return [y.name take:1];
-    }] toArray]];
-  }] subscribeNext:^(NSString *x) {
-    @strongify(self);
-    if (!self) {
-      return;
-    }
-    FileSystemItem *conflict = nil;
-    for (FileSystemItem *item in self->_resolvedItems) {
-      if ([item.name.first isEqual:x]) {
-        conflict = item;
-        break;
-      }
-    }
-    if (conflict) {
-      [self->_resolvedItems removeObject:conflict];
-      [self->_conflictItems addObject:conflict];
-    }
+  
+  // Get the items' names and map them to the items
+  NSMutableArray *namedItems = [[NSMutableArray alloc] initWithCapacity:[items count]];
+  [[[items rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+    return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
+  }] subscribeNext:^(RACTuple *x) {
+    [namedItems addObject:x];
+  } error:^(NSError *error) {
+    [moveSubject sendError:error];
   } completed:^{
-    @strongify(self);
-    // If there are no conflict items we are done
-    if ([self->_conflictItems count] == 0) {
-      [self doneAction:nil];
-      return;
-    }
-    
-    // Prepare to show conflict resolution UI
-    self.conflictTableView.hidden = NO;
-    self.toolbar.hidden = NO;
-    self.progressView.hidden = YES;
-    [self.conflictTableView reloadData];
-    [self.conflictTableView setEditing:YES animated:NO];
-    self.navigationItem.title = @"Select files to replace";
+    // Get the destination folder's children's names
+    NSMutableArray *destinationChildrenNames = [[NSMutableArray alloc] init];
+    [[[[destinationFolder children] take:1] selectMany:^id<RACSubscribable>(NSArray *x) {
+      return [[x rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *y) {
+        return [y.name take:1];
+      }];
+    }] subscribeNext:^(NSString *x) {
+      [destinationChildrenNames addObject:x];
+    } error:^(NSError *error) {
+      [moveSubject sendError:error];
+    } completed:^{
+      @strongify(self);
+      if (!self) {
+        return;
+      }
+      
+      NSMutableArray *conflictItems = [[NSMutableArray alloc] init];
+      NSMutableArray *resolvedItems = [[NSMutableArray alloc] initWithCapacity:[namedItems count]];
+      for (RACTuple *tuple in namedItems) {
+        [resolvedItems addObject:tuple.first];
+      }
+      
+      // Compare the names to find conflicts
+      for (NSString *destinationChildName in destinationChildrenNames) {
+        FileSystemItem *conflict = nil;
+        for (RACTuple *namedItem in namedItems) {
+          if ([namedItem.second isEqualToString:destinationChildName]) {
+            conflict = namedItem.first;
+            break;
+          }
+        }
+        if (conflict) {
+          [resolvedItems removeObject:conflict];
+          [conflictItems addObject:conflict];
+        }
+      }
+      
+      self->_conflictItems = conflictItems;
+      self->_resolvedItems = resolvedItems;
+      
+      // If there are no conflict items we are done
+      if ([self->_conflictItems count] == 0) {
+        [self doneAction:nil];
+        return;
+      }
+      
+      // Prepare to show conflict resolution UI
+      self.conflictTableView.hidden = NO;
+      self.toolbar.hidden = NO;
+      self.progressView.hidden = YES;
+      [self.conflictTableView reloadData];
+      [self.conflictTableView setEditing:YES animated:NO];
+      self.navigationItem.title = @"Select files to replace";
+    }];
   }];
+  
+  return _moveSubject;
 }
 
 #pragma mark - Interface Actions and Outlets
@@ -154,15 +180,15 @@
   [self.conflictTableView deleteRowsAtIndexPaths:[self.conflictTableView indexPathsForSelectedRows] withRowAnimation:UITableViewRowAnimationAutomatic];
   
   // Processing
-  ASSERT(_processingBlock);
-  float resolvedCount = [_resolvedItems count];
-  [_resolvedItems enumerateObjectsUsingBlock:^(FileSystemItem *item, NSUInteger idx, BOOL *stop) {
-    _processingBlock(item);
-    self.progressView.progress = (float)(idx + 1) / resolvedCount;
-  }];
-  
-  // Run completion block
-  _completionBlock();
+  ASSERT(_subscribableBlock);
+  @weakify(self);
+  [[[_resolvedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+    @strongify(self);
+    if (!self) {
+      return nil;
+    }
+    return self->_subscribableBlock(x);
+  }] subscribe:_moveSubject];
 }
 
 - (IBAction)selectAllAction:(id)sender {

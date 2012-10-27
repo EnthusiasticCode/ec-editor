@@ -439,15 +439,17 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
-    [[item copyTo:moveFolder] subscribeError:^(NSError *error) {
-      ASSERT_MAIN_QUEUE();
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-    }];
-  } completion:^{
+  [[[conflictController moveItems:items toFolder:moveFolder usingSubscribableBlock:^id<RACSubscribable>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+    return [item copyTo:destinationFolder];
+  }] finally:^{
     ASSERT_MAIN_QUEUE();
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
+  }] subscribeError:^(NSError *error) {
+    ASSERT_MAIN_QUEUE();
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+  } completed:^{
+    ASSERT_MAIN_QUEUE();
     if (items.count) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files copied" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }
@@ -465,15 +467,17 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [conflictController moveItems:items toFolder:moveFolder usingBlock:^(FileSystemItem *item) {
-    [[item moveTo:moveFolder] subscribeError:^(NSError *error) {
-      ASSERT_MAIN_QUEUE();
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-    }];
-  } completion:^{
+  [[[conflictController moveItems:items toFolder:moveFolder usingSubscribableBlock:^id<RACSubscribable>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+    return [item moveTo:destinationFolder];
+  }] finally:^{
     ASSERT_MAIN_QUEUE();
     [self setEditing:NO animated:YES];
     [self modalNavigationControllerDismissAction:sender];
+  }] subscribeError:^(NSError *error) {
+    ASSERT_MAIN_QUEUE();
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+  } completed:^{
+    ASSERT_MAIN_QUEUE();
     if (items.count) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }

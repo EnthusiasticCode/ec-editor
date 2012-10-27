@@ -14,10 +14,9 @@
 @interface MoveConflictController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 /// Process the array of FileSystemItems by comparing their name with those of items in the given folder. For resolved items (both automatically and from user input) the provided block is applied. At the end of the processing, the completion block is called.
-- (void)moveItems:(NSArray *)items
-         toFolder:(FileSystemDirectory *)destinationFolder
-       usingBlock:(void (^)(FileSystemItem *item))processingBlock
-       completion:(void(^)(void))completionBlock;
+- (id<RACSubscribable>)moveItems:(NSArray *)items
+                        toFolder:(FileSystemDirectory *)destinationFolder
+          usingSubscribableBlock:(id<RACSubscribable>(^)(FileSystemItem *item, FileSystemDirectory *destinationFolder))subscribableBlock;
 
 #pragma mark Interface Actions and Outlets
 
