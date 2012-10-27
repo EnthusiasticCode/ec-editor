@@ -24,6 +24,10 @@ static RACScheduler *fsScheduler() {
   return fileSystemScheduler;
 }
 
+static RACScheduler *currentScheduler() {
+  return [RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]];
+}
+
 // Cache of existing FileSystemItems, used for uniquing
 static NSMutableDictionary *fsItemCache() {
   ASSERT_NOT_MAIN_QUEUE();
@@ -78,7 +82,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type {
-  return [[[self internalItemWithURL:url type:type] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[self internalItemWithURL:url type:type] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 + (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type {
@@ -134,17 +138,17 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)url {
-  return [self.urlBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [self.urlBacking deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)type {
-  return [self.typeBacking deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [self.typeBacking deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)name {
   return [[self.urlBacking select:^NSString *(NSURL *url) {
     return url.lastPathComponent;
-  }] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  }] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)parent {
@@ -174,7 +178,7 @@ static NSMutableDictionary *fsItemCache() {
     }
     [self didCreate:url];
     return [self fileWithURL:url];
-  }] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -212,7 +216,7 @@ static NSMutableDictionary *fsItemCache() {
     }
     [self didCreate:url];
     return [self directoryWithURL:url];
-  }] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -226,19 +230,19 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)children {
-  return [[[self internalChildren] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[self internalChildren] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
-  return [[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[[RACSubscribable combineLatest:@[[[self internalChildren] subscribeOn:fsScheduler()], abbreviationSubscribable]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[[RACSubscribable combineLatest:@[[[self internalChildren] subscribeOn:fsScheduler()], abbreviationSubscribable]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], abbreviationSubscribable]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [[[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], abbreviationSubscribable]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
@@ -323,7 +327,7 @@ static NSMutableDictionary *fsItemCache() {
       [result sendCompleted];
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination {
@@ -342,7 +346,7 @@ static NSMutableDictionary *fsItemCache() {
       [result sendCompleted];
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
@@ -371,7 +375,7 @@ static NSMutableDictionary *fsItemCache() {
       }
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)duplicate {
@@ -399,7 +403,7 @@ static NSMutableDictionary *fsItemCache() {
       [result sendCompleted];
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)exportTo:(NSURL *)destination copy:(BOOL)copy {
@@ -426,7 +430,7 @@ static NSMutableDictionary *fsItemCache() {
       }
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)delete {
@@ -444,7 +448,7 @@ static NSMutableDictionary *fsItemCache() {
       [result sendCompleted];
     }
   }];
-  return [result deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+  return [result deliverOn:currentScheduler()];
 }
 
 @end
