@@ -28,27 +28,33 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
-  // RAC 
-  __weak NewFileController *this = self;
+  self.artCodeTab = self.navigationController.artCodeTab;
+  
+  // RAC
+  @weakify(self);
   
   // Subscribable to get the latest filename with extension and activate 'create' button
   [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
-    if (fileName.length == 0)
+    @strongify(self);
+    if (fileName.length == 0) {
       return nil;
+    }
     
-    if ([[fileName pathExtension] length] == 0)
+    if ([[fileName pathExtension] length] == 0) {
       fileName = [fileName stringByAppendingPathExtension:@"txt"];
+    }
     
-    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[this.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName].path]) {
+    if ( ! [[NSFileManager defaultManager] fileExistsAtPath:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName].path]) {
       return fileName;
     } else {
       return nil;
     }
   }] doNext:^(id x) {
+    @strongify(self);
     if (x) {
-      this.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
+      self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
     } else {
-      this.infoLabel.text = @"The speficied file already exists or is invalid.";
+      self.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
   }] select:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
@@ -61,8 +67,7 @@
   [super viewDidUnload];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   self.fileNameTextField.text = @"";
   [self.fileNameTextField becomeFirstResponder];
@@ -70,15 +75,13 @@
   // TODO if template is specified, set leftview for text field to template icon
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
 }
 
 #pragma mark Text Field delegate
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
   [textField resignFirstResponder];
   [self createAction:textField];
   return NO;
@@ -86,12 +89,12 @@
 
 #pragma mark - Public Methods
 
-- (IBAction)createAction:(id)sender
-{
+- (IBAction)createAction:(id)sender {
   NSString *fileName = self.fileNameTextField.text;
   // TODO use ArtCodeTemplate here
-  if ([[fileName pathExtension] length] == 0)
+  if ([[fileName pathExtension] length] == 0) {
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
+  }
   
   [[FileSystemFile createFileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] subscribeNext:^(id x) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
