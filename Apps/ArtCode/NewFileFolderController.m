@@ -79,9 +79,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [[[[FileSystemDirectory directoryWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] select:^id<RACSubscribable>(FileSystemItem *directory) {
-    return [directory create];
-  }] switch] subscribeCompleted:^{
+  [[FileSystemDirectory createDirectoryWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];

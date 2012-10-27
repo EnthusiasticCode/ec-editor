@@ -150,10 +150,6 @@
   return [FileSystemItem itemWithURL:[self.urlBacking.first URLByDeletingLastPathComponent] type:NSURLFileResourceTypeDirectory];
 }
 
-- (id<RACSubscribable>)create {
-  
-}
-
 - (id<RACSubscribable>)save {
   
 }
@@ -164,6 +160,10 @@
 
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
+}
+
++ (id<RACSubscribable>)createFileWithURL:(NSURL *)url {
+  
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -188,6 +188,10 @@
 
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
+}
+
++ (id<RACSubscribable>)createDirectoryWithURL:(NSURL *)url {
+  
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {

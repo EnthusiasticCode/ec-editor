@@ -93,9 +93,7 @@
   if ([[fileName pathExtension] length] == 0)
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   
-  [[[[FileSystemFile fileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] select:^id<RACSubscribable>(FileSystemItem *file) {
-    return [file create];
-  }] switch] subscribeNext:^(id x) {
+  [[FileSystemFile createFileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] subscribeNext:^(id x) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
   } completed:^{
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];

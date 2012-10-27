@@ -28,9 +28,6 @@
 /// Returns a subscribable that sends the parent directory of the receiver
 - (id<RACSubscribable>)parent;
 
-/// Attempts to create the receiver, then sends the item and completed, or an error, to the returned subscribable
-- (id<RACSubscribable>)create;
-
 /// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)save;
 
@@ -41,6 +38,9 @@
 /// Return a subscribable that sends the file item with the given URL, then completes
 + (id<RACSubscribable>)fileWithURL:(NSURL *)url;
 
+/// Attempts to create a new file at the given url, then sends the created file and completed, or an error, to the returned subscribable
++ (id<RACSubscribable>)createFileWithURL:(NSURL *)url;
+
 /// Returns a RACPropertySyncSubject for the content of the file as an NSString
 @property (nonatomic, strong, readonly) RACPropertySyncSubject *stringContent;
 
@@ -50,6 +50,9 @@
 
 /// Return a subscribable that sends the directory item with the given URL, then completes
 + (id<RACSubscribable>)directoryWithURL:(NSURL *)url;
+
+/// Attempts to create a new directory at the given url, then sends the created directory and completed, or an error, to the returned subscribable
++ (id<RACSubscribable>)createDirectoryWithURL:(NSURL *)url;
 
 /// Returns a subscribable that sends the children of the directory as they change.
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
