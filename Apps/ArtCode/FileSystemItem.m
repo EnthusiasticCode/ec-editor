@@ -10,6 +10,8 @@
 #import "RACPropertySyncSubject.h"
 #import "NSString+ScoreForAbbreviation.h"
 
+
+// All filesystem operations must be done on this scheduler
 static RACScheduler *fsScheduler() {
   static RACScheduler *fileSystemScheduler = nil;
   static dispatch_once_t onceToken;
@@ -22,6 +24,7 @@ static RACScheduler *fsScheduler() {
   return fileSystemScheduler;
 }
 
+// Cache of existing FileSystemItems, used for uniquing
 static NSMutableDictionary *fsItemCache() {
   ASSERT_NOT_MAIN_QUEUE();
   static NSMutableDictionary *itemCache = nil;
@@ -35,7 +38,6 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemItem ()
 
-// All filesystem operations must be done on this scheduler
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type;
 + (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type;
 
@@ -64,6 +66,7 @@ static NSMutableDictionary *fsItemCache() {
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination;
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination;
++ (void)didCreate:(NSURL *)target;
 + (void)didDelete:(NSURL *)target;
 
 @end
@@ -161,7 +164,17 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (id<RACSubscribable>)createFileWithURL:(NSURL *)url {
-  
+  if (!url || ![url isFileURL]) {
+    return [RACSubscribable error:[[NSError alloc] init]];
+  }
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    NSError *error = nil;
+    if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
+      return [RACSubscribable error:error];
+    }
+    [self didCreate:url];
+    return [self fileWithURL:url];
+  }] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -189,7 +202,17 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (id<RACSubscribable>)createDirectoryWithURL:(NSURL *)url {
-  
+  if (!url || ![url isFileURL]) {
+    return [RACSubscribable error:[[NSError alloc] init]];
+  }
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
+      return [RACSubscribable error:error];
+    }
+    [self didCreate:url];
+    return [self directoryWithURL:url];
+  }] subscribeOn:fsScheduler()] deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -440,6 +463,10 @@ static NSMutableDictionary *fsItemCache() {
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
   [[fsItemCache() objectForKey:[destination URLByDeletingLastPathComponent]] didChangeChildren];
+}
+
++ (void)didCreate:(NSURL *)target {
+  [[fsItemCache() objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
