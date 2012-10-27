@@ -100,20 +100,21 @@ static NSMutableDictionary *fsItemCache() {
       return [RACSubscribable return:item];
     }
     NSString *detectedType = nil;
-    [url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
-    if (detectedType && type && ![detectedType isEqual:type]) {
+    if (![url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL]) {
       return [RACSubscribable error:[[NSError alloc] init]];
     }
-    NSString *finalType = type ? : detectedType;
+    if (!detectedType || (type && ![detectedType isEqual:type])) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
     Class finalClass = nil;
-    if (finalType == NSURLFileResourceTypeRegular) {
+    if (detectedType == NSURLFileResourceTypeRegular) {
       finalClass = [FileSystemFile class];
-    } else if (finalType == NSURLFileResourceTypeDirectory) {
+    } else if (detectedType == NSURLFileResourceTypeDirectory) {
       finalClass = [FileSystemDirectory class];
     } else {
       finalClass = [FileSystemItem class];
     }
-    item = [[finalClass alloc] initWithURL:url type:finalType];
+    item = [[finalClass alloc] initWithURL:url type:detectedType];
     if (!item) {
       return [RACSubscribable error:[[NSError alloc] init]];
     }
@@ -298,7 +299,11 @@ static NSMutableDictionary *fsItemCache() {
 
 - (void)didChangeChildren {
   NSMutableArray *children = [[NSMutableArray alloc] init];
-  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:[self.urlBacking first] includingPropertiesForKeys:nil options:0 errorHandler:nil]) {
+  NSURL *url = self.urlBacking.first;
+  if (!url) {
+    [self.childrenBacking sendNext:nil];
+  }
+  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:nil options:0 errorHandler:nil]) {
     FileSystemItem *child = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
     if (child) {
       [children addObject:child];
@@ -474,7 +479,27 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (void)didDelete:(NSURL *)target {
-  [[[fsItemCache() objectForKey:target] urlBacking] sendNext:nil];
+  FileSystemItem *item = [fsItemCache() objectForKey:target];
+  if (item) {
+    [fsItemCache() removeObjectForKey:target];
+    NSString *itemType = item.typeBacking.first;
+    [item.urlBacking sendNext:nil];
+    [item.typeBacking sendNext:nil];
+    [item.parentBacking sendNext:nil];
+    item.extendedAttributes = nil;
+    if (itemType == NSURLFileResourceTypeRegular) {
+      [((FileSystemFile *)item).stringContent sendNext:nil];
+    } else if (itemType == NSURLFileResourceTypeDirectory) {
+      [((FileSystemDirectory *)item).childrenBacking sendNext:nil];
+      NSString *targetString = target.standardizedURL.absoluteString;
+      NSArray *keys = fsItemCache().allKeys.copy;
+      for (NSURL *key in keys) {
+        if ([key.standardizedURL.absoluteString hasPrefix:targetString]) {
+          [self didDelete:key];
+        }
+      }
+    }
+  }
   [[fsItemCache() objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 

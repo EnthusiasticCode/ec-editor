@@ -457,6 +457,9 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   }
   
   content = content.copy;
+  if (!content) {
+    content = @"";
+  }
   
   // Diff the last parsed content with the new one
   DiffMatchPatch *diffMatchPatch = [[DiffMatchPatch alloc] init];
