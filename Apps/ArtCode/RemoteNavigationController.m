@@ -128,7 +128,6 @@ static void _init(RemoteNavigationController *self) {
     self.localBrowserNavigationController = segue.destinationViewController;
     self.localBrowserNavigationController.editing = YES;
     self.localBrowserNavigationController.delegate = self;
-    RAC(self.localFileListController.locationDirectory) = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
   } else if ([segue.identifier isEqualToString:@"RemoteBrowser"]) {
     ASSERT(self.connection && self.remote);
     self.remoteBrowserNavigationController = (UINavigationController *)segue.destinationViewController;
@@ -160,6 +159,12 @@ static void _init(RemoteNavigationController *self) {
   // This is done because UIViewController is not KVO compliant on visibleViewController
   if (navigationController == self.localBrowserNavigationController) {
     self.localFileListController = (LocalFileListController *)viewController;
+    // RAC setting the initial location for the local file browser
+    if ([(LocalFileListController *)viewController locationDirectory] == nil) {
+      [[FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *x) {
+        [(LocalFileListController *)viewController setLocationDirectory:x];
+      }];
+    }
   } else if (navigationController == self.remoteBrowserNavigationController) {
     self.remoteFileListController = (RemoteFileListController *)viewController;
     self.toolbarController.remoteTitleLabel.text = self.remoteFileListController.remotePath.lastPathComponent;
