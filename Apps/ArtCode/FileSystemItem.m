@@ -317,12 +317,16 @@ static NSMutableDictionary *fsItemCache() {
 @implementation FileSystemItem (FileManagement)
 
 - (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination {
+  return [self moveTo:destination renameTo:nil];
+}
+
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination renameTo:(NSString *)newName {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
     @strongify(self);
     NSURL *url = self.urlBacking.first;
-    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:[url lastPathComponent]];
+    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: [url lastPathComponent]];
     NSError *error = nil;
     if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:destinationURL error:&error]) {
       [result sendError:error];
@@ -354,7 +358,7 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy {
+- (id<RACSubscribable>)renameTo:(NSString *)newName {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -362,22 +366,12 @@ static NSMutableDictionary *fsItemCache() {
     NSURL *url = self.urlBacking.first;
     NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName];
     NSError *error = nil;
-    if (!copy) {
-      if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newURL error:&error]) {
-        [result sendError:error];
-      } else {
-        [[self class] didMove:url to:newURL];
-        [result sendNext:self];
-        [result sendCompleted];
-      }
+    if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:newURL error:&error]) {
+      [result sendError:error];
     } else {
-      if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:newURL error:&error]) {
-        [result sendError:error];
-      } else {
-        [[self class] didCopy:url to:newURL];
-        [result sendNext:[[self class] internalItemWithURL:newURL type:nil]];
-        [result sendCompleted];
-      }
+      [[self class] didMove:url to:newURL];
+      [result sendNext:self];
+      [result sendCompleted];
     }
   }];
   return [result deliverOn:currentScheduler()];

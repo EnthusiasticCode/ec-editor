@@ -41,11 +41,8 @@ static void _init(LocalFileListController *self) {
                                  // Just show the directory items
                                  return itemsTuple.first;
                                } else {
-                                 // Combine arrays and sort
-                                 return [[itemsTuple.first arrayByAddingObjectsFromArray:itemsTuple.second] sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-                                   // Both elements are in any case RACTuples with an NSURL as first
-                                   return [[[obj1 first] lastPathComponent] compare:[[obj2 first] lastPathComponent]];
-                                 }];
+                                 // Combine arrays with progress items on top
+                                 return [itemsTuple.second arrayByAddingObjectsFromArray:itemsTuple.first];
                                }
                              }];
 }
@@ -84,12 +81,12 @@ static void _init(LocalFileListController *self) {
   [self didChangeValueForKey:@"selectedItems"];
 }
 
-- (void)addProgressItemWithURL:(NSURL *)url progressSubscribable:(RACSubscribable *)progressSubscribable {
+- (void)addProgressItemWithName:(NSString *)name progressSubscribable:(RACSubscribable *)progressSubscribable {
   [self willChangeValueForKey:@"progressItems"];
   if (!_progressItems) {
     _progressItems = [[NSMutableArray alloc] init];
   }
-  RACTuple *progressItem = [RACTuple tupleWithObjects:url, progressSubscribable, nil];
+  RACTuple *progressItem = [RACTuple tupleWithObjects:name, progressSubscribable, nil];
   [_progressItems addObject:progressItem];
   
   [self didChangeValueForKey:@"progressItems"];

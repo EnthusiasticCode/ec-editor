@@ -275,6 +275,8 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 
 - (void)addAlertMessageWithText:(NSString *)text image:(UIImage *)image displayImmediatly:(BOOL)immediate
 {
+  ASSERT_MAIN_QUEUE();
+  
   if (text == nil && image == nil)
     return;
   

@@ -76,12 +76,13 @@
 
 /// Attempts to move the receiver to the destination, then sends the item and completed, or an error, to the returned subscribable.
 - (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination;
+- (id<RACSubscribable>)moveTo:(FileSystemDirectory *)destination renameTo:(NSString *)newName;
 
 /// Attempts to copy the receiver to the destination, then sends the copy and completed, or an error, to the returned subscribable.
 - (id<RACSubscribable>)copyTo:(FileSystemDirectory *)destination;
 
 /// Attempts to rename or create a renamed copy of the receiver, then sends the item and completed, or an error, to the returned subscribable.
-- (id<RACSubscribable>)renameTo:(NSString *)newName copy:(BOOL)copy;
+- (id<RACSubscribable>)renameTo:(NSString *)newName;
 
 /// Attempts to duplicate the receiver, then sends the duplicate and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)duplicate;

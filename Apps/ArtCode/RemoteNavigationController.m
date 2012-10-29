@@ -195,36 +195,34 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[localController.locationDirectory.url take:1] subscribeNext:^(NSURL *localDirectoryURL) {
-    [[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
-      NSString *itemName = [item objectForKey:cxFilenameKey];
-      // Generate local destination URL and start the download
-      NSURL *localURL = [localDirectoryURL URLByAppendingPathComponent:itemName];
-      RACSubscribable *progressSubscribable = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
-      
-      // Side effect to start the progress indicator in the local file list
-      [localController addProgressItemWithURL:localURL progressSubscribable:progressSubscribable];
-      
-      // Return a subscribable that yields tuple of temporary URL and local destination URL
-      return [[[[progressSubscribable
-                 where:^BOOL(id x) {
-                   return [x isKindOfClass:[NSURL class]];
-                 }]
-                select:^id(NSURL *tempURL) {
-                  return [RACTuple tupleWithObjects:tempURL, localURL, nil];
-                }] asMaybes] take:1];
-    }] subscribeNext:^(RACMaybe *maybeTuple) {
-      if ([maybeTuple hasObject]) {
-        RACTuple *urlTuple = [maybeTuple object];
-        // Move the temporary file to the destination URL
-        [[NSFileManager defaultManager] moveItemAtURL:urlTuple.first toURL:urlTuple.second error:NULL];
-      } else {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-      }
-    } completed:^{
-      @strongify(self);
-      self.transfersInProgressCount--;
-    }];
+  [[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
+    NSString *itemName = [item objectForKey:cxFilenameKey];
+    // Generate local destination URL and start the download
+    RACSubscribable *progressSubscribable = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
+    
+    // Side effect to start the progress indicator in the local file list
+    [localController addProgressItemWithName:itemName progressSubscribable:progressSubscribable];
+    
+    // Return a subscribable that yields tuple of temporary URL and local destination URL
+    return [[[[[progressSubscribable
+               where:^BOOL(id x) {
+                 // Only return URLs
+                 return [x isKindOfClass:[NSURL class]]; }]
+               selectMany:^id<RACSubscribable>(NSURL *tempURL) {
+                 // Convert to filesystem item
+                 return [FileSystemItem itemWithURL:tempURL]; }]
+               selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+                 // Move to destination, the downloaded FileSystemItem is sent
+                 return [x moveTo:localController.locationDirectory renameTo:itemName]; }]
+               asMaybes]
+               take:1];
+  }] subscribeNext:^(RACMaybe *x) {
+    if ([x hasError]) {
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    }
+  } completed:^{
+    @strongify(self);
+    self.transfersInProgressCount--;
   }];
 }
 
