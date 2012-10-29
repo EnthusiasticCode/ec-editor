@@ -294,7 +294,78 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
-  return self.childrenBacking;
+  ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
+  id<RACSubscribable>result = self.childrenBacking;
+  
+  // Filter out hidden files if needed
+  if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
+    result = [[result select:^id<RACSubscribable>(NSArray *x) {
+      return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+        NSMutableArray *nonHiddenChildren = [[NSMutableArray alloc] init];
+        return [[[[[x rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *y) {
+          return [RACSubscribable combineLatest:@[[RACSubscribable return:y], [[y name] take:1]]];
+        }] where:^BOOL(RACTuple *ys) {
+          NSString *name = ys.second;
+          return [name characterAtIndex:0] != L'.';
+        }] select:^FileSystemItem *(RACTuple *ys) {
+          return ys.first;
+        }] subscribeNext:^(FileSystemItem *y) {
+          [nonHiddenChildren addObject:y];
+        } error:^(NSError *error) {
+          [subscriber sendError:error];
+        } completed:^{
+          [subscriber sendNext:nonHiddenChildren];
+          [subscriber sendCompleted];
+        }];
+      }];
+    }] switch];
+  }
+  
+  // Merge in descendants if needed
+  if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
+    result = [[result select:^id<RACSubscribable>(NSArray *x) {
+      return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+        NSMutableArray *descendantSubscribables = [[NSMutableArray alloc] init];
+        __block RACDisposable *descendantDisposable = nil;
+        __block RACDisposable *combineDisposable = nil;
+        
+        descendantDisposable = [[[x rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *y) {
+          return [RACSubscribable combineLatest:@[[RACSubscribable return:y], [[y type] take:1]]];
+        }] subscribeNext:^(RACTuple *ys) {
+          FileSystemItem *item = ys.first;
+          NSString *type = ys.second;
+          if (type == NSURLFileResourceTypeDirectory) {
+            [descendantSubscribables addObject:[((FileSystemDirectory *)item) childrenWithOptions:options]];
+          } else {
+            [descendantSubscribables addObject:[RACSubscribable return:@[item]]];
+          }
+        } error:^(NSError *error) {
+          [subscriber sendNext:error];
+        } completed:^{
+          combineDisposable = [[RACSubscribable combineLatest:descendantSubscribables reduce:^NSArray *(RACTuple *xs) {
+            NSMutableArray *descendants = [[NSMutableArray alloc] init];
+            for (NSArray *children in xs) {
+              [descendants addObjectsFromArray:children];
+            }
+            return descendants;
+          }] subscribeNext:^(NSArray *zs) {
+            [subscriber sendNext:zs];
+          } error:^(NSError *error) {
+            [subscriber sendError:error];
+          } completed:^{
+            [subscriber sendCompleted];
+          }];
+        }];
+        
+        return [RACDisposable disposableWithBlock:^{
+          [descendantDisposable dispose];
+          [combineDisposable dispose];
+        }];
+      }];
+    }] switch];
+  }
+  
+  return result;
 }
 
 - (void)didChangeChildren {
@@ -303,7 +374,7 @@ static NSMutableDictionary *fsItemCache() {
   if (!url) {
     [self.childrenBacking sendNext:nil];
   }
-  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:nil options:0 errorHandler:nil]) {
+  for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
     FileSystemItem *child = [[FileSystemItem internalItemWithURL:childURL type:nil] first];
     if (child) {
       [children addObject:child];

@@ -58,7 +58,7 @@
   }] switch] select:^id<RACSubscribable>(FileSystemDirectory *directory) {
     @strongify(self);
     if (!self) { return nil; }
-    return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants filteredByAbbreviation:self.searchBarTextSubject];
+    return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject];
   }] switch] toProperty:@keypath(self.filteredItems) onObject:self];
   
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {

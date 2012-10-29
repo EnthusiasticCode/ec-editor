@@ -59,6 +59,7 @@
 - (id<RACSubscribable>)children;
 
 /// Returns a subscribable that sends the children of the directory as they change.
+/// Doesn't support NSDirectoryEnumerationSkipsPackageDescendants
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options;
 
 /// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
@@ -68,6 +69,7 @@
 
 /// Returns a subscribable that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSubscribable.
 /// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
+/// Doesn't support NSDirectoryEnumerationSkipsPackageDescendants
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable;
 
 @end
