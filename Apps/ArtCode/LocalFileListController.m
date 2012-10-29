@@ -8,7 +8,7 @@
 
 #import "LocalFileListController.h"
 #import "FileSystemItem.h"
-#import "HighlightTableViewCell.h"
+#import "FileSystemItemCell.h"
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
@@ -26,16 +26,13 @@
 
 static void _init(LocalFileListController *self) {
   // RAC
-  __weak LocalFileListController *this = self;
-  
+  @weakify(self);
   RAC(self.filteredItems) = [[RACSubscribable combineLatest:@[
                               // Subscribable to get filtered files
-                              [[[[RACAble(self.locationURL)
-                                  select:^id(NSURL *url) {
-                                    return [FileSystemDirectory directoryWithURL:url];
-                                  }] switch]
+                              [[RACAble(self.locationDirectory)
                                 select:^id(FileSystemDirectory *directory) {
-                                  return [directory childrenFilteredByAbbreviation:this.searchBarTextSubject];
+                                  @strongify(self);
+                                  return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
                                 }] switch],
                               // Subscribable with progress items
                               RACAbleWithStart(self.progressItems)]]
@@ -114,10 +111,9 @@ static void _init(LocalFileListController *self) {
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
-  NSURL *itemURL = item.first;
+  RACTuple *tuple = [self.filteredItems objectAtIndex:indexPath.row];
   UITableViewCell *cell = nil;
-  if ([item.second isKindOfClass:[RACSubscribable class]]) {
+  if ([tuple.second isKindOfClass:[RACSubscribable class]]) {
     static NSString * const progressCellIdentifier = @"progressCell";
     ProgressTableViewCell *progressCell = (ProgressTableViewCell *)[tView dequeueReusableCellWithIdentifier:progressCellIdentifier];
     if (!progressCell) {
@@ -125,28 +121,38 @@ static void _init(LocalFileListController *self) {
     }
     cell = progressCell;
     
-    [progressCell setProgressSubscribable:item.second];
+    [progressCell setProgressSubscribable:tuple.second];
+    
+    // The first item is an URL
+    NSURL *itemURL = tuple.first;
+    cell.textLabel.text = itemURL.lastPathComponent;
+    
+    if ([itemURL isDirectory]) {
+      cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+      cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+      cell.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    } else {
+      cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
+      cell.accessoryType = UITableViewCellAccessoryNone;
+      cell.editingAccessoryType = UITableViewCellAccessoryNone;
+    }
   } else {
-    HighlightTableViewCell *highlightCell = (HighlightTableViewCell *)[super tableView:tView cellForRowAtIndexPath:indexPath];
+    static NSString * const highlightCellIdentifier = @"cell";
+    FileSystemItemCell *highlightCell = (FileSystemItemCell *)[tView dequeueReusableCellWithIdentifier:highlightCellIdentifier];
+    if (!highlightCell) {
+      highlightCell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:highlightCellIdentifier];
+    }
     cell = highlightCell;
     
-    highlightCell.textLabelHighlightedCharacters = item.second;
+    highlightCell.textLabelHighlightedCharacters = tuple.second;
+    
+    // The first item is a file system item
+    highlightCell.item = tuple.first;
     
     // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
-    if ([_selectedItems containsObject:itemURL])
+    if ([_selectedItems containsObject:tuple.first]) {
       [tView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
-  }
-  
-  cell.textLabel.text = itemURL.lastPathComponent;
-  
-  if ([itemURL isDirectory]) {
-    cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-  } else {
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[itemURL pathExtension]];
-    cell.accessoryType = UITableViewCellAccessoryNone;
-    cell.editingAccessoryType = UITableViewCellAccessoryNone;
+    }
   }
   
   return cell;
@@ -160,9 +166,9 @@ static void _init(LocalFileListController *self) {
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-  NSURL *itemURL = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
   LocalFileListController *nextFileBrowserController = [[LocalFileListController alloc] init];
-  nextFileBrowserController.locationURL = itemURL;
+  nextFileBrowserController.locationDirectory = (FileSystemDirectory *)item;
   nextFileBrowserController.editing = self.editing;
   [self.navigationController pushViewController:nextFileBrowserController animated:YES];
 }

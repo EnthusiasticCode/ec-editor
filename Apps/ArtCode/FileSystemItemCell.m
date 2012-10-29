@@ -29,6 +29,7 @@
     NSString *type = ys.second;
     NSIndexSet *hitMask = xs.second;
     UITableViewCellAccessoryType accessoryType = self.accessoryType;
+    UITableViewCellAccessoryType editingAccessoryType = self.editingAccessoryType;
     self.textLabel.text = itemName;
     self.textLabelHighlightedCharacters = hitMask;
     // Crazy hack because UITableViewCell doesn't redraw properly if you change certain properties after it was inserted in a table view, unless you change it's accessoryType
@@ -40,6 +41,12 @@
       } else {
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
       }
+      if (editingAccessoryType != UITableViewCellAccessoryNone) {
+        self.editingAccessoryType = UITableViewCellAccessoryNone;
+        self.editingAccessoryType = editingAccessoryType;
+      } else {
+        self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+      }
     } else {
       self.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemName.pathExtension];
       if (accessoryType != UITableViewCellAccessoryNone) {
@@ -48,6 +55,13 @@
       } else {
         self.accessoryType = UITableViewCellAccessoryCheckmark;
         self.accessoryType = UITableViewCellAccessoryNone;
+      }
+      if (editingAccessoryType != UITableViewCellAccessoryNone) {
+        self.editingAccessoryType = UITableViewCellAccessoryNone;
+        self.editingAccessoryType = editingAccessoryType;
+      } else {
+        self.editingAccessoryType = UITableViewCellAccessoryCheckmark;
+        self.editingAccessoryType = UITableViewCellAccessoryNone;
       }
     }
   }];
