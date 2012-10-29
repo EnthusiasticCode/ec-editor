@@ -68,4 +68,9 @@
   return self;
 }
 
+- (void)prepareForReuse {
+  self.accessoryType = UITableViewCellAccessoryNone;
+  self.editingAccessoryType = UITableViewCellAccessoryNone;
+}
+
 @end

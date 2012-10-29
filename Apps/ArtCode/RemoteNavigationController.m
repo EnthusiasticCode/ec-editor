@@ -110,7 +110,7 @@ static void _init(RemoteNavigationController *self) {
     self.toolbarController.remoteDeleteButton.enabled = x.count != 0;
   }];
   
-  RAC(self.toolbarController.localTitleLabel.text) = RACAble(self.localFileListController.locationDirectory.name);
+  RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.name) switch];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
