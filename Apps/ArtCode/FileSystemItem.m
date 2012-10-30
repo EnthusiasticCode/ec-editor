@@ -255,9 +255,11 @@ static NSMutableDictionary *fsItemCache() {
       NSArray *content = tuple.first;
       NSString *abbreviation = tuple.second;
       
-      // No abbreviation, no need to filter
+      // No abbreviation, no need to filter, sort it by lastPathComponent
       if (![abbreviation length]) {
-        return [[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
+        return [[[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
+          return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
+        }] rac_toSubscribable] select:^id(FileSystemItem *item) {
           return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
         }] toArray];
       }
@@ -335,7 +337,9 @@ static NSMutableDictionary *fsItemCache() {
           FileSystemItem *item = ys.first;
           NSString *type = ys.second;
           if (type == NSURLFileResourceTypeDirectory) {
-            [descendantSubscribables addObject:[((FileSystemDirectory *)item) childrenWithOptions:options]];
+            [descendantSubscribables addObject:[[((FileSystemDirectory *)item) childrenWithOptions:options] select:^NSArray *(NSArray *x) {
+              return [x arrayByAddingObject:item];
+            }]];
           } else {
             [descendantSubscribables addObject:[RACSubscribable return:@[item]]];
           }
