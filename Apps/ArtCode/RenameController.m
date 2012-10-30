@@ -176,7 +176,7 @@
     if (!self) {
       return nil;
     }
-    return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [self->_item renameTo:newFullName copy:NO]]];
+    return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [self->_item renameTo:newFullName]]];
   }] selectMany:^id<RACSubscribable>(RACTuple *xs) {
     @strongify(self);
     NSString *oldFullName = xs.first;
@@ -184,7 +184,7 @@
     return [[self.selectedAlsoRenameItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
       return [[x.name take:1] selectMany:^id<RACSubscribable>(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
-        return [x renameTo:newFullName copy:NO];
+        return [x renameTo:newFullName];
       }];
     }];
   }] subscribeError:^(NSError *error) {

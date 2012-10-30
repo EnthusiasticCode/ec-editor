@@ -203,7 +203,7 @@ static void _init(RemoteNavigationController *self) {
     // Side effect to start the progress indicator in the local file list
     [localController addProgressItemWithName:itemName progressSubscribable:progressSubscribable];
     
-    // Return a subscribable that yields tuple of temporary URL and local destination URL
+    // Return a subscribable that yields the FileSystemItem of the downloaded file
     return [[[[[progressSubscribable
                where:^BOOL(id x) {
                  // Only return URLs
