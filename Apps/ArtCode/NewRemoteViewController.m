@@ -50,7 +50,7 @@
       break;
       
     case 1:
-      remote.scheme = @"ssh";
+      remote.scheme = @"sftp";
       break;
       
     case 2:

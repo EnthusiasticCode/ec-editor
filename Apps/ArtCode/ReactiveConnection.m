@@ -40,6 +40,7 @@
   _url = url;
   _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:[NSURLRequest requestWithURL:url]];
   [_connection setDelegate:self];
+  ASSERT(_connection);
   return self;
 }
 
