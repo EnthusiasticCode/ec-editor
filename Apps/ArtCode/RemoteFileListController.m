@@ -91,6 +91,10 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     enum ReactiveConnectionStatus status = [x intValue];
     if (!self.showLogin) {
       self.showLoading = status == ReactiveConnectionStatusLoading;
+    } else if (status == ReactiveConnectionStatusError) {
+      self.showLoading = NO;
+      self.showLogin = YES;
+      // TODO set error
     }
   }];
   
