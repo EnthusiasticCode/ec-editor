@@ -28,9 +28,6 @@
 /// Returns a subscribable that sends the parent directory of the receiver
 - (id<RACSubscribable>)parent;
 
-/// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned subscribable
-- (id<RACSubscribable>)save;
-
 @end
 
 @interface FileSystemFile : FileSystemItem
@@ -43,6 +40,9 @@
 
 /// Returns a RACPropertySyncSubject for the content of the file as an NSString
 @property (nonatomic, strong, readonly) RACPropertySyncSubject *stringContent;
+
+/// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned subscribable
+- (id<RACSubscribable>)save;
 
 @end
 
