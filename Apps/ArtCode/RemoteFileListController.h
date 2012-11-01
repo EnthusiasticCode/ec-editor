@@ -37,6 +37,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *loginUser;
 @property (weak, nonatomic) IBOutlet UITextField *loginPassword;
 @property (weak, nonatomic) IBOutlet UISwitch *loginAlwaysAskPassword;
+@property (weak, nonatomic) IBOutlet UILabel *loginErrorMessage;
 - (IBAction)loginAction:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UIView *loadingView;

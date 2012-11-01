@@ -98,6 +98,15 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     }
   }];
   
+  RAC(self.loginErrorMessage.hidden) = [[self.connection.connectionStatus
+                                        where:^BOOL(id x) {
+                                          enum ReactiveConnectionStatus status = [x intValue];
+                                          return status == ReactiveConnectionStatusError || status == ReactiveConnectionStatusConnected;
+                                        }]
+                                        select:^id(id x) {
+                                          return @((enum ReactiveConnectionStatus)[x intValue] == ReactiveConnectionStatusConnected);
+                                        }];
+  
   // Login reaction
   [[[RACAble(self.authenticationCredentials)
    select:^id(NSURLCredential *credentials) {
@@ -106,7 +115,6 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
    }] switch] subscribeNext:^(NSNumber *x) {
      this.showLoading = NO;
      this.showLogin = ![x boolValue];
-     // TODO if no, report error
    }];
 }
 
@@ -354,4 +362,8 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   [self dismissModalViewControllerAnimated:YES];
 }
 
+- (void)viewDidUnload {
+  [self setLoginErrorMessage:nil];
+  [super viewDidUnload];
+}
 @end
