@@ -204,7 +204,7 @@ static void _init(RemoteNavigationController *self) {
     [localController addProgressItemWithName:itemName progressSubscribable:progressSubscribable];
     
     // Return a subscribable that yields the FileSystemItem of the downloaded file
-    return [[[[[progressSubscribable
+    return [[[[progressSubscribable
                where:^BOOL(id x) {
                  // Only return URLs
                  return [x isKindOfClass:[NSURL class]]; }]
@@ -214,10 +214,9 @@ static void _init(RemoteNavigationController *self) {
                selectMany:^id<RACSubscribable>(FileSystemItem *x) {
                  // Move to destination, the downloaded FileSystemItem is sent
                  return [x moveTo:localController.locationDirectory renameTo:itemName]; }]
-               asMaybes]
-               take:1];
-  }] subscribeNext:^(RACMaybe *x) {
-    if ([x hasError]) {
+               catchTo:[RACSubscribable return:nil]];
+  }] subscribeNext:^(id x) {
+    if (x == nil) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }
   } completed:^{

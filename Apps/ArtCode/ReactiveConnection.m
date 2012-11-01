@@ -18,7 +18,7 @@
   id<CKConnection> _connection;
   NSURLCredential *_connectCredentials;
   
-  RACAsyncSubject *_connectedSubject;
+  RACSubject *_connectedSubject;
   RACSubject *_transcriptSubject;
   RACSubject *_directoryContentsSubject;
   RACReplaySubject *_connectionStatusSubject;
@@ -38,9 +38,6 @@
     return nil;
   }
   _url = url;
-  _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:[NSURLRequest requestWithURL:url]];
-  [_connection setDelegate:self];
-  ASSERT(_connection);
   return self;
 }
 
@@ -76,7 +73,12 @@
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
   if (!_connectedSubject) {
     _connectCredentials = credentials;
-    _connectedSubject = [RACAsyncSubject subject];
+    // TODO This should be a replay subject
+    _connectedSubject = [RACReplaySubject replaySubjectWithCapacity:1];
+    // TODO this should connect when someone subscribe to the subject
+    _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:[NSURLRequest requestWithURL:self.url]];
+    [_connection setDelegate:self];
+    ASSERT(_connection);
     [_connection connect];
   }
   return [_connectedSubject deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
@@ -218,10 +220,51 @@
   if (!_uploadProgressSubscribables) {
     _uploadProgressSubscribables = [[NSMutableDictionary alloc] init];
   }
+  if ([localURL isDirectory]) {
+    return [self _uploadDirectoryAtURL:localURL toRemotePath:remotePath];
+  } else {
+    return [self _uploadFileAtLocalURL:localURL toRemotePath:remotePath];
+  }
+}
+
+- (RACSubscribable *)_uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
   RACSubject *uploadSubscribable = [RACSubject subject];
   [_uploadProgressSubscribables setObject:uploadSubscribable forKey:remotePath];
   [_connection uploadFileAtURL:localURL toPath:remotePath openingPosixPermissions:0];
   return uploadSubscribable;
+}
+
+- (RACSubscribable *)_uploadDirectoryAtURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
+  @weakify(self);
+  return [[[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+    @strongify(self);
+    // Create remote directory
+    [self->_connection createDirectoryAtPath:[remotePath stringByAppendingPathComponent:localURL.lastPathComponent] posixPermissions:nil];
+    // Recursevly upload
+    NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
+    NSUInteger totalExpected = localContent.count;
+    __block NSUInteger totalAccumulator = 0;
+    return [[[localContent rac_toSubscribable]
+            selectMany:^id<RACSubscribable>(NSURL *x) {
+              @strongify(self);
+              NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
+              if ([x isDirectory]) {
+                return [self _uploadDirectoryAtURL:x toRemotePath:remoteX];
+              } else {
+                return [self _uploadFileAtLocalURL:x toRemotePath:remoteX];
+              }
+            }] subscribeNext:^(id x) {
+              if ([x isKindOfClass:[NSString class]]) {
+                totalAccumulator++;
+                [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
+              }
+            } error:^(NSError *error) {
+              [subscriber sendError:error];
+            } completed:^{
+              [subscriber sendNext:remotePath];
+              [subscriber sendCompleted];
+            }];
+  }] publish] autoconnect];
 }
 
 - (RACSubscribable *)deleteFileWithRemotePath:(NSString *)remotePath {
@@ -246,6 +289,7 @@
     [_connectedSubject sendCompleted];
     self.connected = YES;
   }
+  _connectedSubject = nil;
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didDisconnectFromHost:(NSString *)host {
@@ -256,10 +300,11 @@
 }
 
 - (void)connection:(id <CKPublishingConnection>)con didReceiveError:(NSError *)error {
-  // TODO manage error
   NSLog(@"connection error: %@", [error localizedDescription]);
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusError)];
-  [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusUnavailable)];
+  [_connectedSubject sendError:error];
+  _connectedSubject = nil;
+  self.connected = NO;
 }
 
 #pragma mark Connection Authentication
@@ -320,7 +365,6 @@
 #pragma mark Connection Downloads
 
 - (void)connection:(id<CKConnection>)con downloadDidBegin:(NSString *)remotePath {
-  // TODO check if needed
   [self connection:con download:remotePath progressedTo:@0];
 }
 
@@ -357,6 +401,7 @@
   if (error) {
     [subject sendError:error];
   } else {
+    [subject sendNext:remotePath];
     [subject sendCompleted];
   }
   [_uploadProgressSubscribables removeObjectForKey:remotePath];

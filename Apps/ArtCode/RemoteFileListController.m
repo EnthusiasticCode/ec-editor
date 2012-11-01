@@ -102,10 +102,11 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   [[[RACAble(self.authenticationCredentials)
    select:^id(NSURLCredential *credentials) {
      this.showLoading = YES;
-     return [this.connection connectWithCredentials:credentials];
-   }] switch] subscribeNext:^(id x) {
+     return [[this.connection connectWithCredentials:credentials] catchTo:[RACSubscribable return:@(NO)]];
+   }] switch] subscribeNext:^(NSNumber *x) {
      this.showLoading = NO;
      this.showLogin = ![x boolValue];
+     // TODO if no, report error
    }];
 }
 
