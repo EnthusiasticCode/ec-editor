@@ -63,7 +63,7 @@
                                             <constraint firstAttribute="width" constant="48" type="user" id="6hO-1F-eVk"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" image="itemIcon_Replace.png">
+                                        <state key="normal" image="itemIcon_Upload.png">
                                             <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -102,7 +102,7 @@
                                             <constraint firstAttribute="width" constant="48" type="user" id="z3f-6c-00H"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" image="itemIcon_Replace.png">
+                                        <state key="normal" image="itemIcon_Download.png">
                                             <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -118,7 +118,7 @@
                                             <constraint firstAttribute="width" constant="48" type="user" id="7OG-sM-pMP"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" image="itemIcon_Replace.png">
+                                        <state key="normal" image="itemIcon_DeleteSecondary.png">
                                             <color key="titleColor" red="0.26666668059999998" green="0.26666668059999998" blue="0.26666668059999998" alpha="1" colorSpace="deviceRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -301,10 +301,70 @@
     </scenes>
     <resources>
         <image name="itemIcon_Accept.png" width="29" height="27"/>
-        <image name="itemIcon_Replace.png" width="21" height="21"/>
+        <image name="itemIcon_DeleteSecondary.png" width="21" height="23"/>
+        <image name="itemIcon_Download.png" width="21" height="23"/>
+        <image name="itemIcon_Upload.png" width="20" height="23"/>
         <image name="searchBar_Background.png" width="10" height="88"/>
         <image name="searchBar_PrevButton_Normal.png" width="18" height="23"/>
     </resources>
+    <classes>
+        <class className="CodeFileSearchBarView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CodeFileSearchBarView.h"/>
+        </class>
+        <class className="LocalFileListController" superclassName="SearchableTableBrowserController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/LocalFileListController.h"/>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="RemoteFileListController" superclassName="SearchableTableBrowserController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteFileListController.h"/>
+            <relationships>
+                <relationship kind="action" name="loginAction:"/>
+                <relationship kind="outlet" name="loadingView" candidateClass="UIView"/>
+                <relationship kind="outlet" name="loginAlwaysAskPassword" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="loginErrorMessage" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="loginLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="loginPassword" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="loginUser" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="loginView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="RemoteNavigationController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteNavigationController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="toolbarController" candidateClass="RemoteNavigationToolbarController"/>
+            </relationships>
+        </class>
+        <class className="RemoteNavigationToolbarController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RemoteNavigationToolbarController.h"/>
+            <relationships>
+                <relationship kind="action" name="taggedButtonAction:"/>
+                <relationship kind="outlet" name="doneButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="downloadButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="localBackButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="localTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="remoteBackButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="remoteDeleteButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="remoteTitleLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="uploadButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="SearchableTableBrowserController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SearchableTableBrowserController.h"/>
+            <relationships>
+                <relationship kind="action" name="toolEditDeleteAction:"/>
+                <relationship kind="action" name="toolPushUrlForTagAction:"/>
+                <relationship kind="outlet" name="bottomToolBar" candidateClass="UIView"/>
+            </relationships>
+        </class>
+        <class className="TopBarEditButton" superclassName="TopBarToolButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TopBarEditButton.h"/>
+        </class>
+        <class className="TopBarToolButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TopBarToolButton.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
