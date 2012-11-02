@@ -55,6 +55,12 @@ static NSMutableDictionary *fsItemCache() {
 
 @end
 
+@interface FileSystemFile ()
+
+@property (nonatomic, weak) RACPropertySyncSubject *stringContentBacking;
+
+@end
+
 @interface FileSystemDirectory ()
 
 @property (nonatomic, strong) RACReplaySubject *childrenBacking;
@@ -156,10 +162,6 @@ static NSMutableDictionary *fsItemCache() {
   return [FileSystemItem itemWithURL:[self.urlBacking.first URLByDeletingLastPathComponent] type:NSURLFileResourceTypeDirectory];
 }
 
-- (id<RACSubscribable>)save {
-  
-}
-
 @end
 
 @implementation FileSystemFile
@@ -173,6 +175,7 @@ static NSMutableDictionary *fsItemCache() {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
   return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
     NSError *error = nil;
     if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
       return [RACSubscribable error:error];
@@ -198,6 +201,28 @@ static NSMutableDictionary *fsItemCache() {
   return self;
 }
 
+- (id<RACSubscribable>)save {
+  if (!self.urlBacking.first) {
+    return [RACSubscribable error:[[NSError alloc] init]];
+  }
+  @weakify(self);
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    @strongify(self);
+    NSError *error = nil;
+    NSString *stringContent = self.stringContent.first;
+    NSURL *url = self.urlBacking.first;
+    if (!stringContent || !url) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    if (![stringContent writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+      return [RACSubscribable error:error];
+    } else {
+      return [RACSubscribable return:self];
+    }
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+}
+
 @end
 
 @implementation FileSystemDirectory
@@ -211,6 +236,7 @@ static NSMutableDictionary *fsItemCache() {
     return [RACSubscribable error:[[NSError alloc] init]];
   }
   return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
     NSError *error = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
       return [RACSubscribable error:error];
