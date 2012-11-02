@@ -27,7 +27,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
     return;
   
   UIKeyboardFrame = CGRectNull;
-  [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil] merge:[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]] subscribeNext:^(NSNotification *note) {
+  [[RACSubscribable merge:@[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]]] subscribeNext:^(NSNotification *note) {
     if (note.name == UIKeyboardDidShowNotification) {
       UIKeyboardFrame = [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     } else {
