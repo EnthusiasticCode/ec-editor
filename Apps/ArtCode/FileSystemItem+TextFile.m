@@ -17,18 +17,30 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
 //static const char * const _explicitSyntaxXattrName = ;
 //static size_t _explicitSyntaxXattrMaxSize = 4 * 1024; // 4 kB
 
-@implementation FileSystemItem (TextFile)
+@implementation FileSystemFile (TextFile)
 
-- (RACPropertySyncSubject *)explicitSyntaxIdentifier {
-  return [self extendedAttributeForKey:_explicitSyntaxIdentifierKey];
+- (id<RACSubscribable>)explicitSyntaxIdentifierSource {
+  return [self extendedAttributeSourceForKey:_explicitSyntaxIdentifierKey];
 }
 
-- (RACPropertySyncSubject *)explicitEncoding {
-  return [self extendedAttributeForKey:_explicitEncodingKey];
+- (id<RACSubscriber>)explicitSyntaxIdentifierSink {
+  return [self extendedAttributeSinkForKey:_explicitSyntaxIdentifierKey];
 }
 
-- (RACPropertySyncSubject *)bookmarks {
-  return [self extendedAttributeForKey:_bookmarksKey];
+- (id<RACSubscribable>)explicitEncodingSource {
+  return [self extendedAttributeSourceForKey:_explicitEncodingKey];
+}
+
+- (id<RACSubscriber>)explicitEncodingSink {
+  return [self extendedAttributeSinkForKey:_explicitEncodingKey];
+}
+
+- (id<RACSubscribable>)bookmarksSource {
+  return [self extendedAttributeSourceForKey:_bookmarksKey];
+}
+
+- (id<RACSubscriber>)bookmarksSink {
+  return [self extendedAttributeSinkForKey:_bookmarksKey];
 }
 
 //- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError *__autoreleasing *)outError {

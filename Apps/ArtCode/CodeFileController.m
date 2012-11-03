@@ -37,7 +37,6 @@
 #import "NSIndexSet+PersistentDataStructure.h"
 #import "FileSystemItem+TextFile.h"
 #import <file/FileMagic.h>
-#import "RACPropertySyncSubject.h"
 
 
 @interface CodeFileController ()
@@ -316,27 +315,42 @@ static void drawStencilStar(CGContextRef myContext)
   [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
-  
-  __block RACDisposable *bookmarksDisposable = nil;
-  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
-    @strongify(self);
-    if (!self) { return; }
-    [bookmarksDisposable dispose];
-    bookmarksDisposable = [textFile.bookmarks syncProperty:@keypath(self.bookmarks) ofObject:self];
-  }];
+
+  // TODO: bind bookmarks again
+//  __block RACDisposable *bookmarksDisposable = nil;
+//  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
+//    @strongify(self);
+//    if (!self) { return; }
+//    [bookmarksDisposable dispose];
+//    bookmarksDisposable = [textFile.bookmarks syncProperty:@keypath(self.bookmarks) ofObject:self];
+//  }];
   
   // When the text file or the code view change, bind their texts together
-  __block RACDisposable *textDisposable = nil;
+  __block RACDisposable *sinkDisposable = nil;
+  __block RACDisposable *sourceDisposable = nil;
+  static void *senderKey = NULL;
   [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
     FileSystemFile *textFile = tuple.second;
-    [textDisposable dispose];
+    [sinkDisposable dispose];
+    [sourceDisposable dispose];
     if (!codeView || !textFile) { return; }
-    textDisposable = [textFile.stringContent syncProperty:@keypath(codeView, text) ofObject:codeView];
+    sinkDisposable = [[RACAble(codeView.text) doNext:^(NSString *x) {
+      @strongify(self);
+      if (!self) {
+        return;
+      }
+      objc_setAssociatedObject(x, &senderKey, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }] subscribe:textFile.contentSink];
+    sourceDisposable = [[textFile.contentSource where:^BOOL(NSString *x) {
+      @strongify(self);
+      id sender = objc_getAssociatedObject(x, &senderKey);
+      return sender != self;
+    }] toProperty:@keypath(codeView.text) onObject:codeView];
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifier) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
+  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -349,7 +363,7 @@ static void drawStencilStar(CGContextRef myContext)
     if (explicitSyntaxIdentifier) {
       return [RACSubscribable return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
-    return [[textFile.stringContent take:1] select:^RACTuple *(NSString *x) {
+    return [[textFile.contentSource take:1] select:^RACTuple *(NSString *x) {
       TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
       if (!syntax) {
         syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
@@ -378,7 +392,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // subscribe to the text file's content to reparse
-  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.stringContent) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.contentSource) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
     ASSERT_NOT_MAIN_QUEUE();
     NSString *changedContent = tuple.first;
     TMUnit *codeUnit = tuple.second;
@@ -386,7 +400,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Update title with current symbol and keyboard accessory based on current scope
-  [[[RACSubscribable combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.stringContent) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSubscribable combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSource) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
     @strongify(self);
     if (!self) {
       return;

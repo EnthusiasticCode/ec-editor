@@ -16,7 +16,6 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
-		5F18E23C161A0C4A005BBB84 /* RACPropertySyncSubject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18E23B161A0C4A005BBB84 /* RACPropertySyncSubject.m */; };
 		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
 		5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */; };
 		5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F20ABD216230BE40051FC86 /* EXTScope.m */; };
@@ -602,8 +601,6 @@
 		5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTab.m; sourceTree = "<group>"; };
 		5F16583715B6DA7100F0DEDC /* _ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ArtCodeTabSet.h; sourceTree = "<group>"; };
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
-		5F18E23A161A0C4A005BBB84 /* RACPropertySyncSubject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACPropertySyncSubject.h; sourceTree = "<group>"; };
-		5F18E23B161A0C4A005BBB84 /* RACPropertySyncSubject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RACPropertySyncSubject.m; sourceTree = "<group>"; };
 		5F18F58D161271A5005D8A4F /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
 		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
 		5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
@@ -1657,8 +1654,6 @@
 				B7FB79C214D604FA0080A714 /* ArchiveUtilities.m */,
 				B7FB79C514D604FA0080A714 /* RectSet.h */,
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
-				5F18E23A161A0C4A005BBB84 /* RACPropertySyncSubject.h */,
-				5F18E23B161A0C4A005BBB84 /* RACPropertySyncSubject.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -3200,7 +3195,6 @@
 				5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */,
 				5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */,
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
-				5F18E23C161A0C4A005BBB84 /* RACPropertySyncSubject.m in Sources */,
 				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
 				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
 				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,

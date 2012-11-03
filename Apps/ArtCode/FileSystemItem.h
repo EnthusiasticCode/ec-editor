@@ -38,8 +38,17 @@
 /// Attempts to create a new file at the given url, then sends the created file and completed, or an error, to the returned subscribable
 + (id<RACSubscribable>)createFileWithURL:(NSURL *)url;
 
-/// Returns a RACPropertySyncSubject for the content of the file as an NSString
-@property (nonatomic, strong, readonly) RACPropertySyncSubject *stringContent;
+/// Returns a source that sends the file's encoding
+- (id<RACSubscribable>)encodingSource;
+
+/// Returns a sink that receives the file's encoding
+- (id<RACSubscriber>)encodingSink;
+
+/// Returns a source that sends the contents of the file encoded as a string with it's encoding
+- (id<RACSubscribable>)contentSource;
+
+/// Returns a sink that receives strings as the file's content
+- (id<RACSubscriber>)contentSink;
 
 /// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned subscribable
 - (id<RACSubscribable>)save;
@@ -99,7 +108,10 @@
 
 @interface FileSystemItem (ExtendedAttributes)
 
-/// Returns a RACPropertySyncSubject for the extended attribute identified by the given key
-- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key;
+/// Returns a source that sends the extended attribute identified by \a key
+- (id<RACSubscribable>)extendedAttributeSourceForKey:(NSString *)key;
+
+/// Returns a sink that receives the extended attribute identified by \a key
+- (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key;
 
 @end

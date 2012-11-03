@@ -7,7 +7,6 @@
 //
 
 #import "FileSystemItem.h"
-#import "RACPropertySyncSubject.h"
 #import "NSString+ScoreForAbbreviation.h"
 
 
@@ -49,7 +48,7 @@ static NSMutableDictionary *fsItemCache() {
 @property (nonatomic, strong) RACReplaySubject *typeBacking;
 @property (nonatomic, strong) RACReplaySubject *parentBacking;
 
-@property (nonatomic, strong) NSMutableDictionary *extendedAttributes;
+@property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type;
 
@@ -57,7 +56,7 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemFile ()
 
-@property (nonatomic, weak) RACPropertySyncSubject *stringContentBacking;
+@property (nonatomic, strong) RACReplaySubject *stringContent;
 
 @end
 
@@ -140,7 +139,7 @@ static NSMutableDictionary *fsItemCache() {
   _typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   [_typeBacking sendNext:type];
   _parentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-  _extendedAttributes = [NSMutableDictionary dictionary];
+  _extendedAttributesBacking = NSMutableDictionary.alloc.init;
   return self;
 }
 
@@ -190,7 +189,7 @@ static NSMutableDictionary *fsItemCache() {
   if (!self) {
     return nil;
   }
-  _stringContent = [RACPropertySyncSubject subject];
+  _stringContent = [RACReplaySubject replaySubjectWithCapacity:1];
   NSError *error;
   NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
   if (!error) {
@@ -199,6 +198,14 @@ static NSMutableDictionary *fsItemCache() {
     [_stringContent sendError:error];
   }
   return self;
+}
+
+- (id<RACSubscribable>)contentSource {
+  return [self.stringContent distinctUntilChanged];
+}
+
+- (id<RACSubscriber>)contentSink {
+  return self.stringContent;
 }
 
 - (id<RACSubscribable>)save {
@@ -581,7 +588,6 @@ static NSMutableDictionary *fsItemCache() {
     [item.urlBacking sendNext:nil];
     [item.typeBacking sendNext:nil];
     [item.parentBacking sendNext:nil];
-    item.extendedAttributes = nil;
     if (itemType == NSURLFileResourceTypeRegular) {
       [((FileSystemFile *)item).stringContent sendNext:nil];
     } else if (itemType == NSURLFileResourceTypeDirectory) {
@@ -602,17 +608,31 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemItem (ExtendedAttributes)
 
-- (RACPropertySyncSubject *)extendedAttributeForKey:(NSString *)key {
-  ASSERT(self.extendedAttributes);
-  @synchronized(self.extendedAttributes) {
-    RACPropertySyncSubject *extendedAttribute = [self.extendedAttributes objectForKey:key];
-    if (!extendedAttribute) {
-      extendedAttribute = [RACPropertySyncSubject subject];
-      [extendedAttribute sendNext:nil];
-      [self.extendedAttributes setObject:extendedAttribute forKey:key];
+- (id<RACSubscribable>)extendedAttributeSourceForKey:(NSString *)key {
+  @weakify(self);
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    @strongify(self);
+    if (!self || !self.urlBacking.first) {
+      return [RACSubscribable never];
     }
-    return extendedAttribute;
-  }
+    
+    id<RACSubscribable>source = nil;
+    @synchronized(self.extendedAttributesBacking) {
+      source = [self.extendedAttributesBacking objectForKey:key];
+      if (!source) {
+        source = [RACReplaySubject replaySubjectWithCapacity:1];
+        [self.extendedAttributesBacking setObject:source forKey:key];
+        // TODO: load extended attribute from filesystem
+      }
+    }
+    return source;
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+}
+
+- (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
+  // TODO: actually return something useful
+  return RACSubscriber.alloc.init;
 }
 
 @end

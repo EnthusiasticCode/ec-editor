@@ -12,10 +12,16 @@
 
 @interface FileSystemFile (TextFile)
 
-- (RACPropertySyncSubject *)explicitSyntaxIdentifier;
+- (id<RACSubscribable>)explicitSyntaxIdentifierSource;
 
-- (RACPropertySyncSubject *)explicitEncoding;
+- (id<RACSubscriber>)explicitSyntaxIdentifierSink;
 
-- (RACPropertySyncSubject *)bookmarks;
+- (id<RACSubscribable>)explicitEncodingSource;
+
+- (id<RACSubscriber>)explicitEncodingSink;
+
+- (id<RACSubscribable>)bookmarksSource;
+
+- (id<RACSubscriber>)bookmarksSink;
 
 @end

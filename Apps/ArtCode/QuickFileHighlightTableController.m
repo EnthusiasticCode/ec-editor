@@ -12,25 +12,15 @@
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
 #import "FileSystemItem+TextFile.h"
-#import "RACPropertySyncSubject.h"
 
 @interface QuickFileHighlightTableController ()
 
-@property (nonatomic, strong, readonly) NSArray *syntaxNames;
-@property (nonatomic, strong) NSString *currentSyntaxName;
+@property (nonatomic, strong) NSArray *syntaxes;
+@property (nonatomic, strong) TMSyntaxNode *currentSyntax;
 
 @end
 
-@implementation QuickFileHighlightTableController {
-  NSArray *_syntaxNames;
-}
-
-- (NSArray *)syntaxNames {
-  if (!_syntaxNames) {
-    _syntaxNames = [@[ @"Automatic" ] arrayByAddingObjectsFromArray:[[TMSyntaxNode allSyntaxesNames].allKeys sortedArrayUsingSelector:@selector(compare:)]];
-  }
-  return _syntaxNames;
-}
+@implementation QuickFileHighlightTableController
 
 #pragma mark - View lifecycle
 
@@ -39,30 +29,40 @@
   if (!self) {
     return nil;
   }
-  __weak QuickFileHighlightTableController *weakSelf = self;
-  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemFile *textFile) {
-    QuickFileHighlightTableController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    [[[textFile.explicitSyntaxIdentifier distinctUntilChanged] select:^NSString *(NSString *explicitSyntaxIdentifier) {
-      return [[TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier] name];
-    }] toProperty:@keypath(strongSelf, currentSyntaxName) onObject:strongSelf];
-    [[[RACAble(strongSelf, currentSyntaxName) distinctUntilChanged] select:^NSString *(NSString *syntaxName) {
-      if ([syntaxName isEqualToString:@"Automatic"]) {
-        return nil;
+  
+  NSArray *allSyntaxes = [@[[NSNull null]] arrayByAddingObjectsFromArray:[TMSyntaxNode.allSyntaxes.allValues sortedArrayUsingComparator:^NSComparisonResult(TMSyntaxNode *obj1, TMSyntaxNode *obj2) {
+    return [obj1.name compare:obj2.name];
+  }]];
+  
+  @weakify(self);
+  
+  // Setup the syntax list and the bindings with the explicit syntax identifier every time the file changes
+  __block RACDisposable *sourceDisposable = nil;
+  __block RACDisposable *sinkDisposable = nil;
+  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemFile *x) {
+    @strongify(self);
+    [sourceDisposable dispose];
+    [sinkDisposable dispose];
+    // Set syntaxes to nil to clear out the table while the explicit syntax identifier is being retrieved
+    self.syntaxes = nil;
+    self.currentSyntax = nil;
+    sourceDisposable = [[[x.explicitSyntaxIdentifierSource doNext:^(id _) {
+      @strongify(self);
+      // If this is the first time the explicit syntax identifier is sent, the syntaxes will still be nil, in that case set the syntaxes back
+      if (!self.syntaxes) {
+        self.syntaxes = allSyntaxes;
       }
-      return [[TMSyntaxNode allSyntaxesNames] objectForKey:syntaxName];
-    }] subscribeNext:^(NSString *syntaxIdentifier) {
-      [textFile.explicitSyntaxIdentifier sendNext:syntaxIdentifier];
-    }];    
+    }] select:^TMSyntaxNode *(NSString *x) {
+      return [TMSyntaxNode syntaxWithScopeIdentifier:x];
+    }] toProperty:@keypath(self.currentSyntax) onObject:self];
+    sinkDisposable = [[RACAble(self.currentSyntax) select:^NSString *(TMSyntaxNode *x) {
+      return x.identifier;
+    }] subscribe:x.explicitSyntaxIdentifierSink];
   }];
-  [RACAble(self.currentSyntaxName) subscribeNext:^(id x) {
-    QuickFileHighlightTableController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    [strongSelf.tableView reloadData];
+  
+  // Reload the table when the current syntax or the syntaxes change
+  [[RACSubscribable combineLatest:@[RACAble(self.currentSyntax), RACAble(self.syntaxes), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
+    [xs.third reloadData];
   }];
   
   return self;
@@ -71,15 +71,19 @@
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return self.syntaxNames.count;
+  return self.syntaxes.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-  cell.textLabel.text = [self.syntaxNames objectAtIndex:indexPath.row];
-  if ((indexPath.row == 0 && self.currentSyntaxName == nil) || [cell.textLabel.text isEqualToString:self.currentSyntaxName]) {
+  
+  if (indexPath.row == 0) {
+    cell.textLabel.text = @"Automatic";
+  } else {
+    cell.textLabel.text = [(TMSyntaxNode *)[self.syntaxes objectAtIndex:indexPath.row] name];
+  }
+  if ((indexPath.row == 0 && self.currentSyntax == nil) || [cell.textLabel.text isEqualToString:self.currentSyntax.name]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
   } else {
     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -92,9 +96,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (indexPath.row == 0) {
-    self.currentSyntaxName = nil;
+    self.currentSyntax = nil;
   } else {
-    self.currentSyntaxName = [self.syntaxNames objectAtIndex:indexPath.row];
+    self.currentSyntax = [self.syntaxes objectAtIndex:indexPath.row];
   }
 }
 

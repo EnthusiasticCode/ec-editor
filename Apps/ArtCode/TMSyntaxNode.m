@@ -165,17 +165,6 @@ static NSMutableDictionary *_includedNodesCaches;
   return _syntaxesWithIdentifier;
 }
 
-+ (NSDictionary *)allSyntaxesNames {
-  static NSMutableDictionary *_nameToSyntaxIdentifier = nil;
-  if (!_nameToSyntaxIdentifier) {
-    _nameToSyntaxIdentifier = [NSMutableDictionary dictionaryWithCapacity:_syntaxesWithIdentifier.count];
-    [_syntaxesWithIdentifier enumerateKeysAndObjectsUsingBlock:^(NSString *key, TMSyntaxNode *obj, BOOL *stop) {
-      [_nameToSyntaxIdentifier setObject:key forKey:obj.name];
-    }];
-  }
-  return _nameToSyntaxIdentifier;
-}
-
 - (NSString *)qualifiedIdentifier {
   return self.identifier;
 }
