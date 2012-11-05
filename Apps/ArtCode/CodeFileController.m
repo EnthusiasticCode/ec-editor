@@ -316,7 +316,7 @@ static void drawStencilStar(CGContextRef myContext)
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
 
-  // TODO:: bind bookmarks again
+  // TODO: bind bookmarks again
 //  __block RACDisposable *bookmarksDisposable = nil;
 //  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
 //    @strongify(self);
@@ -423,6 +423,8 @@ static void drawStencilStar(CGContextRef myContext)
     NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:selectionRange.location];
     [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
     self.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
+    
+    // TODO: update self.codeView.autoIndetationBlock
   }];
   
   // load the web preview if needed

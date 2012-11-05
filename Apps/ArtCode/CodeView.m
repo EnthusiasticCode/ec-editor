@@ -332,6 +332,10 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
   [super setContentSize:size];
 }
 
+- (NSString *)autoIndentationString {
+  return _autoIndentationString ?: @"    ";
+}
+
 #pragma mark Properties - Line numbers
 
 @synthesize textInsets, lineNumbersEnabled, lineNumbersWidth, lineNumbersFont, lineNumbersColor, lineNumbersBackgroundColor;
@@ -1343,21 +1347,42 @@ static void init(CodeView *self)
     lineRange.length = range.location - lineRange.location;
     NSString *line = [self.text substringWithRange:lineRange];
     
-    // Get the tailing spaces
-    NSString *tailingSpaces = nil;
-    static NSRegularExpression *tailingSpacesRegexp = nil;
-    if (!tailingSpacesRegexp) {
-      tailingSpacesRegexp = [NSRegularExpression regularExpressionWithPattern:@"^(\\s*).*$" options:0 error:NULL];
+    // Get the leading spaces of the current line
+    NSString *leadingSpaces = nil;
+    static NSRegularExpression *leadingSpacesRegexp = nil;
+    if (!leadingSpacesRegexp) {
+      leadingSpacesRegexp = [NSRegularExpression regularExpressionWithPattern:@"^(\\s*).*$" options:0 error:NULL];
     }
-    NSTextCheckingResult *tailingSpacesResult = [tailingSpacesRegexp firstMatchInString:line options:0 range:NSMakeRange(0, lineRange.length)];
+    NSTextCheckingResult *tailingSpacesResult = [leadingSpacesRegexp firstMatchInString:line options:0 range:NSMakeRange(0, lineRange.length)];
     if (tailingSpacesResult.numberOfRanges > 1) {
-      tailingSpaces = [line substringWithRange:[tailingSpacesResult rangeAtIndex:1]];
+      leadingSpaces = [line substringWithRange:[tailingSpacesResult rangeAtIndex:1]];
     }
     
-    // Add tailing spaces
-    if (tailingSpaces) {
-      string = [string stringByAppendingString:tailingSpaces];
-      selection.location += tailingSpaces.length;
+    // Get the behaviour for the current line, default to keep current indentation
+    switch (self.autoIndentationBlock ? self.autoIndentationBlock(line) : CodeViewAutoIndentKeep) {
+      case CodeViewAutoIndentIncrease:
+        // Increase the next line indentation
+        leadingSpaces = [leadingSpaces stringByAppendingString:self.autoIndentationString];
+        break;
+        
+      case CodeViewAutoIndentDecrease:
+        // Remove a level of indentation from the *current* and next line
+        if ([leadingSpaces hasSuffix:self.autoIndentationString]) {
+          NSString *decreasedLeadingSpaces = [leadingSpaces substringToIndex:leadingSpaces.length - self.autoIndentationString.length];
+          NSString *currentLine = [decreasedLeadingSpaces stringByAppendingString:[line substringFromIndex:leadingSpaces.length]];
+          [self _replaceTextInRange:lineRange withString:currentLine newSelectionRange:range];
+          leadingSpaces = decreasedLeadingSpaces;
+        }
+        break;
+        
+      default: // CodeViewAutoIndentKeep
+        break;
+    }
+    
+    // Add leading spaces to new line
+    if (leadingSpaces) {
+      string = [string stringByAppendingString:leadingSpaces];
+      selection.location += leadingSpaces.length;
     }
     
     // TODO: use autoIndentationBlock

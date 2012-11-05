@@ -84,6 +84,9 @@ typedef CodeViewAutoIndentResult (^CodeViewAutoIndentationForLineBlock)(NSString
 /// This block will be automatically used when a single new line will be inserted.
 @property (nonatomic, strong) CodeViewAutoIndentationForLineBlock autoIndentationBlock;
 
+/// A string used to indend a line by one level. Default to 4 spaces.
+@property (nonatomic, strong) NSString *autoIndentationString;
+
 #pragma mark Managing Text Content
 
 /// Text insets for the rendering.
