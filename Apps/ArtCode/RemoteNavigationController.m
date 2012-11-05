@@ -100,16 +100,17 @@ static void _init(RemoteNavigationController *self) {
   // Upload button activation reaction
   [RACAble(self.localFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
-    self.toolbarController.uploadButton.enabled = x.count != 0; // TODO && connected
+    self.toolbarController.uploadButton.enabled = x.count != 0 && self.connection.isConnected;
   }];
   
   // Download button activation reaction
   [RACAble(self.remoteFileListController.selectedItems) subscribeNext:^(NSArray *x) {
     @strongify(self);
     self.toolbarController.downloadButton.enabled =
-    self.toolbarController.remoteDeleteButton.enabled = x.count != 0;
+    self.toolbarController.remoteDeleteButton.enabled = x.count != 0 && self.connection.isConnected;
   }];
   
+  // React on local file location to change label name
   RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.name) switch];
 }
 
