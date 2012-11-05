@@ -1529,18 +1529,24 @@ static void init(CodeView *self)
 
 - (void)_handleGestureTap:(UITapGestureRecognizer *)recognizer
 {
-  // Tap with two fingers to show context menu
-  if (recognizer.numberOfTouchesRequired == 2)
-  {
-    UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
-    
-//    // Adding custom menu
-//    UIMenuItem *completionMenuItem = [[UIMenuItem alloc] initWithTitle:@"Completion" action:@selector(complete:)];
-//    sharedMenuController.menuItems = [NSArray arrayWithObject:completionMenuItem];
-    
-    // Show context menu
-    [sharedMenuController setTargetRect:_selectionView.frame inView:self];
-    [sharedMenuController setMenuVisible:YES animated:YES];
+  // Tap with two fingers
+  if (recognizer.numberOfTouchesRequired == 2) {
+    if (self.isFirstResponder) {
+      // Show context menu
+      UIMenuController *sharedMenuController = [UIMenuController sharedMenuController];
+      
+      // Show context menu
+      [sharedMenuController setTargetRect:_selectionView.frame inView:self];
+      [sharedMenuController setMenuVisible:YES animated:YES];
+    } else {
+      // Copy selected text if any
+      if (self.selectionRange.length) {
+        [self copy:nil];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Text copyied") image:nil displayImmediatly:YES];
+      } else {
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"No selection to copy") image:nil displayImmediatly:YES];
+      }
+    }
     return;
   }
   
