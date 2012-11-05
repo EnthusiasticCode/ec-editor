@@ -50,7 +50,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   }
   else if (context == &PopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
   {
-    // TODO:: different formatting for current history position, update without reloading on history position change
+    // TODO: different formatting for current history position, update without reloading on history position change
     // NOTE: doesn't seem to be needed as changing the current history position triggers the history items observing as well
   }
   else

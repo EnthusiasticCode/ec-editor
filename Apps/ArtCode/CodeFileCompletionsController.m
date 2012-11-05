@@ -46,7 +46,7 @@
 
 - (id<TMCompletionResultSet>)_completionResults
 {
-  // TODO:: change to RAC
+  // TODO: change to RAC
 //  if (!_completionResults)
 //    [self.targetCodeFileController.projectFile completionsAtOffset:self.offsetInDocumentForCompletions withCompletionHandler:^(id<TMCompletionResultSet> completions) {
 //      self._completionResults = completions;
