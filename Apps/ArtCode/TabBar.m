@@ -212,7 +212,7 @@ static void init(TabBar *self)
     
     CGRect bounds = scrollView.bounds;
     
-    // TODO remove non visible controls
+    // TODO: remove non visible controls
     
     // Determine button's size
     CGRect buttonFrame = (CGRect) { CGPointZero, strongSelf->tabControlSize };
@@ -358,7 +358,7 @@ static void init(TabBar *self)
   //    newTabControl.frame = UIEdgeInsetsInsetRect(tabControlFrame, tabControlInsets);
   
   // Resize content
-  // TODO check with height = 0
+  // TODO: check with height = 0
   tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * (newTabControlIndex + 1), 1);
   
   [tabControlsContainerView addSubview:newTabControl];
@@ -576,7 +576,7 @@ static void init(TabBar *self)
   
   // Change selection
   [selectedTabControl setSelected:NO];
-  selectedTabControl = tabControl; // TODO!!! make this weak
+  selectedTabControl = tabControl; // TODO:!!! make this weak
   [selectedTabControl setSelected:YES];
   
   [self didChangeValueForKey:@"selectedTabIndex"];

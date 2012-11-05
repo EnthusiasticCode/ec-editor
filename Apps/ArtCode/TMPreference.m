@@ -220,7 +220,7 @@ static NSMutableDictionary *symbolIconsCache;
         image = [[self class] symbolIconForIdentifier:value];
       }
       [_settings setObject:image forKey:TMPreferenceSymbolIconKey];
-      // TODO also use symbolImagePath, symbolImageColor & Title
+      // TODO: also use symbolImagePath, symbolImageColor & Title
     }
 
     // Symbol separation
@@ -281,7 +281,7 @@ static NSMutableDictionary *symbolIconsCache;
 - (bool(^)(NSString*))_createBlockForIndentPattern:(NSString *)pattern {
   OnigRegexp *patternRegexp = [OnigRegexp compile:pattern];
   return [^bool(NSString *line) {
-    // TODO use a direct boolean method?
+    // TODO: use a direct boolean method?
     return [[patternRegexp match:line] count] > 0;
   } copy];
 }

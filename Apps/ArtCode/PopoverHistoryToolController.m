@@ -50,7 +50,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   }
   else if (context == &PopoverHistoryToolControllerTabCurrentHistoryPositionObserving)
   {
-    // TODO: different formatting for current history position, update without reloading on history position change
+    // TODO:: different formatting for current history position, update without reloading on history position change
     // NOTE: doesn't seem to be needed as changing the current history position triggers the history items observing as well
   }
   else
@@ -65,7 +65,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   
   self.tableView.backgroundColor = [UIColor styleBackgroundColor];
   self.tableView.separatorColor = [UIColor styleForegroundColor];
-  // TODO make this a button to go back to projects?
+  // TODO: make this a button to go back to projects?
   self.tableView.tableFooterView = [[UIView alloc] init];
 }
 
@@ -102,7 +102,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   // Configure the 'back to projects' cell
   if (section == SECTION_BACK_TO_PROJECTS)
   {
-    // TODO localize
+    // TODO: localize
     cell.textLabel.text = @"Back to projects";
   }
   else

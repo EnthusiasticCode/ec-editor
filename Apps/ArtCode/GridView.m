@@ -930,7 +930,7 @@ static void _init(GridView *self)
     return;
   [self willChangeValueForKey:@"editing"];
   editing = value;
-  // TODO animate
+  // TODO: animate
   [self didChangeValueForKey:@"editing"];
 }
 

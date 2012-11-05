@@ -112,7 +112,7 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  // TODO push an url instead
+  // TODO: push an url instead
   [table deselectRowAtIndexPath:indexPath animated:YES];
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
   TMSymbol *selectedSymbol = [[self filteredItems] objectAtIndex:indexPath.row];

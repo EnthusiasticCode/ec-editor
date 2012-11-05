@@ -94,7 +94,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     } else if (status == ReactiveConnectionStatusError) {
       self.showLoading = NO;
       self.showLogin = YES;
-      // TODO set error
+      // TODO: set error
     }
   }];
   
@@ -254,7 +254,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
     cell.editingAccessoryType = UITableViewCellAccessoryNone;
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
   }
-  // TODO also use NSFileSize
+  // TODO: also use NSFileSize
   // Select item to maintain selection on filtering
   if ([_selectedItems containsObject:directoryItem])
     [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];

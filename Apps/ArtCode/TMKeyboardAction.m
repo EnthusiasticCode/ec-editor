@@ -162,7 +162,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 
 + (NSArray *)defaultKeyboardActionsConfiguration {
   if (!systemDefaultKeyboardActionsConfiguration) {
-    // TODO actually craete an hardcoded cofiguration
+    // TODO: actually craete an hardcoded cofiguration
     systemDefaultKeyboardActionsConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:@"text.plain"];
     ASSERT(systemDefaultKeyboardActionsConfiguration.count == 11);
   }

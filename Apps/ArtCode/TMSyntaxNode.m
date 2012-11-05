@@ -78,7 +78,7 @@ static NSMutableDictionary *_includedNodesCaches;
   _includedNodesCaches = NSMutableDictionary.alloc.init;
   
   _syntaxesWithIdentifier = NSMutableDictionary.alloc.init;
-// TODO URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
+// TODO: URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
   _syntaxesWithoutIdentifier = NSMutableArray.alloc.init;
   NSFileManager *fileManager = NSFileManager.alloc.init;
   for (NSURL *bundleURL in [TMBundle bundleURLs]) {
@@ -257,7 +257,7 @@ static NSMutableDictionary *_includedNodesCaches;
 }
 
 
-// TODO URI: handle errors more gracefully here
+// TODO: URI: handle errors more gracefully here
 
 - (id)_initWithDictionary:(NSDictionary *)dictionary syntax:(TMSyntaxNode *)syntax {
   ASSERT(dictionary);

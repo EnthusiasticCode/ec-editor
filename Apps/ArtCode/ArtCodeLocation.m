@@ -53,7 +53,7 @@
       // If a file, data is a bookmark data URL
       BOOL isStale = NO;
       NSURL *url = [NSURL URLByResolvingBookmarkData:self.data options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&isStale error:NULL];
-      // TODO do something if it's stale
+      // TODO: do something if it's stale
       return url;
     }
       

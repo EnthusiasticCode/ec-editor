@@ -235,7 +235,7 @@
 	}
   
   // Redirect to safari
-  // TODO complete with alert view delegate
+  // TODO: complete with alert view delegate
   if ([URL.scheme hasPrefix:@"http"]) { //http or https
 		[[[UIAlertView alloc] initWithTitle:L(@"Open Safari")
                                 message:L(@"This is an external link. Do you want to open it in Safari?") 

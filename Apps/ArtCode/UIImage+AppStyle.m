@@ -52,7 +52,7 @@
       //        CGFloat middle_width = outside_right / 2.0;
       CGFloat middle_height = outside_bottom / 2.0;
       
-      // TODO No top arrow for now
+      // TODO: No top arrow for now
       CGPathMoveToPoint(path, NULL, inside_left, outside_top);
       CGPathAddLineToPoint(path, NULL, inside_right, outside_top);
       
@@ -83,7 +83,7 @@
         CGPathAddArcToPoint(path, NULL, outside_right, outside_bottom, inside_right, outside_bottom, radius);
       }
       
-      // TODO no bottom arrow
+      // TODO: no bottom arrow
       CGPathAddLineToPoint(path, NULL, inside_left, outside_bottom);
       
       // Left arrow

@@ -165,7 +165,7 @@
 #pragma mark - Private methods
 
 - (void)_doneAction:(id)sender {
-  // TODO checks on new name?
+  // TODO: checks on new name?
   NSString *newFullName = self.renameTextField.text;
   NSString *newName = newFullName.stringByDeletingPathExtension;
   NSArray *alsoRenameItems = self.alsoRenameItems;

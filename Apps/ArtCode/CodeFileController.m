@@ -316,7 +316,7 @@ static void drawStencilStar(CGContextRef myContext)
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
 
-  // TODO: bind bookmarks again
+  // TODO:: bind bookmarks again
 //  __block RACDisposable *bookmarksDisposable = nil;
 //  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
 //    @strongify(self);
@@ -708,14 +708,14 @@ static void drawStencilStar(CGContextRef myContext)
 //              _preferenceCurrentIndentationLevel--;
 //            }
 //          }
-//          // TODO else single line indent
+//          // TODO: else single line indent
 //        }
 //      }
 //    }
 //    
 //    // Return indented newline
 //    if (_preferenceCurrentIndentationLevel > 0) {
-//      NSString *indentString = @"    "; // TODO parametrize indentation string
+//      NSString *indentString = @"    "; // TODO: parametrize indentation string
 //      NSUInteger level = _preferenceCurrentIndentationLevel;
 //      (*selectionAfterInsertion).location += _preferenceCurrentIndentationLevel * [indentString length];
 //      while (--level) {

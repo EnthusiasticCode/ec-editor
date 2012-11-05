@@ -127,7 +127,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   
   // Layout content view
   CGRect contentFrame = (CGRect){ CGPointMake(bezelCornerRadius, bezelCornerRadius), viewController.contentSizeForViewInPopover };
-  // TODO check if size == Zero and use view size instead
+  // TODO: check if size == Zero and use view size instead
   ASSERT(!CGSizeEqualToSize(contentFrame.size, CGSizeZero));
   viewController.view.frame = contentFrame;
   [self.view addSubview:viewController.view];

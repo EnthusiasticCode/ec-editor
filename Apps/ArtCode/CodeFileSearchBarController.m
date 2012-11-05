@@ -167,11 +167,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   
   _searchFilterMatchesLocation += [sender tag];
   if (_searchFilterMatchesLocation < 0) {
-    // TODO use image isntead
+    // TODO: use image isntead
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleDownIcon"] displayImmediatly:YES];
     _searchFilterMatchesLocation = [_searchFilterMatches count] - 1;
   } else if (_searchFilterMatchesLocation >= (NSInteger)[_searchFilterMatches count]) {
-    // TODO use image isntead
+    // TODO: use image isntead
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleUpIcon"] displayImmediatly:YES];
     _searchFilterMatchesLocation = 0;
   }
@@ -255,7 +255,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 #pragma mark - Private Methods
 
 - (void)_addFindFilterCodeViewPass {
-  // TODO retrieve from theme
+  // TODO: retrieve from theme
   UIColor *decorationColor = [UIColor colorWithRed:249.0/255.0 green:254.0/255.0 blue:192.0/255.0 alpha:1];
   UIColor *decorationSecondaryColor = [UIColor colorWithRed:224.0/255.0 green:233.0/255.0 blue:128.0/255.0 alpha:1];
   
@@ -337,7 +337,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSMutableString *modifiedFilterString = nil;
     if (options & NSRegularExpressionIgnoreMetacharacters) {
       options &= ~NSRegularExpressionIgnoreMetacharacters;
-      // TODO URI use OnigRegExp instead
+      // TODO: URI use OnigRegExp instead
       modifiedFilterString = [[NSRegularExpression escapedPatternForString:filterString] mutableCopy];
     } else {
       modifiedFilterString = [filterString mutableCopy];
@@ -351,7 +351,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     filterString = modifiedFilterString;
   }
   
-  // TODO create here? manage error and convert NSRegularExpression options to OnigRegexp options
+  // TODO: create here? manage error and convert NSRegularExpression options to OnigRegexp options
   self.searchFilter = [NSRegularExpression regularExpressionWithPattern:filterString options:options error:NULL];
   NSArray *matches = nil;
   if (self.searchFilter != nil) {

@@ -157,7 +157,7 @@
           self.tableView.userInteractionEnabled = YES;
           [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
         }] subscribeError:^(NSError *error) {
-          // TODO error handling
+          // TODO: error handling
           ASSERT(NO);
           if (block) {
             block(nil);
@@ -169,7 +169,7 @@
         }];
       }];
     } else {
-      ASSERT(NO); // TODO error handling
+      ASSERT(NO); // TODO: error handling
     }
   }];
 }

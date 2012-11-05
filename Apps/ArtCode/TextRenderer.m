@@ -383,7 +383,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       CFIndex lineLength = [line length], truncationLenght;
       BOOL truncation = NO;
       do {
-        // TODO possibly filter using customizable block
+        // TODO: possibly filter using customizable block
         truncationLenght = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, renderWrapWidth);
         
         // Generate line
@@ -752,7 +752,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   // If the segment already has it's string length, it means that this request
   // has been done to refresh it. See updateTextFromStringRange:toStringRange:
   // to understand how this stringLenght is properly adjusted.
-// TODO BOTH rename in textRenderer:attributedStringInPreferredRange: to internally check for consistency to avoid race conditions
+// TODO: BOTH rename in textRenderer:attributedStringInPreferredRange: to internally check for consistency to avoid race conditions
   NSUInteger inputStringLenght = self.text.length;
   stringRange.length = MIN((inputStringLenght - stringRange.location), (requestSegment.stringLength ? requestSegment.stringLength : maximumStringLenghtPerSegment));
   NSAttributedString *attributedString = [self.text attributedSubstringFromRange:stringRange];
@@ -916,7 +916,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       if (positionX >= CGRectGetMaxX(lineBounds))
         requestPosition = NSMaxRange(lineStringRange) - 1;
       else
-        // TODO there may be problems summing cfindex to nsuinteger
+        // TODO: there may be problems summing cfindex to nsuinteger
         requestPosition = CTLineGetStringIndexForPosition(line->CTLine, (CGPoint){ positionX, 0 });
       requestPosition += stringOffset;
       *stop = *stopInner = YES;
@@ -1041,7 +1041,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       
       CFRange stringRange = CTLineGetStringRange(line.CTLine);
       
-      // TODO make an indexOffset that sums renderedLineCount from past segments
+      // TODO: make an indexOffset that sums renderedLineCount from past segments
       block(line, lineIndex, lineNumberOffset + lineNumber, positionOffset + lineOffset, NSMakeRange(stringOffset + stringRange.location, stringRange.length), stopInner);
       *stop = *stopInner;
     }];
@@ -1228,7 +1228,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       
     case UITextLayoutDirectionDown:
     {
-      // TODO extract this to a convinience method - lineIndexForPosition:
+      // TODO: extract this to a convinience method - lineIndexForPosition:
       CGFloat positionX = 0;
       NSUInteger positionLine = [self _renderedLineIndexFromPosition:position graphicalOffset:&positionX];
       
@@ -1254,7 +1254,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
       if (offset < 0 && -offset > (NSInteger)position)
         break;
       
-      // TODO may require moving visually with graphene clusters.
+      // TODO: may require moving visually with graphene clusters.
       result = position + offset;
       break;
     }

@@ -623,7 +623,7 @@ static NSMutableDictionary *fsItemCache() {
       if (!source) {
         source = [RACReplaySubject replaySubjectWithCapacity:1];
         [self.extendedAttributesBacking setObject:source forKey:key];
-        // TODO: load extended attribute from filesystem
+        // TODO:: load extended attribute from filesystem
       }
     }
     return source;
@@ -631,7 +631,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
-  // TODO: actually return something useful
+  // TODO:: actually return something useful
   return RACSubscriber.alloc.init;
 }
 

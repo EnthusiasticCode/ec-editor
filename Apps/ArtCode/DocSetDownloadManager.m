@@ -195,7 +195,7 @@ static NSString * const docSetContentsPath = @"Contents/Resources/Documents";
 		}
 	}
   
-  // TODO bezel alert here
+  // TODO: bezel alert here
 	
 	[self reloadDownloadedDocSets];
 	
@@ -333,7 +333,7 @@ static NSString * const docSetContentsPath = @"Contents/Resources/Documents";
     if (pathContentsRange.location != NSNotFound) {
       docSetName = [path substringToIndex:pathContentsRange.location - 1];
     } else {
-      // TODO get untill /
+      // TODO: get untill /
       docSetName = path;
     }
   } else {

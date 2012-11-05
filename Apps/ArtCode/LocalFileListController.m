@@ -100,7 +100,7 @@ static void _init(LocalFileListController *self) {
     [self->_progressItems removeObject:progressItem];
     [self didChangeValueForKey:@"progressItems"];
   }] subscribeCompleted:^{
-    // TODO bezel alert with successful downlad
+    // TODO: bezel alert with successful downlad
   }];
 }
 

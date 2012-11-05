@@ -74,7 +74,7 @@
 
 - (CGRect)topLeftRect
 {
-  // TODO check for proper return
+  // TODO: check for proper return
   return count ? buffer[0] : CGRectNull;
 }
 
@@ -129,7 +129,7 @@
 
 - (void)addRect:(CGRect)rect
 {
-  // TODO guarantee single rect
+  // TODO: guarantee single rect
   NSUInteger newCount = count + 1;
   if (capacity <= count)
   {
@@ -154,7 +154,7 @@
   memcpy(&buffer[count], rects->buffer, rects.count * sizeof(CGRect));
   count += rects.count;
   
-  // TODO calculate bounds?
+  // TODO: calculate bounds?
 }
 
 - (void)removeRect:(CGRect)rect

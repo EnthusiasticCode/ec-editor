@@ -228,7 +228,7 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 }
 
 - (void)setText:(NSString *)text {
-  // TODO diff given text to maintain current attributes
+  // TODO: diff given text to maintain current attributes
 //  DiffMatchPatch *diffMatchPatch = [[DiffMatchPatch alloc] init];
 //  NSMutableArray *diffs = [diffMatchPatch diff_mainOfOldString:strongSelf.codeView.text andNewString:content checkLines:YES];
 //  
@@ -357,7 +357,7 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
       if (!line.isTruncation)
       {
         // Rendering line number
-        // TODO get this more efficient. possibly by creating line numbers with preallocated characters.
+        // TODO: get this more efficient. possibly by creating line numbers with preallocated characters.
         NSString *lineNumberString = [NSString stringWithFormat:@"%u", lineNumber + 1];
         CGSize lineNumberStringSize = [lineNumberString sizeWithFont:strongSelf->lineNumbersFont];
         
@@ -745,7 +745,7 @@ static void init(CodeView *self)
   [self setNeedsLayout];
   [_selectionView update];
   
-  // TODO call delegate's endediting
+  // TODO: call delegate's endediting
   
   return shouldResignFirstResponder;
 }
@@ -766,7 +766,7 @@ static void init(CodeView *self)
   if (_flags.delegateHasReplaceInsertedTextSelectionAfterInsertion)
     insertString = [self.delegate codeView:self replaceInsertedText:string selectionAfterInsertion:&selectionAfterInsertion];
   
-  // TODO move pairing match in delegate call
+  // TODO: move pairing match in delegate call
   if (insertString == nil) {
     // Smart string pairing
     if (_pairingStringDictionary.count) {
@@ -859,7 +859,7 @@ static void init(CodeView *self)
 @synthesize inputDelegate;
 @synthesize tokenizer;
 
-// TODO create a proper code tokenizer, should be retreived from the dataSource
+// TODO: create a proper code tokenizer, should be retreived from the dataSource
 - (id<UITextInputTokenizer>)tokenizer
 {
   if (!_tokenizer)
@@ -937,7 +937,7 @@ static void init(CodeView *self)
 
 - (void)setSelectedTextRange:(UITextRange *)selectedTextRange
 {
-  // TODO solidCaret
+  // TODO: solidCaret
   
   [self unmarkText];
   
@@ -1006,7 +1006,7 @@ static void init(CodeView *self)
     return;
   }
   
-  // TODO needsdisplay for markedText layer.
+  // TODO: needsdisplay for markedText layer.
   [self willChangeValueForKey:@"markedTextRange"];
   _markedRange = NSMakeRange(NSNotFound, 0);
   [self didChangeValueForKey:@"markedTextRange"];
@@ -1095,28 +1095,28 @@ static void init(CodeView *self)
 - (UITextPosition *)positionWithinRange:(UITextRange *)range 
                     farthestInDirection:(UITextLayoutDirection)direction
 {
-  // TODO
+  // TODO:
   abort();
 }
 
 - (UITextRange *)characterRangeByExtendingPosition:(UITextPosition *)position 
                                        inDirection:(UITextLayoutDirection)direction
 {
-  // TODO
+  // TODO:
   abort();
 }
 
 - (UITextWritingDirection)baseWritingDirectionForPosition:(UITextPosition *)position 
                                               inDirection:(UITextStorageDirection)direction
 {
-  // TODO
+  // TODO:
   abort();
 }
 
 -(void)setBaseWritingDirection:(UITextWritingDirection)writingDirection 
                       forRange:(UITextRange *)range
 {
-  // TODO
+  // TODO:
   //    abort();
 }
 
@@ -1131,7 +1131,7 @@ static void init(CodeView *self)
 - (CGRect)caretRectForPosition:(UITextPosition *)position
 {
   NSUInteger pos = ((TextPosition *)position).index;
-// TODO NIK: this method is called on main thread, and calls the renderer which eventually starts rendering text, triggering all of the text rendering on main thread
+// TODO: NIK: this method is called on main thread, and calls the renderer which eventually starts rendering text, triggering all of the text rendering on main thread
   CGRect carretRect = [self.renderer rectsForStringRange:(NSRange){pos, 0} limitToFirstLine:YES].bounds;
   
   carretRect.origin.x -= 1.0;
@@ -1151,7 +1151,7 @@ static void init(CodeView *self)
   NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:rectsCount];
   __block NSUInteger count = 0;
   [rects enumerateRectsUsingBlock:^(CGRect rect, BOOL *stop) {
-    // TODO!!! text range is not returned by our API
+    // TODO:!!! text range is not returned by our API
     [result addObject:[[TextSelectionRect alloc] initWithRect:rect textRange:nil isStart:count == 0 isEnd:++count == rectsCount]];
   }];
   return [result copy];
@@ -1211,7 +1211,7 @@ static void init(CodeView *self)
 
 - (void)paste:(id)sender
 {
-  // TODO smart paste logic
+  // TODO: smart paste logic
   
   NSString *text = [UIPasteboard generalPasteboard].string;
   if (!text)
@@ -1255,7 +1255,7 @@ static void init(CodeView *self)
     if (![selectionRange.start isEqual:selectionRange.end])
       return;
     
-    // TODO instead of left/rigth text direction see oui
+    // TODO: instead of left/rigth text direction see oui
     UITextPosition *beforeStart = [self positionFromPosition:selectionRange.start inDirection:UITextLayoutDirectionLeft offset:1];
     if (beforeStart && [selectionRange.start isEqual:beforeStart] == NO)
     {
@@ -1274,7 +1274,7 @@ static void init(CodeView *self)
 
 - (void)selectAll:(id)sender
 {
-  // TODO
+  // TODO:
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
@@ -1323,7 +1323,7 @@ static void init(CodeView *self)
   if (!_undoManager)
   {
     _undoManager = [[CodeViewUndoManager alloc] init];
-    // TODO fill the manager with stored stacks?
+    // TODO: fill the manager with stored stacks?
   }
   return _undoManager;
 }
@@ -1360,7 +1360,7 @@ static void init(CodeView *self)
       selection.location += tailingSpaces.length;
     }
     
-    // TODO use autoIndentationBlock
+    // TODO: use autoIndentationBlock
   }
   
   NSRange stringRange = NSMakeRange(range.location, string.length);
@@ -2164,7 +2164,7 @@ static void init(CodeView *self)
   {
     magnificationView = [[TextMagnificationView alloc] initWithFrame:CGRectMake(0, 0, 600, 40) codeView:parent];
     magnificationView.backgroundColor = parent.backgroundColor;
-    // TODO make this more efficient
+    // TODO: make this more efficient
     magnificationView.layer.cornerRadius = 3;
     magnificationView.layer.masksToBounds = YES;
   }
@@ -2173,7 +2173,7 @@ static void init(CodeView *self)
 
 - (void)handleKnobGesture:(UILongPressGestureRecognizer *)recognizer
 {
-  // TODO it may be needed to change thumbs hit test, see ouieditableframe 1842
+  // TODO: it may be needed to change thumbs hit test, see ouieditableframe 1842
   
   CGPoint tapPoint = [recognizer locationInView:parent];
   

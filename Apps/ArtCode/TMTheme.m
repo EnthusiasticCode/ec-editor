@@ -56,7 +56,7 @@ static NSDictionary *_sharedAttributes = nil;
 {
   if ([_environmentAttributes objectForKey:TMThemeForegroundColorEnvironmentAttributeKey] == nil)
     return [[self class] sharedAttributes];
-  // TODO may need not to cache if shared font is changed
+  // TODO: may need not to cache if shared font is changed
   if (!_commonAttributes)
   {
     NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary:[[self class] sharedAttributes]];
@@ -93,7 +93,7 @@ static NSDictionary *_sharedAttributes = nil;
   NSMutableDictionary *environmentAttributes = [[NSMutableDictionary alloc] init];
   for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
   {
-    // TODO manage default settings for background, caret
+    // TODO: manage default settings for background, caret
     NSString *settingScopes = [plistSetting objectForKey:_themeSettingsScopeKey];
     if (!settingScopes)
     {
@@ -207,7 +207,7 @@ static NSDictionary *_sharedAttributes = nil;
 
 + (NSDictionary *)sharedAttributes
 {
-  // TODO load from application preference plist
+  // TODO: load from application preference plist
   if (!_sharedFont)
     [self setSharedFontName:@"Inconsolata-dz" size:14];
   

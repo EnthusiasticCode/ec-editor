@@ -73,9 +73,9 @@
 - (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
   if (!_connectedSubject) {
     _connectCredentials = credentials;
-    // TODO This should be a replay subject
+    // TODO: This should be a replay subject
     _connectedSubject = [RACReplaySubject replaySubjectWithCapacity:1];
-    // TODO this should connect when someone subscribe to the subject
+    // TODO: this should connect when someone subscribe to the subject
     _connection = (id<CKConnection>)[[CKConnectionRegistry sharedConnectionRegistry] connectionWithRequest:[NSURLRequest requestWithURL:self.url]];
     [_connection setDelegate:self];
     ASSERT(_connection);
@@ -216,7 +216,7 @@
 }
 
 - (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
-  // TODO recursive option
+  // TODO: recursive option
   if (!_uploadProgressSubscribables) {
     _uploadProgressSubscribables = [[NSMutableDictionary alloc] init];
   }

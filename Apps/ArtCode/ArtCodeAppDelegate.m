@@ -131,7 +131,7 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   // Handles open with... by creating a new project from the opened file and opening a new tab with that project.
-  // TODO account for opening a non-archive type
+  // TODO: account for opening a non-archive type
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
   [projectImportController createProjectFromZipAtURL:url completionHandler:^(ArtCodeProject *project) {
     if (project) {

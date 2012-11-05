@@ -54,7 +54,7 @@
   self.tabBar.delegate = self;
   self.tabBar.backgroundColor = [UIColor blackColor];
   self.tabBar.tabControlInsets = UIEdgeInsetsMake(5, 3, 0, 3);
-  // TODO change child container view background to white
+  // TODO: change child container view background to white
   
   // Add tab button
   UIButton *addTabButton = [[UIButton alloc] init];

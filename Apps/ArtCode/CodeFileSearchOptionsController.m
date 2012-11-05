@@ -241,7 +241,7 @@ static void const * parentSearchBarControllerContext;
   NSUInteger index = [indexPath indexAtPosition:1];
   if ([indexPath indexAtPosition:0] == OPTIONS_SECTION)
   {
-    // TODO manage options
+    // TODO: manage options
   }
   else
   {

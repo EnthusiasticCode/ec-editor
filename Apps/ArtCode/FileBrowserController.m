@@ -97,7 +97,7 @@
       if (!anotherStrongSelf) {
         return;
       }
-      // TODO: not quite sure this is needed, test it when directory auto updating is in
+      // TODO:: not quite sure this is needed, test it when directory auto updating is in
       [filteredItemsBindingDisposable dispose];
       filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:@keypath(anotherStrongSelf, filteredItems) from:[directory childrenFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
     }];
