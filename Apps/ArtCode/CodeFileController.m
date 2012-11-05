@@ -52,6 +52,10 @@
 
 @property (nonatomic, weak) TMSymbol *currentSymbol;
 
+// Text indentation preference blocks
+@property (nonatomic, copy) bool(^preferenceIncreaseIndentBlock)(NSString *);
+@property (nonatomic, copy) bool(^preferenceDecreaseIndentBlock)(NSString *);
+
 /// Returns the content view used to display the content in the given editing state.
 /// This method evaluate if using the codeView or the webView based on the current fileURL.
 - (UIView *)_contentViewForEditingState:(BOOL)editingState;
@@ -107,9 +111,6 @@ static void drawStencilStar(CGContextRef myContext)
   UIActionSheet *_webToolsActionSheet;
   CodeFileSearchBarController *_searchBarController;
   UIPopoverController *_quickBrowsersPopover;
-  
-  // Text insertion state for modifiers
-  NSUInteger _preferenceCurrentIndentationLevel;
   
   // Colors used in the minimap delegate methods to color a line, they are resetted when changin theme
   UIColor *_minimapSymbolColor;
@@ -424,7 +425,11 @@ static void drawStencilStar(CGContextRef myContext)
     [self _keyboardAccessoryItemSetupWithQualifiedIdentifier:qualifiedIdentifier];
     self.codeView.pairingStringDictionary = [TMPreference preferenceValueForKey:TMPreferenceSmartTypingPairsKey qualifiedIdentifier:qualifiedIdentifier];
     
-    // TODO: update self.codeView.autoIndetationBlock
+    // Updating indentation blocks used by autoIndentationBlock property of CodeView
+    self.preferenceIncreaseIndentBlock = [TMPreference preferenceValueForKey:TMPreferenceIncreaseIndentKey
+                                                           qualifiedIdentifier:qualifiedIdentifier];
+    self.preferenceDecreaseIndentBlock = [TMPreference preferenceValueForKey:TMPreferenceDecreaseIndentKey
+                                                           qualifiedIdentifier:qualifiedIdentifier];
   }];
   
   // load the web preview if needed
@@ -476,6 +481,27 @@ static void drawStencilStar(CGContextRef myContext)
       drawStencilStar(context);
     }
   } underText:NO forKey:@"bookmarkMarkers"];
+  
+  // Autoindentation block
+  @weakify(self);
+  codeView.autoIndentationBlock = ^CodeViewAutoIndentResult(NSString *line) {
+    @strongify(self);
+    if (self.preferenceIncreaseIndentBlock) {
+      // Apply increase indetantion
+      if (self.preferenceIncreaseIndentBlock(line)) {
+        return CodeViewAutoIndentIncrease;
+      } else {
+        // Apply decrease indentation
+        if (self.preferenceDecreaseIndentBlock) {
+          if (self.preferenceDecreaseIndentBlock(line)) {
+            return CodeViewAutoIndentDecrease;
+          }
+          // TODO: else single line indent
+        }
+      }
+    }
+    return CodeViewAutoIndentKeep;
+  };
   
   // Accessory view
   CodeFileKeyboardAccessoryView *accessoryView = [[CodeFileKeyboardAccessoryView alloc] init];
