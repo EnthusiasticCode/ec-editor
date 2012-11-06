@@ -56,9 +56,10 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemFile ()
 
+@property (nonatomic, strong) RACReplaySubject *encodingBacking;
 @property (nonatomic, strong) RACReplaySubject *contentBacking;
 
-- (NSError *)saveContent:(NSString *)content;
+- (id<RACSubscribable>)internalSave;
 
 @end
 
@@ -140,7 +141,6 @@ static NSMutableDictionary *fsItemCache() {
   [_urlBacking sendNext:url];
   _typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   [_typeBacking sendNext:type];
-  _parentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   _extendedAttributesBacking = NSMutableDictionary.alloc.init;
   return self;
 }
@@ -191,7 +191,10 @@ static NSMutableDictionary *fsItemCache() {
   if (!self) {
     return nil;
   }
+  _encodingBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [_encodingBacking sendNext:nil];
   _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+  [_contentBacking sendNext:nil];
   NSError *error;
   NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
   if (!error) {
@@ -203,6 +206,14 @@ static NSMutableDictionary *fsItemCache() {
   return self;
 }
 
+- (id<RACSubscribable>)encodingSource {
+  return self.encodingBacking;
+}
+
+- (id<RACSubscriber>)encodingSink {
+  return self.encodingBacking;
+}
+
 - (id<RACSubscribable>)contentSource {
   return self.contentBacking;
 }
@@ -212,32 +223,34 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)save {
-  if (!self.urlBacking.first) {
-    return [RACSubscribable error:[[NSError alloc] init]];
-  }
+  return [[[self internalSave] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+}
+
+- (id<RACSubscribable>)internalSave {
   @weakify(self);
-  return [[[RACSubscribable defer:^id<RACSubscribable>{
+  return [RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
-    NSError *error = [self saveContent:self.contentBacking.first];
-    if (error) {
+    NSString *content = self.contentBacking.first;
+    ASSERT(self.encodingBacking.first);
+    NSStringEncoding encoding = [self.encodingBacking.first unsignedIntegerValue];
+    NSURL *url = self.urlBacking.first;
+    if (!url) {
+      return [RACSubscribable error:[[NSError alloc] init]];
+    }
+    if (!encoding) {
+      encoding = NSUTF8StringEncoding;
+    }
+    if (!content) {
+      content = @"";
+    }
+    NSError *error = nil;
+    // Don't save atomically so we don't lose extended attributes
+    if (![content writeToURL:url atomically:NO encoding:encoding error:&error]) {
       return [RACSubscribable error:error];
     }
     return [RACSubscribable return:self];
-  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
-}
-
-- (NSError *)saveContent:(NSString *)content {
-  ASSERT_NOT_MAIN_QUEUE();
-  NSError *error = nil;
-  NSURL *url = self.urlBacking.first;
-  if (!content || !url) {
-    return [[NSError alloc] init];
-  }
-  if (![content writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-    return error;
-  }
-  return nil;
+  }];
 }
 
 @end
