@@ -994,7 +994,6 @@ static void drawStencilStar(CGContextRef myContext)
     }];
     accessoryView.items = items;
   }
-  [self.codeView setKeyboardAccessoryViewVisible:([_keyboardAccessoryItemActions count] == 11) animated:YES];
 }
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item {
