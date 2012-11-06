@@ -1370,8 +1370,17 @@ static void init(CodeView *self)
         if ([leadingSpaces hasSuffix:self.autoIndentationString]) {
           NSString *decreasedLeadingSpaces = [leadingSpaces substringToIndex:leadingSpaces.length - self.autoIndentationString.length];
           NSString *currentLine = [decreasedLeadingSpaces stringByAppendingString:[line substringFromIndex:leadingSpaces.length]];
+          range.location -= self.autoIndentationString.length;
+          selection.location -= self.autoIndentationString.length;
           [self _replaceTextInRange:lineRange withString:currentLine newSelectionRange:range];
           leadingSpaces = decreasedLeadingSpaces;
+        }
+        break;
+        
+      case CodeViewAutoIndentIgnoreOnce:
+        // Removing indentation from current line
+        if (leadingSpaces.length > 0) {
+          [self _replaceTextInRange:lineRange withString:[line substringFromIndex:leadingSpaces.length] newSelectionRange:range];
         }
         break;
         
@@ -1380,7 +1389,7 @@ static void init(CodeView *self)
     }
     
     // Add leading spaces to new line
-    if (leadingSpaces) {
+    if (leadingSpaces.length) {
       string = [string stringByAppendingString:leadingSpaces];
       selection.location += leadingSpaces.length;
     }

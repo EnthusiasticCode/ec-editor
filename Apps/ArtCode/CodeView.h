@@ -18,8 +18,8 @@ typedef void (^CodeViewTileSetupBlock)(CGContextRef context, CGRect rect);
 /// The result of an autoindentation block
 typedef enum {
   CodeViewAutoIndentKeep,         // Keep the current indentation
-  CodeViewAutoIndentIncrease,     // Increase the indentation by one level
-  CodeViewAutoIndentDecrease,     // Decrese one level of indentation
+  CodeViewAutoIndentIncrease,     // Increase the indentation by one level from the next line
+  CodeViewAutoIndentDecrease,     // Decrese one level of indentation from the current line
   CodeViewAutoIndentIncreaseOnce, // Increase the level of indentation only for one line
   CodeViewAutoIndentIgnoreOnce    // Remove all indentation for the line
 } CodeViewAutoIndentResult;
