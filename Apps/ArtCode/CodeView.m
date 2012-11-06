@@ -488,30 +488,29 @@ static void init(CodeView *self)
      ]; }]
    subscribeNext:^(NSArray *x) {
      @strongify(self);
-     if (!self) return;
+     if (!self || !self.keyboardAccessoryView) return;
      
-     // Calculate the target frame for the accessory view
-     CGRect targetFrame = [self convertRect:[x[1] CGRectValue] fromView:nil];
-     CGFloat keyboardHeight = targetFrame.size.height;
-     targetFrame.size.height = ACCESSORY_HEIGHT;
-     targetFrame.origin.y -= ACCESSORY_HEIGHT;
-     
-     // Adjust the accessory view properties
-     self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT /*&& targetFrame.origin.y < KEYBOARD_VISIBLE_MAXIMUM_Y - ACCESSORY_HEIGHT*/);
-     self.keyboardAccessoryView.flipped = NO;
-     
-     // Ask delegate if accessory view should be shown
-     __autoreleasing UIView *targetView = self;
-     if (self->_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
-       return;
-     
-     // Reposition if flipped (it could have been changed by the delegate call)
-     if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped) {
-       targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
-     }
-     
-     // Show or hide accessory view
      if ([x[0] boolValue] && self.isFirstResponder) {
+       // Calculate the target frame for the accessory view
+       CGRect targetFrame = [self convertRect:[x[1] CGRectValue] fromView:nil];
+       CGFloat keyboardHeight = targetFrame.size.height;
+       targetFrame.size.height = ACCESSORY_HEIGHT;
+       targetFrame.origin.y -= ACCESSORY_HEIGHT;
+       
+       // Adjust the accessory view properties
+       self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT /*&& targetFrame.origin.y < KEYBOARD_VISIBLE_MAXIMUM_Y - ACCESSORY_HEIGHT*/);
+       self.keyboardAccessoryView.flipped = NO;
+       
+       // Ask delegate if accessory view should be shown
+       __autoreleasing UIView *targetView = self;
+       if (self->_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
+         return;
+       
+       // Reposition if flipped (it could have been changed by the delegate call)
+       if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped) {
+         targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
+       }
+       
        // Show the accessory view
        self.keyboardAccessoryView.frame = targetFrame;
        [targetView addSubview:self.keyboardAccessoryView];
