@@ -56,7 +56,9 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemFile ()
 
-@property (nonatomic, strong) RACReplaySubject *stringContent;
+@property (nonatomic, strong) RACReplaySubject *contentBacking;
+
+- (NSError *)saveContent:(NSString *)content;
 
 @end
 
@@ -189,23 +191,24 @@ static NSMutableDictionary *fsItemCache() {
   if (!self) {
     return nil;
   }
-  _stringContent = [RACReplaySubject replaySubjectWithCapacity:1];
+  _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   NSError *error;
   NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
   if (!error) {
-    [_stringContent sendNext:content];
+    [_contentBacking sendNext:content];
   } else {
-    [_stringContent sendError:error];
+    [_contentBacking sendError:error];
   }
+  
   return self;
 }
 
 - (id<RACSubscribable>)contentSource {
-  return [self.stringContent distinctUntilChanged];
+  return [self.contentBacking distinctUntilChanged];
 }
 
 - (id<RACSubscriber>)contentSink {
-  return self.stringContent;
+  return self.contentBacking;
 }
 
 - (id<RACSubscribable>)save {
@@ -216,18 +219,25 @@ static NSMutableDictionary *fsItemCache() {
   return [[[RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
-    NSError *error = nil;
-    NSString *stringContent = self.stringContent.first;
-    NSURL *url = self.urlBacking.first;
-    if (!stringContent || !url) {
-      return [RACSubscribable error:[[NSError alloc] init]];
-    }
-    if (![stringContent writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+    NSError *error = [self saveContent:self.contentBacking.first];
+    if (error) {
       return [RACSubscribable error:error];
-    } else {
-      return [RACSubscribable return:self];
     }
+    return [RACSubscribable return:self];
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+}
+
+- (NSError *)saveContent:(NSString *)content {
+  ASSERT_NOT_MAIN_QUEUE();
+  NSError *error = nil;
+  NSURL *url = self.urlBacking.first;
+  if (!content || !url) {
+    return [[NSError alloc] init];
+  }
+  if (![content writeToURL:url atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+    return error;
+  }
+  return nil;
 }
 
 @end
@@ -589,7 +599,7 @@ static NSMutableDictionary *fsItemCache() {
     [item.typeBacking sendNext:nil];
     [item.parentBacking sendNext:nil];
     if (itemType == NSURLFileResourceTypeRegular) {
-      [((FileSystemFile *)item).stringContent sendNext:nil];
+      [((FileSystemFile *)item).contentBacking sendNext:nil];
     } else if (itemType == NSURLFileResourceTypeDirectory) {
       [((FileSystemDirectory *)item).childrenBacking sendNext:nil];
       NSString *targetString = target.standardizedURL.absoluteString;
