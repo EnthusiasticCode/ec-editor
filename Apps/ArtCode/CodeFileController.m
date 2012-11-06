@@ -329,24 +329,16 @@ static void drawStencilStar(CGContextRef myContext)
   // When the text file or the code view change, bind their texts together
   __block RACDisposable *sinkDisposable = nil;
   __block RACDisposable *sourceDisposable = nil;
-  static void *senderKey = NULL;
   [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
     FileSystemFile *textFile = tuple.second;
     [sinkDisposable dispose];
     [sourceDisposable dispose];
     if (!codeView || !textFile) { return; }
-    sinkDisposable = [[RACAble(codeView.text) doNext:^(NSString *x) {
-      @strongify(self);
-      if (!self) {
-        return;
-      }
-      objc_setAssociatedObject(x, &senderKey, self, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }] subscribe:textFile.contentSink];
+    sinkDisposable = [RACAble(codeView.text) subscribe:textFile.contentSink];
     sourceDisposable = [[textFile.contentSource where:^BOOL(NSString *x) {
       @strongify(self);
-      id sender = objc_getAssociatedObject(x, &senderKey);
-      return sender != self;
+      return ![x isEqualToString:self.codeView.text];
     }] toProperty:@keypath(codeView.text) onObject:codeView];
   }];
   
