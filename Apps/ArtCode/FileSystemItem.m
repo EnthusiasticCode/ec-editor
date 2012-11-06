@@ -204,7 +204,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)contentSource {
-  return [self.contentBacking distinctUntilChanged];
+  return self.contentBacking;
 }
 
 - (id<RACSubscriber>)contentSink {
