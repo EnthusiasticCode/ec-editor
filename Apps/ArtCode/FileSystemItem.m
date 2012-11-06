@@ -381,7 +381,7 @@ static NSMutableDictionary *fsItemCache() {
           NSString *type = ys.second;
           if (type == NSURLFileResourceTypeDirectory) {
             [descendantSubscribables addObject:[[((FileSystemDirectory *)item) childrenWithOptions:options] select:^NSArray *(NSArray *x) {
-              return [x arrayByAddingObject:item];
+              return [@[item] arrayByAddingObjectsFromArray:x];
             }]];
           } else {
             [descendantSubscribables addObject:[RACSubscribable return:@[item]]];
@@ -389,7 +389,7 @@ static NSMutableDictionary *fsItemCache() {
         } error:^(NSError *error) {
           [subscriber sendNext:error];
         } completed:^{
-          combineDisposable = [[RACSubscribable combineLatest:descendantSubscribables reduce:^NSArray *(RACTuple *xs) {
+          combineDisposable = [[[RACSubscribable combineLatest:descendantSubscribables] select:^NSArray *(RACTuple *xs) {
             NSMutableArray *descendants = [[NSMutableArray alloc] init];
             for (NSArray *children in xs) {
               [descendants addObjectsFromArray:children];
