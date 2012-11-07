@@ -537,7 +537,7 @@ static void init(TabBar *self)
 
 - (void)_setSelectedTabControl:(UIControl *)tabControl
 {
-  [self _setSelectedTabControl:tabControl animated:YES];
+  [self _setSelectedTabControl:tabControl animated:NO];
 }
 
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated
@@ -587,7 +587,7 @@ static void init(TabBar *self)
   selectedTabFrame.size.width += tabControlInsets.left + tabControlInsets.right;
   selectedTabFrame.origin.y = 0;
   selectedTabFrame.size.height = 1;
-  [UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
+  [UIView animateWithDuration:animated ? 0.25 : 0 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
     [tabControlsContainerView scrollRectToVisible:selectedTabFrame animated:NO];
   } completion:^(BOOL finished) {
     if (delegateFlags.hasDidSelectTabControlAtIndex)

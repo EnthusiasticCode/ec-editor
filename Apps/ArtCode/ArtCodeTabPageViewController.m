@@ -117,7 +117,7 @@
   // If this was the selected tab, change the selection to the closest one
   // This may not be the case if a tab closes automatically for history cleanup
   if (self.tabBar.selectedTabIndex == tabIndex) {
-    [self.tabBar setSelectedTabIndex:tabIndex ? tabIndex - 1 : 1 animated:YES];
+    [self.tabBar setSelectedTabIndex:tabIndex ? tabIndex - 1 : 1 animated:NO];
   }
   
   // Get the art code tab to remove

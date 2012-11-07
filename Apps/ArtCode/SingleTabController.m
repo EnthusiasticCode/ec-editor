@@ -105,7 +105,7 @@
   
   // Reset the toolbar view controller if needed
   if (self.toolbarViewController) {
-    [self setToolbarViewController:nil animated:YES];
+    [self setToolbarViewController:nil animated:NO];
   }
   
   [_contentViewController willMoveToParentViewController:nil];

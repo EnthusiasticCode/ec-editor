@@ -83,7 +83,7 @@
     return xs;
   }] subscribeNext:^(RACTuple *tuple) {
     [this _populateChildViewControllersUpToCount:[tuple.second unsignedIntegerValue]];
-    [this _setSelectedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:YES];
+    [this _setSelectedChildViewControllerForTabAtIndex:[tuple.first unsignedIntegerValue] animated:NO];
   }];
 }
 
