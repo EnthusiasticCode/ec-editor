@@ -61,7 +61,7 @@
   }];
   
   // Reload the table when the current syntax or the syntaxes change
-  [[RACSubscribable combineLatest:@[RACAble(self.currentSyntax), RACAble(self.syntaxes), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
+  [[RACSubscribable combineLatest:@[RACAbleWithStart(self.currentSyntax), RACAbleWithStart(self.syntaxes), RACAble(self.tableView)]] subscribeNext:^(RACTuple *xs) {
     [xs.third reloadData];
   }];
   
