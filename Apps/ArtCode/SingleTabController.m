@@ -327,10 +327,10 @@
   [self.view addSubview:self.contentViewController.view];
   
   // Create and add swipe recognizers to show/hide tabs
-  UISwipeGestureRecognizer *showTabBarRecognizer = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
+  UISwipeGestureRecognizer *showTabBarRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
   showTabBarRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
   [self.view addGestureRecognizer:showTabBarRecognizer];
-  UISwipeGestureRecognizer *hideTabBarRecognizer = [UISwipeGestureRecognizer.alloc initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
+  UISwipeGestureRecognizer *hideTabBarRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleTabBarToggleRecognizer:)];
   hideTabBarRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
   [self.view addGestureRecognizer:hideTabBarRecognizer];
 }

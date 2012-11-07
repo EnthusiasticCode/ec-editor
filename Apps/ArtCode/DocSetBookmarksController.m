@@ -60,7 +60,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   if (!self)
     return nil;
   
-  self.navigationItem.rightBarButtonItem = [UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_addBookmarkAction:)];
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_addBookmarkAction:)];
   self.title = L(@"Bookmarks");
     
   return self;
@@ -98,7 +98,7 @@ static NSString * const DocSetBookmarkDocSetURLKey = @"URL";
   static NSString *CellIdentifier = @"Cell";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
   if (!cell) {
-    cell = [UITableViewCell.alloc initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   }
   

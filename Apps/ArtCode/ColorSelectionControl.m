@@ -28,7 +28,7 @@
     NSMutableArray *accessibilityColors = [NSMutableArray arrayWithCapacity:self.colors.count];
     [self layoutIfNeeded];
     [self.layer.sublayers enumerateObjectsUsingBlock:^(CALayer *layer, NSUInteger idx, BOOL *stop) {
-      UIAccessibilityElement *colorElement = [UIAccessibilityElement.alloc initWithAccessibilityContainer:self];
+      UIAccessibilityElement *colorElement = [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
       colorElement.isAccessibilityElement = YES;
       // TODO: UIColor should return always a human readable description
       colorElement.accessibilityLabel = [[self.colors objectAtIndex:idx] description];

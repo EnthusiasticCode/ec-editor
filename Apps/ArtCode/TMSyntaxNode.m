@@ -75,12 +75,12 @@ static NSMutableDictionary *_includedNodesCaches;
 //#endif
   
   _includedNodesCachesLock = dispatch_semaphore_create(1);
-  _includedNodesCaches = NSMutableDictionary.alloc.init;
+  _includedNodesCaches = [[NSMutableDictionary alloc] init];
   
-  _syntaxesWithIdentifier = NSMutableDictionary.alloc.init;
+  _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
 // TODO: URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
-  _syntaxesWithoutIdentifier = NSMutableArray.alloc.init;
-  NSFileManager *fileManager = NSFileManager.alloc.init;
+  _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
+  NSFileManager *fileManager = [[NSFileManager alloc] init];
   for (NSURL *bundleURL in [TMBundle bundleURLs]) {
     for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
       NSData *plistData = [NSData dataWithContentsOfURL:syntaxURL options:NSDataReadingUncached error:NULL];
@@ -232,7 +232,7 @@ static NSMutableDictionary *_includedNodesCaches;
   dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
   NSMutableDictionary *includedNodesCache = [_includedNodesCaches objectForKey:rootNode];
   if (!includedNodesCache) {
-    includedNodesCache = NSMutableDictionary.alloc.init;
+    includedNodesCache = [[NSMutableDictionary alloc] init];
   }
   [includedNodesCache setObject:includedNodes forKey:self];
   [_includedNodesCaches setObject:includedNodesCache forKey:rootNode];

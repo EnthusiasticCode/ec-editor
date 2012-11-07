@@ -73,7 +73,7 @@
 	[super loadView];
   
   // This has the side effect of setting self.searchDisplayController
-  _searchController = [UISearchDisplayController.alloc initWithSearchBar:UISearchBar.new contentsController:self];
+  _searchController = [[UISearchDisplayController alloc] initWithSearchBar:UISearchBar.new contentsController:self];
   _searchController.delegate = self;
 	_searchController.searchResultsDataSource = self;
 	_searchController.searchResultsDelegate = self;

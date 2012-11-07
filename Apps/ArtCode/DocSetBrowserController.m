@@ -58,7 +58,7 @@
     return nil;
   
   // Add tool buttons
-  self.toolbarItems = [NSArray arrayWithObjects:[UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Bookmarks"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [UIBarButtonItem.alloc initWithImage:[UIImage imageNamed:@"itemIcon_Find"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
+  self.toolbarItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Bookmarks"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalBookmarksAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Find"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalContentsAction:)], nil];
   
   // RAC
   __weak DocSetBrowserController *this = self;
@@ -128,10 +128,10 @@
   if (!_outlinePopoverController) {
     DocSetOutlineController *outlineController = [[DocSetOutlineController alloc] init];
     
-    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:outlineController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:outlineController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     
-    _outlinePopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _outlinePopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
     _outlinePopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     
     outlineController.presentingPopoverController = _outlinePopoverController;
@@ -284,10 +284,10 @@
 
 - (void)_toolNormalContentsAction:(id)sender {
   if (!_contentPopoverController) {
-    DocSetContentController *contentController = [DocSetContentController.alloc initWithDocSet:self.artCodeTab.currentLocation.url.docSet rootNode:nil];
-    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:contentController];
+    DocSetContentController *contentController = [[DocSetContentController alloc] initWithDocSet:self.artCodeTab.currentLocation.url.docSet rootNode:nil];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:contentController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    _contentPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _contentPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
     _contentPopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     navigationController.presentingPopoverController = _contentPopoverController;
   }
@@ -299,9 +299,9 @@
   if (!_bookmarkPopoverController) {
     DocSetBookmarksController *bookmarkController = [[DocSetBookmarksController alloc] init];
     bookmarkController.delegate = self;
-    UINavigationController *navigationController = [UINavigationController.alloc initWithRootViewController:bookmarkController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:bookmarkController];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-    _bookmarkPopoverController = [UIPopoverController.alloc initWithContentViewController:navigationController];
+    _bookmarkPopoverController = [[UIPopoverController alloc] initWithContentViewController:navigationController];
     _bookmarkPopoverController.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
     navigationController.presentingPopoverController = _bookmarkPopoverController;
   }

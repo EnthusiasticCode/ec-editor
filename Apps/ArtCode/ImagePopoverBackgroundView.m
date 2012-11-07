@@ -30,13 +30,13 @@
 
 - (void)setBackgroundImage:(UIImage *)backgroundImage {
   [_backgroundView removeFromSuperview];
-  _backgroundView = [UIImageView.alloc initWithImage:backgroundImage];
+  _backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
   [self insertSubview:_backgroundView atIndex:0];
 }
 
 - (void)setUpArrowImage:(UIImage *)upArrowImage {
   [_arrowView removeFromSuperview];
-  _arrowView = [UIImageView.alloc initWithImage:upArrowImage];
+  _arrowView = [[UIImageView alloc] initWithImage:upArrowImage];
   [self insertSubview:_arrowView atIndex:1];
 }
 

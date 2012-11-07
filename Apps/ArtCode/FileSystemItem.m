@@ -148,7 +148,7 @@ static NSMutableDictionary *fsItemCache() {
   [_urlBacking sendNext:url];
   _typeBacking = [RACReplaySubject replaySubjectWithCapacity:1];
   [_typeBacking sendNext:type];
-  _extendedAttributesBacking = NSMutableDictionary.alloc.init;
+  _extendedAttributesBacking = [[NSMutableDictionary alloc] init];
   return self;
 }
 
@@ -199,7 +199,7 @@ static NSMutableDictionary *fsItemCache() {
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
-      return [RACSubscribable error:NSError.alloc.init];
+      return [RACSubscribable error:[[NSError alloc] init]];
     }
     return self.encodingBacking;
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
@@ -220,7 +220,7 @@ static NSMutableDictionary *fsItemCache() {
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
-      return [RACSubscribable error:NSError.alloc.init];
+      return [RACSubscribable error:[[NSError alloc] init]];
     }
     return self.contentBacking;
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
@@ -678,7 +678,7 @@ static NSMutableDictionary *fsItemCache() {
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
-      return [RACSubscribable error:NSError.alloc.init];
+      return [RACSubscribable error:[[NSError alloc] init]];
     }
     return [self extendedAttributeBackingForKey:key];
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
