@@ -41,6 +41,9 @@
 
 @interface CodeFileController ()
 
+/// View that wraps all the content and that will be adjusted to avoid keyboard overlaps
+@property (nonatomic, strong) UIView *wrapperView;
+
 @property (nonatomic, strong) CodeView *codeView;
 @property (nonatomic, strong) UIWebView *webView;
 
@@ -71,10 +74,6 @@
 
 - (void)_handleGestureUndo:(UISwipeGestureRecognizer *)recognizer;
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer;
-
-- (void)_keyboardWillShow:(NSNotification *)notification;
-- (void)_keyboardWillHide:(NSNotification *)notification;
-- (void)_keyboardWillChangeFrame:(NSNotification *)notification;
 
 - (void)_keyboardAccessoryItemSetupWithQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item;
@@ -116,10 +115,6 @@ static void drawStencilStar(CGContextRef myContext)
   UIColor *_minimapSymbolColor;
   UIColor *_minimapCommentColor;
   UIColor *_minimapPreprocessorColor;
-  
-  // Keyboard management
-  CGRect _keyboardFrame;
-  CGRect _keyboardRotationFrame;
   
   /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
   /// This button is supposed to have the same appearance of the underlying button and the same tag.
@@ -173,7 +168,7 @@ static void drawStencilStar(CGContextRef myContext)
   
   [self willChangeValueForKey:@"minimapVisible"];
   if (minimapVisible) {
-    [self.view addSubview:self.minimapView];
+    [self.wrapperView addSubview:self.minimapView];
   }
   if (animated) {
     [self _layoutChildViews];
@@ -312,6 +307,9 @@ static void drawStencilStar(CGContextRef myContext)
   
   @weakify(self);
   
+  // Keep main view background color equal to code view background
+  RAC(self.view.backgroundColor) = RACAble(self.codeView.backgroundColor);
+  
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
@@ -430,11 +428,84 @@ static void drawStencilStar(CGContextRef myContext)
     [self _loadWebPreviewContentAndTitle];
   }];
   
+  // Handle keyboard display changes
+  [[RACSubscribable merge:@[
+   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
+   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
+   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
+   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
+   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
+    RACAble(self.editing)]]
+   subscribeNext:^(id x) {
+     @strongify(self);
+     
+     NSNotification *note = [x isKindOfClass:[NSNotification class]] ? (NSNotification *)x : nil;
+     
+     // Get actual keyboard frame
+     CGRect keyboardFrame = CGRectNull;
+     if (note.userInfo[UIKeyboardFrameEndUserInfoKey]) {
+       keyboardFrame = [self.view convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+     } else {
+       keyboardFrame = [self.view convertRect:UIScreen.mainScreen.bounds fromView:nil];
+       keyboardFrame.origin.y += keyboardFrame.size.height;
+     }
+     
+     // Show or hide accessory
+     if (self.codeView.isFirstResponder
+         && ((note && (note.name == UIKeyboardDidChangeFrameNotification || note.name == UIKeyboardDidShowNotification))
+             || (!note && [x boolValue]))) {
+       [self.codeView presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:self.view animated:YES];
+       
+       // Set keyboard position specific accessory popover properties
+       if (self.codeView.keyboardAccessoryView.isSplit) {
+         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+       } else if (keyboardFrame.size.width > 768) {
+         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+       } else {
+         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+       }
+       
+       // Adjust keyboard frame to keep accessory view in count
+       CGFloat accessoryHeight = self.codeView.keyboardAccessoryView.bounds.size.height;
+       keyboardFrame.size.height += accessoryHeight;
+       if (!self.codeView.keyboardAccessoryView.isFlipped) {
+         keyboardFrame.origin.y -= accessoryHeight;
+       }
+     } else {
+       [self.codeView dismissKeyboardAccessoryViewAnimated:NO];
+     }
+     
+     // Adjust frame height to free space for docket keyboard
+     [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]
+                           delay:0
+                         options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState
+                      animations:^{
+                        CGRect frame = self.view.bounds;
+                        if (note.name != UIKeyboardWillChangeFrameNotification && CGRectGetMaxY(keyboardFrame) >= frame.size.height) {
+                          frame.size.height = keyboardFrame.origin.y;
+                        }
+                        self.wrapperView.frame = frame;
+                      } completion:nil];
+   }];
+  
   return self;
 }
 
 - (void)loadView {
   [super loadView];
+  
+  self.wrapperView = [[UIView alloc] initWithFrame:self.view.bounds];
+  self.wrapperView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.view addSubview:self.wrapperView];
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
@@ -539,22 +610,13 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)viewDidLoad {
-  [self.view addSubview:[self _contentView]];
+  [self.wrapperView addSubview:[self _contentView]];
   
-  self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];
-  
-  // Keyboard notifications
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
-  _keyboardFrame = CGRectNull;
-  _keyboardRotationFrame = CGRectNull;
+  self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];  
 }
 
 - (void)viewDidUnload {
   [super viewDidUnload];
-  
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   _minimapView = nil;
   self.codeView = nil;
@@ -701,54 +763,6 @@ static void drawStencilStar(CGContextRef myContext)
   }
 }
 
-//- (NSString *)codeView:(CodeView *)codeView replaceInsertedText:(NSString *)insertedText selectionAfterInsertion:(NSRange *)selectionAfterInsertion {
-//  
-//  // Adjusting indentation
-//  if ([insertedText isEqualToString:@"\n"]) {
-//    // Keep previous spacing
-//    
-//    // Get the indentation patterns
-//    NSString *qualifiedIdentifier = [self.codeUnit qualifiedScopeIdentifierAtOffset:codeView.selectionRange.location];
-//    bool(^increaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceIncreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
-//    if (increaseBlock) {    
-//      // Get the line
-//      NSRange lineRange = [codeView.text lineRangeForRange:codeView.selectionRange];
-//      lineRange.length = codeView.selectionRange.location - lineRange.location;
-//      NSString *line = [codeView.text substringWithRange:lineRange];
-//      
-//      // Apply increase indetantion
-//      if (increaseBlock(line)) {
-//        _preferenceCurrentIndentationLevel++;
-//      } else {
-//        // Apply decrease indentation
-//        bool(^decreaseBlock)(NSString *) = [TMPreference preferenceValueForKey:TMPreferenceDecreaseIndentKey qualifiedIdentifier:qualifiedIdentifier];
-//        if (decreaseBlock) {
-//          if (decreaseBlock(line)) {
-//            if (_preferenceCurrentIndentationLevel > 0) {
-//              _preferenceCurrentIndentationLevel--;
-//            }
-//          }
-//          // TODO: else single line indent
-//        }
-//      }
-//    }
-//    
-//    // Return indented newline
-//    if (_preferenceCurrentIndentationLevel > 0) {
-//      NSString *indentString = @"    "; // TODO: parametrize indentation string
-//      NSUInteger level = _preferenceCurrentIndentationLevel;
-//      (*selectionAfterInsertion).location += _preferenceCurrentIndentationLevel * [indentString length];
-//      while (--level) {
-//        indentString = [indentString stringByAppendingString:@"    "];
-//      }
-//      return [@"\n" stringByAppendingString:indentString];
-//    }
-//  }
-//  
-//  // By returning nil, this method have no effects
-//  return nil;
-//}
-
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
   if ([self.bookmarks containsIndex:lineNumber]) {
     self.bookmarks = [self.bookmarks indexSetByRemovingIndex:lineNumber];
@@ -757,83 +771,6 @@ static void drawStencilStar(CGContextRef myContext)
   }
   [codeView setNeedsDisplay];
   [_minimapView setNeedsDisplay];
-}
-
-- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame {
-  ASSERT(view && frame);
-  
-  if ([_keyboardAccessoryItemActions count] != 11)
-    return NO;
-  
-  /// Set keyboard position specific accessory popover properties
-  if (codeView.keyboardAccessoryView.isSplit) {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  } else if (_keyboardFrame.size.width > 768) {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  } else {
-    self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-    [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-  }
-  
-  if ((*frame).origin.y - (*view).bounds.origin.y < (*view).bounds.size.height / 4)
-    codeView.keyboardAccessoryView.flipped = YES;
-  
-  UIView *targetView = self.view.window.rootViewController.view;
-  *frame = [targetView convertRect:*frame fromView:*view];
-  *view = targetView;
-  
-  return YES;
-}
-
-- (void)codeView:(CodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)accessoryFrame {
-  if (!codeView.keyboardAccessoryView.isSplit) {
-    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
-      CGRect frame = self.view.frame;
-      if (!CGRectIsNull(_keyboardFrame)) {
-        frame.size.height = _keyboardFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
-      } else if (!CGRectIsNull(_keyboardRotationFrame)) {
-        frame.size.height = _keyboardRotationFrame.origin.y - codeView.keyboardAccessoryView.frame.size.height;
-      } else {
-        frame.size.height = frame.size.height - codeView.keyboardAccessoryView.frame.size.height;
-      }
-      self.view.frame = frame;
-    } completion:^(BOOL finished) {
-      // Scroll to selection
-      RectSet *selectionRects = self.codeView.selectionRects;
-      if (selectionRects == nil)
-        return;
-      [self.codeView scrollRectToVisible:CGRectInset(selectionRects.bounds, 0, -50) animated:YES];
-    }];
-  }
-}
-
-- (BOOL)codeViewShouldHideKeyboardAccessoryView:(CodeView *)codeView {
-  [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
-  
-  if (!codeView.keyboardAccessoryView.isSplit) {
-    [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
-      CGRect frame = self.view.frame;
-      if (!CGRectIsNull(_keyboardFrame)) {
-        frame.size.height = _keyboardFrame.origin.y;
-      } else if (!CGRectIsNull(_keyboardRotationFrame)) {
-        frame.size.height = _keyboardRotationFrame.origin.y;
-      } else {
-        frame.size.height = frame.size.height + codeView.keyboardAccessoryView.frame.size.height;
-      }
-      _keyboardFrame = CGRectNull;
-      _keyboardRotationFrame = CGRectNull;
-      self.view.frame = frame;
-    } completion:nil];
-  }
-  return YES;
 }
 
 #pragma mark - Webview delegate methods
@@ -896,7 +833,7 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)_layoutChildViews {
-  CGRect frame = (CGRect){ CGPointZero, self.view.frame.size };
+  CGRect frame = (CGRect){ CGPointZero, self.wrapperView.frame.size };
   if ([self _isWebPreview]) {
     self.webView.frame = frame;
   } else {
@@ -916,26 +853,6 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_handleGestureRedo:(UISwipeGestureRecognizer *)recognizer {
   [self.codeView.undoManager redo];
-}
-
-- (void)_keyboardWillChangeFrame:(NSNotification *)notification {
-  _keyboardRotationFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-}
-
-- (void)_keyboardWillShow:(NSNotification *)notification {
-  _keyboardFrame = [self.view convertRect:[[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-  _keyboardRotationFrame = CGRectNull;
-  [UIView animateWithDuration:[[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
-    CGRect frame = self.view.frame;
-    frame.size.height = _keyboardFrame.origin.y;
-    self.view.frame = frame;
-  } completion:nil];
-  
-  [self._keyboardAccessoryView dismissPopoverForItemAnimated:YES];
-}
-
-- (void)_keyboardWillHide:(NSNotification *)notification {
-  [self _keyboardWillShow:notification];
 }
 
 #pragma mark - Keyboard Accessory Item Methods

@@ -52,10 +52,6 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
   // Delegate and dataSource flags
   struct {
     unsigned delegateHasSelectedLineNumber : 1;
-    unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
-    unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
-    unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
-    unsigned delegateHasDidHideKeyboardAccessoryView : 1;
     unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
     unsigned reserved : 2;
   } _flags;
@@ -264,10 +260,6 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
   
   _flags.delegateHasReplaceInsertedTextSelectionAfterInsertion = [delegate respondsToSelector:@selector(codeView:replaceInsertedText:selectionAfterInsertion:)];
   _flags.delegateHasSelectedLineNumber = [delegate respondsToSelector:@selector(codeView:selectedLineNumber:)];
-  _flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
-  _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
-  _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
-  _flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
 }
 
 - (TextRenderer *)renderer
@@ -476,62 +468,6 @@ static void init(CodeView *self)
     self.contentSize = CGSizeMake(boundsSize.width, height ?: boundsSize.height);
   }];
   
-  // Reaction to change the frame based on the 
-  [[[RACSubscribable merge:@[
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil]]]
-   select:^id(NSNotification *x) {
-     return @[
-       @(x.name == UIKeyboardDidChangeFrameNotification), // Should show accessory
-       x.userInfo[UIKeyboardFrameEndUserInfoKey]          // Untransformed keyboard frame
-       ?: [NSValue valueWithCGRect:CGRectMake(0, CGRectGetMaxY(UIScreen.mainScreen.bounds), UIScreen.mainScreen.bounds.size.width, KEYBOARD_DOCKED_MINIMUM_HEIGHT)]
-     ]; }]
-   subscribeNext:^(NSArray *x) {
-     @strongify(self);
-     if (!self || !self.keyboardAccessoryView) return;
-     
-     if ([x[0] boolValue] && self.isFirstResponder) {
-       // Calculate the target frame for the accessory view
-       CGRect targetFrame = [self convertRect:[x[1] CGRectValue] fromView:nil];
-       CGFloat keyboardHeight = targetFrame.size.height;
-       targetFrame.size.height = ACCESSORY_HEIGHT;
-       targetFrame.origin.y -= ACCESSORY_HEIGHT;
-       
-       // Adjust the accessory view properties
-       self.keyboardAccessoryView.split = (keyboardHeight < KEYBOARD_DOCKED_MINIMUM_HEIGHT /*&& targetFrame.origin.y < KEYBOARD_VISIBLE_MAXIMUM_Y - ACCESSORY_HEIGHT*/);
-       self.keyboardAccessoryView.flipped = NO;
-       
-       // Ask delegate if accessory view should be shown
-       __autoreleasing UIView *targetView = self;
-       if (self->_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame])
-         return;
-       
-       // Reposition if flipped (it could have been changed by the delegate call)
-       if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped) {
-         targetFrame.origin.y += keyboardHeight + ACCESSORY_HEIGHT;
-       }
-       
-       // Show the accessory view
-       self.keyboardAccessoryView.frame = targetFrame;
-       [targetView addSubview:self.keyboardAccessoryView];
-       [self.keyboardAccessoryView setNeedsLayout];
-       self.keyboardAccessoryView.alpha = 0;
-       [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-         self.keyboardAccessoryView.alpha = 1;
-       } completion:^(BOOL finished) {
-         if (self->_flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame) {
-           [self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
-         }
-       }];
-     } else if (!self->_flags.delegateHasShouldHideKeyboardAccessoryView || [self.delegate codeViewShouldHideKeyboardAccessoryView:self]) {
-       // Hide the accessory view
-       [self.keyboardAccessoryView removeFromSuperview];
-       if (self->_flags.delegateHasDidHideKeyboardAccessoryView) {
-         [self.delegate codeViewDidHideKeyboardAccessoryView:self];
-       }
-     }
-   }];
-  
   // Setup keyboard and selection
   self->_selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
   [self->_selectionView setOpaque:NO];
@@ -619,6 +555,42 @@ static void init(CodeView *self)
     CGContextAddLineToPoint(context, rect.origin.x + self->lineNumbersWidth + 0.5, CGRectGetMaxY(rect));
     CGContextStrokePath(context);
   }
+}
+
+#pragma mark - Keyboard Accessory Methods
+
+- (void)presentKeyboardAccessoryViewWithKeyboardFrame:(CGRect)keyboardFrame inView:(UIView *)targetView animated:(BOOL)animated {
+  // Calculate the target frame for the accessory view
+  CGRect targetFrame = keyboardFrame;
+  targetFrame.size.height = ACCESSORY_HEIGHT;
+  targetFrame.origin.y -= ACCESSORY_HEIGHT;
+  
+  // Adjust the accessory view properties
+  self.keyboardAccessoryView.split = (keyboardFrame.size.height < KEYBOARD_DOCKED_MINIMUM_HEIGHT && targetFrame.origin.y < KEYBOARD_VISIBLE_MAXIMUM_Y - ACCESSORY_HEIGHT);
+  self.keyboardAccessoryView.flipped = (targetFrame.origin.y - targetView.bounds.origin.y < targetView.bounds.size.height / 4.0);
+  
+  // Reposition if flipped
+  if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped) {
+    targetFrame.origin.y += keyboardFrame.size.height + ACCESSORY_HEIGHT;
+  }
+  
+  // Show the accessory view
+  self.keyboardAccessoryView.frame = targetFrame;
+  [targetView addSubview:self.keyboardAccessoryView];
+  [self.keyboardAccessoryView setNeedsLayout];
+  self.keyboardAccessoryView.alpha = 0;
+  [UIView animateWithDuration:(animated ? 0.25: 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+    self.keyboardAccessoryView.alpha = 1;
+  } completion:nil];
+}
+
+- (void)dismissKeyboardAccessoryViewAnimated:(BOOL)animated {
+  [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
+    self.keyboardAccessoryView.alpha = 0;
+  } completion:^(BOOL finished) {
+    self.keyboardAccessoryView.alpha = 1;
+    [self.keyboardAccessoryView removeFromSuperview];
+  }];
 }
 
 #pragma mark - Text Renderer Delegate
