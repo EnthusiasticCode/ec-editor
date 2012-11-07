@@ -45,9 +45,9 @@ static NSMutableDictionary *fsItemCache() {
 + (id<RACSubscribable>)itemWithURL:(NSURL *)url type:(NSString *)type;
 + (id<RACSubscribable>)internalItemWithURL:(NSURL *)url type:(NSString *)type;
 
-@property (nonatomic, strong) RACReplaySubject *urlBacking;
-@property (nonatomic, strong) RACReplaySubject *typeBacking;
-@property (nonatomic, strong) RACReplaySubject *parentBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *urlBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *typeBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *parentBacking;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
 
@@ -57,8 +57,8 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemFile ()
 
-@property (nonatomic, strong) RACReplaySubject *encodingBacking;
-@property (nonatomic, strong) RACReplaySubject *contentBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *encodingBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *contentBacking;
 
 - (id<RACSubscribable>)internalSave;
 
@@ -66,7 +66,7 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemDirectory ()
 
-@property (nonatomic, strong) RACReplaySubject *childrenBacking;
+@property (nonatomic, strong, readonly) RACReplaySubject *childrenBacking;
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
 - (id<RACSubscribable>)internalChildren;
@@ -193,44 +193,78 @@ static NSMutableDictionary *fsItemCache() {
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
-  self = [super initWithURL:url type:type];
-  if (!self) {
-    return nil;
-  }
-  _encodingBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-  [_encodingBacking sendNext:nil];
-  _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-  [_contentBacking sendNext:nil];
-  NSError *error;
-  NSString *content = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-  if (!error) {
-    [_contentBacking sendNext:content];
-  } else {
-    [_contentBacking sendError:error];
-  }
-  
-  return self;
-}
-
 - (id<RACSubscribable>)encodingSource {
-  return self.encodingBacking;
+  @weakify(self);
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    @strongify(self);
+    if (!self || !self.urlBacking.first) {
+      return [RACSubscribable error:NSError.alloc.init];
+    }
+    return self.encodingBacking;
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscriber>)encodingSink {
+  RACSubject *sink = [RACSubject subject];
+  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
+    ASSERT_NOT_MAIN_QUEUE();
+    [self.encodingBacking sendNext:x];
+  }];
   return self.encodingBacking;
 }
 
 - (id<RACSubscribable>)contentSource {
-  return self.contentBacking;
+  @weakify(self);
+  return [[[RACSubscribable defer:^id<RACSubscribable>{
+    ASSERT_NOT_MAIN_QUEUE();
+    @strongify(self);
+    if (!self || !self.urlBacking.first) {
+      return [RACSubscribable error:NSError.alloc.init];
+    }
+    return self.contentBacking;
+  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscriber>)contentSink {
-  return self.contentBacking;
+  RACSubject *sink = [RACSubject subject];
+  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
+    ASSERT_NOT_MAIN_QUEUE();
+    [self.contentBacking sendNext:x];
+  }];
+  return sink;
 }
 
 - (id<RACSubscribable>)save {
   return [[[self internalSave] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+}
+
+@synthesize encodingBacking = _encodingBacking;
+
+- (RACReplaySubject *)encodingBacking {
+  ASSERT_NOT_MAIN_QUEUE();
+  if (!_encodingBacking) {
+    _encodingBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+    
+  }
+  return _encodingBacking;
+}
+
+@synthesize contentBacking = _contentBacking;
+
+- (RACReplaySubject *)contentBacking {
+  ASSERT_NOT_MAIN_QUEUE();
+  if (!_contentBacking) {
+    _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
+    NSError *error = nil;
+    NSString *content = [NSString stringWithContentsOfURL:self.urlBacking.first encoding:NSUTF8StringEncoding error:&error];
+    if (!error) {
+      [_contentBacking sendNext:content];
+    } else {
+      [_contentBacking sendError:error];
+    }
+  }
+  return _contentBacking;
 }
 
 - (id<RACSubscribable>)internalSave {
@@ -651,7 +685,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
-  RACSubject *sink = RACSubject.subject;
+  RACSubject *sink = [RACSubject subject];
   [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
     ASSERT_NOT_MAIN_QUEUE();
     [[self extendedAttributeBackingForKey:key] sendNext:x];
@@ -661,12 +695,12 @@ static NSMutableDictionary *fsItemCache() {
 
 @end
 
-static size_t _xattrMaxSize = 4 * 1024; // 4 kB
-
 @implementation FileSystemItem (ExtendedAttributes_Private)
 
 - (RACReplaySubject *)extendedAttributeBackingForKey:(NSString *)key {
   ASSERT_NOT_MAIN_QUEUE();
+  static size_t _xattrMaxSize = 4 * 1024; // 4 kB
+  
   RACReplaySubject *backing = [self.extendedAttributesBacking objectForKey:key];
   if (!backing) {
     backing = [RACReplaySubject replaySubjectWithCapacity:1];
@@ -685,6 +719,7 @@ static size_t _xattrMaxSize = 4 * 1024; // 4 kB
     
     // Save the value to disk every time it changes
     [[backing deliverOn:fsScheduler()] subscribeNext:^(id x) {
+      ASSERT_NOT_MAIN_QUEUE();
       if (x) {
         NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
         setxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
