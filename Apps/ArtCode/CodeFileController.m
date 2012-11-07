@@ -341,7 +341,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [/* TODO: switch this back when extended attribute sources and sinks are implemented */ /* RACAble(self.textFile.explicitSyntaxIdentifierSource) switch] */ RACSubscribable return:nil], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
+  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;

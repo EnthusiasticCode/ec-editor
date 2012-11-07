@@ -8,6 +8,7 @@
 
 #import "FileSystemItem.h"
 #import "NSString+ScoreForAbbreviation.h"
+#import <sys/xattr.h>
 
 
 // All filesystem operations must be done on this scheduler
@@ -80,6 +81,12 @@ static NSMutableDictionary *fsItemCache() {
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination;
 + (void)didCreate:(NSURL *)target;
 + (void)didDelete:(NSURL *)target;
+
+@end
+
+@interface FileSystemItem (ExtendedAttributes_Private)
+
+- (RACReplaySubject *)extendedAttributeBackingForKey:(NSString *)key;
 
 @end
 
@@ -637,25 +644,59 @@ static NSMutableDictionary *fsItemCache() {
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
-      return [RACSubscribable never];
+      return [RACSubscribable error:NSError.alloc.init];
     }
-    
-    id<RACSubscribable>source = nil;
-    @synchronized(self.extendedAttributesBacking) {
-      source = [self.extendedAttributesBacking objectForKey:key];
-      if (!source) {
-        source = [RACReplaySubject replaySubjectWithCapacity:1];
-        [self.extendedAttributesBacking setObject:source forKey:key];
-        // TODO: load extended attribute from filesystem
-      }
-    }
-    return source;
+    return [self extendedAttributeBackingForKey:key];
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
-  // TODO: actually return something useful
-  return RACSubscriber.alloc.init;
+  RACSubject *sink = RACSubject.subject;
+  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
+    ASSERT_NOT_MAIN_QUEUE();
+    [[self extendedAttributeBackingForKey:key] sendNext:x];
+  }];
+  return sink;
+}
+
+@end
+
+static size_t _xattrMaxSize = 4 * 1024; // 4 kB
+
+@implementation FileSystemItem (ExtendedAttributes_Private)
+
+- (RACReplaySubject *)extendedAttributeBackingForKey:(NSString *)key {
+  ASSERT_NOT_MAIN_QUEUE();
+  RACReplaySubject *backing = [self.extendedAttributesBacking objectForKey:key];
+  if (!backing) {
+    backing = [RACReplaySubject replaySubjectWithCapacity:1];
+    
+    // Load the initial value from the filesystem
+    void *xattrBytes = malloc(_xattrMaxSize);
+    ssize_t xattrBytesCount = getxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
+    if (xattrBytesCount != -1) {
+      NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
+      id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
+      [backing sendNext:xattrValue];
+    } else {
+      [backing sendNext:nil];
+    }
+    free(xattrBytes);
+    
+    // Save the value to disk every time it changes
+    [[backing deliverOn:fsScheduler()] subscribeNext:^(id x) {
+      if (x) {
+        NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
+        setxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
+      } else {
+        removexattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, 0);
+      }
+    }];
+
+    [self.extendedAttributesBacking setObject:backing forKey:key];
+  }
+  return backing;
+
 }
 
 @end

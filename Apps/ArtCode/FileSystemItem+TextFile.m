@@ -12,11 +12,6 @@ static NSString * const _explicitSyntaxIdentifierKey = @"com.enthusiasticcode.ar
 static NSString * const _explicitEncodingKey = @"com.enthusiasticcode.artcode.TextFile.ExplicitEncoding";
 static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.Bookmarks";
 
-//static const char * const _bookmarksXattrName = ;
-//static size_t _bookmarksXattrMaxSize = 32 * 1024; // 32 kB
-//static const char * const _explicitSyntaxXattrName = ;
-//static size_t _explicitSyntaxXattrMaxSize = 4 * 1024; // 4 kB
-
 @implementation FileSystemFile (TextFile)
 
 - (id<RACSubscribable>)explicitSyntaxIdentifierSource {
