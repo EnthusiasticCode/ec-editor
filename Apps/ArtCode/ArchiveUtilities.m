@@ -44,6 +44,20 @@
 {
   ASSERT(archiveURL && directoryURL);
   
+  static BOOL (^strHasSuffix)(const char *, const char *) = ^BOOL(const char *str, const char *suffix) {
+    if (!str || !suffix)
+      return NO;
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+    if (lensuffix >  lenstr)
+      return NO;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+  };
+  
+  static BOOL (^strHasPrefix)(const char *, const char *) = ^BOOL(const char *str, const char *prefix) {
+    return strstr(str, prefix) == str;
+  };
+  
   NSString *previousWorkingDirectory = [[NSFileManager defaultManager] currentDirectoryPath];
   [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:NULL];
   if (![[NSFileManager defaultManager] changeCurrentDirectoryPath:[directoryURL path]]) {
@@ -68,10 +82,15 @@
   {
     struct archive_entry *entry;
     returnCode = archive_read_next_header(archive, &entry);
-    if (returnCode == ARCHIVE_EOF || returnCode < ARCHIVE_OK)
+    if (returnCode == ARCHIVE_EOF || returnCode == ARCHIVE_FATAL)
       break;
+    if (returnCode < ARCHIVE_OK)
+      continue;
+    const char *pathname = archive_entry_pathname(entry);
+    if (!strcmp(pathname, ".DS_Store") || strHasPrefix(pathname, "__MACOSX/") || strHasSuffix(pathname, "/.DS_Store") || strHasPrefix(pathname, "._"))
+      continue;
     returnCode = archive_write_header(output, entry);
-    if (returnCode < ARCHIVE_FAILED)
+    if (returnCode == ARCHIVE_FATAL)
       break;
     if (returnCode < ARCHIVE_OK)
       continue;
@@ -87,11 +106,15 @@
       if (returnCode < ARCHIVE_OK)
         break;
     }
-    if (returnCode < ARCHIVE_OK)
+    if (returnCode == ARCHIVE_FATAL)
       break;
+    if (returnCode < ARCHIVE_OK)
+      continue;
     returnCode = archive_write_finish_entry(output);
-    if (returnCode < ARCHIVE_OK)
+    if (returnCode == ARCHIVE_FATAL)
       break;
+    if (returnCode < ARCHIVE_OK)
+      continue;
   }
   archive_write_close(output);
   archive_write_free(output);
@@ -100,7 +123,7 @@
   
   [[NSFileManager defaultManager] changeCurrentDirectoryPath:previousWorkingDirectory];
   
-  return returnCode >= 0 ? YES : NO;
+  return returnCode < ARCHIVE_OK ? NO : YES;
 }
 
 + (BOOL)compressFileAtURLs:(NSArray *)urls toArchiveURL:(NSURL *)archiveURL error:(NSError **)error {
