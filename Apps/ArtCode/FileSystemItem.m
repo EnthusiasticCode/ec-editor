@@ -340,7 +340,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], abbreviationSubscribable]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
+  return [[[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], abbreviationSubscribable ?: [RACSubscribable return:nil]]] deliverOn:fsScheduler()] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {

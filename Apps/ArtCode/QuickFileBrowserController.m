@@ -57,13 +57,11 @@
     return [FileSystemDirectory directoryWithURL:projectURL];
   }] switch] select:^id<RACSubscribable>(FileSystemDirectory *directory) {
     @strongify(self);
-    if (!self) { return nil; }
     return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject];
   }] switch] toProperty:@keypath(self.filteredItems) onObject:self];
   
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);
-    if (!self) { return; }
     if (items.count == 0) {
       self.infoLabel.text = L(@"Nothing found.");
     } else {
