@@ -142,12 +142,16 @@
               return [[temporaryDirectory children] take:1];
             }] selectMany:^id<RACSubscribable>(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
-              FileSystemItem *onlyChild = [children lastObject];
-              if (children.count == 1 && onlyChild.type.first == NSURLFileResourceTypeDirectory) {
-                return [[[children lastObject] children] take:1];
-              } else {
+              if (children.count != 1) {
                 return [RACSubscribable return:children];
               }
+              FileSystemItem *onlyChild = [children lastObject];
+              return [[onlyChild.type take:1] selectMany:^id<RACSubscribable>(NSString *x) {
+                if (x == NSURLFileResourceTypeDirectory) {
+                  return [[(FileSystemDirectory *)onlyChild children] take:1];
+                }
+                return [RACSubscribable return:children];
+              }];
             }],
             [FileSystemDirectory directoryWithURL:createdProject.fileURL]
           ]]
