@@ -18,7 +18,6 @@ typedef enum {
   ArtCodeLocationTypeBookmarksList,
   ArtCodeLocationTypeRemotesList,
   ArtCodeLocationTypeRemoteDirectory,
-  ArtCodeLocationTypeDocSet,
 } ArtCodeLocationType;
 
 /// Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.
@@ -49,8 +48,6 @@ typedef enum {
 - (void)pushDefaultProjectSet;
 
 - (void)pushProject:(ArtCodeProject *)project;
-
-- (void)pushDocSetURL:(NSURL *)url;
 
 - (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project;
 

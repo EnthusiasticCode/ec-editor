@@ -20,9 +20,6 @@
 #import "ArtCodeProject.h"
 #import "ArtCodeProjectSet.h"
 
-#import "DocSetDownloadManager.h"
-#import "DocSet.h"
-
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
@@ -67,8 +64,7 @@
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
-    NSMutableArray *elements = [NSMutableArray arrayWithArray:[[ArtCodeProjectSet defaultSet] projects].array];
-    [elements addObjectsFromArray:[[DocSetDownloadManager sharedDownloadManager] downloadedDocSets]];
+    NSArray *elements = [[ArtCodeProjectSet defaultSet] projects].array;
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(ArtCodeProject *obj1, ArtCodeProject *obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
     }];
@@ -138,20 +134,6 @@
     }];
     strongSelf->_gridElements = nil;
     [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
-  }];
-  
-  // Update the grid view when a docset gets removed
-  // TODO:!!! this will never be disposed
-  // TODO: add case when docset is added
-  [[[NSNotificationCenter defaultCenter] rac_addObserverForName:DocSetWillBeDeletedNotification object:nil] subscribeNext:^(NSNotification *note) {
-    ProjectBrowserController *strongSelf = this;
-    if (!strongSelf)
-      return;
-    NSUInteger idx = [strongSelf->_gridElements indexOfObjectIdenticalTo:note.object];
-    if (idx != NSNotFound) {
-      strongSelf->_gridElements = nil;
-      [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:idx] animated:YES];
-    }
   }];
   
   return self;
@@ -288,13 +270,6 @@
     cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
     cell.newlyCreatedBadge.hidden = !project.newlyCreatedValue;
     cell.accessibilityHint = L(@"Open the project");
-  } else if ([element isKindOfClass:[DocSet class]]) {
-    DocSet *docSet = (DocSet *)element;
-    cell.title.text = cell.accessibilityLabel = docSet.name;
-    cell.label.text = @"";
-    cell.icon.image = [UIImage imageNamed:@"projectsIcon_docSet"];
-    cell.accessibilityHint = L(@"Open the documentation");
-    cell.newlyCreatedBadge.hidden = YES;
   }
   
   // Accessibility
@@ -318,8 +293,6 @@
     if ([element isKindOfClass:[ArtCodeProject class]]) {
       [(ArtCodeProject *)element setNewlyCreatedValue:NO];
       [self.artCodeTab pushProject:element];
-    } else if ([element isKindOfClass:[DocSet class]]) {
-      [self.artCodeTab pushDocSetURL:[(DocSet *)element docSetURLForNode:nil]];
     }
   }
 }
@@ -349,10 +322,6 @@
             // Show bezel alert
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
           }];
-        } else if ([obj isKindOfClass:[DocSet class]]) {
-          [[DocSetDownloadManager sharedDownloadManager] deleteDocSet:obj];
-          // Show bezel alert
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
         }
       }];
     }

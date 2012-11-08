@@ -11,9 +11,6 @@
 #import "ArtCodeProject.h"
 #import "ArtCodeLocation.h"
 
-#import "DocSet.h"
-#import "DocSetDownloadManager.h"
-
 #import <objc/runtime.h>
 
 

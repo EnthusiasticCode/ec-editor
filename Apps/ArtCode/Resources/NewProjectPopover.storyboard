@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2182" systemVersion="11E53" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="W2M-Sx-cly">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="W2M-Sx-cly">
     <dependencies>
-        <deployment defaultVersion="1296" identifier="iOS"/>
-        <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1181"/>
+        <deployment defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
     </dependencies>
     <scenes>
         <!--New Project Controller - Create new project-->
         <scene sceneID="ItT-eB-3Zx">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Mub-CS-wlH" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="dJm-cZ-CBT" customClass="NewProjectController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="LRL-2u-T1X">
                         <rect key="frame" x="0.0" y="64" width="540" height="556"/>
@@ -67,13 +65,13 @@
                         <outlet property="projectNameTextField" destination="I17-fp-7XU" id="czm-cq-ubv"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mub-CS-wlH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2157" y="-1304"/>
         </scene>
         <!--New Project Import Controller - Templates-->
         <scene sceneID="il7-Dh-M60">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="nfV-ec-TyI" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="Templates" title="Templates" id="DR9-8m-f4z" customClass="NewProjectImportController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="NQ9-Zo-Iz1">
                         <rect key="frame" x="0.0" y="64" width="540" height="556"/>
@@ -117,13 +115,13 @@
                     <navigationItem key="navigationItem" title="Import from iTunes" id="nPw-DW-fQz"/>
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="200"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nfV-ec-TyI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2157" y="-503"/>
         </scene>
         <!--View Controller - Add New Item-->
         <scene sceneID="See-7B-c1I">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OBE-ll-855" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="YZU-gF-xre" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zUA-Vf-5fx">
                         <rect key="frame" x="0.0" y="64" width="540" height="556"/>
@@ -145,8 +143,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QDV-cR-lag" customClass="PopoverButton">
-                                <rect key="frame" x="20" y="121" width="240" height="58"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <rect key="frame" x="20" y="121" width="500" height="58"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Import from iTunes">
                                     <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -159,34 +157,19 @@
                                     <segue destination="DR9-8m-f4z" kind="push" id="MS8-Bv-CGb"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Eec-Rd-55z" customClass="PopoverButton">
-                                <rect key="frame" x="280" y="121" width="240" height="58"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="Get DocSets">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="5ai-6X-B46" kind="push" id="Hau-uI-1X2"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Add New Item" id="I37-8D-B2H"/>
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="200"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OBE-ll-855" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1398" y="-836"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Jnm-u6-lRM">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="4tW-0O-CS0" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="W2M-Sx-cly" sceneMemberID="viewController">
                     <modalFormSheetSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <navigationBar key="navigationBar" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="kDb-2Z-7vG">
@@ -196,21 +179,21 @@
                         <segue destination="YZU-gF-xre" kind="relationship" relationship="rootViewController" id="Eud-o0-DuZ"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4tW-0O-CS0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="698" y="-836"/>
         </scene>
         <!--Doc Set Download Controller - DocSets-->
         <scene sceneID="M41-YH-czs">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="aKv-sV-df2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="DocSets" title="DocSets" id="5ai-6X-B46" customClass="DocSetDownloadController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="ymK-1X-6a2">
-                        <rect key="frame" x="0.0" y="64" width="540" height="556"/>
+                        <rect key="frame" x="0.0" y="20" width="768" height="1004"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="separatorColor" white="0.35200352820000003" alpha="1" colorSpace="calibratedWhite"/>
                         <label key="tableFooterView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Available documentation to download." textAlignment="center" lineBreakMode="wordWrap" minimumFontSize="10" id="6cz-U8-2F8">
-                            <rect key="frame" x="0.0" y="66" width="540" height="44"/>
+                            <rect key="frame" x="0.0" y="66" width="768" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <color key="textColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -252,10 +235,35 @@
                     </navigationItem>
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="200"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aKv-sV-df2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2157" y="261"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="DocSetDownloadController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/DocSetDownloadController.h"/>
+            <relationships>
+                <relationship kind="action" name="refreshDocSetList:"/>
+            </relationships>
+        </class>
+        <class className="NewProjectController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectController.h"/>
+            <relationships>
+                <relationship kind="action" name="changeColorAction:"/>
+                <relationship kind="action" name="createProjectAction:"/>
+                <relationship kind="outlet" name="descriptionLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="projectColorButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="NewProjectImportController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectImportController.h"/>
+        </class>
+        <class className="PopoverButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PopoverButton.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

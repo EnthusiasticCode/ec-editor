@@ -23,7 +23,6 @@
 #import "BookmarkBrowserController.h"
 #import "CodeFileController.h"
 #import "RemotesListController.h"
-#import "DocSetBrowserController.h"
 
 #import "UIImage+AppStyle.h"
 
@@ -471,11 +470,6 @@
     case ArtCodeLocationTypeDirectory:
     {
       controllerClass = [FileBrowserController class];
-      break;
-    }
-    case ArtCodeLocationTypeDocSet:
-    {
-      controllerClass = [DocSetBrowserController class];
       break;
     }
     case ArtCodeLocationTypeRemoteDirectory:

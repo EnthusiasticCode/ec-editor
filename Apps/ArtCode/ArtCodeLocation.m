@@ -48,7 +48,6 @@
       
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
-    case ArtCodeLocationTypeDocSet:
     {
       // If a file, data is a bookmark data URL
       BOOL isStale = NO;
@@ -79,11 +78,6 @@
 - (NSString *)path {
   NSString *path = self.url.path;
   switch (self.type) {
-    case ArtCodeLocationTypeDocSet:
-    {
-      path = [path substringFromIndex:NSMaxRange([path rangeOfString:@"Contents/Resources/Documents"])];
-    }
-      
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {
@@ -113,11 +107,6 @@
 - (void)pushProject:(ArtCodeProject *)project {
   ASSERT(project);
   [self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
-}
-
-- (void)pushDocSetURL:(NSURL *)url {
-  ASSERT(url);
-  [self pushLocationWithType:ArtCodeLocationTypeDocSet project:nil remote:nil data:[[url absoluteString] dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 - (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project {
