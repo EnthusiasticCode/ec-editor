@@ -135,45 +135,50 @@
       // Import the zip file
       // Extract files if needed
       [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
-        // Get the extracted directories
-        [[[[[RACSubscribable combineLatest:@[
-          [[[[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
-            return [temporaryDirectory children];
-          }] switch] select:^id<RACSubscribable>(NSArray *children) {
-            // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
-            FileSystemItem *onlyChild = [children lastObject];
-            if (children.count == 1 && onlyChild.type.first == NSURLFileResourceTypeDirectory) {
-              return [[children lastObject] children];
-            } else {
-              return [RACSubscribable return:children];
+        if (temporaryDirectoryURL) {
+          // Get the extracted directories
+          [[[[RACSubscribable combineLatest:@[
+            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] selectMany:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
+              return [[temporaryDirectory children] take:1];
+            }] selectMany:^id<RACSubscribable>(NSArray *children) {
+              // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
+              FileSystemItem *onlyChild = [children lastObject];
+              if (children.count == 1 && onlyChild.type.first == NSURLFileResourceTypeDirectory) {
+                return [[[children lastObject] children] take:1];
+              } else {
+                return [RACSubscribable return:children];
+              }
+            }],
+            [FileSystemDirectory directoryWithURL:createdProject.fileURL]
+          ]]
+          selectMany:^id(RACTuple *x) {
+            NSArray *children = x.first;
+            FileSystemDirectory *projectDirectory = x.second;
+            return [[children rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *child) {
+              return [child moveTo:projectDirectory];
+            }];
+          }] finally:^{
+            [self stopRightBarButtonItemActivityIndicator];
+            self.tableView.userInteractionEnabled = YES;
+            [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+          }] subscribeError:^(NSError *error) {
+            // TODO: error handling moving of extracted objects in place failure
+            ASSERT(NO);
+            if (block) {
+              block(nil);
             }
-          }] switch],
-          [FileSystemDirectory directoryWithURL:createdProject.fileURL]
-        ]]
-        select:^id(RACTuple *x) {
-          NSArray *children = x.first;
-          FileSystemDirectory *projectDirectory = x.second;
-          return [[children rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *child) {
-            return [child moveTo:projectDirectory];
+          } completed:^{
+            if (block) {
+              block(createdProject);
+            }
           }];
-        }] switch] finally:^{
-          [self stopRightBarButtonItemActivityIndicator];
-          self.tableView.userInteractionEnabled = YES;
-          [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-        }] subscribeError:^(NSError *error) {
-          // TODO: error handling
-          ASSERT(NO);
-          if (block) {
-            block(nil);
-          }
-        } completed:^{
-          if (block) {
-            block(createdProject);
-          }
-        }];
+        }
+        else {
+          ASSERT(NO); // TODO: error handling file failed to extract
+        }
       }];
     } else {
-      ASSERT(NO); // TODO: error handling
+      ASSERT(NO); // TODO: error handling project creation failure
     }
   }];
 }
