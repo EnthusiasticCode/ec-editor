@@ -136,23 +136,27 @@
       // Extract files if needed
       [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
         // Get the extracted directories
-        [[[[[RACSubscribable combineLatest:@[[[[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
-          return [temporaryDirectory children];
-        }] switch] select:^id<RACSubscribable>(NSArray *children) {
-          // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
-          FileSystemItem *onlyChild = [children lastObject];
-          if (children.count == 1 && onlyChild.type.first == NSURLFileResourceTypeDirectory) {
-            return [[children lastObject] children];
-          } else {
-            return [RACSubscribable return:children];
-          }
-        }], [FileSystemDirectory directoryWithURL:createdProject.fileURL]] reduce:^id(RACTuple *xs) {
-          NSArray *children = xs.first;
-          FileSystemDirectory *projectDirectory = xs.second;
-          return [[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *child) {
+        [[[[[RACSubscribable combineLatest:@[
+          [[[[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] select:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
+            return [temporaryDirectory children];
+          }] switch] select:^id<RACSubscribable>(NSArray *children) {
+            // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
+            FileSystemItem *onlyChild = [children lastObject];
+            if (children.count == 1 && onlyChild.type.first == NSURLFileResourceTypeDirectory) {
+              return [[children lastObject] children];
+            } else {
+              return [RACSubscribable return:children];
+            }
+          }] switch],
+          [FileSystemDirectory directoryWithURL:createdProject.fileURL]
+        ]]
+        select:^id(RACTuple *x) {
+          NSArray *children = x.first;
+          FileSystemDirectory *projectDirectory = x.second;
+          return [[children rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *child) {
             return [child moveTo:projectDirectory];
           }];
-        }] switch] merge] finally:^{
+        }] switch] finally:^{
           [self stopRightBarButtonItemActivityIndicator];
           self.tableView.userInteractionEnabled = YES;
           [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];

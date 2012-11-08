@@ -68,27 +68,29 @@
   {
     struct archive_entry *entry;
     returnCode = archive_read_next_header(archive, &entry);
-    if (returnCode < 0)
+    if (returnCode == ARCHIVE_EOF || returnCode < ARCHIVE_OK)
       break;
     returnCode = archive_write_header(output, entry);
-    if (returnCode < 0)
+    if (returnCode < ARCHIVE_FAILED)
       break;
+    if (returnCode < ARCHIVE_OK)
+      continue;
     const void *buff;
     size_t size;
     off_t offset;
     for (;;)
     {
       returnCode = archive_read_data_block(archive, (const void **)&buff, &size, &offset);
-      if (returnCode != 0)
+      if (returnCode == ARCHIVE_EOF || returnCode < ARCHIVE_OK)
         break;
       returnCode = archive_write_data_block(output, buff, size, offset);
-      if (returnCode < 0)
+      if (returnCode < ARCHIVE_OK)
         break;
     }
-    if (returnCode < 0)
+    if (returnCode < ARCHIVE_OK)
       break;
     returnCode = archive_write_finish_entry(output);
-    if (returnCode < 0)
+    if (returnCode < ARCHIVE_OK)
       break;
   }
   archive_write_close(output);
