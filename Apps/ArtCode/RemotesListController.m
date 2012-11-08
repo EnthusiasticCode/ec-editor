@@ -28,6 +28,10 @@
 
 @interface RemotesListController ()
 
+@property (nonatomic, weak) UIView *hintView;
+- (void)presentHintView;
+- (void)dismissHintView;
+
 - (void)_toolAddAction:(id)sender;
 
 @end
@@ -48,12 +52,31 @@
   // RAC
   __weak RemotesListController *this = self;
   
-  [RACAble(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(id x) {
+  [RACAble(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(NSOrderedSet *x) {
     [this invalidateFilteredItems];
     [this.tableView reloadData];
+    
+    if ([x count] == 0) {
+      [self presentHintView];
+    } else {
+      [self dismissHintView];
+    }
   }];
   
   return self;
+}
+
+- (void)presentHintView {
+  if (!self.hintView) {
+    UIView *hintView = [[[NSBundle mainBundle] loadNibNamed:@"RemotesListHintsView" owner:nil options:nil] objectAtIndex:0];
+    hintView.frame = self.view.bounds;
+    [self.view addSubview:hintView];
+    self.hintView = hintView;
+  }
+}
+
+- (void)dismissHintView {
+  [self.hintView removeFromSuperview];
 }
 
 #pragma mark - Properties
@@ -74,6 +97,8 @@
         return element.name;
       }];
       _filteredRemotesHitMasks = hitMasks;
+      
+      [self dismissHintView];
     }
   }
   return _filteredRemotes;
@@ -111,6 +136,16 @@
 {
   _toolAddPopover = nil;
   [super viewDidUnload];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  
+  if (self.filteredItems.count == 0) {
+    [self presentHintView];
+  } else {
+    [self dismissHintView];
+  }
 }
 
 #pragma mark - Single tab content controller protocol methods

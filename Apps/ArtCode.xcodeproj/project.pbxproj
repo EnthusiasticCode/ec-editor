@@ -455,6 +455,7 @@
 		CDC2829414508D500054358D /* topBar_ForwardButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */; };
 		CDC2829514508D500054358D /* topBar_TitleButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */; };
 		CDC2829614508D500054358D /* topBar_TitleButton_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */; };
+		CDC96177164C08B60069E74A /* RemotesListHintsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDC96176164C08B60069E74A /* RemotesListHintsView.xib */; };
 		CDD40B0313E1A046008AC36B /* PopoverHistoryToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */; };
 		CDDC95071462E23F00E2B96C /* minimap_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDDC95061462E23F00E2B96C /* minimap_Background.png */; };
 		CDE3F14713C0DDD500DFFAFF /* Inconsolata-dz.otf in Resources */ = {isa = PBXBuildFile; fileRef = CDE3F14613C0DDD500DFFAFF /* Inconsolata-dz.otf */; };
@@ -1116,6 +1117,7 @@
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Selected.png; sourceTree = "<group>"; };
+		CDC96176164C08B60069E74A /* RemotesListHintsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemotesListHintsView.xib; sourceTree = "<group>"; };
 		CDCE7E0F1630449A00BE01D8 /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTKeyPathCoding.h; path = extobjc/EXTKeyPathCoding.h; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* PopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverHistoryToolController.m; sourceTree = "<group>"; };
@@ -2068,6 +2070,7 @@
 				CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */,
 				CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */,
 				CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */,
+				CDC96176164C08B60069E74A /* RemotesListHintsView.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -2840,6 +2843,7 @@
 				CD3DFC06164331ED00833D76 /* itemIcon_DeleteSecondary.png in Resources */,
 				CD3DFC07164331ED00833D76 /* itemIcon_Download.png in Resources */,
 				CD3DFC08164331ED00833D76 /* itemIcon_Upload.png in Resources */,
+				CDC96177164C08B60069E74A /* RemotesListHintsView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
