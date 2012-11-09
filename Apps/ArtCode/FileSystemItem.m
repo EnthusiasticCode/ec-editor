@@ -435,6 +435,9 @@ static NSMutableDictionary *fsItemCache() {
     // Merge in descendants if needed
     if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
       result = [[result select:^id<RACSubscribable>(NSArray *x) {
+        if (!x.count) {
+          return [RACSubscribable return:x];
+        }
         NSMutableArray *descendantSubscribables = [[NSMutableArray alloc] init];
         for (FileSystemItem *item in x) {
           if (item.typeBacking.first == NSURLFileResourceTypeDirectory) {
