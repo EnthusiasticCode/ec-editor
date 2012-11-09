@@ -350,9 +350,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[[[self internalChildrenWithOptions:options] select:^id(id x) {
-    return x;
-  }] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
+  return [[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
@@ -406,10 +404,11 @@ static NSMutableDictionary *fsItemCache() {
 
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
   ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
-  RACReplaySubject *backing = self.childrenBacking;
-  return [[RACSubscribable defer:^id<RACSubscribable>{
+  @weakify(self);
+  return [RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_FS_QUEUE();
-    id<RACSubscribable>result = backing;
+    @strongify(self);
+    id<RACSubscribable>result = self.childrenBacking;
     
     // Filter out hidden files if needed
     if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
@@ -464,8 +463,6 @@ static NSMutableDictionary *fsItemCache() {
     }
     
     return result;
-  }] select:^id(id x) {
-    return x;
   }];
 }
 
@@ -732,11 +729,11 @@ static NSMutableDictionary *fsItemCache() {
         removexattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, 0);
       }
     }];
-
+    
     [self.extendedAttributesBacking setObject:backing forKey:key];
   }
   return backing;
-
+  
 }
 
 @end
