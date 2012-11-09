@@ -402,23 +402,20 @@ static NSMutableDictionary *fsItemCache() {
     // Filter out hidden files if needed
     if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
       result = [[result select:^id<RACSubscribable>(NSArray *x) {
-        return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
-          NSMutableArray *nonHiddenChildren = [[NSMutableArray alloc] init];
-          return [[[[[x rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *y) {
-            return [RACSubscribable combineLatest:@[[RACSubscribable return:y], [[y name] take:1]]];
-          }] where:^BOOL(RACTuple *ys) {
-            NSString *name = ys.second;
-            return [name characterAtIndex:0] != L'.';
-          }] select:^FileSystemItem *(RACTuple *ys) {
-            return ys.first;
-          }] subscribeNext:^(FileSystemItem *y) {
-            [nonHiddenChildren addObject:y];
-          } error:^(NSError *error) {
-            [subscriber sendError:error];
-          } completed:^{
-            [subscriber sendNext:nonHiddenChildren];
-            [subscriber sendCompleted];
-          }];
+        NSMutableArray *namedItems = [[NSMutableArray alloc] init];
+        for (FileSystemItem *item in x) {
+          [namedItems addObject:[RACSubscribable combineLatest:@[[RACSubscribable return:item], item.name]]];
+        }
+        return [[RACSubscribable combineLatest:namedItems] select:^NSArray *(RACTuple *xs) {
+          NSMutableArray *nonHiddenItems = [[NSMutableArray alloc] init];
+          for (RACTuple *namedItem in xs) {
+            FileSystemItem *item = namedItem.first;
+            NSString *name = namedItem.second;
+            if ([name characterAtIndex:0] != L'.') {
+              [nonHiddenItems addObject:item];
+            }
+          }
+          return nonHiddenItems;
         }];
       }] switch];
     }
