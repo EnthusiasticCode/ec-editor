@@ -350,7 +350,9 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
+  return [[[RACSubscribable combineLatest:@[[[[self internalChildrenWithOptions:options] select:^id(id x) {
+    return x;
+  }] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
@@ -405,13 +407,16 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSubscribable>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
   ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
   RACReplaySubject *backing = self.childrenBacking;
-  return [RACSubscribable defer:^id<RACSubscribable>{
+  return [[RACSubscribable defer:^id<RACSubscribable>{
     ASSERT_FS_QUEUE();
     id<RACSubscribable>result = backing;
     
     // Filter out hidden files if needed
     if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
       result = [[result select:^id<RACSubscribable>(NSArray *x) {
+        if (!x.count) {
+          return [RACSubscribable return:x];
+        }
         NSMutableArray *namedItems = [[NSMutableArray alloc] init];
         for (FileSystemItem *item in x) {
           [namedItems addObject:[item.name select:^RACTuple *(NSString *x) {
@@ -459,6 +464,8 @@ static NSMutableDictionary *fsItemCache() {
     }
     
     return result;
+  }] select:^id(id x) {
+    return x;
   }];
 }
 
