@@ -450,6 +450,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (void)didChangeChildren {
+  ASSERT_NOT_MAIN_QUEUE();
   NSMutableArray *children = [[NSMutableArray alloc] init];
   NSURL *url = self.urlBacking.first;
   if (!url) {
@@ -607,6 +608,7 @@ static NSMutableDictionary *fsItemCache() {
 @implementation FileSystemItem (FileManagement_Private)
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
+  ASSERT_NOT_MAIN_QUEUE();
   [[[fsItemCache() objectForKey:source] urlBacking] sendNext:destination];
   NSURL *sourceParent = [source URLByDeletingLastPathComponent];
   NSURL *destinationParent = [destination URLByDeletingLastPathComponent];
@@ -617,14 +619,17 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
+  ASSERT_NOT_MAIN_QUEUE();
   [[fsItemCache() objectForKey:[destination URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didCreate:(NSURL *)target {
+  ASSERT_NOT_MAIN_QUEUE();
   [[fsItemCache() objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
+  ASSERT_NOT_MAIN_QUEUE();
   FileSystemItem *item = [fsItemCache() objectForKey:target];
   if (item) {
     [fsItemCache() removeObjectForKey:target];
