@@ -103,7 +103,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
   NSString *path = fileURL.path;
   NSString *projectSetPath = self.fileURL.path;
   if (![path hasPrefix:projectSetPath]) {
-    return nil;
+    return @"";
   }
   return [path substringFromIndex:projectSetPath.length + 1];
 }
