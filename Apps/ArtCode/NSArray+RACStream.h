@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSArray (RACStream)
+@interface NSArray (RACStream) <RACStream>
 
 @end

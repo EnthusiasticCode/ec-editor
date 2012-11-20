@@ -364,21 +364,21 @@ static NSMutableDictionary *fsItemCache() {
       
       // No abbreviation, no need to filter, sort it by lastPathComponent
       if (![abbreviation length]) {
-        return [[[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
+        return [[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
           return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
-        }] rac_toSubscribable] map:^id(FileSystemItem *item) {
+        }] map:^id(FileSystemItem *item) {
           return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
-        }] toArray];
+        }];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] map:^id(FileSystemItem *item) {
+      NSMutableArray *filteredContent = [[[content map:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
         float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
       }] filter:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
-      }] toArray] mutableCopy];
+      }] mutableCopy];
       
       // Sort the filtered content
       [filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {

@@ -341,9 +341,9 @@
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] map:^id(FileSystemItem *x) {
+        [ArchiveUtilities compressFileAtURLs:[_selectedItems map:^id(FileSystemItem *x) {
           return x.url.first;
-        }] toArray] completionHandler:^(NSURL *temporaryDirectoryURL) {
+        }] completionHandler:^(NSURL *temporaryDirectoryURL) {
           ASSERT_MAIN_QUEUE();
           if (temporaryDirectoryURL) {
             NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
