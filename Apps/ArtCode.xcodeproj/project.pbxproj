@@ -29,6 +29,7 @@
 		5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */; };
 		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
 		5FABA6451647DCD40079D074 /* RACSubscribable+libdispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FABA6441647DCD40079D074 /* RACSubscribable+libdispatch.m */; };
+		5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB00D88165C04DD00B70A13 /* NSArray+RACStream.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -579,6 +580,8 @@
 		5FA6148415CE814500A0932A /* libfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfile.a; path = "../ThirdParty/file/build/Release-iphoneos/libfile.a"; sourceTree = "<group>"; };
 		5FABA6431647DCD40079D074 /* RACSubscribable+libdispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RACSubscribable+libdispatch.h"; sourceTree = "<group>"; };
 		5FABA6441647DCD40079D074 /* RACSubscribable+libdispatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RACSubscribable+libdispatch.m"; sourceTree = "<group>"; };
+		5FB00D87165C04DD00B70A13 /* NSArray+RACStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+RACStream.h"; sourceTree = "<group>"; };
+		5FB00D88165C04DD00B70A13 /* NSArray+RACStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+RACStream.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -1555,6 +1558,8 @@
 			children = (
 				5FABA6431647DCD40079D074 /* RACSubscribable+libdispatch.h */,
 				5FABA6441647DCD40079D074 /* RACSubscribable+libdispatch.m */,
+				5FB00D87165C04DD00B70A13 /* NSArray+RACStream.h */,
+				5FB00D88165C04DD00B70A13 /* NSArray+RACStream.m */,
 				CD65F1D014F6C4A200E0C441 /* Keychain.h */,
 				CD65F1D114F6C4A200E0C441 /* Keychain.m */,
 				CD49924C14D6C7480046CD19 /* InstantGestureRecognizer.h */,
@@ -2972,6 +2977,7 @@
 				CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */,
 				5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */,
 				5FABA6451647DCD40079D074 /* RACSubscribable+libdispatch.m in Sources */,
+				5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
