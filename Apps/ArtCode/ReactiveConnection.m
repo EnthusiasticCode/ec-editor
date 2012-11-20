@@ -126,9 +126,9 @@
     @strongify(self);
     [self changeToDirectory:path];
     return [[[[[self directoryContents]
-               where:^BOOL(RACTuple *x) {
+               filter:^BOOL(RACTuple *x) {
                  return [x.first isEqualToString:path]; }]
-               select:^id(RACTuple *x) {
+               map:^id(RACTuple *x) {
                  return x.second; }]
                take:1]
                subscribe:subscriber];
@@ -181,12 +181,12 @@
     __block NSUInteger totalAccumulator = 0;
     return [[[[self directoryContentsForDirectory:remotePath]
               // Transform the directory content into subscribable
-              selectMany:^id(NSArray *content) {
+              flattenMap:^id(NSArray *content) {
                 totalExpected = content.count;
                 return [content rac_toSubscribable];
               }]
               // Get a merge of all 
-              selectMany:^id(NSDictionary *item) {
+              flattenMap:^id(NSDictionary *item) {
                 @strongify(self);
                 NSString *itemName = [item objectForKey:cxFilenameKey];
                 NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
@@ -245,7 +245,7 @@
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
     return [[[localContent rac_toSubscribable]
-            selectMany:^id<RACSubscribable>(NSURL *x) {
+            flattenMap:^id<RACSubscribable>(NSURL *x) {
               @strongify(self);
               NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
               if ([x isDirectory]) {

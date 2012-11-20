@@ -34,16 +34,16 @@
   // RAC
   
   // Update table content
-  [[[[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[[[RACAble(self.currentFolderSubscribable) switch] map:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder children];
-  }] switch] select:^id<RACSubscribable>(NSArray *children) {
+  }] switch] map:^id<RACSubscribable>(NSArray *children) {
     return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSMutableArray *childFolders = [[NSMutableArray alloc] init];
-      return [[[[[[children rac_toSubscribable] select:^id<RACSubscribable>(FileSystemItem *x) {
+      return [[[[[children rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
         return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.type take:1]]];
-      }] merge] where:^BOOL(RACTuple *xs) {
+      }] filter:^BOOL(RACTuple *xs) {
         return xs.second == NSURLFileResourceTypeDirectory;
-      }] select:^id(RACTuple *xs) {
+      }] map:^id(RACTuple *xs) {
         return xs.first;
       }] subscribeNext:^(FileSystemItem *x) {
         [childFolders addObject:x];
@@ -57,7 +57,7 @@
   }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[[RACAble(self.currentFolderSubscribable) switch] select:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[RACAble(self.currentFolderSubscribable) switch] map:^id<RACSubscribable>(FileSystemDirectory *folder) {
     return [folder name];
   }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
   

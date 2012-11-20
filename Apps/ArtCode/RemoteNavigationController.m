@@ -53,16 +53,16 @@ static void _init(RemoteNavigationController *self) {
   // RAC
   @weakify(self);
   
-  RAC(self.connection) = [RACAble(self.remote) select:^id(ArtCodeRemote *remote) {
+  RAC(self.connection) = [RACAble(self.remote) map:^id(ArtCodeRemote *remote) {
     return [ReactiveConnection reactiveConnectionWithURL:remote.url];
   }];
   
-  RAC(self.remote) = [RACAble(self.artCodeTab) select:^id(ArtCodeTab *tab) {
+  RAC(self.remote) = [RACAble(self.artCodeTab) map:^id(ArtCodeTab *tab) {
     return tab.currentLocation.remote;
   }];
   
   [[[RACAble(self.toolbarController)
-   select:^id(RemoteNavigationToolbarController *x) {
+   map:^id(RemoteNavigationToolbarController *x) {
      return [x buttonsActionSubscribable];
    }] switch] subscribeNext:^(UIButton *x) {
      @strongify(self);
@@ -196,7 +196,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
+  [[remoteController.selectedItems.rac_toSubscribable flattenMap:^id<RACSubscribable>(NSDictionary *item) {
     NSString *itemName = [item objectForKey:cxFilenameKey];
     // Generate local destination URL and start the download
     RACSubscribable *progressSubscribable = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
@@ -206,13 +206,13 @@ static void _init(RemoteNavigationController *self) {
     
     // Return a subscribable that yields the FileSystemItem of the downloaded file
     return [[[[progressSubscribable
-               where:^BOOL(id x) {
+               filter:^BOOL(id x) {
                  // Only return URLs
                  return [x isKindOfClass:[NSURL class]]; }]
-               selectMany:^id<RACSubscribable>(NSURL *tempURL) {
+               flattenMap:^id<RACSubscribable>(NSURL *tempURL) {
                  // Convert to filesystem item
                  return [FileSystemItem itemWithURL:tempURL]; }]
-               selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+               flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
                  // Move to destination, the downloaded FileSystemItem is sent
                  return [x moveTo:localController.locationDirectory renameTo:itemName]; }]
                catchTo:[RACSubscribable return:nil]];
@@ -231,9 +231,9 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[[[localController.selectedItems.rac_toSubscribable select:^id(FileSystemItem *x) {
+  [[[[[localController.selectedItems.rac_toSubscribable map:^id(FileSystemItem *x) {
     return x.url;
-  }] switch] selectMany:^id<RACSubscribable>(NSURL *itemURL) {
+  }] switch] flattenMap:^id<RACSubscribable>(NSURL *itemURL) {
     // Start upload
     RACSubscribable *progressSubscribable = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
     
@@ -258,7 +258,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[remoteController.selectedItems.rac_toSubscribable selectMany:^id<RACSubscribable>(NSDictionary *item) {
+  [[[remoteController.selectedItems.rac_toSubscribable flattenMap:^id<RACSubscribable>(NSDictionary *item) {
     return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
   }] finally:^{
     @strongify(self);

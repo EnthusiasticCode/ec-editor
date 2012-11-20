@@ -64,10 +64,10 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   
   // Directory content update reaction
   RAC(self.directoryContent) = [[[self.connection directoryContents]
-                                 where:^BOOL(RACTuple *pathAndContent) {
+                                 filter:^BOOL(RACTuple *pathAndContent) {
                                    return [this.remotePath isEqualToString:pathAndContent.first];
                                  }]
-                                select:^id(RACTuple *pathAndContent) {
+                                map:^id(RACTuple *pathAndContent) {
                                   return pathAndContent.second;
                                 }];
   
@@ -99,17 +99,17 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   }];
   
   RAC(self.loginErrorMessage.hidden) = [[self.connection.connectionStatus
-                                        where:^BOOL(id x) {
+                                        filter:^BOOL(id x) {
                                           enum ReactiveConnectionStatus status = [x intValue];
                                           return status == ReactiveConnectionStatusError || status == ReactiveConnectionStatusConnected;
                                         }]
-                                        select:^id(id x) {
+                                        map:^id(id x) {
                                           return @((enum ReactiveConnectionStatus)[x intValue] == ReactiveConnectionStatusConnected);
                                         }];
   
   // Login reaction
   [[[RACAble(self.authenticationCredentials)
-   select:^id(NSURLCredential *credentials) {
+   map:^id(NSURLCredential *credentials) {
      this.showLoading = YES;
      return [[this.connection connectWithCredentials:credentials] catchTo:[RACSubscribable return:@(NO)]];
    }] switch] subscribeNext:^(NSNumber *x) {

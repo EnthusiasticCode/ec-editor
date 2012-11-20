@@ -48,12 +48,12 @@
   // RAC
   
   // Subscribable for the renameTextField contents
-  id<RACSubscribable> renameTextFieldSubscribable = [[RACAble(self.renameTextField) select:^id<RACSubscribable>(UITextField *textField) {
+  id<RACSubscribable> renameTextFieldSubscribable = [[RACAble(self.renameTextField) map:^id<RACSubscribable>(UITextField *textField) {
     return [[[[textField rac_textSubscribable] throttle:0.2] distinctUntilChanged] startWith:textField.text];
   }] switch];
   
   // Update the file icon when the extension changes
-  [[RACSubscribable combineLatest:@[[[renameTextFieldSubscribable select:^NSString *(NSString *x) {
+  [[RACSubscribable combineLatest:@[[[renameTextFieldSubscribable map:^NSString *(NSString *x) {
     return [x pathExtension];
   }] distinctUntilChanged], RACAble(self.renameFileIcon)]] subscribeNext:^(RACTuple *xs) {
     NSString *extension = xs.first;
@@ -70,20 +70,20 @@
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
-  [[[[RACSubscribable combineLatest:@[[[[item parent] select:^id<RACSubscribable>(FileSystemDirectory *parent) {
+  [[[[RACSubscribable combineLatest:@[[[[item parent] map:^id<RACSubscribable>(FileSystemDirectory *parent) {
     return [parent children];
-  }] switch], [item name]]] select:^id<RACSubscribable>(RACTuple *xs) {
+  }] switch], [item name]]] map:^id<RACSubscribable>(RACTuple *xs) {
     return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSArray *children = xs.first;
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-      return [[[[children.rac_toSubscribable selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+      return [[[[children.rac_toSubscribable flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
         return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
-      }] where:^BOOL(RACTuple *ys) {
+      }] filter:^BOOL(RACTuple *ys) {
         NSString *itemName = ys.second;
         return ![itemName isEqualToString:fullName] && [[itemName stringByDeletingPathExtension] isEqual:name];
-      }] select:^id(RACTuple *ys) {
+      }] map:^id(RACTuple *ys) {
         return ys.first;
       }] subscribeNext:^(FileSystemItem *x) {
         [alsoRenameItems addObject:x];
@@ -97,7 +97,7 @@
   }] switch] toProperty:@keypath(self.alsoRenameItems) onObject:self];
   
   // Reset the selectedAlsoRenameItems when alsoRenameItems change
-  [[RACAble(self.alsoRenameItems) select:^NSMutableSet *(NSArray *alsoRenameItems) {
+  [[RACAble(self.alsoRenameItems) map:^NSMutableSet *(NSArray *alsoRenameItems) {
     return [[NSMutableSet alloc] init];
   }] toProperty:@keypath(self.selectedAlsoRenameItems) onObject:self];
   
@@ -171,18 +171,18 @@
   NSArray *alsoRenameItems = self.alsoRenameItems;
   
   @weakify(self);
-  [[[[_item.name take:1] selectMany:^id<RACSubscribable>(NSString *x) {
+  [[[[_item.name take:1] flattenMap:^id<RACSubscribable>(NSString *x) {
     @strongify(self);
     if (!self) {
       return nil;
     }
     return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [self->_item renameTo:newFullName]]];
-  }] selectMany:^id<RACSubscribable>(RACTuple *xs) {
+  }] flattenMap:^id<RACSubscribable>(RACTuple *xs) {
     @strongify(self);
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [[self.selectedAlsoRenameItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
-      return [[x.name take:1] selectMany:^id<RACSubscribable>(NSString *y) {
+    return [[self.selectedAlsoRenameItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+      return [[x.name take:1] flattenMap:^id<RACSubscribable>(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];
       }];
@@ -204,9 +204,9 @@
     return nil;
   }
   
-  [[[RACSubscribable combineLatest:@[[[RACAble(item) select:^id<RACSubscribable>(FileSystemItem *x) {
+  [[[RACSubscribable combineLatest:@[[[RACAble(item) map:^id<RACSubscribable>(FileSystemItem *x) {
     return x.name;
-  }] switch], RACAble(renameString)]] select:^NSString *(RACTuple *xs) {
+  }] switch], RACAble(renameString)]] map:^NSString *(RACTuple *xs) {
     NSString *itemName = xs.first;
     NSString *renameString = xs.second;
     return [NSString stringWithFormat:L(@"Rename to: %@"), [renameString.stringByDeletingPathExtension stringByAppendingPathExtension:itemName.pathExtension]];

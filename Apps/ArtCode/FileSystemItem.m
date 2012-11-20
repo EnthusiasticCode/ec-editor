@@ -171,7 +171,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)name {
-  return [[self.urlBacking select:^NSString *(NSURL *url) {
+  return [[self.urlBacking map:^NSString *(NSURL *url) {
     return url.lastPathComponent;
   }] deliverOn:currentScheduler()];
 }
@@ -346,11 +346,11 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (id<RACSubscribable>)childrenFilteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[[self internalChildren] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
+  return [[[RACSubscribable combineLatest:@[[[self internalChildren] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] map:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 - (id<RACSubscribable>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSubscribable>)abbreviationSubscribable {
-  return [[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] select:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
+  return [[[RACSubscribable combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], [abbreviationSubscribable ?: [RACSubscribable return:nil] deliverOn:fsScheduler()]]] map:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock {
@@ -366,17 +366,17 @@ static NSMutableDictionary *fsItemCache() {
       if (![abbreviation length]) {
         return [[[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
           return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
-        }] rac_toSubscribable] select:^id(FileSystemItem *item) {
+        }] rac_toSubscribable] map:^id(FileSystemItem *item) {
           return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
         }] toArray];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] select:^id(FileSystemItem *item) {
+      NSMutableArray *filteredContent = [[[[[content rac_toSubscribable] map:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
         float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
-      }] where:^BOOL(RACTuple *item) {
+      }] filter:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
       }] toArray] mutableCopy];
       
@@ -412,17 +412,17 @@ static NSMutableDictionary *fsItemCache() {
     
     // Filter out hidden files if needed
     if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
-      result = [[result select:^id<RACSubscribable>(NSArray *x) {
+      result = [[result map:^id<RACSubscribable>(NSArray *x) {
         if (!x.count) {
           return [RACSubscribable return:x];
         }
         NSMutableArray *namedItems = [[NSMutableArray alloc] init];
         for (FileSystemItem *item in x) {
-          [namedItems addObject:[item.name select:^RACTuple *(NSString *x) {
+          [namedItems addObject:[item.name map:^RACTuple *(NSString *x) {
             return [RACTuple tupleWithObjectsFromArray:@[item, x]];
           }]];
         }
-        return [[RACSubscribable combineLatest:namedItems] select:^NSArray *(RACTuple *xs) {
+        return [[RACSubscribable combineLatest:namedItems] map:^NSArray *(RACTuple *xs) {
           NSMutableArray *nonHiddenItems = [[NSMutableArray alloc] init];
           for (RACTuple *namedItem in xs) {
             FileSystemItem *item = namedItem.first;
@@ -438,21 +438,21 @@ static NSMutableDictionary *fsItemCache() {
     
     // Merge in descendants if needed
     if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
-      result = [[result select:^id<RACSubscribable>(NSArray *x) {
+      result = [[result map:^id<RACSubscribable>(NSArray *x) {
         if (!x.count) {
           return [RACSubscribable return:x];
         }
         NSMutableArray *descendantSubscribables = [[NSMutableArray alloc] init];
         for (FileSystemItem *item in x) {
           if (item.typeBacking.first == NSURLFileResourceTypeDirectory) {
-            [descendantSubscribables addObject:[[((FileSystemDirectory *)item) childrenWithOptions:options] select:^NSArray *(NSArray *x) {
+            [descendantSubscribables addObject:[[((FileSystemDirectory *)item) childrenWithOptions:options] map:^NSArray *(NSArray *x) {
               return [@[item] arrayByAddingObjectsFromArray:x];
             }]];
           } else {
             [descendantSubscribables addObject:[RACSubscribable return:@[item]]];
           }
         }
-        return [[RACSubscribable combineLatest:descendantSubscribables] select:^NSArray *(RACTuple *xs) {
+        return [[RACSubscribable combineLatest:descendantSubscribables] map:^NSArray *(RACTuple *xs) {
           NSMutableArray *mergedDescendants = [[NSMutableArray alloc] init];
           for (NSArray *children in xs) {
             [mergedDescendants addObjectsFromArray:children];

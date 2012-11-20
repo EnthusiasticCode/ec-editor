@@ -34,7 +34,7 @@
   @weakify(self);
   
   // Subscribable to get the latest filename with extension and activate 'create' button
-  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] select:^id(NSString *fileName) {
+  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] map:^id(NSString *fileName) {
     @strongify(self);
     if (fileName.length == 0) {
       return nil;
@@ -56,7 +56,7 @@
     } else {
       self.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
-  }] select:^id(id x) {
+  }] map:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }

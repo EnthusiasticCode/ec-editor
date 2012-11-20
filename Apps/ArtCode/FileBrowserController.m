@@ -267,7 +267,7 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+      [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
         return [x delete];
       }] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -285,7 +285,7 @@
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+      [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
         return [x duplicate];
       }] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -327,7 +327,7 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[_selectedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+        [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
         }] subscribeCompleted:^{
           ASSERT_MAIN_QUEUE();
@@ -341,7 +341,7 @@
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] select:^id(FileSystemItem *x) {
+        [ArchiveUtilities compressFileAtURLs:[[[_selectedItems rac_toSubscribable] map:^id(FileSystemItem *x) {
           return x.url.first;
         }] toArray] completionHandler:^(NSURL *temporaryDirectoryURL) {
           ASSERT_MAIN_QUEUE();

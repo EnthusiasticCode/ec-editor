@@ -34,7 +34,7 @@
   @weakify(self);
   
   // Subscribable to get the latest folder name or nil if the name is not valid
-  [[[[[[[RACAble(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] select:^id(NSString *x) {
+  [[[[[[[RACAble(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] map:^id(NSString *x) {
     @strongify(self);
     if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
       return x;
@@ -44,7 +44,7 @@
   }] doNext:^(id x) {
     @strongify(self);
     self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", self.artCodeTab.currentLocation.prettyPath] : @"The speficied folder name already exists or is invalid.";
-  }] select:^id(id x) {
+  }] map:^id(id x) {
     return [NSNumber numberWithBool:x != nil];
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
   

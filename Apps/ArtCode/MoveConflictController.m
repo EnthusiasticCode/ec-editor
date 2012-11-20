@@ -94,7 +94,7 @@
   
   // Get the items' names and map them to the items
   NSMutableArray *namedItems = [[NSMutableArray alloc] initWithCapacity:[items count]];
-  [[[items rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+  [[[items rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
     return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
   }] subscribeNext:^(RACTuple *x) {
     [namedItems addObject:x];
@@ -103,8 +103,8 @@
   } completed:^{
     // Get the destination folder's children's names
     NSMutableArray *destinationChildrenNames = [[NSMutableArray alloc] init];
-    [[[[destinationFolder children] take:1] selectMany:^id<RACSubscribable>(NSArray *x) {
-      return [[x rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *y) {
+    [[[[destinationFolder children] take:1] flattenMap:^id<RACSubscribable>(NSArray *x) {
+      return [[x rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *y) {
         return [y.name take:1];
       }];
     }] subscribeNext:^(NSString *x) {
@@ -182,7 +182,7 @@
   // Processing
   ASSERT(_subscribableBlock);
   @weakify(self);
-  [[[_resolvedItems rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *x) {
+  [[[_resolvedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
     @strongify(self);
     if (!self) {
       return nil;

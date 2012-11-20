@@ -52,10 +52,10 @@
       if (!self.syntaxes) {
         self.syntaxes = allSyntaxes;
       }
-    }] select:^TMSyntaxNode *(NSString *x) {
+    }] map:^TMSyntaxNode *(NSString *x) {
       return [TMSyntaxNode syntaxWithScopeIdentifier:x];
     }] toProperty:@keypath(self.currentSyntax) onObject:self];
-    sinkDisposable = [[RACAble(self.currentSyntax) select:^NSString *(TMSyntaxNode *x) {
+    sinkDisposable = [[RACAble(self.currentSyntax) map:^NSString *(TMSyntaxNode *x) {
       return x.identifier;
     }] subscribe:x.explicitSyntaxIdentifierSink];
   }];

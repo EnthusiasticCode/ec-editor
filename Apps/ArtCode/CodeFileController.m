@@ -311,7 +311,7 @@ static void drawStencilStar(CGContextRef myContext)
   RAC(self.view.backgroundColor) = RACAble(self.codeView.backgroundColor);
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
-  [[[RACAble(self.artCodeTab.currentLocation.url) select:^id<RACSubscribable>(NSURL *url) {
+  [[[RACAble(self.artCodeTab.currentLocation.url) map:^id<RACSubscribable>(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
 
@@ -334,14 +334,14 @@ static void drawStencilStar(CGContextRef myContext)
     [sourceDisposable dispose];
     if (!codeView || !textFile) { return; }
     sinkDisposable = [RACAble(codeView.text) subscribe:textFile.contentSink];
-    sourceDisposable = [[textFile.contentSource where:^BOOL(NSString *x) {
+    sourceDisposable = [[textFile.contentSource filter:^BOOL(NSString *x) {
       @strongify(self);
       return ![x isEqualToString:self.codeView.text];
     }] toProperty:@keypath(codeView.text) onObject:codeView];
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] select:^id<RACSubscribable>(RACTuple *tuple) {
+  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^id<RACSubscribable>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -354,7 +354,7 @@ static void drawStencilStar(CGContextRef myContext)
     if (explicitSyntaxIdentifier) {
       return [RACSubscribable return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
-    return [[textFile.contentSource take:1] select:^RACTuple *(NSString *x) {
+    return [[textFile.contentSource take:1] map:^RACTuple *(NSString *x) {
       TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
       if (!syntax) {
         syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
@@ -365,12 +365,12 @@ static void drawStencilStar(CGContextRef myContext)
       ASSERT(syntax);
       return [RACTuple tupleWithObjectsFromArray:@[fileURL, syntax]];
     }];
-  }] switch] select:^TMUnit *(RACTuple *xs) {
+  }] switch] map:^TMUnit *(RACTuple *xs) {
     return [[TMUnit alloc] initWithFileURL:xs.first syntax:xs.second index:nil];
   }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:@keypath(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
-  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] merge] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] flatten] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     if (!self) {

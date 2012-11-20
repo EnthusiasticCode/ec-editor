@@ -30,13 +30,13 @@ static void _init(LocalFileListController *self) {
   RAC(self.filteredItems) = [[RACSubscribable combineLatest:@[
                               // Subscribable to get filtered files
                               [[RACAble(self.locationDirectory)
-                                select:^id(FileSystemDirectory *directory) {
+                                map:^id(FileSystemDirectory *directory) {
                                   @strongify(self);
                                   return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
                                 }] switch],
                               // Subscribable with progress items
                               RACAbleWithStart(self.progressItems)]]
-                             select:^id(RACTuple *itemsTuple) {
+                             map:^id(RACTuple *itemsTuple) {
                                if (itemsTuple.second == nil) {
                                  // Just show the directory items
                                  return itemsTuple.first;

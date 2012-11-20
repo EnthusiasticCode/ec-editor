@@ -138,15 +138,15 @@
         if (temporaryDirectoryURL) {
           // Get the extracted directories
           [[[[RACSubscribable combineLatest:@[
-            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] selectMany:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
+            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
               return [[temporaryDirectory children] take:1];
-            }] selectMany:^id<RACSubscribable>(NSArray *children) {
+            }] flattenMap:^id<RACSubscribable>(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
               if (children.count != 1) {
                 return [RACSubscribable return:children];
               }
               FileSystemItem *onlyChild = [children lastObject];
-              return [[onlyChild.type take:1] selectMany:^id<RACSubscribable>(NSString *x) {
+              return [[onlyChild.type take:1] flattenMap:^id<RACSubscribable>(NSString *x) {
                 if (x == NSURLFileResourceTypeDirectory) {
                   return [[(FileSystemDirectory *)onlyChild children] take:1];
                 }
@@ -155,10 +155,10 @@
             }],
             [FileSystemDirectory directoryWithURL:createdProject.fileURL]
           ]]
-          selectMany:^id(RACTuple *x) {
+          flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;
             FileSystemDirectory *projectDirectory = x.second;
-            return [[children rac_toSubscribable] selectMany:^id<RACSubscribable>(FileSystemItem *child) {
+            return [[children rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *child) {
               return [child moveTo:projectDirectory];
             }];
           }] finally:^{

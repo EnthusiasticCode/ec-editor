@@ -34,12 +34,12 @@
   
   // RAC
   // Project name will change when text field does
-  [[[[[RACAble(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] where:^BOOL(NSString *x) {
+  [[[[[RACAble(self.projectNameTextField.rac_textSubscribable) switch] throttle:0.3] distinctUntilChanged] filter:^BOOL(NSString *x) {
     return x.length;
   }] toProperty:@keypath(self.artCodeTab.currentLocation.project.name) onObject:self];
   
   // Project label color will change when selecting a new color
-  [[[RACAble(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] where:^BOOL(id x) {
+  [[[RACAble(self.labelColorSelectionControl.selectedColor) distinctUntilChanged] filter:^BOOL(id x) {
     return x != nil;
   }] toProperty:@keypath(self.artCodeTab.currentLocation.project.labelColor) onObject:self];
   
