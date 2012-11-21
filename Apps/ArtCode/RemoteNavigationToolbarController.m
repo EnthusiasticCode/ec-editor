@@ -13,7 +13,7 @@
   RACSubject *_buttonsActionSubject;
 }
 
-- (RACSubscribable *)buttonsActionSubscribable {
+- (RACSignal *)buttonsActionSignal {
   return _buttonsActionSubject ?: (_buttonsActionSubject = [RACSubject subject]);
 }
 

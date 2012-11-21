@@ -26,37 +26,37 @@ enum ReactiveConnectionStatus {
 @property (nonatomic, readonly, getter = isConnected) BOOL connected;
 
 /// Returns the status of the connection with \c NSNumber containing a \c ReactiveConnectionStatus enum value.
-- (RACSubscribable *)connectionStatus;
+- (RACSignal *)connectionStatus;
 
 /// Begin a connections request if neccessary.
-/// Returns a subscribable that yield a single boolean value with the connected status.
-- (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials;
+/// Returns a signal that yield a single boolean value with the connected status.
+- (RACSignal *)connectWithCredentials:(NSURLCredential *)credentials;
 
-/// A subscribable yielding the transcript records as \c RACTuples containing \c CKTranscriptType and the string for that transcript.
-- (RACSubscribable *)transcript;
+/// A signal yielding the transcript records as \c RACTuples containing \c CKTranscriptType and the string for that transcript.
+- (RACSignal *)transcript;
 
 /// Cancel all the operations in progress.
 - (void)cancelAll;
 
 #pragma mark Managing directories
 
-/// A subscribable that returns \c RACTuple of path to array of dictionaries with directory item informations
-- (RACSubscribable *)directoryContents;
+/// A signal that returns \c RACTuple of path to array of dictionaries with directory item informations
+- (RACSignal *)directoryContents;
 - (void)changeToDirectory:(NSString *)path;
-- (RACSubscribable *)directoryContentsForDirectory:(NSString *)path;
+- (RACSignal *)directoryContentsForDirectory:(NSString *)path;
 
 #pragma mark Managin file transfers
 
-/// Returns a subscribable that send next when a download update is available.
+/// Returns a signal that send next when a download update is available.
 /// An update can be either an NSNumber containing the percentage of download complete of an NSURL of the localy downloaded file.
-- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory;
+- (RACSignal *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory;
 
 /// The local URL will be querried to see if it's a directory to enable recursive upload.
-/// Returns a subscribable that send next when an upload update is available.
+/// Returns a signal that send next when an upload update is available.
 /// An update is an NSNumber containing the percentage of upload completed.
-- (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath;
+- (RACSignal *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath;
 
-/// Returns a subscribable that send completed when a deleting operation ends.
-- (RACSubscribable *)deleteFileWithRemotePath:(NSString *)remotePath;
+/// Returns a signal that send completed when a deleting operation ends.
+- (RACSignal *)deleteFileWithRemotePath:(NSString *)remotePath;
 
 @end

@@ -137,20 +137,20 @@
       [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
         if (temporaryDirectoryURL) {
           // Get the extracted directories
-          [[[[RACSubscribable combineLatest:@[
-            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^id<RACSubscribable>(FileSystemDirectory *temporaryDirectory) {
+          [[[[RACSignal combineLatest:@[
+            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^id<RACSignal>(FileSystemDirectory *temporaryDirectory) {
               return [[temporaryDirectory children] take:1];
-            }] flattenMap:^id<RACSubscribable>(NSArray *children) {
+            }] flattenMap:^id<RACSignal>(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
               if (children.count != 1) {
-                return [RACSubscribable return:children];
+                return [RACSignal return:children];
               }
               FileSystemItem *onlyChild = [children lastObject];
-              return [[onlyChild.type take:1] flattenMap:^id<RACSubscribable>(NSString *x) {
+              return [[onlyChild.type take:1] flattenMap:^id<RACSignal>(NSString *x) {
                 if (x == NSURLFileResourceTypeDirectory) {
                   return [[(FileSystemDirectory *)onlyChild children] take:1];
                 }
-                return [RACSubscribable return:children];
+                return [RACSignal return:children];
               }];
             }],
             [FileSystemDirectory directoryWithURL:createdProject.fileURL]
@@ -158,7 +158,7 @@
           flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;
             FileSystemDirectory *projectDirectory = x.second;
-            return [[children rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *child) {
+            return [[children rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *child) {
               return [child moveTo:projectDirectory];
             }];
           }] finally:^{

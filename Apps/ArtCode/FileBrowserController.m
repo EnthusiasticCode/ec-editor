@@ -219,7 +219,7 @@
     [_selectedItems addObject:item];
   } else {
     @weakify(self);
-    [[[RACSubscribable combineLatest:@[item.url, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
+    [[[RACSignal combineLatest:@[item.url, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
       @strongify(self);
       NSURL *fileURL = xs.first;
       NSString *type = xs.second;
@@ -267,7 +267,7 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+      [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
         return [x delete];
       }] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -280,12 +280,12 @@
     if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+      directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+      [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
         return [x duplicate];
       }] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -320,14 +320,14 @@
       case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderSubscribable = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+        directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
         [self modalNavigationControllerPresentViewController:directoryBrowser];
         break;
       }
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[_selectedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+        [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
         }] subscribeCompleted:^{
           ASSERT_MAIN_QUEUE();
@@ -439,7 +439,7 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [[[conflictController moveItems:items toFolder:moveFolder usingSubscribableBlock:^id<RACSubscribable>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+  [[[conflictController moveItems:items toFolder:moveFolder usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
     return [item copyTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();
@@ -467,7 +467,7 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [[[conflictController moveItems:items toFolder:moveFolder usingSubscribableBlock:^id<RACSubscribable>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+  [[[conflictController moveItems:items toFolder:moveFolder usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
     return [item moveTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();

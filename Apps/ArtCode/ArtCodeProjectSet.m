@@ -21,14 +21,14 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
   RACSubject *_objectsRemovedSubject;
 }
 
-- (RACSubscribable *)objectsAdded {
+- (RACSignal *)objectsAdded {
   if (!_objectsAddedSubject) {
     _objectsAddedSubject = [RACSubject subject];
   }
   return _objectsAddedSubject;
 }
 
-- (RACSubscribable *)objectsRemoved {
+- (RACSignal *)objectsRemoved {
   if (!_objectsRemovedSubject) {
     _objectsRemovedSubject = [RACSubject subject];
   }
@@ -87,7 +87,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [[[[FileSystemDirectory directoryWithURL:project.fileURL] map:^id<RACSubscribable>(FileSystemDirectory *directory) {
+  [[[[FileSystemDirectory directoryWithURL:project.fileURL] map:^id<RACSignal>(FileSystemDirectory *directory) {
     return [directory delete];
   }] switch] subscribeError:^(NSError *error) {
     completionHandler(error);

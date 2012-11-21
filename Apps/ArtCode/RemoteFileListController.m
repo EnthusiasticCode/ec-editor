@@ -19,7 +19,7 @@
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
 
-static NSString * const progressSubscribableKey = @"progressSibscribable";
+static NSString * const progressSignalKey = @"progressSibscribable";
 
 @interface RemoteFileListController ()
 @property (nonatomic, strong) ReactiveConnection *connection;
@@ -29,7 +29,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
 @property (nonatomic) BOOL showLogin;
 @property (nonatomic) BOOL showLoading;
 @property (nonatomic, readwrite, copy) NSArray *selectedItems;
-/// An array of NSDictionaries with keys: cxFilenameKey, progressSubscribableKey
+/// An array of NSDictionaries with keys: cxFilenameKey, progressSignalKey
 @property (nonatomic, strong) NSArray *progressItems;
 @end
 
@@ -71,12 +71,10 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
                                   return pathAndContent.second;
                                 }];
   
-  [[self rac_whenAny:@[@keypath(self.directoryContent), @keypath(self.progressItems)] reduce:^id(RACTuple *xs) {
-    return xs;
-  }] subscribeNext:^(id x) {
+	[[RACSignal combineLatest:@[RACAble(self.directoryContent), RACAble(self.progressItems)]] subscribeNext:^(id x) {
     [this invalidateFilteredItems];
   }];
-  
+	
   // Connected refresh reaction
   [RACAble(self.connection.connected) subscribeNext:^(id x) {
     if ([x boolValue]) {
@@ -111,7 +109,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   [[[RACAble(self.authenticationCredentials)
    map:^id(NSURLCredential *credentials) {
      this.showLoading = YES;
-     return [[this.connection connectWithCredentials:credentials] catchTo:[RACSubscribable return:@(NO)]];
+     return [[this.connection connectWithCredentials:credentials] catchTo:[RACSignal return:@(NO)]];
    }] switch] subscribeNext:^(NSNumber *x) {
      this.showLoading = NO;
      this.showLogin = ![x boolValue];
@@ -191,14 +189,14 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
 
 #pragma mark - Public methods
 
-- (void)addProgressItemWithURL:(NSURL *)url progressSubscribable:(RACSubscribable *)progressSubscribable {
+- (void)addProgressItemWithURL:(NSURL *)url progressSignal:(RACSignal *)progressSignal {
   [self willChangeValueForKey:@"progressItems"];
   if (!_progressItems) {
     _progressItems = [[NSMutableArray alloc] init];
   }
   NSDictionary *progressItem = @{
     cxFilenameKey : url.lastPathComponent,
-    progressSubscribableKey : progressSubscribable
+    progressSignalKey : progressSignal
   };
   [_progressItems addObject:progressItem];
   
@@ -206,7 +204,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   
   // RAC
   @weakify(self);
-  [[progressSubscribable finally:^{
+  [[progressSignal finally:^{
     @strongify(self);
     // Remove the progress item when it completes
     [self willChangeValueForKey:@"progressItems"];
@@ -227,7 +225,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
   NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
   UITableViewCell *cell = nil;
   
-  if ([directoryItem objectForKey:progressSubscribableKey] == nil) {
+  if ([directoryItem objectForKey:progressSignalKey] == nil) {
     HighlightTableViewCell *highlightCell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
     cell = highlightCell;
     highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
@@ -238,7 +236,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
       progressCell = [[ProgressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:progressCellIdentifier];
     }
     cell = progressCell;
-    [progressCell setProgressSubscribable:[directoryItem objectForKey:progressSubscribableKey]];
+    [progressCell setProgressSignal:[directoryItem objectForKey:progressSignalKey]];
   }
   
   cell.textLabel.text = [directoryItem objectForKey:cxFilenameKey];
@@ -264,7 +262,7 @@ static NSString * const progressSubscribableKey = @"progressSibscribable";
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
-  return [directoryItem objectForKey:progressSubscribableKey] == nil;
+  return [directoryItem objectForKey:progressSignalKey] == nil;
 }
 
 #pragma mark - Table view delegate

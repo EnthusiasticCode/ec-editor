@@ -34,13 +34,13 @@
   // RAC
   
   // Update table content
-  [[[[[[RACAble(self.currentFolderSubscribable) switch] map:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[[[RACAble(self.currentFolderSignal) switch] map:^id<RACSignal>(FileSystemDirectory *folder) {
     return [folder children];
-  }] switch] map:^id<RACSubscribable>(NSArray *children) {
-    return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+  }] switch] map:^id<RACSignal>(NSArray *children) {
+    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSMutableArray *childFolders = [[NSMutableArray alloc] init];
-      return [[[[[children rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
-        return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.type take:1]]];
+      return [[[[[children rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+        return [RACSignal combineLatest:@[[RACSignal return:x], [x.type take:1]]];
       }] filter:^BOOL(RACTuple *xs) {
         return xs.second == NSURLFileResourceTypeDirectory;
       }] map:^id(RACTuple *xs) {
@@ -57,12 +57,12 @@
   }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[[RACAble(self.currentFolderSubscribable) switch] map:^id<RACSubscribable>(FileSystemDirectory *folder) {
+  [[[[RACAble(self.currentFolderSignal) switch] map:^id<RACSignal>(FileSystemDirectory *folder) {
     return [folder name];
   }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
-  [[RACSubscribable combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
+  [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
     [xs.second reloadData];
   }];
   
@@ -105,7 +105,7 @@
   ASSERT(self.navigationController != nil);
   
   FolderBrowserController *nextBrowser = [[FolderBrowserController alloc] initWithStyle:self.tableView.style];
-  nextBrowser.currentFolderSubscribable = [RACSubscribable return:[self.currentFolderSubfolders objectAtIndex:indexPath.row]];
+  nextBrowser.currentFolderSignal = [RACSignal return:[self.currentFolderSubfolders objectAtIndex:indexPath.row]];
   nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
   [self.navigationController pushViewController:nextBrowser animated:YES];
 }

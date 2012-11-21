@@ -70,12 +70,12 @@
     @strongify(self);
     if (project) {
       // The project has been successfuly created, copying files
-      [[[[RACSubscribable combineLatest:@[[[[FileSystemDirectory directoryWithURL:self.fileURL] map:^id<RACSubscribable>(FileSystemDirectory *projectDirectory) {
+      [[[[RACSignal combineLatest:@[[[[FileSystemDirectory directoryWithURL:self.fileURL] map:^id<RACSignal>(FileSystemDirectory *projectDirectory) {
         return [projectDirectory children];
-      }] switch], [FileSystemDirectory directoryWithURL:project.fileURL]] reduce:^id<RACSubscribable>(RACTuple *xs) {
+      }] switch], [FileSystemDirectory directoryWithURL:project.fileURL]] reduce:^id<RACSignal>(RACTuple *xs) {
         NSArray *children = xs.first;
         FileSystemDirectory *projectDirectory = xs.second;
-        return [[children rac_toSubscribable] map:^id<RACSubscribable>(FileSystemItem *child) {
+        return [[children rac_toSignal] map:^id<RACSignal>(FileSystemItem *child) {
           return [child copyTo:projectDirectory];
         }];
       }] switch] flatten] subscribeCompleted:^{

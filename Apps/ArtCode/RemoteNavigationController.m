@@ -63,7 +63,7 @@ static void _init(RemoteNavigationController *self) {
   
   [[[RACAble(self.toolbarController)
    map:^id(RemoteNavigationToolbarController *x) {
-     return [x buttonsActionSubscribable];
+     return [x buttonsActionSignal];
    }] switch] subscribeNext:^(UIButton *x) {
      @strongify(self);
      switch (x.tag) {
@@ -196,26 +196,26 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[remoteController.selectedItems.rac_toSubscribable flattenMap:^id<RACSubscribable>(NSDictionary *item) {
+  [[remoteController.selectedItems.rac_toSignal flattenMap:^id<RACSignal>(NSDictionary *item) {
     NSString *itemName = [item objectForKey:cxFilenameKey];
     // Generate local destination URL and start the download
-    RACSubscribable *progressSubscribable = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
+    RACSignal *progressSignal = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
     
     // Side effect to start the progress indicator in the local file list
-    [localController addProgressItemWithName:itemName progressSubscribable:progressSubscribable];
+    [localController addProgressItemWithName:itemName progressSignal:progressSignal];
     
-    // Return a subscribable that yields the FileSystemItem of the downloaded file
-    return [[[[progressSubscribable
+    // Return a signal that yields the FileSystemItem of the downloaded file
+    return [[[[progressSignal
                filter:^BOOL(id x) {
                  // Only return URLs
                  return [x isKindOfClass:[NSURL class]]; }]
-               flattenMap:^id<RACSubscribable>(NSURL *tempURL) {
+               flattenMap:^id<RACSignal>(NSURL *tempURL) {
                  // Convert to filesystem item
                  return [FileSystemItem itemWithURL:tempURL]; }]
-               flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+               flattenMap:^id<RACSignal>(FileSystemItem *x) {
                  // Move to destination, the downloaded FileSystemItem is sent
                  return [x moveTo:localController.locationDirectory renameTo:itemName]; }]
-               catchTo:[RACSubscribable return:nil]];
+               catchTo:[RACSignal return:nil]];
   }] subscribeNext:^(id x) {
     if (x == nil) {
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -231,16 +231,16 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[[[localController.selectedItems.rac_toSubscribable map:^id(FileSystemItem *x) {
+  [[[[[localController.selectedItems.rac_toSignal map:^id(FileSystemItem *x) {
     return x.url;
-  }] switch] flattenMap:^id<RACSubscribable>(NSURL *itemURL) {
+  }] switch] flattenMap:^id<RACSignal>(NSURL *itemURL) {
     // Start upload
-    RACSubscribable *progressSubscribable = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
+    RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
     
     // Start progress indicator in the remote file list
-    [remoteController addProgressItemWithURL:itemURL progressSubscribable:progressSubscribable];
+    [remoteController addProgressItemWithURL:itemURL progressSignal:progressSignal];
     
-    return progressSubscribable;
+    return progressSignal;
   }] finally:^{
     @strongify(self);
     self.transfersInProgressCount--;
@@ -258,7 +258,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[remoteController.selectedItems.rac_toSubscribable flattenMap:^id<RACSubscribable>(NSDictionary *item) {
+  [[[remoteController.selectedItems.rac_toSignal flattenMap:^id<RACSignal>(NSDictionary *item) {
     return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
   }] finally:^{
     @strongify(self);

@@ -412,7 +412,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   return [_symbolList copy];
 }
 
-- (id<RACSubscribable>)tokens {
+- (id<RACSignal>)tokens {
   if (!_tokens) {
     _tokens = [RACSubject subject];
   }

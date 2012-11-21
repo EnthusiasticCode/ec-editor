@@ -33,8 +33,8 @@
   // RAC
   @weakify(self);
   
-  // Subscribable to get the latest folder name or nil if the name is not valid
-  [[[[[[[RACAble(self.folderNameTextField.rac_textSubscribable) switch] throttle:0.5] distinctUntilChanged] map:^id(NSString *x) {
+  // Signal to get the latest folder name or nil if the name is not valid
+  [[[[[[[RACAble(self.folderNameTextField.rac_textSignal) switch] throttle:0.5] distinctUntilChanged] map:^id(NSString *x) {
     @strongify(self);
     if (x.length && ![[NSFileManager defaultManager] fileExistsAtPath:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
       return x;

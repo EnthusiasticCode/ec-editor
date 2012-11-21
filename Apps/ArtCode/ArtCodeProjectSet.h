@@ -24,10 +24,10 @@
 #pragma mark RAC Outlets
 
 // Sends each object after it has been added. It never completes or errors.
-@property (nonatomic, readonly) RACSubscribable *objectsAdded;
+@property (nonatomic, readonly) RACSignal *objectsAdded;
 
 // Sends each object after it has been removed. It never completes or errors.
-@property (nonatomic, readonly) RACSubscribable *objectsRemoved;
+@property (nonatomic, readonly) RACSignal *objectsRemoved;
 
 #pragma mark Utilities
 

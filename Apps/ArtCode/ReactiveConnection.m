@@ -23,9 +23,9 @@
   RACSubject *_directoryContentsSubject;
   RACReplaySubject *_connectionStatusSubject;
   
-  NSMutableDictionary *_downloadProgressSubscribables;
-  NSMutableDictionary *_uploadProgressSubscribables;
-  NSMutableDictionary *_deleteProgressSubscribables;
+  NSMutableDictionary *_downloadProgressSignals;
+  NSMutableDictionary *_uploadProgressSignals;
+  NSMutableDictionary *_deleteProgressSignals;
 }
 
 + (ReactiveConnection *)reactiveConnectionWithURL:(NSURL *)url {
@@ -66,11 +66,11 @@
 
 #pragma mark - Public Methods
 
-- (RACSubscribable *)connectionStatus {
+- (RACSignal *)connectionStatus {
   return _connectionStatusSubject ?: (_connectionStatusSubject = [RACReplaySubject replaySubjectWithCapacity:1]);
 }
 
-- (RACSubscribable *)connectWithCredentials:(NSURLCredential *)credentials {
+- (RACSignal *)connectWithCredentials:(NSURLCredential *)credentials {
   if (!_connectedSubject) {
     _connectCredentials = credentials;
     // TODO: This should be a replay subject
@@ -84,7 +84,7 @@
   return [_connectedSubject deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
 }
 
-- (RACSubscribable *)transcript {
+- (RACSignal *)transcript {
   return _transcriptSubject ?: (_transcriptSubject = [RACSubject subject]);
 }
 
@@ -92,25 +92,25 @@
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
   [_connection cancelAll];
   NSError *cancelError = [[NSError alloc] init];
-  [_downloadProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+  [_downloadProgressSignals enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
     [subject sendError:cancelError];
   }];
-  [_downloadProgressSubscribables removeAllObjects];
-  [_uploadProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+  [_downloadProgressSignals removeAllObjects];
+  [_uploadProgressSignals enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
     [subject sendError:cancelError];
   }];
-  [_uploadProgressSubscribables removeAllObjects];
-  [_deleteProgressSubscribables enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
+  [_uploadProgressSignals removeAllObjects];
+  [_deleteProgressSignals enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
     [subject sendError:cancelError];
   }];
-  [_deleteProgressSubscribables removeAllObjects];
+  [_deleteProgressSignals removeAllObjects];
   for (NSURL *tempURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] includingPropertiesForKeys:nil options:0 error:NULL]) {
     [[NSFileManager defaultManager] removeItemAtURL:tempURL error:NULL];
   }
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
 }
 
-- (RACSubscribable *)directoryContents {
+- (RACSignal *)directoryContents {
   return _directoryContentsSubject ?: (_directoryContentsSubject = [RACSubject subject]);
 }
 
@@ -120,9 +120,9 @@
   [_connection directoryContents];
 }
 
-- (RACSubscribable *)directoryContentsForDirectory:(NSString *)path {
+- (RACSignal *)directoryContentsForDirectory:(NSString *)path {
   @weakify(self);
-  return [RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+  return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
     @strongify(self);
     [self changeToDirectory:path];
     return [[[[[self directoryContents]
@@ -135,9 +135,9 @@
   }];
 }
 
-- (RACSubscribable *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory {
-  if (!_downloadProgressSubscribables) {
-    _downloadProgressSubscribables = [[NSMutableDictionary alloc] init];
+- (RACSignal *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory {
+  if (!_downloadProgressSignals) {
+    _downloadProgressSignals = [[NSMutableDictionary alloc] init];
   }
   if (isDirectory) {
     return [self _downloadDirectoryWithRemotePath:remotePath toLocalURL:[NSURL temporaryDirectory]];
@@ -146,16 +146,16 @@
   }
 }
 
-- (RACSubscribable *)_downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
+- (RACSignal *)_downloadFileWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
   @weakify(self);
-  return [[[RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+  return [[[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
     @strongify(self);
     // On Subscription, start the download
-    RACSubject *downloadSubscribable = [RACSubject subject];
-    [self->_downloadProgressSubscribables setObject:downloadSubscribable forKey:remotePath];
+    RACSubject *downloadSignal = [RACSubject subject];
+    [self->_downloadProgressSignals setObject:downloadSignal forKey:remotePath];
     [self->_connection downloadFile:remotePath toDirectory:localURL.path overwrite:YES delegate:nil];
-    // Retun an 'endWith:localURL' subscribable
-		return [downloadSubscribable
+    // Retun an 'endWith:localURL' signal
+		return [downloadSignal
             subscribeNext:^(id x) {
               [subscriber sendNext:x];
             } error:^(NSError *error) {
@@ -170,20 +170,20 @@
 	}] publish] autoconnect];
 }
 
-- (RACSubscribable *)_downloadDirectoryWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
+- (RACSignal *)_downloadDirectoryWithRemotePath:(NSString *)remotePath toLocalURL:(NSURL *)localURL {
   @weakify(self);
-  return [[[RACSubscribable createSubscribable:^(id<RACSubscriber> subscriber) {
+  return [[[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
     @strongify(self);
     // Create destination directory
     [[NSFileManager defaultManager] createDirectoryAtURL:localURL withIntermediateDirectories:YES attributes:nil error:NULL];
-    // Returning a subscribable that 'endWith:localURL'
+    // Returning a signal that 'endWith:localURL'
     __block NSUInteger totalExpected = 0;
     __block NSUInteger totalAccumulator = 0;
     return [[[[self directoryContentsForDirectory:remotePath]
-              // Transform the directory content into subscribable
+              // Transform the directory content into signal
               flattenMap:^id(NSArray *content) {
                 totalExpected = content.count;
-                return [content rac_toSubscribable];
+                return [content rac_toSignal];
               }]
               // Get a merge of all 
               flattenMap:^id(NSDictionary *item) {
@@ -191,7 +191,7 @@
                 NSString *itemName = [item objectForKey:cxFilenameKey];
                 NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
                 NSURL *itemLocalURL = [localURL URLByAppendingPathComponent:itemName isDirectory:YES];
-                // For every item in the directory, return the progress subscribable
+                // For every item in the directory, return the progress signal
                 if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
                   return [self _downloadDirectoryWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
                 } else {
@@ -215,10 +215,10 @@
   }] publish] autoconnect];
 }
 
-- (RACSubscribable *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
+- (RACSignal *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
   // TODO: recursive option
-  if (!_uploadProgressSubscribables) {
-    _uploadProgressSubscribables = [[NSMutableDictionary alloc] init];
+  if (!_uploadProgressSignals) {
+    _uploadProgressSignals = [[NSMutableDictionary alloc] init];
   }
   if ([localURL isDirectory]) {
     return [self _uploadDirectoryAtURL:localURL toRemotePath:remotePath];
@@ -227,16 +227,16 @@
   }
 }
 
-- (RACSubscribable *)_uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
-  RACSubject *uploadSubscribable = [RACSubject subject];
-  [_uploadProgressSubscribables setObject:uploadSubscribable forKey:remotePath];
+- (RACSignal *)_uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
+  RACSubject *uploadSignal = [RACSubject subject];
+  [_uploadProgressSignals setObject:uploadSignal forKey:remotePath];
   [_connection uploadFileAtURL:localURL toPath:remotePath openingPosixPermissions:0];
-  return uploadSubscribable;
+  return uploadSignal;
 }
 
-- (RACSubscribable *)_uploadDirectoryAtURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
+- (RACSignal *)_uploadDirectoryAtURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
   @weakify(self);
-  return [[[RACSubscribable createSubscribable:^RACDisposable *(id<RACSubscriber> subscriber) {
+  return [[[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
     @strongify(self);
     // Create remote directory
     [self->_connection createDirectoryAtPath:[remotePath stringByAppendingPathComponent:localURL.lastPathComponent] posixPermissions:nil];
@@ -244,8 +244,8 @@
     NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
-    return [[[localContent rac_toSubscribable]
-            flattenMap:^id<RACSubscribable>(NSURL *x) {
+    return [[[localContent rac_toSignal]
+            flattenMap:^id<RACSignal>(NSURL *x) {
               @strongify(self);
               NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
               if ([x isDirectory]) {
@@ -267,14 +267,14 @@
   }] publish] autoconnect];
 }
 
-- (RACSubscribable *)deleteFileWithRemotePath:(NSString *)remotePath {
-  if (!_deleteProgressSubscribables) {
-    _deleteProgressSubscribables = [[NSMutableDictionary alloc] init];
+- (RACSignal *)deleteFileWithRemotePath:(NSString *)remotePath {
+  if (!_deleteProgressSignals) {
+    _deleteProgressSignals = [[NSMutableDictionary alloc] init];
   }
-  RACSubject *deleteSubscribable = [RACSubject subject];
-  [_deleteProgressSubscribables setObject:deleteSubscribable forKey:remotePath];
+  RACSubject *deleteSignal = [RACSubject subject];
+  [_deleteProgressSignals setObject:deleteSignal forKey:remotePath];
   [_connection deleteFile:remotePath];
-  return deleteSubscribable;
+  return deleteSignal;
 }
 
 #pragma mark - Connection delegate
@@ -369,17 +369,17 @@
 }
 
 - (void)connection:(id<CKConnection>)con download:(NSString *)remotePath progressedTo:(NSNumber *)percent {
-  [[_downloadProgressSubscribables objectForKey:remotePath] sendNext:percent];
+  [[_downloadProgressSignals objectForKey:remotePath] sendNext:percent];
 }
 
 - (void)connection:(id<CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error {
-  RACSubject *subject = [_downloadProgressSubscribables objectForKey:remotePath];
+  RACSubject *subject = [_downloadProgressSignals objectForKey:remotePath];
   if (error) {
     [subject sendError:error];
   } else {
     [subject sendCompleted];
   }
-  [_downloadProgressSubscribables removeObjectForKey:remotePath];
+  [_downloadProgressSignals removeObjectForKey:remotePath];
 }
 
 //- (void)connection:(id<CKConnection>)con download:(NSString *)path receivedDataOfLength:(unsigned long long)length {
@@ -393,30 +393,30 @@
 }
 
 - (void)connection:(id<CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent {
-  [[_uploadProgressSubscribables objectForKey:remotePath] sendNext:percent];
+  [[_uploadProgressSignals objectForKey:remotePath] sendNext:percent];
 }
 
 - (void)connection:(id<CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error {
-  RACSubject *subject = [_uploadProgressSubscribables objectForKey:remotePath];
+  RACSubject *subject = [_uploadProgressSignals objectForKey:remotePath];
   if (error) {
     [subject sendError:error];
   } else {
     [subject sendNext:remotePath];
     [subject sendCompleted];
   }
-  [_uploadProgressSubscribables removeObjectForKey:remotePath];
+  [_uploadProgressSignals removeObjectForKey:remotePath];
 }
 
 #pragma mark Connection Deletion
 
 - (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error {
-  RACSubject *subject = [_deleteProgressSubscribables objectForKey:path];
+  RACSubject *subject = [_deleteProgressSignals objectForKey:path];
   if (error) {
     [subject sendError:error];
   } else {
     [subject sendCompleted];
   }
-  [_deleteProgressSubscribables removeObjectForKey:path];
+  [_deleteProgressSignals removeObjectForKey:path];
 }
 
 @end

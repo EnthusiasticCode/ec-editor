@@ -311,7 +311,7 @@ static void drawStencilStar(CGContextRef myContext)
   RAC(self.view.backgroundColor) = RACAble(self.codeView.backgroundColor);
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
-  [[[RACAble(self.artCodeTab.currentLocation.url) map:^id<RACSubscribable>(NSURL *url) {
+  [[[RACAble(self.artCodeTab.currentLocation.url) map:^id<RACSignal>(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
 
@@ -327,7 +327,7 @@ static void drawStencilStar(CGContextRef myContext)
   // When the text file or the code view change, bind their texts together
   __block RACDisposable *sinkDisposable = nil;
   __block RACDisposable *sourceDisposable = nil;
-  [[RACSubscribable combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
+  [[RACSignal combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
     FileSystemFile *textFile = tuple.second;
     [sinkDisposable dispose];
@@ -341,7 +341,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSubscribable combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^id<RACSubscribable>(RACTuple *tuple) {
+  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^id<RACSignal>(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -352,7 +352,7 @@ static void drawStencilStar(CGContextRef myContext)
     }
     // Selecting the syntax to use
     if (explicitSyntaxIdentifier) {
-      return [RACSubscribable return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
+      return [RACSignal return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
     return [[textFile.contentSource take:1] map:^RACTuple *(NSString *x) {
       TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
@@ -383,7 +383,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // subscribe to the text file's content to reparse
-  [[[RACSubscribable combineLatest:@[[RACAble(self.textFile.contentSource) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[[RACAble(self.textFile.contentSource) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
     ASSERT_NOT_MAIN_QUEUE();
     NSString *changedContent = tuple.first;
     TMUnit *codeUnit = tuple.second;
@@ -391,7 +391,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Update title with current symbol and keyboard accessory based on current scope
-  [[[RACSubscribable combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSource) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSource) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
     @strongify(self);
     if (!self) {
       return;
@@ -423,13 +423,13 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // load the web preview if needed
-  [[RACSubscribable combineLatest:@[RACAble(self.textFile), RACAble(self.webView)]] subscribeNext:^(id x) {
+  [[RACSignal combineLatest:@[RACAble(self.textFile), RACAble(self.webView)]] subscribeNext:^(id x) {
     @strongify(self);
     [self _loadWebPreviewContentAndTitle];
   }];
   
   // Handle keyboard display changes
-  [[RACSubscribable merge:@[
+  [[RACSignal merge:@[
    [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
    [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
    [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],

@@ -15,7 +15,7 @@
 
 
 @interface LocalFileListController ()
-/// An array of RACTuples (itemURL, progressSubscribable)
+/// An array of RACTuples (itemURL, progressSignal)
 @property (nonatomic, strong) NSArray *progressItems;
 @end
 
@@ -27,14 +27,14 @@
 static void _init(LocalFileListController *self) {
   // RAC
   @weakify(self);
-  RAC(self.filteredItems) = [[RACSubscribable combineLatest:@[
-                              // Subscribable to get filtered files
+  RAC(self.filteredItems) = [[RACSignal combineLatest:@[
+                              // Signal to get filtered files
                               [[RACAble(self.locationDirectory)
                                 map:^id(FileSystemDirectory *directory) {
                                   @strongify(self);
                                   return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
                                 }] switch],
-                              // Subscribable with progress items
+                              // Signal with progress items
                               RACAbleWithStart(self.progressItems)]]
                              map:^id(RACTuple *itemsTuple) {
                                if (itemsTuple.second == nil) {
@@ -81,19 +81,19 @@ static void _init(LocalFileListController *self) {
   [self didChangeValueForKey:@"selectedItems"];
 }
 
-- (void)addProgressItemWithName:(NSString *)name progressSubscribable:(RACSubscribable *)progressSubscribable {
+- (void)addProgressItemWithName:(NSString *)name progressSignal:(RACSignal *)progressSignal {
   [self willChangeValueForKey:@"progressItems"];
   if (!_progressItems) {
     _progressItems = [[NSMutableArray alloc] init];
   }
-  RACTuple *progressItem = [RACTuple tupleWithObjects:name, progressSubscribable, nil];
+  RACTuple *progressItem = [RACTuple tupleWithObjects:name, progressSignal, nil];
   [_progressItems addObject:progressItem];
   
   [self didChangeValueForKey:@"progressItems"];
   
   // RAC
   @weakify(self);
-  [[progressSubscribable finally:^{
+  [[progressSignal finally:^{
     @strongify(self);
     // Remove the progress item when it completes
     [self willChangeValueForKey:@"progressItems"];
@@ -110,7 +110,7 @@ static void _init(LocalFileListController *self) {
 {
   RACTuple *tuple = [self.filteredItems objectAtIndex:indexPath.row];
   UITableViewCell *cell = nil;
-  if ([tuple.second isKindOfClass:[RACSubscribable class]]) {
+  if ([tuple.second isKindOfClass:[RACSignal class]]) {
     static NSString * const progressCellIdentifier = @"progressCell";
     ProgressTableViewCell *progressCell = (ProgressTableViewCell *)[tView dequeueReusableCellWithIdentifier:progressCellIdentifier];
     if (!progressCell) {
@@ -118,7 +118,7 @@ static void _init(LocalFileListController *self) {
     }
     cell = progressCell;
     
-    [progressCell setProgressSubscribable:tuple.second];
+    [progressCell setProgressSignal:tuple.second];
     
     // The first item is an URL
     NSURL *itemURL = tuple.first;
@@ -157,7 +157,7 @@ static void _init(LocalFileListController *self) {
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
   RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
-  return ![item.second isKindOfClass:[RACSubscribable class]];
+  return ![item.second isKindOfClass:[RACSignal class]];
 }
 
 #pragma mark - Table view delegate

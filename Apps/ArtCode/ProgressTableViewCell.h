@@ -12,7 +12,7 @@
 
 @property (strong, nonatomic) IBOutlet UIProgressView *progressView;
 
-/// Set a subscribable that yields NSNumbers with the percentage of progress, this will be reflected in the progress view.
-- (void)setProgressSubscribable:(RACSubscribable *)progressSubscribable;
+/// Set a signal that yields NSNumbers with the percentage of progress, this will be reflected in the progress view.
+- (void)setProgressSignal:(RACSignal *)progressSignal;
 
 @end

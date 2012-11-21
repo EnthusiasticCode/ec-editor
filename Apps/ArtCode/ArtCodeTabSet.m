@@ -17,7 +17,7 @@
 
 #pragma mark - RAC Support
 
-- (RACSubscribable *)objectsAdded {
+- (RACSignal *)objectsAdded {
   if (!_objectsAddedSubject) {
     _objectsAddedSubject = [RACSubject subject];
   }

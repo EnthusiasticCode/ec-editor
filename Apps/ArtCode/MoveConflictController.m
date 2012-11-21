@@ -17,7 +17,7 @@
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  id<RACSubscribable>(^_subscribableBlock)(FileSystemItem *);
+  id<RACSignal>(^_signalBlock)(FileSystemItem *);
   RACSubject *_moveSubject;
 }
 
@@ -54,7 +54,7 @@
   [self setToolbar:nil];
   _conflictItems = nil;
   _resolvedItems = nil;
-  _subscribableBlock = nil;
+  _signalBlock = nil;
   [super viewDidUnload];
 }
 
@@ -83,10 +83,10 @@
 
 #pragma mark - Public Methods
 
-- (id<RACSubscribable>)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSubscribableBlock:(id<RACSubscribable> (^)(FileSystemItem *, FileSystemDirectory *))subscribableBlock {
+- (id<RACSignal>)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSignalBlock:(id<RACSignal> (^)(FileSystemItem *, FileSystemDirectory *))signalBlock {
   ASSERT_MAIN_QUEUE();
-  _subscribableBlock = ^id<RACSubscribable>(FileSystemItem *item) {
-    return subscribableBlock(item, destinationFolder);
+  _signalBlock = ^id<RACSignal>(FileSystemItem *item) {
+    return signalBlock(item, destinationFolder);
   };
   RACReplaySubject *moveSubject = [RACReplaySubject replaySubjectWithCapacity:1];
   _moveSubject = moveSubject;
@@ -94,8 +94,8 @@
   
   // Get the items' names and map them to the items
   NSMutableArray *namedItems = [[NSMutableArray alloc] initWithCapacity:[items count]];
-  [[[items rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
-    return [RACSubscribable combineLatest:@[[RACSubscribable return:x], [x.name take:1]]];
+  [[[items rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+    return [RACSignal combineLatest:@[[RACSignal return:x], [x.name take:1]]];
   }] subscribeNext:^(RACTuple *x) {
     [namedItems addObject:x];
   } error:^(NSError *error) {
@@ -103,8 +103,8 @@
   } completed:^{
     // Get the destination folder's children's names
     NSMutableArray *destinationChildrenNames = [[NSMutableArray alloc] init];
-    [[[[destinationFolder children] take:1] flattenMap:^id<RACSubscribable>(NSArray *x) {
-      return [[x rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *y) {
+    [[[[destinationFolder children] take:1] flattenMap:^id<RACSignal>(NSArray *x) {
+      return [[x rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *y) {
         return [y.name take:1];
       }];
     }] subscribeNext:^(NSString *x) {
@@ -180,14 +180,14 @@
   [self.conflictTableView deleteRowsAtIndexPaths:[self.conflictTableView indexPathsForSelectedRows] withRowAnimation:UITableViewRowAnimationAutomatic];
   
   // Processing
-  ASSERT(_subscribableBlock);
+  ASSERT(_signalBlock);
   @weakify(self);
-  [[[_resolvedItems rac_toSubscribable] flattenMap:^id<RACSubscribable>(FileSystemItem *x) {
+  [[[_resolvedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
     @strongify(self);
     if (!self) {
       return nil;
     }
-    return self->_subscribableBlock(x);
+    return self->_signalBlock(x);
   }] subscribe:_moveSubject];
 }
 

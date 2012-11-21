@@ -19,8 +19,8 @@
 @property (nonatomic, readonly, copy) NSArray *selectedItems;
 
 /// Adds an item to the list that will be presented as non-selectable files with download progress.
-/// The subscribable is expected to yield NSNumbers with percent progress, any other kind of value will be ignored.
-/// When the subscribable completes, the item will be removed.
-- (void)addProgressItemWithName:(NSString *)name progressSubscribable:(RACSubscribable *)progressSubscribable;
+/// The signal is expected to yield NSNumbers with percent progress, any other kind of value will be ignored.
+/// When the signal completes, the item will be removed.
+- (void)addProgressItemWithName:(NSString *)name progressSignal:(RACSignal *)progressSignal;
 
 @end

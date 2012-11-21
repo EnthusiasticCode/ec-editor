@@ -295,9 +295,7 @@
   }];
   
   // Update tool bar title when project changes
-  [[self rac_whenAny:[NSArray arrayWithObjects:@keypath(self.artCodeTab.currentLocation.project.labelColor), @keypath(self.artCodeTab.currentLocation.project.name), @keypath(self.contentViewController.title), nil] reduce:^id(RACTuple *xs) {
-    return nil;
-  }] subscribeNext:^(id x) {
+	[[RACSignal combineLatest:@[RACAble(self.artCodeTab.currentLocation.project.labelColor), RACAble(self.artCodeTab.currentLocation.project.name), RACAble(self.contentViewController.title)]] subscribeNext:^(id x) {
     [this updateDefaultToolbarTitle];
   }];
   

@@ -19,8 +19,8 @@
     return nil;
   }
   @weakify(self);
-  [[RACSubscribable combineLatest:@[[[RACAble(item) map:^id<RACSubscribable>(FileSystemItem *x) {
-    return [RACSubscribable combineLatest:@[x.name, x.type]];
+  [[RACSignal combineLatest:@[[[RACAble(item) map:^id<RACSignal>(FileSystemItem *x) {
+    return [RACSignal combineLatest:@[x.name, x.type]];
   }] switch], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);

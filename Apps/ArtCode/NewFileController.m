@@ -33,8 +33,8 @@
   // RAC
   @weakify(self);
   
-  // Subscribable to get the latest filename with extension and activate 'create' button
-  [[[[[[self.fileNameTextField.rac_textSubscribable throttle:0.5] distinctUntilChanged] map:^id(NSString *fileName) {
+  // Signal to get the latest filename with extension and activate 'create' button
+  [[[[[[self.fileNameTextField.rac_textSignal throttle:0.5] distinctUntilChanged] map:^id(NSString *fileName) {
     @strongify(self);
     if (fileName.length == 0) {
       return nil;
