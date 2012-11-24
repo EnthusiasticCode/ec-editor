@@ -347,7 +347,6 @@
 		CD6E4DD014EFE702009B8CF8 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DB714EFE702009B8CF8 /* libclangFrontend.a */; };
 		CD6E4DD114EFE702009B8CF8 /* libclangLex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DB814EFE702009B8CF8 /* libclangLex.a */; };
 		CD6E4DD214EFE702009B8CF8 /* libclangParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DB914EFE702009B8CF8 /* libclangParse.a */; };
-		CD6E4DD314EFE702009B8CF8 /* libclangRewrite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DBA14EFE702009B8CF8 /* libclangRewrite.a */; };
 		CD6E4DD414EFE702009B8CF8 /* libclangSema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DBB14EFE702009B8CF8 /* libclangSema.a */; };
 		CD6E4DD514EFE702009B8CF8 /* libclangSerialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DBC14EFE702009B8CF8 /* libclangSerialization.a */; };
 		CD6E4DD614EFE702009B8CF8 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DBD14EFE702009B8CF8 /* libLLVMAnalysis.a */; };
@@ -974,7 +973,6 @@
 		CD6E4DB714EFE702009B8CF8 /* libclangFrontend.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangFrontend.a; path = ../ThirdParty/libclang/lib/libclangFrontend.a; sourceTree = "<group>"; };
 		CD6E4DB814EFE702009B8CF8 /* libclangLex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangLex.a; path = ../ThirdParty/libclang/lib/libclangLex.a; sourceTree = "<group>"; };
 		CD6E4DB914EFE702009B8CF8 /* libclangParse.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangParse.a; path = ../ThirdParty/libclang/lib/libclangParse.a; sourceTree = "<group>"; };
-		CD6E4DBA14EFE702009B8CF8 /* libclangRewrite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangRewrite.a; path = ../ThirdParty/libclang/lib/libclangRewrite.a; sourceTree = "<group>"; };
 		CD6E4DBB14EFE702009B8CF8 /* libclangSema.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSema.a; path = ../ThirdParty/libclang/lib/libclangSema.a; sourceTree = "<group>"; };
 		CD6E4DBC14EFE702009B8CF8 /* libclangSerialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclangSerialization.a; path = ../ThirdParty/libclang/lib/libclangSerialization.a; sourceTree = "<group>"; };
 		CD6E4DBD14EFE702009B8CF8 /* libLLVMAnalysis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLLVMAnalysis.a; path = ../ThirdParty/libclang/lib/libLLVMAnalysis.a; sourceTree = "<group>"; };
@@ -1189,7 +1187,6 @@
 				CD6E4DD014EFE702009B8CF8 /* libclangFrontend.a in Frameworks */,
 				CD6E4DD114EFE702009B8CF8 /* libclangLex.a in Frameworks */,
 				CD6E4DD214EFE702009B8CF8 /* libclangParse.a in Frameworks */,
-				CD6E4DD314EFE702009B8CF8 /* libclangRewrite.a in Frameworks */,
 				CD6E4DD414EFE702009B8CF8 /* libclangSema.a in Frameworks */,
 				CD6E4DD514EFE702009B8CF8 /* libclangSerialization.a in Frameworks */,
 				CD6E4DD614EFE702009B8CF8 /* libLLVMAnalysis.a in Frameworks */,
@@ -1909,7 +1906,6 @@
 				CD6E4DB714EFE702009B8CF8 /* libclangFrontend.a */,
 				CD6E4DB814EFE702009B8CF8 /* libclangLex.a */,
 				CD6E4DB914EFE702009B8CF8 /* libclangParse.a */,
-				CD6E4DBA14EFE702009B8CF8 /* libclangRewrite.a */,
 				CD6E4DBB14EFE702009B8CF8 /* libclangSema.a */,
 				CD6E4DBC14EFE702009B8CF8 /* libclangSerialization.a */,
 				CD6E4DBD14EFE702009B8CF8 /* libLLVMAnalysis.a */,

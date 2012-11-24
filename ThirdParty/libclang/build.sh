@@ -2,9 +2,10 @@
 
 LOG="build.log"
 PLATFORMS_ROOT="/Applications/Xcode.app/Contents/Developer/Platforms/"
-ARCHS="i386 armv7"
-SDKVERSION="5.1"
-OSXSDKVERSION="10.7"
+TOOLCHAIN_ROOT="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/"
+ARCHS="i386 armv7 armv7s"
+SDKVERSION="6.0"
+OSXSDKVERSION="10.8"
 
 
 ROOT_DIRECTORY=`pwd`
@@ -70,20 +71,16 @@ do
     export CFLAGS="-I${ROOT_DIRECTORY} -isysroot ${SDKROOT} -arch ${ARCH} ${CFLAGS}"
     export CXXFLAGS="${CFLAGS}"
     export LDFLAGS="-lstdc++"
-
-    if [ "${ARCH}" != "i386" ];
-        then
-        export CC=$DEVROOT/usr/bin/clang
-        export BUILD_CC=$DEVROOT/usr/bin/clang
-        export BUILD_CXX=$DEVROOT/usr/bin/clang
-        export LD=$DEVROOT/usr/bin/ld
-        export CPP="$DEVROOT/usr/bin/clang -E"
-        export CXX=$DEVROOT/usr/bin/clang
-        export AR=$DEVROOT/usr/bin/ar
-        export AS=$DEVROOT/usr/bin/as
-        export NM=$DEVROOT/usr/bin/nm
-        export CXXCPP="$DEVROOT/usr/bin/clang -E"
-    fi
+    export CC=$TOOLCHAIN_ROOT/usr/bin/clang
+    export BUILD_CC=$TOOLCHAIN_ROOT/usr/bin/clang
+    export BUILD_CXX=$TOOLCHAIN_ROOT/usr/bin/clang
+    export LD=$DEVROOT/usr/bin/ld
+    export CPP="$TOOLCHAIN_ROOT/usr/bin/clang -E"
+    export CXX=$TOOLCHAIN_ROOT/usr/bin/clang
+    export AR=$DEVROOT/usr/bin/ar
+    export AS=$DEVROOT/usr/bin/as
+    export NM=$DEVROOT/usr/bin/nm
+    export CXXCPP="$TOOLCHAIN_ROOT/usr/bin/clang -E"
 
     if [ ! -e include/llvm/Config/config.h ];
         then
