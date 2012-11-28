@@ -490,7 +490,7 @@
   [previewer setCurrentPreviewItemIndex:[[self _previewItems] indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
     return [item.previewItemURL isEqual:fileURL];
   }]];
-  [self presentModalViewController:previewer animated:YES];
+  [self presentViewController:previewer animated:YES completion:nil];
 }
 
 - (NSArray *)_previewItems {

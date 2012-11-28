@@ -1,0 +1,175 @@
+//
+//  NewFileImportController.m
+//  ArtCode
+//
+//  Created by Nicola Peduzzi on 28/11/12.
+//
+//
+
+#import "NewFileImportController.h"
+#import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
+#import "FileSystemItem.h"
+//#import "FileSystemItemCell.h"
+#import "NSURL+Utilities.h"
+#import "ArchiveUtilities.h"
+#import "UIImage+AppStyle.h"
+#import "MoveConflictController.h"
+#import "BezelAlert.h"
+#import "UIViewController+Utilities.h"
+
+@interface NewFileImportController ()
+// Items shown in the table view that could be imported
+@property (nonatomic, strong) NSArray *importableFileItems;
+
+// FileSystemItems to be imported
+@property (nonatomic, strong) NSArray *importFileItems;
+@end
+
+@implementation NewFileImportController
+
+static void _init(NewFileImportController *self) {
+  @weakify(self);
+  // TODO use RAC to keep importableFileItems updated?
+//  [[FileSystemDirectory directoryWithURL:[NSURL applicationDocumentsDirectory]] subscribeNext:^(FileSystemDirectory *documentsDirecory) {
+//    [documentsDirecory.children filter:^BOOL(FileSystemItem *x) {
+//      x.url
+//    }];
+//  }];
+  
+  // Reaction to update table data
+  [RACAble(self.importableFileItems) subscribeNext:^(id x) {
+    @strongify(self);
+    [self.tableView reloadData];
+  }];
+  
+  // Reaction to import the selected items to the current location URL
+  [RACAble(self.importFileItems) subscribeNext:^(NSArray *items) {
+    if (items.count == 0) return;
+    
+    @strongify(self);
+    
+    [[FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] subscribeNext:^(FileSystemDirectory *copyToDirectory) {
+      @strongify(self);
+      // Dismiss popover
+      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+      
+      // Initialize and present conflict controller
+      MoveConflictController *conflictController = [[MoveConflictController alloc] init];
+      UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
+      [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+      conflictController.navigationItem.leftBarButtonItem = cancelItem;
+      UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:conflictController];
+      navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+      [self presentViewController:navigationController animated:YES completion:^{
+        // Start copy
+        [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+          return [item copyTo:destinationFolder];
+        }] finally:^{
+          ASSERT_MAIN_QUEUE();
+          [self dismissModalViewControllerAnimated:YES];
+        }] subscribeError:^(NSError *error) {
+          ASSERT_MAIN_QUEUE();
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+        } completed:^{
+          ASSERT_MAIN_QUEUE();
+          if (items.count) {
+            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+          }
+        }];
+      }];
+    }];
+  }];
+}
+
+- (id)initWithStyle:(UITableViewStyle)style {
+  self = [super initWithStyle:style];
+  if (!self) {
+    return nil;
+  }
+  _init(self);
+  return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+  self = [super initWithCoder:aDecoder];
+  if (!self) {
+    return nil;
+  }
+  _init(self);
+  return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+  // Fetch all files in the document direcotry
+  NSMutableArray *result = [[NSMutableArray alloc] init];
+  for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
+    if (![url isArchiveURL]) {
+      [result addObject:url];
+    }
+  }
+  self.importableFileItems = result.copy;
+  
+  // Set the table view in edit mode to show check marks
+  self.tableView.editing = YES;
+}
+
+- (void)didReceiveMemoryWarning {
+  [super didReceiveMemoryWarning];
+  _importableFileItems = nil;
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  return self.importableFileItems.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  static NSString *cellIdentifier = @"DefaultCell";
+  // TODO use FileSystemItemCell instead of normal cell with URL
+//  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+//  if (!cell) {
+//    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+//    cell.textLabel.backgroundColor = [UIColor clearColor];
+//  }
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+  
+  NSURL *fileURL = self.importableFileItems[indexPath.row];
+  cell.textLabel.text = fileURL.lastPathComponent;
+  cell.imageView.image = fileURL.isDirectory ? [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)] : [UIImage styleDocumentImageWithFileExtension:fileURL.pathExtension];
+    
+  return cell;
+}
+
+#pragma mark - Table view delegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  self.navigationItem.rightBarButtonItem.enabled = YES;
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+  self.navigationItem.rightBarButtonItem.enabled = tableView.indexPathsForSelectedRows.count > 0;
+}
+
+#pragma mark - Public methods
+
+- (IBAction)importAction:(id)sender {
+  [sender setEnabled:NO];
+  
+  @weakify(self);
+  
+  // Get items to import
+  NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:self.tableView.indexPathsForSelectedRows.count];
+  [[[self.tableView.indexPathsForSelectedRows rac_toSignal] flattenMap:^id(NSIndexPath *x) {
+    @strongify(self);
+    return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
+  }] subscribeNext:^(id x) {
+    [items addObject:x];
+  } completed:^{
+    @strongify(self);
+    self.importFileItems = items.copy;
+  }];
+}
+
+@end
