@@ -28,7 +28,6 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeRemote.h"
 #import "ArtCodeTab.h"
-#import "FileSystemItem.h"
 
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
@@ -342,6 +341,7 @@
         self.loading = YES;
         
         [ArchiveUtilities compressFileAtURLs:[_selectedItems map:^id(FileSystemItem *x) {
+#warning URI use of first
           return x.url.first;
         }] completionHandler:^(NSURL *temporaryDirectoryURL) {
           ASSERT_MAIN_QUEUE();
@@ -447,11 +447,11 @@
     [self modalNavigationControllerDismissAction:sender];
   }] subscribeError:^(NSError *error) {
     ASSERT_MAIN_QUEUE();
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error copying files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error copying files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
     if (items.count) {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files copied" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }
   }];
 }
@@ -475,11 +475,11 @@
     [self modalNavigationControllerDismissAction:sender];
   }] subscribeError:^(NSError *error) {
     ASSERT_MAIN_QUEUE();
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error moving files" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error moving files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
     if (items.count) {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Files moved" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
     }
   }];
 }
@@ -498,6 +498,7 @@
     _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
     for (RACTuple *tuple in [self filteredItems]) {
       FileSystemItem *item = tuple.first;
+#warning URI use of first
       NSURL *itemURL = item.url.first;
       FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
       if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
