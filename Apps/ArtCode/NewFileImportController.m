@@ -24,19 +24,16 @@
 
 // FileSystemItems to be imported
 @property (nonatomic, strong) NSArray *importFileItems;
+
+// Return a list of NSURLs of non archive files in the document directory
+- (NSArray *)_importableFileURLsInDocuments;
 @end
 
 @implementation NewFileImportController
 
 static void _init(NewFileImportController *self) {
   @weakify(self);
-  // TODO use RAC to keep importableFileItems updated?
-//  [[FileSystemDirectory directoryWithURL:[NSURL applicationDocumentsDirectory]] subscribeNext:^(FileSystemDirectory *documentsDirecory) {
-//    [documentsDirecory.children filter:^BOOL(FileSystemItem *x) {
-//      x.url
-//    }];
-//  }];
-  
+
   // Reaction to update table data
   [RACAble(self.importableFileItems) subscribeNext:^(id x) {
     @strongify(self);
@@ -101,22 +98,13 @@ static void _init(NewFileImportController *self) {
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-  // Fetch all files in the document direcotry
-  NSMutableArray *result = [[NSMutableArray alloc] init];
-  for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
-    if (![url isArchiveURL]) {
-      [result addObject:url];
-    }
-  }
-  self.importableFileItems = result.copy;
-  
-  // Set the table view in edit mode to show check marks
-  self.tableView.editing = YES;
+  self.importableFileItems = [self _importableFileURLsInDocuments];
 }
 
 - (void)didReceiveMemoryWarning {
   [super didReceiveMemoryWarning];
   _importableFileItems = nil;
+  _importFileItems = nil;
 }
 
 #pragma mark - Table view data source
@@ -127,19 +115,25 @@ static void _init(NewFileImportController *self) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *cellIdentifier = @"DefaultCell";
-  // TODO use FileSystemItemCell instead of normal cell with URL
-//  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-//  if (!cell) {
-//    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-//    cell.textLabel.backgroundColor = [UIColor clearColor];
-//  }
-  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   
   NSURL *fileURL = self.importableFileItems[indexPath.row];
   cell.textLabel.text = fileURL.lastPathComponent;
   cell.imageView.image = fileURL.isDirectory ? [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)] : [UIImage styleDocumentImageWithFileExtension:fileURL.pathExtension];
     
   return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+  return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete) {
+    [[NSFileManager defaultManager] removeItemAtURL:self.importableFileItems[indexPath.row] error:NULL];
+    _importableFileItems = [self _importableFileURLsInDocuments];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+  }
 }
 
 #pragma mark - Table view delegate
@@ -170,6 +164,26 @@ static void _init(NewFileImportController *self) {
     @strongify(self);
     self.importFileItems = items.copy;
   }];
+}
+
+#pragma mark - Private Methods
+
+- (NSArray *)_importableFileURLsInDocuments {
+  NSMutableArray *result = [[NSMutableArray alloc] init];
+  for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
+    if (![url isArchiveURL]) {
+      [result addObject:url];
+    }
+  }
+  
+  // Side effect to update hint label
+  if (result.count != 0) {
+    [(UILabel *)self.tableView.tableFooterView setText:L(@"Swipe on an item to delete it.")];
+  } else {
+    [(UILabel *)self.tableView.tableFooterView setText:L(@"Add files from iTunes to populate this list.")];
+  }
+  
+  return [result copy];
 }
 
 @end
