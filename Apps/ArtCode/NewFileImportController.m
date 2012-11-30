@@ -152,17 +152,13 @@ static void _init(NewFileImportController *self) {
   [sender setEnabled:NO];
   
   // Get items to import
-  NSMutableArray *items = [[NSMutableArray alloc] initWithCapacity:self.tableView.indexPathsForSelectedRows.count];
   @weakify(self);
-  [[RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
+  [[[RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
     @strongify(self);
-    return [[FileSystemItem itemWithURL:self.importableFileItems[x.row]] doNext:^(id y) {
-      [items addObject:y];
-    }];
-  }]] subscribeCompleted:^{
-    @strongify(self);
-    self.importFileItems = items.copy;
-  }];  
+    return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
+  }]] map:^NSArray *(RACTuple *xs) {
+    return xs.allObjects;
+  }] toProperty:@keypath(self.importFileItems) onObject:self];
 }
 
 #pragma mark - Private Methods
