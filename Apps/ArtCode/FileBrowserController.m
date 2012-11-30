@@ -266,9 +266,9 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
         return [x delete];
-      }] subscribeCompleted:^{
+      }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -284,9 +284,9 @@
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
         return [x duplicate];
-      }] subscribeCompleted:^{
+      }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -326,9 +326,9 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[_selectedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+        [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
-        }] subscribeCompleted:^{
+        }]] subscribeCompleted:^{
           ASSERT_MAIN_QUEUE();
           self.loading = NO;
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -340,33 +340,34 @@
         // Compressing files to export
         self.loading = YES;
         
-        [ArchiveUtilities compressFileAtURLs:[_selectedItems map:^id(FileSystemItem *x) {
-#warning URI use of first
-          return x.url.first;
-        }] completionHandler:^(NSURL *temporaryDirectoryURL) {
-          ASSERT_MAIN_QUEUE();
-          if (temporaryDirectoryURL) {
-            NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
-            [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
-            // Create mail composer
-            MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
-            mailComposer.mailComposeDelegate = self;
-            mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-            mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-            
-            // Add attachement
-            [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
-            
-            // Add precompiled mail fields
-            [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
-            [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
-            
-            // Present mail composer
-            [self presentViewController:mailComposer animated:YES completion:nil];
-            [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-            [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-          }
-          self.loading = NO;
+        [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
+          return [x.url take:1];
+        }]] subscribeNext:^(RACTuple *xs) {
+          [ArchiveUtilities compressFileAtURLs:xs.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
+            ASSERT_MAIN_QUEUE();
+            if (temporaryDirectoryURL) {
+              NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
+              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
+              // Create mail composer
+              MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+              mailComposer.mailComposeDelegate = self;
+              mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+              mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+              
+              // Add attachement
+              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
+              
+              // Add precompiled mail fields
+              [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
+              [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+              
+              // Present mail composer
+              [self presentViewController:mailComposer animated:YES completion:nil];
+              [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+            }
+            self.loading = NO;
+          }];
         }];
         
         [self setEditing:NO animated:YES];

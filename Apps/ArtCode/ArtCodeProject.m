@@ -75,9 +75,9 @@
       }] switch], [FileSystemDirectory directoryWithURL:project.fileURL]] reduce:^id<RACSignal>(RACTuple *xs) {
         NSArray *children = xs.first;
         FileSystemDirectory *projectDirectory = xs.second;
-        return [[children rac_toSignal] map:^id<RACSignal>(FileSystemItem *child) {
+        return [RACSignal zip:[children map:^id<RACSignal>(FileSystemItem *child) {
           return [child copyTo:projectDirectory];
-        }];
+        }]];
       }] switch] flatten] subscribeCompleted:^{
         if (completionHandler) {
           completionHandler(project);

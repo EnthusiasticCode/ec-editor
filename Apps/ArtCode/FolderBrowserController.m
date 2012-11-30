@@ -39,13 +39,11 @@
   }] switch] map:^id<RACSignal>(NSArray *children) {
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSMutableArray *childFolders = [[NSMutableArray alloc] init];
-      return [[[[[children rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
-        return [RACSignal combineLatest:@[[RACSignal return:x], [x.type take:1]]];
-      }] filter:^BOOL(RACTuple *xs) {
-        return xs.second == NSURLFileResourceTypeDirectory;
-      }] map:^id(RACTuple *xs) {
-        return xs.first;
-      }] subscribeNext:^(FileSystemItem *x) {
+      return [[RACSignal zip:[children map:^id<RACSignal>(FileSystemItem *x) {
+        return [[[x.type take:1] filter:^BOOL(NSString *y) {
+          return y == NSURLFileResourceTypeDirectory;
+        }] mapReplace:x];
+      }]] subscribeNext:^(FileSystemItem *x) {
         [childFolders addObject:x];
       } error:^(NSError *error) {
         [subscriber sendError:error];

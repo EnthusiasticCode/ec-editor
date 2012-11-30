@@ -162,7 +162,7 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
       }
       // Remove remaining child scopes
 #warning TODO: since the children are sorted this could be done better, also finding the index of the new end scope could be done on the insertion above
-      [[scope.children rac_where:^BOOL(TMScope *childScope) {
+      [[scope.children filter:^BOOL(TMScope *childScope) {
         return childScope.location > resultRange.location;
       }] makeObjectsPerformSelector:@selector(removeFromParent)];
       scopeEndHandler(scope);

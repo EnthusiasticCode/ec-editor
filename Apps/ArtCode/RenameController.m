@@ -78,16 +78,13 @@
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-      return [[[[children.rac_toSignal flattenMap:^id<RACSignal>(FileSystemItem *x) {
-        return [RACSignal combineLatest:@[[RACSignal return:x], [x.name take:1]]];
-      }] filter:^BOOL(RACTuple *ys) {
-        NSString *itemName = ys.second;
-        return ![itemName isEqualToString:fullName] && [[itemName stringByDeletingPathExtension] isEqual:name];
-      }] map:^id(RACTuple *ys) {
-        return ys.first;
-      }] subscribeNext:^(FileSystemItem *x) {
-        [alsoRenameItems addObject:x];
-      } error:^(NSError *error) {
+      return [[RACSignal zip:[children map:^id<RACSignal>(FileSystemItem *x) {
+        return [[[x.name take:1] filter:^BOOL(NSString *y) {
+          return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
+        }] doNext:^(id y) {
+          [alsoRenameItems addObject:y];
+        }];
+      }]] subscribeError:^(NSError *error) {
         [subscriber sendError:error];
       } completed:^{
         [subscriber sendNext:alsoRenameItems];
@@ -181,12 +178,12 @@
     @strongify(self);
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [[self.selectedAlsoRenameItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+    return [RACSignal zip:[self.selectedAlsoRenameItems.allObjects map:^id<RACSignal>(FileSystemItem *x) {
       return [[x.name take:1] flattenMap:^id<RACSignal>(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];
       }];
-    }];
+    }]];
   }] subscribeError:^(NSError *error) {
     _completionHandler(0, error);
   } completed:^{

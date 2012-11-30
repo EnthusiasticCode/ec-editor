@@ -19,12 +19,13 @@
   return @[ value ];
 }
 
-- (instancetype)bind:(id (^)(id, BOOL *))block {
+- (instancetype)bind:(RACStreamBindBlock (^)(void))block {
   NSMutableArray *mapped = NSMutableArray.array;
   BOOL stop = NO;
+  RACStreamBindBlock bindBlock = block();
   
   for (id value in self) {
-    NSArray *result = block(value, &stop);
+    NSArray *result = bindBlock(value, &stop);
     if (!result) {
       break;
     }

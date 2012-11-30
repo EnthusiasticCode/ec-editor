@@ -89,10 +89,11 @@
   // RAC 
   __weak ArtCodeTabPageViewController *this = self;
   // Attach controller's title to tab button
-  [[[[singleTabController rac_signalForKeyPath:@keypath(singleTabController, title) onObject:singleTabController] distinctUntilChanged] injectObjectWeakly:singleTabController] subscribeNext:^(RACTuple *tuple) {
-    if (tuple.first && tuple.first != [RACTupleNil tupleNil] 
-        && tuple.second && [tuple.second artCodeTab]) {
-      [this.tabBar setTitle:tuple.first forTabAtIndex:[[tuple.second artCodeTab].tabSet.tabs indexOfObject:[tuple.second artCodeTab]]];
+  @weakify(singleTabController);
+  [[[singleTabController rac_signalForKeyPath:@keypath(singleTabController, title) onObject:singleTabController] distinctUntilChanged] subscribeNext:^(NSString *title) {
+    @strongify(singleTabController);
+    if (title && singleTabController && singleTabController.artCodeTab) {
+      [this.tabBar setTitle:title forTabAtIndex:[singleTabController.artCodeTab.tabSet.tabs indexOfObject:singleTabController.artCodeTab]];
     }
   }];
   

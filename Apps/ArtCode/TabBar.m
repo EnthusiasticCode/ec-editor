@@ -690,13 +690,15 @@ static void init(TabBar *self)
     
     // RAC
     // Adjust title inset and close button when the tab is selected
-    [[[tabButton rac_signalForKeyPath:@keypath(tabButton, selected) onObject:tabButton] injectObjectWeakly:tabButton] subscribeNext:^(RACTuple *tuple) {
-      if ([tuple.first boolValue]) {
-        [tuple.second addSubview:tabCloseButton];
-        [tuple.second setTitleEdgeInsets:UIEdgeInsetsMake(0, 38, 0, 3)];
+    @weakify(tabButton);
+    [[tabButton rac_signalForKeyPath:@keypath(tabButton, selected) onObject:tabButton] subscribeNext:^(NSNumber *selected) {
+      @strongify(tabButton);
+      if ([selected boolValue]) {
+        [tabButton addSubview:tabCloseButton];
+        [tabButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 38, 0, 3)];
       } else {
         [tabCloseButton removeFromSuperview];
-        [tuple.second setTitleEdgeInsets:UIEdgeInsetsMake(0, 3, 0, 3)];
+        [tabButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 3, 0, 3)];
       }
     }];
   }

@@ -94,22 +94,22 @@
   
   // Get the items' names and map them to the items
   NSMutableArray *namedItems = [[NSMutableArray alloc] initWithCapacity:[items count]];
-  [[[items rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
-    return [RACSignal combineLatest:@[[RACSignal return:x], [x.name take:1]]];
-  }] subscribeNext:^(RACTuple *x) {
-    [namedItems addObject:x];
-  } error:^(NSError *error) {
+  [[RACSignal zip:[items map:^id<RACSignal>(FileSystemItem *x) {
+    return [[RACSignal combineLatest:@[[RACSignal return:x], [x.name take:1]]] doNext:^(id x) {
+      [namedItems addObject:x];
+    }];
+  }]] subscribeError:^(NSError *error) {
     [moveSubject sendError:error];
   } completed:^{
     // Get the destination folder's children's names
     NSMutableArray *destinationChildrenNames = [[NSMutableArray alloc] init];
     [[[[destinationFolder children] take:1] flattenMap:^id<RACSignal>(NSArray *x) {
-      return [[x rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *y) {
-        return [y.name take:1];
-      }];
-    }] subscribeNext:^(NSString *x) {
-      [destinationChildrenNames addObject:x];
-    } error:^(NSError *error) {
+      return [RACSignal zip:[x map:^id<RACSignal>(FileSystemItem *y) {
+        return [[y.name take:1] doNext:^(id z) {
+          [destinationChildrenNames addObject:z];
+        }];
+      }]];
+    }] subscribeError:^(NSError *error) {
       [moveSubject sendError:error];
     } completed:^{
       @strongify(self);
@@ -182,13 +182,13 @@
   // Processing
   ASSERT(_signalBlock);
   @weakify(self);
-  [[[_resolvedItems rac_toSignal] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+  [[RACSignal zip:[_resolvedItems map:^id<RACSignal>(FileSystemItem *x) {
     @strongify(self);
     if (!self) {
       return nil;
     }
     return self->_signalBlock(x);
-  }] subscribe:_moveSubject];
+  }]] subscribe:_moveSubject];
 }
 
 - (IBAction)selectAllAction:(id)sender {

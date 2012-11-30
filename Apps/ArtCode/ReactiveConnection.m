@@ -179,39 +179,37 @@
     // Returning a signal that 'endWith:localURL'
     __block NSUInteger totalExpected = 0;
     __block NSUInteger totalAccumulator = 0;
-    return [[[[self directoryContentsForDirectory:remotePath]
-              // Transform the directory content into signal
-              flattenMap:^id(NSArray *content) {
-                totalExpected = content.count;
-                return [content rac_toSignal];
-              }]
-              // Get a merge of all 
-              flattenMap:^id(NSDictionary *item) {
-                @strongify(self);
-                NSString *itemName = [item objectForKey:cxFilenameKey];
-                NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
-                NSURL *itemLocalURL = [localURL URLByAppendingPathComponent:itemName isDirectory:YES];
-                // For every item in the directory, return the progress signal
-                if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
-                  return [self _downloadDirectoryWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
-                } else {
-                  return [self _downloadFileWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
-                }
-              }] subscribeNext:^(id x) {
-                // Ignore progress nexts, only consider completed files
-                if ([x isKindOfClass:[NSURL class]]) {
-                  totalAccumulator++;
-                  [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
-                }
-              } error:^(NSError *error) {
-                // Remove temporary file
-                [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
-                [subscriber sendError:error];
-              } completed:^{
-                // Send temporary download URL uppon completion
-                [subscriber sendNext:localURL];
-                [subscriber sendCompleted];
-              }];
+    return [[[self directoryContentsForDirectory:remotePath] flattenMap:^id(NSArray *content) {
+      totalExpected = content.count;
+      return [[content map:^id<RACSignal>(NSDictionary *item) {
+        @strongify(self);
+        NSString *itemName = [item objectForKey:cxFilenameKey];
+        NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
+        NSURL *itemLocalURL = [localURL URLByAppendingPathComponent:itemName isDirectory:YES];
+        // For every item in the directory, return the progress signal
+        if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
+          return [self _downloadDirectoryWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
+        } else {
+          return [self _downloadFileWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
+        }
+      }] map:^id<RACSignal>(id<RACSignal> x) {
+        return [x doNext:^(id y) {
+          // Ignore progress nexts, only consider completed files
+          if ([y isKindOfClass:[NSURL class]]) {
+            totalAccumulator++;
+            [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
+          }
+        }];
+      }];
+    }] subscribeError:^(NSError *error) {
+      // Remove temporary file
+      [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
+      [subscriber sendError:error];
+    } completed:^{
+      // Send temporary download URL uppon completion
+      [subscriber sendNext:localURL];
+      [subscriber sendCompleted];
+    }];
   }] publish] autoconnect];
 }
 
@@ -244,26 +242,27 @@
     NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
-    return [[[localContent rac_toSignal]
-            flattenMap:^id<RACSignal>(NSURL *x) {
-              @strongify(self);
-              NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
-              if ([x isDirectory]) {
-                return [self _uploadDirectoryAtURL:x toRemotePath:remoteX];
-              } else {
-                return [self _uploadFileAtLocalURL:x toRemotePath:remoteX];
-              }
-            }] subscribeNext:^(id x) {
-              if ([x isKindOfClass:[NSString class]]) {
-                totalAccumulator++;
-                [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
-              }
-            } error:^(NSError *error) {
-              [subscriber sendError:error];
-            } completed:^{
-              [subscriber sendNext:remotePath];
-              [subscriber sendCompleted];
-            }];
+    return [[RACSignal zip:[[localContent map:^id<RACSignal>(NSURL *x) {
+      @strongify(self);
+      NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
+      if ([x isDirectory]) {
+        return [self _uploadDirectoryAtURL:x toRemotePath:remoteX];
+      } else {
+        return [self _uploadFileAtLocalURL:x toRemotePath:remoteX];
+      }
+    }] map:^id<RACSignal>(id<RACSignal> x) {
+      return [x doNext:^(id y) {
+        if ([x isKindOfClass:[NSString class]]) {
+          totalAccumulator++;
+          [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
+        }
+      }];
+    }]] subscribeError:^(NSError *error) {
+      [subscriber sendError:error];
+    } completed:^{
+      [subscriber sendNext:remotePath];
+      [subscriber sendCompleted];
+    }];
   }] publish] autoconnect];
 }
 
