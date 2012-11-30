@@ -463,6 +463,7 @@
 		CDE8F9D4145EEEFE00CA4496 /* CodeFileSearchBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8F9D2145EEEFE00CA4496 /* CodeFileSearchBarController.m */; };
 		CDE8FA8514B9B32A00CFC953 /* TMTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8214B9B32A00CFC953 /* TMTheme.m */; };
 		CDE8FA8614B9B32A00CFC953 /* UIColor+HexColor.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */; };
+		CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDE96824166650540097AAF1 /* NewFileImportController.m */; };
 		CDEE0D7214BDA59B0019FDEF /* projectsTable_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */; };
 		CDEE0D7514BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */; };
 		CDEE0D7614BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */; };
@@ -1047,8 +1048,6 @@
 		CD870E4D16257CC20038EC7F /* RemoteNavigationToolbarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNavigationToolbarController.h; sourceTree = "<group>"; };
 		CD870E4E16257CC20038EC7F /* RemoteNavigationToolbarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteNavigationToolbarController.m; sourceTree = "<group>"; };
 		CD870E8C16257D490038EC7F /* LocalFileListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalFileListController.m; sourceTree = "<group>"; };
-		CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteDirectoryBrowserController.h; sourceTree = "<group>"; };
-		CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteDirectoryBrowserController.m; sourceTree = "<group>"; };
 		CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+StringRanges.h"; sourceTree = "<group>"; };
 		CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+StringRanges.m"; sourceTree = "<group>"; };
 		CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Connection-for-iOS.xcodeproj"; path = "../ThirdParty/Connection/Connection-for-iOS.xcodeproj"; sourceTree = "<group>"; };
@@ -1132,6 +1131,8 @@
 		CDE8FA8214B9B32A00CFC953 /* TMTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMTheme.m; sourceTree = "<group>"; };
 		CDE8FA8314B9B32A00CFC953 /* UIColor+HexColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+HexColor.h"; sourceTree = "<group>"; };
 		CDE8FA8414B9B32A00CFC953 /* UIColor+HexColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+HexColor.m"; sourceTree = "<group>"; };
+		CDE96823166650540097AAF1 /* NewFileImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileImportController.h; sourceTree = "<group>"; };
+		CDE96824166650540097AAF1 /* NewFileImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileImportController.m; sourceTree = "<group>"; };
 		CDEE0D7114BDA59B0019FDEF /* projectsTable_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTable_Background.png; sourceTree = "<group>"; };
 		CDEE0D7314BDA77E0019FDEF /* projectsTableCell_BackgroundNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundNormal.png; sourceTree = "<group>"; };
 		CDEE0D7414BDA77E0019FDEF /* projectsTableCell_BackgroundSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = projectsTableCell_BackgroundSelected.png; sourceTree = "<group>"; };
@@ -1807,8 +1808,6 @@
 				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
 				CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */,
 				CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */,
-				CD8A047C14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.h */,
-				CD8A047D14FBC8CD0054BF73 /* RemoteDirectoryBrowserController.m */,
 			);
 			name = "Export sheets";
 			sourceTree = "<group>";
@@ -2276,6 +2275,8 @@
 				B71A1DE61435112700672F65 /* NewFileController.m */,
 				CD7BD9E814D817D40048A48A /* NewFileFolderController.h */,
 				CD7BD9E914D817D40048A48A /* NewFileFolderController.m */,
+				CDE96823166650540097AAF1 /* NewFileImportController.h */,
+				CDE96824166650540097AAF1 /* NewFileImportController.m */,
 			);
 			name = "New file";
 			sourceTree = "<group>";
@@ -2974,6 +2975,7 @@
 				5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */,
 				5FABA6451647DCD40079D074 /* RACSignal+libdispatch.m in Sources */,
 				5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */,
+				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

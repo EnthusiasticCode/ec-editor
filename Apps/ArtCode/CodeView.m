@@ -487,6 +487,7 @@ static void init(CodeView *self)
   [self addGestureRecognizer:self->_doubleTapRecognizer];
   
   self->_longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];
+  self->_longPressRecognizer.minimumPressDuration = 0.1;
   [self addGestureRecognizer:self->_longPressRecognizer];
   
   self->_longDoublePressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureLongPress:)];

@@ -18,6 +18,7 @@
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "UIColor+AppStyle.h"
+#import "UIImage+AppStyle.h"
 
 
 @interface NewProjectImportController ()
@@ -79,10 +80,9 @@
   static NSString *CellIdentifier = @"Cell";
   
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-  if (cell == nil) {
-    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-  }
+
   cell.textLabel.text = [[self.documentsArchiveURLs objectAtIndex:indexPath.row] lastPathComponent];
+  cell.imageView.image = [UIImage styleProjectImageWithSize:CGSizeMake(32, 32) labelColor:nil];
   
   return cell;
 }
@@ -93,7 +93,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
-    [[[NSFileManager alloc] init] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
+    [[NSFileManager defaultManager] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
     _documentsArchiveURLs = nil;
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
