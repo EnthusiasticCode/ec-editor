@@ -419,7 +419,7 @@ static NSMutableDictionary *fsItemCache() {
         NSMutableArray *namedItems = [[NSMutableArray alloc] init];
         for (FileSystemItem *item in x) {
           [namedItems addObject:[item.name map:^RACTuple *(NSString *x) {
-            return [RACTuple tupleWithObjectsFromArray:@[item, x]];
+            return [RACTuple tupleWithObjectsFromArray:@[item, x ? : [RACTupleNil tupleNil]]];
           }]];
         }
         return [[RACSignal combineLatest:namedItems] map:^NSArray *(RACTuple *xs) {
@@ -427,7 +427,7 @@ static NSMutableDictionary *fsItemCache() {
           for (RACTuple *namedItem in xs) {
             FileSystemItem *item = namedItem.first;
             NSString *name = namedItem.second;
-            if ([name characterAtIndex:0] != L'.') {
+            if (name && [name characterAtIndex:0] != L'.') {
               [nonHiddenItems addObject:item];
             }
           }
