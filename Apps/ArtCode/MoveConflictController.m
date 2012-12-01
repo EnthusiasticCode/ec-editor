@@ -92,70 +92,63 @@
   _moveSubject = moveSubject;
   @weakify(self);
   
-  // Get the items' names and map them to the items
-  NSMutableArray *namedItems = [[NSMutableArray alloc] initWithCapacity:[items count]];
-  [[RACSignal zip:[items map:^id<RACSignal>(FileSystemItem *x) {
-    return [[RACSignal combineLatest:@[[RACSignal return:x], [x.name take:1]]] doNext:^(id x) {
-      [namedItems addObject:x];
-    }];
-  }]] subscribeError:^(NSError *error) {
-    [moveSubject sendError:error];
-  } completed:^{
-    // Get the destination folder's children's names
-    NSMutableArray *destinationChildrenNames = [[NSMutableArray alloc] init];
-    [[[[destinationFolder children] take:1] flattenMap:^id<RACSignal>(NSArray *x) {
-      return [RACSignal zip:[x map:^id<RACSignal>(FileSystemItem *y) {
-        return [[y.name take:1] doNext:^(id z) {
-          [destinationChildrenNames addObject:z];
-        }];
-      }]];
-    }] subscribeError:^(NSError *error) {
-      [moveSubject sendError:error];
-    } completed:^{
-      @strongify(self);
-      if (!self) {
-        return;
-      }
-      
-      NSMutableArray *conflictItems = [[NSMutableArray alloc] init];
-      NSMutableArray *resolvedItems = [[NSMutableArray alloc] initWithCapacity:[namedItems count]];
-      for (RACTuple *tuple in namedItems) {
-        [resolvedItems addObject:tuple.first];
-      }
-      
-      // Compare the names to find conflicts
-      for (NSString *destinationChildName in destinationChildrenNames) {
-        FileSystemItem *conflict = nil;
-        for (RACTuple *namedItem in namedItems) {
-          if ([namedItem.second isEqualToString:destinationChildName]) {
-            conflict = namedItem.first;
-            break;
-          }
-        }
-        if (conflict) {
-          [resolvedItems removeObject:conflict];
-          [conflictItems addObject:conflict];
-        }
-      }
-      
-      self->_conflictItems = conflictItems;
-      self->_resolvedItems = resolvedItems;
-      
-      // If there are no conflict items we are done
-      if ([self->_conflictItems count] == 0) {
-        [self doneAction:nil];
-        return;
-      }
-      
-      // Prepare to show conflict resolution UI
-      self.conflictTableView.hidden = NO;
-      self.toolbar.hidden = NO;
-      self.progressView.hidden = YES;
-      [self.conflictTableView reloadData];
-      [self.conflictTableView setEditing:YES animated:NO];
-      self.navigationItem.title = @"Select files to replace";
-    }];
-  }];
+	[[RACSignal zip:@[ [RACSignal zip:[items map:^(FileSystemItem *x) {
+		return [[x.name take:1] map:^(NSString *y) {
+			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];
+		}];
+  }]], [[destinationFolder.children take:1] flattenMap:^(NSArray *x) {
+		return [RACSignal zip:[x map:^(FileSystemItem *y) {
+			return [y.name take:1];
+		}]];
+	}] ]] subscribeNext:^(RACTuple *x) {
+		@strongify(self);
+		if (!self) {
+			return;
+		}
+		
+		RACTuple *namedItems = x.first;
+		RACTuple *destinationChildrenNames = x.second;
+		
+		NSMutableArray *conflictItems = [[NSMutableArray alloc] init];
+		NSMutableArray *resolvedItems = [[NSMutableArray alloc] initWithCapacity:[namedItems count]];
+		for (RACTuple *tuple in namedItems) {
+			[resolvedItems addObject:tuple.first];
+		}
+		
+		// Compare the names to find conflicts
+		for (NSString *destinationChildName in destinationChildrenNames) {
+			FileSystemItem *conflict = nil;
+			for (RACTuple *namedItem in namedItems) {
+				if ([namedItem.second isEqualToString:destinationChildName]) {
+					conflict = namedItem.first;
+					break;
+				}
+			}
+			if (conflict) {
+				[resolvedItems removeObject:conflict];
+				[conflictItems addObject:conflict];
+			}
+		}
+		
+		self->_conflictItems = conflictItems;
+		self->_resolvedItems = resolvedItems;
+		
+		// If there are no conflict items we are done
+		if ([self->_conflictItems count] == 0) {
+			[self doneAction:nil];
+			return;
+		}
+		
+		// Prepare to show conflict resolution UI
+		self.conflictTableView.hidden = NO;
+		self.toolbar.hidden = NO;
+		self.progressView.hidden = YES;
+		[self.conflictTableView reloadData];
+		[self.conflictTableView setEditing:YES animated:NO];
+		self.navigationItem.title = @"Select files to replace";
+	} error:^(NSError *error) {
+		[moveSubject sendError:error];
+	}];
   
   return _moveSubject;
 }
