@@ -22,9 +22,6 @@
 // Items shown in the table view that could be imported
 @property (nonatomic, strong) NSArray *importableFileItems;
 
-// FileSystemItems to be imported
-@property (nonatomic, strong) NSArray *importFileItems;
-
 // Return a list of NSURLs of non archive files in the document directory
 - (NSArray *)_importableFileURLsInDocuments;
 @end
@@ -38,44 +35,6 @@ static void _init(NewFileImportController *self) {
   [RACAble(self.importableFileItems) subscribeNext:^(id x) {
     @strongify(self);
     [self.tableView reloadData];
-  }];
-  
-  // Reaction to import the selected items to the current location URL
-  [RACAble(self.importFileItems) subscribeNext:^(NSArray *items) {
-    if (items.count == 0) return;
-    
-    @strongify(self);
-    
-    [[FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] subscribeNext:^(FileSystemDirectory *copyToDirectory) {
-      @strongify(self);
-      // Dismiss popover
-      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-      
-      // Initialize and present conflict controller
-      MoveConflictController *conflictController = [[MoveConflictController alloc] init];
-      UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
-      [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-      conflictController.navigationItem.leftBarButtonItem = cancelItem;
-      UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:conflictController];
-      navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-      [self presentViewController:navigationController animated:YES completion:^{
-        // Start copy
-        [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
-          return [item copyTo:destinationFolder];
-        }] finally:^{
-          ASSERT_MAIN_QUEUE();
-          [self dismissModalViewControllerAnimated:YES];
-        }] subscribeError:^(NSError *error) {
-          ASSERT_MAIN_QUEUE();
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-        } completed:^{
-          ASSERT_MAIN_QUEUE();
-          if (items.count) {
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-          }
-        }];
-      }];
-    }];
   }];
 }
 
@@ -104,7 +63,6 @@ static void _init(NewFileImportController *self) {
 - (void)didReceiveMemoryWarning {
   [super didReceiveMemoryWarning];
   _importableFileItems = nil;
-  _importFileItems = nil;
 }
 
 #pragma mark - Table view data source
@@ -153,12 +111,51 @@ static void _init(NewFileImportController *self) {
   
   // Get items to import
   @weakify(self);
-  [[[RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
+  [[RACSignal zip:@[
+  [RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
     @strongify(self);
     return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
-  }]] map:^NSArray *(RACTuple *xs) {
-    return xs.allObjects;
-  }] toProperty:@keypath(self.importFileItems) onObject:self];
+  }]],
+  [FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
+    @strongify(self);
+    NSArray *items = [x.first allObjects];
+    FileSystemDirectory *copyToDirectory = x.second;
+    
+    // Dismiss popover
+    [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+    
+    // Initialize and present conflict controller
+    MoveConflictController *conflictController = [[MoveConflictController alloc] init];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
+    [cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    conflictController.navigationItem.leftBarButtonItem = cancelItem;
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:conflictController];
+    navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    [self presentViewController:navigationController animated:YES completion:^{
+      // Start copy
+      [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+        return [item copyTo:destinationFolder];
+      }] finally:^{
+        ASSERT_MAIN_QUEUE();
+        [self dismissModalViewControllerAnimated:YES];
+      }] subscribeError:^(NSError *error) {
+        ASSERT_MAIN_QUEUE();
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+      } completed:^{
+        ASSERT_MAIN_QUEUE();
+        if (items.count) {
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+        }
+      }];
+    }];
+  }];
+  
+//  [[[RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
+//    @strongify(self);
+//    return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
+//  }]] map:^NSArray *(RACTuple *xs) {
+//    return xs.allObjects;
+//  }] toProperty:@keypath(self.importFileItems) onObject:self];
 }
 
 #pragma mark - Private Methods
