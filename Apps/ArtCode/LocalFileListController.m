@@ -108,7 +108,7 @@ static void _init(LocalFileListController *self) {
 
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  RACTuple *tuple = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *tuple = (self.filteredItems)[indexPath.row];
   UITableViewCell *cell = nil;
   if ([tuple.second isKindOfClass:[RACSignal class]]) {
     static NSString * const progressCellIdentifier = @"progressCell";
@@ -156,14 +156,14 @@ static void _init(LocalFileListController *self) {
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-  RACTuple *item = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *item = (self.filteredItems)[indexPath.row];
   return ![item.second isKindOfClass:[RACSignal class]];
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
   LocalFileListController *nextFileBrowserController = [[LocalFileListController alloc] init];
   nextFileBrowserController.locationDirectory = (FileSystemDirectory *)item;
   nextFileBrowserController.editing = self.editing;
@@ -173,7 +173,7 @@ static void _init(LocalFileListController *self) {
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems addObject:[(RACTuple *)[self.filteredItems objectAtIndex:indexPath.row] first]];
+    [_selectedItems addObject:[(RACTuple *)(self.filteredItems)[indexPath.row] first]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -186,7 +186,7 @@ static void _init(LocalFileListController *self) {
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems removeObject:[(RACTuple *)[self.filteredItems objectAtIndex:indexPath.row] first]];
+    [_selectedItems removeObject:[(RACTuple *)(self.filteredItems)[indexPath.row] first]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];

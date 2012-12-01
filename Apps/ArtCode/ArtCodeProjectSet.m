@@ -60,7 +60,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
     NSManagedObjectContext *defaultContext = [[ArtCodeDatastore defaultDatastore] managedObjectContext];
     NSArray *results = [defaultContext executeFetchRequest:fetchRequest error:NULL];
     if ([results count]) {
-      defaultSet = [results objectAtIndex:0];
+      defaultSet = results[0];
     } else {
       defaultSet = [self insertInManagedObjectContext:defaultContext];
       [defaultSet setName:_defaultProjectSetName];

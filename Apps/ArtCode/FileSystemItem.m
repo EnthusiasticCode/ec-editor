@@ -116,7 +116,7 @@ static NSMutableDictionary *fsItemCache() {
   }
   return [RACSignal defer:^id<RACSignal>{
     ASSERT_FS_QUEUE();
-    FileSystemItem *item = [fsItemCache() objectForKey:url];
+    FileSystemItem *item = fsItemCache()[url];
     if (item) {
       ASSERT([item.urlBacking.first isEqual:url]);
       if (type && ![item.typeBacking.first isEqual:type]) {
@@ -143,7 +143,7 @@ static NSMutableDictionary *fsItemCache() {
     if (!item) {
       return [RACSignal error:[[NSError alloc] init]];
     }
-    [fsItemCache() setObject:item forKey:url];
+    fsItemCache()[url] = item;
     return [RACSignal return:item];
   }];
 }
@@ -626,28 +626,28 @@ static NSMutableDictionary *fsItemCache() {
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
   ASSERT_FS_QUEUE();
-  [[[fsItemCache() objectForKey:source] urlBacking] sendNext:destination];
+  [[fsItemCache()[source] urlBacking] sendNext:destination];
   NSURL *sourceParent = [source URLByDeletingLastPathComponent];
   NSURL *destinationParent = [destination URLByDeletingLastPathComponent];
   if (![sourceParent isEqual:destinationParent]) {
-    [[fsItemCache() objectForKey:sourceParent] didChangeChildren];
-    [[fsItemCache() objectForKey:destinationParent] didChangeChildren];
+    [fsItemCache()[sourceParent] didChangeChildren];
+    [fsItemCache()[destinationParent] didChangeChildren];
   }
 }
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
   ASSERT_FS_QUEUE();
-  [[fsItemCache() objectForKey:[destination URLByDeletingLastPathComponent]] didChangeChildren];
+  [fsItemCache()[[destination URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didCreate:(NSURL *)target {
   ASSERT_FS_QUEUE();
-  [[fsItemCache() objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
+  [fsItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
   ASSERT_FS_QUEUE();
-  FileSystemItem *item = [fsItemCache() objectForKey:target];
+  FileSystemItem *item = fsItemCache()[target];
   if (item) {
     [fsItemCache() removeObjectForKey:target];
     NSString *itemType = item.typeBacking.first;
@@ -667,7 +667,7 @@ static NSMutableDictionary *fsItemCache() {
       }
     }
   }
-  [[fsItemCache() objectForKey:[target URLByDeletingLastPathComponent]] didChangeChildren];
+  [fsItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 @end
@@ -703,7 +703,7 @@ static NSMutableDictionary *fsItemCache() {
   ASSERT_FS_QUEUE();
   static size_t _xattrMaxSize = 4 * 1024; // 4 kB
   
-  RACReplaySubject *backing = [self.extendedAttributesBacking objectForKey:key];
+  RACReplaySubject *backing = (self.extendedAttributesBacking)[key];
   if (!backing) {
     backing = [RACReplaySubject replaySubjectWithCapacity:1];
     
@@ -730,7 +730,7 @@ static NSMutableDictionary *fsItemCache() {
       }
     }];
     
-    [self.extendedAttributesBacking setObject:backing forKey:key];
+    (self.extendedAttributesBacking)[key] = backing;
   }
   return backing;
   

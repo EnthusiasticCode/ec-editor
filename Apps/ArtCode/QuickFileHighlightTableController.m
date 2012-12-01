@@ -81,7 +81,7 @@
   if (indexPath.row == 0) {
     cell.textLabel.text = @"Automatic";
   } else {
-    cell.textLabel.text = [(TMSyntaxNode *)[self.syntaxes objectAtIndex:indexPath.row] name];
+    cell.textLabel.text = [(TMSyntaxNode *)(self.syntaxes)[indexPath.row] name];
   }
   if ((indexPath.row == 0 && self.currentSyntax == nil) || [cell.textLabel.text isEqualToString:self.currentSyntax.name]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
@@ -98,7 +98,7 @@
   if (indexPath.row == 0) {
     self.currentSyntax = nil;
   } else {
-    self.currentSyntax = [self.syntaxes objectAtIndex:indexPath.row];
+    self.currentSyntax = (self.syntaxes)[indexPath.row];
   }
 }
 

@@ -54,13 +54,13 @@ static NSDictionary *_sharedAttributes = nil;
 
 - (NSDictionary *)commonAttributes
 {
-  if ([_environmentAttributes objectForKey:TMThemeForegroundColorEnvironmentAttributeKey] == nil)
+  if (_environmentAttributes[TMThemeForegroundColorEnvironmentAttributeKey] == nil)
     return [[self class] sharedAttributes];
   // TODO: may need not to cache if shared font is changed
   if (!_commonAttributes)
   {
     NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary:[[self class] sharedAttributes]];
-    [common setObject:(__bridge id)[[_environmentAttributes objectForKey:TMThemeForegroundColorEnvironmentAttributeKey] CGColor] forKey:(__bridge id)kCTForegroundColorAttributeName];
+    common[(__bridge id)kCTForegroundColorAttributeName] = (__bridge id)[_environmentAttributes[TMThemeForegroundColorEnvironmentAttributeKey] CGColor];
     _commonAttributes = common;
   }
   return _commonAttributes;
@@ -81,7 +81,7 @@ static NSDictionary *_sharedAttributes = nil;
   
   NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
   
-  NSString *name = [plist objectForKey:_themeNameKey];
+  NSString *name = plist[_themeNameKey];
   if (!name)
     return nil;
   
@@ -89,55 +89,55 @@ static NSDictionary *_sharedAttributes = nil;
   _name = name;
   
   // Preprocess settings
-  NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)[plist objectForKey:_themeSettingsKey] count]];
+  NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plist[_themeSettingsKey] count]];
   NSMutableDictionary *environmentAttributes = [[NSMutableDictionary alloc] init];
-  for (NSDictionary *plistSetting in [plist objectForKey:_themeSettingsKey])
+  for (NSDictionary *plistSetting in plist[_themeSettingsKey])
   {
     // TODO: manage default settings for background, caret
-    NSString *settingScopes = [plistSetting objectForKey:_themeSettingsScopeKey];
+    NSString *settingScopes = plistSetting[_themeSettingsScopeKey];
     if (!settingScopes)
     {
       // Load environment styles
-      [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+      [plistSetting[_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
         UIColor *color = [UIColor colorWithHexString:value];
         if (color)
-          [environmentAttributes setObject:color forKey:key];
+          environmentAttributes[key] = color;
         else
-          [environmentAttributes setObject:value forKey:key];
+          environmentAttributes[key] = value;
       }];
       _environmentAttributes = [environmentAttributes copy];
       continue;
     }
     
-    NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)[plistSetting objectForKey:_themeSettingsKey] count]];
+    NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plistSetting[_themeSettingsKey] count]];
     
     // Pre-map settings with Core Text attributes
-    [[plistSetting objectForKey:_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
+    [plistSetting[_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
       ASSERT([value isKindOfClass:[NSString class]]);
       
       if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
         if ([value isEqualToString:@"italic"] && _sharedItalicFont) {
-          [styleSettings setObject:(__bridge id)_sharedItalicFont forKey:(__bridge id)kCTFontAttributeName];
+          styleSettings[(__bridge id)kCTFontAttributeName] = (__bridge id)_sharedItalicFont;
         }
         else if ([value isEqualToString:@"bold"] && _sharedBoldFont) {
-          [styleSettings setObject:(__bridge id)_sharedBoldFont forKey:(__bridge id)kCTFontAttributeName];
+          styleSettings[(__bridge id)kCTFontAttributeName] = (__bridge id)_sharedBoldFont;
         }
         else if ([value isEqualToString:@"underline"]) {
-          [styleSettings setObject:[NSNumber numberWithUnsignedInt:kCTUnderlineStyleSingle] forKey:(__bridge id)kCTUnderlineStyleAttributeName];
+          styleSettings[(__bridge id)kCTUnderlineStyleAttributeName] = @(kCTUnderlineStyleSingle);
         }
       }
       else if ([key isEqualToString:@"foreground"]) {
-        [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:(__bridge id)kCTForegroundColorAttributeName];
+        styleSettings[(__bridge id)kCTForegroundColorAttributeName] = (__bridge id)[UIColor colorWithHexString:value].CGColor;
       }
       else if ([key isEqualToString:@"background"]) {
-        [styleSettings setObject:(__bridge id)[UIColor colorWithHexString:value].CGColor forKey:@"runBackground"];
+        styleSettings[@"runBackground"] = (__bridge id)[UIColor colorWithHexString:value].CGColor;
       }
       else {
-        [styleSettings setObject:value forKey:key];
+        styleSettings[key] = value;
       }
     }];
     
-    [themeSettings setObject:styleSettings forKey:settingScopes];
+    themeSettings[settingScopes] = styleSettings;
   }
   _settings = themeSettings;    
   _scopeAttribuesCache = [[NSCache alloc] init];
@@ -158,7 +158,7 @@ static NSDictionary *_sharedAttributes = nil;
   [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:settingScope];
     if (score > 0) {
-      [scoreForAttributes setObject:attributes forKey:@(score)];
+      scoreForAttributes[@(score)] = attributes;
     }
   }];
   
@@ -168,7 +168,7 @@ static NSDictionary *_sharedAttributes = nil;
     [newResultAttributes addEntriesFromDictionary:self.commonAttributes];
   }
   for (NSNumber *score in [scoreForAttributes.allKeys sortedArrayUsingSelector:@selector(compare:)]) {
-    [newResultAttributes addEntriesFromDictionary:[scoreForAttributes objectForKey:score]];
+    [newResultAttributes addEntriesFromDictionary:scoreForAttributes[score]];
   }
   
   // Cache results
@@ -213,9 +213,8 @@ static NSDictionary *_sharedAttributes = nil;
   
   if (!_sharedAttributes)
   {
-    _sharedAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                         (__bridge id)_sharedFont, kCTFontAttributeName,
-                         [NSNumber numberWithInt:0], kCTLigatureAttributeName, nil];
+    _sharedAttributes = @{(id)kCTFontAttributeName: (__bridge id)_sharedFont,
+                         (id)kCTLigatureAttributeName: @0};
   }
   return _sharedAttributes;
 }

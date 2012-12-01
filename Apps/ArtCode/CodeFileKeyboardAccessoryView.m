@@ -36,7 +36,7 @@ static const void *itemContext;
   if (!_itemPopoverViewDismissRecognizer)
   {
     _itemPopoverViewDismissRecognizer = [[InstantGestureRecognizer alloc] initWithTarget:self action:@selector(_handleDismissRecognizer:)];
-    _itemPopoverViewDismissRecognizer.passTroughViews = [NSArray arrayWithObject:self.itemPopoverView.contentView];
+    _itemPopoverViewDismissRecognizer.passTroughViews = @[self.itemPopoverView.contentView];
   }
   return _itemPopoverViewDismissRecognizer;
 }
@@ -183,7 +183,7 @@ static const void *itemContext;
   NSUInteger tag = sender.tag;
   if (tag < [self.items count])
   {
-    UIBarButtonItem *item = [self.items objectAtIndex:tag];
+    UIBarButtonItem *item = (self.items)[tag];
     if (item.target && item.action)
       objc_msgSend(item.target, item.action, item);
   }
@@ -268,7 +268,7 @@ static const void *itemContext;
 {
   ASSERT(index < [self.items count]);
   
-  UIView *itemView = [[self.items objectAtIndex:index] customView];
+  UIView *itemView = [(self.items)[index] customView];
   if (!itemView)
     return;
   

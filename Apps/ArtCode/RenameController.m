@@ -140,7 +140,7 @@
     cell = [[RenameCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  cell.item = [self.alsoRenameItems objectAtIndex:indexPath.row];
+  cell.item = (self.alsoRenameItems)[indexPath.row];
   if ([self.selectedAlsoRenameItems containsObject:cell.item]) {
     [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
   }
@@ -152,11 +152,11 @@
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self.selectedAlsoRenameItems addObject:[self.alsoRenameItems objectAtIndex:indexPath.row]];
+  [self.selectedAlsoRenameItems addObject:(self.alsoRenameItems)[indexPath.row]];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self.selectedAlsoRenameItems removeObject:[self.alsoRenameItems objectAtIndex:indexPath.row]];
+  [self.selectedAlsoRenameItems removeObject:(self.alsoRenameItems)[indexPath.row]];
 }
 
 #pragma mark - Private methods

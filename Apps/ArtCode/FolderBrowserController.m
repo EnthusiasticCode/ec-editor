@@ -79,7 +79,7 @@
     cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
   }
   
-  cell.item = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  cell.item = (self.currentFolderSubfolders)[indexPath.row];
   cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
   
   return cell;
@@ -88,14 +88,14 @@
 #pragma mark - UITableView Delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  self.selectedFolder = [self.currentFolderSubfolders objectAtIndex:indexPath.row];
+  self.selectedFolder = (self.currentFolderSubfolders)[indexPath.row];
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   ASSERT(self.navigationController != nil);
   
   FolderBrowserController *nextBrowser = [[FolderBrowserController alloc] initWithStyle:self.tableView.style];
-  nextBrowser.currentFolderSignal = [RACSignal return:[self.currentFolderSubfolders objectAtIndex:indexPath.row]];
+  nextBrowser.currentFolderSignal = [RACSignal return:(self.currentFolderSubfolders)[indexPath.row]];
   nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
   [self.navigationController pushViewController:nextBrowser animated:YES];
 }

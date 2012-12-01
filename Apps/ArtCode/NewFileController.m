@@ -57,7 +57,7 @@
       self.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
   }] map:^id(id x) {
-    return [NSNumber numberWithBool:x != nil];
+		return @(x != nil);
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }
 

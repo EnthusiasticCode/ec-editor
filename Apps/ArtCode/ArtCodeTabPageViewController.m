@@ -60,7 +60,7 @@
   UIButton *addTabButton = [[UIButton alloc] init];
   [addTabButton setImage:[UIImage imageNamed:@"tabBar_TabAddButton"] forState:UIControlStateNormal];
   [addTabButton addTarget:self action:@selector(_addButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-  self.tabBar.additionalControls = [NSArray arrayWithObject:addTabButton];
+  self.tabBar.additionalControls = @[addTabButton];
   
   for (ArtCodeTab *tab in [self.artCodeTabSet tabs]) {
     [self.tabBar addTabWithTitle:tab.currentLocation.name animated:NO];
@@ -73,7 +73,7 @@
 
 - (UIViewController *)tabPageViewController:(TabPageViewController *)tabPageController viewControllerForTabAtIndex:(NSUInteger)tabIndex {
   // Get the corresponding ArtCodeTab
-  ArtCodeTab *artCodeTab = [[self.artCodeTabSet tabs] objectAtIndex:tabIndex];
+  ArtCodeTab *artCodeTab = [self.artCodeTabSet tabs][tabIndex];
   
   // Search in controllers already presents as child
   for (SingleTabController *controller in self.childViewControllers) {
@@ -122,7 +122,7 @@
   }
   
   // Get the art code tab to remove
-  ArtCodeTab *artCodeTab = [[self.artCodeTabSet tabs] objectAtIndex:tabIndex];
+  ArtCodeTab *artCodeTab = [self.artCodeTabSet tabs][tabIndex];
   
   // Clear the controller state to avoid RAC problems
   for (SingleTabController *controller in self.childViewControllers) {

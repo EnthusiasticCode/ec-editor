@@ -54,7 +54,7 @@
 
 - (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
   // TODO: port to rac_fs
-  resultHandler([NSArray array]);
+  resultHandler(@[]);
 }
 
 #pragma mark - Project-wide operations

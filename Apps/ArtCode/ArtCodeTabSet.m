@@ -43,7 +43,7 @@
   NSArray *results = [context executeFetchRequest:fetchRequest error:NULL];
   if ([results count] > 0) {
     ASSERT([results count] == 1); // if more than 1 they should be merged
-    return [results objectAtIndex:0];
+    return results[0];
   }
   
   // At this point there is no default tab set and it should be created

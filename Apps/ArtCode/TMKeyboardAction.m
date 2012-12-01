@@ -76,9 +76,9 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   
   for (NSDictionary *command in _commands)
   {
-    if (![target keyboardAction:self canPerformSelector:NSSelectorFromString([command objectForKey:@"command"])])
+    if (![target keyboardAction:self canPerformSelector:NSSelectorFromString(command[@"command"])])
       continue;
-    objc_msgSend(target, NSSelectorFromString([command objectForKey:@"command"]), [command objectForKey:@"argument"]);
+    objc_msgSend(target, NSSelectorFromString(command[@"command"]), command[@"argument"]);
   }
 }
 
@@ -86,11 +86,11 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 
 - (id)initWithDictionary:(NSDictionary *)dict {
   ASSERT(dict);
-  self = [self initWithUUID:[dict objectForKey:@"uuid"] 
-                      title:[dict objectForKey:@"title"] 
-                description:[dict objectForKey:@"description"] 
-                  imagePath:[dict objectForKey:@"imagePath"] 
-                   commands:[dict objectForKey:@"commands"]];
+  self = [self initWithUUID:dict[@"uuid"] 
+                      title:dict[@"title"] 
+                description:dict[@"description"] 
+                  imagePath:dict[@"imagePath"] 
+                   commands:dict[@"commands"]];
   if (!self)
     return nil;
   return self;
@@ -107,8 +107,8 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   ASSERT([plist objectForKey:@"keyboardActionsConfiguration"] == nil); // No configurations allowed
   
   // Load global actions
-  for (NSDictionary *action in [plist objectForKey:@"keyboardActions"]) {
-    [systemKeyboardActions setObject:[[TMKeyboardAction alloc] initWithDictionary:action] forKey:[action objectForKey:@"uuid"]];
+  for (NSDictionary *action in plist[@"keyboardActions"]) {
+    systemKeyboardActions[action[@"uuid"]] = [[TMKeyboardAction alloc] initWithDictionary:action];
   }
 }
 
@@ -121,21 +121,21 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   
   // Load local actions
   NSMutableDictionary *localActions = [[NSMutableDictionary alloc] init];
-  for (NSDictionary *action in [plist objectForKey:@"keyboardActions"]) {
-    [localActions setObject:[[TMKeyboardAction alloc] initWithDictionary:action] forKey:[action objectForKey:@"uuid"]];
+  for (NSDictionary *action in plist[@"keyboardActions"]) {
+    localActions[action[@"uuid"]] = [[TMKeyboardAction alloc] initWithDictionary:action];
   }
   
   // Load configuration
   NSMutableArray *configuration = [[NSMutableArray alloc] init];
-  for (NSString *actionUUID in [plist objectForKey:@"keyboardActionsConfiguration"])
+  for (NSString *actionUUID in plist[@"keyboardActionsConfiguration"])
   {
     if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"]) {
       [configuration addObject:[NSNull null]];
     } else {
       // Get action from local or global action dictionaries
-      id action = [localActions objectForKey:actionUUID];
+      id action = localActions[actionUUID];
       if (!action)
-        action = [systemKeyboardActions objectForKey:actionUUID];
+        action = systemKeyboardActions[actionUUID];
       [configuration addObject:action];
     }
   }
@@ -143,9 +143,9 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   // Add configuration to system list
   if (!systemKeyboardActionsConfigurations)
     systemKeyboardActionsConfigurations = [[NSMutableDictionary alloc] init];
-  for (NSString *scope in [[plist objectForKey:@"scope"] componentsSeparatedByString:@","])
+  for (NSString *scope in [plist[@"scope"] componentsSeparatedByString:@","])
   {
-    [systemKeyboardActionsConfigurations setObject:[configuration copy] forKey:scope];
+    systemKeyboardActionsConfigurations[scope] = [configuration copy];
   }
 }
 
@@ -163,7 +163,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 + (NSArray *)defaultKeyboardActionsConfiguration {
   if (!systemDefaultKeyboardActionsConfiguration) {
     // TODO: actually craete an hardcoded cofiguration
-    systemDefaultKeyboardActionsConfiguration = [[self allKeyboardActionsConfigurations] objectForKey:@"text.plain"];
+    systemDefaultKeyboardActionsConfiguration = [self allKeyboardActionsConfigurations][@"text.plain"];
     ASSERT(systemDefaultKeyboardActionsConfiguration.count == 11);
   }
   return systemDefaultKeyboardActionsConfiguration;
@@ -173,7 +173,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   if (!systemKeyboardActionsConfigurations) {
     NSNumber *isRegularFile = nil;
     for (NSURL *bundleURL in [TMBundle bundleURLs]) {
-      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardConfigurationsPath isDirectory:YES] includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsRegularFileKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
+      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardConfigurationsPath isDirectory:YES] includingPropertiesForKeys:@[NSURLIsRegularFileKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
         if ([keyboardActionURL getResourceValue:&isRegularFile forKey:NSURLIsRegularFileKey error:NULL] && [isRegularFile boolValue]) {
           [self _loadKeyboardActionsConfigurationsFromFileURL:keyboardActionURL];
         }
@@ -192,7 +192,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   [[self allKeyboardActionsConfigurations] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, NSArray *conf, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:scopeSelector];
     if (score > 0) {
-      [configurationDictionary setObject:conf forKey:[NSNumber numberWithFloat:score]];
+      configurationDictionary[@(score)] = conf;
     }
   }];
   
@@ -202,7 +202,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   // Apply configurations
   if (configurationDictionary.count) {
     for (NSNumber *n in [[configurationDictionary allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
-      [(NSArray *)[configurationDictionary objectForKey:n] enumerateObjectsUsingBlock:^(id action, NSUInteger idx, BOOL *stop) {
+      [(NSArray *)configurationDictionary[n] enumerateObjectsUsingBlock:^(id action, NSUInteger idx, BOOL *stop) {
         if (action != [NSNull null]) {
           // If action is not inherit, substitute to result configuration
           [configuration removeObjectAtIndex:idx];

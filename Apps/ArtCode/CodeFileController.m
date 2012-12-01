@@ -227,9 +227,9 @@ static void drawStencilStar(CGContextRef myContext)
   if (self.currentSymbol) {
     NSString *path = [self.artCodeTab.currentLocation path];
     if (self.currentSymbol.icon) {
-      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+      [titleControl setTitleFragments:@[[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     } else {
-      [titleControl setTitleFragments:[NSArray arrayWithObjects:[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.title, nil] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
+      [titleControl setTitleFragments:@[[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.title] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     }
     return YES;
   }
@@ -612,7 +612,7 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)viewDidLoad {
   [self.wrapperView addSubview:[self _contentView]];
   
-  self.toolbarItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];  
+  self.toolbarItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];  
 }
 
 - (void)viewDidUnload {
@@ -708,7 +708,7 @@ static void drawStencilStar(CGContextRef myContext)
   for (TMSymbol *symbol in self.codeUnit.symbolList) {
     if (NSLocationInRange(symbol.range.location, range)) {
       if (!_minimapSymbolColor) {
-        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:symbol.qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+        _minimapSymbolColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[TMTheme currentTheme] attributesForQualifiedIdentifier:symbol.qualifiedIdentifier][(__bridge id)kCTForegroundColorAttributeName]];
       }
       *lineColor = _minimapSymbolColor;
       return YES;
@@ -723,7 +723,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     if ([qualifiedIdentifier rangeOfString:@"preprocessor"].location != NSNotFound) {
       if (!_minimapPreprocessorColor) {
-        _minimapPreprocessorColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+        _minimapPreprocessorColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier][(__bridge id)kCTForegroundColorAttributeName]];
       }
       color = _minimapPreprocessorColor;
       *stop = YES;
@@ -732,7 +732,7 @@ static void drawStencilStar(CGContextRef myContext)
     
     if ([qualifiedIdentifier rangeOfString:@"comment"].location != NSNotFound) {
       if (!_minimapCommentColor) {
-        _minimapCommentColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier] objectForKey:(__bridge id)kCTForegroundColorAttributeName]];
+        _minimapCommentColor = [UIColor colorWithCGColor:(__bridge CGColorRef)[[TMTheme currentTheme] attributesForQualifiedIdentifier:qualifiedIdentifier][(__bridge id)kCTForegroundColorAttributeName]];
       }
       color = _minimapCommentColor;
       *stop = YES;
@@ -894,7 +894,7 @@ static void drawStencilStar(CGContextRef myContext)
           [item setWidth:60 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
       }
       
-      action = [_keyboardAccessoryItemActions objectAtIndex:i];
+      action = _keyboardAccessoryItemActions[i];
       item.title = action.title;
       item.image = [action image];
       item.tag = i;
@@ -905,7 +905,7 @@ static void drawStencilStar(CGContextRef myContext)
   } else {
     NSArray *items = accessoryView.items;
     [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
-      TMKeyboardAction *action = [_keyboardAccessoryItemActions objectAtIndex:itemIndex];
+      TMKeyboardAction *action = _keyboardAccessoryItemActions[itemIndex];
       item.title = action.title;
       item.image = [action image];
     }];
@@ -915,7 +915,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (void)_keyboardAccessoryItemAction:(UIBarButtonItem *)item {
   _keyboardAccessoryItemCurrentActionIndex = item.tag;
-  [[_keyboardAccessoryItemActions objectAtIndex:item.tag] executeActionOnTarget:self];
+  [_keyboardAccessoryItemActions[item.tag] executeActionOnTarget:self];
 }
 
 static CGFloat placeholderEndingsWidthCallback(void *refcon) {
@@ -997,22 +997,22 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   };
   
   // placeholder body style
-  [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:placeHolderBodyBlock, TextRendererRunUnderlayBlockAttributeName, [UIColor blackColor].CGColor, kCTForegroundColorAttributeName, nil] range:NSMakeRange(range.location + 2, range.length - 4)];
+  [attributedString addAttributes:@{TextRendererRunUnderlayBlockAttributeName: placeHolderBodyBlock, (id)kCTForegroundColorAttributeName: (id)([UIColor blackColor].CGColor)} range:NSMakeRange(range.location + 2, range.length - 4)];
   
   // Opening and Closing style
   
   //
-  CGFontRef font = (__bridge CGFontRef)[TMTheme.defaultTheme.commonAttributes objectForKey:(__bridge id)kCTFontAttributeName];
+  CGFontRef font = (__bridge CGFontRef)(TMTheme.defaultTheme.commonAttributes)[(__bridge id)kCTFontAttributeName];
   ASSERT(font);
   CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
   
-  [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderLeftBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(range.location, 2)];
-  [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:(__bridge id)delegateRef, kCTRunDelegateAttributeName, placeholderRightBlock, TextRendererRunDrawBlockAttributeName, nil] range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+  [attributedString addAttributes:@{(id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderLeftBlock} range:NSMakeRange(range.location, 2)];
+  [attributedString addAttributes:@{(id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderRightBlock} range:NSMakeRange(NSMaxRange(range) - 2, 2)];
   
   CFRelease(delegateRef);
   
   // Placeholder behaviour
-  [attributedString addAttributes:[NSDictionary dictionaryWithObjectsAndKeys:name, CodeViewPlaceholderAttributeName, nil] range:range];
+  [attributedString addAttributes:@{CodeViewPlaceholderAttributeName: name} range:range];
 }
 
 #pragma mark Keyboard Actions Target Methods
@@ -1037,13 +1037,13 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 
 - (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
   UIColor *color = nil;
-  color = [theme.environmentAttributes objectForKey:TMThemeBackgroundColorEnvironmentAttributeKey];
+  color = (theme.environmentAttributes)[TMThemeBackgroundColorEnvironmentAttributeKey];
   self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
   self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
   self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
-  color = [theme.environmentAttributes objectForKey:TMThemeCaretColorEnvironmentAttributeKey];
+  color = (theme.environmentAttributes)[TMThemeCaretColorEnvironmentAttributeKey];
   self.codeView.caretColor = color ? color : [UIColor blackColor];
-  color = [theme.environmentAttributes objectForKey:TMThemeSelectionColorEnvironmentAttributeKey];
+  color = (theme.environmentAttributes)[TMThemeSelectionColorEnvironmentAttributeKey];
   self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
   
   _minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;

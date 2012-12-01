@@ -90,7 +90,7 @@ static void _init(NewFileImportController *self) {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
     [[NSFileManager defaultManager] removeItemAtURL:self.importableFileItems[indexPath.row] error:NULL];
     _importableFileItems = [self _importableFileURLsInDocuments];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
 }
 

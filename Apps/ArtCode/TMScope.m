@@ -79,7 +79,7 @@
   else
   {
     _qualifiedIdentifier = identifier;
-    _identifiersStack = identifier ? [NSArray arrayWithObject:identifier] : nil;
+    _identifiersStack = identifier ? @[identifier] : nil;
   }
   _identifierRange.length = [identifier length];
   _syntaxNode = syntaxNode;
@@ -156,7 +156,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     
     if (insertionIndex < childrenRange.length)
     {
-      TMScope *childScope = [scope->_children objectAtIndex:insertionIndex];
+      TMScope *childScope = scope->_children[insertionIndex];
       NSUInteger childScopeLocation = childScope->_location;
       NSUInteger childScopeEnd = childScope->_location + childScope->_length;
       BOOL scopePassesQueryOpenOnly = !(options & TMScopeQueryOpenOnly) || ((childScope->_type == TMScopeTypeSpan ) && !(childScope->_flags & TMScopeHasBegin));
@@ -171,7 +171,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     }
     if (insertionIndex > 0)
     {
-      TMScope *childScope = [scope->_children objectAtIndex:insertionIndex - 1];
+      TMScope *childScope = scope->_children[insertionIndex - 1];
       NSUInteger childScopeLocation = childScope->_location;
       NSUInteger childScopeEnd = childScope->_location + childScope->_length;
       BOOL scopePassesQueryOpenOnly = !(options & TMScopeQueryOpenOnly) || ((childScope->_type == TMScopeTypeSpan ) && !(childScope->_flags & TMScopeHasEnd));
@@ -279,7 +279,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     if (childScopeIndex < scope->_children.count)
     {
       BOOL recurse = NO;
-      TMScope *childScope = [scope->_children objectAtIndex:childScopeIndex];
+      TMScope *childScope = scope->_children[childScopeIndex];
       ASSERT(childScope->_type == TMScopeTypeMatch || childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent || childScope->_type == TMScopeTypeBegin || childScope->_type == TMScopeTypeEnd);
       NSRange childScopeRange = NSMakeRange(childScope->_location, childScope->_length);
       NSUInteger childScopeEnd = NSMaxRange(childScopeRange);
@@ -314,7 +314,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasBeginScope)
           {
-            callBlockOnDescendantsOfScope(block, [childScope->_children objectAtIndex:0]);
+            callBlockOnDescendantsOfScope(block, childScope->_children[0]);
             [childScope->_children removeObjectAtIndex:0];
             childScope->_flags &= ~TMScopeHasBeginScope;
           }
@@ -353,10 +353,10 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
         {
           if (childScope->_flags & TMScopeHasBeginScope)
           {
-            TMScope *beginScope = [childScope->_children objectAtIndex:0];
+            TMScope *beginScope = childScope->_children[0];
             if (range.location < beginScope->_location + beginScope->_length)
             {
-              callBlockOnDescendantsOfScope(block, [childScope->_children objectAtIndex:0]);
+              callBlockOnDescendantsOfScope(block, childScope->_children[0]);
               [childScope->_children removeObjectAtIndex:0];
               childScope->_flags &= ~TMScopeHasBeginScope;
               childScope->_flags &= ~TMScopeHasBegin;
@@ -382,7 +382,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       if (recurse)
       {
         ASSERT(childScope->_type == TMScopeTypeSpan || childScope->_type == TMScopeTypeContent);
-        [childScopeIndexStack addObject:[NSNumber numberWithUnsignedInteger:childScopeIndex]];
+        [childScopeIndexStack addObject:@(childScopeIndex)];
         childScopeIndex = 0;
         scope = childScope;
         continue;
@@ -418,7 +418,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   
   // Compare scopes at each depth to see if they all match
   [leftScopeStack enumerateObjectsUsingBlock:^(TMScope *head, NSUInteger depth, BOOL *stop) {
-    TMScope *tail = [rightScopeStack objectAtIndex:depth];
+    TMScope *tail = rightScopeStack[depth];
     if (head == tail) {
       return;
     }
@@ -448,7 +448,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   
   // Proceed to merge
   [leftScopeStack enumerateObjectsUsingBlock:^(TMScope *head, NSUInteger depth, BOOL *stop) {
-    TMScope *tail = [rightScopeStack objectAtIndex:depth];
+    TMScope *tail = rightScopeStack[depth];
     if (head == tail) {
       return;
     }
@@ -514,7 +514,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   if (_type == TMScopeTypeSpan) {
     ASSERT(_flags & TMScopeHasBegin);
     if (_flags & TMScopeHasBeginScope) {
-      TMScope *beginScope = [_children objectAtIndex:0];
+      TMScope *beginScope = _children[0];
       ASSERT(beginScope->_type == TMScopeTypeBegin);
     }
     if (_flags & TMScopeHasEndScope) {
@@ -522,7 +522,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       ASSERT(endScope->_type == TMScopeTypeEnd);
     }
     if (_flags & TMScopeHasContentScope) {
-      TMScope *contentScope = [_children objectAtIndex:_flags & TMScopeHasBeginScope ? 1 : 0];
+      TMScope *contentScope = _children[_flags & TMScopeHasBeginScope ? 1 : 0];
       ASSERT(contentScope->_type == TMScopeTypeContent);
     }
   }

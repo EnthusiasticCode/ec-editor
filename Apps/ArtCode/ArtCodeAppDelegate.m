@@ -57,7 +57,7 @@
   ////////////////////////////////////////////////////////////////////////////
   // UI Bars
   [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
-  [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], UITextAttributeTextColor, [UIColor blackColor], UITextAttributeTextShadowColor, [NSValue valueWithUIOffset:UIOffsetMake(0, -1)], UITextAttributeTextShadowOffset, nil]];
+  [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeTextColor: [UIColor whiteColor], UITextAttributeTextShadowColor: [UIColor blackColor], UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]}];
   
   [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
   
@@ -122,8 +122,8 @@
   [self.window makeKeyAndVisible];
   
   // Open the file if needed to account for open with...
-  if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]) {
-    return [self application:[UIApplication sharedApplication] openURL:[launchOptions objectForKey:UIApplicationLaunchOptionsURLKey] sourceApplication:[launchOptions objectForKey:UIApplicationLaunchOptionsSourceApplicationKey] annotation:[launchOptions objectForKey:UIApplicationLaunchOptionsAnnotationKey]];
+  if (launchOptions[UIApplicationLaunchOptionsURLKey]) {
+    return [self application:[UIApplication sharedApplication] openURL:launchOptions[UIApplicationLaunchOptionsURLKey] sourceApplication:launchOptions[UIApplicationLaunchOptionsSourceApplicationKey] annotation:launchOptions[UIApplicationLaunchOptionsAnnotationKey]];
   }
   
   return YES;

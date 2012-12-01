@@ -64,7 +64,7 @@
 
 - (NSManagedObjectModel *)managedObjectModel {
   if (!_managedObjectModel) {
-    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:[NSArray arrayWithObject:[NSBundle mainBundle]]];
+    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:@[[NSBundle mainBundle]]];
   }
   return _managedObjectModel;
 }

@@ -81,7 +81,7 @@
   
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 
-  cell.textLabel.text = [[self.documentsArchiveURLs objectAtIndex:indexPath.row] lastPathComponent];
+  cell.textLabel.text = [(self.documentsArchiveURLs)[indexPath.row] lastPathComponent];
   cell.imageView.image = [UIImage styleProjectImageWithSize:CGSizeMake(32, 32) labelColor:nil];
   
   return cell;
@@ -93,16 +93,16 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
-    [[NSFileManager defaultManager] removeItemAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] error:NULL];
+    [[NSFileManager defaultManager] removeItemAtURL:(self.documentsArchiveURLs)[indexPath.row] error:NULL];
     _documentsArchiveURLs = nil;
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self createProjectFromZipAtURL:[self.documentsArchiveURLs objectAtIndex:indexPath.row] completionHandler:^(ArtCodeProject *project) {
+  [self createProjectFromZipAtURL:(self.documentsArchiveURLs)[indexPath.row] completionHandler:^(ArtCodeProject *project) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }];

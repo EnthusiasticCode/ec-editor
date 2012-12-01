@@ -152,7 +152,7 @@
     @strongify(self);
     // On Subscription, start the download
     RACSubject *downloadSignal = [RACSubject subject];
-    [self->_downloadProgressSignals setObject:downloadSignal forKey:remotePath];
+    self->_downloadProgressSignals[remotePath] = downloadSignal;
     [self->_connection downloadFile:remotePath toDirectory:localURL.path overwrite:YES delegate:nil];
     // Retun an 'endWith:localURL' signal
 		return [downloadSignal
@@ -183,11 +183,11 @@
       totalExpected = content.count;
       return [[content map:^id<RACSignal>(NSDictionary *item) {
         @strongify(self);
-        NSString *itemName = [item objectForKey:cxFilenameKey];
+        NSString *itemName = item[cxFilenameKey];
         NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
         NSURL *itemLocalURL = [localURL URLByAppendingPathComponent:itemName isDirectory:YES];
         // For every item in the directory, return the progress signal
-        if ([item objectForKey:NSFileType] == NSFileTypeDirectory) {
+        if (item[NSFileType] == NSFileTypeDirectory) {
           return [self _downloadDirectoryWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
         } else {
           return [self _downloadFileWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
@@ -227,7 +227,7 @@
 
 - (RACSignal *)_uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
   RACSubject *uploadSignal = [RACSubject subject];
-  [_uploadProgressSignals setObject:uploadSignal forKey:remotePath];
+  _uploadProgressSignals[remotePath] = uploadSignal;
   [_connection uploadFileAtURL:localURL toPath:remotePath openingPosixPermissions:0];
   return uploadSignal;
 }
@@ -271,7 +271,7 @@
     _deleteProgressSignals = [[NSMutableDictionary alloc] init];
   }
   RACSubject *deleteSignal = [RACSubject subject];
-  [_deleteProgressSignals setObject:deleteSignal forKey:remotePath];
+  _deleteProgressSignals[remotePath] = deleteSignal;
   [_connection deleteFile:remotePath];
   return deleteSignal;
 }
@@ -358,7 +358,7 @@
 
 - (void)connection:(id<CKPublishingConnection>)connection appendString:(NSString *)string toTranscript:(CKTranscriptType)transcript {
   NSLog(@"transcript: %@", string);
-  [_transcriptSubject sendNext:[RACTuple tupleWithObjects:[NSNumber numberWithInt:transcript], string, nil]];
+  [_transcriptSubject sendNext:[RACTuple tupleWithObjects:@(transcript), string, nil]];
 }
 
 #pragma mark Connection Downloads
@@ -368,11 +368,11 @@
 }
 
 - (void)connection:(id<CKConnection>)con download:(NSString *)remotePath progressedTo:(NSNumber *)percent {
-  [[_downloadProgressSignals objectForKey:remotePath] sendNext:percent];
+  [_downloadProgressSignals[remotePath] sendNext:percent];
 }
 
 - (void)connection:(id<CKConnection>)con downloadDidFinish:(NSString *)remotePath error:(NSError *)error {
-  RACSubject *subject = [_downloadProgressSignals objectForKey:remotePath];
+  RACSubject *subject = _downloadProgressSignals[remotePath];
   if (error) {
     [subject sendError:error];
   } else {
@@ -392,11 +392,11 @@
 }
 
 - (void)connection:(id<CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent {
-  [[_uploadProgressSignals objectForKey:remotePath] sendNext:percent];
+  [_uploadProgressSignals[remotePath] sendNext:percent];
 }
 
 - (void)connection:(id<CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error {
-  RACSubject *subject = [_uploadProgressSignals objectForKey:remotePath];
+  RACSubject *subject = _uploadProgressSignals[remotePath];
   if (error) {
     [subject sendError:error];
   } else {
@@ -409,7 +409,7 @@
 #pragma mark Connection Deletion
 
 - (void)connection:(id <CKPublishingConnection>)con didDeleteFile:(NSString *)path error:(NSError *)error {
-  RACSubject *subject = [_deleteProgressSignals objectForKey:path];
+  RACSubject *subject = _deleteProgressSignals[path];
   if (error) {
     [subject sendError:error];
   } else {

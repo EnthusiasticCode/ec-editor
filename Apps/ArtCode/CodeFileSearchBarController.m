@@ -109,8 +109,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (void)viewDidDisappear:(BOOL)animated {
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  [defaults setObject:[NSNumber numberWithUnsignedInteger:self.regExpOptions] forKey:@"CodeFileFindRegExpOptions"];
-  [defaults setObject:[NSNumber numberWithUnsignedInteger:self.hitMustOption] forKey:@"CodeFileFindHitMustOption"];
+  [defaults setObject:@(self.regExpOptions) forKey:@"CodeFileFindRegExpOptions"];
+  [defaults setObject:@(self.hitMustOption) forKey:@"CodeFileFindHitMustOption"];
   [defaults synchronize];
   
   [self.targetCodeFileController.codeView removePassLayerForKey:findFilterPassBlockKey];
@@ -176,7 +176,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     _searchFilterMatchesLocation = 0;
   }
   
-  [_targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
+  [_targetCodeFileController.codeView flashTextInRange:[_searchFilterMatches[_searchFilterMatchesLocation] range]];
 }
 
 - (IBAction)toggleReplaceAction:(id)sender {
@@ -201,7 +201,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   _isReplacing = YES;
   
   // Get the string to replace
-  NSTextCheckingResult *match = [self.searchFilterMatches objectAtIndex:_searchFilterMatchesLocation];
+  NSTextCheckingResult *match = (self.searchFilterMatches)[_searchFilterMatchesLocation];
   NSString *replacementString = self.replaceTextField.text;
   if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
     replacementString = [NSRegularExpression escapedTemplateForString:replacementString];
@@ -375,7 +375,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     _findResultLabel.text = @"Invalid RegExp";
   } else if ([_searchFilterMatches count] > 0) {
     if (shouldFlash) {
-      [_targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:_searchFilterMatchesLocation] range]];
+      [_targetCodeFileController.codeView flashTextInRange:[_searchFilterMatches[_searchFilterMatchesLocation] range]];
     }
     _findResultLabel.text = [NSString stringWithFormat:@"%u matches", [_searchFilterMatches count]];
   } else {

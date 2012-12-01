@@ -16,12 +16,10 @@
 - (NSString *)passwordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier
 {
   CFTypeRef outDataRef = NULL;
-  if (SecItemCopyMatching((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
-                                                     (__bridge id)kCFBooleanTrue, (__bridge id)kSecReturnData,
-                                                     (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass, 
-                                                     serviceIdentifier, (__bridge id)kSecAttrService,
-                                                     accountIdentifier, (__bridge id)kSecAttrAccount, 
-                                                     nil], &outDataRef) != noErr)
+  if (SecItemCopyMatching((__bridge CFDictionaryRef)@{(__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
+                                                     (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword, 
+                                                     (__bridge id)kSecAttrService: serviceIdentifier,
+                                                     (__bridge id)kSecAttrAccount: accountIdentifier}, &outDataRef) != noErr)
     return nil;
   
   NSString *password = [[NSString alloc] initWithData:(__bridge NSData *)outDataRef encoding:NSUTF8StringEncoding];
@@ -36,30 +34,28 @@
     return [self removePasswordForServiceWithIdentifier:serviceIdentifier account:accountIdentifier];
   }
   
-  NSDictionary *spec = [NSDictionary dictionaryWithObjectsAndKeys:
-                        (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass,
-                        serviceIdentifier, (__bridge id)kSecAttrService,
-                        accountIdentifier, (__bridge id)kSecAttrAccount, nil];
+  NSDictionary *spec = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+                        (__bridge id)kSecAttrService: serviceIdentifier,
+                        (__bridge id)kSecAttrAccount: accountIdentifier};
   
   
   if([self passwordForServiceWithIdentifier:serviceIdentifier account:accountIdentifier] != nil)
   {
-    return !SecItemUpdate((__bridge CFDictionaryRef)spec, (__bridge CFDictionaryRef)[NSDictionary dictionaryWithObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecValueData]);
+    return !SecItemUpdate((__bridge CFDictionaryRef)spec, (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: [password dataUsingEncoding:NSUTF8StringEncoding]});
   }
   else
   {
     NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:spec];
-    [data setObject:[password dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecValueData];
+    data[(__bridge id)kSecValueData] = [password dataUsingEncoding:NSUTF8StringEncoding];
     return !SecItemAdd((__bridge CFDictionaryRef)data, NULL);
   }
 }
 
 - (BOOL)removePasswordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier
 { 
-  return !SecItemDelete((__bridge CFDictionaryRef)[NSDictionary dictionaryWithObjectsAndKeys:
-                                                   (__bridge id)kSecClassGenericPassword, (__bridge id)kSecClass,
-                                                   serviceIdentifier, (__bridge id)kSecAttrService,
-                                                   accountIdentifier, (__bridge id)kSecAttrAccount, nil]);
+  return !SecItemDelete((__bridge CFDictionaryRef)@{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+                                                   (__bridge id)kSecAttrService: serviceIdentifier,
+                                                   (__bridge id)kSecAttrAccount: accountIdentifier});
 }
 
 #pragma mark Class methods

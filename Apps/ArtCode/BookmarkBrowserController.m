@@ -92,7 +92,7 @@
   if ([self isMemberOfClass:[BookmarkBrowserController class]])
   {
     // Tool edit items
-    self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
+    self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
     
     // Customize subviews
     self.searchBar.placeholder = @"Filter bookmarks";
@@ -108,10 +108,10 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  ArtCodeLocation *bookmarkLocation = [self.filteredItems objectAtIndex:indexPath.row];
+  ArtCodeLocation *bookmarkLocation = (self.filteredItems)[indexPath.row];
   
   cell.textLabel.text = bookmarkLocation.name;
-  cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? [_filteredItemsHitMask objectAtIndex:indexPath.row] : nil;
+  cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? _filteredItemsHitMask[indexPath.row] : nil;
   cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   
   return cell;
@@ -123,7 +123,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   if (!self.isEditing) {
-    ArtCodeProjectBookmark *bookmark = [self.filteredItems objectAtIndex:indexPath.row];
+    ArtCodeProjectBookmark *bookmark = (self.filteredItems)[indexPath.row];
     [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project lineNumber:bookmark.lineNumber];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];

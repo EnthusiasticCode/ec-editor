@@ -107,7 +107,7 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
   }
   else
   {
-    cell.textLabel.text = [[[self.tab.history objectAtIndex:[self historyIndexForIndexPath:indexPath]] URL] path];
+    cell.textLabel.text = [[(self.tab.history)[[self historyIndexForIndexPath:indexPath]] URL] path];
     if ([self currentHistoryPositionIsAtIndexPath:indexPath])
       cell.imageView.image = [UIImage imageNamed:@"toolPanelBookmarksToolSelectedImage.png"];
     else

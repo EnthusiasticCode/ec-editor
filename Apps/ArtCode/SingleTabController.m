@@ -550,7 +550,7 @@ static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
   if (loading == self.isLoading)
     return;
   
-  objc_setAssociatedObject(self, UIViewControllerLoadingKey, [NSNumber numberWithBool:loading], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  objc_setAssociatedObject(self, UIViewControllerLoadingKey, @(loading), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

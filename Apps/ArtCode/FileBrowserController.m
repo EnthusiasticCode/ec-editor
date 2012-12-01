@@ -145,13 +145,13 @@
   self.searchBar.placeholder = L(@"Filter files in this folder");
   
   // Preparing tool items array changed in set editing
-  self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
-  [[self.toolEditItems objectAtIndex:0] setAccessibilityLabel:L(@"Export")];
-  [[self.toolEditItems objectAtIndex:1] setAccessibilityLabel:L(@"Copy")];
-  [[self.toolEditItems objectAtIndex:2] setAccessibilityLabel:L(@"Delete")];
+  self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+  [(self.toolEditItems)[0] setAccessibilityLabel:L(@"Export")];
+  [(self.toolEditItems)[1] setAccessibilityLabel:L(@"Copy")];
+  [(self.toolEditItems)[2] setAccessibilityLabel:L(@"Delete")];
   
-  self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-  [[self.toolNormalItems objectAtIndex:0] setAccessibilityLabel:L(@"Add file or folder")];
+  self.toolNormalItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+  [(self.toolNormalItems)[0] setAccessibilityLabel:L(@"Add file or folder")];
 }
 
 - (void)viewDidUnload
@@ -194,7 +194,7 @@
   }
   
   // Configure the cell
-  RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *filteredItem = (self.filteredItems)[indexPath.row];
   FileSystemItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
@@ -211,7 +211,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
   if (self.isEditing) {
     if (!_selectedItems)
       _selectedItems = [[NSMutableArray alloc] init];
@@ -239,7 +239,7 @@
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];
   if (self.isEditing) {
-    [_selectedItems removeObject:[[self.filteredItems objectAtIndex:indexPath.row] first]];
+    [_selectedItems removeObject:[(self.filteredItems)[indexPath.row] first]];
   }
 }
 
@@ -250,7 +250,7 @@
 }
 
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index {
-  return [[self _previewItems] objectAtIndex:index];
+  return [self _previewItems][index];
 }
 
 #pragma mark - QLPreviewControllerDelegate
@@ -300,7 +300,7 @@
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
-        RenameController *renameController = [[RenameController alloc] initWithRenameItem:[_selectedItems objectAtIndex:0] completionHandler:^(NSUInteger renamedCount, NSError *err) {
+        RenameController *renameController = [[RenameController alloc] initWithRenameItem:_selectedItems[0] completionHandler:^(NSUInteger renamedCount, NSError *err) {
           [self modalNavigationControllerDismissAction:nil];
           if (err || renamedCount == 0) {
             [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];

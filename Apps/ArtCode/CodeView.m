@@ -624,7 +624,7 @@ static void init(CodeView *self)
   {
     if (!underlayPasses)
       underlayPasses = [[NSMutableDictionary alloc] init];
-    [underlayPasses setObject:[block copy] forKey:passKey];
+    underlayPasses[passKey] = [block copy];
     
     self.renderer.underlayRenderingPasses = [underlayPasses allValues];
   }
@@ -632,7 +632,7 @@ static void init(CodeView *self)
   {
     if (!overlayPasses)
       overlayPasses = [[NSMutableDictionary alloc] init];
-    [overlayPasses setObject:[block copy] forKey:passKey];
+    overlayPasses[passKey] = [block copy];
     
     self.renderer.overlayRenderingPasses = [overlayPasses allValues];
   }
@@ -641,14 +641,14 @@ static void init(CodeView *self)
   {
     if (!setupPasses)
       setupPasses = [[NSMutableDictionary alloc] init];
-    [setupPasses setObject:[setupBlock copy] forKey:passKey];
+    setupPasses[passKey] = [setupBlock copy];
   }
   
   if (cleanupBlock)
   {
     if (!cleanupPasses)
       cleanupPasses = [[NSMutableDictionary alloc] init];
-    [cleanupPasses setObject:[cleanupBlock copy] forKey:passKey];
+    cleanupPasses[passKey] = [cleanupBlock copy];
   }
 }
 
@@ -741,7 +741,7 @@ static void init(CodeView *self)
       if (selection.length > 0
           || selection.location == self.text.length 
           || ! [[NSCharacterSet alphanumericCharacterSet] characterIsMember:[self.text characterAtIndex:selection.location]]) {
-        NSString *pairedWithString = [self.pairingStringDictionary objectForKey:string];
+        NSString *pairedWithString = (self.pairingStringDictionary)[string];
         if (pairedWithString) {
           if (selection.length > 0) {
             insertString = [NSString stringWithFormat:@"%@%@%@", string, [self selectedText], pairedWithString];
@@ -781,7 +781,7 @@ static void init(CodeView *self)
     
     // Delete pairing strings if any
     if (self.pairingStringDictionary.count) {
-      NSString *pairingString = [self.pairingStringDictionary objectForKey:[self.text substringWithRange:deleteRange]];
+      NSString *pairingString = (self.pairingStringDictionary)[[self.text substringWithRange:deleteRange]];
       if (pairingString 
           && self.text.length >= deleteRange.location + 1 + pairingString.length 
           && [[self.text substringWithRange:NSMakeRange(deleteRange.location + 1, pairingString.length)] isEqualToString:pairingString]) {
@@ -1981,8 +1981,8 @@ static void init(CodeView *self)
   if (!blinkAnimation) 
   {
     blinkAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    blinkAnimation.fromValue = [NSNumber numberWithFloat:1.0];
-    blinkAnimation.toValue = [NSNumber numberWithFloat:0.0];
+    blinkAnimation.fromValue = @1.0f;
+    blinkAnimation.toValue = @0.0f;
     blinkAnimation.repeatCount = CGFLOAT_MAX;
     blinkAnimation.autoreverses = YES;
     blinkAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];

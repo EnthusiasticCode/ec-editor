@@ -81,7 +81,7 @@
 
 - (UIView *)hintView {
   if (!_hintView) {
-    _hintView = [[[NSBundle mainBundle] loadNibNamed:@"ProjectsHintsView" owner:nil options:nil] objectAtIndex:0];
+    _hintView = [[NSBundle mainBundle] loadNibNamed:@"ProjectsHintsView" owner:nil options:nil][0];
     _hintView.frame = self.view.bounds;
   }
   return _hintView;
@@ -190,11 +190,11 @@
   duplicateButtonItem.accessibilityLabel = L(@"Duplicate");
   UIBarButtonItem *deleteButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDeleteAction:)];
   deleteButtonItem.accessibilityLabel = L(@"Delete");
-  _toolItemsEditing = [NSArray arrayWithObjects:exportButtonItem, duplicateButtonItem, deleteButtonItem, nil];
+  _toolItemsEditing = @[exportButtonItem, duplicateButtonItem, deleteButtonItem];
   
   UIBarButtonItem *addButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)];
   addButtonItem.accessibilityLabel = L(@"Add");
-  _toolItemsNormal = [NSArray arrayWithObject:addButtonItem];
+  _toolItemsNormal = @[addButtonItem];
   self.toolbarItems = _toolItemsNormal;
 }
 
@@ -262,7 +262,7 @@
   }
   
   // Setup cell
-  id element = [self.gridElements objectAtIndex:cellIndex];
+  id element = (self.gridElements)[cellIndex];
   if ([element isKindOfClass:[ArtCodeProject class]]) {
     ArtCodeProject *project = (ArtCodeProject *)element;
     cell.title.text = cell.accessibilityLabel = project.name;
@@ -289,7 +289,7 @@
       [(UIButton *)item.customView setEnabled:enable];
     }];
   } else {
-    id element = [self.gridElements objectAtIndex:cellIndex];
+    id element = (self.gridElements)[cellIndex];
     if ([element isKindOfClass:[ArtCodeProject class]]) {
       [(ArtCodeProject *)element setNewlyCreatedValue:NO];
       [self.artCodeTab pushProject:element];

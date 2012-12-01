@@ -19,11 +19,11 @@
 @implementation NSURL (Additions)
 
 + (NSURL *)applicationDocumentsDirectory {
-  return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+  return [NSURL fileURLWithPath:NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]];
 }
 
 + (NSURL *)applicationLibraryDirectory {
-  return [NSURL fileURLWithPath:[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
+  return [NSURL fileURLWithPath:NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0]];
 }
 
 + (NSURL *)temporaryDirectory {
@@ -141,7 +141,7 @@
   static NSArray *packageExtensions = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    packageExtensions = [NSArray arrayWithObjects:@"app", @"tmbundle", @"bundle", nil];
+    packageExtensions = @[@"app", @"tmbundle", @"bundle"];
   });
   return packageExtensions;
 }

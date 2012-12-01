@@ -99,8 +99,8 @@ typedef enum {
 - (void)viewDidLoad {
   [super viewDidLoad];
   
-  [[self.toolbar.items objectAtIndex:0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-  [[self.toolbar.items objectAtIndex:1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+  [(self.toolbar.items)[0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+  [(self.toolbar.items)[1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -135,14 +135,14 @@ typedef enum {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  id item = [_itemsConflicts objectAtIndex:indexPath.row];
+  id item = _itemsConflicts[indexPath.row];
   if ([item isKindOfClass:[NSDictionary class]]) {
-    cell.textLabel.text = [(NSDictionary *)item objectForKey:cxFilenameKey];
+    cell.textLabel.text = ((NSDictionary *)item)[cxFilenameKey];
     cell.detailTextLabel.text = nil;
-    if ([(NSDictionary *)item objectForKey:NSFileType] == NSFileTypeDirectory) {
+    if (((NSDictionary *)item)[NSFileType] == NSFileTypeDirectory) {
       cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
     } else {
-      cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[(NSDictionary *)item objectForKey:cxFilenameKey] pathExtension]];
+      cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[((NSDictionary *)item)[cxFilenameKey] pathExtension]];
     }
   } else if ([item isKindOfClass:[NSString class]]) {
     cell.textLabel.text = [item lastPathComponent];
@@ -194,11 +194,11 @@ typedef enum {
       [[NSFileManager defaultManager] createDirectoryAtURL:localTemporaryURL withIntermediateDirectories:YES attributes:nil error:NULL];
       // Append item to download queue
       for (NSDictionary *item in contents) {
-        if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-          [_connection downloadFile:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]] toDirectory:localTemporaryURL.path overwrite:YES delegate:nil];
+        if (item[NSFileType] != NSFileTypeDirectory) {
+          [_connection downloadFile:[dirPath stringByAppendingPathComponent:item[cxFilenameKey]] toDirectory:localTemporaryURL.path overwrite:YES delegate:nil];
         } else {
           _transfersStarted++;
-          [_connection changeToDirectory:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+          [_connection changeToDirectory:[dirPath stringByAppendingPathComponent:item[cxFilenameKey]]];
           [_connection directoryContents];
         }
       }
@@ -285,11 +285,11 @@ typedef enum {
     case RemoteTransferDeleteOperation: {
       // Recursion inside folders in the requested items to delete
       for (NSDictionary *item in contents) {
-        if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-          [con deleteFile:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+        if (item[NSFileType] != NSFileTypeDirectory) {
+          [con deleteFile:[dirPath stringByAppendingPathComponent:item[cxFilenameKey]]];
         } else {
           // Recurse
-          [con changeToDirectory:[dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+          [con changeToDirectory:[dirPath stringByAppendingPathComponent:item[cxFilenameKey]]];
           [con directoryContents];
         }
       }
@@ -329,7 +329,7 @@ typedef enum {
 - (void)connection:(id <CKPublishingConnection>)con uploadDidBegin:(NSString *)remotePath {
   ASSERT(con == _connection);
   _transfersStarted++;
-  [_transfersProgress setObject:[NSNumber numberWithFloat:0] forKey:remotePath];
+  _transfersProgress[remotePath] = @0.0f;
 }
 
 - (void)connection:(id <CKPublishingConnection>)con uploadDidFinish:(NSString *)remotePath error:(NSError *)error {
@@ -356,7 +356,7 @@ typedef enum {
 - (void)connection:(id <CKConnection>)con upload:(NSString *)remotePath progressedTo:(NSNumber *)percent {
   ASSERT(con == _connection);
   
-  [_transfersProgress setObject:percent forKey:remotePath];
+  _transfersProgress[remotePath] = percent;
   if (!self.progressView.isHidden) {
     __block float totalProgress = 0;
     [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
@@ -449,7 +449,7 @@ typedef enum {
   
   for (NSDictionary *item in items)
   {
-    NSString *itemName = [item objectForKey:cxFilenameKey];
+    NSString *itemName = item[cxFilenameKey];
     
     // Check for conflicts in downloading location
     if ([[NSFileManager defaultManager] fileExistsAtPath:[localDirectoryURL URLByAppendingPathComponent:itemName].path]) {
@@ -459,10 +459,10 @@ typedef enum {
     
     // Add to transfers
     NSString *itemPath = [_connectionPath stringByAppendingPathComponent:itemName];
-    if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-      [_transfers setObject:[self _localTemporaryDirectoryURL] forKey:itemPath];
+    if (item[NSFileType] != NSFileTypeDirectory) {
+      _transfers[itemPath] = [self _localTemporaryDirectoryURL];
     } else {
-      [_transfers setObject:[NSNull null] forKey:itemPath];
+      _transfers[itemPath] = [NSNull null];
     }
   }
   
@@ -490,8 +490,8 @@ typedef enum {
   self.navigationItem.title = @"Calculating differences";
   
   // Get synchronization options
-  _syncIsFromRemote = [[optionsDictionary objectForKey:RemoteSyncOptionDirectionKey] boolValue];
-  _syncUseFileSize = [[optionsDictionary objectForKey:RemoteSyncOptionChangeDeterminationKey] boolValue];
+  _syncIsFromRemote = [optionsDictionary[RemoteSyncOptionDirectionKey] boolValue];
+  _syncUseFileSize = [optionsDictionary[RemoteSyncOptionChangeDeterminationKey] boolValue];
   
   // Populate transfers with items to synchronize 
 // TODO: port
@@ -518,12 +518,12 @@ typedef enum {
   
   for (NSDictionary *item in items) {
     // Queue deletion
-    if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
+    if (item[NSFileType] != NSFileTypeDirectory) {
       _transfersStarted++;
-      [connection deleteFile:[_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+      [connection deleteFile:[_connectionPath stringByAppendingPathComponent:item[cxFilenameKey]]];
     } else {
       // Recursion
-      [connection changeToDirectory:[_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+      [connection changeToDirectory:[_connectionPath stringByAppendingPathComponent:item[cxFilenameKey]]];
       [connection directoryContents];
     }
   }
@@ -577,12 +577,12 @@ typedef enum {
       // _itemConflicts contains top level remote items that may have been selected to download.
       // Add resolved items to transfer list
       for (NSIndexPath *indexPath in [self.conflictTableView indexPathsForSelectedRows]) {
-        NSDictionary *item = [_itemsConflicts objectAtIndex:indexPath.row];
-        NSString *itemPath = [_connectionPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
-        if ([item objectForKey:NSFileType] != NSFileTypeDirectory) {
-          [_transfers setObject:[self _localTemporaryDirectoryURL] forKey:itemPath];
+        NSDictionary *item = _itemsConflicts[indexPath.row];
+        NSString *itemPath = [_connectionPath stringByAppendingPathComponent:item[cxFilenameKey]];
+        if (item[NSFileType] != NSFileTypeDirectory) {
+          _transfers[itemPath] = [self _localTemporaryDirectoryURL];
         } else {
-          [_transfers setObject:[NSNull null] forKey:itemPath];
+          _transfers[itemPath] = [NSNull null];
         }
       }
       // Start transfers

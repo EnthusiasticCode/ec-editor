@@ -72,7 +72,7 @@ static UIImage *_TMScopeBlankImage = nil;
   if (!_separator) {
     _separator = [TMPreference preferenceValueForKey:TMPreferenceSymbolIsSeparatorKey qualifiedIdentifier:self.qualifiedIdentifier];
     if (!_separator) {
-      _separator = [NSNumber numberWithBool:NO];
+      _separator = @NO;
     }
   }
   return [_separator boolValue];

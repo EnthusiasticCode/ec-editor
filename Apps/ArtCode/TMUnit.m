@@ -54,7 +54,7 @@ void _generateScopesWithCaptures(NSDictionary *dictionary, OnigResult *result, T
   
   TMScope *capturesScope = parentScope;
   if (type != TMScopeTypeMatch) {
-    capturesScope = [parentScope newChildScopeWithIdentifier:[(NSDictionary *)[dictionary objectForKey:@"0"] objectForKey:_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
+    capturesScope = [parentScope newChildScopeWithIdentifier:((NSDictionary *)dictionary[@"0"])[_captureName] syntaxNode:nil location:[result bodyRange].location + offset type:type];
     scopeStartHandler(capturesScope);
     capturesScope.length = [result bodyRange].length;
   }
@@ -68,7 +68,7 @@ void _generateScopesWithCaptures(NSDictionary *dictionary, OnigResult *result, T
       continue;
     }
     currentMatchRange.location += offset;
-    NSString *currentCaptureName = [(NSDictionary *)[dictionary objectForKey:[NSString stringWithFormat:@"%d", currentMatchRangeIndex]] objectForKey:_captureName];
+    NSString *currentCaptureName = ((NSDictionary *)dictionary[[NSString stringWithFormat:@"%d", currentMatchRangeIndex]])[_captureName];
     if (!currentCaptureName) {
       continue;
     }

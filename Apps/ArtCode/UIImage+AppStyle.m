@@ -331,8 +331,7 @@
       CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)@"Courier-Bold", fontSize, NULL);
       NSAttributedString *attributedText = 
       [[NSAttributedString alloc] initWithString:text 
-                                      attributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                  (__bridge id)font, kCTFontAttributeName, nil]];
+                                      attributes:@{(id)kCTFontAttributeName: (__bridge id)font}];
       
       CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
       CGFloat lineDescent;

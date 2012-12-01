@@ -31,7 +31,7 @@
       UIAccessibilityElement *colorElement = [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
       colorElement.isAccessibilityElement = YES;
       // TODO: UIColor should return always a human readable description
-      colorElement.accessibilityLabel = [[self.colors objectAtIndex:idx] description];
+      colorElement.accessibilityLabel = [(self.colors)[idx] description];
       colorElement.accessibilityTraits = UIAccessibilityTraitButton;
       colorElement.accessibilityFrame = [self convertRect:layer.frame toView:nil];
       [accessibilityColors addObject:colorElement];
@@ -83,7 +83,7 @@
   
   ASSERT(colorIndex < [colors count]);
   
-  self.selectedColor = [colors objectAtIndex:colorIndex];
+  self.selectedColor = colors[colorIndex];
   
   [self sendActionsForControlEvents:UIControlEventTouchUpInside];
 }
@@ -96,13 +96,12 @@ static void _init(ColorSelectionControl *self)
   self.colorCellsMargin = 2;
   self.columns = 3;
   self.rows = 2;
-  self.colors = [NSArray arrayWithObjects:
-                 [UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
+  self.colors = @[[UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1], 
                  [UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1], 
                  [UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],
                  [UIColor colorWithRed:168./255. green:230./255. blue:75./255. alpha:1],
                  [UIColor colorWithRed:93./255. green:157./255. blue:255./255. alpha:1],
-                 [UIColor styleForegroundColor], nil];
+                 [UIColor styleForegroundColor]];
 }
 
 - (id)initWithCoder:(NSCoder *)coder {
@@ -128,7 +127,7 @@ static void _init(ColorSelectionControl *self)
 }
 
 - (id)accessibilityElementAtIndex:(NSInteger)index {
-  return [self.accessibilityColors objectAtIndex:index];
+  return (self.accessibilityColors)[index];
 }
 
 - (NSInteger)indexOfAccessibilityElement:(id)element {

@@ -81,11 +81,11 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMSymbol *symbol = [self filteredItems][indexPath.row];
   cell.textLabel.text = symbol.title;
   cell.imageView.image = symbol.icon;
 //  cell.indentationLevel = symbol.indentation;
-  cell.textLabelHighlightedCharacters = _filteredSymbolListHitMask ? [_filteredSymbolListHitMask objectAtIndex:indexPath.row] : nil;
+  cell.textLabelHighlightedCharacters = _filteredSymbolListHitMask ? _filteredSymbolListHitMask[indexPath.row] : nil;
   if (symbol.isSeparator)
   {
     if (!cell.backgroundView)
@@ -102,7 +102,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  TMSymbol *symbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMSymbol *symbol = [self filteredItems][indexPath.row];
   if (symbol.isSeparator)
     return 22;
   return UITableViewAutomaticDimension;
@@ -115,7 +115,7 @@
   // TODO: push an url instead
   [table deselectRowAtIndexPath:indexPath animated:YES];
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  TMSymbol *selectedSymbol = [[self filteredItems] objectAtIndex:indexPath.row];
+  TMSymbol *selectedSymbol = [self filteredItems][indexPath.row];
   [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:selectedSymbol.range];
 }
 

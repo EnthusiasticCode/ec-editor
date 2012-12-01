@@ -311,15 +311,15 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
     ++directionIndex;
   }
   
-  if ([_arrowDirectionImages objectAtIndex:directionIndex] == [NSNull null])
+  if (_arrowDirectionImages[directionIndex] == [NSNull null])
     return nil;
   
-  NSMutableArray *arrowPositionImages = (NSMutableArray *)[_arrowDirectionImages objectAtIndex:directionIndex];
+  NSMutableArray *arrowPositionImages = (NSMutableArray *)_arrowDirectionImages[directionIndex];
   metaPosition += 1;
-  if ([arrowPositionImages objectAtIndex:metaPosition] != [NSNull null])
-    return [arrowPositionImages objectAtIndex:metaPosition];
-  if (metaPosition != 1 && [arrowPositionImages objectAtIndex:1] != [NSNull null])
-    return [arrowPositionImages objectAtIndex:1];
+  if (arrowPositionImages[metaPosition] != [NSNull null])
+    return arrowPositionImages[metaPosition];
+  if (metaPosition != 1 && arrowPositionImages[1] != [NSNull null])
+    return arrowPositionImages[1];
   return nil;
 }
 
@@ -336,13 +336,13 @@ static void init(CodeFileKeyboardAccessoryPopoverView *self)
   do {
     if (direction & directionMask)
     {
-      if ([_arrowDirectionImages objectAtIndex:directionIndex] == [NSNull null])
+      if (_arrowDirectionImages[directionIndex] == [NSNull null])
       {
         [_arrowDirectionImages removeObjectAtIndex:directionIndex];
         [_arrowDirectionImages insertObject:[NSMutableArray arrayWithObjects:[NSNull null], [NSNull null], [NSNull null], nil] atIndex:directionIndex];
       }
       
-      NSMutableArray *arrowPositionImages = (NSMutableArray *)[_arrowDirectionImages objectAtIndex:directionIndex];
+      NSMutableArray *arrowPositionImages = (NSMutableArray *)_arrowDirectionImages[directionIndex];
       [arrowPositionImages removeObjectAtIndex:metaPosition];
       [arrowPositionImages insertObject:image atIndex:metaPosition];
     }

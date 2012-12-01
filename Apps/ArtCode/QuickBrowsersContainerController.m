@@ -87,7 +87,7 @@
 - (void)setViewControllers:(NSArray *)viewControllers animated:(BOOL)animated
 {
   [super setViewControllers:viewControllers animated:animated];
-  [self setSelectedViewController:[viewControllers objectAtIndex:0]];
+  [self setSelectedViewController:viewControllers[0]];
 }
 
 #pragma mark - View lifecycle

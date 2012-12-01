@@ -103,7 +103,7 @@
   }
   
   // Configure the cell
-  RACTuple *filteredItem = [self.filteredItems objectAtIndex:indexPath.row];
+  RACTuple *filteredItem = (self.filteredItems)[indexPath.row];
   FileSystemItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
@@ -118,7 +118,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  FileSystemItem *item = [[self.filteredItems objectAtIndex:indexPath.row] first];
+  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
   [[[item url] take:1] subscribeNext:^(NSURL *x) {
     [self.artCodeTab pushFileURL:x withProject:self.artCodeTab.currentLocation.project];
   }];

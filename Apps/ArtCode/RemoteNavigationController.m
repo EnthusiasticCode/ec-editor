@@ -197,9 +197,9 @@ static void _init(RemoteNavigationController *self) {
   // RAC
   ReactiveConnection *connection = self.connection;
   [[RACSignal zip:[remoteController.selectedItems map:^id<RACSignal>(NSDictionary *item) {
-    NSString *itemName = [item objectForKey:cxFilenameKey];
+    NSString *itemName = item[cxFilenameKey];
     // Generate local destination URL and start the download
-    RACSignal *progressSignal = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:([item objectForKey:NSFileType] == NSFileTypeDirectory)];
+    RACSignal *progressSignal = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:(item[NSFileType] == NSFileTypeDirectory)];
     
     // Side effect to start the progress indicator in the local file list
     [localController addProgressItemWithName:itemName progressSignal:progressSignal];
@@ -258,7 +258,7 @@ static void _init(RemoteNavigationController *self) {
   // RAC
   ReactiveConnection *connection = self.connection;
   [[[RACSignal zip:[remoteController.selectedItems map:^id<RACSignal>(NSDictionary *item) {
-    return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]]];
+    return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:item[cxFilenameKey]]];
   }]] finally:^{
     @strongify(self);
     self.transfersInProgressCount--;

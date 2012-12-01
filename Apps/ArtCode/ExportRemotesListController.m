@@ -32,7 +32,7 @@
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  ArtCodeRemote *remote = [self.remotes objectAtIndex:indexPath.row];
+  ArtCodeRemote *remote = (self.remotes)[indexPath.row];
   cell.textLabel.text = remote.name;
   cell.detailTextLabel.text = remote.url.absoluteString;
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -44,7 +44,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.remoteSelectedBlock) {
-    self.remoteSelectedBlock(self, [self.remotes objectAtIndex:indexPath.row]);
+    self.remoteSelectedBlock(self, (self.remotes)[indexPath.row]);
   }
 }
 

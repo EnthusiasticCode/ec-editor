@@ -96,7 +96,7 @@ static NSMutableDictionary *_includedNodesCaches;
         continue;
       }
       if (syntax.identifier) {
-        [_syntaxesWithIdentifier setObject:syntax forKey:syntax.identifier];
+        _syntaxesWithIdentifier[syntax.identifier] = syntax;
       } else {
         [_syntaxesWithoutIdentifier addObject:syntax];
       }
@@ -127,7 +127,7 @@ static NSMutableDictionary *_includedNodesCaches;
   if (!scopeIdentifier) {
     return nil;
   }
-  return [_syntaxesWithIdentifier objectForKey:scopeIdentifier];
+  return _syntaxesWithIdentifier[scopeIdentifier];
 }
 
 + (TMSyntaxNode *)syntaxForFileName:(NSString *)fileName {
@@ -173,7 +173,7 @@ static NSMutableDictionary *_includedNodesCaches;
 {
   ASSERT(!self.include); // This cannot be called on include nodes.
   dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
-  NSMutableArray *includedNodes = [(NSMutableDictionary *)[_includedNodesCaches objectForKey:rootNode] objectForKey:self];
+  NSMutableArray *includedNodes = ((NSMutableDictionary *)_includedNodesCaches[rootNode])[self];
   dispatch_semaphore_signal(_includedNodesCachesLock);
   if (includedNodes)
     return includedNodes;
@@ -192,7 +192,7 @@ static NSMutableDictionary *_includedNodesCaches;
     }];
     __block NSUInteger offset = 0;
     [containerNodesIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-      TMSyntaxNode *containerNode = [includedNodes objectAtIndex:idx + offset];
+      TMSyntaxNode *containerNode = includedNodes[idx + offset];
       [includedNodes removeObjectAtIndex:idx + offset];
       if ([dereferencedNodes containsObject:containerNode])
         return;
@@ -203,7 +203,7 @@ static NSMutableDictionary *_includedNodesCaches;
         unichar firstCharacter = [containerNode.include characterAtIndex:0];
         if (firstCharacter == '#')
         {
-          [includedNodes insertObject:[[containerNode rootSyntax].repository objectForKey:[containerNode.include substringFromIndex:1]] atIndex:idx + offset];
+          [includedNodes insertObject:([containerNode rootSyntax].repository)[[containerNode.include substringFromIndex:1]] atIndex:idx + offset];
         }
         else
         {
@@ -230,12 +230,12 @@ static NSMutableDictionary *_includedNodesCaches;
   }
   while ([containerNodesIndexes count]);
   dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
-  NSMutableDictionary *includedNodesCache = [_includedNodesCaches objectForKey:rootNode];
+  NSMutableDictionary *includedNodesCache = _includedNodesCaches[rootNode];
   if (!includedNodesCache) {
     includedNodesCache = [[NSMutableDictionary alloc] init];
   }
-  [includedNodesCache setObject:includedNodes forKey:self];
-  [_includedNodesCaches setObject:includedNodesCache forKey:rootNode];
+  includedNodesCache[self] = includedNodes;
+  _includedNodesCaches[rootNode] = includedNodesCache;
   dispatch_semaphore_signal(_includedNodesCachesLock);
   return includedNodes;
 }
@@ -304,7 +304,7 @@ static NSMutableDictionary *_includedNodesCaches;
     {
       NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
       [propertyValue enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *innerStop) {
-        [repository setObject:[[[self class] alloc] _initWithDictionary:obj syntax:syntax] forKey:key];
+        repository[key] = [[[self class] alloc] _initWithDictionary:obj syntax:syntax];
       }];
       if ([repository count])
         [self setValue:[repository copy] forKey:propertyKey];

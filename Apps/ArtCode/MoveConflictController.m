@@ -44,8 +44,8 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
-  [[self.toolbar.items objectAtIndex:0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-  [[self.toolbar.items objectAtIndex:1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+  [(self.toolbar.items)[0] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+  [(self.toolbar.items)[1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 }
 
 - (void)viewDidUnload {
@@ -75,7 +75,7 @@
     cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  FileSystemItem *item = [_conflictItems objectAtIndex:indexPath.row];
+  FileSystemItem *item = _conflictItems[indexPath.row];
   cell.item = item;
   
   return cell;

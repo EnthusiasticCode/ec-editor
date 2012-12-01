@@ -35,8 +35,8 @@
     systemScopesScoreCache = [[NSMutableDictionary alloc] init];
   });
   @synchronized(systemScopesScoreCache) {
-    NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
-    NSNumber *cachedScore = [scopeToScore objectForKey:self];
+    NSMutableDictionary *scopeToScore = systemScopesScoreCache[scopeSelector];
+    NSNumber *cachedScore = scopeToScore[self];
     if (cachedScore)
       return [cachedScore floatValue];
   }
@@ -54,7 +54,7 @@
     NSArray *searchScopeComponents = [[searchScope stringByTrimmingCharactersInSet:spaceCharacterSet] componentsSeparatedByString:@" - "];
     if ([searchScopeComponents count] == 1)
     {
-      score = MAX(score, [self _scoreForSearchScope:[searchScopeComponents objectAtIndex:0]]);
+      score = MAX(score, [self _scoreForSearchScope:searchScopeComponents[0]]);
     }
     else
     {
@@ -68,19 +68,19 @@
       }];
       if (exclude)
         continue;
-      score = MAX(score, [self _scoreForSearchScope:[searchScopeComponents objectAtIndex:0]]);
+      score = MAX(score, [self _scoreForSearchScope:searchScopeComponents[0]]);
     }
   }
   
   @synchronized(systemScopesScoreCache) {
     // Store in cache
-    NSMutableDictionary *scopeToScore = [systemScopesScoreCache objectForKey:scopeSelector];
+    NSMutableDictionary *scopeToScore = systemScopesScoreCache[scopeSelector];
     if (!scopeToScore)
     {
       scopeToScore = [[NSMutableDictionary alloc] init];
-      [systemScopesScoreCache setObject:scopeToScore forKey:scopeSelector];
+      systemScopesScoreCache[scopeSelector] = scopeToScore;
     }
-    [scopeToScore setObject:[NSNumber numberWithFloat:score] forKey:self];
+    scopeToScore[self] = @(score);
   }
   return score;
 }

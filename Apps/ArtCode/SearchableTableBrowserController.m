@@ -233,7 +233,7 @@
       SearchableTableBrowserController *strongSelf = this;
       if (note.name == UIKeyboardDidShowNotification) {
         CGRect tableViewFrame = this.tableView.frame;
-        tableViewFrame.size.height = [this.view convertRect:[[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
+        tableViewFrame.size.height = [this.view convertRect:[[note userInfo][UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil].origin.y - tableViewFrame.origin.y;
         this.tableView.frame = tableViewFrame;
       } else {
         CGRect tableViewFrame = this.view.bounds;

@@ -161,7 +161,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   if ([self.searchBar.text length] != 0) {
     NSArray *hitsMask = nil;
     _filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitsMask extrapolateTargetStringBlock:^NSString *(NSDictionary *element) {
-      return [element objectForKey:cxFilenameKey];
+      return element[cxFilenameKey];
     }];
     _filteredItemsHitMasks = hitsMask;
   }
@@ -172,7 +172,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
     } else {
       _filteredItems = [contentsArray sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2){
         // Both elements are in any case NSDictionaries with a cxFilenameKey
-        return [(NSString *)[obj1 objectForKey:cxFilenameKey] compare:(NSString *)[obj2 objectForKey:cxFilenameKey]];
+        return [(NSString *)obj1[cxFilenameKey] compare:(NSString *)obj2[cxFilenameKey]];
       }];
     }
     _filteredItemsHitMasks = nil;
@@ -222,13 +222,13 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
   UITableViewCell *cell = nil;
   
-  if ([directoryItem objectForKey:progressSignalKey] == nil) {
+  if (directoryItem[progressSignalKey] == nil) {
     HighlightTableViewCell *highlightCell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
     cell = highlightCell;
-    highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? [_filteredItemsHitMasks objectAtIndex:indexPath.row] : nil;
+    highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? _filteredItemsHitMasks[indexPath.row] : nil;
   } else {
     static NSString * const progressCellIdentifier = @"progressCell";
     ProgressTableViewCell *progressCell = [tableView dequeueReusableCellWithIdentifier:progressCellIdentifier];
@@ -236,11 +236,11 @@ static NSString * const progressSignalKey = @"progressSibscribable";
       progressCell = [[ProgressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:progressCellIdentifier];
     }
     cell = progressCell;
-    [progressCell setProgressSignal:[directoryItem objectForKey:progressSignalKey]];
+    [progressCell setProgressSignal:directoryItem[progressSignalKey]];
   }
   
-  cell.textLabel.text = [directoryItem objectForKey:cxFilenameKey];
-  if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory)
+  cell.textLabel.text = directoryItem[cxFilenameKey];
+  if (directoryItem[NSFileType] == NSFileTypeDirectory)
   {
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
@@ -250,7 +250,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   {
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.editingAccessoryType = UITableViewCellAccessoryNone;
-    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[directoryItem objectForKey:cxFilenameKey] pathExtension]];
+    cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[directoryItem[cxFilenameKey] pathExtension]];
   }
   // TODO: also use NSFileSize
   // Select item to maintain selection on filtering
@@ -261,24 +261,24 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
-  return [directoryItem objectForKey:progressSignalKey] == nil;
+  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+  return directoryItem[progressSignalKey] == nil;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
+  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
   RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
-  [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:[directoryItem objectForKey:cxFilenameKey]]];
+  [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
   [remoteFileListController setEditing:self.editing animated:NO];
   [self.navigationController pushViewController:remoteFileListController animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    NSDictionary *directoryItem = [self.filteredItems objectAtIndex:indexPath.row];
-    if ([directoryItem objectForKey:NSFileType] == NSFileTypeDirectory) {
+    NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+    if (directoryItem[NSFileType] == NSFileTypeDirectory) {
       // Same action as accessory button
       [self tableView:tableView accessoryButtonTappedForRowWithIndexPath:indexPath];
     } else {
@@ -286,7 +286,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
     }
   } else {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems addObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [_selectedItems addObject:(self.filteredItems)[indexPath.row]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -295,7 +295,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems removeObject:[self.filteredItems objectAtIndex:indexPath.row]];
+    [_selectedItems removeObject:(self.filteredItems)[indexPath.row]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];

@@ -20,7 +20,7 @@
   if (self.currentPositionValue + 1 > (int16_t)self.history.count) {
     return nil;
   }
-  return [self.history objectAtIndex:self.currentPositionValue];
+  return (self.history)[self.currentPositionValue];
 }
 
 + (NSSet *)keyPathsForValuesAffectingCurrentLocation {
@@ -87,7 +87,7 @@
 
 - (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location {
   ArtCodeLocation *oldLocation = self.currentLocation;
-  [[self historySet] replaceObjectAtIndex:self.currentPositionValue withObject:location];
+  [self historySet][self.currentPositionValue] = location;
   [oldLocation.managedObjectContext deleteObject:oldLocation];
 }
 

@@ -68,7 +68,7 @@
 
 - (void)presentHintView {
   if (!self.hintView) {
-    UIView *hintView = [[[NSBundle mainBundle] loadNibNamed:@"RemotesListHintsView" owner:nil options:nil] objectAtIndex:0];
+    UIView *hintView = [[NSBundle mainBundle] loadNibNamed:@"RemotesListHintsView" owner:nil options:nil][0];
     hintView.frame = self.view.bounds;
     [self.view addSubview:hintView];
     self.hintView = hintView;
@@ -125,9 +125,9 @@
 {
   [super viewDidLoad];
   
-  self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
+  self.toolNormalItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
   
-  self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+  self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
   
   self.searchBar.placeholder = @"Filter remotes";
 }
@@ -161,9 +161,9 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
   
-  ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+  ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
   cell.textLabel.text = remote.name;
-  cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? [_filteredRemotesHitMasks objectAtIndex:indexPath.row] : nil;
+  cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? _filteredRemotesHitMasks[indexPath.row] : nil;
   cell.detailTextLabel.text = [[remote url] absoluteString];
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   
@@ -174,7 +174,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+    ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
     [self.artCodeTab pushRemotePath:remote.path ?: @"" withRemote:remote];
   }
   
@@ -194,7 +194,7 @@
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows) {
         NSMutableOrderedSet *remotes = [self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"];
-        ArtCodeRemote *remote = [self.filteredItems objectAtIndex:indexPath.row];
+        ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
         [remotes removeObject:remote];
         [remote.managedObjectContext deleteObject:remote];
       }

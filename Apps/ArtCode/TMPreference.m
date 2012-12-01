@@ -71,7 +71,7 @@ static NSMutableDictionary *symbolIconsCache;
 
 - (id)preferenceValueForKey:(NSString *)key
 {
-  return [_settings objectForKey:key];
+  return _settings[key];
 }
 
 #pragma mark - Class methods
@@ -93,11 +93,11 @@ static NSMutableDictionary *symbolIconsCache;
       ASSERT(plist != nil && "Couldn't load plist");
       
       // Get preference objects
-      NSString *scopeSelector = [plist objectForKey:@"scope"];
-      NSDictionary *settings = [plist objectForKey:@"settings"];
+      NSString *scopeSelector = plist[@"scope"];
+      NSDictionary *settings = plist[@"settings"];
       if (scopeSelector) {
         // Add scope specific preferences
-        TMPreference *pref = [preferences objectForKey:scopeSelector];
+        TMPreference *pref = preferences[scopeSelector];
         if (!pref) {
           pref = [[TMPreference alloc] initWithScopeSelector:scopeSelector settingsDictionary:settings];
         } else {
@@ -105,7 +105,7 @@ static NSMutableDictionary *symbolIconsCache;
         }
         // Add preferences to global dictionary if any is present
         if ([pref count] != 0) {
-          [preferences setObject:pref forKey:scopeSelector];
+          preferences[scopeSelector] = pref;
         }
       } else {
         // Getting supported global settings
@@ -133,8 +133,8 @@ static NSMutableDictionary *symbolIconsCache;
   // Check per scope cache
   if (!scopeToPreferenceCache)
     scopeToPreferenceCache = [[NSMutableDictionary alloc] init];
-  NSMutableDictionary *cachedPreferences = [scopeToPreferenceCache objectForKey:qualifiedIdentifier];
-  __block id value = [cachedPreferences objectForKey:preferenceKey];
+  NSMutableDictionary *cachedPreferences = scopeToPreferenceCache[qualifiedIdentifier];
+  __block id value = cachedPreferences[preferenceKey];
   if (value)
     return value == [NSNull null] ? nil : value;
   
@@ -156,15 +156,15 @@ static NSMutableDictionary *symbolIconsCache;
   // Cache resulting coalesed preferences per scope
   if (!cachedPreferences) {
     cachedPreferences = [[NSMutableDictionary alloc] init];
-    [scopeToPreferenceCache setObject:cachedPreferences forKey:qualifiedIdentifier];
+    scopeToPreferenceCache[qualifiedIdentifier] = cachedPreferences;
   }
-  [cachedPreferences setObject:value ?: [NSNull null] forKey:preferenceKey];
+  cachedPreferences[preferenceKey] = value ?: [NSNull null];
   
   return value;
 }
 
 + (UIImage *)symbolIconForIdentifier:(NSString *)symbolIdentifier {
-  UIImage *icon = [symbolIconsCache objectForKey:symbolIdentifier];
+  UIImage *icon = symbolIconsCache[symbolIdentifier];
   if (!icon) {
     NSString *letter = [symbolIdentifier substringToIndex:1];
     UIColor *color = [UIColor lightGrayColor];
@@ -185,7 +185,7 @@ static NSMutableDictionary *symbolIconsCache;
     if (!symbolIconsCache) {
       symbolIconsCache = [[NSMutableDictionary alloc] init];
     }
-    [symbolIconsCache setObject:icon forKey:symbolIdentifier];
+    symbolIconsCache[symbolIdentifier] = icon;
   }
   return icon;
 }
@@ -200,16 +200,16 @@ static NSMutableDictionary *symbolIconsCache;
     
     // Symbol list
     if ([settingName isEqualToString:TMPreferenceShowInSymbolListKey]) {
-      [_settings setObject:value forKey:TMPreferenceShowInSymbolListKey];
+      _settings[TMPreferenceShowInSymbolListKey] = value;
     }
     
     // Symbol transformation
     else if ([settingName isEqualToString:TMPreferenceSymbolTransformationKey]) {
       // Set showInSymbolList if not set
-      if (![settingsDict objectForKey:TMPreferenceShowInSymbolListKey])
-        [_settings setObject:[NSNumber numberWithBool:YES] forKey:TMPreferenceShowInSymbolListKey];
+      if (!settingsDict[TMPreferenceShowInSymbolListKey])
+        _settings[TMPreferenceShowInSymbolListKey] = @YES;
       // Prepare transformations regexps
-      [_settings setObject:[self _createBlockForSymbolTransformation:value] forKey:TMPreferenceSymbolTransformationKey];
+      _settings[TMPreferenceSymbolTransformationKey] = [self _createBlockForSymbolTransformation:value];
     }
     
     // Symbol Icon
@@ -219,13 +219,13 @@ static NSMutableDictionary *symbolIconsCache;
       if (!image) {
         image = [[self class] symbolIconForIdentifier:value];
       }
-      [_settings setObject:image forKey:TMPreferenceSymbolIconKey];
+      _settings[TMPreferenceSymbolIconKey] = image;
       // TODO: also use symbolImagePath, symbolImageColor & Title
     }
 
     // Symbol separation
     else if ([settingName isEqualToString:TMPreferenceSymbolIsSeparatorKey]) {
-      [_settings setObject:value forKey:TMPreferenceSymbolIsSeparatorKey];
+      _settings[TMPreferenceSymbolIsSeparatorKey] = value;
     }
     
     // Smart typing pairs
@@ -233,20 +233,20 @@ static NSMutableDictionary *symbolIconsCache;
       ASSERT([_settings objectForKey:TMPreferenceSmartTypingPairsKey] == nil); // In this case the array should get mutable
       NSMutableDictionary *pairs = [[NSMutableDictionary alloc] init];
       for (NSArray *pairArray in value) {
-        [pairs setObject:[pairArray objectAtIndex:1] forKey:[pairArray objectAtIndex:0]];
+        pairs[pairArray[0]] = pairArray[1];
       }
-      [_settings setObject:pairs forKey:TMPreferenceSmartTypingPairsKey];
+      _settings[TMPreferenceSmartTypingPairsKey] = pairs;
     }
     
     // Indentation
     else if ([settingName isEqualToString:TMPreferenceIncreaseIndentKey]) {
-      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceIncreaseIndentKey];
+      _settings[TMPreferenceIncreaseIndentKey] = [self _createBlockForIndentPattern:value];
     }
     else if ([settingName isEqualToString:TMPreferenceDecreaseIndentKey]) {
-      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceDecreaseIndentKey];
+      _settings[TMPreferenceDecreaseIndentKey] = [self _createBlockForIndentPattern:value];
     }
     else if ([settingName isEqualToString:TMPreferenceIndentNextLineKey]) {
-      [_settings setObject:[self _createBlockForIndentPattern:value] forKey:TMPreferenceIndentNextLineKey];
+      _settings[TMPreferenceIndentNextLineKey] = [self _createBlockForIndentPattern:value];
     }
   }];
 }

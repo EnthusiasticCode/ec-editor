@@ -45,7 +45,7 @@
     @strongify(self);
     self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", self.artCodeTab.currentLocation.prettyPath] : @"The speficied folder name already exists or is invalid.";
   }] map:^id(id x) {
-    return [NSNumber numberWithBool:x != nil];
+		return @(x != nil);
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
   
   return self;

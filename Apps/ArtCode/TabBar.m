@@ -92,12 +92,10 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 {
   [super setBackgroundColor:backgroundColor];
   
-  leftFadeLayer.colors = [NSArray arrayWithObjects:
-                          (__bridge id)(backgroundColor.CGColor),
-                          (__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor), nil];
-  rightFadeLayer.colors = [NSArray arrayWithObjects:
-                           (__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor),
-                           (__bridge id)(backgroundColor.CGColor), nil];
+  leftFadeLayer.colors = @[(__bridge id)(backgroundColor.CGColor),
+                          (__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor)];
+  rightFadeLayer.colors = @[(__bridge id)([backgroundColor colorWithAlphaComponent:0].CGColor),
+                           (__bridge id)(backgroundColor.CGColor)];
 }
 
 - (void)setTabControlInsets:(UIEdgeInsets)insets
@@ -164,7 +162,7 @@ static void updateFadeViews(TabBar *self)
     self->leftFadeLayer = [CAGradientLayer layer];
     self->leftFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->leftFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->leftFadeLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
+    self->leftFadeLayer.actions = @{@"position": [NSNull null]};
     self->leftFadeLayer.startPoint = CGPointMake(0, .5);
     self->leftFadeLayer.endPoint = CGPointMake(1, .5);
     self->leftFadeLayer.opacity = 0;
@@ -177,7 +175,7 @@ static void updateFadeViews(TabBar *self)
     self->rightFadeLayer = [CAGradientLayer layer];
     self->rightFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->rightFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->rightFadeLayer.actions = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"position"];
+    self->rightFadeLayer.actions = @{@"position": [NSNull null]};
     self->rightFadeLayer.startPoint = CGPointMake(0, .5);
     self->rightFadeLayer.endPoint = CGPointMake(1, .5);
     self->rightFadeLayer.opacity = 0;
@@ -328,7 +326,7 @@ static void init(TabBar *self)
     [self _setSelectedTabControl:nil animated:animated];
   
   ASSERT(index < [tabControls count]);
-  UIControl *tabControl = [tabControls objectAtIndex:index];
+  UIControl *tabControl = tabControls[index];
   [self _setSelectedTabControl:tabControl animated:animated];
 }
 
@@ -374,7 +372,7 @@ static void init(TabBar *self)
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
   ASSERT(tabIndex < [tabControls count]);
-  UIControl *tabControl = [tabControls objectAtIndex:tabIndex];
+  UIControl *tabControl = tabControls[tabIndex];
   [self _removeTabControl:tabControl animated:animated];
 }
 
@@ -383,7 +381,7 @@ static void init(TabBar *self)
   ASSERT(fromIndex < [tabControls count]);
   ASSERT(toIndex < [tabControls count]);
   
-  id obj = [tabControls objectAtIndex:fromIndex];
+  id obj = tabControls[fromIndex];
   [tabControls removeObjectAtIndex:fromIndex];
   [tabControls insertObject:obj atIndex:toIndex];
   
@@ -403,7 +401,7 @@ static void init(TabBar *self)
 {
   ASSERT(tabIndex < [tabControls count]);
   
-  UIButton *tabButton = (UIButton *)[tabControls objectAtIndex:tabIndex];
+  UIButton *tabButton = (UIButton *)tabControls[tabIndex];
   [tabButton setTitle:title forState:UIControlStateNormal];
 }
 
@@ -419,7 +417,7 @@ static void init(TabBar *self)
       // Get tab to move and forward to delegate to ask for permission
       movedTabIndex = (NSUInteger)(locationInView.x / tabControlSize.width);
       movedTabDestinationIndex = movedTabIndex;
-      movedTab = [tabControls objectAtIndex:movedTabIndex];
+      movedTab = tabControls[movedTabIndex];
       if (delegateFlags.hasWillMoveTabControlAtIndex
           && ![delegate tabBar:self willMoveTabControl:movedTab atIndex:movedTabIndex])
       {

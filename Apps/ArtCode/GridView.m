@@ -123,11 +123,11 @@
   if (!_reusableCells)
     return nil;
   
-  NSMutableArray *reusableArray = [_reusableCells objectForKey:identifier];
+  NSMutableArray *reusableArray = _reusableCells[identifier];
   if (![reusableArray count])
     return nil;
   
-  id result = [reusableArray objectAtIndex:0];
+  id result = reusableArray[0];
   [reusableArray removeObjectAtIndex:0];
   return result;
 }
@@ -143,11 +143,11 @@
     [cell prepareForReuse];
     [cell removeFromSuperview];
     
-    NSMutableArray *reuseArray = [_reusableCells objectForKey:cell.reuseIdentifier];
+    NSMutableArray *reuseArray = _reusableCells[cell.reuseIdentifier];
     if (!reuseArray)
     {
       reuseArray = [[NSMutableArray alloc] init];
-      [_reusableCells setObject:reuseArray forKey:cell.reuseIdentifier];
+      _reusableCells[cell.reuseIdentifier] = reuseArray;
     }
     
     [reuseArray addObject:cell];
@@ -267,7 +267,7 @@
   // Select cell if visible
   if (NSLocationInRange(cellIndex, _cellsLoadedRange))
   {
-    GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+    GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
     [cell _setSelected:YES animated:animated completionHandler:^{
       if (_flags.delegateHasDidSelectCellAtIndex)
         [self.delegate gridView:self didSelectCellAtIndex:cellIndex];
@@ -302,7 +302,7 @@
   // Select cell if visible
   if (NSLocationInRange(cellIndex, _cellsLoadedRange))
   {
-    GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+    GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
     [cell _setSelected:NO animated:animated completionHandler:^{
       if (_flags.delegateHasDidDeselectCellAtIndex)
         [self.delegate gridView:self didDeselectCellAtIndex:cellIndex];
@@ -353,7 +353,7 @@
     {
       if (NSLocationInRange(cellIndex, _cellsLoadedRange))
       {
-        GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
         [cellsAfterUpdate removeObject:cell];
         [cell removeFromSuperview];
       }
@@ -364,7 +364,7 @@
     {
       if (NSLocationInRange(cellIndex, _cellsLoadedRange))
       {
-        GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
         [cellsAfterUpdate removeObject:cell];
         [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
         [UIView animateWithDuration:0.2 animations:^{
@@ -383,7 +383,7 @@
     {
       if (NSLocationInRange(cellIndex, _cellsLoadedRange))
       {
-        GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
         [cellsAfterUpdate removeObject:cell];
         [cell removeFromSuperview];
       }
@@ -400,7 +400,7 @@
     {
       if (NSLocationInRange(cellIndex, _cellsLoadedRange))
       {
-        GridViewCell *cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+        GridViewCell *cell = _cells[(cellIndex - _cellsLoadedRange.location)];
         [cellsAfterUpdate removeObject:cell];
         [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation)];
         [UIView animateWithDuration:0.2 animations:^{
@@ -464,7 +464,7 @@
       {
         [UIView animateWithDuration:(hasAnimations ? 0.2 : 0) animations:^{
           // A way to reproduce this is to deleted several projects at the end together
-          GridViewCell *cell = [_cells objectAtIndex:(cellIndex)];
+          GridViewCell *cell = _cells[(cellIndex)];
           [self _positionCell:cell forIndex:(cellIndex + offsetBeforeAnimation + offsetAfterAnimation)];
         }];
       }
@@ -760,7 +760,7 @@ static void _init(GridView *self)
   // Animate cell push
   GridViewCell *cell = nil;
   if(self.isEditing && NSLocationInRange(cellIndex, _cellsLoadedRange))
-    cell = [_cells objectAtIndex:(cellIndex - _cellsLoadedRange.location)];
+    cell = _cells[(cellIndex - _cellsLoadedRange.location)];
   
   [UIView animateWithDuration:(self.isEditing ? 0.1 : 0) animations:^{
     [cell setTransform:CGAffineTransformMakeScale(0.95, 0.95)];

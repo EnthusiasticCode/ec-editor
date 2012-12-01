@@ -172,7 +172,7 @@ static void const * parentSearchBarControllerContext;
     ASSERT([[_searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
     
     // Retrieve the match bounding box in the code view rendered text.
-    CGRect matchRect = [self.parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[[_searchFilterMatches objectAtIndex:index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
+    CGRect matchRect = [self.parentSearchBarController.targetCodeFileController.codeView.renderer rectsForStringRange:[_searchFilterMatches[index] rangeAtIndex:0] limitToFirstLine:NO].bounds;
     CGRect clipRect = CGRectMake(0, 0, PREVIEW_SECTION_IMAGE_WIDTH, PREVIEW_SECTION_IMAGE_HEIGHT);
     clipRect.origin.x = CGRectGetMidX(matchRect) - PREVIEW_SECTION_IMAGE_WIDTH / 2;
     clipRect.origin.y = CGRectGetMidY(matchRect) - PREVIEW_SECTION_IMAGE_HEIGHT / 2;
@@ -184,10 +184,9 @@ static void const * parentSearchBarControllerContext;
     {
       // Create gradiend
       CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      NSArray *gradientColors = [NSArray arrayWithObjects:
-                                 (__bridge id)[UIColor clearColor].CGColor,
+      NSArray *gradientColors = @[(__bridge id)[UIColor clearColor].CGColor,
                                  (__bridge id)[UIColor whiteColor].CGColor,
-                                 (__bridge id)[UIColor clearColor].CGColor,nil];
+                                 (__bridge id)[UIColor clearColor].CGColor];
       CGFloat gradientLocations[] = {0, 0.5, 1};
       CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradientColors, gradientLocations);
       
@@ -247,7 +246,7 @@ static void const * parentSearchBarControllerContext;
   {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     [self.parentPopoverController dismissPopoverAnimated:YES];
-    [self.parentSearchBarController.targetCodeFileController.codeView flashTextInRange:[[_searchFilterMatches objectAtIndex:index] range]];
+    [self.parentSearchBarController.targetCodeFileController.codeView flashTextInRange:[_searchFilterMatches[index] range]];
   }
 }
 

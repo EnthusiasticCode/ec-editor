@@ -29,7 +29,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   UIKeyboardFrame = CGRectNull;
   [[RACSignal merge:@[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]]] subscribeNext:^(NSNotification *note) {
     if (note.name == UIKeyboardDidShowNotification) {
-      UIKeyboardFrame = [[[note userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+      UIKeyboardFrame = [[note userInfo][UIKeyboardFrameEndUserInfoKey] CGRectValue];
     } else {
       UIKeyboardFrame = CGRectNull;
     }
@@ -123,7 +123,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 {
   ASSERT([self.childViewControllers count] != 0);
   
-  UIViewController *viewController = [self.childViewControllers objectAtIndex:0];
+  UIViewController *viewController = (self.childViewControllers)[0];
   
   // Layout content view
   CGRect contentFrame = (CGRect){ CGPointMake(bezelCornerRadius, bezelCornerRadius), viewController.contentSizeForViewInPopover };
@@ -136,7 +136,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   if (presentingViewController == nil)
   {
     ASSERT([[UIApplication sharedApplication].windows count]);
-    presentingViewController = [[[UIApplication sharedApplication].windows objectAtIndex:0] rootViewController];
+    presentingViewController = [([UIApplication sharedApplication].windows)[0] rootViewController];
   }
   CGRect presentingBounds = presentingViewController.view.bounds;
   if (!CGRectIsNull(UIKeyboardFrame))
@@ -209,7 +209,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 
 - (void)alertTimerExpires:(NSTimer *)timer
 {
-  UIViewController *viewController = [self.childViewControllers objectAtIndex:0];
+  UIViewController *viewController = (self.childViewControllers)[0];
   if ([self.childViewControllers count] > 1)
   {
     [UIView animateWithDuration:0.10 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
@@ -239,7 +239,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 - (void)addAlertMessageWithViewController:(UIViewController *)viewController displayImmediatly:(BOOL)immediate
 {
   // Reset the fade out timer if readding the same controller
-  if ([self.childViewControllers count] && [self.childViewControllers objectAtIndex:0] == viewController)
+  if ([self.childViewControllers count] && (self.childViewControllers)[0] == viewController)
   {
     [alertTimer invalidate];
     alertTimer = nil;
