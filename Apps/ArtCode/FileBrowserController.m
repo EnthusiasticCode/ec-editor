@@ -266,7 +266,7 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
         return [x delete];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -284,7 +284,7 @@
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
         return [x duplicate];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -326,7 +326,7 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
+        [[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
         }]] subscribeCompleted:^{
           ASSERT_MAIN_QUEUE();
@@ -340,10 +340,10 @@
         // Compressing files to export
         self.loading = YES;
         
-        [[RACSignal zip:[_selectedItems map:^id<RACSignal>(FileSystemItem *x) {
+        [[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
           return [x.url take:1];
-        }]] subscribeNext:^(RACTuple *xs) {
-          [ArchiveUtilities compressFileAtURLs:xs.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
+        }]] subscribeNext:^(RACTuple *x) {
+          [ArchiveUtilities compressFileAtURLs:x.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
             ASSERT_MAIN_QUEUE();
             if (temporaryDirectoryURL) {
               NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];

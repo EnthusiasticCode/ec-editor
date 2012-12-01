@@ -34,34 +34,26 @@
   // RAC
   
   // Update table content
-  [[[[[[RACAble(self.currentFolderSignal) switch] map:^id<RACSignal>(FileSystemDirectory *folder) {
-    return [folder children];
-  }] switch] map:^id<RACSignal>(NSArray *children) {
-    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-      NSMutableArray *childFolders = [[NSMutableArray alloc] init];
-      return [[RACSignal zip:[children map:^id<RACSignal>(FileSystemItem *x) {
-        return [[[x.type take:1] filter:^BOOL(NSString *y) {
-          return y == NSURLFileResourceTypeDirectory;
-        }] mapReplace:x];
-      }]] subscribeNext:^(FileSystemItem *x) {
-        [childFolders addObject:x];
-      } error:^(NSError *error) {
-        [subscriber sendError:error];
-      } completed:^{
-        [subscriber sendNext:childFolders];
-        [subscriber sendCompleted];
-      }];
-    }];
+  [[[[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
+    return x.children;
+  }] map:^(NSArray *x) {
+		return [[RACSignal merge:[x map:^(FileSystemItem *y) {
+			return [[[y.type take:1] filter:^ BOOL (NSString *z) {
+				return z == NSURLFileResourceTypeDirectory;
+			}] mapReplace:y];
+		}]] collect];
   }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[[RACAble(self.currentFolderSignal) switch] map:^id<RACSignal>(FileSystemDirectory *folder) {
-    return [folder name];
-  }] switch] toProperty:@keypath(self.navigationItem.title) onObject:self];
+  [[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
+    return x.name;
+  }] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
-  [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)]] subscribeNext:^(RACTuple *xs) {
-    [xs.second reloadData];
+  [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)] reduce:^(NSArray *_, UITableView *x) {
+		return x;
+	}] subscribeNext:^(UITableView *x) {
+    [x reloadData];
   }];
   
   return self;
