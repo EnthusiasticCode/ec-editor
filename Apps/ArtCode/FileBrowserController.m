@@ -326,11 +326,15 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
+        [[[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
           return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
-        }]] subscribeCompleted:^{
-          ASSERT_MAIN_QUEUE();
+        }]] finally:^{
           self.loading = NO;
+				}] subscribeError:^(NSError *error) {
+					ASSERT_MAIN_QUEUE();
+					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Error exporting file") plural:L(@"Error exporting files") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+				} completed:^{
+          ASSERT_MAIN_QUEUE();
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
@@ -430,9 +434,9 @@
 }
 
 - (void)_directoryBrowserCopyAction:(id)sender {
-  // Retrieve URL to move to
+  // Retrieve URL to copy to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
+  FileSystemDirectory *copyDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -440,7 +444,10 @@
   
   // Start copy
   NSArray *items = [_selectedItems copy];
-  [[[conflictController moveItems:items toFolder:moveFolder usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+	if (items.count == 0) {
+		return;
+	}
+  [[[conflictController moveItems:items toFolder:copyDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
     return [item copyTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();
@@ -451,16 +458,14 @@
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error copying files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
-    if (items.count) {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    }
+		[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
-  FileSystemDirectory *moveFolder = directoryBrowser.selectedFolder;
+  FileSystemDirectory *moveDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -468,7 +473,10 @@
   
   // Start moving
   NSArray *items = [_selectedItems copy];
-  [[[conflictController moveItems:items toFolder:moveFolder usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+	if (items.count == 0) {
+		return;
+	}
+  [[[conflictController moveItems:items toFolder:moveDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
     return [item moveTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();
@@ -479,9 +487,7 @@
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error moving files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
-    if (items.count) {
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-    }
+		[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 
