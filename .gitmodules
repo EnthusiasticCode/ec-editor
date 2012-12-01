@@ -12,4 +12,4 @@
 	url = https://github.com/github/ReactiveCocoa.git
 [submodule "ThirdParty/file"]
 	path = ThirdParty/file
-	url = ssh://coneko.no-ip.org/Users/Shared/Projects/file.git
+	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/file.git
