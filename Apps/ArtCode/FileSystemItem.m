@@ -238,10 +238,10 @@ static NSMutableDictionary *fsItemCache() {
 
 - (id<RACSubscriber>)contentSink {
   RACSubject *sink = [RACSubject subject];
-  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-    ASSERT_FS_QUEUE();
-    [self.contentBacking sendNext:x];
-  }];
+//  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
+//    ASSERT_FS_QUEUE();
+//    [self.contentBacking sendNext:x];
+//  }];
   return sink;
 }
 
