@@ -386,13 +386,27 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
         // TODO: possibly filter using customizable block
         truncationLenght = CTTypesetterSuggestLineBreak(typesetter, lineRange.location, renderWrapWidth);
         
-        // Generate line
-        lineRange.length = truncationLenght;
-        CTLineRef ctline = CTTypesetterCreateLine(typesetter, lineRange);
+        TextRendererLine *rendererLine;
+        CTLineRef ctline = NULL;
+        for (;;) {
+          // Generate line
+          lineRange.length = truncationLenght;
+          ctline = CTTypesetterCreateLine(typesetter, lineRange);
+          rendererLine = [TextRendererLine textRendererLineWithCTLine:ctline font:lineLength > 1 ? nil : font isTruncation:truncation];
+          
+          // End the loop if we have an ok like
+          if (rendererLine.width <= renderWrapWidth)
+            break;
+          
+          // in case of line with only spaces, the truncation length is not correct
+          truncationLenght = (CFIndex)((CGFloat)truncationLenght * renderWrapWidth / rendererLine.width);
+        }
+        
+        // Update range for next line chunk
         lineRange.location += lineRange.length;
         
         // Save line
-        [_renderedLines addObject:[TextRendererLine textRendererLineWithCTLine:ctline font:lineLength > 1 ? nil : font isTruncation:truncation]];
+        [_renderedLines addObject:rendererLine];
         truncation = YES;
         lineLength -= truncationLenght;
         CFRelease(ctline);
