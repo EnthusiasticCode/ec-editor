@@ -81,7 +81,8 @@
     ASSERT(_connection);
     [_connection connect];
   }
-  return [_connectedSubject deliverOn:[RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]]];
+	ASSERT(RACScheduler.currentScheduler);
+  return [_connectedSubject deliverOn:RACScheduler.currentScheduler];
 }
 
 - (RACSignal *)transcript {

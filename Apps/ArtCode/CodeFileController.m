@@ -194,10 +194,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (RACScheduler *)codeScheduler {
   if (!_codeScheduler) {
-    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.maxConcurrentOperationCount = 1;
-    operationQueue.name = @"CodeFileController code queue";
-    _codeScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
+		_codeScheduler = RACScheduler.backgroundScheduler;
   }
   return _codeScheduler;
 }
@@ -367,10 +364,10 @@ static void drawStencilStar(CGContextRef myContext)
     }];
   }] switch] map:^TMUnit *(RACTuple *xs) {
     return [[TMUnit alloc] initWithFileURL:xs.first syntax:xs.second index:nil];
-  }] deliverOn:[RACScheduler mainQueueScheduler]] toProperty:@keypath(self.codeUnit) onObject:self];
+  }] deliverOn:RACScheduler.mainThreadScheduler] toProperty:@keypath(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
-  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] flatten] deliverOn:[RACScheduler mainQueueScheduler]] subscribeNext:^(TMToken *token) {
+  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] flatten] deliverOn:RACScheduler.mainThreadScheduler] subscribeNext:^(TMToken *token) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     if (!self) {

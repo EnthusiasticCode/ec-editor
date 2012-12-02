@@ -13,34 +13,32 @@
 
 // All filesystem operations must be done on this scheduler
 #if DEBUG
-#define ASSERT_FS_QUEUE() ASSERT([NSOperationQueue currentQueue] == fsQueue && fsQueue != nil)
-static NSOperationQueue *fsQueue = nil;
+#define ASSERT_FS_SCHEDULER() ASSERT(RACScheduler.currentScheduler == fsScheduler_debug && fsScheduler_debug != nil)
+static RACScheduler *fsScheduler_debug = nil;
 #else
-#define ASSERT_FS_QUEUE()
+#define ASSERT_FS_SCHEDULER()
 #endif
 
 static RACScheduler *fsScheduler() {
-  static RACScheduler *fileSystemScheduler = nil;
+  static RACScheduler *fsScheduler = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.name = @"FileSystemItem file system queue";
-    operationQueue.maxConcurrentOperationCount = 1;
+		fsScheduler = RACScheduler.backgroundScheduler;
 #if DEBUG
-    fsQueue = operationQueue;
+    fsScheduler_debug = fsScheduler;
 #endif
-    fileSystemScheduler = [RACScheduler schedulerWithOperationQueue:operationQueue];
   });
-  return fileSystemScheduler;
+  return fsScheduler;
 }
 
 static RACScheduler *currentScheduler() {
-  return [RACScheduler schedulerWithOperationQueue:[NSOperationQueue currentQueue]];
+	ASSERT(RACScheduler.currentScheduler);
+  return RACScheduler.currentScheduler;
 }
 
 // Cache of existing FileSystemItems, used for uniquing
 static NSMutableDictionary *fsItemCache() {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   static NSMutableDictionary *itemCache = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
@@ -115,7 +113,7 @@ static NSMutableDictionary *fsItemCache() {
     return [RACSignal error:[[NSError alloc] init]];
   }
   return [RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     FileSystemItem *item = fsItemCache()[url];
     if (item) {
       ASSERT([item.urlBacking.first isEqual:url]);
@@ -149,7 +147,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   self = [super init];
   if (!self) {
     return nil;
@@ -193,7 +191,7 @@ static NSMutableDictionary *fsItemCache() {
     return [RACSignal error:[[NSError alloc] init]];
   }
   return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     NSError *error = nil;
     if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
       return [RACSignal error:error];
@@ -206,7 +204,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSignal>)encodingSource {
   @weakify(self);
   return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
       return [RACSignal error:[[NSError alloc] init]];
@@ -218,7 +216,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSubscriber>)encodingSink {
   RACSubject *sink = [RACSubject subject];
   [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     [self.encodingBacking sendNext:x];
   }];
   return self.encodingBacking;
@@ -227,7 +225,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSignal>)contentSource {
   @weakify(self);
   return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
       return [RACSignal error:[[NSError alloc] init]];
@@ -239,7 +237,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSubscriber>)contentSink {
   RACSubject *sink = [RACSubject subject];
 //  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-//    ASSERT_FS_QUEUE();
+//    ASSERT_FS_SCHEDULER();
 //    [self.contentBacking sendNext:x];
 //  }];
   return sink;
@@ -252,7 +250,7 @@ static NSMutableDictionary *fsItemCache() {
 @synthesize encodingBacking = _encodingBacking;
 
 - (RACReplaySubject *)encodingBacking {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   if (!_encodingBacking) {
     _encodingBacking = [RACReplaySubject replaySubjectWithCapacity:1];
     
@@ -263,7 +261,7 @@ static NSMutableDictionary *fsItemCache() {
 @synthesize contentBacking = _contentBacking;
 
 - (RACReplaySubject *)contentBacking {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   if (!_contentBacking) {
     _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
     NSError *error = nil;
@@ -280,7 +278,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSignal>)internalSave {
   @weakify(self);
   return [RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     @strongify(self);
     NSString *content = self.contentBacking.first;
     ASSERT(self.encodingBacking.first);
@@ -317,7 +315,7 @@ static NSMutableDictionary *fsItemCache() {
     return [RACSignal error:[[NSError alloc] init]];
   }
   return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     NSError *error = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
       return [RACSignal error:error];
@@ -358,7 +356,7 @@ static NSMutableDictionary *fsItemCache() {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     filterAndSortByAbbreviationBlock = ^NSArray *(RACTuple *tuple) {
-      ASSERT_FS_QUEUE();
+      ASSERT_FS_SCHEDULER();
       NSArray *content = tuple.first;
       NSString *abbreviation = tuple.second;
       
@@ -406,7 +404,7 @@ static NSMutableDictionary *fsItemCache() {
   ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
   @weakify(self);
   return [RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     @strongify(self);
     id<RACSignal>result = self.childrenBacking;
     
@@ -467,7 +465,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (void)didChangeChildren {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   NSMutableArray *children = [[NSMutableArray alloc] init];
   NSURL *url = self.urlBacking.first;
   if (!url) {
@@ -625,7 +623,7 @@ static NSMutableDictionary *fsItemCache() {
 @implementation FileSystemItem (FileManagement_Private)
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   [[fsItemCache()[source] urlBacking] sendNext:destination];
   NSURL *sourceParent = [source URLByDeletingLastPathComponent];
   NSURL *destinationParent = [destination URLByDeletingLastPathComponent];
@@ -636,17 +634,17 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   [fsItemCache()[[destination URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didCreate:(NSURL *)target {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   [fsItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   FileSystemItem *item = fsItemCache()[target];
   if (item) {
     [fsItemCache() removeObjectForKey:target];
@@ -677,7 +675,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSignal>)extendedAttributeSourceForKey:(NSString *)key {
   @weakify(self);
   return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
       return [RACSignal error:[[NSError alloc] init]];
@@ -689,7 +687,7 @@ static NSMutableDictionary *fsItemCache() {
 - (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
   RACSubject *sink = [RACSubject subject];
   [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-    ASSERT_FS_QUEUE();
+    ASSERT_FS_SCHEDULER();
     [[self extendedAttributeBackingForKey:key] sendNext:x];
   }];
   return sink;
@@ -700,7 +698,7 @@ static NSMutableDictionary *fsItemCache() {
 @implementation FileSystemItem (ExtendedAttributes_Private)
 
 - (RACReplaySubject *)extendedAttributeBackingForKey:(NSString *)key {
-  ASSERT_FS_QUEUE();
+  ASSERT_FS_SCHEDULER();
   static size_t _xattrMaxSize = 4 * 1024; // 4 kB
   
   RACReplaySubject *backing = (self.extendedAttributesBacking)[key];
@@ -721,7 +719,7 @@ static NSMutableDictionary *fsItemCache() {
     
     // Save the value to disk every time it changes
     [[backing deliverOn:fsScheduler()] subscribeNext:^(id x) {
-      ASSERT_FS_QUEUE();
+      ASSERT_FS_SCHEDULER();
       if (x) {
         NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
         setxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
