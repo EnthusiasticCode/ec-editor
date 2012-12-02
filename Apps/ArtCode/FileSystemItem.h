@@ -98,7 +98,7 @@
 /// Attempts to duplicate the receiver, then sends the duplicate and completed, or an error, to the returned signal
 - (id<RACSignal>)duplicate;
 
-/// Attempts to export the receiver or a copy of the receiver to the given destination directory, then sends the destination url and completed, or an error, to the returned signal.
+/// Attempts to export the receiver or a copy of the receiver to the given destination location, then sends the destination url and completed, or an error, to the returned signal.
 - (id<RACSignal>)exportTo:(NSURL *)destination copy:(BOOL)copy;
 
 /// Attempts to delete the receiver, then sends the item and completed, or an error, to the returned signal.

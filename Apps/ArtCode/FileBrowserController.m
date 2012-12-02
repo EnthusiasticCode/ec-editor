@@ -327,7 +327,9 @@
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
         [[[RACSignal zip:[_selectedItems map:^(FileSystemItem *x) {
-          return [x exportTo:[NSURL applicationDocumentsDirectory] copy:YES];
+					return [x.url map:^id(NSURL *url) {
+						return [x exportTo:[NSURL.applicationDocumentsDirectory URLByAppendingPathComponent:url.lastPathComponent] copy:YES];
+					}];
         }]] finally:^{
           self.loading = NO;
 				}] subscribeError:^(NSError *error) {
