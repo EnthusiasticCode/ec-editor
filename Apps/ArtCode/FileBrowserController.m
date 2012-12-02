@@ -289,7 +289,7 @@
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }

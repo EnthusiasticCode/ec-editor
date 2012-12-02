@@ -551,16 +551,15 @@ static NSMutableDictionary *fsItemCache() {
   [fsScheduler() schedule:^{
     @strongify(self);
     NSURL *url = self.urlBacking.first;
-    NSString *name = [[url lastPathComponent] stringByDeletingPathExtension];
     NSUInteger duplicateCount = 1;
-    NSString *extension = [url pathExtension];
+		NSURL *destinationURL = nil;
     for (;;) {
-      if (![[NSFileManager defaultManager] fileExistsAtPath:[[[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ (%d).%@", name, duplicateCount, extension]] path]]) {
+			destinationURL = [url.URLByDeletingLastPathComponent URLByAppendingPathComponent:(url.pathExtension.length == 0 ? [NSString stringWithFormat:@"%@ (%d)", url.lastPathComponent, duplicateCount] : [NSString stringWithFormat:@"%@ (%d).%@", url.lastPathComponent.stringByDeletingPathExtension, duplicateCount, url.pathExtension])];
+      if (![[NSFileManager defaultManager] fileExistsAtPath:destinationURL.path]) {
         break;
       }
       ++duplicateCount;
     }
-    NSURL *destinationURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@ (%d).%@", name, duplicateCount, extension]];
     NSError *error = nil;
     if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destinationURL error:&error]) {
       [result sendError:error];
