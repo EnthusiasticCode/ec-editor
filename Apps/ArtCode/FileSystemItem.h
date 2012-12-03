@@ -85,11 +85,30 @@
 
 @interface FileSystemItem (FileManagement)
 
-/// Attempts to move the receiver to the destination, then sends the item and completed, or an error, to the returned signal.
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination;
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination renameTo:(NSString *)newName;
+// Moves the receiver to the given directory and generates a new FileSystemItem.
+//
+// destination:		The FileSystemDirectory in which to copy the receiver.
+// newName:				A name to give to the copyied file. It can be nil to keep the
+//								current name.
+// shouldReplace:	Indicates if the peration should replace any existing file.
+//
+// Returns a signal that sends the moved FileSystemItem and completes.
+- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace;
 
-/// Attempts to copy the receiver to the destination, then sends the copy and completed, or an error, to the returned signal.
+// Calls -moveTo:destination withName:nil replaceExisting:YES.
+- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination;
+
+// Copy the receiver to the given directory and generates a new FileSystemItem.
+//
+// destination:		The FileSystemDirectory in which to copy the receiver.
+// newName:				A name to give to the copyied file. It can be nil to keep the
+//								current name.
+// shouldReplace:	Indicates if the peration should replace any existing file.
+//
+// Returns a signal that sends the newly copied FileSystemItem and completes.
+- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace;
+
+// Calls -copyTo:destination withName:nil replaceExisting:YES.
 - (id<RACSignal>)copyTo:(FileSystemDirectory *)destination;
 
 /// Attempts to rename or create a renamed copy of the receiver, then sends the item and completed, or an error, to the returned signal.

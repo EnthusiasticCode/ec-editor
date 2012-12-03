@@ -484,19 +484,18 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemItem (FileManagement)
 
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination {
-  return [self moveTo:destination renameTo:nil];
-}
-
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination renameTo:(NSString *)newName {
+- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
     @strongify(self);
     NSURL *url = self.urlBacking.first;
-    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: [url lastPathComponent]];
+    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
     NSError *error = nil;
-    if (![[NSFileManager defaultManager] moveItemAtURL:url toURL:destinationURL error:&error]) {
+		if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
+			[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
+		}
+    if (![NSFileManager.defaultManager moveItemAtURL:url toURL:destinationURL error:&error]) {
       [result sendError:error];
     } else {
       [[self class] didMove:url to:destinationURL];
@@ -507,15 +506,22 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination {
-  RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
+- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination {
+  return [self moveTo:destination withName:nil replaceExisting:YES];
+}
+
+- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
+	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
     @strongify(self);
     NSURL *url = self.urlBacking.first;
-    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:[url lastPathComponent]];
+    NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
     NSError *error = nil;
-    if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destinationURL error:&error]) {
+		if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
+			[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
+		}
+    if (![NSFileManager.defaultManager copyItemAtURL:url toURL:destinationURL error:&error]) {
       [result sendError:error];
     } else {
       [[self class] didCopy:url to:destinationURL];
@@ -524,6 +530,10 @@ static NSMutableDictionary *fsItemCache() {
     }
   }];
   return [result deliverOn:currentScheduler()];
+}
+
+- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination {
+  return [self copyTo:destination withName:nil replaceExisting:YES];
 }
 
 - (id<RACSignal>)renameTo:(NSString *)newName {

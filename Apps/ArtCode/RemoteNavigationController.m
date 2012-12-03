@@ -213,7 +213,7 @@ static void _init(RemoteNavigationController *self) {
       return [FileSystemItem itemWithURL:tempURL];
     }] flattenMap:^id<RACSignal>(FileSystemItem *x) {
       // Move to destination, the downloaded FileSystemItem is sent
-      return [x moveTo:localController.locationDirectory renameTo:itemName];
+      return [x moveTo:localController.locationDirectory withName:itemName replaceExisting:YES];
     }] catchTo:[RACSignal return:nil]] doNext:^(id x) {
       if (x == nil) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];

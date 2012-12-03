@@ -149,13 +149,6 @@ static void _init(NewFileImportController *self) {
       }];
     }];
   }];
-  
-//  [[[RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
-//    @strongify(self);
-//    return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
-//  }]] map:^NSArray *(RACTuple *xs) {
-//    return xs.allObjects;
-//  }] toProperty:@keypath(self.importFileItems) onObject:self];
 }
 
 #pragma mark - Private Methods
