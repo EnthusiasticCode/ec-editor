@@ -14,7 +14,6 @@
 
 #import "QuickFileBrowserController.h"
 #import "QuickBookmarkBrowserController.h"
-#import "QuickProjectInfoController.h"
 #import "QuickFolderInfoController.h"
 #import "QuickFileInfoController.h"
 #import "QuickTOCController.h"
@@ -31,8 +30,6 @@
   } else {
     switch (contentController.artCodeTab.currentLocation.type) {
       case ArtCodeLocationTypeProject:
-        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickProjectInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
-        break;
       case ArtCodeLocationTypeDirectory:
         quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
         break;
