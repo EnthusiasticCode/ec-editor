@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@class ColorSelectionControl;
+
 @interface NewProjectController : UIViewController <UITextFieldDelegate>
 
-@property (strong, nonatomic) IBOutlet UIButton *projectColorButton;
-@property (strong, nonatomic) IBOutlet UITextField *projectNameTextField;
-@property (strong, nonatomic) IBOutlet UILabel *descriptionLabel;
+@property (weak, nonatomic) IBOutlet ColorSelectionControl *projectColorSelection;
+@property (weak, nonatomic) IBOutlet UITextField *projectNameTextField;
+@property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 
-- (IBAction)changeColorAction:(id)sender;
 - (IBAction)createProjectAction:(id)sender;
 
 @end

@@ -9,6 +9,7 @@
 #import "NewProjectController.h"
 
 #import "BezelAlert.h"
+#import "ColorSelectionControl.h"
 
 #import "AppStyle.h"
 #import "ColorSelectionControl.h"
@@ -18,54 +19,23 @@
 #import "ArtCodeProject.h"
 #import "ArtCodeProjectSet.h"
 
-@implementation NewProjectController {
-  UIViewController *changeColorController;
-  UIColor *projectColor;
-}
-
-@synthesize projectColorButton;
-@synthesize projectNameTextField;
-@synthesize descriptionLabel;
-
-- (id)initWithCoder:(NSCoder *)coder {
-  self = [super initWithCoder:coder];
-  if (self) {
-    projectColor = [UIColor styleForegroundColor];
-  }
-  return self;
-}
+@implementation NewProjectController
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  self.projectColorButton.accessibilityIdentifier = @"Label color";
-  self.projectColorButton.accessibilityLabel = L(@"No color label");
-}
-
-- (void)viewDidUnload {
-  [self setProjectNameTextField:nil];
-  [self setProjectColorButton:nil];
-  [self setDescriptionLabel:nil];
-  [super viewDidUnload];
+  // Send the selected color to the current project's label color
+  self.projectColorSelection.rows = 1;
+  self.projectColorSelection.columns = 6;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
   
-  self.projectColorButton.hidden = NO;
+  self.projectColorSelection.enabled = YES;
   self.projectNameTextField.enabled = YES;
   [self stopRightBarButtonItemActivityIndicator];
-  
-  [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:CGSizeMake(14, 22) color:projectColor] forState:UIControlStateNormal];
   [self.projectNameTextField becomeFirstResponder];
-}
-
-- (void)_selectColorAction:(ColorSelectionControl *)sender
-{
-  projectColor = sender.selectedColor;
-  [self.projectColorButton setImage:[UIImage styleProjectLabelImageWithSize:self.projectColorButton.bounds.size color:projectColor] forState:UIControlStateNormal];
-  self.projectColorButton.accessibilityLabel = [NSString stringWithFormat:L(@"%@ label"), projectColor];
-  [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark Text Field delegate
@@ -79,34 +49,22 @@
 
 #pragma mark Public methods
 
-- (IBAction)changeColorAction:(id)sender
-{
-  if (!changeColorController)
-  {
-    ColorSelectionControl *colorSelectionControl = [[ColorSelectionControl alloc] initWithFrame:CGRectMake(0, 0, 300, 200)];
-    [colorSelectionControl addTarget:self action:@selector(_selectColorAction:) forControlEvents:UIControlEventTouchUpInside];
-    colorSelectionControl.accessibilityIdentifier = @"color selector";
-    
-    changeColorController = [[UIViewController alloc] init];
-    changeColorController.view = colorSelectionControl;
-    changeColorController.contentSizeForViewInPopover = CGSizeMake(400, 200);
-  }
-  [self.navigationController pushViewController:changeColorController animated:YES];
-}
-
 - (IBAction)createProjectAction:(id)sender {
   NSString *projectName = self.projectNameTextField.text;
   if ([projectName length] == 0) {
     self.descriptionLabel.text = L(@"A project name must be specified.");
     return;
   }
+	
+	UIColor *projectColor = self.projectColorSelection.selectedColor;
+	if (!projectColor) projectColor = [UIColor styleForegroundColor];
   
   [self startRightBarButtonItemActivityIndicator];
-  self.projectColorButton.enabled = NO;
+  self.projectColorSelection.enabled = NO;
   self.projectNameTextField.enabled = NO;
   [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName labelColor:projectColor completionHandler:^(ArtCodeProject *project) {
     [self stopRightBarButtonItemActivityIndicator];
-    self.projectColorButton.enabled = YES;
+    self.projectColorSelection.enabled = YES;
     self.projectNameTextField.enabled = YES;
     if (!project) {
       [self.projectNameTextField selectAll:nil];
