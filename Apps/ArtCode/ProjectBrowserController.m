@@ -10,6 +10,7 @@
 #import "NSNotificationCenter+RACSupport.h"
 
 #import "ProjectBrowserController.h"
+#import "NewProjectController.h"
 #import "AppStyle.h"
 #import "ColorSelectionControl.h"
 
@@ -342,102 +343,128 @@
       }
     }];
   } else if (actionSheet == _toolItemExportActionSheet) {
-    if (buttonIndex == 0) // export to iTunes
-    {
-      NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
-      [self setEditing:NO animated:YES];
-      
-      self.loading = YES;
-      NSInteger cellsToExportCount = [cellsToExport count];
-      __block NSInteger progress = 0;
-      void (^progressBlock)() = ^{
-        // Block to advance the progress count and terminate loading phase when done
-        if (++progress == cellsToExportCount) {
-          self.loading = NO;
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+		switch (buttonIndex) {
+			case 0: // Rename
+			{
+				if (self.gridView.indexesForSelectedCells.count != 1) {
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single project to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+          break;
         }
-      };
-      [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ArtCodeProject class]]) {
-          ArtCodeProject *project = obj;
-          NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-          [ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
-            if (temporaryDirectoryURL) {
-              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
-              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-            }
-            progressBlock();
-          }];
-        } else {
-          // Not a project
-          progressBlock();
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Only projects can be exported") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-        }
-      }];
-    }
-    else if (buttonIndex == 1) // send mail
-    {
-      MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
-      mailComposer.mailComposeDelegate = self;
-      mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-      mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-      
-      // Compressing projects to export
-      self.loading = YES;
-      NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
-      [self setEditing:NO animated:YES];
-      
-      NSMutableString *subject = [[NSMutableString alloc] init];
-      NSInteger cellsToExportCount = [cellsToExport count];
-      __block NSInteger progress = 0;
-      // Complete process block
-      void (^progressCompletion)() = ^ {
-        if (++progress == cellsToExportCount) {
-          // Add mail subject
-          if ([subject length] > 2) {
-            [subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
-            [mailComposer setSubject:subject];
-          } else {
-            [mailComposer setSubject:L(@"ArtCode exported project")];
-          }
-          
-          // Add body
-          if (cellsToExportCount == 1)
-            [mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
-          else
-            [mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
-          
-          // Present
-          [self presentViewController:mailComposer animated:YES completion:nil];
-          [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-          self.loading = NO;
-        }
-      };
-      // Enumerate elements to export
-      [self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ArtCodeProject class]]) {
-          ArtCodeProject *project = obj;
-          
-          // Generate mail subject
-          [subject appendFormat:@"%@, ", project.name];
-          
-          // Process project
-          [ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
-            if (temporaryDirectoryURL) {
-              // Add attachment
-              NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
-              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-              progressCompletion();
-            }
-          }];
-        } else {
-          // Ignore non projects
-          progressCompletion();
-        }
-      }];
-    }
+				UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
+				NewProjectController *projectEditor = (NewProjectController *)[storyboard instantiateViewControllerWithIdentifier:@"ProjectEditor"];
+				projectEditor.projectToEdit = (self.gridElements)[self.gridView.indexForSelectedCell];
+				// Cancel button
+				UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Cancel") style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
+				[cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+				projectEditor.navigationItem.leftBarButtonItem = cancelItem;
+				//
+				UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:projectEditor];
+				navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentModalViewController:navigationController animated:YES];
+			} break;
+				
+			case 1: // export to iTunes
+			{
+				NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+				[self setEditing:NO animated:YES];
+				
+				self.loading = YES;
+				NSInteger cellsToExportCount = [cellsToExport count];
+				__block NSInteger progress = 0;
+				void (^progressBlock)() = ^{
+					// Block to advance the progress count and terminate loading phase when done
+					if (++progress == cellsToExportCount) {
+						self.loading = NO;
+						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+					}
+				};
+				[self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+					if ([obj isKindOfClass:[ArtCodeProject class]]) {
+						ArtCodeProject *project = obj;
+						NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+							if (temporaryDirectoryURL) {
+								[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+								[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+							}
+							progressBlock();
+						}];
+					} else {
+						// Not a project
+						progressBlock();
+						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Only projects can be exported") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+					}
+				}];
+			} break;
+				
+			case 2:
+			{
+				MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+				mailComposer.mailComposeDelegate = self;
+				mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+				mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+				
+				// Compressing projects to export
+				self.loading = YES;
+				NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+				[self setEditing:NO animated:YES];
+				
+				NSMutableString *subject = [[NSMutableString alloc] init];
+				NSInteger cellsToExportCount = [cellsToExport count];
+				__block NSInteger progress = 0;
+				// Complete process block
+				void (^progressCompletion)() = ^ {
+					if (++progress == cellsToExportCount) {
+						// Add mail subject
+						if ([subject length] > 2) {
+							[subject replaceCharactersInRange:NSMakeRange([subject length] - 2, 2) withString:(cellsToExportCount == 1 ? @" project" : @" projects")];
+							[mailComposer setSubject:subject];
+						} else {
+							[mailComposer setSubject:L(@"ArtCode exported project")];
+						}
+						
+						// Add body
+						if (cellsToExportCount == 1)
+							[mailComposer setMessageBody:@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>" isHTML:YES];
+						else
+							[mailComposer setMessageBody:@"<br/><p>Open this files with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained projects.</p>" isHTML:YES];
+						
+						// Present
+						[self presentViewController:mailComposer animated:YES completion:nil];
+						[mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+						self.loading = NO;
+					}
+				};
+				// Enumerate elements to export
+				[self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+					if ([obj isKindOfClass:[ArtCodeProject class]]) {
+						ArtCodeProject *project = obj;
+						
+						// Generate mail subject
+						[subject appendFormat:@"%@, ", project.name];
+						
+						// Process project
+						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+							if (temporaryDirectoryURL) {
+								// Add attachment
+								NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+								[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+								[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+								[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+								progressCompletion();
+							}
+						}];
+					} else {
+						// Ignore non projects
+						progressCompletion();
+					}
+				}];
+			} break;
+				
+			default:
+				ASSERT(NO); // no action
+				break;
+		}
   }
 }
 
@@ -503,7 +530,7 @@
 {
   if (!_toolItemExportActionSheet)
   {
-    _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
+    _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
