@@ -23,7 +23,7 @@ static RACScheduler *fsScheduler() {
   static RACScheduler *fsScheduler = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-		fsScheduler = RACScheduler.backgroundScheduler;
+		fsScheduler = [RACScheduler scheduler];
 #if DEBUG
     fsScheduler_debug = fsScheduler;
 #endif
