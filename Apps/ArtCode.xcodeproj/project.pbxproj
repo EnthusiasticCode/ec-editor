@@ -30,6 +30,7 @@
 		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
 		5FABA6451647DCD40079D074 /* RACSignal+libdispatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FABA6441647DCD40079D074 /* RACSignal+libdispatch.m */; };
 		5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB00D88165C04DD00B70A13 /* NSArray+RACStream.m */; };
+		5FC9E256167B8FFF00E4FD6F /* NSObject+RACBindings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC9E255167B8FFF00E4FD6F /* NSObject+RACBindings.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -580,6 +581,8 @@
 		5FABA6441647DCD40079D074 /* RACSignal+libdispatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RACSignal+libdispatch.m"; sourceTree = "<group>"; };
 		5FB00D87165C04DD00B70A13 /* NSArray+RACStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+RACStream.h"; sourceTree = "<group>"; };
 		5FB00D88165C04DD00B70A13 /* NSArray+RACStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+RACStream.m"; sourceTree = "<group>"; };
+		5FC9E254167B8FFF00E4FD6F /* NSObject+RACBindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+RACBindings.h"; sourceTree = "<group>"; };
+		5FC9E255167B8FFF00E4FD6F /* NSObject+RACBindings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+RACBindings.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -1548,6 +1551,8 @@
 		B7FB79C014D6048E0080A714 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				5FC9E254167B8FFF00E4FD6F /* NSObject+RACBindings.h */,
+				5FC9E255167B8FFF00E4FD6F /* NSObject+RACBindings.m */,
 				5FABA6431647DCD40079D074 /* RACSignal+libdispatch.h */,
 				5FABA6441647DCD40079D074 /* RACSignal+libdispatch.m */,
 				5FB00D87165C04DD00B70A13 /* NSArray+RACStream.h */,
@@ -2964,6 +2969,7 @@
 				5FABA6451647DCD40079D074 /* RACSignal+libdispatch.m in Sources */,
 				5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */,
 				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
+				5FC9E256167B8FFF00E4FD6F /* NSObject+RACBindings.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

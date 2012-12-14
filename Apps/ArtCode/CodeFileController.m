@@ -194,7 +194,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (RACScheduler *)codeScheduler {
   if (!_codeScheduler) {
-		_codeScheduler = RACScheduler.backgroundScheduler;
+		_codeScheduler = [RACScheduler scheduler];
   }
   return _codeScheduler;
 }
