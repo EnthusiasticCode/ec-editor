@@ -39,16 +39,16 @@
 + (id<RACSignal>)createFileWithURL:(NSURL *)url;
 
 /// Returns a source that sends the file's encoding
-- (id<RACSignal>)encodingSource;
+- (id<RACSignal>)encodingSignal;
 
-/// Returns a sink that receives the file's encoding
-- (id<RACSubscriber>)encodingSink;
+/// Binds the encoding of the file as an NSStringEncoding. Returns a disposable to dispose the binding.
+- (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath;
 
 /// Returns a source that sends the contents of the file encoded as a string with it's encoding
-- (id<RACSignal>)contentSource;
+- (id<RACSignal>)contentSignal;
 
-/// Returns a sink that receives strings as the file's content
-- (id<RACSubscriber>)contentSink;
+/// Binds the content of the file as a NSString. Returns a disposable to dispose the binding.
+- (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath;
 
 /// Attempts to save the receiver to disk, then sends the item and completed, or an error, to the returned signal
 - (id<RACSignal>)save;

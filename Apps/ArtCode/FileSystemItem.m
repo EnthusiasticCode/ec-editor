@@ -65,10 +65,11 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemFile ()
 
-@property (nonatomic, strong, readonly) RACReplaySubject *encodingBacking;
-@property (nonatomic, strong, readonly) RACReplaySubject *contentBacking;
+@property (nonatomic) NSStringEncoding encoding;
+@property (nonatomic, strong) NSString *content;
 
 - (id<RACSignal>)internalSave;
+- (void)internalLoadFileIfNeeded;
 
 @end
 
@@ -201,78 +202,42 @@ static NSMutableDictionary *fsItemCache() {
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)encodingSource {
-  @weakify(self);
-  return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_SCHEDULER();
-    @strongify(self);
-    if (!self || !self.urlBacking.first) {
-      return [RACSignal error:[[NSError alloc] init]];
-    }
-    return self.encodingBacking;
-  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+- (id<RACSignal>)encodingSignal {
+	return [[[RACSignal defer:^id<RACSignal>{
+		[self internalLoadFileIfNeeded];
+		return RACAbleWithStart(self.encoding);
+	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
 }
 
-- (id<RACSubscriber>)encodingSink {
-  RACSubject *sink = [RACSubject subject];
-  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-    ASSERT_FS_SCHEDULER();
-    [self.encodingBacking sendNext:x];
-  }];
-  return self.encodingBacking;
+- (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath {
+	[fsScheduler() schedule:^{
+		[self internalLoadFileIfNeeded];
+	}];
+	return [target rac_bind:keyPath transformer:^(id value) {
+		if (!value || ![value unsignedIntegerValue] || value == [NSNull null]) value = @(NSUTF8StringEncoding);
+		return value;
+	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.encoding) transformer:nil onScheduler:fsScheduler()];
 }
 
-- (id<RACSignal>)contentSource {
-  @weakify(self);
-  return [[[RACSignal defer:^id<RACSignal>{
-    ASSERT_FS_SCHEDULER();
-    @strongify(self);
-    if (!self || !self.urlBacking.first) {
-      return [RACSignal error:[[NSError alloc] init]];
-    }
-    return self.contentBacking;
-  }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+- (id<RACSignal>)contentSignal {
+	return [[[RACSignal defer:^id<RACSignal>{
+		[self internalLoadFileIfNeeded];
+		return RACAbleWithStart(self.content);
+	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
 }
 
-- (id<RACSubscriber>)contentSink {
-  RACSubject *sink = [RACSubject subject];
-//  [[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
-//    ASSERT_FS_SCHEDULER();
-//    [self.contentBacking sendNext:x];
-//  }];
-  return sink;
+- (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath {
+	[fsScheduler() schedule:^{
+		[self internalLoadFileIfNeeded];
+	}];
+	return [target rac_bind:keyPath transformer:^(id value) {
+		if (!value || value == [NSNull null]) value = @"";
+		return value;
+	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.content) transformer:nil onScheduler:fsScheduler()];
 }
 
 - (id<RACSignal>)save {
   return [[[self internalSave] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
-}
-
-@synthesize encodingBacking = _encodingBacking;
-
-- (RACReplaySubject *)encodingBacking {
-  ASSERT_FS_SCHEDULER();
-  if (!_encodingBacking) {
-    _encodingBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-    
-  }
-  return _encodingBacking;
-}
-
-@synthesize contentBacking = _contentBacking;
-
-- (RACReplaySubject *)contentBacking {
-  ASSERT_FS_SCHEDULER();
-  if (!_contentBacking) {
-    _contentBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-    NSError *error = nil;
-    NSString *content = [NSString stringWithContentsOfURL:self.urlBacking.first encoding:NSUTF8StringEncoding error:&error];
-    if (!error) {
-      [_contentBacking sendNext:content];
-    } else {
-      [_contentBacking sendError:error];
-    }
-  }
-  return _contentBacking;
 }
 
 - (id<RACSignal>)internalSave {
@@ -280,26 +245,31 @@ static NSMutableDictionary *fsItemCache() {
   return [RACSignal defer:^id<RACSignal>{
     ASSERT_FS_SCHEDULER();
     @strongify(self);
-    NSString *content = self.contentBacking.first;
-    ASSERT(self.encodingBacking.first);
-    NSStringEncoding encoding = [self.encodingBacking.first unsignedIntegerValue];
     NSURL *url = self.urlBacking.first;
     if (!url) {
       return [RACSignal error:[[NSError alloc] init]];
     }
-    if (!encoding) {
-      encoding = NSUTF8StringEncoding;
+    if (!self.encoding) {
+      self.encoding = NSUTF8StringEncoding;
     }
-    if (!content) {
-      content = @"";
+    if (!self.content) {
+      self.content = @"";
     }
     NSError *error = nil;
     // Don't save atomically so we don't lose extended attributes
-    if (![content writeToURL:url atomically:NO encoding:encoding error:&error]) {
+    if (![self.content writeToURL:url atomically:NO encoding:self.encoding error:&error]) {
       return [RACSignal error:error];
     }
     return [RACSignal return:self];
   }];
+}
+
+- (void)internalLoadFileIfNeeded {
+	ASSERT_FS_SCHEDULER();
+	if (self.content) return;
+	NSStringEncoding encoding;
+	self.content = [NSString stringWithContentsOfURL:self.urlBacking.first usedEncoding:&encoding error:NULL];
+	self.encoding = encoding;
 }
 
 @end
@@ -662,7 +632,7 @@ static NSMutableDictionary *fsItemCache() {
     [item.typeBacking sendNext:nil];
     [item.parentBacking sendNext:nil];
     if (itemType == NSURLFileResourceTypeRegular) {
-      [((FileSystemFile *)item).contentBacking sendNext:nil];
+      ((FileSystemFile *)item).content = nil;
     } else if (itemType == NSURLFileResourceTypeDirectory) {
       [((FileSystemDirectory *)item).childrenBacking sendNext:nil];
       NSString *targetString = target.standardizedURL.absoluteString;

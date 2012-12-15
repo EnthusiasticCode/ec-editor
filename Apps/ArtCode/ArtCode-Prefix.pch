@@ -16,5 +16,6 @@
 #import "NSNotificationCenter+RACSupport.h"
 #import "EXTScope.h"
 #import "NSArray+RACStream.h"
+#import "NSObject+RACBindings.h"
 
 #endif
