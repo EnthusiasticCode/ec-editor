@@ -42,6 +42,13 @@
 	}
 }
 
+- (void)sendActionsForControlEvents:(UIControlEvents)controlEvents {
+	if (controlEvents == UIControlEventValueChanged) {
+		self.selectedColor = self.colors[self.selectedSegmentIndex];
+	}
+	[super sendActionsForControlEvents:controlEvents];
+}
+
 - (void)setSelectedSegmentIndex:(NSInteger)selectedSegmentIndex {
 	if (selectedSegmentIndex == self.selectedSegmentIndex)
 		return;
