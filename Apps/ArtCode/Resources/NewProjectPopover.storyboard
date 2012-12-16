@@ -24,7 +24,7 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Adding files, remotes and modifying project name and color will be possible inside the project once created." lineBreakMode="wordWrap" numberOfLines="5" minimumFontSize="10" id="ruL-ac-Czu">
-                                <rect key="frame" x="20" y="99" width="500" height="43"/>
+                                <rect key="frame" x="20" y="110" width="500" height="43"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -32,11 +32,14 @@
                                 <color key="shadowColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <size key="shadowOffset" width="0.0" height="1"/>
                             </label>
-                            <view contentMode="scaleToFill" id="ahL-5P-hvC" customClass="ColorSelectionControl">
-                                <rect key="frame" x="20" y="59" width="500" height="32"/>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="OrW-cj-coZ" customClass="ColorSelectionControl">
+                                <rect key="frame" x="20" y="59" width="500" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="0.91000000000000003" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -50,7 +53,7 @@
                     <value key="contentSizeForViewInPopover" type="size" width="400" height="200"/>
                     <connections>
                         <outlet property="descriptionLabel" destination="ruL-ac-Czu" id="Rcn-WJ-gJG"/>
-                        <outlet property="projectColorSelection" destination="ahL-5P-hvC" id="eYj-Uo-m4s"/>
+                        <outlet property="projectColorSelection" destination="OrW-cj-coZ" id="fe0-1F-qiZ"/>
                         <outlet property="projectNameTextField" destination="I17-fp-7XU" id="czm-cq-ubv"/>
                     </connections>
                 </viewController>
@@ -229,6 +232,27 @@
             <point key="canvasLocation" x="2157" y="261"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="ColorSelectionControl" superclassName="UISegmentedControl">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ColorSelectionControl.h"/>
+        </class>
+        <class className="NewProjectController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectController.h"/>
+            <relationships>
+                <relationship kind="action" name="createProjectAction:"/>
+                <relationship kind="action" name="editProjectAction:"/>
+                <relationship kind="outlet" name="descriptionLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="projectColorSelection" candidateClass="ColorSelectionControl"/>
+                <relationship kind="outlet" name="projectNameTextField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="NewProjectImportController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NewProjectImportController.h"/>
+        </class>
+        <class className="PopoverButton" superclassName="UIButton">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PopoverButton.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

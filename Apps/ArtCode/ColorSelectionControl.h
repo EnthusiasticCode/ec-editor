@@ -8,18 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ColorSelectionControl : UIControl
+@interface ColorSelectionControl : UISegmentedControl
 
 @property (nonatomic, strong) NSArray *colors;
 
 @property (nonatomic, strong) UIColor *selectedColor;
-
-@property (nonatomic) CGFloat colorCellsMargin;
-
-@property (nonatomic) NSUInteger columns;
-
-@property (nonatomic) NSUInteger rows;
-
-@property (nonatomic, weak) id userInfo;
 
 @end

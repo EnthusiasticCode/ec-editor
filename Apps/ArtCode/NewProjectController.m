@@ -23,9 +23,6 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  // Send the selected color to the current project's label color
-  self.projectColorSelection.rows = 1;
-  self.projectColorSelection.columns = 6;
 	
 	if (self.projectToEdit != nil) {
 		self.navigationItem.title = L(@"Edit project");
@@ -46,6 +43,8 @@
 		self.projectNameTextField.text = self.projectToEdit.name;
 		self.projectColorSelection.selectedColor = self.projectToEdit.labelColor;
 		self.descriptionLabel.text = @"";
+	} else {
+		self.projectColorSelection.selectedSegmentIndex = 0;
 	}
 	
   [self.projectNameTextField becomeFirstResponder];
