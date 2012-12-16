@@ -30,6 +30,8 @@
 #import "ArchiveUtilities.h"
 #import "BezelAlert.h"
 
+#import "UIBarButtonItem+BlockAction.h"
+
 
 @interface ProjectBrowserController ()
 
@@ -350,9 +352,27 @@
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single project to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
+				//
 				UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
 				NewProjectController *projectEditor = (NewProjectController *)[storyboard instantiateViewControllerWithIdentifier:@"ProjectEditor"];
-				projectEditor.projectToEdit = (self.gridElements)[self.gridView.indexForSelectedCell];
+				//
+				NSInteger indexOfProjectToEdit = self.gridView.indexForSelectedCell;
+				ArtCodeProject *projectToEdit = (self.gridElements)[indexOfProjectToEdit];
+				// Prepare the editing view from a NewProjectController
+				projectEditor.navigationItem.title = L(@"Edit project");
+				[projectEditor.navigationItem.rightBarButtonItem setTitle:L(@"Done")];
+				[projectEditor.navigationItem.rightBarButtonItem setActionBlock:^(id sender) {
+					if (projectEditor.projectNameTextField.text.length == 0) {
+						projectEditor.descriptionLabel.text = L(@"Invalid name for a project");
+					}
+					projectToEdit.name = projectEditor.projectNameTextField.text;
+					if (projectEditor.projectColorSelection.selectedColor != nil) {
+						projectToEdit.labelColor = projectEditor.projectColorSelection.selectedColor;
+					}
+					[self dismissModalViewControllerAnimated:YES];
+					[self setEditing:NO animated:YES];
+					[self.gridView reloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:indexOfProjectToEdit] animated:YES];
+				}];
 				// Cancel button
 				UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Cancel") style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
 				[cancelItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
@@ -360,7 +380,11 @@
 				//
 				UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:projectEditor];
 				navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-        [self presentModalViewController:navigationController animated:YES];
+        [self presentViewController:navigationController animated:YES completion:^{
+					projectEditor.projectNameTextField.text = projectToEdit.name;
+					projectEditor.projectColorSelection.selectedColor = projectToEdit.labelColor;
+					projectEditor.descriptionLabel.text = @"";
+				}];
 			} break;
 				
 			case 1: // export to iTunes

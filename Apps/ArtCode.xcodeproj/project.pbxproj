@@ -240,6 +240,7 @@
 		CD0C97DD14DD455B0014A7B0 /* TMKeyboardAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0C97DC14DD455B0014A7B0 /* TMKeyboardAction.m */; };
 		CD12A97414F00DD80005F603 /* SearchableTableBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */; };
 		CD12A98414F14F0F0005F603 /* RemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD12A98314F14F0F0005F603 /* RemotesListController.m */; };
+		CD149662167E3B7400223367 /* UIBarButtonItem+BlockAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CD149661167E3B7400223367 /* UIBarButtonItem+BlockAction.m */; };
 		CD174BC915D1326200F3EAF1 /* topBar_ToolButton_Normal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BC715D1326200F3EAF1 /* topBar_ToolButton_Normal@2x.png */; };
 		CD174BCA15D1326200F3EAF1 /* topBar_ToolButton_Selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BC815D1326200F3EAF1 /* topBar_ToolButton_Selected@2x.png */; };
 		CD174BCF15D13B5800F3EAF1 /* topBar_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD174BCC15D13B5800F3EAF1 /* topBar_background@2x.png */; };
@@ -848,6 +849,8 @@
 		CD12A97314F00DD80005F603 /* SearchableTableBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchableTableBrowserController.m; sourceTree = "<group>"; };
 		CD12A98214F14F0F0005F603 /* RemotesListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemotesListController.h; sourceTree = "<group>"; };
 		CD12A98314F14F0F0005F603 /* RemotesListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemotesListController.m; sourceTree = "<group>"; };
+		CD149660167E3B7400223367 /* UIBarButtonItem+BlockAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+BlockAction.h"; sourceTree = "<group>"; };
+		CD149661167E3B7400223367 /* UIBarButtonItem+BlockAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+BlockAction.m"; sourceTree = "<group>"; };
 		CD174BC715D1326200F3EAF1 /* topBar_ToolButton_Normal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBar_ToolButton_Normal@2x.png"; sourceTree = "<group>"; };
 		CD174BC815D1326200F3EAF1 /* topBar_ToolButton_Selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBar_ToolButton_Selected@2x.png"; sourceTree = "<group>"; };
 		CD174BCC15D13B5800F3EAF1 /* topBar_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "topBar_background@2x.png"; sourceTree = "<group>"; };
@@ -1485,6 +1488,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				CD149660167E3B7400223367 /* UIBarButtonItem+BlockAction.h */,
+				CD149661167E3B7400223367 /* UIBarButtonItem+BlockAction.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
 				CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */,
 				B7FB7A2014D60C360080A714 /* UIView+ReuseIdentifier.h */,
@@ -2970,6 +2975,7 @@
 				5FB00D89165C04DD00B70A13 /* NSArray+RACStream.m in Sources */,
 				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
 				5FC9E256167B8FFF00E4FD6F /* NSObject+RACBindings.m in Sources */,
+				CD149662167E3B7400223367 /* UIBarButtonItem+BlockAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

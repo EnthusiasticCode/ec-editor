@@ -21,16 +21,6 @@
 
 @implementation NewProjectController
 
-- (void)viewDidLoad {
-  [super viewDidLoad];
-	
-	if (self.projectToEdit != nil) {
-		self.navigationItem.title = L(@"Edit project");
-		[self.navigationItem.rightBarButtonItem setTitle:L(@"Done")];
-		[self.navigationItem.rightBarButtonItem setAction:@selector(editProjectAction:)];
-	}
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -38,15 +28,6 @@
   self.projectColorSelection.enabled = YES;
   self.projectNameTextField.enabled = YES;
   [self stopRightBarButtonItemActivityIndicator];
-	
-	if (self.projectToEdit != nil) {
-		self.projectNameTextField.text = self.projectToEdit.name;
-		self.projectColorSelection.selectedColor = self.projectToEdit.labelColor;
-		self.descriptionLabel.text = @"";
-	} else {
-		self.projectColorSelection.selectedSegmentIndex = 0;
-	}
-	
   [self.projectNameTextField becomeFirstResponder];
 }
 
@@ -86,17 +67,6 @@
       [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
     }
   }];
-}
-
-- (void)editProjectAction:(id)sender {
-	if (self.projectNameTextField.text.length == 0) {
-		self.descriptionLabel.text = L(@"Invalid name for a project");
-	}
-	self.projectToEdit.name = self.projectNameTextField.text;
-	if (self.projectColorSelection.selectedColor != nil) {
-		self.projectToEdit.labelColor = self.projectColorSelection.selectedColor;
-	}
-	[self dismissModalViewControllerAnimated:YES];
 }
 
 @end
