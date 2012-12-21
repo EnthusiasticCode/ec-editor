@@ -43,6 +43,8 @@
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
+@property (nonatomic, strong) FileSystemDirectory *currentDirectory;
+
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
@@ -83,42 +85,34 @@
     return nil;
   
   // RAC
-  __weak FileBrowserController *weakSelf = self;
+  @weakify(self);
   __block RACDisposable *filteredItemsBindingDisposable = nil;
+	
+	[[RACAble(self.artCodeTab.currentLocation.url) flattenMap:^id(NSURL *url) {
+		return [FileSystemDirectory directoryWithURL:url];
+	}] toProperty:@keypath(self.currentDirectory) onObject:self];
   
-  [RACAble(self.artCodeTab.currentLocation.url) subscribeNext:^(NSURL *url) {
-    FileBrowserController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    [[FileSystemDirectory directoryWithURL:url] subscribeNext:^(FileSystemDirectory *directory) {
-      FileBrowserController *anotherStrongSelf = weakSelf;
-      if (!anotherStrongSelf) {
-        return;
-      }
-      // TODO: not quite sure this is needed, test it when directory auto updating is in
-      [filteredItemsBindingDisposable dispose];
-      filteredItemsBindingDisposable = [anotherStrongSelf rac_deriveProperty:@keypath(anotherStrongSelf, filteredItems) from:[directory childrenFilteredByAbbreviation:anotherStrongSelf.searchBarTextSubject]];
-    }];
-  }];
+  [RACAble(self.currentDirectory) subscribeNext:^(FileSystemDirectory *directory) {
+		@strongify(self);
+		// TODO: not quite sure this is needed, test it when directory auto updating is in
+		[filteredItemsBindingDisposable dispose];
+		filteredItemsBindingDisposable = [self rac_deriveProperty:@keypath(self.filteredItems) from:[directory childrenFilteredByAbbreviation:self.searchBarTextSubject]];
+	}];
   
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
-    FileBrowserController *strongSelf = weakSelf;
-    if (!strongSelf) {
-      return;
-    }
-    [strongSelf.tableView reloadData];
-    if (strongSelf.searchBar.text.length) {
+    @strongify(self);
+    [self.tableView reloadData];
+    if (self.searchBar.text.length) {
       if (items.count == 0) {
-        strongSelf.infoLabel.text = L(@"No items in this folder match the filter.");
+        self.infoLabel.text = L(@"No items in this folder match the filter.");
       } else {
-        strongSelf.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items"), items.count];
+        self.infoLabel.text = [NSString stringWithFormat:L(@"Showing %u filtered items"), items.count];
       }
     } else {
       if (items.count == 0) {
-        strongSelf.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
+        self.infoLabel.text = L(@"This folder has no items. Use the + button to add a new one.");
       } else {
-        strongSelf.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:items.count];
+        self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:items.count];
       }
     }
   }];
@@ -320,6 +314,7 @@
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
         directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+				directoryBrowser.excludeDirectory = self.currentDirectory;
         [self modalNavigationControllerPresentViewController:directoryBrowser];
         break;
       }

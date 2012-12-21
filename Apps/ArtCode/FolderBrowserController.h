@@ -16,6 +16,9 @@
 /// The folder that the browser is currently displaying.
 @property (nonatomic, strong) id<RACSignal> currentFolderSignal;
 
+/// A FileSystemDirectory for which to show a message and disable action buttons.
+@property (nonatomic, strong) FileSystemDirectory *excludeDirectory;
+
 /// The ArtCodeLocation selected by the user.
 @property (nonatomic, strong, readonly) FileSystemDirectory *selectedFolder;
 

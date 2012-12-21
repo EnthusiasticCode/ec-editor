@@ -18,6 +18,7 @@
 
 @property (nonatomic, strong) FileSystemDirectory *selectedFolder;
 @property (nonatomic, strong) NSArray *currentFolderSubfolders;
+@property (nonatomic) BOOL hideExcludeMessage;
 
 @end
 
@@ -32,9 +33,17 @@
   }
   
   // RAC
-  
+	id<RACSignal> currentFolder = [RACAble(self.currentFolderSignal) switch];
+	
+	// Excluded folder state
+	id<RACSignal> shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory)] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e) {
+		return @(s ? s != e : c != e);
+	}];
+	[shouldEnableSignal toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
+	[shouldEnableSignal toProperty:@keypath(self.hideExcludeMessage) onObject:self];
+	
   // Update table content
-  [[[[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
+  [[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
     return x.children;
   }] map:^(NSArray *x) {
 		return [[RACSignal merge:[x map:^(FileSystemItem *y) {
@@ -59,10 +68,33 @@
   return self;
 }
 
+- (void)setHideExcludeMessage:(BOOL)hideExcludeMessage {
+	if (hideExcludeMessage == _hideExcludeMessage) return;
+	
+	_hideExcludeMessage = hideExcludeMessage;
+	
+	if (!hideExcludeMessage) {
+		UILabel *excludeLabel = [[UILabel alloc] init];
+		excludeLabel.text = L(@"The file is in this directory");
+		excludeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		excludeLabel.textAlignment = NSTextAlignmentCenter;
+		excludeLabel.backgroundColor = [UIColor grayColor];
+		[excludeLabel sizeToFit];
+		self.tableView.tableHeaderView = excludeLabel;
+	} else {
+		self.tableView.tableHeaderView = nil;
+	}
+}
+
 #pragma mark - UIViewController
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	self.selectedFolder = nil;
 }
 
 #pragma mark - UITableView Data Source
@@ -97,6 +129,7 @@
   FolderBrowserController *nextBrowser = [[FolderBrowserController alloc] initWithStyle:self.tableView.style];
   nextBrowser.currentFolderSignal = [RACSignal return:(self.currentFolderSubfolders)[indexPath.row]];
   nextBrowser.navigationItem.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
+	nextBrowser.excludeDirectory = self.excludeDirectory;
   [self.navigationController pushViewController:nextBrowser animated:YES];
 }
 
