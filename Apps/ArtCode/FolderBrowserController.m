@@ -33,10 +33,11 @@
   }
   
   // RAC
+	id<RACSignal> tableView = RACAbleWithStart(self.tableView);
 	id<RACSignal> currentFolder = [RACAble(self.currentFolderSignal) switch];
 	
 	// Excluded folder state
-	id<RACSignal> shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory)] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e) {
+	id<RACSignal> shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
 		return @(s ? s != e : c != e);
 	}];
 	[shouldEnableSignal toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
@@ -59,7 +60,7 @@
   }] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
-  [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), RACAbleWithStart(self.tableView)] reduce:^(NSArray *_, UITableView *x) {
+  [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), tableView] reduce:^(NSArray *_, UITableView *x) {
 		return x;
 	}] subscribeNext:^(UITableView *x) {
     [x reloadData];
@@ -69,8 +70,6 @@
 }
 
 - (void)setHideExcludeMessage:(BOOL)hideExcludeMessage {
-	if (hideExcludeMessage == _hideExcludeMessage) return;
-	
 	_hideExcludeMessage = hideExcludeMessage;
 	
 	if (!hideExcludeMessage) {
