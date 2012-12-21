@@ -77,7 +77,8 @@
 		excludeLabel.text = L(@"The file is in this directory");
 		excludeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		excludeLabel.textAlignment = NSTextAlignmentCenter;
-		excludeLabel.backgroundColor = [UIColor grayColor];
+		excludeLabel.backgroundColor = [UIColor lightGrayColor];
+		excludeLabel.textColor = [UIColor whiteColor];
 		[excludeLabel sizeToFit];
 		self.tableView.tableHeaderView = excludeLabel;
 	} else {
