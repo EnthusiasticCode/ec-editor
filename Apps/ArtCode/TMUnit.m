@@ -162,9 +162,9 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
       }
       // Remove remaining child scopes
 #warning TODO: since the children are sorted this could be done better, also finding the index of the new end scope could be done on the insertion above
-      [[scope.children filter:^BOOL(TMScope *childScope) {
+      [[[[scope.children rac_sequence] filter:^BOOL(TMScope *childScope) {
         return childScope.location > resultRange.location;
-      }] makeObjectsPerformSelector:@selector(removeFromParent)];
+      }] array] makeObjectsPerformSelector:@selector(removeFromParent)];
       scopeEndHandler(scope);
       ASSERT([scopeStack count]);
       [scopeStack removeLastObject];
@@ -412,7 +412,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   return [_symbolList copy];
 }
 
-- (id<RACSignal>)tokens {
+- (RACSignal *)tokens {
   if (!_tokens) {
     _tokens = [RACSubject subject];
   }

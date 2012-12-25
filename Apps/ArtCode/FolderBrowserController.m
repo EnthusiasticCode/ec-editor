@@ -33,11 +33,11 @@
   }
   
   // RAC
-	id<RACSignal> tableView = RACAbleWithStart(self.tableView);
-	id<RACSignal> currentFolder = [RACAble(self.currentFolderSignal) switch];
+	RACSignal * tableView = RACAbleWithStart(self.tableView);
+	RACSignal * currentFolder = [RACAble(self.currentFolderSignal) switch];
 	
 	// Excluded folder state
-	id<RACSignal> shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
+	RACSignal * shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
 		return @(s ? s != e : c != e);
 	}];
 	[shouldEnableSignal toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
@@ -47,11 +47,11 @@
   [[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
     return x.children;
   }] map:^(NSArray *x) {
-		return [[RACSignal merge:[x map:^(FileSystemItem *y) {
+		return [[RACSignal merge:[[[x rac_sequence] map:^(FileSystemItem *y) {
 			return [[[y.type take:1] filter:^ BOOL (NSString *z) {
 				return z == NSURLFileResourceTypeDirectory;
 			}] mapReplace:y];
-		}]] collect];
+		}] array]] collect];
   }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title

@@ -308,7 +308,7 @@ static void drawStencilStar(CGContextRef myContext)
   RAC(self.view.backgroundColor) = RACAble(self.codeView.backgroundColor);
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
-  [[[RACAble(self.artCodeTab.currentLocation.url) map:^id<RACSignal>(NSURL *url) {
+  [[[RACAble(self.artCodeTab.currentLocation.url) map:^RACSignal *(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
   }] switch] toProperty:@keypath(self.textFile) onObject:self];
 
@@ -332,7 +332,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
 
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^id<RACSignal>(RACTuple *tuple) {
+  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;

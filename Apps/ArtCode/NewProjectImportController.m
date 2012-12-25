@@ -138,15 +138,15 @@
         if (temporaryDirectoryURL) {
           // Get the extracted directories
           [[[[RACSignal combineLatest:@[
-            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^id<RACSignal>(FileSystemDirectory *temporaryDirectory) {
+            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(FileSystemDirectory *temporaryDirectory) {
               return [[temporaryDirectory children] take:1];
-            }] flattenMap:^id<RACSignal>(NSArray *children) {
+            }] flattenMap:^RACSignal *(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
               if (children.count != 1) {
                 return [RACSignal return:children];
               }
               FileSystemItem *onlyChild = [children lastObject];
-              return [[onlyChild.type take:1] flattenMap:^id<RACSignal>(NSString *x) {
+              return [[onlyChild.type take:1] flattenMap:^RACSignal *(NSString *x) {
                 if (x == NSURLFileResourceTypeDirectory) {
                   return [[(FileSystemDirectory *)onlyChild children] take:1];
                 }
@@ -158,9 +158,9 @@
           flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;
             FileSystemDirectory *projectDirectory = x.second;
-            return [RACSignal zip:[children map:^id<RACSignal>(FileSystemItem *x) {
+            return [RACSignal zip:[[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
               return [x moveTo:projectDirectory];
-            }]];
+            }] array]];
           }] finally:^{
             [self stopRightBarButtonItemActivityIndicator];
             self.tableView.userInteractionEnabled = YES;

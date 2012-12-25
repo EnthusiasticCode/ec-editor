@@ -22,7 +22,7 @@
 @property (nonatomic, copy, readonly) NSArray *symbolList;
 
 /// Returns a signal that sends a signal for each reparse operation that send tokens as they are parsed
-@property (nonatomic, strong, readonly) id<RACSignal> tokens;
+@property (nonatomic, strong, readonly) RACSignal * tokens;
 
 /// Designated initializer. Creates a new TMUnit for the file at the given URL and syntax, coordinating with other TMUnits via the given index.
 /// It will not attempt to access the file itself, the fileURL is only used internally for parsing

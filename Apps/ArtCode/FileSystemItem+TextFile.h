@@ -12,15 +12,15 @@
 
 @interface FileSystemFile (TextFile)
 
-- (id<RACSignal>)explicitSyntaxIdentifierSource;
+- (RACSignal *)explicitSyntaxIdentifierSource;
 
 - (id<RACSubscriber>)explicitSyntaxIdentifierSink;
 
-- (id<RACSignal>)explicitEncodingSource;
+- (RACSignal *)explicitEncodingSource;
 
 - (id<RACSubscriber>)explicitEncodingSink;
 
-- (id<RACSignal>)bookmarksSource;
+- (RACSignal *)bookmarksSource;
 
 - (id<RACSubscriber>)bookmarksSink;
 

@@ -14,7 +14,7 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
 
 @implementation FileSystemFile (TextFile)
 
-- (id<RACSignal>)explicitSyntaxIdentifierSource {
+- (RACSignal *)explicitSyntaxIdentifierSource {
   return [self extendedAttributeSourceForKey:_explicitSyntaxIdentifierKey];
 }
 
@@ -22,7 +22,7 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
   return [self extendedAttributeSinkForKey:_explicitSyntaxIdentifierKey];
 }
 
-- (id<RACSignal>)explicitEncodingSource {
+- (RACSignal *)explicitEncodingSource {
   return [self extendedAttributeSourceForKey:_explicitEncodingKey];
 }
 
@@ -30,7 +30,7 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
   return [self extendedAttributeSinkForKey:_explicitEncodingKey];
 }
 
-- (id<RACSignal>)bookmarksSource {
+- (RACSignal *)bookmarksSource {
   return [self extendedAttributeSourceForKey:_bookmarksKey];
 }
 

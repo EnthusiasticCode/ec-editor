@@ -87,7 +87,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [[[[FileSystemDirectory directoryWithURL:project.fileURL] map:^id<RACSignal>(FileSystemDirectory *directory) {
+  [[[[FileSystemDirectory directoryWithURL:project.fileURL] map:^RACSignal *(FileSystemDirectory *directory) {
     return [directory delete];
   }] switch] subscribeError:^(NSError *error) {
     completionHandler(error);

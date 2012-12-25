@@ -196,7 +196,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[RACSignal zip:[remoteController.selectedItems map:^id<RACSignal>(NSDictionary *item) {
+  [[RACSignal zip:[[[remoteController.selectedItems rac_sequence] map:^RACSignal *(NSDictionary *item) {
     NSString *itemName = item[cxFilenameKey];
     // Generate local destination URL and start the download
     RACSignal *progressSignal = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:(item[NSFileType] == NSFileTypeDirectory)];
@@ -208,10 +208,10 @@ static void _init(RemoteNavigationController *self) {
     return [[[[[progressSignal filter:^BOOL(id x) {
       // Only return URLs
       return [x isKindOfClass:[NSURL class]];
-    }] flattenMap:^id<RACSignal>(NSURL *tempURL) {
+    }] flattenMap:^RACSignal *(NSURL *tempURL) {
       // Convert to filesystem item
       return [FileSystemItem itemWithURL:tempURL];
-    }] flattenMap:^id<RACSignal>(FileSystemItem *x) {
+    }] flattenMap:^RACSignal *(FileSystemItem *x) {
       // Move to destination, the downloaded FileSystemItem is sent
       return [x moveTo:localController.locationDirectory withName:itemName replaceExisting:YES];
     }] catchTo:[RACSignal return:nil]] doNext:^(id x) {
@@ -219,7 +219,7 @@ static void _init(RemoteNavigationController *self) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }
     }];
-  }]] subscribeCompleted:^{
+  }] array]] subscribeCompleted:^{
     @strongify(self);
     self.transfersInProgressCount--;
   }];
@@ -230,8 +230,8 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[localController.selectedItems map:^id<RACSignal>(FileSystemItem *x) {
-    return [[x.url take:1] map:^id<RACSignal>(NSURL *itemURL) {
+  [[[RACSignal zip:[[[localController.selectedItems rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+    return [[x.url take:1] map:^RACSignal *(NSURL *itemURL) {
       // Start upload
       RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
       
@@ -240,7 +240,7 @@ static void _init(RemoteNavigationController *self) {
       
       return progressSignal;
     }];
-  }]] finally:^{
+  }] array]] finally:^{
     @strongify(self);
     self.transfersInProgressCount--;
     // Refresh remote list
@@ -257,9 +257,9 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[remoteController.selectedItems map:^id<RACSignal>(NSDictionary *item) {
+  [[[RACSignal zip:[[[remoteController.selectedItems rac_sequence] map:^RACSignal *(NSDictionary *item) {
     return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:item[cxFilenameKey]]];
-  }]] finally:^{
+  }] array]] finally:^{
     @strongify(self);
     self.transfersInProgressCount--;
     [remoteController refresh];

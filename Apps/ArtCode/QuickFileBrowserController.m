@@ -53,9 +53,9 @@
   
   // RAC
   @weakify(self);
-  [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^id<RACSignal>(NSURL *projectURL) {
+  [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
     return [FileSystemDirectory directoryWithURL:projectURL];
-  }] switch] map:^id<RACSignal>(FileSystemDirectory *directory) {
+  }] switch] map:^RACSignal *(FileSystemDirectory *directory) {
     @strongify(self);
     return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject];
   }] switch] toProperty:@keypath(self.filteredItems) onObject:self];

@@ -50,8 +50,8 @@ static NSMutableDictionary *fsItemCache() {
 
 @interface FileSystemItem ()
 
-+ (id<RACSignal>)itemWithURL:(NSURL *)url type:(NSString *)type;
-+ (id<RACSignal>)internalItemWithURL:(NSURL *)url type:(NSString *)type;
++ (RACSignal *)itemWithURL:(NSURL *)url type:(NSString *)type;
++ (RACSignal *)internalItemWithURL:(NSURL *)url type:(NSString *)type;
 
 @property (nonatomic, strong, readonly) RACReplaySubject *urlBacking;
 @property (nonatomic, strong, readonly) RACReplaySubject *typeBacking;
@@ -68,7 +68,7 @@ static NSMutableDictionary *fsItemCache() {
 @property (nonatomic) NSStringEncoding encoding;
 @property (nonatomic, strong) NSString *content;
 
-- (id<RACSignal>)internalSave;
+- (RACSignal *)internalSave;
 - (void)internalLoadFileIfNeeded;
 
 @end
@@ -78,8 +78,8 @@ static NSMutableDictionary *fsItemCache() {
 @property (nonatomic, strong, readonly) RACReplaySubject *childrenBacking;
 
 + (NSArray *(^)(RACTuple *))filterAndSortByAbbreviationBlock;
-- (id<RACSignal>)internalChildren;
-- (id<RACSignal>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options;
+- (RACSignal *)internalChildren;
+- (RACSignal *)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options;
 - (void)didChangeChildren;
 
 @end
@@ -101,19 +101,19 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemItem
 
-+ (id<RACSignal>)itemWithURL:(NSURL *)url {
++ (RACSignal *)itemWithURL:(NSURL *)url {
   return [self itemWithURL:url type:nil];
 }
 
-+ (id<RACSignal>)itemWithURL:(NSURL *)url type:(NSString *)type {
++ (RACSignal *)itemWithURL:(NSURL *)url type:(NSString *)type {
   return [[[self internalItemWithURL:url type:type] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-+ (id<RACSignal>)internalItemWithURL:(NSURL *)url type:(NSString *)type {
++ (RACSignal *)internalItemWithURL:(NSURL *)url type:(NSString *)type {
   if (!url || ![url isFileURL]) {
     return [RACSignal error:[[NSError alloc] init]];
   }
-  return [RACSignal defer:^id<RACSignal>{
+  return [RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     FileSystemItem *item = fsItemCache()[url];
     if (item) {
@@ -161,21 +161,21 @@ static NSMutableDictionary *fsItemCache() {
   return self;
 }
 
-- (id<RACSignal>)url {
+- (RACSignal *)url {
   return [self.urlBacking deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)type {
+- (RACSignal *)type {
   return [self.typeBacking deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)name {
+- (RACSignal *)name {
   return [[self.urlBacking map:^NSString *(NSURL *url) {
     return url.lastPathComponent;
   }] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)parent {
+- (RACSignal *)parent {
   return [FileSystemItem itemWithURL:[self.urlBacking.first URLByDeletingLastPathComponent] type:NSURLFileResourceTypeDirectory];
 }
 
@@ -183,15 +183,15 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemFile
 
-+ (id<RACSignal>)fileWithURL:(NSURL *)url {
++ (RACSignal *)fileWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
 }
 
-+ (id<RACSignal>)createFileWithURL:(NSURL *)url {
++ (RACSignal *)createFileWithURL:(NSURL *)url {
   if (!url || ![url isFileURL]) {
     return [RACSignal error:[[NSError alloc] init]];
   }
-  return [[[RACSignal defer:^id<RACSignal>{
+  return [[[RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     NSError *error = nil;
     if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
@@ -202,8 +202,8 @@ static NSMutableDictionary *fsItemCache() {
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)encodingSignal {
-	return [[[RACSignal defer:^id<RACSignal>{
+- (RACSignal *)encodingSignal {
+	return [[[RACSignal defer:^RACSignal *{
 		[self internalLoadFileIfNeeded];
 		return RACAbleWithStart(self.encoding);
 	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
@@ -219,8 +219,8 @@ static NSMutableDictionary *fsItemCache() {
 	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.encoding) transformer:nil onScheduler:fsScheduler()];
 }
 
-- (id<RACSignal>)contentSignal {
-	return [[[RACSignal defer:^id<RACSignal>{
+- (RACSignal *)contentSignal {
+	return [[[RACSignal defer:^RACSignal *{
 		[self internalLoadFileIfNeeded];
 		return RACAbleWithStart(self.content);
 	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
@@ -236,13 +236,13 @@ static NSMutableDictionary *fsItemCache() {
 	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.content) transformer:nil onScheduler:fsScheduler()];
 }
 
-- (id<RACSignal>)save {
+- (RACSignal *)save {
   return [[[self internalSave] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)internalSave {
+- (RACSignal *)internalSave {
   @weakify(self);
-  return [RACSignal defer:^id<RACSignal>{
+  return [RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     @strongify(self);
     NSURL *url = self.urlBacking.first;
@@ -276,15 +276,15 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemDirectory
 
-+ (id<RACSignal>)directoryWithURL:(NSURL *)url {
++ (RACSignal *)directoryWithURL:(NSURL *)url {
   return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
 }
 
-+ (id<RACSignal>)createDirectoryWithURL:(NSURL *)url {
++ (RACSignal *)createDirectoryWithURL:(NSURL *)url {
   if (!url || ![url isFileURL]) {
     return [RACSignal error:[[NSError alloc] init]];
   }
-  return [[[RACSignal defer:^id<RACSignal>{
+  return [[[RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     NSError *error = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
@@ -305,19 +305,19 @@ static NSMutableDictionary *fsItemCache() {
   return self;
 }
 
-- (id<RACSignal>)children {
+- (RACSignal *)children {
   return [[[self internalChildren] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
+- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
   return [[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)childrenFilteredByAbbreviation:(id<RACSignal>)abbreviationSignal {
+- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
   return [[[RACSignal combineLatest:@[[[self internalChildren] subscribeOn:fsScheduler()], [abbreviationSignal ?: [RACSignal return:nil] deliverOn:fsScheduler()]]] map:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(id<RACSignal>)abbreviationSignal {
+- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
   return [[[RACSignal combineLatest:@[[[self internalChildrenWithOptions:options] subscribeOn:fsScheduler()], [abbreviationSignal ?: [RACSignal return:nil] deliverOn:fsScheduler()]]] map:[[self class] filterAndSortByAbbreviationBlock]] deliverOn:currentScheduler()];
 }
 
@@ -332,15 +332,15 @@ static NSMutableDictionary *fsItemCache() {
       
       // No abbreviation, no need to filter, sort it by lastPathComponent
       if (![abbreviation length]) {
-        return [[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
+        return [[[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
           return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
-        }] map:^id(FileSystemItem *item) {
+        }] rac_sequence] map:^id(FileSystemItem *item) {
           return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
-        }];
+        }] array];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[content map:^id(FileSystemItem *item) {
+      NSMutableArray *filteredContent = [[[[content rac_sequence] map:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
         float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
@@ -366,21 +366,21 @@ static NSMutableDictionary *fsItemCache() {
   return filterAndSortByAbbreviationBlock;
 }
 
-- (id<RACSignal>)internalChildren {
+- (RACSignal *)internalChildren {
   return [self internalChildrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
 }
 
-- (id<RACSignal>)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
+- (RACSignal *)internalChildrenWithOptions:(NSDirectoryEnumerationOptions)options {
   ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
   @weakify(self);
-  return [RACSignal defer:^id<RACSignal>{
+  return [RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     @strongify(self);
-    id<RACSignal>result = self.childrenBacking;
+    RACSignal *result = self.childrenBacking;
     
     // Filter out hidden files if needed
     if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
-      result = [[result map:^id<RACSignal>(NSArray *x) {
+      result = [[result map:^RACSignal *(NSArray *x) {
         if (!x.count) {
           return [RACSignal return:x];
         }
@@ -406,7 +406,7 @@ static NSMutableDictionary *fsItemCache() {
     
     // Merge in descendants if needed
     if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
-      result = [[result map:^id<RACSignal>(NSArray *x) {
+      result = [[result map:^RACSignal *(NSArray *x) {
         if (!x.count) {
           return [RACSignal return:x];
         }
@@ -454,7 +454,7 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemItem (FileManagement)
 
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
+- (RACSignal *)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -476,11 +476,11 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)moveTo:(FileSystemDirectory *)destination {
+- (RACSignal *)moveTo:(FileSystemDirectory *)destination {
   return [self moveTo:destination withName:nil replaceExisting:YES];
 }
 
-- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
+- (RACSignal *)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -502,11 +502,11 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)copyTo:(FileSystemDirectory *)destination {
+- (RACSignal *)copyTo:(FileSystemDirectory *)destination {
   return [self copyTo:destination withName:nil replaceExisting:YES];
 }
 
-- (id<RACSignal>)renameTo:(NSString *)newName {
+- (RACSignal *)renameTo:(NSString *)newName {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -525,7 +525,7 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)duplicate {
+- (RACSignal *)duplicate {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -552,7 +552,7 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)exportTo:(NSURL *)destination copy:(BOOL)copy {
+- (RACSignal *)exportTo:(NSURL *)destination copy:(BOOL)copy {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -579,7 +579,7 @@ static NSMutableDictionary *fsItemCache() {
   return [result deliverOn:currentScheduler()];
 }
 
-- (id<RACSignal>)delete {
+- (RACSignal *)delete {
   RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
   @weakify(self);
   [fsScheduler() schedule:^{
@@ -651,9 +651,9 @@ static NSMutableDictionary *fsItemCache() {
 
 @implementation FileSystemItem (ExtendedAttributes)
 
-- (id<RACSignal>)extendedAttributeSourceForKey:(NSString *)key {
+- (RACSignal *)extendedAttributeSourceForKey:(NSString *)key {
   @weakify(self);
-  return [[[RACSignal defer:^id<RACSignal>{
+  return [[[RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
     @strongify(self);
     if (!self || !self.urlBacking.first) {

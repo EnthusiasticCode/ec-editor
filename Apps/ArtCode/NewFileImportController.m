@@ -112,10 +112,10 @@ static void _init(NewFileImportController *self) {
   // Get items to import
   @weakify(self);
   [[RACSignal zip:@[
-  [RACSignal zip:[self.tableView.indexPathsForSelectedRows map:^id<RACSignal>(NSIndexPath *x) {
+  [RACSignal zip:[[[self.tableView.indexPathsForSelectedRows rac_sequence] map:^RACSignal *(NSIndexPath *x) {
     @strongify(self);
     return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
-  }]],
+  }] array]],
   [FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
     @strongify(self);
     NSArray *items = [x.first allObjects];
@@ -133,7 +133,7 @@ static void _init(NewFileImportController *self) {
     navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:navigationController animated:YES completion:^{
       // Start copy
-      [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^id<RACSignal>(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+      [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^RACSignal *(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
         return [item copyTo:destinationFolder];
       }] finally:^{
         ASSERT_MAIN_QUEUE();

@@ -182,7 +182,7 @@
     __block NSUInteger totalAccumulator = 0;
     return [[[self directoryContentsForDirectory:remotePath] flattenMap:^id(NSArray *content) {
       totalExpected = content.count;
-      return [[content map:^id<RACSignal>(NSDictionary *item) {
+      return [[[content rac_sequence] map:^RACSignal *(NSDictionary *item) {
         @strongify(self);
         NSString *itemName = item[cxFilenameKey];
         NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
@@ -193,7 +193,7 @@
         } else {
           return [self _downloadFileWithRemotePath:itemRemotePath toLocalURL:itemLocalURL];
         }
-      }] map:^id<RACSignal>(id<RACSignal> x) {
+      }] map:^RACSignal *(RACSignal * x) {
         return [x doNext:^(id y) {
           // Ignore progress nexts, only consider completed files
           if ([y isKindOfClass:[NSURL class]]) {
@@ -243,7 +243,7 @@
     NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
-    return [[RACSignal zip:[[localContent map:^id<RACSignal>(NSURL *x) {
+    return [[RACSignal zip:[[[[localContent rac_sequence] map:^RACSignal *(NSURL *x) {
       @strongify(self);
       NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
       if ([x isDirectory]) {
@@ -251,14 +251,14 @@
       } else {
         return [self _uploadFileAtLocalURL:x toRemotePath:remoteX];
       }
-    }] map:^id<RACSignal>(id<RACSignal> x) {
+    }] map:^RACSignal *(RACSignal * x) {
       return [x doNext:^(id y) {
         if ([x isKindOfClass:[NSString class]]) {
           totalAccumulator++;
           [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
         }
       }];
-    }]] subscribeError:^(NSError *error) {
+    }] array]] subscribeError:^(NSError *error) {
       [subscriber sendError:error];
     } completed:^{
       [subscriber sendNext:remotePath];

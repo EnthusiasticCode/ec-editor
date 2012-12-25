@@ -17,7 +17,7 @@
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  id<RACSignal>(^_signalBlock)(FileSystemItem *);
+  RACSignal *(^_signalBlock)(FileSystemItem *);
   RACSubject *_moveSubject;
 }
 
@@ -83,23 +83,23 @@
 
 #pragma mark - Public Methods
 
-- (id<RACSignal>)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSignalBlock:(id<RACSignal> (^)(FileSystemItem *, FileSystemDirectory *))signalBlock {
+- (RACSignal *)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSignalBlock:(RACSignal * (^)(FileSystemItem *, FileSystemDirectory *))signalBlock {
   ASSERT_MAIN_QUEUE();
-  _signalBlock = ^id<RACSignal>(FileSystemItem *item) {
+  _signalBlock = ^RACSignal *(FileSystemItem *item) {
     return signalBlock(item, destinationFolder);
   };
   RACReplaySubject *moveSubject = [RACReplaySubject replaySubjectWithCapacity:1];
   _moveSubject = moveSubject;
   @weakify(self);
   
-	[[RACSignal zip:@[ [RACSignal zip:[items map:^(FileSystemItem *x) {
+	[[RACSignal zip:@[ [RACSignal zip:[[[items rac_sequence] map:^(FileSystemItem *x) {
 		return [[x.name take:1] map:^(NSString *y) {
 			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];
 		}];
-  }]], [[destinationFolder.children take:1] flattenMap:^(NSArray *x) {
-		return [RACSignal zip:[x map:^(FileSystemItem *y) {
+  }] array]], [[destinationFolder.children take:1] flattenMap:^(NSArray *x) {
+		return [RACSignal zip:[[[x rac_sequence] map:^(FileSystemItem *y) {
 			return [y.name take:1];
-		}]];
+		}] array]];
 	}] ]] subscribeNext:^(RACTuple *x) {
 		@strongify(self);
 		if (!self) {
@@ -175,13 +175,13 @@
   // Processing
   ASSERT(_signalBlock);
   @weakify(self);
-  [[RACSignal zip:[_resolvedItems map:^id<RACSignal>(FileSystemItem *x) {
+  [[RACSignal zip:[[[_resolvedItems rac_sequence] map:^RACSignal *(FileSystemItem *x) {
     @strongify(self);
     if (!self) {
       return nil;
     }
     return self->_signalBlock(x);
-  }]] subscribe:_moveSubject];
+  }] array]] subscribe:_moveSubject];
 }
 
 - (IBAction)selectAllAction:(id)sender {
