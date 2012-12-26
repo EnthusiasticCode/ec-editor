@@ -260,9 +260,9 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+      [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
         return [x delete];
-      }] array]] subscribeCompleted:^{
+      }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
@@ -278,9 +278,9 @@
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+      [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
         return [x duplicate];
-      }] array]] subscribeCompleted:^{
+      }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
@@ -321,11 +321,11 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[RACSignal zip:[[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+        [[[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
 					return [x.url map:^id(NSURL *url) {
 						return [x exportTo:[NSURL.applicationDocumentsDirectory URLByAppendingPathComponent:url.lastPathComponent] copy:YES];
 					}];
-        }] array]] finally:^{
+        }]] finally:^{
           self.loading = NO;
 				}] subscribeError:^(NSError *error) {
 					ASSERT_MAIN_QUEUE();
@@ -341,9 +341,9 @@
         // Compressing files to export
         self.loading = YES;
         
-        [[RACSignal zip:[[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+        [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
           return [x.url take:1];
-        }] array]] subscribeNext:^(RACTuple *x) {
+        }]] subscribeNext:^(RACTuple *x) {
           [ArchiveUtilities compressFileAtURLs:x.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
             ASSERT_MAIN_QUEUE();
             if (temporaryDirectoryURL) {

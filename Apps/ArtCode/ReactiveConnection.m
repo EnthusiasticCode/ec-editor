@@ -243,7 +243,7 @@
     NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
-    return [[RACSignal zip:[[[[localContent rac_sequence] map:^RACSignal *(NSURL *x) {
+    return [[RACSignal zip:[[[localContent rac_sequence] map:^RACSignal *(NSURL *x) {
       @strongify(self);
       NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
       if ([x isDirectory]) {
@@ -258,7 +258,7 @@
           [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
         }
       }];
-    }] array]] subscribeError:^(NSError *error) {
+    }]] subscribeError:^(NSError *error) {
       [subscriber sendError:error];
     } completed:^{
       [subscriber sendNext:remotePath];

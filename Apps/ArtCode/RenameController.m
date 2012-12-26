@@ -78,13 +78,13 @@
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-      return [[RACSignal zip:[[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+      return [[RACSignal zip:[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
         return [[[x.name take:1] filter:^BOOL(NSString *y) {
           return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
         }] doNext:^(id y) {
           [alsoRenameItems addObject:y];
         }];
-      }] array]] subscribeError:^(NSError *error) {
+      }]] subscribeError:^(NSError *error) {
         [subscriber sendError:error];
       } completed:^{
         [subscriber sendNext:alsoRenameItems];
@@ -178,12 +178,12 @@
     @strongify(self);
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [RACSignal zip:[[[self.selectedAlsoRenameItems.allObjects rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+    return [RACSignal zip:[[self.selectedAlsoRenameItems.allObjects rac_sequence] map:^RACSignal *(FileSystemItem *x) {
       return [[x.name take:1] flattenMap:^RACSignal *(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];
       }];
-    }] array]];
+    }]];
   }] subscribeError:^(NSError *error) {
     _completionHandler(0, error);
   } completed:^{

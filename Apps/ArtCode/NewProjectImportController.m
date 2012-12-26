@@ -158,9 +158,9 @@
           flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;
             FileSystemDirectory *projectDirectory = x.second;
-            return [RACSignal zip:[[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+            return [RACSignal zip:[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
               return [x moveTo:projectDirectory];
-            }] array]];
+            }]];
           }] finally:^{
             [self stopRightBarButtonItemActivityIndicator];
             self.tableView.userInteractionEnabled = YES;

@@ -112,10 +112,10 @@ static void _init(NewFileImportController *self) {
   // Get items to import
   @weakify(self);
   [[RACSignal zip:@[
-  [RACSignal zip:[[[self.tableView.indexPathsForSelectedRows rac_sequence] map:^RACSignal *(NSIndexPath *x) {
+  [RACSignal zip:[[self.tableView.indexPathsForSelectedRows rac_sequence] map:^RACSignal *(NSIndexPath *x) {
     @strongify(self);
     return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
-  }] array]],
+  }]],
   [FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
     @strongify(self);
     NSArray *items = [x.first allObjects];
