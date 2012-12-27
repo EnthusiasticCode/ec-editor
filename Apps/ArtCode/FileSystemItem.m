@@ -110,8 +110,11 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (RACSignal *)internalItemWithURL:(NSURL *)url type:(NSString *)type {
-  if (!url || ![url isFileURL]) {
-    return [RACSignal error:[[NSError alloc] init]];
+	if (!url) {
+		return [RACSignal return:nil];
+	}
+  if (![url isFileURL]) {
+    return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
   }
   return [RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
@@ -119,16 +122,16 @@ static NSMutableDictionary *fsItemCache() {
     if (item) {
       ASSERT([item.urlBacking.first isEqual:url]);
       if (type && ![item.typeBacking.first isEqual:type]) {
-        return [RACSignal error:[[NSError alloc] init]];
+        return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
       }
       return [RACSignal return:item];
     }
     NSString *detectedType = nil;
     if (![url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL]) {
-      return [RACSignal error:[[NSError alloc] init]];
+      return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
     }
     if (!detectedType || (type && ![detectedType isEqual:type])) {
-      return [RACSignal error:[[NSError alloc] init]];
+      return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
     }
     Class finalClass = nil;
     if (detectedType == NSURLFileResourceTypeRegular) {
@@ -140,7 +143,7 @@ static NSMutableDictionary *fsItemCache() {
     }
     item = [[finalClass alloc] initWithURL:url type:detectedType];
     if (!item) {
-      return [RACSignal error:[[NSError alloc] init]];
+      return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
     }
     fsItemCache()[url] = item;
     return [RACSignal return:item];
@@ -188,8 +191,11 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (RACSignal *)createFileWithURL:(NSURL *)url {
-  if (!url || ![url isFileURL]) {
-    return [RACSignal error:[[NSError alloc] init]];
+	if (!url) {
+		return [RACSignal return:nil];
+	}
+  if (![url isFileURL]) {
+    return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
   }
   return [[[RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
@@ -247,7 +253,7 @@ static NSMutableDictionary *fsItemCache() {
     @strongify(self);
     NSURL *url = self.urlBacking.first;
     if (!url) {
-      return [RACSignal error:[[NSError alloc] init]];
+      return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
     }
     if (!self.encoding) {
       self.encoding = NSUTF8StringEncoding;
@@ -281,8 +287,11 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 + (RACSignal *)createDirectoryWithURL:(NSURL *)url {
-  if (!url || ![url isFileURL]) {
-    return [RACSignal error:[[NSError alloc] init]];
+	if (!url) {
+		return [RACSignal return:nil];
+	}
+  if (![url isFileURL]) {
+    return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
   }
   return [[[RACSignal defer:^RACSignal *{
     ASSERT_FS_SCHEDULER();
@@ -657,7 +666,7 @@ static NSMutableDictionary *fsItemCache() {
     ASSERT_FS_SCHEDULER();
     @strongify(self);
     if (!self || !self.urlBacking.first) {
-      return [RACSignal error:[[NSError alloc] init]];
+      return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
     }
     return [self extendedAttributeBackingForKey:key];
   }] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];

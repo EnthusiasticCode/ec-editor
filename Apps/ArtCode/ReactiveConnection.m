@@ -92,7 +92,7 @@
 - (void)cancelAll {
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusLoading)];
   [_connection cancelAll];
-  NSError *cancelError = [[NSError alloc] init];
+  NSError *cancelError = [NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil];
   [_downloadProgressSignals enumerateKeysAndObjectsUsingBlock:^(id key, RACSubject *subject, BOOL *stop) {
     [subject sendError:cancelError];
   }];
