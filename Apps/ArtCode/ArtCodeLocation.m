@@ -78,6 +78,7 @@
 - (NSString *)path {
   NSString *path = self.url.path;
   switch (self.type) {
+		case ArtCodeLocationTypeProject:
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {

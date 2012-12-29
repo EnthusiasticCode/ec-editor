@@ -37,7 +37,7 @@
   [[[[[[self.fileNameTextField.rac_textSignal throttle:0.5] distinctUntilChanged] map:^id(NSString *fileName) {
     @strongify(self);
     if (fileName.length == 0) {
-      return nil;
+      return @"";
     }
     
     if ([[fileName pathExtension] length] == 0) {
@@ -57,7 +57,7 @@
       self.infoLabel.text = @"The speficied file already exists or is invalid.";
     }
   }] map:^id(id x) {
-		return @(x != nil);
+		return @([x length] != 0);
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }
 
