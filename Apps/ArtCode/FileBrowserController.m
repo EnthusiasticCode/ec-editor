@@ -86,22 +86,32 @@
   
   // RAC
   @weakify(self);
-  __block RACDisposable *filteredItemsBindingDisposable = nil;
-	
+	__block NSIndexPath *scrollToIndexPath = nil;
+
 	[[RACAble(self.artCodeTab.currentLocation.url) flattenMap:^id(NSURL *url) {
 		return [FileSystemDirectory directoryWithURL:url];
 	}] toProperty:@keypath(self.currentDirectory) onObject:self];
   
-  [RACAble(self.currentDirectory) subscribeNext:^(FileSystemDirectory *directory) {
+	[[[RACAble(self.currentDirectory) flattenMap:^(FileSystemDirectory *directory) {
 		@strongify(self);
-		// TODO: not quite sure this is needed, test it when directory auto updating is in
-		[filteredItemsBindingDisposable dispose];
-		filteredItemsBindingDisposable = [self rac_deriveProperty:@keypath(self.filteredItems) from:[directory childrenFilteredByAbbreviation:self.searchBarTextSubject]];
-	}];
-  
+		return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
+	}] doNext:^(NSArray *items) {
+		@strongify(self);
+		// If the new items are more than the previous, find the first one inserted
+		if (self.filteredItems.count < items.count) {
+			[self.filteredItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+				if ([obj first] != [items[idx] first]) {
+					scrollToIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+					*stop = YES;
+				}
+			}];
+		}
+	}] toProperty:@keypath(self.filteredItems) onObject:self];
+	
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);
     [self.tableView reloadData];
+		// Update info label text
     if (self.searchBar.text.length) {
       if (items.count == 0) {
         self.infoLabel.text = L(@"No items in this folder match the filter.");
@@ -115,6 +125,11 @@
         self.infoLabel.text = [NSString stringWithFormatForSingular:L(@"One item in this folder.") plural:L(@"%u items in this folder.") count:items.count];
       }
     }
+		// Scroll the tableview to an added item
+		if (scrollToIndexPath) {
+			[self.tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+			scrollToIndexPath = nil;
+		}
   }];
 
   return self;

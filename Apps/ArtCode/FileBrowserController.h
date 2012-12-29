@@ -18,7 +18,4 @@
 @property (strong, nonatomic) IBOutlet UILabel *bottomToolBarDetailLabel;
 @property (strong, nonatomic) IBOutlet BottomToolBarButton *bottomToolBarSyncButton;
 
-/// Shows a modal that will proceed to syncronize the current directory with a remote one.
-- (IBAction)syncAction:(id)sender;
-
 @end
