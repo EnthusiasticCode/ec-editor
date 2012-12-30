@@ -349,13 +349,13 @@ static NSMutableDictionary *fsItemCache() {
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[content rac_sequence] map:^id(FileSystemItem *item) {
+      NSMutableArray *filteredContent = [[[[[content rac_sequence] map:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
         float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
       }] filter:^BOOL(RACTuple *item) {
         return [item.third floatValue] > 0;
-      }] mutableCopy];
+      }] array] mutableCopy];
       
       // Sort the filtered content
       [filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
