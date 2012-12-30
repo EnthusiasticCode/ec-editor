@@ -9,7 +9,8 @@
 #import "FileSystemItemCell.h"
 #import "FileSystemItem.h"
 #import "UIImage+AppStyle.h"
-
+#import "NSString+Utilities.h"
+#import "ArtCodeProjectSet.h"
 
 @implementation FileSystemItemCell
 
@@ -20,18 +21,22 @@
   }
   @weakify(self);
   [[RACSignal combineLatest:@[[[RACAble(item) map:^RACSignal *(FileSystemItem *x) {
-    return [RACSignal combineLatest:@[x.name, x.type]];
+    return [RACSignal combineLatest:@[x.name, x.type, x.url]];
   }] switch], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     RACTuple *ys = xs.first;
     NSString *itemName = ys.first;
     NSString *type = ys.second;
+		NSURL *url = ys.third;
     NSIndexSet *hitMask = xs.second;
     UITableViewCellAccessoryType accessoryType = self.accessoryType;
     UITableViewCellAccessoryType editingAccessoryType = self.editingAccessoryType;
     self.textLabel.text = itemName;
     self.textLabelHighlightedCharacters = hitMask;
+		if (style == UITableViewCellStyleSubtitle) {
+			self.detailTextLabel.text = [[[ArtCodeProjectSet defaultSet] relativePathForFileURL:url] prettyPath];
+		}
     // Crazy hack because UITableViewCell doesn't redraw properly if you change certain properties after it was inserted in a table view, unless you change it's accessoryType
     if (type == NSURLFileResourceTypeDirectory) {
       self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
