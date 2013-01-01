@@ -44,7 +44,7 @@
 	[shouldEnableSignal toProperty:@keypath(self.hideExcludeMessage) onObject:self];
 	
   // Update table content
-  [[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
+  [[[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
     return x.children;
   }] map:^(NSArray *x) {
 		return [[RACSignal merge:[[x rac_sequence] map:^(FileSystemItem *y) {
@@ -52,12 +52,12 @@
 				return z == NSURLFileResourceTypeDirectory;
 			}] mapReplace:y];
 		}]] collect];
-  }] switch] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
+  }] switch] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
+  [[[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
     return x.name;
-  }] toProperty:@keypath(self.navigationItem.title) onObject:self];
+  }] catchTo:RACSignal.empty] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table
   [[RACSignal combineLatest:@[RACAble(self.currentFolderSubfolders), tableView] reduce:^(NSArray *_, UITableView *x) {

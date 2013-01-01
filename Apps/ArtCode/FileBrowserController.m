@@ -88,9 +88,9 @@
   @weakify(self);
 	__block NSIndexPath *scrollToIndexPath = nil;
 
-	[[RACAble(self.artCodeTab.currentLocation.url) flattenMap:^id(NSURL *url) {
+	[[[RACAble(self.artCodeTab.currentLocation.url) flattenMap:^id(NSURL *url) {
 		return [FileSystemDirectory directoryWithURL:url];
-	}] toProperty:@keypath(self.currentDirectory) onObject:self];
+	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
   
 	[[[RACAble(self.currentDirectory) flattenMap:^(FileSystemDirectory *directory) {
 		@strongify(self);

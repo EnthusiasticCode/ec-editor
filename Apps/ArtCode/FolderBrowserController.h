@@ -14,7 +14,7 @@
 @interface FolderBrowserController : UITableViewController
 
 /// The folder that the browser is currently displaying.
-@property (nonatomic, strong) RACSignal * currentFolderSignal;
+@property (nonatomic, strong) RACSignal *currentFolderSignal;
 
 /// A FileSystemDirectory for which to show a message and disable action buttons.
 @property (nonatomic, strong) FileSystemDirectory *excludeDirectory;
