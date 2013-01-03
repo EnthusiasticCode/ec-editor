@@ -44,6 +44,7 @@
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
 @property (nonatomic, strong) FileSystemDirectory *currentDirectory;
+@property (nonatomic, strong) NSArray *previewItems;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
@@ -53,8 +54,6 @@
 - (void)_directoryBrowserMoveAction:(id)sender;
 
 - (void)_previewFile:(NSURL *)fileURL;
-- (NSArray *)_previewItems;
-- (void)_clearPreviewItems;
 
 @end
 
@@ -75,7 +74,6 @@
   UIActionSheet *_toolEditItemExportActionSheet;
   
   NSMutableArray *_selectedItems;
-  NSMutableArray *_previewItems;
 }
 
 - (id)init
@@ -255,17 +253,17 @@
 #pragma mark - QLPreviewControllerDataSource
 
 - (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller {
-  return [[self _previewItems] count];
+  return [self.previewItems count];
 }
 
 - (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index {
-  return [self _previewItems][index];
+  return self.previewItems[index];
 }
 
 #pragma mark - QLPreviewControllerDelegate
 
 - (void)previewControllerWillDismiss:(QLPreviewController *)controller {
-  [self _clearPreviewItems];
+	self.previewItems = nil;
 }
 
 #pragma mark - Action Sheet Delegate
@@ -504,32 +502,24 @@
 }
 
 - (void)_previewFile:(NSURL *)fileURL {
-  QLPreviewController *previewer = [[QLPreviewController alloc] init];
-  [previewer setDataSource:self];
-  [previewer setCurrentPreviewItemIndex:[[self _previewItems] indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
-    return [item.previewItemURL isEqual:fileURL];
-  }]];
-  [self presentViewController:previewer animated:YES completion:nil];
-}
-
-- (NSArray *)_previewItems {
-  if (!_previewItems) {
-    _previewItems = [NSMutableArray arrayWithCapacity:[[self filteredItems] count]];
-    for (RACTuple *tuple in [self filteredItems]) {
-      FileSystemItem *item = tuple.first;
-#warning URI use of first
-      NSURL *itemURL = item.url.first;
-      FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
-      if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
-        [_previewItems addObject:previewItem];
-      }
-    }
-  }
-  return _previewItems;
-}
-
-- (void)_clearPreviewItems {
-  _previewItems = nil;
+	[[[RACSignal zip:[self.filteredItems.rac_sequence.eagerSequence map:^id(RACTuple *value) {
+		return [(FileSystemItem *)value.first url];
+	}]] take:1] subscribeNext:^(RACTuple *x) {
+		NSMutableArray *previewItems = [NSMutableArray arrayWithCapacity:x.count];
+		for (NSURL *itemURL in x) {
+			FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
+			if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
+				[previewItems addObject:previewItem];
+			}
+		}
+		self.previewItems = previewItems;
+		QLPreviewController *previewer = [[QLPreviewController alloc] init];
+		[previewer setDataSource:self];
+		[previewer setCurrentPreviewItemIndex:[self.previewItems indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
+			return [item.previewItemURL isEqual:fileURL];
+		}]];
+		[self presentViewController:previewer animated:YES completion:nil];
+	}];
 }
 
 @end
