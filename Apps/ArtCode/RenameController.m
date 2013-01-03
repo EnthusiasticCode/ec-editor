@@ -78,7 +78,7 @@
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-      return [[RACSignal zip:[[children rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+      return [[RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
         return [[[x.name take:1] filter:^BOOL(NSString *y) {
           return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
         }] doNext:^(id y) {
@@ -178,7 +178,7 @@
     @strongify(self);
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [RACSignal zip:[[self.selectedAlsoRenameItems.allObjects rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+    return [RACSignal zip:[self.selectedAlsoRenameItems.allObjects.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
       return [[x.name take:1] flattenMap:^RACSignal *(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];

@@ -73,7 +73,7 @@
 			[[[RACSignal zip:@[ [[FileSystemDirectory directoryWithURL:self.fileURL] flattenMap:^(FileSystemDirectory *x) {
         return [[x children] take:1];
       }], [FileSystemDirectory directoryWithURL:project.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
-        return [RACSignal zip:[[x1 rac_sequence] map:^(FileSystemItem *y) {
+        return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
           return [y copyTo:x2];
         }]];
       }] flatten] subscribeCompleted:^{

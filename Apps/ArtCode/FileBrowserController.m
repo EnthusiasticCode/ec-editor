@@ -275,7 +275,7 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
         return [x delete];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -293,7 +293,7 @@
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
         return [x duplicate];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -336,7 +336,7 @@
       case 2: { // iTunes
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
-        [[[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+        [[[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
 					return [x.url map:^id(NSURL *url) {
 						return [x exportTo:[NSURL.applicationDocumentsDirectory URLByAppendingPathComponent:url.lastPathComponent] copy:YES];
 					}];
@@ -356,7 +356,7 @@
         // Compressing files to export
         self.loading = YES;
         
-        [[RACSignal zip:[[_selectedItems rac_sequence] map:^(FileSystemItem *x) {
+        [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
           return [x.url take:1];
         }]] subscribeNext:^(RACTuple *x) {
           [ArchiveUtilities compressFileAtURLs:x.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {

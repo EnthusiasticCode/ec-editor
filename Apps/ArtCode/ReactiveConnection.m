@@ -182,7 +182,7 @@
     __block NSUInteger totalAccumulator = 0;
     return [[[self directoryContentsForDirectory:remotePath] flattenMap:^id(NSArray *content) {
       totalExpected = content.count;
-      return [[[content rac_sequence] map:^RACSignal *(NSDictionary *item) {
+      return [[content.rac_sequence.eagerSequence map:^RACSignal *(NSDictionary *item) {
         @strongify(self);
         NSString *itemName = item[cxFilenameKey];
         NSString *itemRemotePath = [remotePath stringByAppendingPathComponent:itemName];
@@ -243,7 +243,7 @@
     NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
-    return [[RACSignal zip:[[[localContent rac_sequence] map:^RACSignal *(NSURL *x) {
+    return [[RACSignal zip:[[localContent.rac_sequence.eagerSequence map:^RACSignal *(NSURL *x) {
       @strongify(self);
       NSString *remoteX = [remotePath stringByAppendingPathComponent:x.lastPathComponent];
       if ([x isDirectory]) {

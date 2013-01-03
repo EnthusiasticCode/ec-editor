@@ -196,7 +196,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[RACSignal zip:[[remoteController.selectedItems rac_sequence] map:^RACSignal *(NSDictionary *item) {
+  [[RACSignal zip:[remoteController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(NSDictionary *item) {
     NSString *itemName = item[cxFilenameKey];
     // Generate local destination URL and start the download
     RACSignal *progressSignal = [connection downloadFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemName] isDirectory:(item[NSFileType] == NSFileTypeDirectory)];
@@ -230,7 +230,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[[localController.selectedItems rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+  [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
     return [[x.url take:1] map:^RACSignal *(NSURL *itemURL) {
       // Start upload
       RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
@@ -257,7 +257,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[[remoteController.selectedItems rac_sequence] map:^RACSignal *(NSDictionary *item) {
+  [[[RACSignal zip:[remoteController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(NSDictionary *item) {
     return [connection deleteFileWithRemotePath:[remoteController.remotePath stringByAppendingPathComponent:item[cxFilenameKey]]];
   }]] finally:^{
     @strongify(self);

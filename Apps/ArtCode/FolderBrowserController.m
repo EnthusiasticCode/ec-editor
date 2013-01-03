@@ -47,7 +47,7 @@
   [[[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
     return x.children;
   }] map:^(NSArray *x) {
-		return [[RACSignal merge:[[x rac_sequence] map:^(FileSystemItem *y) {
+		return [[RACSignal merge:[x.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
 			return [[[y.type take:1] filter:^ BOOL (NSString *z) {
 				return z == NSURLFileResourceTypeDirectory;
 			}] mapReplace:y];

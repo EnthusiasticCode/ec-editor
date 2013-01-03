@@ -92,12 +92,12 @@
   _moveSubject = moveSubject;
   @weakify(self);
   
-	[[RACSignal zip:@[ [RACSignal zip:[[items rac_sequence] map:^(FileSystemItem *x) {
+	[[RACSignal zip:@[ [RACSignal zip:[items.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
 		return [[x.name take:1] map:^(NSString *y) {
 			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];
 		}];
   }]], [[destinationFolder.children take:1] flattenMap:^(NSArray *x) {
-		return [RACSignal zip:[[x rac_sequence] map:^(FileSystemItem *y) {
+		return [RACSignal zip:[x.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
 			return [y.name take:1];
 		}]];
 	}] ]] subscribeNext:^(RACTuple *x) {
@@ -175,7 +175,7 @@
   // Processing
   ASSERT(_signalBlock);
   @weakify(self);
-  [[RACSignal zip:[[_resolvedItems rac_sequence] map:^RACSignal *(FileSystemItem *x) {
+  [[RACSignal zip:[_resolvedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
     @strongify(self);
     if (!self) {
       return nil;

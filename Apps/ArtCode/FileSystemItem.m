@@ -341,15 +341,15 @@ static NSMutableDictionary *fsItemCache() {
       
       // No abbreviation, no need to filter, sort it by lastPathComponent
       if (![abbreviation length]) {
-        return [[[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
+        return [[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
           return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
-        }] rac_sequence] map:^id(FileSystemItem *item) {
+        }].rac_sequence.eagerSequence map:^id(FileSystemItem *item) {
           return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
         }] array];
       }
       
       // Filter the content
-      NSMutableArray *filteredContent = [[[[[content rac_sequence] map:^id(FileSystemItem *item) {
+      NSMutableArray *filteredContent = [[[[content.rac_sequence.eagerSequence map:^id(FileSystemItem *item) {
         NSIndexSet *hitMask = nil;
         float score = [[item.urlBacking.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
         return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
