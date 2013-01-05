@@ -339,13 +339,11 @@ static NSMutableDictionary *fsItemCache() {
       NSArray *content = tuple.first;
       NSString *abbreviation = tuple.second;
       
-      // No abbreviation, no need to filter, sort it by lastPathComponent
+      // No abbreviation, no need to filter
       if (![abbreviation length]) {
-        return [[[content sortedArrayUsingComparator:^NSComparisonResult(FileSystemItem *obj1, FileSystemItem *obj2) {
-          return [[obj1.urlBacking.first lastPathComponent] compare:[obj2.urlBacking.first lastPathComponent]];
-        }].rac_sequence.eagerSequence map:^id(FileSystemItem *item) {
-          return [RACTuple tupleWithObjectsFromArray:@[item, [RACTupleNil tupleNil]]];
-        }] array];
+				return [content.rac_sequence.eagerSequence map:^id(id value) {
+					return [RACTuple tupleWithObjects:value, nil];
+				}].array;
       }
       
       // Filter the content
