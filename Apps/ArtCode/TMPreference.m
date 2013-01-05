@@ -10,7 +10,7 @@
 #import "TMPreference.h"
 #import "TMBundle.h"
 #import "NSString+TextMateScopeSelectorMatching.h"
-#import <CocoaOniguruma/OnigRegexp.h>
+#import "OnigRegexp.h"
 #import "UIImage+AppStyle.h"
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";
@@ -267,14 +267,14 @@ static NSMutableDictionary *symbolIconsCache;
   
   // Create block
   return [^NSString *(NSString *symbol) {
-    NSMutableString *result = [symbol mutableCopy];
     for (TMPreferenceSymbolTransformation *t in transformations) {
-      if (t->isGlobal)
-        [t->regExp gsub:result string:t->templateString];
-      else
-        [t->regExp sub:result string:t->templateString];
-    }
-    return result;
+      if (t->isGlobal) {
+				symbol = [symbol replaceAllByRegexp:t->regExp with:t->templateString];
+			} else {
+				symbol = [symbol replaceByRegexp:t->regExp with:t->templateString];
+			}
+		}
+		return symbol;
   } copy];
 }
 

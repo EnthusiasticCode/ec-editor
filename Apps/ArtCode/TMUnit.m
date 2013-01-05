@@ -10,7 +10,7 @@
 #import "TMIndex.h"
 #import "TMScope+Internal.h"
 #import "TMSyntaxNode.h"
-#import <CocoaOniguruma/OnigRegexp.h>
+#import "OnigRegexp.h"
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "TMPreference.h"
@@ -194,23 +194,23 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
       spanScope.flags |= TMScopeHasBegin;
       // Create the end regexp
       NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
-      [_numberedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
+			end = [end replaceAllByRegexp:_numberedCapturesRegexp withBlock:^NSString *(OnigResult *result) {
         int captureNumber = [[result stringAt:1] intValue];
-        if (captureNumber >= 0 && [firstResult count] > captureNumber) {
+        if (captureNumber >= 0 && (int)[firstResult count] > captureNumber) {
           return [firstResult stringAt:captureNumber];
         } else {
           return nil;
         }
-      }];
-      [_namedCapturesRegexp gsub:end block:^NSString *(OnigResult *result, BOOL *stop) {
+			}];
+			end = [end replaceAllByRegexp:_namedCapturesRegexp withBlock:^NSString *(OnigResult *result) {
         NSString *captureName = [result stringAt:1];
         int captureNumber = [firstResult indexForName:captureName];
-        if (captureNumber >= 0 && [firstResult count] > captureNumber) {
+        if (captureNumber >= 0 && (int)[firstResult count] > captureNumber) {
           return [firstResult stringAt:captureNumber];
         } else {
           return nil;
         }
-      }];
+			}];
       spanScope.endRegexp = [OnigRegexp compile:end options:OnigOptionCaptureGroup];
       ASSERT(spanScope.endRegexp);
       // Handle begin captures
