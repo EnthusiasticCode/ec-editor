@@ -740,7 +740,6 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:_notificationCenterMemoryWarningObserver];
-  dispatch_release(textSegmentsSemaphore);
 }
 
 #pragma mark Private Methods

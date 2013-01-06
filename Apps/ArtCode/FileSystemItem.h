@@ -19,7 +19,7 @@
 /// Returns a signal that sends the URL of the item
 - (RACSignal *)url;
 
-/// Returns a signal that sends the \c NSURLFileResourceTypeKey value of the receiver
+/// Returns a signal that sends the `NSURLFileResourceTypeKey` value of the receiver
 - (RACSignal *)type;
 
 /// Returns a signal that sends the name of the item
