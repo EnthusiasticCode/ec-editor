@@ -47,40 +47,59 @@ static NSMutableDictionary *fsItemCache() {
   return itemCache;
 }
 
-static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^NSArray *(RACTuple *tuple) {
-	ASSERT_NOT_MAIN_QUEUE();
+static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTuple *tuple) {
 	NSArray *content = tuple.first;
 	NSString *abbreviation = tuple.second;
 	
 	// No abbreviation, no need to filter
 	if (![abbreviation length]) {
-		return [content.rac_sequence.eagerSequence map:^id(id value) {
+		return [RACSignal return:[content.rac_sequence.eagerSequence map:^id(id value) {
 			return [RACTuple tupleWithObjects:value, nil];
-		}].array;
+		}].array];
 	}
 	
-	// Filter the content
-	NSMutableArray *filteredContent = [[[[content.rac_sequence.eagerSequence map:^id(FileSystemItem *item) {
-		NSIndexSet *hitMask = nil;
-		float score = [[item.url.first lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-		return [RACTuple tupleWithObjectsFromArray:@[item, hitMask ? : [RACTupleNil tupleNil], @(score)]];
-	}] filter:^BOOL(RACTuple *item) {
-		return [item.third floatValue] > 0;
-	}] array] mutableCopy];
-	
-	// Sort the filtered content
-	[filteredContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-		float score1 = [[tuple1 third] floatValue];
-		float score2 = [[tuple2 third] floatValue];
-		if (score1 > score2) {
-			return NSOrderedAscending;
-		} else if (score1 < score2) {
-			return NSOrderedDescending;
-		} else {
-			return NSOrderedSame;
-		}
+	return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+		__block BOOL wasDisposed = NO;
+		RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
+			wasDisposed = YES;
+		}];
+		
+		[RACScheduler.scheduler schedule:^{
+			ASSERT_NOT_MAIN_QUEUE();
+			// Filter the content
+			[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
+				return item.url;
+			}]] take:1] subscribeNext:^(RACTuple *urls) {
+				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence, urls.allObjects.rac_sequence ]] map:^id(RACTuple *value) {
+					RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
+					NSIndexSet *hitMask = nil;
+					float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
+					return [RACTuple tupleWithObjects:item, hitMask ? : [RACTupleNil tupleNil], @(score), nil];
+				}] filter:^BOOL(RACTuple *item) {
+					return [item.third floatValue] > 0;
+				}].array;
+				NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+					NSNumber *score1 = tuple1.third;
+					NSNumber *score2 = tuple2.third;
+					if (score1.floatValue > score2.floatValue) {
+						return NSOrderedAscending;
+					} else if (score1.floatValue < score2.floatValue) {
+						return NSOrderedDescending;
+					} else {
+						return NSOrderedSame;
+					}
+				}];
+				[subscriber sendNext:sortedContent];
+				[subscriber sendCompleted];
+			} error:^(NSError *error) {
+				[subscriber sendError:error];
+			} completed:^{
+				[subscriber sendCompleted];
+			}];
+		}];
+		
+		return disposable;
 	}];
-	return filteredContent;
 };
 
 @interface FileSystemItem ()
@@ -446,11 +465,11 @@ static NSArray *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^NSArray 
 }
 
 - (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[[[RACSignal combineLatest:@[[self children], abbreviationSignal ?: [RACSignal return:nil]]] deliverOn:RACScheduler.scheduler] map:filterAndSortByAbbreviationBlock] deliverOn:currentScheduler()];
+	return [[[[RACSignal combineLatest:@[[self children], abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch] deliverOn:currentScheduler()];
 }
 
 - (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[[[RACSignal combineLatest:@[[self childrenWithOptions:options], abbreviationSignal ?: [RACSignal return:nil]]] deliverOn:RACScheduler.scheduler] map:filterAndSortByAbbreviationBlock] deliverOn:currentScheduler()];
+	return [[[[RACSignal combineLatest:@[[self childrenWithOptions:options], abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch] deliverOn:currentScheduler()];
 }
 
 - (void)didChangeChildren {
