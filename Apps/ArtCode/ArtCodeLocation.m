@@ -13,13 +13,15 @@
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
 
+static NSString * const ArtCodeLocationDataBookmarkDataKey = @"BookmarkData";
+static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 
 #pragma mark -
 
 @interface ArtCodeTab (ArtCodeLocation_Internal)
 
 /// Pushes the location built with the given parameters
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data;
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary;
 
 @end
 
@@ -49,17 +51,17 @@
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {
-      // If a file, data is a bookmark data URL
+      // If a file, dataDictionary contains a bookmark data URL
       BOOL isStale = NO;
-      NSURL *url = [NSURL URLByResolvingBookmarkData:self.data options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&isStale error:NULL];
+      NSURL *url = [NSURL URLByResolvingBookmarkData:self.dataDictionary[ArtCodeLocationDataBookmarkDataKey] options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:&isStale error:NULL];
       // TODO: do something if it's stale
       return url;
     }
       
     case ArtCodeLocationTypeRemoteDirectory:
     {
-      // If a remote directory location, data is a string containing the remote path
-      return [self.remote.url URLByAppendingPathComponent:[[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding]];
+      // If a remote directory location, dataDictionary contains a path
+      return [self.remote.url URLByAppendingPathComponent:self.dataDictionary[ArtCodeLocationDataRemotePathKey]];
     }
       
     default:
@@ -95,6 +97,28 @@
   return self.path.prettyPath;
 }
 
+- (NSDictionary *)dataDictionary {
+	if (!self.data) return nil;
+	NSDictionary *dict = nil;
+	@try {
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:self.data];
+		dict = [unarchiver decodeObject];
+		[unarchiver finishDecoding];
+	}
+	@catch (NSException *exception) {
+    dict = nil;
+	}
+	return dict;
+}
+
+- (void)setDataDictionary:(NSDictionary *)dataDictionary {
+	NSMutableData *data = [NSMutableData data];
+	NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+	[archiver encodeObject:dataDictionary];
+	[archiver finishEncoding];
+	self.data = data;
+}
+
 @end
 
 #pragma mark -
@@ -102,41 +126,43 @@
 @implementation ArtCodeTab (Location)
 
 - (void)pushDefaultProjectSet {
-  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil remote:nil data:nil];
+  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil remote:nil dataDictionary:nil];
 }
 
 - (void)pushProject:(ArtCodeProject *)project {
   ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
+  [self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil dataDictionary:nil];
 }
 
 - (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project {
-  ASSERT(project && url);
-  NSData *bookmarkData = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark | NSURLBookmarkCreationPreferFileIDResolution includingResourceValuesForKeys:nil relativeToURL:nil error:NULL];
-  if ([url isDirectory]) {
-    [self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil data:bookmarkData];
-  } else {
-    [self pushLocationWithType:ArtCodeLocationTypeTextFile project:project remote:nil data:bookmarkData];
-  }
+  [self pushFileURL:url withProject:project dataDictionary:nil];
 }
 
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project lineNumber:(NSUInteger)lineNumber {
-  [self pushFileURL:url withProject:project];
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project dataDictionary:(NSDictionary *)dict {
+	ASSERT(project && url);
+	NSData *bookmarkData = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark | NSURLBookmarkCreationPreferFileIDResolution includingResourceValuesForKeys:nil relativeToURL:nil error:NULL];
+	NSMutableDictionary *newDict = dict ? [dict mutableCopy] : [NSMutableDictionary dictionary];
+	newDict[ArtCodeLocationDataBookmarkDataKey] = bookmarkData;
+  if ([url isDirectory]) {
+    [self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil dataDictionary:newDict];
+  } else {
+    [self pushLocationWithType:ArtCodeLocationTypeTextFile project:project remote:nil dataDictionary:newDict];
+  }
 }
 
 - (void)pushBookmarksListForProject:(ArtCodeProject *)project {
   ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeBookmarksList project:project remote:nil data:nil];
+  [self pushLocationWithType:ArtCodeLocationTypeBookmarksList project:project remote:nil dataDictionary:nil];
 }
 
 - (void)pushRemotesListForProject:(ArtCodeProject *)project {
   ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeRemotesList project:project remote:nil data:nil];
+  [self pushLocationWithType:ArtCodeLocationTypeRemotesList project:project remote:nil dataDictionary:nil];
 }
 
 - (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote {
   ASSERT(path && remote);
-  [self pushLocationWithType:ArtCodeLocationTypeRemoteDirectory project:remote.project remote:remote data:[path dataUsingEncoding:NSUTF8StringEncoding]];
+  [self pushLocationWithType:ArtCodeLocationTypeRemoteDirectory project:remote.project remote:remote dataDictionary:@{ ArtCodeLocationDataRemotePathKey : [path copy] }];
 }
 
 @end
@@ -145,7 +171,7 @@
 
 @implementation ArtCodeTab (ArtCodeLocation_Internal)
 
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data {
+- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary {
   ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
   if (type) {
     location.type = type;
@@ -156,8 +182,8 @@
   if (remote) {
     location.remote = remote;
   }
-  if (data) {
-    location.data = data;
+  if (dataDictionary) {
+    location.dataDictionary = dataDictionary;
   }
   [self pushLocation:location];
 }

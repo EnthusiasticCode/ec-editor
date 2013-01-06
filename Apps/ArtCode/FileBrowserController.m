@@ -84,10 +84,12 @@
   
   // RAC
   @weakify(self);
+	__block NSString *revealFileName = nil;
 	__block NSIndexPath *scrollToIndexPath = nil;
 
-	[[[RACAble(self.artCodeTab.currentLocation.url) flattenMap:^id(NSURL *url) {
-		return [FileSystemDirectory directoryWithURL:url];
+	[[[RACAble(self.artCodeTab.currentLocation) flattenMap:^id(ArtCodeLocation *location) {
+		revealFileName = [location.dataDictionary objectForKey:@"reveal"];
+		return [FileSystemDirectory directoryWithURL:location.url];
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
   
 	[[[RACAble(self.currentDirectory) flattenMap:^(FileSystemDirectory *directory) {
@@ -95,8 +97,14 @@
 		return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
 	}] doNext:^(NSArray *items) {
 		@strongify(self);
+		// Should reveal a file
+		if (revealFileName) {
+			// TODO: Implement this
+			NSLog(@"should reveal %@", revealFileName);
+			revealFileName = nil;
+		}
 		// If the new items are more than the previous, find the first one inserted
-		if (self.filteredItems.count < items.count) {
+		else if (self.filteredItems.count < items.count) {
 			[self.filteredItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				if ([obj first] != [items[idx] first]) {
 					scrollToIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];

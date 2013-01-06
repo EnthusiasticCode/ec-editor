@@ -124,7 +124,7 @@
 {
   if (!self.isEditing) {
     ArtCodeProjectBookmark *bookmark = (self.filteredItems)[indexPath.row];
-    [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project lineNumber:bookmark.lineNumber];
+    [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project dataDictionary:@{ @"lineNumber" : @(bookmark.lineNumber)}];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

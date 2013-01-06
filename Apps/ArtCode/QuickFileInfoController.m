@@ -21,6 +21,13 @@
 
 #pragma mark - View lifecycle
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+	self = [super initWithCoder:aDecoder];
+  if (!self) return nil;
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Reveal") style:UIBarButtonItemStylePlain target:self action:@selector(_revealAction:)];
+  return self;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -45,6 +52,15 @@
     ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);
     [(QuickFileHighlightTableController *)segue.destinationViewController setCodeFileController:(CodeFileController *)self.quickBrowsersContainerController.contentController];
   }
+}
+
+#pragma mark - Private Methods
+
+- (void)_revealAction:(id)sender {
+	[self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
+	
+	NSURL *url = self.artCodeTab.currentLocation.url;
+	[self.artCodeTab pushFileURL:url.URLByDeletingLastPathComponent withProject:self.artCodeTab.currentLocation.project dataDictionary:@{@"reveal" : url.lastPathComponent}];
 }
 
 @end

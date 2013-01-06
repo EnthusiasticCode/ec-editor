@@ -41,6 +41,9 @@ typedef enum {
 
 - (NSString *)prettyPath;
 
+/// If the data is a dictionary, this method returns it.
+@property (nonatomic, copy) NSDictionary *dataDictionary;
+
 @end
 
 @interface ArtCodeTab (Location)
@@ -51,7 +54,7 @@ typedef enum {
 
 - (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project;
 
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project lineNumber:(NSUInteger)lineNumber;
+- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project dataDictionary:(NSDictionary *)dict;
 
 - (void)pushBookmarksListForProject:(ArtCodeProject *)project;
 
