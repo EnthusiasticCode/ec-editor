@@ -3312,7 +3312,7 @@
 					$inherited,
 					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
@@ -3372,7 +3372,7 @@
 					$inherited,
 					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
 					"\"$(SRCROOT)/../ThirdParty/libclang/lib\"",
