@@ -48,8 +48,7 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTuple *tuple) {
-	NSArray *content = tuple.first;
-	NSString *abbreviation = tuple.second;
+	RACTupleUnpack(NSArray *content, NSString *abbreviation) = tuple;
 	
 	// No abbreviation, no need to filter
 	if (![abbreviation length]) {
@@ -70,15 +69,20 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
 				return item.url;
 			}]] take:1] subscribeNext:^(RACTuple *urls) {
-				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence, urls.allObjects.rac_sequence ]] map:^id(RACTuple *value) {
+				if (wasDisposed) return;
+				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.allObjects.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
 					RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
+					if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
 					NSIndexSet *hitMask = nil;
 					float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-					return [RACTuple tupleWithObjects:item, hitMask ? : [RACTupleNil tupleNil], @(score), nil];
+					return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
 				}] filter:^BOOL(RACTuple *item) {
+					if (wasDisposed) return NO;
 					return [item.third floatValue] > 0;
 				}].array;
+				if (wasDisposed) return;
 				NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+					if (wasDisposed) return NSOrderedSame;
 					NSNumber *score1 = tuple1.third;
 					NSNumber *score2 = tuple2.third;
 					if (score1.floatValue > score2.floatValue) {
@@ -89,6 +93,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 						return NSOrderedSame;
 					}
 				}];
+				if (wasDisposed) return;
 				[subscriber sendNext:sortedContent];
 				[subscriber sendCompleted];
 			} error:^(NSError *error) {
@@ -641,9 +646,14 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
 	ASSERT_FS_SCHEDULER();
-	[[fsItemCache()[source] urlBacking] sendNext:destination];
-	NSURL *sourceParent = [source URLByDeletingLastPathComponent];
-	NSURL *destinationParent = [destination URLByDeletingLastPathComponent];
+	FileSystemItem *item = fsItemCache()[source];
+	if (item != nil) {
+		[item.urlBacking sendNext:destination];
+		[fsItemCache() removeObjectForKey:source];
+		fsItemCache()[destination] = item;
+	}
+	NSURL *sourceParent = source.URLByDeletingLastPathComponent;
+	NSURL *destinationParent = destination.URLByDeletingLastPathComponent;
 	if (![sourceParent isEqual:destinationParent]) {
 		[fsItemCache()[sourceParent] didChangeChildren];
 		[fsItemCache()[destinationParent] didChangeChildren];
@@ -652,12 +662,12 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
 	ASSERT_FS_SCHEDULER();
-	[fsItemCache()[[destination URLByDeletingLastPathComponent]] didChangeChildren];
+	[fsItemCache()[destination.URLByDeletingLastPathComponent] didChangeChildren];
 }
 
 + (void)didCreate:(NSURL *)target {
 	ASSERT_FS_SCHEDULER();
-	[fsItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
+	[fsItemCache()[target.URLByDeletingLastPathComponent] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
