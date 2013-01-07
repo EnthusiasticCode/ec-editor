@@ -13,22 +13,18 @@
 
 // All filesystem operations must be done on this scheduler
 #if DEBUG
-#define ASSERT_FS_SCHEDULER() ASSERT(RACScheduler.currentScheduler == fsScheduler_debug && fsScheduler_debug != nil)
-static RACScheduler *fsScheduler_debug = nil;
+#define ASSERT_FS_SCHEDULER() ASSERT(currentScheduler() == fileSystemScheduler())
 #else
 #define ASSERT_FS_SCHEDULER()
 #endif
 
-static RACScheduler *fsScheduler() {
-  static RACScheduler *fsScheduler = nil;
+static RACScheduler *fileSystemScheduler() {
+  static RACScheduler *fileSystemScheduler = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-		fsScheduler = [RACScheduler scheduler];
-#if DEBUG
-    fsScheduler_debug = fsScheduler;
-#endif
+		fileSystemScheduler = [RACScheduler scheduler];
   });
-  return fsScheduler;
+  return fileSystemScheduler;
 }
 
 static RACScheduler *currentScheduler() {
@@ -47,73 +43,12 @@ static NSMutableDictionary *fsItemCache() {
   return itemCache;
 }
 
-static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTuple *tuple) {
-	RACTupleUnpack(NSArray *content, NSString *abbreviation) = tuple;
-	
-	// No abbreviation, no need to filter
-	if (![abbreviation length]) {
-		return [RACSignal return:[content.rac_sequence.eagerSequence map:^id(id value) {
-			return [RACTuple tupleWithObjects:value, nil];
-		}].array];
-	}
-	
-	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}];
-		
-		[RACScheduler.scheduler schedule:^{
-			ASSERT_NOT_MAIN_QUEUE();
-			// Filter the content
-			[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
-				return item.url;
-			}]] take:1] subscribeNext:^(RACTuple *urls) {
-				if (wasDisposed) return;
-				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
-					RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
-					if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
-					NSIndexSet *hitMask = nil;
-					float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-					return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
-				}] filter:^BOOL(RACTuple *item) {
-					if (wasDisposed) return NO;
-					return [item.third floatValue] > 0;
-				}].array;
-				if (wasDisposed) return;
-				NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-					if (wasDisposed) return NSOrderedSame;
-					NSNumber *score1 = tuple1.third;
-					NSNumber *score2 = tuple2.third;
-					if (score1.floatValue > score2.floatValue) {
-						return NSOrderedAscending;
-					} else if (score1.floatValue < score2.floatValue) {
-						return NSOrderedDescending;
-					} else {
-						return NSOrderedSame;
-					}
-				}];
-				if (wasDisposed) return;
-				[subscriber sendNext:sortedContent];
-				[subscriber sendCompleted];
-			} error:^(NSError *error) {
-				[subscriber sendError:error];
-			} completed:^{
-				[subscriber sendCompleted];
-			}];
-		}];
-		
-		return disposable;
-	}] deliverOn:currentScheduler()];
-};
-
 @interface FileSystemItem ()
 
 + (RACSignal *)itemWithURL:(NSURL *)url type:(NSString *)type;
 
 @property (nonatomic, strong, readonly) RACReplaySubject *urlBacking;
 @property (nonatomic, strong, readonly) RACReplaySubject *typeBacking;
-@property (nonatomic, strong, readonly) RACReplaySubject *parentBacking;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
 
@@ -132,7 +67,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 
 @interface FileSystemDirectory ()
 
-@property (nonatomic, strong, readonly) RACReplaySubject *childrenBacking;
+@property (nonatomic, weak, readonly) RACReplaySubject *childrenBacking;
 
 - (void)didChangeChildren;
 
@@ -153,6 +88,12 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 
 @end
 
+@interface RACSignal (FileSystemItem)
+
+- (RACSignal *)deliverOnCurrentSchedulerIfNotFileSystemScheduler;
+
+@end
+
 @implementation FileSystemItem
 
 + (RACSignal *)itemWithURL:(NSURL *)url {
@@ -167,18 +108,15 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			wasDisposed = YES;
 		}];
 		
-		[fsScheduler() schedule:^{
+		[fileSystemScheduler() schedule:^{
 			ASSERT_FS_SCHEDULER();
 			if (wasDisposed) return;
 			FileSystemItem *item = fsItemCache()[url];
 			if (item) {
-				ASSERT([item.urlBacking.first isEqual:url]);
-				if (type && ![item.typeBacking.first isEqual:type]) {
-					[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-					return;
-				}
-				[subscriber sendNext:item];
-				[subscriber sendCompleted];
+				[[[item.type take:1] flattenMap:^(NSString *value) {
+					if (type && ![value isEqual:type]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+					return [RACSignal return:item];
+				}] subscribe:subscriber];
 				return;
 			}
 			if (wasDisposed) return;
@@ -209,7 +147,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}];
 		
 		return disposable;
-	}] deliverOn:currentScheduler()];
+	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -262,7 +200,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			wasDisposed = YES;
 		}];
 		
-		[fsScheduler() schedule:^{
+		[fileSystemScheduler() schedule:^{
 			ASSERT_FS_SCHEDULER();
 			if (wasDisposed) return;
 			NSError *error = nil;
@@ -276,41 +214,41 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}];
 		
 		return disposable;
-	}] deliverOn:currentScheduler()];
+	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)encodingSignal {
 	return [[[RACSignal defer:^RACSignal *{
 		[self internalLoadFileIfNeeded];
 		return RACAbleWithStart(self.encoding);
-	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
+	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
 }
 
 - (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath {
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		[self internalLoadFileIfNeeded];
 	}];
 	return [target rac_bind:keyPath transformer:^(id value) {
 		if (!value || ![value unsignedIntegerValue] || value == [NSNull null]) value = @(NSUTF8StringEncoding);
 		return value;
-	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.encoding) transformer:nil onScheduler:fsScheduler()];
+	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.encoding) transformer:nil onScheduler:fileSystemScheduler()];
 }
 
 - (RACSignal *)contentSignal {
 	return [[[RACSignal defer:^RACSignal *{
 		[self internalLoadFileIfNeeded];
 		return RACAbleWithStart(self.content);
-	}] subscribeOn:fsScheduler()] deliverOn:[RACScheduler currentScheduler]];
+	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
 }
 
 - (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath {
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		[self internalLoadFileIfNeeded];
 	}];
 	return [target rac_bind:keyPath transformer:^(id value) {
 		if (!value || value == [NSNull null]) value = @"";
 		return value;
-	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.content) transformer:nil onScheduler:fsScheduler()];
+	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.content) transformer:nil onScheduler:fileSystemScheduler()];
 }
 
 - (RACSignal *)save {
@@ -321,7 +259,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			wasDisposed = YES;
 		}];
 		
-		[fsScheduler() schedule:^{
+		[fileSystemScheduler() schedule:^{
 			ASSERT_FS_SCHEDULER();
 			@strongify(self);
 			if (wasDisposed) return;
@@ -348,7 +286,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}];
 		
 		return disposable;
-	}] deliverOn:currentScheduler()];
+	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (void)internalLoadFileIfNeeded {
@@ -375,7 +313,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			wasDisposed = YES;
 		}];
 		
-		[fsScheduler() schedule:^{
+		[fileSystemScheduler() schedule:^{
 			ASSERT_FS_SCHEDULER();
 			if (wasDisposed) return;
 			NSError *error = nil;
@@ -388,11 +326,67 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}];
 		
 		return disposable;
-	}] deliverOn:currentScheduler()];
+	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 + (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[[RACSignal combineLatest:@[ childrenSignal, abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch];
+	return [[RACSignal combineLatest:@[ childrenSignal, abbreviationSignal ?: [RACSignal return:nil]] reduce:^(NSArray *content, NSString *abbreviation) {
+		// No abbreviation, no need to filter
+		if (![abbreviation length]) {
+			return [RACSignal return:[content.rac_sequence.eagerSequence map:^id(id value) {
+				return [RACTuple tupleWithObjects:value, nil];
+			}].array];
+		}
+		
+		return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+			__block BOOL wasDisposed = NO;
+			RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
+				wasDisposed = YES;
+			}];
+			
+			[RACScheduler.scheduler schedule:^{
+				ASSERT_NOT_MAIN_QUEUE();
+				// Filter the content
+				[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
+					return item.url;
+				}]] take:1] subscribeNext:^(RACTuple *urls) {
+					if (wasDisposed) return;
+					NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
+						RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
+						if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
+						NSIndexSet *hitMask = nil;
+						float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
+						return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
+					}] filter:^BOOL(RACTuple *item) {
+						if (wasDisposed) return NO;
+						return [item.third floatValue] > 0;
+					}].array;
+					if (wasDisposed) return;
+					NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+						if (wasDisposed) return NSOrderedSame;
+						NSNumber *score1 = tuple1.third;
+						NSNumber *score2 = tuple2.third;
+						if (score1.floatValue > score2.floatValue) {
+							return NSOrderedAscending;
+						} else if (score1.floatValue < score2.floatValue) {
+							return NSOrderedDescending;
+						} else {
+							return NSOrderedSame;
+						}
+					}];
+					if (wasDisposed) return;
+					[subscriber sendNext:sortedContent];
+					[subscriber sendCompleted];
+				} error:^(NSError *error) {
+					[subscriber sendError:error];
+				} completed:^{
+					[subscriber sendCompleted];
+				}];
+			}];
+			
+			return disposable;
+		}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
+	}] switch];
 }
 
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
@@ -470,23 +464,26 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}
 		
 		return result;
-	}] subscribeOn:RACScheduler.scheduler] deliverOn:currentScheduler()];
+	}] subscribeOn:RACScheduler.scheduler] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (void)didChangeChildren {
 	ASSERT_FS_SCHEDULER();
-	NSMutableArray *children = [[NSMutableArray alloc] init];
+	RACSubject *childrenBacking = self.childrenBacking;
+	if (!childrenBacking) return;
 	NSURL *url = self.urlBacking.first;
 	if (!url) {
-		[self.childrenBacking sendNext:nil];
+		[childrenBacking sendNext:nil];
 	}
+	NSMutableArray *childrenURLs = [NSMutableArray array];
 	for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
-		FileSystemItem *child = [[FileSystemItem itemWithURL:childURL type:nil] first];
-		if (child) {
-			[children addObject:child];
-		}
+		[childrenURLs addObject:childURL];
 	}
-	[self.childrenBacking sendNext:children.copy];
+	[[RACSignal zip:[childrenURLs.rac_sequence.eagerSequence map:^id(NSURL *childURL) {
+		return [FileSystemItem itemWithURL:childURL type:nil];
+	}]] subscribeNext:^(RACTuple *children) {
+		[childrenBacking sendNext:children.allObjects];
+	}];
 }
 
 @end
@@ -496,7 +493,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 - (RACSignal *)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
@@ -512,7 +509,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[result sendCompleted];
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)moveTo:(FileSystemDirectory *)destination {
@@ -522,7 +519,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 - (RACSignal *)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
@@ -538,7 +535,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[result sendCompleted];
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)copyTo:(FileSystemDirectory *)destination {
@@ -548,7 +545,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 - (RACSignal *)renameTo:(NSString *)newName {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName];
@@ -561,13 +558,13 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[result sendCompleted];
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)duplicate {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSUInteger duplicateCount = 1;
@@ -588,13 +585,13 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[result sendCompleted];
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)exportTo:(NSURL *)destination copy:(BOOL)copy {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSError *error = nil;
@@ -615,13 +612,13 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			}
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)delete {
 	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fsScheduler() schedule:^{
+	[fileSystemScheduler() schedule:^{
 		@strongify(self);
 		NSURL *url = self.urlBacking.first;
 		NSError *error = nil;
@@ -633,7 +630,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			[result sendCompleted];
 		}
 	}];
-	return [result deliverOn:currentScheduler()];
+	return [result deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 @end
@@ -674,7 +671,6 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		NSString *itemType = item.typeBacking.first;
 		[item.urlBacking sendNext:nil];
 		[item.typeBacking sendNext:nil];
-		[item.parentBacking sendNext:nil];
 		if (itemType == NSURLFileResourceTypeRegular) {
 			((FileSystemFile *)item).content = nil;
 		} else if (itemType == NSURLFileResourceTypeDirectory) {
@@ -704,12 +700,12 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 			return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 		}
 		return [self extendedAttributeBackingForKey:key];
-	}] subscribeOn:fsScheduler()] deliverOn:currentScheduler()];
+	}] subscribeOn:fileSystemScheduler()] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (id<RACSubscriber>)extendedAttributeSinkForKey:(NSString *)key {
 	RACSubject *sink = [RACSubject subject];
-	[[sink deliverOn:fsScheduler()] subscribeNext:^(id x) {
+	[[sink deliverOn:fileSystemScheduler()] subscribeNext:^(id x) {
 		ASSERT_FS_SCHEDULER();
 		[[self extendedAttributeBackingForKey:key] sendNext:x];
 	}];
@@ -741,7 +737,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		free(xattrBytes);
 		
 		// Save the value to disk every time it changes
-		[[backing deliverOn:fsScheduler()] subscribeNext:^(id x) {
+		[[backing deliverOn:fileSystemScheduler()] subscribeNext:^(id x) {
 			ASSERT_FS_SCHEDULER();
 			if (x) {
 				NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
@@ -755,6 +751,18 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 	}
 	return backing;
 	
+}
+
+@end
+
+@implementation RACSignal (FileSystemItem)
+
+- (RACSignal *)deliverOnCurrentSchedulerIfNotFileSystemScheduler {
+	if (currentScheduler() == fileSystemScheduler()) {
+		return self;
+	} else {
+		return [self deliverOn:currentScheduler()];
+	}
 }
 
 @end
