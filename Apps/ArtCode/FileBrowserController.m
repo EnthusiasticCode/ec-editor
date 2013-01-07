@@ -152,6 +152,20 @@
   return self;
 }
 
+- (NSArray *)toolNormalItems {
+	NSArray *items = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+  [items[0] setAccessibilityLabel:L(@"Add file or folder")];
+	return items;
+}
+
+- (NSArray *)toolEditItems {
+	NSArray *items = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+  [items[0] setAccessibilityLabel:L(@"Export")];
+  [items[1] setAccessibilityLabel:L(@"Copy")];
+  [items[2] setAccessibilityLabel:L(@"Delete")];
+	return items;
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -169,15 +183,6 @@
   
   // Customize subviews
   self.searchBar.placeholder = L(@"Filter files in this folder");
-  
-  // Preparing tool items array changed in set editing
-  self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
-  [(self.toolEditItems)[0] setAccessibilityLabel:L(@"Export")];
-  [(self.toolEditItems)[1] setAccessibilityLabel:L(@"Copy")];
-  [(self.toolEditItems)[2] setAccessibilityLabel:L(@"Delete")];
-  
-  self.toolNormalItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-  [(self.toolNormalItems)[0] setAccessibilityLabel:L(@"Add file or folder")];
 }
 
 - (void)didReceiveMemoryWarning
@@ -283,7 +288,7 @@
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-  if (actionSheet == _toolEditDeleteActionSheet) {
+  if ([self isToolEditDeleteActionSheet:actionSheet]) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
@@ -455,8 +460,8 @@
 #pragma mark Modal actions
 
 - (void)modalNavigationControllerDismissAction:(id)sender {
-  if ([_modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)_modalNavigationController.visibleViewController isTransferFinished]) {
-    [(RemoteTransferController *)_modalNavigationController.visibleViewController cancelCurrentTransfer];
+  if ([self.modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)self.modalNavigationController.visibleViewController isTransferFinished]) {
+    [(RemoteTransferController *)self.modalNavigationController.visibleViewController cancelCurrentTransfer];
   } else {
     [self setEditing:NO animated:YES];
     [super modalNavigationControllerDismissAction:sender];
@@ -465,7 +470,7 @@
 
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to copy to
-  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)self.modalNavigationController.topViewController;
   FileSystemDirectory *copyDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
@@ -494,7 +499,7 @@
 
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
-  FolderBrowserController *directoryBrowser = (FolderBrowserController *)_modalNavigationController.topViewController;
+  FolderBrowserController *directoryBrowser = (FolderBrowserController *)self.modalNavigationController.topViewController;
   FileSystemDirectory *moveDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller

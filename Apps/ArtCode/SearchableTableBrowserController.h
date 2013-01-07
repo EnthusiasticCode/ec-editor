@@ -10,11 +10,7 @@
 
 @class RACSubject;
 
-@interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate> {
-@protected
-  UINavigationController *_modalNavigationController;
-  UIActionSheet *_toolEditDeleteActionSheet;
-}
+@interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate>
 
 - (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop;
 
@@ -28,22 +24,23 @@
 
 #pragma mark Layout objects
 
+/// Indicate if the searchbar should be fixed on top instead of as the table header.
+@property (nonatomic, readonly) BOOL isSearchBarStaticOnTop;
+
 /// The search bar used to filter
-@property (nonatomic, readonly, strong) UISearchBar *searchBar;
+@property (nonatomic, readonly, weak) UISearchBar *searchBar;
 
 /// The table view that shows the filtered data
-@property (nonatomic, readonly, strong) UITableView *tableView;
+@property (nonatomic, readonly, weak) UITableView *tableView;
 
 /// A label that is presented at the bottom of the table view
-@property (nonatomic, readonly, strong) UILabel *infoLabel;
+@property (nonatomic, readonly, weak) UILabel *infoLabel;
 
 /// If not nil, this items will be set when the controller is not in edit mode.
-/// This property should be set in loadView.
-@property (nonatomic, strong) NSArray *toolNormalItems;
+- (NSArray *)toolNormalItems;
 
 /// If not nil, this items will be set when the controller is in edit mode.
-/// This property should be set in loadView.
-@property (nonatomic, strong) NSArray *toolEditItems;
+- (NSArray *)toolEditItems;
 
 /// A bottom toolbar to be displayed statically on the view. This view is loaded usually via a nib in loadView.
 @property (strong, nonatomic) IBOutlet UIView *bottomToolBar;
@@ -54,11 +51,16 @@
 /// Subclasses should override the action sheed delegate to modify the behaviour of the confirmation button.
 - (IBAction)toolEditDeleteAction:(id)sender;
 
+/// Used to see if an action sheet is the one opened by toolEditDeleteAction:
+- (BOOL)isToolEditDeleteActionSheet:(UIActionSheet *)actionSheet;
+
 /// Pushes on the current tab an URL based on the sender's tag.
 /// 0 for top project directory, 1 for bookmarks and 2 for remotes
 - (IBAction)toolPushUrlForTagAction:(id)sender;
 
 #pragma mark Modal navigation
+
+@property (nonatomic, strong) UINavigationController *modalNavigationController;
 
 /// Shows a modal navigation controller and adds a cancel button to the left of the given view controller. The cancel button will invoke modalNavigationControllerDismissAction:.
 - (void)modalNavigationControllerPresentViewController:(UIViewController *)viewController completion:(void(^)())completion;

@@ -83,17 +83,17 @@
   _filteredItemsAreValid = NO;
 }
 
+- (NSArray *)toolEditItems {
+	return @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
 {
   [super loadView];
   
-  if ([self isMemberOfClass:[BookmarkBrowserController class]])
-  {
-    // Tool edit items
-    self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
-    
+  if ([self isMemberOfClass:[BookmarkBrowserController class]]) {
     // Customize subviews
     self.searchBar.placeholder = @"Filter bookmarks";
     

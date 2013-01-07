@@ -101,11 +101,6 @@
   [self.openingButton setSelected:NO];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
 // TODO: dismiss on esc?
 
 @end

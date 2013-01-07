@@ -111,6 +111,14 @@
   [super invalidateFilteredItems];
 }
 
+- (NSArray *)toolNormalItems {
+	return @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
+}
+
+- (NSArray *)toolEditItems {
+	return @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+}
+
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -121,13 +129,8 @@
   [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
   [super viewDidLoad];
-  
-  self.toolNormalItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
-  
-  self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
   
   self.searchBar.placeholder = @"Filter remotes";
 }
@@ -184,7 +187,7 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-  if (actionSheet == _toolEditDeleteActionSheet)
+  if ([self isToolEditDeleteActionSheet:actionSheet])
   {
     if (buttonIndex == actionSheet.destructiveButtonIndex)
     {

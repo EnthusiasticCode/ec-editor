@@ -20,16 +20,25 @@
 
 #import "NSNotificationCenter+RACSupport.h"
 
+@interface SearchableTableBrowserController ()
+
+@property (nonatomic, weak) UISearchBar *searchBar;
+@property (nonatomic, weak) UITableView *tableView;
+@property (nonatomic, weak) UILabel *infoLabel;
+
+@property (nonatomic) BOOL isSearchBarStaticOnTop;
+
+@property (nonatomic, strong) UIPopoverController *quickBrowsersPopover;
+@property (nonatomic, strong) UIActionSheet *toolEditDeleteActionSheet;
+
+@end
 
 @implementation SearchableTableBrowserController {
-  UIPopoverController *_quickBrowsersPopover;
-  BOOL _isSearchBarStaticOnTop;
   RACDisposable *_racGlobalDisposable;
 }
 
 #pragma mark - Properties
 
-@synthesize tableView = _tableView, searchBar, infoLabel, toolEditItems, toolNormalItems, bottomToolBar;
 @synthesize searchBarTextSubject = _searchBarTextSubject;
 
 - (RACSubject *)searchBarTextSubject {
@@ -40,46 +49,15 @@
   return _searchBarTextSubject;
 }
 
-- (UISearchBar *)searchBar {
-  if (!searchBar && self.isViewLoaded) {
-    searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
-    searchBar.delegate = self;
-    searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  }
-  return searchBar;
-}
-
-- (UITableView *)tableView {
-  if (!_tableView && self.isViewLoaded) {
-    CGRect bounds = self.view.bounds;
-    if (_isSearchBarStaticOnTop) {
-      bounds.origin.y = 44;
-      bounds.size.height -= 44;
-    }
-    _tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
-    _tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
-    _tableView.allowsMultipleSelectionDuringEditing = YES;
-  }
-  return _tableView;
-}
-
-- (UILabel *)infoLabel {
-  if (!infoLabel && self.isViewLoaded) {
-    infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
-    infoLabel.textAlignment = NSTextAlignmentCenter;
-    infoLabel.backgroundColor = [UIColor clearColor];
-    infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
-    infoLabel.shadowColor = [UIColor whiteColor];
-    infoLabel.shadowOffset = CGSizeMake(0, 1);
-  }
-  return infoLabel;
-}
-
 - (void)invalidateFilteredItems {
+}
+
+- (NSArray *)toolNormalItems {
+	return nil;
+}
+
+- (NSArray *)toolEditItems {
+	return nil;
 }
 
 #pragma mark - Controller lifecycle
@@ -91,7 +69,7 @@
     return nil;
   
   self.title = title;
-  _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
+  self.isSearchBarStaticOnTop = isSearchBarStaticOnTop;
       
   return self;
 }
@@ -99,7 +77,7 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-  [_quickBrowsersPopover dismissPopoverAnimated:YES];
+  [self.quickBrowsersPopover dismissPopoverAnimated:YES];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -130,10 +108,9 @@
   return NO;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
+	[self invalidateFilteredItems];
   [super didReceiveMemoryWarning];
-  [self invalidateFilteredItems];
 }
 
 #pragma mark - View lifecycle
@@ -141,9 +118,40 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
+	
+	// Table View
+	CGRect bounds = self.view.bounds;
+	if (self.isSearchBarStaticOnTop) {
+		bounds.origin.y = 44;
+		bounds.size.height -= 44;
+	}
+	UITableView *tableView = [[UITableView alloc] initWithFrame:bounds style:UITableViewStylePlain];
+	tableView.delegate = self;
+	tableView.dataSource = self;
+	tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	tableView.backgroundColor = [UIColor colorWithWhite:0.91 alpha:1];
+	tableView.separatorColor = [UIColor colorWithWhite:0.35 alpha:1];
+	tableView.allowsMultipleSelectionDuringEditing = YES;
+	self.tableView = tableView;
+	[self.view addSubview:self.tableView];
+  [self.tableView setEditing:self.editing animated:NO];
   
+	// Info Label
+	UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
+	infoLabel.textAlignment = NSTextAlignmentCenter;
+	infoLabel.backgroundColor = [UIColor clearColor];
+	infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
+	infoLabel.shadowColor = [UIColor whiteColor];
+	infoLabel.shadowOffset = CGSizeMake(0, 1);
+	self.infoLabel = infoLabel;
   self.tableView.tableFooterView = self.infoLabel;
-  if (_isSearchBarStaticOnTop)
+	
+	// Search bar
+	UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+	searchBar.delegate = self;
+	searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	self.searchBar = searchBar;
+  if (self.isSearchBarStaticOnTop)
   {
     [self.view addSubview:self.searchBar];
   }
@@ -152,8 +160,6 @@
     self.tableView.tableHeaderView = self.searchBar;
     self.tableView.contentOffset = CGPointMake(0, 45);
   }
-  [self.view addSubview:self.tableView];
-  [self.tableView setEditing:self.editing animated:NO];
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
@@ -182,22 +188,6 @@
   }
 }
 
-- (void)viewDidUnload
-{
-  _tableView = nil;
-  searchBar = nil;
-  infoLabel = nil;
-  toolEditItems = nil;
-  toolNormalItems = nil;
-  _quickBrowsersPopover = nil;
-  
-  _toolEditDeleteActionSheet = nil;
-  _modalNavigationController = nil;
-  
-  [self setBottomToolBar:nil];
-  [super viewDidUnload];
-}
-
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
@@ -221,7 +211,7 @@
   }]];
   
   // TODO: this property is not the correct one to use for enabling the keyboard resize, there should be a dedicated one
-  if (!_isSearchBarStaticOnTop) {
+  if (!self.isSearchBarStaticOnTop) {
     // Account for keyboard and resize table accordingly
     [disposables addObject:[[RACSignal merge:@[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]]] subscribeNext:^(NSNotification *note) {
       CGPoint tableViewOffset = this.tableView.contentOffset;
@@ -233,7 +223,7 @@
       } else {
         CGRect tableViewFrame = this.view.bounds;
         // Re-calculate frame based of search bar position
-        if (strongSelf && strongSelf->_isSearchBarStaticOnTop) {
+        if (strongSelf && strongSelf.isSearchBarStaticOnTop) {
           tableViewFrame.origin.y = 44;
           tableViewFrame.size.height -= 44;
         }
@@ -245,7 +235,7 @@
         this.tableView.frame = tableViewFrame;
       }
       // Account for search bar glitch
-      if (strongSelf && !strongSelf->_isSearchBarStaticOnTop && tableViewOffset.y < 45) {
+      if (strongSelf && !strongSelf.isSearchBarStaticOnTop && tableViewOffset.y < 45) {
         [this.tableView setContentOffset:tableViewOffset animated:NO];
       }
     }]];
@@ -274,18 +264,18 @@
   QuickBrowsersContainerController *quickBrowserContainerController = [QuickBrowsersContainerController defaultQuickBrowsersContainerControllerForContentController:self];
   UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:quickBrowserContainerController];
   [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
-  if (!_quickBrowsersPopover)
+  if (!self.quickBrowsersPopover)
   {
-    _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+    self.quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+    self.quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
   }
   else
   {
-    [_quickBrowsersPopover setContentViewController:navigationController animated:NO];
+    [self.quickBrowsersPopover setContentViewController:navigationController animated:NO];
   }
-  quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
+  quickBrowserContainerController.presentingPopoverController = self.quickBrowsersPopover;
   quickBrowserContainerController.openingButton = sender;
-  [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  [self.quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
 }
 
 #pragma mark - UISeachBar Delegate Methods
@@ -347,12 +337,16 @@
 
 - (void)toolEditDeleteAction:(id)sender
 {
-  if (!_toolEditDeleteActionSheet)
+  if (!self.toolEditDeleteActionSheet)
   {
-    _toolEditDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
-    _toolEditDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    self.toolEditDeleteActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:@"Delete permanently" otherButtonTitles:nil];
+    self.toolEditDeleteActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
-  [_toolEditDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+  [self.toolEditDeleteActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
+}
+
+- (BOOL)isToolEditDeleteActionSheet:(UIActionSheet *)actionSheet {
+	return self.toolEditDeleteActionSheet != nil && actionSheet == self.toolEditDeleteActionSheet;
 }
 
 - (IBAction)toolPushUrlForTagAction:(id)sender
@@ -382,15 +376,15 @@
   viewController.navigationItem.leftBarButtonItem = cancelItem;
   
   // Prepare new modal navigation controller and present it
-  if (!_modalNavigationController)
+  if (!self.modalNavigationController)
   {
-    _modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    _modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
+    self.modalNavigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    self.modalNavigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:_modalNavigationController animated:YES completion:completion];
   }
   else
   {
-    [_modalNavigationController pushViewController:viewController animated:YES];
+    [self.modalNavigationController pushViewController:viewController animated:YES];
     if (completion)
       completion();
   }
@@ -404,7 +398,7 @@
 - (void)modalNavigationControllerDismissAction:(id)sender
 {
   [self dismissViewControllerAnimated:YES completion:^{
-    _modalNavigationController = nil;
+    self.modalNavigationController = nil;
   }];
 }
 
