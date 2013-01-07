@@ -114,10 +114,11 @@ static NSMutableDictionary *fsItemCache() {
 			if (wasDisposed) return;
 			FileSystemItem *item = fsItemCache()[url];
 			if (item) {
-				[disposable addDisposable:[[[item.type take:1] flattenMap:^(NSString *value) {
+				RACDisposable *itemDisposable = [[[item.type take:1] flattenMap:^(NSString *value) {
 					if (type && ![value isEqual:type]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 					return [RACSignal return:item];
-				}] subscribe:subscriber]];
+				}] subscribe:subscriber];
+				[disposable addDisposable:itemDisposable];
 				return;
 			}
 			if (wasDisposed) return;
@@ -458,18 +459,18 @@ static NSMutableDictionary *fsItemCache() {
 					NSMutableArray *descendantSignals = [[NSMutableArray alloc] init];
 					for (FileSystemItem *item in x) {
 						if (wasDisposed) break;
-						[descendantSignals addObject:[item.type map:^(NSString *type) {
+						[descendantSignals addObject:[[item.type map:^(NSString *type) {
 							if (wasDisposed) return RACSignal.empty;
 							if (type != NSURLFileResourceTypeDirectory) {
-								return [RACSignal return:item];
+								return [RACSignal return:@[ item ]];
 							} else {
 								FileSystemDirectory *directory = (FileSystemDirectory *)item;
 								return [[directory childrenWithOptions:options] map:^NSArray *(NSArray *x) {
 									if (wasDisposed) return @[];
-									return [@[item] arrayByAddingObjectsFromArray:x];
+									return [@[ item ] arrayByAddingObjectsFromArray:x];
 								}];
 							}
-						}]];
+						}] switch]];
 					}
 					return [[RACSignal combineLatest:descendantSignals] map:^NSArray *(RACTuple *xs) {
 						if (wasDisposed) return @[];
