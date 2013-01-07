@@ -57,7 +57,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}].array];
 	}
 	
-	return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		__block BOOL wasDisposed = NO;
 		RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
 			wasDisposed = YES;
@@ -104,7 +104,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		}];
 		
 		return disposable;
-	}];
+	}] deliverOn:currentScheduler()];
 };
 
 @interface FileSystemItem ()
@@ -391,6 +391,10 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 	}] deliverOn:currentScheduler()];
 }
 
++ (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal {
+	return [[[RACSignal combineLatest:@[ childrenSignal, abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch];
+}
+
 - (instancetype)initWithURL:(NSURL *)url type:(NSString *)type {
 	self = [super initWithURL:url type:type];
 	if (!self) {
@@ -467,14 +471,6 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 		
 		return result;
 	}] subscribeOn:RACScheduler.scheduler] deliverOn:currentScheduler()];
-}
-
-- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[[[RACSignal combineLatest:@[[self children], abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch] deliverOn:currentScheduler()];
-}
-
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[[[RACSignal combineLatest:@[[self childrenWithOptions:options], abbreviationSignal ?: [RACSignal return:nil]]] map:filterAndSortByAbbreviationBlock] switch] deliverOn:currentScheduler()];
 }
 
 - (void)didChangeChildren {

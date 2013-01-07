@@ -63,6 +63,10 @@
 /// Attempts to create a new directory at the given url, then sends the created directory and completed, or an error, to the returned signal
 + (RACSignal *)createDirectoryWithURL:(NSURL *)url;
 
+/// Returns a signal that filters `childrenSignal` by the abbreviations sent by `abbreviationSignal`.
+/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable.
++ (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal;
+
 /// Returns a signal that sends the children of the directory as they change.
 /// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles
 - (RACSignal *)children;
@@ -70,16 +74,6 @@
 /// Returns a signal that sends the children of the directory as they change.
 /// Doesn't support NSDirectoryEnumerationSkipsPackageDescendants
 - (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options;
-
-/// Returns a signal that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSignal.
-/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
-/// Equivalent to contentWithOptions:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:abbreviationSignal
-- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal;
-
-/// Returns a signal that sends the children of the directory as they change filtered by the abbreviations sent by \a abbreviationSignal.
-/// Sends tuples where the first element is the child and the second element is the filter hitmask, if applicable
-/// Doesn't support NSDirectoryEnumerationSkipsPackageDescendants
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal;
 
 @end
 
