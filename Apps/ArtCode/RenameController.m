@@ -178,7 +178,7 @@
     @strongify(self);
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [RACSignal zip:[self.selectedAlsoRenameItems.allObjects.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
+    return [RACSignal zip:[self.selectedAlsoRenameItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
       return [[x.name take:1] flattenMap:^RACSignal *(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];

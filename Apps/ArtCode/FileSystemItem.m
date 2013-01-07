@@ -70,7 +70,7 @@ static RACSignal *(^filterAndSortByAbbreviationBlock)(RACTuple *tuple) = ^(RACTu
 				return item.url;
 			}]] take:1] subscribeNext:^(RACTuple *urls) {
 				if (wasDisposed) return;
-				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.allObjects.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
+				NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
 					RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
 					if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
 					NSIndexSet *hitMask = nil;
