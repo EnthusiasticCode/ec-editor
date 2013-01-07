@@ -210,8 +210,8 @@ typedef enum {
     case RemoteTransferSynchronizationOperation: {
       // _transfers are remote path to local project item
       // after the initial sync call, they represent the current status of the local content
-      NSComparisonResult expectedToSync = _syncIsFromRemote ? NSOrderedAscending : NSOrderedDescending;
-      for (NSDictionary *item in contents) {
+//      NSComparisonResult expectedToSync = _syncIsFromRemote ? NSOrderedAscending : NSOrderedDescending;
+//      for (NSDictionary *item in contents) {
 // TODO: port
 //        NSString *remoteItemPath = [dirPath stringByAppendingPathComponent:[item objectForKey:cxFilenameKey]];
 //        ACProjectFileSystemItem *localItem = [_transfers objectForKey:remoteItemPath];
@@ -244,7 +244,6 @@ typedef enum {
 //          continue;
 //        }
         // Determine if the item should not be synced
-#warning FIX
 //        if (_syncUseFileSize && localItem.type == ACPFile) {
 //          // remote to/from local: have the same hanling in this case
 //          if ([(ACProjectFile *)localItem fileSize] == [[item objectForKey:NSFileSize] unsignedIntegerValue])
@@ -255,7 +254,7 @@ typedef enum {
 //          if ([localItem.contentModificationDate compare:[item objectForKey:NSFileModificationDate]] != expectedToSync)
 //            [_transfers removeObjectForKey:remoteItemPath];
 //        }
-      }
+//      }
       
       // When all the remote items have been checked, we can complete a transfer
       _transfersCompleted++;

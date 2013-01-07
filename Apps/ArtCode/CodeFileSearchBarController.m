@@ -43,10 +43,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 #pragma mark - Properties
 
-@synthesize targetCodeFileController = _targetCodeFileController;
-@synthesize findTextField = _findTextField, replaceTextField = _replaceTextField, findResultLabel = _findResultLabel;
-@synthesize searchFilter = _searchFilter, searchFilterMatches = _searchFilterMatches, regExpOptions = _regExpOptions, hitMustOption = _hitMustOption;
-
 - (void)setTargetCodeFileController:(CodeFileController *)controller {
   if (controller == _targetCodeFileController) {
     return;
@@ -92,12 +88,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 #pragma mark - View Lifecycle
 
-- (void)viewDidUnload  {
+- (void)didReceiveMemoryWarning  {
   [self setSearchFilterMatches:nil];
-  [self setFindTextField:nil];
-  [self setReplaceTextField:nil];
-  [self setFindResultLabel:nil];
-  [super viewDidUnload];
+  [super didReceiveMemoryWarning];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

@@ -357,11 +357,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 }
 
 - (void)dismiss {
-  [self dismissModalViewControllerAnimated:YES];
+  [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)viewDidUnload {
-  [self setLoginErrorMessage:nil];
-  [super viewDidUnload];
-}
 @end

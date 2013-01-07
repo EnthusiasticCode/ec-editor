@@ -70,7 +70,7 @@
 - (UILabel *)infoLabel {
   if (!infoLabel && self.isViewLoaded) {
     infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
-    infoLabel.textAlignment = UITextAlignmentCenter;
+    infoLabel.textAlignment = NSTextAlignmentCenter;
     infoLabel.backgroundColor = [UIColor clearColor];
     infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
     infoLabel.shadowColor = [UIColor whiteColor];
@@ -94,11 +94,6 @@
   _isSearchBarStaticOnTop = isSearchBarStaticOnTop;
       
   return self;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration

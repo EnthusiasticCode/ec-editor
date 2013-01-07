@@ -132,10 +132,9 @@
   self.searchBar.placeholder = @"Filter remotes";
 }
 
-- (void)viewDidUnload
-{
+- (void)didReceiveMemoryWarning{
   _toolAddPopover = nil;
-  [super viewDidUnload];
+  [super didReceiveMemoryWarning];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

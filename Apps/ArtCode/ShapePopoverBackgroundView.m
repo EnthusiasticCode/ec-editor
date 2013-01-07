@@ -164,6 +164,9 @@ static void updatePath(ShapePopoverBackgroundView *self)
       rect.size.width -= [[self class] arrowHeight];
       localArrowPosition += rect.size.height / 2.0 - self->cornerRadius;
       break;
+			
+		default:
+			break;
   }
   
   CGMutablePathRef path = CGPathCreateMutable();

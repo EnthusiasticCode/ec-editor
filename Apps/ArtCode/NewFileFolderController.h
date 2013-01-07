@@ -12,8 +12,8 @@
 
 #pragma mark IB outlets
 
-@property (strong, nonatomic) IBOutlet UITextField *folderNameTextField;
-@property (strong, nonatomic) IBOutlet UILabel *infoLabel;
+@property (weak, nonatomic) IBOutlet UITextField *folderNameTextField;
+@property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 
 - (IBAction)createAction:(id)sender;
 

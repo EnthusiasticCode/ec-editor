@@ -10,12 +10,12 @@
 
 @interface RemoteOptionsViewController : UIViewController <UITextFieldDelegate>
 
-@property (strong, nonatomic) IBOutlet UITextField *remoteName;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *remoteType;
-@property (strong, nonatomic) IBOutlet UITextField *remoteHost;
-@property (strong, nonatomic) IBOutlet UITextField *remotePort;
-@property (strong, nonatomic) IBOutlet UITextField *remoteUser;
-@property (strong, nonatomic) IBOutlet UITextField *remotePassword;
+@property (weak, nonatomic) IBOutlet UITextField *remoteName;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *remoteType;
+@property (weak, nonatomic) IBOutlet UITextField *remoteHost;
+@property (weak, nonatomic) IBOutlet UITextField *remotePort;
+@property (weak, nonatomic) IBOutlet UITextField *remoteUser;
+@property (weak, nonatomic) IBOutlet UITextField *remotePassword;
 
 @property (strong, nonatomic) NSString *remoteTypeString;
 

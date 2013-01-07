@@ -29,22 +29,6 @@
   return [self init];
 }
 
-- (void)viewDidUnload
-{
-  [self setRemoteType:nil];
-  [self setRemoteHost:nil];
-  [self setRemotePort:nil];
-  [self setRemoteUser:nil];
-  [self setRemotePassword:nil];
-  [self setRemoteName:nil];
-  [super viewDidUnload];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-  return YES;
-}
-
 - (NSString *)remoteTypeString
 {
   switch (self.remoteType.selectedSegmentIndex)

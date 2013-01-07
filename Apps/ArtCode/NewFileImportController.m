@@ -137,7 +137,7 @@ static void _init(NewFileImportController *self) {
         return [item copyTo:destinationFolder];
       }] finally:^{
         ASSERT_MAIN_QUEUE();
-        [self dismissModalViewControllerAnimated:YES];
+        [self dismissViewControllerAnimated:YES completion:nil];
       }] subscribeError:^(NSError *error) {
         ASSERT_MAIN_QUEUE();
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];

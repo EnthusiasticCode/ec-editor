@@ -112,11 +112,6 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   self.view = bezelView;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-  return YES;
-}
-
 #pragma mark - Internal Allerting Methods
 
 - (void)presentFirstChildViewController
@@ -296,7 +291,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
     label.font = [UIFont boldSystemFontOfSize:16];
     label.backgroundColor = [UIColor clearColor];
     label.textColor = [UIColor whiteColor];
-    label.textAlignment = UITextAlignmentCenter;
+    label.textAlignment = NSTextAlignmentCenter;
     label.text = text;
     label.numberOfLines = 0;
     [label sizeToFit];

@@ -37,16 +37,6 @@
   self.fileHighlightTypeLabel.text = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].syntax.name;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
-- (void)viewDidUnload {
-  [self setFileHighlightTypeLabel:nil];
-  [super viewDidUnload];
-}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
   if ([segue.destinationViewController isKindOfClass:[QuickFileHighlightTableController class]]) {
     ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);

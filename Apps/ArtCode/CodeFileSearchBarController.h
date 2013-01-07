@@ -26,9 +26,9 @@ typedef NSUInteger CodeFileSearchHitMustOption;
 
 @property (weak, nonatomic) CodeFileController *targetCodeFileController;
 
-@property (strong, nonatomic) IBOutlet UITextField *findTextField;
-@property (strong, nonatomic) IBOutlet UITextField *replaceTextField;
-@property (strong, nonatomic) IBOutlet UILabel *findResultLabel;
+@property (weak, nonatomic) IBOutlet UITextField *findTextField;
+@property (weak, nonatomic) IBOutlet UITextField *replaceTextField;
+@property (weak, nonatomic) IBOutlet UILabel *findResultLabel;
 
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;

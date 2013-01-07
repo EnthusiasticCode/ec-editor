@@ -38,8 +38,4 @@
   self.folderSubfolderCountLabel.text = [NSString stringWithFormat:@"%u", folderCount];
 }
 
-- (void)viewDidUnload {
-  [self setFolderSubfolderCountLabel:nil];
-  [super viewDidUnload];
-}
 @end

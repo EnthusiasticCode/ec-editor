@@ -21,9 +21,4 @@
   [_buttonsActionSubject sendNext:sender];
 }
 
-- (void)viewDidUnload {
-    [self setRemoteDeleteButton:nil];
-    [self setDoneButton:nil];
-    [super viewDidUnload];
-}
 @end

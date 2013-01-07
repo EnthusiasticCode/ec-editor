@@ -18,9 +18,6 @@
 
 @implementation NewFileFolderController
 
-@synthesize folderNameTextField;
-@synthesize infoLabel;
-
 #pragma mark - View lifecycle
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -59,21 +56,11 @@
   [super viewDidLoad];
 }
 
-- (void)viewDidUnload {
-  [self setFolderNameTextField:nil];
-  [self setInfoLabel:nil];
-  [super viewDidUnload];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   self.folderNameTextField.text = @"";
   [self.folderNameTextField becomeFirstResponder];
   self.infoLabel.text = @"A new empty folder will be created.";
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
 }
 
 #pragma mark Text Field delegate

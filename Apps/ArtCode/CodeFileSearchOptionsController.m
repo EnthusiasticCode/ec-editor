@@ -39,11 +39,6 @@ static void const * parentSearchBarControllerContext;
 
 #pragma mark - Controller Methods
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-	return YES;
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   _searchFilterMatches = [self.parentSearchBarController.searchFilterMatches copy];

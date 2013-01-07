@@ -42,10 +42,13 @@
 @interface CodeFileController ()
 
 /// View that wraps all the content and that will be adjusted to avoid keyboard overlaps
-@property (nonatomic, strong) UIView *wrapperView;
+@property (nonatomic, weak) UIView *wrapperView;
 
-@property (nonatomic, strong) CodeView *codeView;
-@property (nonatomic, strong) UIWebView *webView;
+@property (nonatomic, weak) CodeView *codeView;
+@property (nonatomic, weak) UIWebView *webView;
+@property (nonatomic, strong) UIView *hiddenView;
+
+@property (nonatomic, weak) CodeFileMinimapView *minimapView;
 
 @property (nonatomic, strong) NSIndexSet *bookmarks;
 
@@ -129,27 +132,6 @@ static void drawStencilStar(CGContextRef myContext)
 
 #pragma mark - Properties
 
-@synthesize minimapView = _minimapView, minimapVisible = _minimapVisible, minimapWidth = _minimapWidth;
-@synthesize codeScheduler = _codeScheduler, currentSymbol = _currentSymbol;
-
-- (CodeFileMinimapView *)minimapView {
-  if (!_minimapView) {
-    _minimapView = [[CodeFileMinimapView alloc] init];
-    _minimapView.delegate = self;
-    _minimapView.renderer = self.codeView.renderer;
-    
-    _minimapView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
-    _minimapView.contentInset = UIEdgeInsetsMake(10, 0, 10, 10);
-    _minimapView.alwaysBounceVertical = YES;
-    
-    _minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
-    _minimapView.lineShadowColor = self.codeView.backgroundColor;
-    _minimapView.lineDecorationInset = 10;
-    _minimapView.lineDefaultColor = [UIColor blackColor];
-  }
-  return _minimapView;
-}
-
 - (CGFloat)minimapWidth {
   if (_minimapWidth == 0) {
     _minimapWidth = 124;
@@ -168,7 +150,21 @@ static void drawStencilStar(CGContextRef myContext)
   
   [self willChangeValueForKey:@"minimapVisible"];
   if (minimapVisible) {
-    [self.wrapperView addSubview:self.minimapView];
+		CodeFileMinimapView *minimapView = [[CodeFileMinimapView alloc] init];
+    minimapView.delegate = self;
+    minimapView.renderer = self.codeView.renderer;
+    
+    minimapView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+    minimapView.contentInset = UIEdgeInsetsMake(10, 0, 10, 10);
+    minimapView.alwaysBounceVertical = YES;
+    
+    minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
+    minimapView.lineShadowColor = self.codeView.backgroundColor;
+    minimapView.lineDecorationInset = 10;
+    minimapView.lineDefaultColor = [UIColor blackColor];
+		
+    [self.wrapperView addSubview:minimapView];
+		self.minimapView = minimapView;
   }
   if (animated) {
     [self _layoutChildViews];
@@ -177,12 +173,12 @@ static void drawStencilStar(CGContextRef myContext)
       [self _layoutChildViews];
     } completion:^(BOOL finished) {
       if (!_minimapVisible)
-        [_minimapView removeFromSuperview];
+        [self.minimapView removeFromSuperview];
     }];
   } else {
     _minimapVisible = minimapVisible;
     if (!_minimapVisible)
-      [_minimapView removeFromSuperview];
+      [self.minimapView removeFromSuperview];
     [self _layoutChildViews];
   }
   [self didChangeValueForKey:@"minimapVisible"];
@@ -491,129 +487,28 @@ static void drawStencilStar(CGContextRef myContext)
   return self;
 }
 
+- (void)didReceiveMemoryWarning {
+	self.hiddenView = nil;
+	[super didReceiveMemoryWarning];
+}
+
 - (void)loadView {
   [super loadView];
   
-  self.wrapperView = [[UIView alloc] initWithFrame:self.view.bounds];
-  self.wrapperView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  [self.view addSubview:self.wrapperView];
+	UIView *wrapperView = [[UIView alloc] initWithFrame:self.view.bounds];
+  wrapperView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.view addSubview:wrapperView];
+	self.wrapperView = wrapperView;
   
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
-  
-  // Load the codeview
-  __weak CodeFileController *this = self;
-  
-  CodeView *codeView = [[CodeView alloc] init];
-  codeView.delegate = self;
-  codeView.magnificationPopoverBackgroundViewClass = [ImagePopoverBackgroundView class];
-  
-  codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
-  codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
-  
-  codeView.lineNumbersEnabled = YES;
-  codeView.lineNumbersWidth = 30;
-  codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
-  
-  codeView.alwaysBounceVertical = YES;
-  codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  
-  UISwipeGestureRecognizer *undoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureUndo:)];
-  undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
-  undoRecognizer.numberOfTouchesRequired = 2;
-  [codeView addGestureRecognizer:undoRecognizer];
-  UISwipeGestureRecognizer *redoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureRedo:)];
-  redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-  undoRecognizer.numberOfTouchesRequired = 2;
-  [codeView addGestureRecognizer:redoRecognizer];
-  
-  // Bookmark markers
-  [codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
-    if (!line.isTruncation && [this.bookmarks containsIndex:lineNumber +1]) {
-      CGContextSetFillColorWithColor(context, this.codeView.lineNumbersColor.CGColor);
-      CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
-      drawStencilStar(context);
-    }
-  } underText:NO forKey:@"bookmarkMarkers"];
-  
-  // Autoindentation block
-  @weakify(self);
-  codeView.autoIndentationBlock = ^CodeViewAutoIndentResult(NSString *line) {
-    @strongify(self);
-    if (self.preferenceIncreaseIndentBlock) {
-      // Apply increase indetantion
-      if (self.preferenceIncreaseIndentBlock(line)) {
-        return CodeViewAutoIndentIncrease;
-      } else {
-        // Apply decrease indentation
-        if (self.preferenceDecreaseIndentBlock) {
-          if (self.preferenceDecreaseIndentBlock(line)) {
-            return CodeViewAutoIndentDecrease;
-          }
-          // TODO: else single line indent
-        }
-      }
-    }
-    return CodeViewAutoIndentKeep;
-  };
-  
-  // Accessory view
-  CodeFileKeyboardAccessoryView *accessoryView = [[CodeFileKeyboardAccessoryView alloc] init];
-  accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
-  
-  [accessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
-  [accessoryView setItemDefaultWidth:81 + 4 forAccessoryPosition:KeyboardAccessoryPositionLandscape];
-  [accessoryView setItemDefaultWidth:36 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating]; // 44
-  
-  [accessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forAccessoryPosition:KeyboardAccessoryPositionPortrait];
-  [accessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forAccessoryPosition:KeyboardAccessoryPositionPortrait];
-  
-  [accessoryView setContentInsets:UIEdgeInsetsMake(3, 4, 2, 3) forAccessoryPosition:KeyboardAccessoryPositionLandscape];
-  [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forAccessoryPosition:KeyboardAccessoryPositionLandscape];
-  
-  [accessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:KeyboardAccessoryPositionFloating];
-  [accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:KeyboardAccessoryPositionFloating];
-  
-  codeView.keyboardAccessoryView = accessoryView;
-  
-  // Accessory view popover setup
-  accessoryView.itemPopoverView.contentSize = CGSizeMake(300, 300);
-  accessoryView.itemPopoverView.contentInsets = UIEdgeInsetsMake(12, 12, 12, 12);
-  accessoryView.itemPopoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
-  [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionMiddle];
-  [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarRight];
-  [accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
-  accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
-  
-  UIView *accessoryPopoverContentView = [[UIView alloc] init];
-  accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
-  accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
-  
-  codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
-  
-  self.codeView = codeView;
-  [self _setCodeViewAttributesForTheme:nil];
-  
-  UIWebView *webView = [[UIWebView alloc] init];
-  webView.delegate = self;
-  webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  self.webView = webView;
+
 }
 
 - (void)viewDidLoad {
   [self.wrapperView addSubview:[self _contentView]];
   
   self.toolbarItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"topBarItem_Tools"] style:UIBarButtonItemStylePlain target:self action:@selector(toolButtonAction:)]];  
-}
-
-- (void)viewDidUnload {
-  [super viewDidUnload];
-  
-  _minimapView = nil;
-  self.codeView = nil;
-  
-  _editToolsActionSheet = nil;
-  _searchBarController = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -625,10 +520,6 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 #pragma mark - Controller Methods
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
@@ -654,6 +545,8 @@ static void drawStencilStar(CGContextRef myContext)
   if ([currentContentView isKindOfClass:[CodeView class]]) {
     [(CodeView *)currentContentView setEditing:editing];
   }
+	
+	self.hiddenView = oldContentView;
   
   if (editing) {
     // Set keyboard for main scope
@@ -796,9 +689,116 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (UIView *)_contentViewForEditingState:(BOOL)editingState {
   if (!editingState && [self.class canDisplayFileInWebView:self.artCodeTab.currentLocation.url]) {
-    return self.webView;
+		UIWebView *webView = self.webView;
+    if (webView) return webView;
+		
+		if ([self.hiddenView isKindOfClass:[UIWebView class]]) return self.hiddenView;
+		
+		webView = [[UIWebView alloc] init];
+		webView.delegate = self;
+		webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		self.webView = webView;
+		return webView;
   } else {
-    return self.codeView;
+		CodeView *codeView = self.codeView;
+		if (codeView) return codeView;
+		
+		if ([self.hiddenView isKindOfClass:[CodeView class]]) return self.hiddenView;
+		
+		// Load the codeview
+		__weak CodeFileController *this = self;
+		
+		codeView = [[CodeView alloc] init];
+		codeView.delegate = self;
+		codeView.magnificationPopoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+		
+		codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
+		codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
+		
+		codeView.lineNumbersEnabled = YES;
+		codeView.lineNumbersWidth = 30;
+		codeView.lineNumbersFont = [UIFont systemFontOfSize:10];
+		
+		codeView.alwaysBounceVertical = YES;
+		codeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		
+		UISwipeGestureRecognizer *undoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureUndo:)];
+		undoRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+		undoRecognizer.numberOfTouchesRequired = 2;
+		[codeView addGestureRecognizer:undoRecognizer];
+		UISwipeGestureRecognizer *redoRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_handleGestureRedo:)];
+		redoRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+		undoRecognizer.numberOfTouchesRequired = 2;
+		[codeView addGestureRecognizer:redoRecognizer];
+		
+		// Bookmark markers
+		[codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+			if (!line.isTruncation && [this.bookmarks containsIndex:lineNumber +1]) {
+				CGContextSetFillColorWithColor(context, this.codeView.lineNumbersColor.CGColor);
+				CGContextTranslateCTM(context, -lineBounds.origin.x, line.descent / 2.0 + 1);
+				drawStencilStar(context);
+			}
+		} underText:NO forKey:@"bookmarkMarkers"];
+		
+		// Autoindentation block
+		@weakify(self);
+		codeView.autoIndentationBlock = ^CodeViewAutoIndentResult(NSString *line) {
+			@strongify(self);
+			if (self.preferenceIncreaseIndentBlock) {
+				// Apply increase indetantion
+				if (self.preferenceIncreaseIndentBlock(line)) {
+					return CodeViewAutoIndentIncrease;
+				} else {
+					// Apply decrease indentation
+					if (self.preferenceDecreaseIndentBlock) {
+						if (self.preferenceDecreaseIndentBlock(line)) {
+							return CodeViewAutoIndentDecrease;
+						}
+						// TODO: else single line indent
+					}
+				}
+			}
+			return CodeViewAutoIndentKeep;
+		};
+		
+		// Accessory view
+		CodeFileKeyboardAccessoryView *accessoryView = [[CodeFileKeyboardAccessoryView alloc] init];
+		accessoryView.itemBackgroundImage = [[UIImage imageNamed:@"accessoryView_itemBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 12, 0, 12)];
+		
+		[accessoryView setItemDefaultWidth:59 + 4 forAccessoryPosition:KeyboardAccessoryPositionPortrait];
+		[accessoryView setItemDefaultWidth:81 + 4 forAccessoryPosition:KeyboardAccessoryPositionLandscape];
+		[accessoryView setItemDefaultWidth:36 + 4 forAccessoryPosition:KeyboardAccessoryPositionFloating]; // 44
+		
+		[accessoryView setContentInsets:UIEdgeInsetsMake(3, 0, 2, 0) forAccessoryPosition:KeyboardAccessoryPositionPortrait];
+		[accessoryView setItemInsets:UIEdgeInsetsMake(0, 3, 0, 3) forAccessoryPosition:KeyboardAccessoryPositionPortrait];
+		
+		[accessoryView setContentInsets:UIEdgeInsetsMake(3, 4, 2, 3) forAccessoryPosition:KeyboardAccessoryPositionLandscape];
+		[accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 8) forAccessoryPosition:KeyboardAccessoryPositionLandscape];
+		
+		[accessoryView setContentInsets:UIEdgeInsetsMake(3, 10, 2, 7) forAccessoryPosition:KeyboardAccessoryPositionFloating];
+		[accessoryView setItemInsets:UIEdgeInsetsMake(0, 0, 0, 3) forAccessoryPosition:KeyboardAccessoryPositionFloating];
+		
+		codeView.keyboardAccessoryView = accessoryView;
+		
+		// Accessory view popover setup
+		accessoryView.itemPopoverView.contentSize = CGSizeMake(300, 300);
+		accessoryView.itemPopoverView.contentInsets = UIEdgeInsetsMake(12, 12, 12, 12);
+		accessoryView.itemPopoverView.backgroundView.image = [[UIImage imageNamed:@"accessoryView_popoverBackground"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 50, 10)];
+		[accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowMiddle"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionMiddle];
+		[accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowRight"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarRight];
+		[accessoryView.itemPopoverView setArrowImage:[[UIImage imageNamed:@"accessoryView_popoverArrowLeft"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forDirection:UIPopoverArrowDirectionDown metaPosition:PopoverViewArrowMetaPositionFarLeft];
+		accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
+		
+		UIView *accessoryPopoverContentView = [[UIView alloc] init];
+		accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
+		accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
+		
+		codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
+		
+		self.codeView = codeView;
+		[self _setCodeViewAttributesForTheme:nil];
+		
+		return codeView;
   }
 }
 

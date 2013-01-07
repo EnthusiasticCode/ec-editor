@@ -313,7 +313,7 @@
     if ([obj isKindOfClass:[NSString class]])
     {
       UILabel *label = [[UILabel alloc] init];
-      label.lineBreakMode = UILineBreakModeMiddleTruncation;
+      label.lineBreakMode = NSLineBreakByTruncatingMiddle;
       label.backgroundColor = [UIColor clearColor];
       
       label.textColor = isPrimary ? self.selectedTitleFragmentsTint : self.secondaryTitleFragmentsTint;
