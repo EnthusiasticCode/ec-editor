@@ -152,20 +152,6 @@
   return self;
 }
 
-- (NSArray *)toolNormalItems {
-	NSArray *items = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
-  [items[0] setAccessibilityLabel:L(@"Add file or folder")];
-	return items;
-}
-
-- (NSArray *)toolEditItems {
-	NSArray *items = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
-  [items[0] setAccessibilityLabel:L(@"Export")];
-  [items[1] setAccessibilityLabel:L(@"Copy")];
-  [items[2] setAccessibilityLabel:L(@"Delete")];
-	return items;
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -183,6 +169,15 @@
   
   // Customize subviews
   self.searchBar.placeholder = L(@"Filter files in this folder");
+	
+	// Preparing tool items array changed in set editing
+  self.toolEditItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Export"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditExportAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Duplicate"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolEditDuplicateAction:)], [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+  [(self.toolEditItems)[0] setAccessibilityLabel:L(@"Export")];
+  [(self.toolEditItems)[1] setAccessibilityLabel:L(@"Copy")];
+  [(self.toolEditItems)[2] setAccessibilityLabel:L(@"Delete")];
+  
+  self.toolNormalItems = @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolNormalAddAction:)]];
+  [(self.toolNormalItems)[0] setAccessibilityLabel:L(@"Add file or folder")];
 }
 
 - (void)didReceiveMemoryWarning

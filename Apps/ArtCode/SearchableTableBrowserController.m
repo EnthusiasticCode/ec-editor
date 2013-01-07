@@ -52,14 +52,6 @@
 - (void)invalidateFilteredItems {
 }
 
-- (NSArray *)toolNormalItems {
-	return nil;
-}
-
-- (NSArray *)toolEditItems {
-	return nil;
-}
-
 #pragma mark - Controller lifecycle
 
 - (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop

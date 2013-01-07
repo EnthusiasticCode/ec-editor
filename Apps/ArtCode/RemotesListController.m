@@ -111,14 +111,6 @@
   [super invalidateFilteredItems];
 }
 
-- (NSArray *)toolNormalItems {
-	return @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
-}
-
-- (NSArray *)toolEditItems {
-	return @[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
-}
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -132,6 +124,10 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
+	self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
+  
+  self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];
+	
   self.searchBar.placeholder = @"Filter remotes";
 }
 

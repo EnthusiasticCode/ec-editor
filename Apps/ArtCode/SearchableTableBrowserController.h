@@ -36,11 +36,11 @@
 /// A label that is presented at the bottom of the table view
 @property (nonatomic, readonly, weak) UILabel *infoLabel;
 
-/// If not nil, this items will be set when the controller is not in edit mode.
-- (NSArray *)toolNormalItems;
+/// If not nil, this items will be used when the controller is not in edit mode.
+@property (nonatomic, strong) NSArray *toolNormalItems;
 
-/// If not nil, this items will be set when the controller is in edit mode.
-- (NSArray *)toolEditItems;
+/// If not nil, this items will be used when the controller is in edit mode.
+@property (nonatomic, strong) NSArray *toolEditItems;
 
 /// A bottom toolbar to be displayed statically on the view. This view is loaded usually via a nib in loadView.
 @property (strong, nonatomic) IBOutlet UIView *bottomToolBar;
