@@ -735,7 +735,6 @@
 		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
-		B757C0021519CF1400AE6AC3 /* libKiwi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKiwi.a; path = "../ThirdParty/Kiwi/build/Release-iphoneos/libKiwi.a"; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
 		B757C0A21519FEDF00AE6AC3 /* NSString+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Utilities.m"; sourceTree = "<group>"; };
 		B75F658214D868EB008B88C5 /* ArtCodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeLocation.h; sourceTree = "<group>"; };
@@ -1820,7 +1819,6 @@
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */,
-				B757C0021519CF1400AE6AC3 /* libKiwi.a */,
 				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
 				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
 				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
@@ -3380,18 +3378,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5F1A2854169ACD86005A928E /* Profile.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
 					../Headers,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 					../ThirdParty,
 					$inherited,
-					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
@@ -3419,18 +3410,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5F1A2853169ACD86005A928E /* Debug.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
 					../Headers,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 					../ThirdParty,
 					$inherited,
-					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
@@ -3446,18 +3430,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5F1A2855169ACD86005A928E /* Release.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
 					../Headers,
-					"$(BUILT_PRODUCTS_DIR)/KiwiPublicHeaders",
 					../ThirdParty,
 					$inherited,
-					../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../ThirdParty/libarchive/arc/build\"",
