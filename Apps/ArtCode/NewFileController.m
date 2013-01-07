@@ -61,22 +61,12 @@
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 }
 
-- (void)viewDidUnload {
-  [self setFileNameTextField:nil];
-  [self setInfoLabel:nil];
-  [super viewDidUnload];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   self.fileNameTextField.text = @"";
   [self.fileNameTextField becomeFirstResponder];
   self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
   // TODO: if template is specified, set leftview for text field to template icon
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
 }
 
 #pragma mark Text Field delegate

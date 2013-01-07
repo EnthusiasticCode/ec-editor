@@ -10,12 +10,12 @@
 #import <MessageUI/MessageUI.h>
 #import "SearchableTableBrowserController.h"
 
+@class FileSystemItem;
 
 @interface FileBrowserController : SearchableTableBrowserController <MFMailComposeViewControllerDelegate>
 
 #pragma mark - Synchronization UI
 
-@property (strong, nonatomic) IBOutlet UILabel *bottomToolBarDetailLabel;
-@property (strong, nonatomic) IBOutlet BottomToolBarButton *bottomToolBarSyncButton;
+- (void)scrollToFileSystemItem:(FileSystemItem *)item highlight:(BOOL)shouldHighlight;
 
 @end

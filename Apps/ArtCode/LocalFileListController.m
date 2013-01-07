@@ -32,7 +32,7 @@ static void _init(LocalFileListController *self) {
                               [[RACAble(self.locationDirectory)
                                 map:^id(FileSystemDirectory *directory) {
                                   @strongify(self);
-                                  return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
+                                  return [FileSystemDirectory filterChildren:directory.children byAbbreviation:self.searchBarTextSubject];
                                 }] switch],
                               // Signal with progress items
                               RACAbleWithStart(self.progressItems)]]

@@ -46,6 +46,8 @@
 @property (nonatomic, strong) FileSystemDirectory *currentDirectory;
 @property (nonatomic, strong) NSArray *previewItems;
 
+@property (nonatomic, strong) NSString *revealFileName;
+
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDuplicateAction:(id)sender;
 - (void)_toolEditExportAction:(id)sender;
@@ -84,35 +86,35 @@
   
   // RAC
   @weakify(self);
-	__block NSString *revealFileName = nil;
-	__block NSIndexPath *scrollToIndexPath = nil;
+	__block FileSystemItem *scrollToItem = nil;
 
 	[[[RACAble(self.artCodeTab.currentLocation) flattenMap:^id(ArtCodeLocation *location) {
-		revealFileName = [location.dataDictionary objectForKey:@"reveal"];
-		return [FileSystemDirectory directoryWithURL:location.url];
+		RACSignal *directorySignal = [FileSystemDirectory directoryWithURL:location.url];
+		NSString *revealFileName = [location.dataDictionary objectForKey:@"reveal"];
+		if (revealFileName.length == 0) return directorySignal;
+		// Return the directorySignal by setting the scrollToItem in case the revealItem is valid
+		return [[[FileSystemItem itemWithURL:[location.url URLByAppendingPathComponent:revealFileName]] catchTo:directorySignal] flattenMap:^(FileSystemItem *revealItem) {
+			scrollToItem = revealItem;
+			return directorySignal;
+		}];
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
   
-	[[[RACAble(self.currentDirectory) flattenMap:^(FileSystemDirectory *directory) {
-		@strongify(self);
-		return [directory childrenFilteredByAbbreviation:self.searchBarTextSubject];
-	}] doNext:^(NSArray *items) {
-		@strongify(self);
-		// Should reveal a file
-		if (revealFileName) {
-			// TODO: Implement this
-			NSLog(@"should reveal %@", revealFileName);
-			revealFileName = nil;
-		}
-		// If the new items are more than the previous, find the first one inserted
-		else if (self.filteredItems.count < items.count) {
-			[self.filteredItems enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-				if ([obj first] != [items[idx] first]) {
-					scrollToIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
+		return [directory children];
+	}] switch] aggregateWithStart:nil combine:^(NSArray *previous, NSArray *next) {
+		// If at least one item has been added to children, will scroll to one of them
+		if (scrollToItem == nil && previous.count < next.count) {
+			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
+				if (prevItem != next[idx]) {
+					scrollToItem = next[idx];
 					*stop = YES;
 				}
 			}];
 		}
-	}] toProperty:@keypath(self.filteredItems) onObject:self];
+		return next;
+	}];
+	
+	[[FileSystemDirectory filterChildren:itemsSignal byAbbreviation:self.searchBarTextSubject] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);
@@ -132,9 +134,18 @@
       }
     }
 		// Scroll the tableview to an added item
-		if (scrollToIndexPath) {
-			[self.tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
-			scrollToIndexPath = nil;
+		if (scrollToItem) {
+			__block NSIndexPath *scrollToIndexPath = nil;
+			[items enumerateObjectsUsingBlock:^(RACTuple *itemTuple, NSUInteger idx, BOOL *stop) {
+				if (itemTuple.first == scrollToItem) {
+					scrollToIndexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+					*stop = YES;
+				}
+			}];
+			if (scrollToIndexPath) {
+				[self.tableView scrollToRowAtIndexPath:scrollToIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+			}
+			scrollToItem = nil;
 		}
   }];
 
@@ -169,25 +180,20 @@
   [(self.toolNormalItems)[0] setAccessibilityLabel:L(@"Add file or folder")];
 }
 
-- (void)viewDidUnload
+- (void)didReceiveMemoryWarning
 {
   _toolNormalAddPopover = nil;
   
   _toolEditItemExportActionSheet = nil;
   _toolEditItemDuplicateActionSheet = nil;
-  
-  [self setBottomToolBarDetailLabel:nil];
-  [self setBottomToolBarSyncButton:nil];
-  [super viewDidUnload];
+
+  [super didReceiveMemoryWarning];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [_selectedItems removeAllObjects];
   [super viewWillAppear:animated];
-    
-  // Hide sync button if no remotes
-  self.bottomToolBarSyncButton.hidden = [self.artCodeTab.currentLocation.project.remotes count] == 0;
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -405,7 +411,13 @@
   if (result == MFMailComposeResultSent) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }
-  [self dismissModalViewControllerAnimated:YES];
+  [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Public methods
+
+- (void)scrollToFileSystemItem:(FileSystemItem *)item highlight:(BOOL)shouldHighlight {
+	
 }
 
 #pragma mark - Private Methods

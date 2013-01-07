@@ -57,7 +57,7 @@
     return [FileSystemDirectory directoryWithURL:projectURL];
   }] switch] map:^RACSignal *(FileSystemDirectory *directory) {
     @strongify(self);
-    return [directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject];
+		return [FileSystemDirectory filterChildren:[directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject];
   }] switch] toProperty:@keypath(self.filteredItems) onObject:self];
   
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
