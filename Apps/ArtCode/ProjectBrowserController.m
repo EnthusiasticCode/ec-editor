@@ -32,11 +32,11 @@
 
 #import "UIBarButtonItem+BlockAction.h"
 
+static NSString * const ProjectCellIdentifier = @"ProjectCell";
 
-@interface ProjectBrowserController ()
+@interface ProjectBrowserController () <UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
-@property (nonatomic, strong, readonly) NSArray *gridElements;
-@property (nonatomic, weak) GridView *gridView;
+@property (nonatomic, strong) NSArray *gridElements;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -90,45 +90,42 @@
 #pragma mark - UIViewController
 
 - (id)init {
-  self = [super initWithNibName:@"ProjectsBrowserController" bundle:nil];
+  self = [super initWithCollectionViewLayout:[[ProjectCollectionLayout alloc] init]];
   if (!self)
     return nil;
   
   // RAC
-  __weak ProjectBrowserController *this = self;
+  @weakify(self);
   [self rac_bind:@keypath(self.projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
   
   // Update gird view
   [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {
-    ProjectBrowserController *strongSelf = this;
-    if (!strongSelf)
-      return;
+    @strongify(self);
     NSString *projectName = [proj name];
-    __block NSUInteger index = strongSelf->_gridElements.count;
-    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
+    __block NSUInteger index = self.gridElements.count;
+    [self.gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
       if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
         index = idx;
         *stop = YES;
       }
     }];
-    strongSelf->_gridElements = nil;
-    [strongSelf.gridView insertCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    self.gridElements = nil;
+		
+		[self.collectionView insertItemsAtIndexPaths:@[ [NSIndexPath indexPathForItem:index inSection:0] ]];
   }];
   
   [[ArtCodeProjectSet defaultSet].objectsRemoved subscribeNext:^(ArtCodeProject *proj) {
-    ProjectBrowserController *strongSelf = this;
-    if (!strongSelf)
-      return;
+    @strongify(self);
     NSString *projectName = [proj name];
     __block NSUInteger index = 0;
-    [strongSelf->_gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
+    [self.gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
       if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
         index = idx;
         *stop = YES;
       }
     }];
-    strongSelf->_gridElements = nil;
-    [strongSelf.gridView deleteCellsAtIndexes:[NSIndexSet indexSetWithIndex:index] animated:YES];
+    self.gridElements = nil;
+		[self.collectionView deleteItemsAtIndexPaths:@[ [NSIndexPath indexPathForItem:index inSection:0] ]];
   }];
   
   return self;
@@ -155,8 +152,13 @@
       [(UIButton *)item.customView setEnabled:NO];
     }];
   }
-  
-  [self.gridView setEditing:editing animated:animated];
+	
+	for (NSIndexPath *itemPath in self.collectionView.indexPathsForSelectedItems) {
+    [self.collectionView deselectItemAtIndexPath:itemPath animated:animated];
+	}
+	for (ProjectCell *cell in self.collectionView.visibleCells) {
+    cell.jiggle = editing;
+	}
   
   [self didChangeValueForKey:@"editing"];
 }
@@ -168,25 +170,7 @@
 
 - (void)loadView {
   [super loadView];
-	
-	// Create grid view
-	GridView *gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-	gridView.allowMultipleSelectionDuringEditing = YES;
-	gridView.dataSource = self;
-	gridView.delegate = self;
-	gridView.rowHeight = 120 + 15;
-	gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	gridView.alwaysBounceVertical = YES;
-	gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
-	gridView.backgroundView = [[UIView alloc] init];
-	gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
-	gridView.accessibilityIdentifier = @"projects grid";
-  self.gridView = gridView;
-	
-  [self.view addSubview:self.gridView];
-  self.gridView.frame = self.view.bounds;
-  self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  
+	  
   self.editButtonItem.title = @"";
   self.editButtonItem.image = [UIImage imageNamed:@"topBarItem_Edit"];
   self.editButtonItem.accessibilityLabel = L(@"Edit");
@@ -206,18 +190,21 @@
   self.toolbarItems = _toolItemsNormal;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
   [super viewDidLoad];
-  
+	
+	[self.collectionView registerNib:[UINib nibWithNibName:ProjectCellIdentifier bundle:nil] forCellWithReuseIdentifier:ProjectCellIdentifier];
+	self.collectionView.allowsMultipleSelection = YES;
+	self.collectionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
+	self.collectionView.accessibilityIdentifier = @"projects collection";
+	
   [self setEditing:NO animated:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  [self.gridView reloadData];
-  
+	
   // Fix to show hint view on empty app start
   if (self.gridElements.count > 0) {
     [self.hintView removeFromSuperview];
@@ -227,60 +214,40 @@
   }
 }
 
-#pragma mark - Grid View Data Source
+#pragma mark - Collection View Data Source
 
-- (NSInteger)numberOfCellsForGridView:(GridView *)gridView
-{
-  return self.gridElements.count;
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+	return self.gridElements.count;
 }
 
-- (GridViewCell *)gridView:(GridView *)gridView cellAtIndex:(NSInteger)cellIndex
-{    
-  // Create cell
-  static NSString *cellIdentifier = @"cell";
-  ProjectCell *cell = [gridView dequeueReusableCellWithIdentifier:cellIdentifier];
-  if (cell == nil)
-  {
-    cell = [ProjectCell gridViewCellWithReuseIdentifier:cellIdentifier fromNibNamed:@"ProjectCell" bundle:nil];
-    cell.contentInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    
-    if (!_cellNormalBackground)
-      _cellNormalBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
-    [(UIImageView *)cell.backgroundView setImage:_cellNormalBackground];
-    if (!_cellSelectedBackground)
-      _cellSelectedBackground = [[UIImage imageNamed:@"projectsTableCell_BackgroundSelected"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
-    [(UIImageView *)cell.selectedBackgroundView setImage:_cellSelectedBackground];
-  }
-  
-  // Setup cell
-  id element = (self.gridElements)[cellIndex];
-  if ([element isKindOfClass:[ArtCodeProject class]]) {
-    ArtCodeProject *project = (ArtCodeProject *)element;
-    cell.title.text = cell.accessibilityLabel = project.name;
-    cell.label.text = @"";
-    cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-    cell.newlyCreatedBadge.hidden = !project.newlyCreatedValue;
-    cell.accessibilityHint = L(@"Open the project");
-  }
-  
-  // Accessibility
-  cell.isAccessibilityElement = YES;
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+	ProjectCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProjectCellIdentifier forIndexPath:indexPath];
+	
+	ArtCodeProject *project = self.gridElements[indexPath.item];
+	cell.title.text = cell.accessibilityLabel = project.name;
+	cell.label.text = @"";
+	cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
+	cell.newlyCreatedBadge.hidden = !project.newlyCreatedValue;
+
+	cell.accessibilityHint = L(@"Open the project");
+	cell.isAccessibilityElement = YES;
   cell.accessibilityTraits = UIAccessibilityTraitButton;
-  
-  return cell;
+	
+	cell.jiggle = self.isEditing;
+	
+	return cell;
 }
 
-#pragma mark - Grid View Delegate
+#pragma mark - Collection View Delegate
 
-- (void)gridView:(GridView *)gridView didSelectCellAtIndex:(NSInteger)cellIndex
-{
-  if (self.isEditing) {
-    BOOL enable = [gridView indexForSelectedCell] != -1;
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+	if (self.isEditing) {
+    BOOL enable = collectionView.indexPathsForSelectedItems.count > 0;
     [_toolItemsEditing enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger idx, BOOL *stop) {
       [(UIButton *)item.customView setEnabled:enable];
     }];
   } else {
-    id element = (self.gridElements)[cellIndex];
+    id element = self.gridElements[indexPath.item];
     if ([element isKindOfClass:[ArtCodeProject class]]) {
       [(ArtCodeProject *)element setNewlyCreatedValue:NO];
       [self.artCodeTab pushProject:element];
@@ -288,55 +255,50 @@
   }
 }
 
-- (void)gridView:(GridView *)gridView didDeselectCellAtIndex:(NSInteger)cellIndex
-{
-  // Will update editing items like in select
-  [self gridView:gridView didSelectCellAtIndex:cellIndex];
+- (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+	// Will update editing items like in select
+	[self collectionView:collectionView didSelectItemAtIndexPath:indexPath];
 }
 
 #pragma mark - Action Sheet Delegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
   ASSERT(self.isEditing);
-  ASSERT([self.gridView indexForSelectedCell] != -1);
+  ASSERT(self.collectionView.indexPathsForSelectedItems.count > 0);
   
   if (actionSheet == _toolItemDeleteActionSheet) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) {
-      NSIndexSet *cellsToRemove = [self.gridView indexesForSelectedCells];
+			NSArray *cellsToRemove = self.collectionView.indexPathsForSelectedItems;
       [self setEditing:NO animated:YES];
       
       // Remove projects
       NSArray *oldElements = self.gridElements;
-      [oldElements enumerateObjectsAtIndexes:cellsToRemove options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        if ([obj isKindOfClass:[ArtCodeProject class]]) {
-          [[ArtCodeProjectSet defaultSet] removeProject:obj completionHandler:^(NSError *error) {
-            // Show bezel alert
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
-          }];
-        }
-      }];
+			for (NSIndexPath *itemPath in cellsToRemove) {
+				[[ArtCodeProjectSet defaultSet] removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
+					// Show bezel alert
+					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+				}];
+			}
     }
   } else if (actionSheet == _toolItemDuplicateActionSheet) {
     self.loading = YES;
-    NSIndexSet *cellsToDuplicate = [self.gridView indexesForSelectedCells];
+    NSArray *cellsToDuplicate = self.collectionView.indexPathsForSelectedItems;
     NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
     __block NSInteger progress = 0;
     [self setEditing:NO animated:YES];
     
-    [self.gridElements enumerateObjectsAtIndexes:cellsToDuplicate options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      if ([obj isKindOfClass:[ArtCodeProject class]]) {
-        [(ArtCodeProject *)obj duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-          if (++progress == cellsToDuplicateCount) {
-            self.loading = NO;
-          }
-        }];
-      }
-    }];
+		for (NSIndexPath *itemPath in cellsToDuplicate) {
+			[(ArtCodeProject *)self.gridElements[itemPath.item] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+				if (++progress == cellsToDuplicateCount) {
+					self.loading = NO;
+				}
+			}];
+		}
   } else if (actionSheet == _toolItemExportActionSheet) {
 		switch (buttonIndex) {
 			case 0: // Rename
 			{
-				if (self.gridView.indexesForSelectedCells.count != 1) {
+				if (self.collectionView.indexPathsForSelectedItems.count != 1) {
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single project to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
@@ -344,8 +306,8 @@
 				UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"NewProjectPopover" bundle:nil];
 				NewProjectController *projectEditor = (NewProjectController *)[storyboard instantiateViewControllerWithIdentifier:@"ProjectEditor"];
 				//
-				NSInteger indexOfProjectToEdit = self.gridView.indexForSelectedCell;
-				ArtCodeProject *projectToEdit = (self.gridElements)[indexOfProjectToEdit];
+				NSIndexPath *indexPathOfProjectToEdit = self.collectionView.indexPathsForSelectedItems[0];
+				ArtCodeProject *projectToEdit = self.gridElements[indexPathOfProjectToEdit.item];
 				// Prepare the editing view from a NewProjectController
 				projectEditor.navigationItem.title = L(@"Edit project");
 				[projectEditor.navigationItem.rightBarButtonItem setTitle:L(@"Done")];
@@ -359,7 +321,7 @@
 					}
 					[self dismissViewControllerAnimated:YES completion:nil];
 					[self setEditing:NO animated:YES];
-					[self.gridView reloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:indexOfProjectToEdit] animated:YES];
+					[self.collectionView reloadItemsAtIndexPaths:@[ indexPathOfProjectToEdit ]];
 				}];
 				// Cancel button
 				UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Cancel") style:UIBarButtonItemStylePlain target:self action:@selector(dismissModalViewControllerAnimated:)];
@@ -377,7 +339,7 @@
 				
 			case 1: // export to iTunes
 			{
-				NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+				NSArray *cellsToExport = self.collectionView.indexPathsForSelectedItems;
 				[self setEditing:NO animated:YES];
 				
 				self.loading = YES;
@@ -390,9 +352,8 @@
 						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
 					}
 				};
-				[self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-					if ([obj isKindOfClass:[ArtCodeProject class]]) {
-						ArtCodeProject *project = obj;
+				for (NSIndexPath *itemPath in cellsToExport) {
+						ArtCodeProject *project = self.gridElements[itemPath.item];
 						NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
 						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
 							if (temporaryDirectoryURL) {
@@ -401,12 +362,7 @@
 							}
 							progressBlock();
 						}];
-					} else {
-						// Not a project
-						progressBlock();
-						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Only projects can be exported") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-					}
-				}];
+				}
 			} break;
 				
 			case 2:
@@ -418,7 +374,7 @@
 				
 				// Compressing projects to export
 				self.loading = YES;
-				NSIndexSet *cellsToExport = [self.gridView indexesForSelectedCells];
+				NSArray *cellsToExport = self.collectionView.indexPathsForSelectedItems;
 				[self setEditing:NO animated:YES];
 				
 				NSMutableString *subject = [[NSMutableString alloc] init];
@@ -448,29 +404,24 @@
 					}
 				};
 				// Enumerate elements to export
-				[self.gridElements enumerateObjectsAtIndexes:cellsToExport options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-					if ([obj isKindOfClass:[ArtCodeProject class]]) {
-						ArtCodeProject *project = obj;
-						
-						// Generate mail subject
-						[subject appendFormat:@"%@, ", project.name];
-						
-						// Process project
-						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
-							if (temporaryDirectoryURL) {
-								// Add attachment
-								NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-								[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
-								[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-								[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-								progressCompletion();
-							}
-						}];
-					} else {
-						// Ignore non projects
-						progressCompletion();
-					}
-				}];
+				for (NSIndexPath *itemPath in cellsToExport) {
+					ArtCodeProject *project = self.gridElements[itemPath.item];
+					
+					// Generate mail subject
+					[subject appendFormat:@"%@, ", project.name];
+					
+					// Process project
+					[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+						if (temporaryDirectoryURL) {
+							// Add attachment
+							NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
+							[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+							[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
+							[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+							progressCompletion();
+						}
+					}];
+				}
 			} break;
 				
 			default:
@@ -531,7 +482,7 @@
 
 - (void)_toolEditDuplicateAction:(id)sender {
   ASSERT(self.isEditing);
-  ASSERT([self.gridView indexForSelectedCell] != -1);
+  ASSERT(self.collectionView.indexPathsForSelectedItems.count > 0);
   
   if (!_toolItemDuplicateActionSheet) {
     _toolItemDuplicateActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Duplicate"), nil];
@@ -546,20 +497,34 @@
 
 @implementation ProjectCell
 
-@synthesize title;
-@synthesize label;
-@synthesize icon;
-@synthesize newlyCreatedBadge;
+- (id)initWithCoder:(NSCoder *)aDecoder {
+	self = [super initWithCoder:aDecoder];
+  if (!self) return nil;
+	
+	static UIImage *_cellNormalBackgroundImage = nil;
+  if (!_cellNormalBackgroundImage) {
+		_cellNormalBackgroundImage = [[UIImage imageNamed:@"projectsTableCell_BackgroundNormal"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
+	}
+	self.backgroundView = [[UIImageView alloc] initWithImage:_cellNormalBackgroundImage];
+	
+	static UIImage *_cellSelectedBackgroundImge = nil;
+	if (!_cellSelectedBackgroundImge) {
+		_cellSelectedBackgroundImge = [[UIImage imageNamed:@"projectsTableCell_BackgroundSelected"] resizableImageWithCapInsets:UIEdgeInsetsMake(13, 13, 13, 13)];
+	}
+	self.selectedBackgroundView = [[UIImageView alloc] initWithImage:_cellSelectedBackgroundImge];
+	
+  return self;
+}
 
 #define RADIANS(degrees) ((degrees * M_PI) / 180.0)
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-  [super setEditing:editing animated:animated];
-  
+- (void)setJiggle:(BOOL)jiggle {
+	if (jiggle == _jiggle) return;
+	_jiggle = jiggle;
+	
   static NSString *jitterAnimationKey = @"jitter";
-  
-  if (editing)
+	
+  if (jiggle)
   {
     CGFloat angle = RADIANS(0.7);
     CABasicAnimation *jitter = [CABasicAnimation animationWithKeyPath:@"transform"];
@@ -580,3 +545,82 @@
 
 @end
 
+#pragma mark
+
+@implementation ProjectCollectionLayout {
+	CGFloat _itemFullWidth;
+	CGSize _collectionViewContentSize;
+}
+
+- (id)init {
+	self = [super init];
+  if (!self) return nil;
+  
+	self.sectionInset = UIEdgeInsetsMake(15, 15, 15, 15);
+	self.itemHeight = 100;
+	self.interItemSpacing = 15;
+	self.numberOfColumns = 2;
+	
+  return self;
+}
+
+- (void)prepareLayout
+{	
+	// Calculate content size
+	NSUInteger rowCount = 0;
+	for (NSInteger section = 0; section < self.collectionView.numberOfSections; ++section) {
+		rowCount += ([self.collectionView numberOfItemsInSection:section] + 1) / self.numberOfColumns;
+	}
+	
+	CGFloat height = self.sectionInset.top + rowCount * self.itemHeight + (rowCount - 1) * self.interItemSpacing + self.sectionInset.bottom;
+	
+	_collectionViewContentSize = CGSizeMake(self.collectionView.bounds.size.width, height);
+	
+	// Calculate item width
+	_itemFullWidth = (
+							 self.collectionView.bounds.size.width
+							 - self.sectionInset.left
+							 - self.sectionInset.right
+							 + self.interItemSpacing) / self.numberOfColumns;
+}
+
+- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
+{
+	NSMutableArray *attributes = [NSMutableArray array];
+	
+	NSInteger firstItemIndex = (rect.origin.y + self.sectionInset.top) / (self.itemHeight + self.interItemSpacing);
+	NSInteger lastItemIndex = firstItemIndex + rect.size.height / (self.itemHeight + self.interItemSpacing) * self.numberOfColumns;
+	
+	for (NSInteger itemIndex = firstItemIndex; itemIndex <= lastItemIndex; ++itemIndex) {
+		[attributes addObject:[self layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:itemIndex inSection:0]]];
+	}
+	
+	return attributes;
+}
+
+- (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+	UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+	
+	NSInteger row = indexPath.item / self.numberOfColumns;
+	NSInteger column = indexPath.item % self.numberOfColumns;
+	
+	CGFloat itemWidth = floorf(_itemFullWidth - self.interItemSpacing);
+	CGFloat originX = floorf(self.sectionInset.left + _itemFullWidth * column);
+	CGFloat originY = floorf(self.sectionInset.top + (self.itemHeight + self.interItemSpacing) * row);
+	
+	attributes.frame = CGRectMake(originX, originY, itemWidth, self.itemHeight);
+	
+	return attributes;
+}
+
+- (CGSize)collectionViewContentSize
+{
+	return _collectionViewContentSize;
+}
+
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
+	return self.collectionView.bounds.size.width != newBounds.size.width;
+}
+
+@end

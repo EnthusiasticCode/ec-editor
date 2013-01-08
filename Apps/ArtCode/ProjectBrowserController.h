@@ -8,12 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
-#import "GridView.h"
 
 @class Application, ArtCodeTab, ProjectCell;
 
 
-@interface ProjectBrowserController : UIViewController <GridViewDataSource, GridViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface ProjectBrowserController : UICollectionViewController
 
 @property (nonatomic, strong) NSOrderedSet *projectsSet;
 
@@ -22,12 +21,22 @@
 
 @end
 
+@interface ProjectCell : UICollectionViewCell
 
-@interface ProjectCell : GridViewCell
+@property (weak, nonatomic) IBOutlet UIImageView *icon;
+@property (weak, nonatomic) IBOutlet UILabel *title;
+@property (weak, nonatomic) IBOutlet UILabel *label;
+@property (weak, nonatomic) IBOutlet UIImageView *newlyCreatedBadge;
 
-@property (strong, nonatomic) IBOutlet UILabel *title;
-@property (strong, nonatomic) IBOutlet UILabel *label;
-@property (strong, nonatomic) IBOutlet UIImageView *icon;
-@property (strong, nonatomic) IBOutlet UIImageView *newlyCreatedBadge;
+@property (nonatomic) BOOL jiggle;
+
+@end
+
+@interface ProjectCollectionLayout : UICollectionViewLayout
+
+@property (nonatomic) UIEdgeInsets sectionInset;
+@property (nonatomic) CGFloat itemHeight;
+@property (nonatomic) CGFloat interItemSpacing;
+@property (nonatomic) NSUInteger numberOfColumns;
 
 @end
