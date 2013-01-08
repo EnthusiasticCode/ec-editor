@@ -36,8 +36,7 @@
 @interface ProjectBrowserController ()
 
 @property (nonatomic, strong, readonly) NSArray *gridElements;
-@property (nonatomic, strong) GridView *gridView;
-@property (nonatomic, strong) UIView *hintView;
+@property (nonatomic, weak) GridView *gridView;
 
 - (void)_toolNormalAddAction:(id)sender;
 - (void)_toolEditDeleteAction:(id)sender;
@@ -62,7 +61,7 @@
   UIImage *_cellSelectedBackground;
 }
 
-@synthesize gridElements=_gridElements, gridView = _gridView, hintView = _hintView;
+@synthesize gridElements=_gridElements;
 @synthesize projectsSet = _projectsSet;
 
 - (NSArray *)gridElements {
@@ -74,20 +73,13 @@
     
     // Side effect to update hint view
     if (_gridElements.count > 0) {
-      [_hintView removeFromSuperview];
+      [self.hintView removeFromSuperview];
     } else {
       [self.view addSubview:self.hintView];
+			self.hintView.frame = self.view.bounds;
     }
   }
   return _gridElements;
-}
-
-- (UIView *)hintView {
-  if (!_hintView) {
-    _hintView = [[NSBundle mainBundle] loadNibNamed:@"ProjectsHintsView" owner:nil options:nil][0];
-    _hintView.frame = self.view.bounds;
-  }
-  return _hintView;
 }
 
 + (BOOL)automaticallyNotifiesObserversOfEditing
@@ -97,8 +89,8 @@
 
 #pragma mark - UIViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+- (id)init {
+  self = [super initWithNibName:@"ProjectsBrowserController" bundle:nil];
   if (!self)
     return nil;
   
@@ -174,10 +166,23 @@
   return @"ArtCode";
 }
 
-- (void)loadView
-{
+- (void)loadView {
   [super loadView];
-  
+	
+	// Create grid view
+	GridView *gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+	gridView.allowMultipleSelectionDuringEditing = YES;
+	gridView.dataSource = self;
+	gridView.delegate = self;
+	gridView.rowHeight = 120 + 15;
+	gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	gridView.alwaysBounceVertical = YES;
+	gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
+	gridView.backgroundView = [[UIView alloc] init];
+	gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
+	gridView.accessibilityIdentifier = @"projects grid";
+  self.gridView = gridView;
+	
   [self.view addSubview:self.gridView];
   self.gridView.frame = self.view.bounds;
   self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -208,24 +213,6 @@
   [self setEditing:NO animated:NO];
 }
 
-- (void)viewDidUnload
-{
-  [super viewDidUnload];
-  
-  _toolItemPopover = nil;
-  
-  _toolItemsNormal = nil;
-  _toolItemsEditing = nil;
-  
-  _toolItemDeleteActionSheet = nil;
-  _toolItemExportActionSheet = nil;
-  
-  _cellNormalBackground = nil;
-  _cellSelectedBackground = nil;
-  
-  _gridElements = nil;
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
@@ -233,9 +220,10 @@
   
   // Fix to show hint view on empty app start
   if (self.gridElements.count > 0) {
-    [_hintView removeFromSuperview];
+    [self.hintView removeFromSuperview];
   } else {
     [self.view addSubview:self.hintView];
+		self.hintView.frame = self.view.bounds;
   }
 }
 
@@ -369,7 +357,7 @@
 					if (projectEditor.projectColorSelection.selectedColor != nil) {
 						projectToEdit.labelColor = projectEditor.projectColorSelection.selectedColor;
 					}
-					[self dismissModalViewControllerAnimated:YES];
+					[self dismissViewControllerAnimated:YES completion:nil];
 					[self setEditing:NO animated:YES];
 					[self.gridView reloadCellsAtIndexes:[NSIndexSet indexSetWithIndex:indexOfProjectToEdit] animated:YES];
 				}];
@@ -498,29 +486,10 @@
 {
   if (result == MFMailComposeResultSent)
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-  [self dismissModalViewControllerAnimated:YES];
+  [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Private Methods
-
-- (GridView *)gridView
-{
-  if (!_gridView && self.isViewLoaded)
-  {
-    _gridView = [[GridView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-    _gridView.allowMultipleSelectionDuringEditing = YES;
-    _gridView.dataSource = self;
-    _gridView.delegate = self;
-    _gridView.rowHeight = 120 + 15;
-    _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _gridView.alwaysBounceVertical = YES;
-    _gridView.cellInsets = UIEdgeInsetsMake(15, 15, 15, 15);
-    _gridView.backgroundView = [[UIView alloc] init];
-    _gridView.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
-    _gridView.accessibilityIdentifier = @"projects grid";
-  }
-  return _gridView;
-}
 
 - (void)_toolNormalAddAction:(id)sender
 {

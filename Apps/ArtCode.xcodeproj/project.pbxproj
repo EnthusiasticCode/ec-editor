@@ -294,7 +294,6 @@
 		CD1973ED14B1D2B200CACF5E /* topBarItem_Edit.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */; };
 		CD1973EF14B1D4F600CACF5E /* topBarItem_Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */; };
 		CD217EB214D412F1001AEA41 /* QuickInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */; };
-		CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */; };
 		CD2568C31450D44000A3CCDE /* topBar_BackButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */; };
 		CD2568C71450D5B600A3CCDE /* topBar_ToolButton_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */; };
 		CD27416914E9C4120045ADFD /* itemIcon_Accept.png in Resources */ = {isa = PBXBuildFile; fileRef = CD27416714E9C4120045ADFD /* itemIcon_Accept.png */; };
@@ -388,7 +387,7 @@
 		CD6E4DE214EFE702009B8CF8 /* libLLVMTransformUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6E4DC914EFE702009B8CF8 /* libLLVMTransformUtils.a */; };
 		CD70F4CE147A615000EAEEDC /* SearchBar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */; };
 		CD711AD0156B9A1500F30964 /* helpArrowUp.png in Resources */ = {isa = PBXBuildFile; fileRef = CD711ACF156B9A1500F30964 /* helpArrowUp.png */; };
-		CD711AD2156B9D1F00F30964 /* ProjectsHintsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */; };
+		CD711AD2156B9D1F00F30964 /* ProjectsBrowserController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD711AD1156B9D1F00F30964 /* ProjectsBrowserController.xib */; };
 		CD78C1C414E15CFB00EBBBFF /* bezelAlert_cancelIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1BF14E15CFB00EBBBFF /* bezelAlert_cancelIcon.png */; };
 		CD78C1C514E15CFB00EBBBFF /* bezelAlert_cycleDownIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1C014E15CFB00EBBBFF /* bezelAlert_cycleDownIcon.png */; };
 		CD78C1C614E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CD78C1C114E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png */; };
@@ -457,7 +456,7 @@
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
 		CDBCC5DF14B60F9E005E5C46 /* HighlightTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */; };
-		CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */; };
+		CDBD3F73150003050050B10C /* SearchableTableBrowserController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F72150003050050B10C /* SearchableTableBrowserController.xib */; };
 		CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */; };
 		CDBD3F7E150014CF0050B10C /* bottomToolBar_Button.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F76150014CF0050B10C /* bottomToolBar_Button.png */; };
 		CDBD3F7F150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CDBD3F77150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png */; };
@@ -1017,7 +1016,6 @@
 		CD1973EC14B1D2B200CACF5E /* topBarItem_Edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Edit.png; sourceTree = "<group>"; };
 		CD1973EE14B1D4F600CACF5E /* topBarItem_Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBarItem_Tools.png; sourceTree = "<group>"; };
 		CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = QuickInfo.storyboard; sourceTree = "<group>"; };
-		CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileBrowserBottomToolBar.xib; sourceTree = "<group>"; };
 		CD2568C21450D44000A3CCDE /* topBar_BackButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_BackButton_Normal.png; sourceTree = "<group>"; };
 		CD2568C61450D5B600A3CCDE /* topBar_ToolButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ToolButton_Normal.png; sourceTree = "<group>"; };
 		CD27416714E9C4120045ADFD /* itemIcon_Accept.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Accept.png; sourceTree = "<group>"; };
@@ -1130,7 +1128,7 @@
 		CD6E4DE314EFE7B3009B8CF8 /* Index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Index.h; path = "../ThirdParty/libclang/include/clang-c/Index.h"; sourceTree = "<group>"; };
 		CD70F4CD147A615000EAEEDC /* SearchBar.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SearchBar.storyboard; sourceTree = "<group>"; };
 		CD711ACF156B9A1500F30964 /* helpArrowUp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = helpArrowUp.png; sourceTree = "<group>"; };
-		CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectsHintsView.xib; sourceTree = "<group>"; };
+		CD711AD1156B9D1F00F30964 /* ProjectsBrowserController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectsBrowserController.xib; sourceTree = "<group>"; };
 		CD78C1BF14E15CFB00EBBBFF /* bezelAlert_cancelIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_cancelIcon.png; sourceTree = "<group>"; };
 		CD78C1C014E15CFB00EBBBFF /* bezelAlert_cycleDownIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_cycleDownIcon.png; sourceTree = "<group>"; };
 		CD78C1C114E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_cycleUpIcon.png; sourceTree = "<group>"; };
@@ -1228,7 +1226,7 @@
 		CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MoveConflictController.xib; sourceTree = "<group>"; };
 		CDBCC5DD14B60F9E005E5C46 /* HighlightTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighlightTableViewCell.h; sourceTree = "<group>"; };
 		CDBCC5DE14B60F9E005E5C46 /* HighlightTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HighlightTableViewCell.m; sourceTree = "<group>"; };
-		CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserControllerBottomBar.xib; sourceTree = "<group>"; };
+		CDBD3F72150003050050B10C /* SearchableTableBrowserController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchableTableBrowserController.xib; sourceTree = "<group>"; };
 		CDBD3F75150014CF0050B10C /* bottomToolBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Background.png; sourceTree = "<group>"; };
 		CDBD3F76150014CF0050B10C /* bottomToolBar_Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Button.png; sourceTree = "<group>"; };
 		CDBD3F77150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Bookmarks_Normal.png; sourceTree = "<group>"; };
@@ -2425,9 +2423,8 @@
 				CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
 				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
-				CDBD3F72150003050050B10C /* BrowserControllerBottomBar.xib */,
-				CD227E6B1503D85B0053AEEF /* FileBrowserBottomToolBar.xib */,
-				CD711AD1156B9D1F00F30964 /* ProjectsHintsView.xib */,
+				CDBD3F72150003050050B10C /* SearchableTableBrowserController.xib */,
+				CD711AD1156B9D1F00F30964 /* ProjectsBrowserController.xib */,
 				CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */,
 				CDC96176164C08B60069E74A /* RemotesListHintsView.xib */,
 			);
@@ -3111,7 +3108,7 @@
 				CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */,
 				CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */,
 				CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */,
-				CDBD3F73150003050050B10C /* BrowserControllerBottomBar.xib in Resources */,
+				CDBD3F73150003050050B10C /* SearchableTableBrowserController.xib in Resources */,
 				CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */,
 				CDBD3F7E150014CF0050B10C /* bottomToolBar_Button.png in Resources */,
 				CDBD3F7F150014CF0050B10C /* bottomToolBar_Icon_Bookmarks_Normal.png in Resources */,
@@ -3120,12 +3117,11 @@
 				CDBD3F82150014CF0050B10C /* bottomToolBar_Icon_Files_Selected.png in Resources */,
 				CDBD3F83150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png in Resources */,
 				CDBD3F84150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png in Resources */,
-				CD227E6C1503D85B0053AEEF /* FileBrowserBottomToolBar.xib in Resources */,
 				CD01C290151DE6F900B3820B /* projectsTableCell_NewBadge.png in Resources */,
 				CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */,
 				CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */,
 				CD711AD0156B9A1500F30964 /* helpArrowUp.png in Resources */,
-				CD711AD2156B9D1F00F30964 /* ProjectsHintsView.xib in Resources */,
+				CD711AD2156B9D1F00F30964 /* ProjectsBrowserController.xib in Resources */,
 				CDEFDE351570E6E500DBB528 /* UITabBar_info.png in Resources */,
 				CDEFDE371570E7D200DBB528 /* UITabBar_star.png in Resources */,
 				CDEFDE391570E9BC00DBB528 /* UITabBar_symbol.png in Resources */,
@@ -3452,6 +3448,7 @@
 			buildSettings = {
 				GCC_PREFIX_HEADER = "ArtCode/ArtCode-Prefix.pch";
 				INFOPLIST_FILE = "ArtCode/ArtCode-Info.plist";
+				OTHER_CFLAGS = "-fcatch-undefined-behavior";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

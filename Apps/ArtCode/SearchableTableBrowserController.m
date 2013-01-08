@@ -54,9 +54,9 @@
 
 #pragma mark - Controller lifecycle
 
-- (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop
+- (id)initWithNibNamed:(NSString *)nibName title:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop
 {
-  self = [super initWithNibName:nil bundle:nil];
+  self = [super initWithNibName:nibName bundle:nil];
   if (!self)
     return nil;
   

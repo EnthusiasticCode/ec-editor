@@ -45,7 +45,7 @@
 
 - (id)init
 {
-  self = [super initWithTitle:@"Remotes" searchBarStaticOnTop:NO];
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
   
@@ -67,12 +67,12 @@
 }
 
 - (void)presentHintView {
-  if (!self.hintView) {
-    UIView *hintView = [[NSBundle mainBundle] loadNibNamed:@"RemotesListHintsView" owner:nil options:nil][0];
-    hintView.frame = self.view.bounds;
-    [self.view addSubview:hintView];
-    self.hintView = hintView;
-  }
+//  if (!self.hintView) {
+//    UIView *hintView = [[NSBundle mainBundle] loadNibNamed:@"RemotesListHintsView" owner:nil options:nil][0];
+//    hintView.frame = self.view.bounds;
+//    [self.view addSubview:hintView];
+//    self.hintView = hintView;
+//  }
 }
 
 - (void)dismissHintView {
@@ -112,14 +112,6 @@
 }
 
 #pragma mark - View lifecycle
-
-- (void)loadView
-{
-  [super loadView];
-  
-  // Load the bottom toolbar
-  [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
-}
 
 - (void)viewDidLoad {
   [super viewDidLoad];

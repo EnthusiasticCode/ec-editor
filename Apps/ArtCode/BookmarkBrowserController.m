@@ -31,7 +31,7 @@
 
 - (id)init
 {
-  self = [super initWithTitle:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
   if (!self)
     return nil;
   return self;
@@ -95,9 +95,6 @@
 		
     // Customize subviews
     self.searchBar.placeholder = @"Filter bookmarks";
-    
-    // Load the bottom toolbar
-    [[NSBundle mainBundle] loadNibNamed:@"BrowserControllerBottomBar" owner:self options:nil];
   }
 }
 

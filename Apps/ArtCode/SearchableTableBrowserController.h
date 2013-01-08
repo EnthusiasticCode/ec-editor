@@ -12,7 +12,7 @@
 
 @interface SearchableTableBrowserController : UIViewController <UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate>
 
-- (id)initWithTitle:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop;
+- (id)initWithNibNamed:(NSString *)nibName title:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop;
 
 #pragma mark Provide items for the table view
 
@@ -42,8 +42,8 @@
 /// If not nil, this items will be used when the controller is in edit mode.
 @property (nonatomic, strong) NSArray *toolEditItems;
 
-/// A bottom toolbar to be displayed statically on the view. This view is loaded usually via a nib in loadView.
-@property (strong, nonatomic) IBOutlet UIView *bottomToolBar;
+/// A bottom toolbar to be displayed statically on the view.
+@property (nonatomic, weak) IBOutlet UIView *bottomToolBar;
 
 #pragma mark Common actions
 

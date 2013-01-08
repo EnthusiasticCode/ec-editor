@@ -59,7 +59,7 @@
 
 - (id)init
 {
-  self = [super initWithTitle:@"Symbol list" searchBarStaticOnTop:YES];
+  self = [super initWithNibNamed:nil title:@"Symbol list" searchBarStaticOnTop:YES];
   if (!self)
     return nil;
   self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:[UIImage imageNamed:@"UITabBar_symbol"] tag:0];

@@ -47,16 +47,22 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSMutableArray *_progressItems;
 }
 
+- (id)initWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
+	self = [super initWithNibNamed:@"RemoteLogin" title:@"Remotes" searchBarStaticOnTop:NO];
+  if (!self) return nil;
+	[self prepareWithConnection:connection artCodeRemote:remote path:remotePath];
+	return self;
+}
 
 - (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
   ASSERT(!_connection); // This prepare can happen only once
   ASSERT(remote && connection); // Connection and remote need to be specified
+	
   _remote = remote;
   _connection = connection;
   self.remotePath = remotePath ?: @"/";
   
   // Preparing view
-  [[NSBundle mainBundle] loadNibNamed:@"RemoteLogin" owner:self options:nil];
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)];
   
   // RAC
@@ -269,8 +275,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
-  RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] init];
-  [remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
+  RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
   [remoteFileListController setEditing:self.editing animated:NO];
   [self.navigationController pushViewController:remoteFileListController animated:YES];
 }

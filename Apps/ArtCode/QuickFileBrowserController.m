@@ -40,7 +40,7 @@
 
 - (id)init
 {
-  self = [super initWithTitle:L(@"Open quickly") searchBarStaticOnTop:YES];
+  self = [super initWithNibNamed:nil title:L(@"Open quickly") searchBarStaticOnTop:YES];
   if (!self)
     return nil;
   float iconSize = 26;

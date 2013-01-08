@@ -80,7 +80,7 @@
 
 - (id)init
 {
-  self = [super initWithTitle:nil searchBarStaticOnTop:NO];
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:nil searchBarStaticOnTop:NO];
   if (!self)
     return nil;
   
@@ -159,9 +159,6 @@
   [super loadView];
   
   self.tableView.accessibilityIdentifier = @"file browser";
-  
-  // Load the bottom toolbar
-  [[NSBundle mainBundle] loadNibNamed:@"FileBrowserBottomToolBar" owner:self options:nil];
 }
 
 - (void)viewDidLoad {
