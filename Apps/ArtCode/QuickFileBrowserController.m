@@ -53,21 +53,33 @@
   
   // RAC
   @weakify(self);
-  [[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
+  [[[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
     return [FileSystemDirectory directoryWithURL:projectURL];
   }] switch] map:^RACSignal *(FileSystemDirectory *directory) {
+		ASSERT_MAIN_QUEUE();
     @strongify(self);
-		return [FileSystemDirectory filterChildren:[directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject];
-  }] switch] toProperty:@keypath(self.filteredItems) onObject:self];
+		return [[FileSystemDirectory filterChildren:[directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
+			@strongify(self);
+			if (self.searchBar.text.length == 0) return @[];
+			return items;
+		}];
+  }] switch] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
   
-  [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
+  [[RACSignal combineLatest:@[ RACAble(self.filteredItems), self.searchBarTextSubject ]] subscribeNext:^(RACTuple *value) {
+		ASSERT_MAIN_QUEUE();
     @strongify(self);
+		RACTupleUnpack(NSArray *items, NSString *abbreviation) = value;
     if (items.count == 0) {
-      self.infoLabel.text = L(@"Nothing found.");
+			if (abbreviation.length == 0) {
+				self.infoLabel.text = L(@"Type a file name to open.");
+			} else {
+				self.infoLabel.text = L(@"Nothing found.");
+			}
     } else {
       self.infoLabel.text = @"";
     }
   }];
+	
   return self;
 }
 
