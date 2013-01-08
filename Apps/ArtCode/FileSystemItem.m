@@ -167,15 +167,15 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (RACSignal *)url {
-  return self.urlBacking;
+  return [self.urlBacking deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)type {
-  return self.typeBacking;
+  return [self.typeBacking deliverOnCurrentSchedulerIfNotFileSystemScheduler];
 }
 
 - (RACSignal *)name {
-  return [self.urlBacking map:^NSString *(NSURL *url) {
+  return [self.url map:^NSString *(NSURL *url) {
     return url.lastPathComponent;
   }];
 }
