@@ -291,18 +291,20 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 			}
     }
   } else if (actionSheet == _toolItemDuplicateActionSheet) {
-    self.loading = YES;
-    NSArray *cellsToDuplicate = self.collectionView.indexPathsForSelectedItems;
-    NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
-    __block NSInteger progress = 0;
-    [self setEditing:NO animated:YES];
-    
-		for (NSIndexPath *itemPath in cellsToDuplicate) {
-			[(ArtCodeProject *)self.gridElements[itemPath.item] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-				if (++progress == cellsToDuplicateCount) {
-					self.loading = NO;
-				}
-			}];
+		if (buttonIndex == 0) {
+			self.loading = YES;
+			NSArray *cellsToDuplicate = self.collectionView.indexPathsForSelectedItems;
+			NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
+			__block NSInteger progress = 0;
+			[self setEditing:NO animated:YES];
+			
+			for (NSIndexPath *itemPath in cellsToDuplicate) {
+				[(ArtCodeProject *)self.gridElements[itemPath.item] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+					if (++progress == cellsToDuplicateCount) {
+						self.loading = NO;
+					}
+				}];
+			}
 		}
   } else if (actionSheet == _toolItemExportActionSheet) {
 		switch (buttonIndex) {
@@ -435,7 +437,6 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 			} break;
 				
 			default:
-				ASSERT(NO); // no action
 				break;
 		}
   }
