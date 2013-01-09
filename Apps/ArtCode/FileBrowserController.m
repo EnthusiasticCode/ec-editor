@@ -110,6 +110,7 @@
 					*stop = YES;
 				}
 			}];
+			if (scrollToItem == nil) scrollToItem = next.lastObject;
 		}
 		return next;
 	}];
