@@ -20,9 +20,9 @@
 
 #pragma mark Interface Actions and Outlets
 
-@property (strong, nonatomic) IBOutlet UIProgressView *progressView;
-@property (strong, nonatomic) IBOutlet UITableView *conflictTableView;
-@property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+@property (weak, nonatomic) IBOutlet UITableView *conflictTableView;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 
 - (IBAction)doneAction:(id)sender;
 - (IBAction)selectAllAction:(id)sender;

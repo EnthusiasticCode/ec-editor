@@ -47,10 +47,6 @@
 
 #pragma mark - View Lifecycle
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
   self.tableView.userInteractionEnabled = YES;

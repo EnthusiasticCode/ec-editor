@@ -48,20 +48,6 @@
   [(self.toolbar.items)[1] setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
 }
 
-- (void)viewDidUnload {
-  [self setConflictTableView:nil];
-  [self setProgressView:nil];
-  [self setToolbar:nil];
-  _conflictItems = nil;
-  _resolvedItems = nil;
-  _signalBlock = nil;
-  [super viewDidUnload];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	return YES;
-}
-
 #pragma mark - Table View Data Source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
