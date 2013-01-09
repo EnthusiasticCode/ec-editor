@@ -548,8 +548,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 #pragma mark
 
 @implementation ProjectCollectionLayout {
-	CGFloat _itemFullWidth;
+	NSDictionary *_layoutAttributes;
 	CGSize _collectionViewContentSize;
+	NSDictionary *_preAnimationLayoutAttributes;
 }
 
 - (id)init {
@@ -565,7 +566,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 }
 
 - (void)prepareLayout
-{	
+{
 	// Calculate content size
 	NSUInteger rowCount = 0;
 	for (NSInteger section = 0; section < self.collectionView.numberOfSections; ++section) {
@@ -576,42 +577,26 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 	
 	_collectionViewContentSize = CGSizeMake(self.collectionView.bounds.size.width, height);
 	
-	// Calculate item width
-	_itemFullWidth = (
-							 self.collectionView.bounds.size.width
-							 - self.sectionInset.left
-							 - self.sectionInset.right
-							 + self.interItemSpacing) / self.numberOfColumns;
+	// Precalculate attributes
+	_layoutAttributes = [self _layoutAttributesForCollectionWithBound:self.collectionView.bounds];
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect
 {
-	NSMutableArray *attributes = [NSMutableArray array];
-	
-	NSInteger firstItemIndex = (rect.origin.y + self.sectionInset.top) / (self.itemHeight + self.interItemSpacing);
-	NSInteger lastItemIndex = firstItemIndex + rect.size.height / (self.itemHeight + self.interItemSpacing) * self.numberOfColumns;
-	
-	for (NSInteger itemIndex = firstItemIndex; itemIndex <= lastItemIndex; ++itemIndex) {
-		[attributes addObject:[self layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:itemIndex inSection:0]]];
-	}
-	
-	return attributes;
+	NSMutableArray *elements = [NSMutableArray array];
+	[_layoutAttributes enumerateKeysAndObjectsUsingBlock:^(NSIndexPath *indexPath, UICollectionViewLayoutAttributes *attributes, BOOL *stop) {
+		if (CGRectIntersectsRect(attributes.frame, rect)) {
+			[elements addObject:attributes];
+		} else if (elements.count > 0) {
+			*stop = YES;
+		}
+	}];
+	return elements.copy;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
-	
-	NSInteger row = indexPath.item / self.numberOfColumns;
-	NSInteger column = indexPath.item % self.numberOfColumns;
-	
-	CGFloat itemWidth = floorf(_itemFullWidth - self.interItemSpacing);
-	CGFloat originX = floorf(self.sectionInset.left + _itemFullWidth * column);
-	CGFloat originY = floorf(self.sectionInset.top + (self.itemHeight + self.interItemSpacing) * row);
-	
-	attributes.frame = CGRectMake(originX, originY, itemWidth, self.itemHeight);
-	
-	return attributes;
+	return _layoutAttributes[indexPath];
 }
 
 - (CGSize)collectionViewContentSize
@@ -621,6 +606,53 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 
 - (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
 	return self.collectionView.bounds.size.width != newBounds.size.width;
+}
+
+- (void)prepareForAnimatedBoundsChange:(CGRect)oldBounds {
+	_preAnimationLayoutAttributes = [self _layoutAttributesForCollectionWithBound:oldBounds];
+}
+
+- (void)finalizeAnimatedBoundsChange {
+	_preAnimationLayoutAttributes = nil;
+}
+
+- (UICollectionViewLayoutAttributes *)initialLayoutAttributesForAppearingItemAtIndexPath:(NSIndexPath *)itemIndexPath {
+	return _preAnimationLayoutAttributes[itemIndexPath];
+}
+
+- (UICollectionViewLayoutAttributes *)finalLayoutAttributesForDisappearingItemAtIndexPath:(NSIndexPath *)itemIndexPath {
+	return _preAnimationLayoutAttributes[itemIndexPath];
+}
+
+- (NSDictionary *)_layoutAttributesForCollectionWithBound:(CGRect)bounds {
+	// Calculate item width
+	CGFloat itemFullWidth = (
+					bounds.size.width
+										- self.sectionInset.left
+										- self.sectionInset.right
+										+ self.interItemSpacing) / self.numberOfColumns;
+	
+	// Generate attributes and chace them
+	NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
+	UICollectionViewLayoutAttributes *attributes;
+	NSInteger itemsCount;
+	NSIndexPath *itemPath;
+	for (NSInteger section = 0; section < self.collectionView.numberOfSections; ++section) {
+		itemsCount = [self.collectionView numberOfItemsInSection:section];
+		for (NSInteger item = 0; item < itemsCount; ++item) {
+			itemPath = [NSIndexPath indexPathForItem:item inSection:section];
+			attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:itemPath];
+			
+			attributes.frame = CGRectMake(
+																		floorf(self.sectionInset.left + itemFullWidth * (item % self.numberOfColumns)),
+																		floorf(self.sectionInset.top + (self.itemHeight + self.interItemSpacing) * (item / self.numberOfColumns)),
+																		floorf(itemFullWidth - self.interItemSpacing),
+																		self.itemHeight);
+			
+			[attributesDictionary setObject:attributes forKey:itemPath];
+		}
+	}
+	return attributesDictionary.copy;
 }
 
 @end
