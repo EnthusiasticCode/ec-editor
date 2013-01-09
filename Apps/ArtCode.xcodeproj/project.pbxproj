@@ -1131,8 +1131,6 @@
 		CD78C1C114E15CFB00EBBBFF /* bezelAlert_cycleUpIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_cycleUpIcon.png; sourceTree = "<group>"; };
 		CD78C1C214E15CFB00EBBBFF /* bezelAlert_nothingIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_nothingIcon.png; sourceTree = "<group>"; };
 		CD78C1C314E15CFB00EBBBFF /* bezelAlert_okIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bezelAlert_okIcon.png; sourceTree = "<group>"; };
-		CD78E51E14729A0E00801C3F /* CodeFileCompletionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileCompletionsController.h; sourceTree = "<group>"; };
-		CD78E51F14729A0E00801C3F /* CodeFileCompletionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileCompletionsController.m; sourceTree = "<group>"; };
 		CD7B434F14CECA5700090CAE /* QuickBrowsersContainerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickBrowsersContainerController.h; sourceTree = "<group>"; };
 		CD7B435014CECA5700090CAE /* QuickBrowsersContainerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickBrowsersContainerController.m; sourceTree = "<group>"; };
 		CD7B435214CECA9900090CAE /* QuickFileBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickFileBrowserController.h; sourceTree = "<group>"; };
@@ -1241,8 +1239,6 @@
 		CDC1333414602F5E0028423F /* searchBar_NextButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_NextButton_Normal.png; sourceTree = "<group>"; };
 		CDC1333514602F5E0028423F /* searchBar_PrevButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_PrevButton_Normal.png; sourceTree = "<group>"; };
 		CDC1333A146030380028423F /* searchBar_OptionButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_OptionButton.png; sourceTree = "<group>"; };
-		CDC1A077147E6EC300E01B7A /* CodeFileCompletionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileCompletionCell.h; sourceTree = "<group>"; };
-		CDC1A078147E6EC300E01B7A /* CodeFileCompletionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileCompletionCell.m; sourceTree = "<group>"; };
 		CDC1A07A147E6EF500E01B7A /* CompletionControllerCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CompletionControllerCell.xib; sourceTree = "<group>"; };
 		CDC2828F14508D500054358D /* topBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_Background.png; sourceTree = "<group>"; };
 		CDC2829014508D500054358D /* topBar_ForwardButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_ForwardButton_Normal.png; sourceTree = "<group>"; };
@@ -2082,17 +2078,6 @@
 			name = "Remote Toolbar";
 			sourceTree = "<group>";
 		};
-		CD41529C1475564F004C7157 /* Completion */ = {
-			isa = PBXGroup;
-			children = (
-				CD78E51E14729A0E00801C3F /* CodeFileCompletionsController.h */,
-				CD78E51F14729A0E00801C3F /* CodeFileCompletionsController.m */,
-				CDC1A077147E6EC300E01B7A /* CodeFileCompletionCell.h */,
-				CDC1A078147E6EC300E01B7A /* CodeFileCompletionCell.m */,
-			);
-			name = Completion;
-			sourceTree = "<group>";
-		};
 		CD54BD87160607B30025B7CA /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2569,7 +2554,6 @@
 				CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */,
 				CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */,
 				CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */,
-				CD41529C1475564F004C7157 /* Completion */,
 			);
 			name = "Keyboard Accessory";
 			sourceTree = "<group>";
