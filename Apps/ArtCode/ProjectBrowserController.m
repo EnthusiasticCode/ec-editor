@@ -90,7 +90,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 #pragma mark - UIViewController
 
 - (id)init {
-  self = [super initWithCollectionViewLayout:[[ProjectCollectionLayout alloc] init]];
+  self = [super initWithNibName:@"ProjectsBrowserController" bundle:nil];
   if (!self)
     return nil;
   
@@ -198,6 +198,12 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 	self.collectionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"projectsTable_Background"]];
 	self.collectionView.accessibilityIdentifier = @"projects collection";
 	
+	ProjectCollectionLayout *layout = (ProjectCollectionLayout *)self.collectionView.collectionViewLayout;
+	layout.sectionInset = UIEdgeInsetsMake(15, 15, 15, 15);
+	layout.itemHeight = 100;
+	layout.interItemSpacing = 15;
+	layout.numberOfColumns = 2;
+	
   [self setEditing:NO animated:NO];
 }
 
@@ -276,7 +282,11 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 			for (NSIndexPath *itemPath in cellsToRemove) {
 				[[ArtCodeProjectSet defaultSet] removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
 					// Show bezel alert
-					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+					if (error) {
+						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+					} else {
+						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+					}
 				}];
 			}
     }
@@ -551,18 +561,6 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 	NSDictionary *_layoutAttributes;
 	CGSize _collectionViewContentSize;
 	NSDictionary *_preAnimationLayoutAttributes;
-}
-
-- (id)init {
-	self = [super init];
-  if (!self) return nil;
-  
-	self.sectionInset = UIEdgeInsetsMake(15, 15, 15, 15);
-	self.itemHeight = 100;
-	self.interItemSpacing = 15;
-	self.numberOfColumns = 2;
-	
-  return self;
 }
 
 - (void)prepareLayout

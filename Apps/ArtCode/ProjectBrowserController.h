@@ -12,7 +12,9 @@
 @class Application, ArtCodeTab, ProjectCell;
 
 
-@interface ProjectBrowserController : UICollectionViewController
+@interface ProjectBrowserController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate>
+
+@property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 
 @property (nonatomic, strong) NSOrderedSet *projectsSet;
 
