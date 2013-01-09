@@ -45,6 +45,10 @@
 /// A bottom toolbar to be displayed statically on the view.
 @property (nonatomic, weak) IBOutlet UIView *bottomToolBar;
 
+/// Hint view that gets shown when filtered items is empty.
+@property (strong, nonatomic) IBOutlet UIView *hintView;
+@property (weak, nonatomic) IBOutlet UILabel *hintLabel;
+
 #pragma mark Common actions
 
 /// Shows a confirmation button to confirm the deletion.

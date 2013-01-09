@@ -198,8 +198,16 @@
   }]];
   
   // Reload the table when the table data changes
-  [disposables addObject:[RACAble(self.filteredItems) subscribeNext:^(id x) {
+  [disposables addObject:[RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     [this.tableView reloadData];
+		
+		// Hide or show hint view
+		if (items.count > 0) {
+			[self.hintView removeFromSuperview];
+    } else {
+      [self.view addSubview:self.hintView];
+			self.hintView.frame = self.view.bounds;
+    }
   }]];
   
   // TODO: this property is not the correct one to use for enabling the keyboard resize, there should be a dedicated one
@@ -235,6 +243,12 @@
   
   self.toolbarItems = self.toolNormalItems;
   [self.tableView reloadData];
+	if (self.filteredItems.count > 0) {
+		[self.hintView removeFromSuperview];
+	} else {
+		[self.view addSubview:self.hintView];
+		self.hintView.frame = self.view.bounds;
+	}
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

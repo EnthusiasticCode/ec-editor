@@ -85,9 +85,10 @@
 
 #pragma mark - View lifecycle
 
-- (void)loadView
-{
-  [super loadView];
+- (void)viewDidLoad {
+  [super viewDidLoad];
+	[self.hintView removeFromSuperview];
+	self.hintView = nil;
   
   if ([self isMemberOfClass:[BookmarkBrowserController class]]) {
 		// Tool edit items

@@ -154,15 +154,10 @@
 
 #pragma mark - View lifecycle
 
-- (void)loadView
-{
-  [super loadView];
-  
-  self.tableView.accessibilityIdentifier = @"file browser";
-}
-
 - (void)viewDidLoad {
   [super viewDidLoad];
+	self.tableView.accessibilityIdentifier = @"file browser";
+	self.hintLabel.text = L(@"Start by creating new files");
   
   // Customize subviews
   self.searchBar.placeholder = L(@"Filter files in this folder");
