@@ -294,6 +294,7 @@
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
       directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+			directoryBrowser.excludeDirectory = self.currentDirectory;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
