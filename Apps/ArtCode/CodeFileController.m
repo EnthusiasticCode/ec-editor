@@ -416,73 +416,78 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Handle keyboard display changes
-  [[RACSignal merge:@[
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
-   [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
-    RACAble(self.editing)]]
-   subscribeNext:^(id x) {
-     @strongify(self);
-     
-     NSNotification *note = [x isKindOfClass:[NSNotification class]] ? (NSNotification *)x : nil;
-     
-     // Get actual keyboard frame
-     CGRect keyboardFrame = CGRectNull;
-     if (note.userInfo[UIKeyboardFrameEndUserInfoKey]) {
-       keyboardFrame = [self.view convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-     } else {
-       keyboardFrame = [self.view convertRect:UIScreen.mainScreen.bounds fromView:nil];
-       keyboardFrame.origin.y += keyboardFrame.size.height;
-     }
-     
-     // Show or hide accessory
-     if (self.codeView.isFirstResponder
-         && ((note && (note.name == UIKeyboardDidChangeFrameNotification || note.name == UIKeyboardDidShowNotification))
-             || (!note && [x boolValue]))) {
-       [self.codeView presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:self.view animated:YES];
-       
-       // Set keyboard position specific accessory popover properties
-       if (self.codeView.keyboardAccessoryView.isSplit) {
-         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-       } else if (keyboardFrame.size.width > 768) {
-         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-       } else {
-         self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
-         [self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
-       }
-       
-       // Adjust keyboard frame to keep accessory view in count
-       CGFloat accessoryHeight = self.codeView.keyboardAccessoryView.bounds.size.height;
-       keyboardFrame.size.height += accessoryHeight;
-       if (!self.codeView.keyboardAccessoryView.isFlipped) {
-         keyboardFrame.origin.y -= accessoryHeight;
-       }
-     } else {
-       [self.codeView dismissKeyboardAccessoryViewAnimated:NO];
-     }
-     
-     // Adjust frame height to free space for docket keyboard
-     [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]
-                           delay:0
-                         options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState
-                      animations:^{
-                        CGRect frame = self.view.bounds;
-                        if (note.name != UIKeyboardWillChangeFrameNotification && CGRectGetMaxY(keyboardFrame) >= frame.size.height) {
-                          frame.size.height = keyboardFrame.origin.y;
-                        }
-                        self.wrapperView.frame = frame;
-                      } completion:nil];
-   }];
+	NSArray *accessoryViewNotificationSignals = @[
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
+	RACAble(self.editing) ];
+  [[[[RACSignal merge:accessoryViewNotificationSignals] map:^id(id value) {
+		@strongify(self);
+		NSNotification *note = [value isKindOfClass:[NSNotification class]] ? (NSNotification *)value : nil;
+		BOOL shouldShow = (self.codeView.isFirstResponder
+											 && ((note && ((note.name == UIKeyboardDidChangeFrameNotification) || note.name == UIKeyboardDidShowNotification))
+													 || (!note && [value boolValue])));
+		if (!shouldShow) {
+			[self.codeView dismissKeyboardAccessoryViewAnimated:NO];
+		}
+		return [RACTuple tupleWithObjects:@(shouldShow), note ?: RACTupleNil.tupleNil, nil];
+	}] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+		@strongify(self);
+    RACTupleUnpack(NSNumber *shouldShow, NSNotification *note) = tuple;
+		
+		// Get actual keyboard frame
+		CGRect keyboardFrame = CGRectNull;
+		if (note.userInfo[UIKeyboardFrameEndUserInfoKey]) {
+			keyboardFrame = [self.view convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+		} else {
+			keyboardFrame = [self.view convertRect:UIScreen.mainScreen.bounds fromView:nil];
+			keyboardFrame.origin.y += keyboardFrame.size.height;
+		}
+		
+		// Show or hide accessory
+		// NOTE: the additional condition is there to address an animation issue: the docked accessory shows when the keyboard is animating the split when selecting 'split' from docked
+		if (!shouldShow.boolValue || (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < 264 && keyboardFrame.origin.y > 650 && keyboardFrame.origin.y < 768)) {
+			[self.codeView dismissKeyboardAccessoryViewAnimated:NO];
+		} else {
+			[self.codeView presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:self.view animated:YES];
+			
+			// Set keyboard position specific accessory popover properties
+			if (self.codeView.keyboardAccessoryView.isSplit) {
+				self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(56, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(62, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+			} else if (keyboardFrame.size.width > 768) {
+				self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(99, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(100, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+			} else {
+				self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, -3, 4, -3);
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarLeft];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(77, 54) forMetaPosition:PopoverViewArrowMetaPositionMiddle];
+				[self._keyboardAccessoryView.itemPopoverView setArrowSize:CGSizeMake(79, 54) forMetaPosition:PopoverViewArrowMetaPositionFarRight];
+			}
+			
+			// Adjust keyboard frame to keep accessory view in count
+			CGFloat accessoryHeight = self.codeView.keyboardAccessoryView.bounds.size.height;
+			keyboardFrame.size.height += accessoryHeight;
+			if (!self.codeView.keyboardAccessoryView.isFlipped) {
+				keyboardFrame.origin.y -= accessoryHeight;
+			}
+		}
+		
+		// Adjust frame height to free space for docket keyboard
+		[UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] delay:0 options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] intValue] << 16 | UIViewAnimationOptionBeginFromCurrentState animations:^{
+			CGRect frame = self.view.bounds;
+			if (note.name != UIKeyboardWillChangeFrameNotification && CGRectGetMaxY(keyboardFrame) >= frame.size.height) {
+				frame.size.height = keyboardFrame.origin.y;
+			}
+			self.wrapperView.frame = frame;
+		} completion:nil];
+	}];
   
   return self;
 }
