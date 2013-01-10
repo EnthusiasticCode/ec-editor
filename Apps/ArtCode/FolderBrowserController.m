@@ -34,7 +34,7 @@
   
   // RAC
 	RACSignal * tableView = RACAbleWithStart(self.tableView);
-	RACSignal * currentFolder = [RACAble(self.currentFolderSignal) switch];
+	RACSignal * currentFolder = [RACAble(self.currentFolderSignal) switchToLatest];
 	
 	// Excluded folder state
 	RACSignal * shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
@@ -52,10 +52,10 @@
 				return z == NSURLFileResourceTypeDirectory;
 			}] mapReplace:y];
 		}]] collect];
-  }] switch] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
+  }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[[RACAble(self.currentFolderSignal) switch] flattenMap:^(FileSystemDirectory *x) {
+  [[[[RACAble(self.currentFolderSignal) switchToLatest] flattenMap:^(FileSystemDirectory *x) {
     return x.name;
   }] catchTo:RACSignal.empty] toProperty:@keypath(self.navigationItem.title) onObject:self];
   

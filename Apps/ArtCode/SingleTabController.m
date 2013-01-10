@@ -275,8 +275,8 @@
   __weak SingleTabController *this = self;
   
   // Back and forward buttons to tab history
-  [self rac_bind:@keypath(self.defaultToolbar.backButton.enabled) to:RACAble(self.artCodeTab.canMoveBackInHistory)];
-  [self rac_bind:@keypath(self.defaultToolbar.forwardButton.enabled) to:RACAble(self.artCodeTab.canMoveForwardInHistory)];
+	RAC(self.defaultToolbar.backButton.enabled) = RACAble(self.artCodeTab.canMoveBackInHistory);
+	RAC(self.defaultToolbar.forwardButton.enabled) = RACAble(self.artCodeTab.canMoveForwardInHistory);
   
   // Changing current tab URL re-route the content view controller
   [RACAble(self.artCodeTab.currentLocation) subscribeNext:^(id x) {

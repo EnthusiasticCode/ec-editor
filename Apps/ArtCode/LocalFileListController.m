@@ -33,7 +33,7 @@ static void _init(LocalFileListController *self) {
                                 map:^id(FileSystemDirectory *directory) {
                                   @strongify(self);
                                   return [FileSystemDirectory filterChildren:directory.children byAbbreviation:self.searchBarTextSubject];
-                                }] switch],
+                                }] switchToLatest],
                               // Signal with progress items
                               RACAbleWithStart(self.progressItems)]]
                              map:^id(RACTuple *itemsTuple) {

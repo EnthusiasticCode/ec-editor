@@ -101,7 +101,7 @@
   
 	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
 		return [directory children];
-	}] switch] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
+	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
 		// If at least one item has been added to children, will scroll to one of them
 		if (scrollToItem == nil && previous.count < next.count) {
 			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {

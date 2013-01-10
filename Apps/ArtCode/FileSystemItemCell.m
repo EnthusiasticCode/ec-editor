@@ -22,7 +22,7 @@
   @weakify(self);
   [[RACSignal combineLatest:@[[[RACAble(item) map:^RACSignal *(FileSystemItem *x) {
     return [RACSignal combineLatest:@[x.name, x.type, x.url]];
-  }] switch], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
+  }] switchToLatest], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     RACTuple *ys = xs.first;

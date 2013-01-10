@@ -116,7 +116,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
    map:^id(NSURLCredential *credentials) {
      this.showLoading = YES;
      return [[this.connection connectWithCredentials:credentials] catchTo:[RACSignal return:@(NO)]];
-   }] switch] subscribeNext:^(NSNumber *x) {
+   }] switchToLatest] subscribeNext:^(NSNumber *x) {
      this.showLoading = NO;
      this.showLogin = ![x boolValue];
    }];

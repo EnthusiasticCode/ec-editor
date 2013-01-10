@@ -8,7 +8,6 @@
 
 #import "FileSystemItem.h"
 #import "NSString+ScoreForAbbreviation.h"
-#import "NSObject+RACBindings.h"
 #import <sys/xattr.h>
 #import <libkern/OSAtomic.h>
 
@@ -34,7 +33,7 @@ static RACScheduler *currentScheduler() {
 }
 
 // Cache of existing FileSystemItems, used for uniquing
-static NSMutableDictionary *fsItemCache() {
+static NSMutableDictionary *fileSystemItemCache() {
   ASSERT_FILE_SYSTEM_SCHEDULER();
   static NSMutableDictionary *itemCache = nil;
   static dispatch_once_t onceToken;
@@ -113,7 +112,7 @@ static NSMutableDictionary *fsItemCache() {
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			if (wasDisposed) return;
-			FileSystemItem *item = fsItemCache()[url];
+			FileSystemItem *item = fileSystemItemCache()[url];
 			if (item) {
 				RACDisposable *itemDisposable = [[[item.type take:1] flattenMap:^(NSString *value) {
 					if (type && ![value isEqual:type]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
@@ -144,7 +143,7 @@ static NSMutableDictionary *fsItemCache() {
 				return;
 			}
 			if (wasDisposed) return;
-			fsItemCache()[url] = item;
+			fileSystemItemCache()[url] = item;
 			[subscriber sendNext:item];
 			[subscriber sendCompleted];
 		}];
@@ -184,7 +183,7 @@ static NSMutableDictionary *fsItemCache() {
 - (RACSignal *)parent {
 	return [[self.url map:^(NSURL *value) {
 		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent type:NSURLFileResourceTypeDirectory];
-	}] switch];
+	}] switchToLatest];
 }
 
 @end
@@ -229,13 +228,21 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath {
+	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
 	[fileSystemScheduler() schedule:^{
 		[self internalLoadFileIfNeeded];
 	}];
-	return [target rac_bind:keyPath transformer:^(id value) {
-		if (!value || ![value unsignedIntegerValue] || value == [NSNull null]) value = @(NSUTF8StringEncoding);
-		return value;
-	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.encoding) transformer:nil onScheduler:fileSystemScheduler()];
+	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
+	RACScheduler *targetBindingScheduler = currentScheduler();
+	[fileSystemScheduler() schedule:^{
+		RACBinding *encoding = RACBind(self.encoding);
+		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] map:^id(NSNumber *value) {
+			if (value == nil || value.unsignedIntegerValue == 0 || value == (id)[NSNull null]) value = @(NSUTF8StringEncoding);
+			return value;
+		}] subscribe:encoding]];
+		[disposable addDisposable:[[encoding deliverOn:targetBindingScheduler] subscribe:targetBinding]];
+	}];
+	return disposable;
 }
 
 - (RACSignal *)contentSignal {
@@ -246,13 +253,20 @@ static NSMutableDictionary *fsItemCache() {
 }
 
 - (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath {
+	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
 	[fileSystemScheduler() schedule:^{
 		[self internalLoadFileIfNeeded];
 	}];
-	return [target rac_bind:keyPath transformer:^(id value) {
-		if (!value || value == [NSNull null]) value = @"";
-		return value;
-	} onScheduler:[RACScheduler currentScheduler] toObject:self withKeyPath:@keypath(self.content) transformer:nil onScheduler:fileSystemScheduler()];
+	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
+	RACScheduler *targetBindingScheduler = currentScheduler();
+	[fileSystemScheduler() schedule:^{
+		RACBinding *content = RACBind(self.content);
+		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] filter:^ BOOL (NSString *value) {
+			return value != nil && value != (id)[NSNull null];
+		}] subscribe:content]];
+		[disposable addDisposable:[[content deliverOn:targetBindingScheduler] subscribe:targetBinding]];
+	}];
+	return disposable;
 }
 
 - (RACSignal *)save {
@@ -391,7 +405,7 @@ static NSMutableDictionary *fsItemCache() {
 			
 			return disposable;
 		}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-	}] switch];
+	}] switchToLatest];
 }
 
 - (RACSignal *)children {
@@ -447,7 +461,7 @@ static NSMutableDictionary *fsItemCache() {
 						}
 						return nonHiddenItems;
 					}];
-				}] switch];
+				}] switchToLatest];
 			}
 			
 			// Merge in descendants if needed
@@ -471,7 +485,7 @@ static NSMutableDictionary *fsItemCache() {
 									return [@[ item ] arrayByAddingObjectsFromArray:x];
 								}];
 							}
-						}] switch]];
+						}] switchToLatest]];
 					}
 					return [[RACSignal combineLatest:descendantSignals] map:^NSArray *(RACTuple *xs) {
 						if (wasDisposed) return @[];
@@ -482,7 +496,7 @@ static NSMutableDictionary *fsItemCache() {
 						}
 						return mergedDescendants;
 					}];
-				}] switch];
+				}] switchToLatest];
 			}
 			
 			[disposable addDisposable:[result subscribe:subscriber]];
@@ -664,35 +678,35 @@ static NSMutableDictionary *fsItemCache() {
 
 + (void)didMove:(NSURL *)source to:(NSURL *)destination {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	FileSystemItem *item = fsItemCache()[source];
+	FileSystemItem *item = fileSystemItemCache()[source];
 	if (item != nil) {
 		[item.urlBacking sendNext:destination];
-		[fsItemCache() removeObjectForKey:source];
-		fsItemCache()[destination] = item;
+		[fileSystemItemCache() removeObjectForKey:source];
+		fileSystemItemCache()[destination] = item;
 	}
 	NSURL *sourceParent = source.URLByDeletingLastPathComponent;
 	NSURL *destinationParent = destination.URLByDeletingLastPathComponent;
 	if (![sourceParent isEqual:destinationParent]) {
-		[fsItemCache()[sourceParent] didChangeChildren];
-		[fsItemCache()[destinationParent] didChangeChildren];
+		[fileSystemItemCache()[sourceParent] didChangeChildren];
+		[fileSystemItemCache()[destinationParent] didChangeChildren];
 	}
 }
 
 + (void)didCopy:(NSURL *)source to:(NSURL *)destination {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	[fsItemCache()[destination.URLByDeletingLastPathComponent] didChangeChildren];
+	[fileSystemItemCache()[destination.URLByDeletingLastPathComponent] didChangeChildren];
 }
 
 + (void)didCreate:(NSURL *)target {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	[fsItemCache()[target.URLByDeletingLastPathComponent] didChangeChildren];
+	[fileSystemItemCache()[target.URLByDeletingLastPathComponent] didChangeChildren];
 }
 
 + (void)didDelete:(NSURL *)target {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	FileSystemItem *item = fsItemCache()[target];
+	FileSystemItem *item = fileSystemItemCache()[target];
 	if (item) {
-		[fsItemCache() removeObjectForKey:target];
+		[fileSystemItemCache() removeObjectForKey:target];
 		NSString *itemType = item.typeBacking.first;
 		[item.urlBacking sendNext:nil];
 		[item.typeBacking sendNext:nil];
@@ -701,7 +715,7 @@ static NSMutableDictionary *fsItemCache() {
 		} else if (itemType == NSURLFileResourceTypeDirectory) {
 			[((FileSystemDirectory *)item).childrenBacking sendNext:nil];
 			NSString *targetString = target.standardizedURL.absoluteString;
-			NSArray *keys = fsItemCache().allKeys.copy;
+			NSArray *keys = fileSystemItemCache().allKeys.copy;
 			for (NSURL *key in keys) {
 				if ([key.standardizedURL.absoluteString hasPrefix:targetString]) {
 					[self didDelete:key];
@@ -709,7 +723,7 @@ static NSMutableDictionary *fsItemCache() {
 			}
 		}
 	}
-	[fsItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
+	[fileSystemItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
 }
 
 @end

@@ -64,7 +64,7 @@ static void _init(RemoteNavigationController *self) {
   [[[RACAble(self.toolbarController)
      map:^id(RemoteNavigationToolbarController *x) {
        return [x buttonsActionSignal];
-     }] switch] subscribeNext:^(UIButton *x) {
+     }] switchToLatest] subscribeNext:^(UIButton *x) {
        @strongify(self);
        switch (x.tag) {
          case 1: // Local back
@@ -111,7 +111,7 @@ static void _init(RemoteNavigationController *self) {
   }];
   
   // React on local file location to change label name
-  RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.name) switch];
+  RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.name) switchToLatest];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {

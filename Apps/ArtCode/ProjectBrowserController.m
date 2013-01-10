@@ -96,9 +96,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
   
   // RAC
   @weakify(self);
-  [self rac_bind:@keypath(self.projectsSet) to:RACAble([ArtCodeProjectSet defaultSet], projects)];
+	RAC(self.projectsSet) = RACAble(ArtCodeProjectSet.defaultSet, projects);
   
-  // Update gird view
+  // Update grid view
   [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {
     @strongify(self);
     NSString *projectName = [proj name];

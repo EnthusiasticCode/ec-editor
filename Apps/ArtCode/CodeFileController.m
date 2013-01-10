@@ -307,7 +307,7 @@ static void drawStencilStar(CGContextRef myContext)
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[[RACAble(self.artCodeTab.currentLocation.url) map:^RACSignal *(NSURL *url) {
     return [FileSystemFile fileWithURL:url];
-  }] switch] catchTo:RACSignal.empty] toProperty:@keypath(self.textFile) onObject:self];
+  }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.textFile) onObject:self];
 
   // TODO: bind bookmarks again
 //  __block RACDisposable *bookmarksDisposable = nil;
@@ -329,7 +329,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
 
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switch], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switch], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
+  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switchToLatest], [RACAble(self.textFile.explicitSyntaxIdentifierSource) switchToLatest], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -353,12 +353,12 @@ static void drawStencilStar(CGContextRef myContext)
       ASSERT(syntax);
       return [RACTuple tupleWithObjectsFromArray:@[fileURL, syntax]];
     }];
-  }] switch] map:^TMUnit *(RACTuple *xs) {
+  }] switchToLatest] map:^TMUnit *(RACTuple *xs) {
     return [[TMUnit alloc] initWithFileURL:xs.first syntax:xs.second index:nil];
   }] deliverOn:RACScheduler.mainThreadScheduler] toProperty:@keypath(self.codeUnit) onObject:self];
   
   // subscribe to the tokens for syntax coloring
-  [[[[[RACAble(self.codeUnit.tokens) switch] subscribeOn:self.codeScheduler] flatten] deliverOn:RACScheduler.mainThreadScheduler] subscribeNext:^(TMToken *token) {
+  [[[[[RACAble(self.codeUnit.tokens) switchToLatest] subscribeOn:self.codeScheduler] flatten] deliverOn:RACScheduler.mainThreadScheduler] subscribeNext:^(TMToken *token) {
     ASSERT_MAIN_QUEUE();
     @strongify(self);
     if (!self) {
@@ -371,7 +371,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // subscribe to the text file's content to reparse
-  [[[RACSignal combineLatest:@[[RACAble(self.textFile.contentSignal) switch], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[[RACAble(self.textFile.contentSignal) switchToLatest], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
     ASSERT_NOT_MAIN_QUEUE();
     NSString *changedContent = tuple.first;
     TMUnit *codeUnit = tuple.second;
@@ -379,7 +379,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Update title with current symbol and keyboard accessory based on current scope
-  [[[RACSignal combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSignal) switch]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSignal) switchToLatest]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
     @strongify(self);
     if (!self) {
       return;

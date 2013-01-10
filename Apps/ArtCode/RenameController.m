@@ -50,7 +50,7 @@
   // Signal for the renameTextField contents
   RACSignal * renameTextFieldSignal = [[RACAble(self.renameTextField) map:^RACSignal *(UITextField *textField) {
     return [[[[textField rac_textSignal] throttle:0.2] distinctUntilChanged] startWith:textField.text];
-  }] switch];
+  }] switchToLatest];
   
   // Update the file icon when the extension changes
   [[RACSignal combineLatest:@[[[renameTextFieldSignal map:^NSString *(NSString *x) {
@@ -72,7 +72,7 @@
   // Update the alsoRenameItems when the item's name or siblings change
   [[[[RACSignal combineLatest:@[[[[item parent] map:^RACSignal *(FileSystemDirectory *parent) {
     return [parent children];
-  }] switch], [item name]]] map:^RACSignal *(RACTuple *xs) {
+  }] switchToLatest], [item name]]] map:^RACSignal *(RACTuple *xs) {
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSArray *children = xs.first;
       NSString *fullName = xs.second;
@@ -91,7 +91,7 @@
         [subscriber sendCompleted];
       }];
     }];
-  }] switch] toProperty:@keypath(self.alsoRenameItems) onObject:self];
+  }] switchToLatest] toProperty:@keypath(self.alsoRenameItems) onObject:self];
   
   // Reset the selectedAlsoRenameItems when alsoRenameItems change
   [[RACAble(self.alsoRenameItems) map:^NSMutableSet *(NSArray *alsoRenameItems) {
@@ -199,7 +199,7 @@
   
   [[[RACSignal combineLatest:@[[[RACAble(item) map:^RACSignal *(FileSystemItem *x) {
     return x.name;
-  }] switch], RACAble(renameString)]] map:^NSString *(RACTuple *xs) {
+  }] switchToLatest], RACAble(renameString)]] map:^NSString *(RACTuple *xs) {
     NSString *itemName = xs.first;
     NSString *renameString = xs.second;
     return [NSString stringWithFormat:L(@"Rename to: %@"), [renameString.stringByDeletingPathExtension stringByAppendingPathExtension:itemName.pathExtension]];

@@ -55,7 +55,7 @@
   @weakify(self);
   [[[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
     return [FileSystemDirectory directoryWithURL:projectURL];
-  }] switch] map:^RACSignal *(FileSystemDirectory *directory) {
+  }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
 		return [[FileSystemDirectory filterChildren:[directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
@@ -63,7 +63,7 @@
 			if (self.searchBar.text.length == 0) return @[];
 			return items;
 		}];
-  }] switch] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
+  }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
   
   [[RACSignal combineLatest:@[ RACAble(self.filteredItems), self.searchBarTextSubject ]] subscribeNext:^(RACTuple *value) {
 		ASSERT_MAIN_QUEUE();

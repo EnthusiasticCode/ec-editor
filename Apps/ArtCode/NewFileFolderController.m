@@ -31,7 +31,7 @@
   @weakify(self);
   
   // Signal to get the latest folder name or nil if the name is not valid
-  [[[[[[[RACAble(self.folderNameTextField.rac_textSignal) switch] throttle:0.5] distinctUntilChanged] map:^id(NSString *x) {
+  [[[[[[[RACAble(self.folderNameTextField.rac_textSignal) switchToLatest] throttle:0.5] distinctUntilChanged] map:^id(NSString *x) {
     @strongify(self);
 		if (x.length == 0) {
 			return @"";
