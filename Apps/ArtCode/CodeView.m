@@ -537,7 +537,7 @@ static void init(CodeView *self)
 		
 		// Show or hide accessory
 		// NOTE: the additional condition is there to address an animation issue: the docked accessory shows when the keyboard is animating the split when selecting 'split' from docked
-		if (!shouldShow.boolValue || (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < 264 && keyboardFrame.origin.y > 650 && keyboardFrame.origin.y < 768)) {
+		if (!shouldShow.boolValue || (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < KEYBOARD_DOCKED_MINIMUM_HEIGHT && keyboardFrame.origin.y > KEYBOARD_VISIBLE_MAXIMUM_Y && keyboardFrame.origin.y < 768)) {
 			[self dismissKeyboardAccessoryViewAnimated:NO];
 		} else {
 			[self presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:self.superview animated:YES];
