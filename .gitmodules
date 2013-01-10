@@ -1,6 +1,6 @@
 [submodule "ThirdParty/cocoaoniguruma"]
 	path = ThirdParty/cocoaoniguruma
-	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/cocoaoniguruma.git
+	url = git@github.com:EnthusiasticCode/cocoaoniguruma.git
 [submodule "ThirdParty/libarchive"]
 	path = ThirdParty/libarchive
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/iOS-libarchive.git
