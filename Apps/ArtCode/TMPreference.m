@@ -10,7 +10,7 @@
 #import "TMPreference.h"
 #import "TMBundle.h"
 #import "NSString+TextMateScopeSelectorMatching.h"
-#import "OnigRegexp.h"
+#import <CocoaOniguruma/OnigRegexp.h>
 #import "UIImage+AppStyle.h"
 
 NSString * const TMPreferenceShowInSymbolListKey = @"showInSymbolList";

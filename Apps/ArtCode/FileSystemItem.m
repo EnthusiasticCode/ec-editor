@@ -8,6 +8,7 @@
 
 #import "FileSystemItem.h"
 #import "NSString+ScoreForAbbreviation.h"
+#import "NSObject+RACBindings.h"
 #import <sys/xattr.h>
 #import <libkern/OSAtomic.h>
 

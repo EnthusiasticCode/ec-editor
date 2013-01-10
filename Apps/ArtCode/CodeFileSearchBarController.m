@@ -17,7 +17,7 @@
 
 #import "CodeFileSearchOptionsController.h"
 
-#import "OnigRegexp.h"
+#import <CocoaOniguruma/OnigRegexp.h>
 
 static NSString * findFilterPassBlockKey = @"findFilterPass";
 

@@ -17,18 +17,6 @@
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
 		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
-		5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */; };
-		5F1A24E71698944B005A928E /* OnigRegexp.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A24CE1698944A005A928E /* OnigRegexp.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A24E81698944B005A928E /* OnigRegexpUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A24D01698944A005A928E /* OnigRegexpUtility.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A268C16989D0F005A928E /* regparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A261716989C45005A928E /* regparse.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A268D16989D31005A928E /* utf16_le.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A25F616989C45005A928E /* utf16_le.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A268E16989DDC005A928E /* regexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A261316989C45005A928E /* regexec.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26D516989EBC005A928E /* regenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A261016989C45005A928E /* regenc.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26D616989ED2005A928E /* ascii.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A25DA16989C45005A928E /* ascii.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26D716989F14005A928E /* regcomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A260F16989C45005A928E /* regcomp.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26D816989F33005A928E /* regerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A261216989C45005A928E /* regerror.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26D916989F6A005A928E /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A262916989C45005A928E /* st.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
-		5F1A26DA16989F82005A928E /* unicode.c in Sources */ = {isa = PBXBuildFile; fileRef = 5F1A25F416989C45005A928E /* unicode.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-checker"; }; };
 		5F1A2864169ACD86005A928E /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2851169ACD86005A928E /* Common.xcconfig */; };
 		5F1A2865169ACD86005A928E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2853169ACD86005A928E /* Debug.xcconfig */; };
 		5F1A2866169ACD86005A928E /* Profile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2854169ACD86005A928E /* Profile.xcconfig */; };
@@ -44,16 +32,20 @@
 		5F1A2870169ACD86005A928E /* Mac-Framework.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2861169ACD86005A928E /* Mac-Framework.xcconfig */; };
 		5F1A2871169ACD86005A928E /* Mac-StaticLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2862169ACD86005A928E /* Mac-StaticLibrary.xcconfig */; };
 		5F1A2872169ACD86005A928E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2863169ACD86005A928E /* README.md */; };
-		5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F20ABD216230BE40051FC86 /* EXTScope.m */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */; };
+		5F37A990169E380900D91E56 /* ReactiveCocoa.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */; };
+		5F37A994169E386500D91E56 /* file.xcodeproj in Resources */ = {isa = PBXBuildFile; fileRef = 5F37A993169E386500D91E56 /* file.xcodeproj */; };
+		5F37AB03169E3B2900D91E56 /* libCocoaOniguruma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AB02169E3B2000D91E56 /* libCocoaOniguruma.a */; };
+		5F37AB04169E3B3700D91E56 /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA47169E3A2400D91E56 /* libfile.a */; };
+		5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */; };
+		5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
 		5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */; };
-		5FA6148515CE814500A0932A /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FA6148415CE814500A0932A /* libfile.a */; };
 		5FC9E256167B8FFF00E4FD6F /* NSObject+RACBindings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC9E255167B8FFF00E4FD6F /* NSObject+RACBindings.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
@@ -320,12 +312,6 @@
 		CD49925514D6F1230046CD19 /* NSString+PluralFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49925414D6F1200046CD19 /* NSString+PluralFormat.m */; };
 		CD49AA0F14E33D98006032F6 /* TMPreference.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA0E14E33D98006032F6 /* TMPreference.m */; };
 		CD49AA1214E33E95006032F6 /* QuickTOCController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD49AA1114E33E95006032F6 /* QuickTOCController.m */; };
-		CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */; };
-		CD54BD8F160607F70025B7CA /* EXTConcreteProtocol.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */; };
-		CD54BD90160607F70025B7CA /* EXTConcreteProtocol.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */; };
-		CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */; };
-		CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */; };
-		CD54BD93160607F70025B7CA /* metamacros.h in Resources */ = {isa = PBXBuildFile; fileRef = CD54BD8D160607F70025B7CA /* metamacros.h */; };
 		CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596CC41625808400B95B49 /* TextSelectionRect.m */; };
 		CD596D8D16283D2300B95B49 /* RemoteNavigator.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD596D8B16283D2300B95B49 /* RemoteNavigator.storyboard */; };
 		CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */; };
@@ -504,6 +490,48 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5F37AA3C169E3A2400D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88037F8315056328001A5B19;
+			remoteInfo = ReactiveCocoa;
+		};
+		5F37AA3E169E3A2400D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88F440AB153DAC820097B4C3;
+			remoteInfo = "ReactiveCocoa-iOS";
+		};
+		5F37AA40169E3A2400D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 88CDF7DC15000FCF00163A9F;
+			remoteInfo = ReactiveCocoaTests;
+		};
+		5F37AA46169E3A2400D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A993169E386500D91E56 /* file.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F02C8F615CC1BB9008D9B03;
+			remoteInfo = file;
+		};
+		5F37AA48169E3A2400D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A993169E386500D91E56 /* file.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F02CA7415CC1F29008D9B03;
+			remoteInfo = filetest;
+		};
+		5F37AB01169E3B2000D91E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F37A789169DEC0100D91E56;
+			remoteInfo = CocoaOniguruma;
+		};
 		CD54BDBA160608530025B7CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
@@ -582,111 +610,6 @@
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
 		5F18F58D161271A5005D8A4F /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
 		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
-		5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
-		5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "../ThirdParty/ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
-		5F1A24CD1698944A005A928E /* OnigRegexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OnigRegexp.h; path = ../../../../cocoaoniguruma/framework/core/OnigRegexp.h; sourceTree = "<group>"; };
-		5F1A24CE1698944A005A928E /* OnigRegexp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OnigRegexp.m; path = ../../../../cocoaoniguruma/framework/core/OnigRegexp.m; sourceTree = "<group>"; };
-		5F1A24CF1698944A005A928E /* OnigRegexpUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OnigRegexpUtility.h; path = ../../../../cocoaoniguruma/framework/core/OnigRegexpUtility.h; sourceTree = "<group>"; };
-		5F1A24D01698944A005A928E /* OnigRegexpUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OnigRegexpUtility.m; path = ../../../../cocoaoniguruma/framework/core/OnigRegexpUtility.m; sourceTree = "<group>"; };
-		5F1A25C916989C45005A928E /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
-		5F1A25CA16989C45005A928E /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
-		5F1A25CB16989C45005A928E /* config.guess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
-		5F1A25CC16989C45005A928E /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
-		5F1A25CD16989C45005A928E /* config.sub */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
-		5F1A25CE16989C45005A928E /* configure */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
-		5F1A25CF16989C45005A928E /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
-		5F1A25D016989C45005A928E /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		5F1A25D116989C45005A928E /* depcomp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = depcomp; sourceTree = "<group>"; };
-		5F1A25D316989C45005A928E /* API */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = API; sourceTree = "<group>"; };
-		5F1A25D416989C45005A928E /* API.ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = API.ja; sourceTree = "<group>"; };
-		5F1A25D516989C45005A928E /* FAQ */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FAQ; sourceTree = "<group>"; };
-		5F1A25D616989C45005A928E /* FAQ.ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FAQ.ja; sourceTree = "<group>"; };
-		5F1A25D716989C45005A928E /* RE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RE; sourceTree = "<group>"; };
-		5F1A25D816989C45005A928E /* RE.ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RE.ja; sourceTree = "<group>"; };
-		5F1A25DA16989C45005A928E /* ascii.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ascii.c; sourceTree = "<group>"; };
-		5F1A25DB16989C45005A928E /* big5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = big5.c; sourceTree = "<group>"; };
-		5F1A25DC16989C45005A928E /* cp1251.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cp1251.c; sourceTree = "<group>"; };
-		5F1A25DD16989C45005A928E /* euc_jp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = euc_jp.c; sourceTree = "<group>"; };
-		5F1A25DE16989C45005A928E /* euc_kr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = euc_kr.c; sourceTree = "<group>"; };
-		5F1A25DF16989C45005A928E /* euc_tw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = euc_tw.c; sourceTree = "<group>"; };
-		5F1A25E016989C45005A928E /* gb18030.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gb18030.c; sourceTree = "<group>"; };
-		5F1A25E116989C45005A928E /* iso8859_1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_1.c; sourceTree = "<group>"; };
-		5F1A25E216989C45005A928E /* iso8859_10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_10.c; sourceTree = "<group>"; };
-		5F1A25E316989C45005A928E /* iso8859_11.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_11.c; sourceTree = "<group>"; };
-		5F1A25E416989C45005A928E /* iso8859_13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_13.c; sourceTree = "<group>"; };
-		5F1A25E516989C45005A928E /* iso8859_14.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_14.c; sourceTree = "<group>"; };
-		5F1A25E616989C45005A928E /* iso8859_15.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_15.c; sourceTree = "<group>"; };
-		5F1A25E716989C45005A928E /* iso8859_16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_16.c; sourceTree = "<group>"; };
-		5F1A25E816989C45005A928E /* iso8859_2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_2.c; sourceTree = "<group>"; };
-		5F1A25E916989C45005A928E /* iso8859_3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_3.c; sourceTree = "<group>"; };
-		5F1A25EA16989C45005A928E /* iso8859_4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_4.c; sourceTree = "<group>"; };
-		5F1A25EB16989C45005A928E /* iso8859_5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_5.c; sourceTree = "<group>"; };
-		5F1A25EC16989C45005A928E /* iso8859_6.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_6.c; sourceTree = "<group>"; };
-		5F1A25ED16989C45005A928E /* iso8859_7.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_7.c; sourceTree = "<group>"; };
-		5F1A25EE16989C45005A928E /* iso8859_8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_8.c; sourceTree = "<group>"; };
-		5F1A25EF16989C45005A928E /* iso8859_9.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iso8859_9.c; sourceTree = "<group>"; };
-		5F1A25F016989C45005A928E /* koi8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = koi8.c; sourceTree = "<group>"; };
-		5F1A25F116989C45005A928E /* koi8_r.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = koi8_r.c; sourceTree = "<group>"; };
-		5F1A25F216989C45005A928E /* mktable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mktable.c; sourceTree = "<group>"; };
-		5F1A25F316989C45005A928E /* sjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjis.c; sourceTree = "<group>"; };
-		5F1A25F416989C45005A928E /* unicode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unicode.c; sourceTree = "<group>"; };
-		5F1A25F516989C45005A928E /* utf16_be.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf16_be.c; sourceTree = "<group>"; };
-		5F1A25F616989C45005A928E /* utf16_le.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf16_le.c; sourceTree = "<group>"; };
-		5F1A25F716989C45005A928E /* utf32_be.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf32_be.c; sourceTree = "<group>"; };
-		5F1A25F816989C45005A928E /* utf32_le.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf32_le.c; sourceTree = "<group>"; };
-		5F1A25F916989C45005A928E /* utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf8.c; sourceTree = "<group>"; };
-		5F1A25FA16989C45005A928E /* HISTORY */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HISTORY; sourceTree = "<group>"; };
-		5F1A25FB16989C45005A928E /* index_ja.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index_ja.html; sourceTree = "<group>"; };
-		5F1A25FC16989C45005A928E /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
-		5F1A25FD16989C45005A928E /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
-		5F1A25FE16989C45005A928E /* install-sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
-		5F1A25FF16989C45005A928E /* ltmain.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = ltmain.sh; sourceTree = "<group>"; };
-		5F1A260116989C45005A928E /* libtool.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libtool.m4; sourceTree = "<group>"; };
-		5F1A260216989C45005A928E /* ltoptions.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ltoptions.m4; sourceTree = "<group>"; };
-		5F1A260316989C45005A928E /* ltsugar.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ltsugar.m4; sourceTree = "<group>"; };
-		5F1A260416989C45005A928E /* ltversion.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ltversion.m4; sourceTree = "<group>"; };
-		5F1A260516989C45005A928E /* lt~obsolete.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lt~obsolete.m4"; sourceTree = "<group>"; };
-		5F1A260616989C45005A928E /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		5F1A260716989C45005A928E /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
-		5F1A260816989C45005A928E /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
-		5F1A260916989C45005A928E /* onig-config.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "onig-config.in"; sourceTree = "<group>"; };
-		5F1A260A16989C45005A928E /* oniggnu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oniggnu.h; sourceTree = "<group>"; };
-		5F1A260B16989C45005A928E /* onigposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = onigposix.h; sourceTree = "<group>"; };
-		5F1A260C16989C45005A928E /* oniguruma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oniguruma.h; sourceTree = "<group>"; };
-		5F1A260D16989C45005A928E /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		5F1A260E16989C45005A928E /* README.ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.ja; sourceTree = "<group>"; };
-		5F1A260F16989C45005A928E /* regcomp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regcomp.c; sourceTree = "<group>"; };
-		5F1A261016989C45005A928E /* regenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regenc.c; sourceTree = "<group>"; };
-		5F1A261116989C45005A928E /* regenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regenc.h; sourceTree = "<group>"; };
-		5F1A261216989C45005A928E /* regerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regerror.c; sourceTree = "<group>"; };
-		5F1A261316989C45005A928E /* regexec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regexec.c; sourceTree = "<group>"; };
-		5F1A261416989C45005A928E /* regext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regext.c; sourceTree = "<group>"; };
-		5F1A261516989C45005A928E /* reggnu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reggnu.c; sourceTree = "<group>"; };
-		5F1A261616989C45005A928E /* regint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regint.h; sourceTree = "<group>"; };
-		5F1A261716989C45005A928E /* regparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regparse.c; sourceTree = "<group>"; };
-		5F1A261816989C45005A928E /* regparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regparse.h; sourceTree = "<group>"; };
-		5F1A261916989C45005A928E /* regposerr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regposerr.c; sourceTree = "<group>"; };
-		5F1A261A16989C45005A928E /* regposix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regposix.c; sourceTree = "<group>"; };
-		5F1A261B16989C45005A928E /* regsyntax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regsyntax.c; sourceTree = "<group>"; };
-		5F1A261C16989C45005A928E /* regtrav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regtrav.c; sourceTree = "<group>"; };
-		5F1A261D16989C45005A928E /* regversion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regversion.c; sourceTree = "<group>"; };
-		5F1A261F16989C45005A928E /* crnl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = crnl.c; sourceTree = "<group>"; };
-		5F1A262016989C45005A928E /* encode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = encode.c; sourceTree = "<group>"; };
-		5F1A262116989C45005A928E /* listcap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listcap.c; sourceTree = "<group>"; };
-		5F1A262216989C45005A928E /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
-		5F1A262316989C45005A928E /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
-		5F1A262416989C45005A928E /* names.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = names.c; sourceTree = "<group>"; };
-		5F1A262516989C45005A928E /* posix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = posix.c; sourceTree = "<group>"; };
-		5F1A262616989C45005A928E /* simple.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = simple.c; sourceTree = "<group>"; };
-		5F1A262716989C45005A928E /* sql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sql.c; sourceTree = "<group>"; };
-		5F1A262816989C45005A928E /* syntax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = syntax.c; sourceTree = "<group>"; };
-		5F1A262916989C45005A928E /* st.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = st.c; sourceTree = "<group>"; };
-		5F1A262A16989C45005A928E /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
-		5F1A262B16989C45005A928E /* testc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testc.c; sourceTree = "<group>"; };
-		5F1A262C16989C45005A928E /* testu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testu.c; sourceTree = "<group>"; };
-		5F1A262E16989C45005A928E /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		5F1A262F16989C45005A928E /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		5F1A263016989C45005A928E /* testc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testc.c; sourceTree = "<group>"; };
 		5F1A2851169ACD86005A928E /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		5F1A2853169ACD86005A928E /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		5F1A2854169ACD86005A928E /* Profile.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Profile.xcconfig; sourceTree = "<group>"; };
@@ -702,11 +625,14 @@
 		5F1A2861169ACD86005A928E /* Mac-Framework.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Mac-Framework.xcconfig"; sourceTree = "<group>"; };
 		5F1A2862169ACD86005A928E /* Mac-StaticLibrary.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "Mac-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
 		5F1A2863169ACD86005A928E /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa/libextobjc/Configuration/README.md; sourceTree = "<group>"; };
-		5F20ABD116230BE40051FC86 /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTScope.h; path = extobjc/EXTScope.h; sourceTree = "<group>"; };
-		5F20ABD216230BE40051FC86 /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTScope.m; path = extobjc/EXTScope.m; sourceTree = "<group>"; };
 		5F2345A915EE4B0E000220C5 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		5F24A84B161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+PersistentDataStructure.h"; sourceTree = "<group>"; };
 		5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+PersistentDataStructure.m"; sourceTree = "<group>"; };
+		5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactiveCocoa.xcodeproj; path = ../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj; sourceTree = "<group>"; };
+		5F37A993169E386500D91E56 /* file.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = file.xcodeproj; path = ../ThirdParty/file/file.xcodeproj; sourceTree = "<group>"; };
+		5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "CocoaOniguruma-for-iOS.xcodeproj"; path = "cocoaoniguruma/CocoaOniguruma-for-iOS.xcodeproj"; sourceTree = "<group>"; };
+		5F37AB64169E3EF000D91E56 /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
+		5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -716,7 +642,6 @@
 		5F7047DF15D1D7D5005EF62D /* magic.mgc */ = {isa = PBXFileReference; lastKnownFileType = file; name = magic.mgc; path = "../../../ThirdParty/file/Supporting Files/magic.mgc"; sourceTree = "<group>"; };
 		5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItemCell.h; sourceTree = "<group>"; };
 		5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItemCell.m; sourceTree = "<group>"; };
-		5FA6148415CE814500A0932A /* libfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfile.a; path = "../ThirdParty/file/build/Release-iphoneos/libfile.a"; sourceTree = "<group>"; };
 		5FC9E254167B8FFF00E4FD6F /* NSObject+RACBindings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+RACBindings.h"; sourceTree = "<group>"; };
 		5FC9E255167B8FFF00E4FD6F /* NSObject+RACBindings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+RACBindings.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
@@ -730,7 +655,6 @@
 		B71A1DE51435112700672F65 /* NewFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewFileController.h; sourceTree = "<group>"; };
 		B71A1DE61435112700672F65 /* NewFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewFileController.m; sourceTree = "<group>"; };
 		B728590914E5971D00E3DE65 /* TMScope+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TMScope+Internal.h"; sourceTree = "<group>"; };
-		B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCocoaOniguruma.a; path = "../ThirdParty/cocoaoniguruma/framework/build/Release-iphoneos/libCocoaOniguruma.a"; sourceTree = "<group>"; };
 		B741D71414C2FA0D00B622D1 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		B757BFA21518DEA100AE6AC3 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Debug.h; path = ../../Headers/Debug.h; sourceTree = "<group>"; };
 		B757C0A11519FEDF00AE6AC3 /* NSString+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Utilities.h"; sourceTree = "<group>"; };
@@ -801,9 +725,6 @@
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
 		B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextMateScopeSelectorMatching.m"; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
-		B78C160415245F6000C66DDC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		B78C160615245F6000C66DDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		B78C160815245F6000C66DDC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B78D136D15AB4D5D0022C93B /* FileSystemItem+TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemItem+TextFile.h"; sourceTree = "<group>"; };
 		B78D136E15AB4D5D0022C93B /* FileSystemItem+TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemItem+TextFile.m"; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
@@ -1048,13 +969,7 @@
 		CD49AA0E14E33D98006032F6 /* TMPreference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPreference.m; sourceTree = "<group>"; };
 		CD49AA1014E33E95006032F6 /* QuickTOCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickTOCController.h; sourceTree = "<group>"; };
 		CD49AA1114E33E95006032F6 /* QuickTOCController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuickTOCController.m; sourceTree = "<group>"; };
-		CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libReactiveCocoa-iOS.a"; path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/build/Release-iphoneos/libReactiveCocoa-iOS.a"; sourceTree = "<group>"; };
 		CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactiveCocoa.xcodeproj; path = /Users/Nikso/Projects/edit/edit/ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj; sourceTree = "<absolute>"; };
-		CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTConcreteProtocol.h; path = extobjc/EXTConcreteProtocol.h; sourceTree = "<group>"; };
-		CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTConcreteProtocol.m; path = extobjc/EXTConcreteProtocol.m; sourceTree = "<group>"; };
-		CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensions.h; path = extobjc/EXTRuntimeExtensions.h; sourceTree = "<group>"; };
-		CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
-		CD54BD8D160607F70025B7CA /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = extobjc/metamacros.h; sourceTree = "<group>"; };
 		CD596CC31625808400B95B49 /* TextSelectionRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextSelectionRect.h; sourceTree = "<group>"; };
 		CD596CC41625808400B95B49 /* TextSelectionRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextSelectionRect.m; sourceTree = "<group>"; };
 		CD596D8B16283D2300B95B49 /* RemoteNavigator.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = RemoteNavigator.storyboard; sourceTree = "<group>"; };
@@ -1245,7 +1160,6 @@
 		CDC2829114508D500054358D /* topBar_TitleButton_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Normal.png; sourceTree = "<group>"; };
 		CDC2829214508D500054358D /* topBar_TitleButton_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = topBar_TitleButton_Selected.png; sourceTree = "<group>"; };
 		CDC96176164C08B60069E74A /* RemotesListHintsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemotesListHintsView.xib; sourceTree = "<group>"; };
-		CDCE7E0F1630449A00BE01D8 /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTKeyPathCoding.h; path = extobjc/EXTKeyPathCoding.h; sourceTree = "<group>"; };
 		CDD40B0113E1A046008AC36B /* PopoverHistoryToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverHistoryToolController.h; sourceTree = "<group>"; };
 		CDD40B0213E1A046008AC36B /* PopoverHistoryToolController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverHistoryToolController.m; sourceTree = "<group>"; };
 		CDDC95061462E23F00E2B96C /* minimap_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimap_Background.png; sourceTree = "<group>"; };
@@ -1287,11 +1201,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */,
+				5F37AB04169E3B3700D91E56 /* libfile.a in Frameworks */,
+				5F37AB03169E3B2900D91E56 /* libCocoaOniguruma.a in Frameworks */,
 				CD8F59B8161C53910080494E /* libconnectionkit.a in Frameworks */,
 				5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */,
-				5FA6148515CE814500A0932A /* libfile.a in Frameworks */,
 				CD2DB5FF1578C506009E4026 /* CoreData.framework in Frameworks */,
-				CD4A9138155962F900D2177F /* libReactiveCocoa-iOS.a in Frameworks */,
 				B7DD438B14E0A04D0057DDB4 /* libicucore.dylib in Frameworks */,
 				B7DD437314E098BE0057DDB4 /* CFNetwork.framework in Frameworks */,
 				B7DD436F14E098030057DDB4 /* Security.framework in Frameworks */,
@@ -1358,179 +1273,10 @@
 		5F18F5F31614F833005D8A4F /* ReactiveCocoa */ = {
 			isa = PBXGroup;
 			children = (
-				5F18F5F41614F83D005D8A4F /* Extensions */,
-				CD4A9137155962F900D2177F /* libReactiveCocoa-iOS.a */,
+				5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */,
+				5F37AB63169E3ED700D91E56 /* RACExtensions */,
 			);
 			name = ReactiveCocoa;
-			sourceTree = "<group>";
-		};
-		5F18F5F41614F83D005D8A4F /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				5F18F5F51614F859005D8A4F /* NSNotificationCenter+RACSupport.h */,
-				5F18F5F61614F859005D8A4F /* NSNotificationCenter+RACSupport.m */,
-			);
-			name = Extensions;
-			sourceTree = "<group>";
-		};
-		5F1A24CC16989404005A928E /* cocoaoniguruma */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A24CD1698944A005A928E /* OnigRegexp.h */,
-				5F1A24CE1698944A005A928E /* OnigRegexp.m */,
-				5F1A24CF1698944A005A928E /* OnigRegexpUtility.h */,
-				5F1A24D01698944A005A928E /* OnigRegexpUtility.m */,
-				5F1A24D11698944A005A928E /* oniguruma */,
-			);
-			name = cocoaoniguruma;
-			path = ../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa/libextobjc;
-			sourceTree = "<group>";
-		};
-		5F1A24D11698944A005A928E /* oniguruma */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A25C916989C45005A928E /* aclocal.m4 */,
-				5F1A25CA16989C45005A928E /* AUTHORS */,
-				5F1A25CB16989C45005A928E /* config.guess */,
-				5F1A25CC16989C45005A928E /* config.h.in */,
-				5F1A25CD16989C45005A928E /* config.sub */,
-				5F1A25CE16989C45005A928E /* configure */,
-				5F1A25CF16989C45005A928E /* configure.in */,
-				5F1A25D016989C45005A928E /* COPYING */,
-				5F1A25D116989C45005A928E /* depcomp */,
-				5F1A25D216989C45005A928E /* doc */,
-				5F1A25D916989C45005A928E /* enc */,
-				5F1A25FA16989C45005A928E /* HISTORY */,
-				5F1A25FB16989C45005A928E /* index_ja.html */,
-				5F1A25FC16989C45005A928E /* index.html */,
-				5F1A25FD16989C45005A928E /* INSTALL */,
-				5F1A25FE16989C45005A928E /* install-sh */,
-				5F1A25FF16989C45005A928E /* ltmain.sh */,
-				5F1A260016989C45005A928E /* m4 */,
-				5F1A260616989C45005A928E /* Makefile.am */,
-				5F1A260716989C45005A928E /* Makefile.in */,
-				5F1A260816989C45005A928E /* missing */,
-				5F1A260916989C45005A928E /* onig-config.in */,
-				5F1A260A16989C45005A928E /* oniggnu.h */,
-				5F1A260B16989C45005A928E /* onigposix.h */,
-				5F1A260C16989C45005A928E /* oniguruma.h */,
-				5F1A260D16989C45005A928E /* README */,
-				5F1A260E16989C45005A928E /* README.ja */,
-				5F1A260F16989C45005A928E /* regcomp.c */,
-				5F1A261016989C45005A928E /* regenc.c */,
-				5F1A261116989C45005A928E /* regenc.h */,
-				5F1A261216989C45005A928E /* regerror.c */,
-				5F1A261316989C45005A928E /* regexec.c */,
-				5F1A261416989C45005A928E /* regext.c */,
-				5F1A261516989C45005A928E /* reggnu.c */,
-				5F1A261616989C45005A928E /* regint.h */,
-				5F1A261716989C45005A928E /* regparse.c */,
-				5F1A261816989C45005A928E /* regparse.h */,
-				5F1A261916989C45005A928E /* regposerr.c */,
-				5F1A261A16989C45005A928E /* regposix.c */,
-				5F1A261B16989C45005A928E /* regsyntax.c */,
-				5F1A261C16989C45005A928E /* regtrav.c */,
-				5F1A261D16989C45005A928E /* regversion.c */,
-				5F1A261E16989C45005A928E /* sample */,
-				5F1A262916989C45005A928E /* st.c */,
-				5F1A262A16989C45005A928E /* st.h */,
-				5F1A262B16989C45005A928E /* testc.c */,
-				5F1A262C16989C45005A928E /* testu.c */,
-				5F1A262D16989C45005A928E /* win32 */,
-			);
-			name = oniguruma;
-			path = ../../../../cocoaoniguruma/framework/core/oniguruma;
-			sourceTree = "<group>";
-		};
-		5F1A25D216989C45005A928E /* doc */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A25D316989C45005A928E /* API */,
-				5F1A25D416989C45005A928E /* API.ja */,
-				5F1A25D516989C45005A928E /* FAQ */,
-				5F1A25D616989C45005A928E /* FAQ.ja */,
-				5F1A25D716989C45005A928E /* RE */,
-				5F1A25D816989C45005A928E /* RE.ja */,
-			);
-			path = doc;
-			sourceTree = "<group>";
-		};
-		5F1A25D916989C45005A928E /* enc */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A25DA16989C45005A928E /* ascii.c */,
-				5F1A25DB16989C45005A928E /* big5.c */,
-				5F1A25DC16989C45005A928E /* cp1251.c */,
-				5F1A25DD16989C45005A928E /* euc_jp.c */,
-				5F1A25DE16989C45005A928E /* euc_kr.c */,
-				5F1A25DF16989C45005A928E /* euc_tw.c */,
-				5F1A25E016989C45005A928E /* gb18030.c */,
-				5F1A25E116989C45005A928E /* iso8859_1.c */,
-				5F1A25E216989C45005A928E /* iso8859_10.c */,
-				5F1A25E316989C45005A928E /* iso8859_11.c */,
-				5F1A25E416989C45005A928E /* iso8859_13.c */,
-				5F1A25E516989C45005A928E /* iso8859_14.c */,
-				5F1A25E616989C45005A928E /* iso8859_15.c */,
-				5F1A25E716989C45005A928E /* iso8859_16.c */,
-				5F1A25E816989C45005A928E /* iso8859_2.c */,
-				5F1A25E916989C45005A928E /* iso8859_3.c */,
-				5F1A25EA16989C45005A928E /* iso8859_4.c */,
-				5F1A25EB16989C45005A928E /* iso8859_5.c */,
-				5F1A25EC16989C45005A928E /* iso8859_6.c */,
-				5F1A25ED16989C45005A928E /* iso8859_7.c */,
-				5F1A25EE16989C45005A928E /* iso8859_8.c */,
-				5F1A25EF16989C45005A928E /* iso8859_9.c */,
-				5F1A25F016989C45005A928E /* koi8.c */,
-				5F1A25F116989C45005A928E /* koi8_r.c */,
-				5F1A25F216989C45005A928E /* mktable.c */,
-				5F1A25F316989C45005A928E /* sjis.c */,
-				5F1A25F416989C45005A928E /* unicode.c */,
-				5F1A25F516989C45005A928E /* utf16_be.c */,
-				5F1A25F616989C45005A928E /* utf16_le.c */,
-				5F1A25F716989C45005A928E /* utf32_be.c */,
-				5F1A25F816989C45005A928E /* utf32_le.c */,
-				5F1A25F916989C45005A928E /* utf8.c */,
-			);
-			path = enc;
-			sourceTree = "<group>";
-		};
-		5F1A260016989C45005A928E /* m4 */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A260116989C45005A928E /* libtool.m4 */,
-				5F1A260216989C45005A928E /* ltoptions.m4 */,
-				5F1A260316989C45005A928E /* ltsugar.m4 */,
-				5F1A260416989C45005A928E /* ltversion.m4 */,
-				5F1A260516989C45005A928E /* lt~obsolete.m4 */,
-			);
-			path = m4;
-			sourceTree = "<group>";
-		};
-		5F1A261E16989C45005A928E /* sample */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A261F16989C45005A928E /* crnl.c */,
-				5F1A262016989C45005A928E /* encode.c */,
-				5F1A262116989C45005A928E /* listcap.c */,
-				5F1A262216989C45005A928E /* Makefile.am */,
-				5F1A262316989C45005A928E /* Makefile.in */,
-				5F1A262416989C45005A928E /* names.c */,
-				5F1A262516989C45005A928E /* posix.c */,
-				5F1A262616989C45005A928E /* simple.c */,
-				5F1A262716989C45005A928E /* sql.c */,
-				5F1A262816989C45005A928E /* syntax.c */,
-			);
-			path = sample;
-			sourceTree = "<group>";
-		};
-		5F1A262D16989C45005A928E /* win32 */ = {
-			isa = PBXGroup;
-			children = (
-				5F1A262E16989C45005A928E /* config.h */,
-				5F1A262F16989C45005A928E /* Makefile */,
-				5F1A263016989C45005A928E /* testc.c */,
-			);
-			path = win32;
 			sourceTree = "<group>";
 		};
 		5F1A284F169ACD64005A928E /* xcconfigs */ = {
@@ -1596,6 +1342,96 @@
 			);
 			name = "Mac OS X";
 			path = "../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa/libextobjc/Configuration/Mac OS X";
+			sourceTree = "<group>";
+		};
+		5F37A991169E381A00D91E56 /* ConnectionKit */ = {
+			isa = PBXGroup;
+			children = (
+				CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */,
+			);
+			name = ConnectionKit;
+			sourceTree = "<group>";
+		};
+		5F37A992169E385C00D91E56 /* file */ = {
+			isa = PBXGroup;
+			children = (
+				5F37A993169E386500D91E56 /* file.xcodeproj */,
+			);
+			name = file;
+			sourceTree = "<group>";
+		};
+		5F37A995169E38B900D91E56 /* CocoaOniguruma */ = {
+			isa = PBXGroup;
+			children = (
+				5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */,
+			);
+			name = CocoaOniguruma;
+			sourceTree = "<group>";
+		};
+		5F37A996169E391E00D91E56 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F2345A915EE4B0E000220C5 /* QuickLook.framework */,
+				CD2DB5FE1578C506009E4026 /* CoreData.framework */,
+				B77101451506E336006AF1FB /* SenTestingKit.framework */,
+				B7DD437214E098BE0057DDB4 /* CFNetwork.framework */,
+				CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */,
+				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
+				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
+				CD7D2AE313C0CD2600B889EE /* UIKit.framework */,
+				CD7D2AE513C0CD2600B889EE /* Foundation.framework */,
+				CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */,
+				B7DD436E14E098020057DDB4 /* Security.framework */,
+			);
+			name = Frameworks;
+			path = System/Library/Frameworks/;
+			sourceTree = SDKROOT;
+		};
+		5F37A997169E392500D91E56 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
+				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
+				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
+			);
+			name = Libraries;
+			path = usr/lib/;
+			sourceTree = SDKROOT;
+		};
+		5F37AA37169E3A2400D91E56 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F37AA3D169E3A2400D91E56 /* ReactiveCocoa.framework */,
+				5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */,
+				5F37AA41169E3A2400D91E56 /* ReactiveCocoaTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5F37AA42169E3A2400D91E56 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F37AA47169E3A2400D91E56 /* libfile.a */,
+				5F37AA49169E3A2400D91E56 /* filetest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5F37AAFB169E3B1F00D91E56 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F37AB02169E3B2000D91E56 /* libCocoaOniguruma.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5F37AB63169E3ED700D91E56 /* RACExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				5F37AB64169E3EF000D91E56 /* NSNotificationCenter+RACSupport.h */,
+				5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */,
+			);
+			name = RACExtensions;
 			sourceTree = "<group>";
 		};
 		B732D00113DB2AD100637FBE /* Model */ = {
@@ -1801,21 +1637,17 @@
 		B7AC172714216C59009E9205 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */,
+				5F37A995169E38B900D91E56 /* CocoaOniguruma */,
+				5F37A992169E385C00D91E56 /* file */,
+				5F37A991169E381A00D91E56 /* ConnectionKit */,
 				5F1A284F169ACD64005A928E /* xcconfigs */,
 				5F18F5F31614F833005D8A4F /* ReactiveCocoa */,
-				CD54BD8E160607F70025B7CA /* libextobjc */,
-				5F1A24CC16989404005A928E /* cocoaoniguruma */,
-				5FA6148415CE814500A0932A /* libfile.a */,
 				CD6E4DAF14EFE4DA009B8CF8 /* libclang */,
 				B7FB79F214D607400080A714 /* Archive */,
 				B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */,
-				B72CEBE9151B43C200757F94 /* libCocoaOniguruma.a */,
-				CDF1D46C14150C4900EFEC21 /* libstdc++.6.0.9.dylib */,
-				B741D71414C2FA0D00B622D1 /* libiconv.dylib */,
-				B7DD438A14E0A04D0057DDB4 /* libicucore.dylib */,
 			);
 			name = "Third Party";
+			path = ../ThirdParty;
 			sourceTree = "<group>";
 		};
 		B7BEA42D159B0B6A0095C9D1 /* diff-match-patch */ = {
@@ -2088,22 +1920,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CD54BD8E160607F70025B7CA /* libextobjc */ = {
-			isa = PBXGroup;
-			children = (
-				CDCE7E0F1630449A00BE01D8 /* EXTKeyPathCoding.h */,
-				5F20ABD116230BE40051FC86 /* EXTScope.h */,
-				5F20ABD216230BE40051FC86 /* EXTScope.m */,
-				CD54BD89160607F70025B7CA /* EXTConcreteProtocol.h */,
-				CD54BD8A160607F70025B7CA /* EXTConcreteProtocol.m */,
-				CD54BD8B160607F70025B7CA /* EXTRuntimeExtensions.h */,
-				CD54BD8C160607F70025B7CA /* EXTRuntimeExtensions.m */,
-				CD54BD8D160607F70025B7CA /* metamacros.h */,
-			);
-			name = libextobjc;
-			path = ../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa/libextobjc;
-			sourceTree = "<group>";
-		};
 		CD6580C514157B300079412F /* Find & Replace Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2312,11 +2128,8 @@
 		CD7D2AE213C0CD2600B889EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CD7D2B0613C0CE3200B889EE /* Apple Frameworks */,
+				CD7D2B0613C0CE3200B889EE /* Apple */,
 				B7AC172714216C59009E9205 /* Third Party */,
-				B78C160415245F6000C66DDC /* SenTestingKit.framework */,
-				B78C160615245F6000C66DDC /* UIKit.framework */,
-				B78C160815245F6000C66DDC /* Foundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2343,22 +2156,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CD7D2B0613C0CE3200B889EE /* Apple Frameworks */ = {
+		CD7D2B0613C0CE3200B889EE /* Apple */ = {
 			isa = PBXGroup;
 			children = (
-				5F2345A915EE4B0E000220C5 /* QuickLook.framework */,
-				CD2DB5FE1578C506009E4026 /* CoreData.framework */,
-				B77101451506E336006AF1FB /* SenTestingKit.framework */,
-				B7DD437214E098BE0057DDB4 /* CFNetwork.framework */,
-				CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */,
-				CD7D2B0113C0CD9D00B889EE /* CoreText.framework */,
-				CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */,
-				CD7D2AE313C0CD2600B889EE /* UIKit.framework */,
-				CD7D2AE513C0CD2600B889EE /* Foundation.framework */,
-				CD7D2AE713C0CD2600B889EE /* CoreGraphics.framework */,
-				B7DD436E14E098020057DDB4 /* Security.framework */,
+				5F37A997169E392500D91E56 /* Libraries */,
+				5F37A996169E391E00D91E56 /* Frameworks */,
 			);
-			name = "Apple Frameworks";
+			name = Apple;
 			sourceTree = "<group>";
 		};
 		CD7D2B0713C0CE5200B889EE /* Resources */ = {
@@ -2790,12 +2594,24 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 5F37AAFB169E3B1F00D91E56 /* Products */;
+					ProjectRef = 5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */;
+				},
+				{
 					ProductGroup = CD8F5985161C53810080494E /* Products */;
 					ProjectRef = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
 				},
 				{
+					ProductGroup = 5F37AA42169E3A2400D91E56 /* Products */;
+					ProjectRef = 5F37A993169E386500D91E56 /* file.xcodeproj */;
+				},
+				{
 					ProductGroup = CD54BD87160607B30025B7CA /* Products */;
 					ProjectRef = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
+				},
+				{
+					ProductGroup = 5F37AA37169E3A2400D91E56 /* Products */;
+					ProjectRef = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -2806,6 +2622,48 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		5F37AA3D169E3A2400D91E56 /* ReactiveCocoa.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ReactiveCocoa.framework;
+			remoteRef = 5F37AA3C169E3A2400D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libReactiveCocoa-iOS.a";
+			remoteRef = 5F37AA3E169E3A2400D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37AA41169E3A2400D91E56 /* ReactiveCocoaTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ReactiveCocoaTests.octest;
+			remoteRef = 5F37AA40169E3A2400D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37AA47169E3A2400D91E56 /* libfile.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libfile.a;
+			remoteRef = 5F37AA46169E3A2400D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37AA49169E3A2400D91E56 /* filetest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = filetest;
+			remoteRef = 5F37AA48169E3A2400D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37AB02169E3B2000D91E56 /* libCocoaOniguruma.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCocoaOniguruma.a;
+			remoteRef = 5F37AB01169E3B2000D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CD54BDBB160608530025B7CA /* ReactiveCocoa.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -3165,11 +3023,6 @@
 				CD6D411115D720F0003EADC2 /* UITabBar_star@2x.png in Resources */,
 				CD6D411215D720F0003EADC2 /* UITabBar_symbol@2x.png in Resources */,
 				CD42AAD215EFB36F00E9FC5B /* RenameModalView.xib in Resources */,
-				CD54BD8F160607F70025B7CA /* EXTConcreteProtocol.h in Resources */,
-				CD54BD90160607F70025B7CA /* EXTConcreteProtocol.m in Resources */,
-				CD54BD91160607F70025B7CA /* EXTRuntimeExtensions.h in Resources */,
-				CD54BD92160607F70025B7CA /* EXTRuntimeExtensions.m in Resources */,
-				CD54BD93160607F70025B7CA /* metamacros.h in Resources */,
 				CD596D8D16283D2300B95B49 /* RemoteNavigator.storyboard in Resources */,
 				CD3DFC001643305800833D76 /* itemIcon_DeleteSecondary@2x.png in Resources */,
 				CD3DFC011643305800833D76 /* itemIcon_Download@2x.png in Resources */,
@@ -3193,6 +3046,8 @@
 				5F1A2870169ACD86005A928E /* Mac-Framework.xcconfig in Resources */,
 				5F1A2871169ACD86005A928E /* Mac-StaticLibrary.xcconfig in Resources */,
 				5F1A2872169ACD86005A928E /* README.md in Resources */,
+				5F37A990169E380900D91E56 /* ReactiveCocoa.xcodeproj in Resources */,
+				5F37A994169E386500D91E56 /* file.xcodeproj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3306,12 +3161,10 @@
 				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
 				CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */,
 				5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */,
-				5F18F5F71614F859005D8A4F /* NSNotificationCenter+RACSupport.m in Sources */,
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
 				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
 				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
 				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,
-				5F20ABD316230BE40051FC86 /* EXTScope.m in Sources */,
 				CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */,
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
@@ -3320,17 +3173,7 @@
 				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
 				5FC9E256167B8FFF00E4FD6F /* NSObject+RACBindings.m in Sources */,
 				CD149662167E3B7400223367 /* UIBarButtonItem+BlockAction.m in Sources */,
-				5F1A24E71698944B005A928E /* OnigRegexp.m in Sources */,
-				5F1A24E81698944B005A928E /* OnigRegexpUtility.m in Sources */,
-				5F1A268C16989D0F005A928E /* regparse.c in Sources */,
-				5F1A268D16989D31005A928E /* utf16_le.c in Sources */,
-				5F1A268E16989DDC005A928E /* regexec.c in Sources */,
-				5F1A26D516989EBC005A928E /* regenc.c in Sources */,
-				5F1A26D616989ED2005A928E /* ascii.c in Sources */,
-				5F1A26D716989F14005A928E /* regcomp.c in Sources */,
-				5F1A26D816989F33005A928E /* regerror.c in Sources */,
-				5F1A26D916989F6A005A928E /* st.c in Sources */,
-				5F1A26DA16989F82005A928E /* unicode.c in Sources */,
+				5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

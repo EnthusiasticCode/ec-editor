@@ -10,7 +10,7 @@
 #import "TMIndex.h"
 #import "TMScope+Internal.h"
 #import "TMSyntaxNode.h"
-#import "OnigRegexp.h"
+#import <CocoaOniguruma/OnigRegexp.h>
 #import "NSString+CStringCaching.h"
 #import "NSIndexSet+StringRanges.h"
 #import "TMPreference.h"

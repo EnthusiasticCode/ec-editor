@@ -14,6 +14,7 @@
 #import "TopBarTitleControl.h"
 
 #import <QuartzCore/QuartzCore.h>
+#import "NSNotificationCenter+RACSupport.h"
 #import "BezelAlert.h"
 #import "TMTheme.h"
 #import "UIColor+Contrast.h"
