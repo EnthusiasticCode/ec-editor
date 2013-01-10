@@ -256,8 +256,8 @@ static void drawStencilStar(CGContextRef myContext)
       {
         if (!_searchBarController) {
           _searchBarController = [[UIStoryboard storyboardWithName:@"SearchBar" bundle:nil] instantiateInitialViewController];
-          _searchBarController.targetCodeFileController = self;
         }
+				_searchBarController.targetCodeFileController = self;
         if (self.singleTabController.toolbarViewController != _searchBarController) {
           [self.singleTabController setToolbarViewController:_searchBarController animated:YES];
           [_searchBarController.findTextField becomeFirstResponder];

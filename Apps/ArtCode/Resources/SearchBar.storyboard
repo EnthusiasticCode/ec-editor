@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="uMq-mf-wWL">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C3006" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="uMq-mf-wWL">
     <dependencies>
-        <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
     </dependencies>
     <scenes>
+        <!--Code File Search Bar Controller-->
         <scene sceneID="OZK-5M-ugJ">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="MjW-0Q-Log" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="uMq-mf-wWL" customClass="CodeFileSearchBarController" sceneMemberID="viewController">
                     <view key="view" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="Dv0-es-fXd" customClass="CodeFileSearchBarView">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="88"/>
@@ -158,16 +157,19 @@
                     <connections>
                         <outlet property="findResultLabel" destination="Jkn-hL-DJr" id="e6U-6w-Gnt"/>
                         <outlet property="findTextField" destination="ddd-N7-1PD" id="dgM-Jy-xCf"/>
+                        <outlet property="nextResultButton" destination="0Ju-wM-eDp" id="pCa-gb-T4n"/>
+                        <outlet property="previousResultButton" destination="0f0-Hy-GMi" id="KHM-Jo-PbN"/>
                         <outlet property="replaceTextField" destination="ZLT-Op-BB2" id="C0I-tz-Wbw"/>
                         <outlet property="view" destination="Dv0-es-fXd" id="QeM-vI-hD4"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MjW-0Q-Log" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-41" y="102"/>
         </scene>
+        <!--Code File Search Options Controller-->
         <scene sceneID="H2b-9n-9jt">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="SuA-w3-xDP" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="v4E-9V-adk" customClass="CodeFileSearchOptionsController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ncf-qM-5aM">
                         <rect key="frame" x="0.0" y="0.0" width="400" height="1020"/>
@@ -203,7 +205,7 @@
                                 <rect key="frame" x="0.0" y="79" width="400" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="1" width="380" height="43"/>
+                                    <rect key="frame" x="10" y="0.0" width="380" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <switch opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="zhy-Ji-baI">
@@ -228,7 +230,7 @@
                                 <rect key="frame" x="0.0" y="123" width="400" height="45"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="1" width="380" height="43"/>
+                                    <rect key="frame" x="10" y="0.0" width="380" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <segmentedControl opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="brR-wT-hxl">
@@ -264,6 +266,7 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SuA-w3-xDP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="946" y="27"/>
         </scene>
@@ -287,6 +290,8 @@
                 <relationship kind="action" name="toggleReplaceAction:"/>
                 <relationship kind="outlet" name="findResultLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="findTextField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="nextResultButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="previousResultButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="replaceTextField" candidateClass="UITextField"/>
             </relationships>
         </class>
