@@ -40,6 +40,8 @@
 		5F37AB04169E3B3700D91E56 /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA47169E3A2400D91E56 /* libfile.a */; };
 		5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */; };
 		5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */; };
+		5F4B2A31169F6A1100CBB85D /* FileSystemFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */; };
+		5F4B2A34169F6A2100CBB85D /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
@@ -632,6 +634,12 @@
 		5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "CocoaOniguruma-for-iOS.xcodeproj"; path = "cocoaoniguruma/CocoaOniguruma-for-iOS.xcodeproj"; sourceTree = "<group>"; };
 		5F37AB64169E3EF000D91E56 /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
 		5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
+		5F4B2A2F169F6A1100CBB85D /* FileSystemFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemFile.h; sourceTree = "<group>"; };
+		5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemFile.m; sourceTree = "<group>"; };
+		5F4B2A32169F6A2100CBB85D /* FileSystemDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectory.h; sourceTree = "<group>"; };
+		5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemDirectory.m; sourceTree = "<group>"; };
+		5F4B2A35169F6D0F00CBB85D /* FileSystemItem+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileSystemItem+Private.h"; sourceTree = "<group>"; };
+		5F4B2A36169F6DF300CBB85D /* FileSystemDirectory+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileSystemDirectory+Private.h"; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -1754,7 +1762,13 @@
 			isa = PBXGroup;
 			children = (
 				5F18F58D161271A5005D8A4F /* FileSystemItem.h */,
+				5F4B2A35169F6D0F00CBB85D /* FileSystemItem+Private.h */,
 				5F18F58E161271A5005D8A4F /* FileSystemItem.m */,
+				5F4B2A2F169F6A1100CBB85D /* FileSystemFile.h */,
+				5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */,
+				5F4B2A32169F6A2100CBB85D /* FileSystemDirectory.h */,
+				5F4B2A36169F6DF300CBB85D /* FileSystemDirectory+Private.h */,
+				5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */,
 				B78D136D15AB4D5D0022C93B /* FileSystemItem+TextFile.h */,
 				B78D136E15AB4D5D0022C93B /* FileSystemItem+TextFile.m */,
 			);
@@ -3168,6 +3182,8 @@
 				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
 				CD149662167E3B7400223367 /* UIBarButtonItem+BlockAction.m in Sources */,
 				5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */,
+				5F4B2A31169F6A1100CBB85D /* FileSystemFile.m in Sources */,
+				5F4B2A34169F6A2100CBB85D /* FileSystemDirectory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

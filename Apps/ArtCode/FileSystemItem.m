@@ -6,10 +6,14 @@
 //
 //
 
-#import "FileSystemItem.h"
-#import "NSString+ScoreForAbbreviation.h"
-#import <sys/xattr.h>
+#import "FileSystemItem+Private.h"
+
 #import <libkern/OSAtomic.h>
+#import <sys/xattr.h>
+
+#import "FileSystemDirectory+Private.h"
+#import "FileSystemFile.h"
+#import "NSString+ScoreForAbbreviation.h"
 
 // All filesystem operations must be done on this scheduler
 #if DEBUG
@@ -51,25 +55,6 @@ static NSMutableDictionary *fileSystemItemCache() {
 @property (nonatomic, strong, readonly) RACReplaySubject *typeBacking;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
-
-- (instancetype)initWithURL:(NSURL *)url type:(NSString *)type;
-
-@end
-
-@interface FileSystemFile ()
-
-@property (nonatomic) NSStringEncoding encoding;
-@property (nonatomic, strong) NSString *content;
-
-- (void)internalLoadFileIfNeeded;
-
-@end
-
-@interface FileSystemDirectory ()
-
-@property (nonatomic, weak) RACReplaySubject *childrenBacking;
-
-- (void)didChangeChildren;
 
 @end
 
@@ -184,345 +169,6 @@ static NSMutableDictionary *fileSystemItemCache() {
 	return [[self.url map:^(NSURL *value) {
 		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent type:NSURLFileResourceTypeDirectory];
 	}] switchToLatest];
-}
-
-@end
-
-@implementation FileSystemFile
-
-+ (RACSignal *)fileWithURL:(NSURL *)url {
-  return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
-}
-
-+ (RACSignal *)createFileWithURL:(NSURL *)url {
-  if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
-		
-		[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (wasDisposed) return;
-			NSError *error = nil;
-			if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
-				[subscriber sendError:error];
-				return;
-			}
-			[self didCreate:url];
-			if (wasDisposed) return;
-			[disposable addDisposable:[[self fileWithURL:url] subscribe:subscriber]];
-		}];
-		
-		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-}
-
-- (RACSignal *)encodingSignal {
-	return [[[RACSignal defer:^RACSignal *{
-		[self internalLoadFileIfNeeded];
-		return RACAbleWithStart(self.encoding);
-	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
-}
-
-- (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath {
-	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-	[fileSystemScheduler() schedule:^{
-		[self internalLoadFileIfNeeded];
-	}];
-	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
-	RACScheduler *targetBindingScheduler = currentScheduler();
-	[fileSystemScheduler() schedule:^{
-		RACBinding *encoding = RACBind(self.encoding);
-		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] map:^id(NSNumber *value) {
-			if (value == nil || value.unsignedIntegerValue == 0 || value == (id)[NSNull null]) value = @(NSUTF8StringEncoding);
-			return value;
-		}] subscribe:encoding]];
-		[disposable addDisposable:[[encoding deliverOn:targetBindingScheduler] subscribe:targetBinding]];
-	}];
-	return disposable;
-}
-
-- (RACSignal *)contentSignal {
-	return [[[RACSignal defer:^RACSignal *{
-		[self internalLoadFileIfNeeded];
-		return RACAbleWithStart(self.content);
-	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
-}
-
-- (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath {
-	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-	[fileSystemScheduler() schedule:^{
-		[self internalLoadFileIfNeeded];
-	}];
-	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
-	RACScheduler *targetBindingScheduler = currentScheduler();
-	[fileSystemScheduler() schedule:^{
-		RACBinding *content = RACBind(self.content);
-		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] filter:^ BOOL (NSString *value) {
-			return value != nil && value != (id)[NSNull null];
-		}] subscribe:content]];
-		[disposable addDisposable:[[content deliverOn:targetBindingScheduler] subscribe:targetBinding]];
-	}];
-	return disposable;
-}
-
-- (RACSignal *)save {
-	@weakify(self);
-	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}];
-		
-		[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			@strongify(self);
-			if (wasDisposed) return;
-			NSURL *url = self.urlBacking.first;
-			if (!url) {
-				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-				return;
-			}
-			if (!self.encoding) {
-				self.encoding = NSUTF8StringEncoding;
-			}
-			if (!self.content) {
-				self.content = @"";
-			}
-			if (wasDisposed) return;
-			NSError *error = nil;
-			// Don't save atomically so we don't lose extended attributes
-			if (![self.content writeToURL:url atomically:NO encoding:self.encoding error:&error]) {
-				[subscriber sendError:error];
-			} else {
-				[subscriber sendNext:self];
-				[subscriber sendCompleted];
-			}
-		}];
-		
-		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-}
-
-- (void)internalLoadFileIfNeeded {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
-	if (self.content) return;
-	NSStringEncoding encoding;
-	self.content = [NSString stringWithContentsOfURL:self.urlBacking.first usedEncoding:&encoding error:NULL];
-	self.encoding = encoding;
-}
-
-@end
-
-@implementation FileSystemDirectory
-
-+ (RACSignal *)directoryWithURL:(NSURL *)url {
-  return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
-}
-
-+ (RACSignal *)createDirectoryWithURL:(NSURL *)url {
-  if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
-		
-		[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (wasDisposed) return;
-			NSError *error = nil;
-			if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
-				[subscriber sendError:error];
-				return;
-			}
-			[self didCreate:url];
-			[disposable addDisposable:[[self directoryWithURL:url] subscribe:subscriber]];
-		}];
-		
-		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-}
-
-+ (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal {
-	return [[RACSignal combineLatest:@[ childrenSignal, abbreviationSignal ?: [RACSignal return:nil]] reduce:^(NSArray *content, NSString *abbreviation) {
-		// No abbreviation, no need to filter
-		if (![abbreviation length]) {
-			return [RACSignal return:[content.rac_sequence.eagerSequence map:^id(id value) {
-				return [RACTuple tupleWithObjects:value, nil];
-			}].array];
-		}
-		
-		return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-			__block BOOL wasDisposed = NO;
-			RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
-				wasDisposed = YES;
-			}];
-			
-			[RACScheduler.scheduler schedule:^{
-				ASSERT_NOT_MAIN_QUEUE();
-				// Filter the content
-				[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
-					return item.url;
-				}]] take:1] subscribeNext:^(RACTuple *urls) {
-					if (wasDisposed) return;
-					NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
-						RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
-						if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
-						NSIndexSet *hitMask = nil;
-						float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-						return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
-					}] filter:^BOOL(RACTuple *item) {
-						if (wasDisposed) return NO;
-						return [item.third floatValue] > 0;
-					}].array;
-					if (wasDisposed) return;
-					NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-						if (wasDisposed) return NSOrderedSame;
-						NSNumber *score1 = tuple1.third;
-						NSNumber *score2 = tuple2.third;
-						if (score1.floatValue > score2.floatValue) {
-							return NSOrderedAscending;
-						} else if (score1.floatValue < score2.floatValue) {
-							return NSOrderedDescending;
-						} else {
-							return NSOrderedSame;
-						}
-					}];
-					if (wasDisposed) return;
-					[subscriber sendNext:sortedContent];
-					[subscriber sendCompleted];
-				} error:^(NSError *error) {
-					[subscriber sendError:error];
-				} completed:^{
-					[subscriber sendCompleted];
-				}];
-			}];
-			
-			return disposable;
-		}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-	}] switchToLatest];
-}
-
-- (RACSignal *)children {
-	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-}
-
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
-	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
-	@weakify(self);
-	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
-		
-		[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			@strongify(self);
-			if (wasDisposed) return;
-			RACReplaySubject *childrenBacking = self.childrenBacking;
-			if (!childrenBacking) {
-				childrenBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-				self.childrenBacking = childrenBacking;
-				[self didChangeChildren];
-			}
-			RACSignal *result = childrenBacking;
-			
-			// Filter out hidden files if needed
-			if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
-				result = [[result map:^RACSignal *(NSArray *x) {
-					if (wasDisposed) return [RACSignal return:@[]];
-					if (!x.count) {
-						return [RACSignal return:x];
-					}
-					NSMutableArray *namedItems = [[NSMutableArray alloc] init];
-					for (FileSystemItem *item in x) {
-						if (wasDisposed) break;
-						[namedItems addObject:[item.name map:^RACTuple *(NSString *x) {
-							return [RACTuple tupleWithObjectsFromArray:@[item, x ? : [RACTupleNil tupleNil]]];
-						}]];
-					}
-					return [[RACSignal combineLatest:namedItems] map:^NSArray *(RACTuple *xs) {
-						if (wasDisposed) return @[];
-						NSMutableArray *nonHiddenItems = [[NSMutableArray alloc] init];
-						for (RACTuple *namedItem in xs) {
-							if (wasDisposed) break;
-							FileSystemItem *item = namedItem.first;
-							NSString *name = namedItem.second;
-							if (name && [name characterAtIndex:0] != L'.') {
-								[nonHiddenItems addObject:item];
-							}
-						}
-						return nonHiddenItems;
-					}];
-				}] switchToLatest];
-			}
-			
-			// Merge in descendants if needed
-			if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
-				result = [[result map:^RACSignal *(NSArray *x) {
-					if (wasDisposed) return [RACSignal return:@[]];
-					if (!x.count) {
-						return [RACSignal return:x];
-					}
-					NSMutableArray *descendantSignals = [[NSMutableArray alloc] init];
-					for (FileSystemItem *item in x) {
-						if (wasDisposed) break;
-						[descendantSignals addObject:[[item.type map:^(NSString *type) {
-							if (wasDisposed) return RACSignal.empty;
-							if (type != NSURLFileResourceTypeDirectory) {
-								return [RACSignal return:@[ item ]];
-							} else {
-								FileSystemDirectory *directory = (FileSystemDirectory *)item;
-								return [[directory childrenWithOptions:options] map:^NSArray *(NSArray *x) {
-									if (wasDisposed) return @[];
-									return [@[ item ] arrayByAddingObjectsFromArray:x];
-								}];
-							}
-						}] switchToLatest]];
-					}
-					return [[RACSignal combineLatest:descendantSignals] map:^NSArray *(RACTuple *xs) {
-						if (wasDisposed) return @[];
-						NSMutableArray *mergedDescendants = [[NSMutableArray alloc] init];
-						for (NSArray *children in xs) {
-							if (wasDisposed) break;
-							[mergedDescendants addObjectsFromArray:children];
-						}
-						return mergedDescendants;
-					}];
-				}] switchToLatest];
-			}
-			
-			[disposable addDisposable:[result subscribe:subscriber]];
-		}];
-		
-		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
-}
-
-- (void)didChangeChildren {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
-	RACSubject *childrenBacking = self.childrenBacking;
-	if (!childrenBacking) return;
-	NSURL *url = self.urlBacking.first;
-	if (!url) {
-		[childrenBacking sendNext:nil];
-	}
-	NSMutableArray *childrenURLs = [NSMutableArray array];
-	for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
-		[childrenURLs addObject:childURL];
-	}
-	[[RACSignal zip:[childrenURLs.rac_sequence.eagerSequence map:^id(NSURL *childURL) {
-		return [FileSystemItem itemWithURL:childURL type:nil];
-	}]] subscribeNext:^(RACTuple *children) {
-		[childrenBacking sendNext:children.allObjects];
-	}];
 }
 
 @end
@@ -705,11 +351,12 @@ static NSMutableDictionary *fileSystemItemCache() {
 + (void)didDelete:(NSURL *)target {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
 	FileSystemItem *item = fileSystemItemCache()[target];
-	if (item) {
-		[fileSystemItemCache() removeObjectForKey:target];
+	[fileSystemItemCache() removeObjectForKey:target];
+	[item didDelete];
+	[item.urlBacking sendNext:nil];
+	[item.typeBacking sendNext:nil];
+		
 		NSString *itemType = item.typeBacking.first;
-		[item.urlBacking sendNext:nil];
-		[item.typeBacking sendNext:nil];
 		if (itemType == NSURLFileResourceTypeRegular) {
 			((FileSystemFile *)item).content = nil;
 		} else if (itemType == NSURLFileResourceTypeDirectory) {
