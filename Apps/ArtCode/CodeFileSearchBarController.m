@@ -182,6 +182,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 		// Check if there is both a search regexp, a replacement string and the index to replace is contained in the matches
 		return @(replaceInfo.first && [replaceInfo.second length] && [replaceInfo.third count] > [replaceInfo.fourth unsignedIntegerValue]);
 	}];
+	[canReplaceSignal toProperty:@keypath(self.replaceOnceButton.enabled) onObject:self];
+	[canReplaceSignal toProperty:@keypath(self.replaceAllButton.enabled) onObject:self];
 	
 	self.replaceOnceCommand = [RACCommand commandWithCanExecuteSignal:canReplaceSignal block:nil];
 	[[replaceInfoSignal sample:self.replaceOnceCommand] subscribeNext:^(RACTuple *replaceInfo) {

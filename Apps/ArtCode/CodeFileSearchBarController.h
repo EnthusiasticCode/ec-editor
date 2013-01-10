@@ -31,6 +31,8 @@ typedef NSUInteger CodeFileSearchHitMustOption;
 @property (weak, nonatomic) IBOutlet UILabel *findResultLabel;
 @property (weak, nonatomic) IBOutlet UIButton *previousResultButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextResultButton;
+@property (weak, nonatomic) IBOutlet UIButton *replaceOnceButton;
+@property (weak, nonatomic) IBOutlet UIButton *replaceAllButton;
 
 - (IBAction)moveResultAction:(id)sender;
 - (IBAction)toggleReplaceAction:(id)sender;
