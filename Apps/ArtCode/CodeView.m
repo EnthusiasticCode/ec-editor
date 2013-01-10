@@ -14,6 +14,7 @@
 #import "NSTimer+BlockTimer.h"
 #import "KeyboardAccessoryView.h"
 #import "BezelAlert.h"
+#import "NSNotificationCenter+RACSupport.h"
 
 #define CARET_WIDTH 2
 #define ACCESSORY_HEIGHT 45
@@ -52,6 +53,10 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
   // Delegate and dataSource flags
   struct {
     unsigned delegateHasSelectedLineNumber : 1;
+		unsigned delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame : 1;
+    unsigned delegateHasDidShowKeyboardAccessoryViewInViewWithFrame : 1;
+    unsigned delegateHasShouldHideKeyboardAccessoryView : 1;
+    unsigned delegateHasDidHideKeyboardAccessoryView : 1;
     unsigned delegateHasReplaceInsertedTextSelectionAfterInsertion : 1;
     unsigned reserved : 2;
   } _flags;
@@ -260,6 +265,10 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
   
   _flags.delegateHasReplaceInsertedTextSelectionAfterInsertion = [delegate respondsToSelector:@selector(codeView:replaceInsertedText:selectionAfterInsertion:)];
   _flags.delegateHasSelectedLineNumber = [delegate respondsToSelector:@selector(codeView:selectedLineNumber:)];
+	_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:shouldShowKeyboardAccessoryViewInView:withFrame:)];
+  _flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame = [delegate respondsToSelector:@selector(codeView:didShowKeyboardAccessoryViewInView:withFrame:)];
+  _flags.delegateHasShouldHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewShouldHideKeyboardAccessoryView:)];
+  _flags.delegateHasDidHideKeyboardAccessoryView = [delegate respondsToSelector:@selector(codeViewDidHideKeyboardAccessoryView:)];
 }
 
 - (TextRenderer *)renderer
@@ -459,15 +468,6 @@ static void init(CodeView *self)
     self.renderer.renderWidth = self.bounds.size.width;
   }
   
-  // RAC
-  @weakify(self);
-  [RACAble(self.renderer.renderHeight) subscribeNext:^(NSNumber *heightNumber) {
-    @strongify(self);
-    CGSize boundsSize = self.bounds.size;
-    CGFloat height = [heightNumber floatValue];
-    self.contentSize = CGSizeMake(boundsSize.width, height ?: boundsSize.height);
-  }];
-  
   // Setup keyboard and selection
   self->_selectionView = [[TextSelectionView alloc] initWithFrame:CGRectZero codeView:self];
   [self->_selectionView setOpaque:NO];
@@ -495,6 +495,54 @@ static void init(CodeView *self)
   [self addGestureRecognizer:self->_longDoublePressRecognizer];
   
   self.attributedText = [[NSMutableAttributedString alloc] init];
+	
+	// RAC
+  @weakify(self);
+  [RACAble(self.renderer.renderHeight) subscribeNext:^(NSNumber *heightNumber) {
+    @strongify(self);
+    CGSize boundsSize = self.bounds.size;
+    CGFloat height = [heightNumber floatValue];
+    self.contentSize = CGSizeMake(boundsSize.width, height ?: boundsSize.height);
+  }];
+	
+	// Handle keyboard display changes
+	NSArray *accessoryViewNotificationSignals = @[
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
+	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
+	RACAble(self.isFirstResponder) ];
+  [[[[RACSignal merge:accessoryViewNotificationSignals] map:^id(id value) {
+		@strongify(self);
+		NSNotification *note = [value isKindOfClass:[NSNotification class]] ? (NSNotification *)value : nil;
+		BOOL shouldShow = (self.isFirstResponder
+											 && ((note && ((note.name == UIKeyboardDidChangeFrameNotification) || note.name == UIKeyboardDidShowNotification))));
+		if (!shouldShow) {
+			[self dismissKeyboardAccessoryViewAnimated:NO];
+		}
+		return [RACTuple tupleWithObjects:@(shouldShow), note ?: RACTupleNil.tupleNil, nil];
+	}] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+		@strongify(self);
+    RACTupleUnpack(NSNumber *shouldShow, NSNotification *note) = tuple;
+		
+		// Get actual keyboard frame
+		CGRect keyboardFrame = CGRectNull;
+		if (note.userInfo[UIKeyboardFrameEndUserInfoKey]) {
+			keyboardFrame = [self.superview convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+		} else {
+			keyboardFrame = [self.superview convertRect:UIScreen.mainScreen.bounds fromView:nil];
+			keyboardFrame.origin.y += keyboardFrame.size.height;
+		}
+		
+		// Show or hide accessory
+		// NOTE: the additional condition is there to address an animation issue: the docked accessory shows when the keyboard is animating the split when selecting 'split' from docked
+		if (!shouldShow.boolValue || (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < 264 && keyboardFrame.origin.y > 650 && keyboardFrame.origin.y < 768)) {
+			[self dismissKeyboardAccessoryViewAnimated:NO];
+		} else {
+			[self presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:self.superview animated:YES];
+		}
+	}];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -574,6 +622,8 @@ static void init(CodeView *self)
   if (self.keyboardAccessoryView.isSplit && self.keyboardAccessoryView.isFlipped) {
     targetFrame.origin.y += keyboardFrame.size.height + ACCESSORY_HEIGHT;
   }
+	
+	if (_flags.delegateHasShouldShowKeyboardAccessoryViewInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewInView:&targetView withFrame:&targetFrame]) return;
   
   // Show the accessory view
   self.keyboardAccessoryView.frame = targetFrame;
@@ -582,15 +632,23 @@ static void init(CodeView *self)
   self.keyboardAccessoryView.alpha = 0;
   [UIView animateWithDuration:(animated ? 0.25: 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
     self.keyboardAccessoryView.alpha = 1;
+		if (_flags.delegateHasDidShowKeyboardAccessoryViewInViewWithFrame) {
+			[self.delegate codeView:self didShowKeyboardAccessoryViewInView:targetView withFrame:targetFrame];
+		}
   } completion:nil];
 }
 
 - (void)dismissKeyboardAccessoryViewAnimated:(BOOL)animated {
+	if (_flags.delegateHasShouldHideKeyboardAccessoryView && ![self.delegate codeViewShouldHideKeyboardAccessoryView:self]) return;
+	
   [UIView animateWithDuration:(animated ? 0.25 : 0) delay:0 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState animations:^{
     self.keyboardAccessoryView.alpha = 0;
   } completion:^(BOOL finished) {
     self.keyboardAccessoryView.alpha = 1;
     [self.keyboardAccessoryView removeFromSuperview];
+		if (_flags.delegateHasDidHideKeyboardAccessoryView) {
+			[self.delegate codeViewDidHideKeyboardAccessoryView:self];
+		}
   }];
 }
 
@@ -699,21 +757,24 @@ static void init(CodeView *self)
 
 - (BOOL)becomeFirstResponder
 {
+	[self willChangeValueForKey:@"isFirstResponder"];
   BOOL shouldBecomeFirstResponder = [super becomeFirstResponder];
-  
   [self setNeedsLayout];
+	[self didChangeValueForKey:@"isFirstResponder"];
   
   return shouldBecomeFirstResponder;   
 }
 
 - (BOOL)resignFirstResponder
 {
+	[self willChangeValueForKey:@"isFirstResponder"];
   BOOL shouldResignFirstResponder = [super resignFirstResponder];
-  
+	
   [self setNeedsLayout];
   [_selectionView update];
   
   // TODO: call delegate's endediting
+	[self didChangeValueForKey:@"isFirstResponder"];
   
   return shouldResignFirstResponder;
 }

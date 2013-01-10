@@ -33,6 +33,19 @@ typedef CodeViewAutoIndentResult (^CodeViewAutoIndentationForLineBlock)(NSString
 /// Called when the user tap on a line number. Line numbers starts from 1, if 0 is returned, it has to be considered an invalid line.
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber;
 
+/// Returns if the codeview should show its keyboard accessory view in the given view with the given frame.
+/// The provided frame is relative to the given view. The implementer can return a different view and frame. The frame will be automatically adjusted after this method if the accessovy view 'flipped' property will be set to YES.
+- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView **)view withFrame:(CGRect *)frame;
+
+/// Informs the delegate that the accessory view has been displayed in the given view with the given frame.
+- (void)codeView:(CodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)frame;
+
+/// Returns if the codeview should hide its keyboard accessory view.
+- (BOOL)codeViewShouldHideKeyboardAccessoryView:(CodeView *)codeView;
+
+/// Informs the delegate that the accessory view has been hidden.
+- (void)codeViewDidHideKeyboardAccessoryView:(CodeView *)codeView;
+
 #pragma mark Insersion modificators
 
 /// This method allow the delegate to substitute the inserted text. 
