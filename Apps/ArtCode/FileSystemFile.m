@@ -13,14 +13,25 @@
 
 @property (nonatomic) NSStringEncoding encodingBacking;
 @property (nonatomic, strong) NSString *contentBacking;
+@property (nonatomic, getter = isLoaded) BOOL loaded;
 
-- (void)internalLoadFileIfNeeded;
+- (void)loadFileIfNeeded;
 
 @end
 
 @implementation FileSystemFile
 
 #pragma mark FileSystemItem
+
+- (instancetype)initWithURL:(NSURL *)url {
+	self = [super initWithURL:url];
+	if (self == nil) return nil;
+	
+	_encodingBacking = NSUTF8StringEncoding;
+	_contentBacking = @"";
+	
+	return self;
+}
 
 - (RACSignal *)create {
 	@weakify(self);
@@ -36,7 +47,7 @@
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
 			
-			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![[NSData data] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
+			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {
 				[subscriber sendError:error];
 			} else {
 				[self didCreate];
@@ -51,53 +62,47 @@
 
 #pragma mark FileSystemFile
 
-- (RACSignal *)encodingSignal {
-	return [[[RACSignal defer:^RACSignal *{
-		[self internalLoadFileIfNeeded];
-		return RACAbleWithStart(self.encoding);
-	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
+- (RACPropertySubject *)encoding {
+	@weakify(self);
+	RACPropertySubject *encoding = [RACPropertySubject property];
+	RACBinding *encodingBinding = encoding.binding;
+	RACScheduler *callingScheduler = currentScheduler();
+	
+	[fileSystemScheduler() schedule:^{
+		@strongify(self);
+		[self loadFileIfNeeded];
+		RACBinding *encodingBackingBinding = RACBind(self.encodingBacking);
+		[[encodingBackingBinding deliverOn:callingScheduler] subscribe:encodingBinding];
+		[callingScheduler schedule:^{
+			[[[encodingBinding deliverOn:fileSystemScheduler()] map:^(NSNumber *encoding) {
+				if (encoding == nil || encoding.unsignedIntegerValue == 0) encoding = @(NSUTF8StringEncoding);
+				return encoding;
+			}] subscribe:encodingBackingBinding];
+		}];
+	}];
+	
+	return encoding;
 }
 
-- (RACDisposable *)bindEncodingToObject:(id)target withKeyPath:(NSString *)keyPath {
-	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
+- (RACPropertySubject *)content {
+	@weakify(self);
+	RACPropertySubject *content = [RACPropertySubject property];
+	RACBinding *contentBinding = content.binding;
+	RACScheduler *callingScheduler = currentScheduler();
+	
 	[fileSystemScheduler() schedule:^{
-		[self internalLoadFileIfNeeded];
+		@strongify(self);
+		[self loadFileIfNeeded];
+		RACBinding *contentBackingBinding = RACBind(self.contentBacking);
+		[[contentBackingBinding deliverOn:callingScheduler] subscribe:contentBinding];
+		[callingScheduler schedule:^{
+			[[[contentBinding deliverOn:fileSystemScheduler()] filter:^BOOL(NSString *content) {
+				return content != nil;
+			}] subscribe:contentBackingBinding];
+		}];
 	}];
-	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
-	RACScheduler *targetBindingScheduler = currentScheduler();
-	[fileSystemScheduler() schedule:^{
-		RACBinding *encoding = RACBind(self.encoding);
-		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] map:^id(NSNumber *value) {
-			if (value == nil || value.unsignedIntegerValue == 0 || value == (id)[NSNull null]) value = @(NSUTF8StringEncoding);
-			return value;
-		}] subscribe:encoding]];
-		[disposable addDisposable:[[encoding deliverOn:targetBindingScheduler] subscribe:targetBinding]];
-	}];
-	return disposable;
-}
-
-- (RACSignal *)contentSignal {
-	return [[[RACSignal defer:^RACSignal *{
-		[self internalLoadFileIfNeeded];
-		return RACAbleWithStart(self.content);
-	}] subscribeOn:fileSystemScheduler()] deliverOn:[RACScheduler currentScheduler]];
-}
-
-- (RACDisposable *)bindContentToObject:(id)target withKeyPath:(NSString *)keyPath {
-	RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-	[fileSystemScheduler() schedule:^{
-		[self internalLoadFileIfNeeded];
-	}];
-	RACBinding *targetBinding = [[target rac_propertyForKeyPath:keyPath] binding];
-	RACScheduler *targetBindingScheduler = currentScheduler();
-	[fileSystemScheduler() schedule:^{
-		RACBinding *content = RACBind(self.content);
-		[disposable addDisposable:[[[targetBinding deliverOn:fileSystemScheduler()] filter:^ BOOL (NSString *value) {
-			return value != nil && value != (id)[NSNull null];
-		}] subscribe:content]];
-		[disposable addDisposable:[[content deliverOn:targetBindingScheduler] subscribe:targetBinding]];
-	}];
-	return disposable;
+	
+	return content;
 }
 
 - (RACSignal *)save {
@@ -107,23 +112,21 @@
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
-			@strongify(self);
 			IF_CANCELLED_RETURN();
-			NSURL *url = self.urlBacking.first;
+			
+			@strongify(self);
+			NSURL *url = self.urlBacking;
+			NSError *error = nil;
+			
 			if (!url) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
-			if (!self.encoding) {
-				self.encoding = NSUTF8StringEncoding;
-			}
-			if (!self.content) {
-				self.content = @"";
-			}
+
 			IF_CANCELLED_RETURN();
-			NSError *error = nil;
+			
 			// Don't save atomically so we don't lose extended attributes
-			if (![self.content writeToURL:url atomically:NO encoding:self.encoding error:&error]) {
+			if (![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {
 				[subscriber sendError:error];
 			} else {
 				[subscriber sendNext:self];
@@ -135,12 +138,15 @@
 	}] deliverOn:RACScheduler.currentScheduler];
 }
 
-- (void)internalLoadFileIfNeeded {
+#pragma mark Private Methods
+
+- (void)loadFileIfNeeded {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	if (self.content) return;
+	if (self.loaded) return;
 	NSStringEncoding encoding;
-	self.content = [NSString stringWithContentsOfURL:self.urlBacking.first usedEncoding:&encoding error:NULL];
-	self.encoding = encoding;
+	self.contentBacking = [NSString stringWithContentsOfURL:self.urlBacking usedEncoding:&encoding error:NULL];
+	self.encodingBacking = encoding;
+	self.loaded = YES;
 }
 
 @end
