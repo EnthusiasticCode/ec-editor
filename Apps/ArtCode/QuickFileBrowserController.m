@@ -9,7 +9,7 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
@@ -54,7 +54,7 @@
   // RAC
   @weakify(self);
   [[[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
-    return [FileSystemDirectory directoryWithURL:projectURL];
+    return [FileSystemDirectory itemWithURL:projectURL];
   }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);

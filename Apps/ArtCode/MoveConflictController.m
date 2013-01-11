@@ -10,7 +10,7 @@
 #import "NSURL+Utilities.h"
 #import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "FileSystemItemCell.h"
 
 

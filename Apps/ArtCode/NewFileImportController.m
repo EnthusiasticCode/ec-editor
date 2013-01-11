@@ -9,8 +9,7 @@
 #import "NewFileImportController.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "FileSystemItem.h"
-//#import "FileSystemItemCell.h"
+#import "FileSystemDirectory.h"
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
 #import "UIImage+AppStyle.h"
@@ -116,7 +115,7 @@ static void _init(NewFileImportController *self) {
     @strongify(self);
     return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
   }]],
-  [FileSystemDirectory directoryWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
+  [FileSystemDirectory itemWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
     @strongify(self);
     NSArray *items = [x.first allObjects];
     FileSystemDirectory *copyToDirectory = x.second;

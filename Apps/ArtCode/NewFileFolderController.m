@@ -8,7 +8,7 @@
 
 #import "NewFileFolderController.h"
 #import "UIViewController+Utilities.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
@@ -74,7 +74,9 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [[FileSystemDirectory createDirectoryWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] subscribeCompleted:^{
+  [[[FileSystemDirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] flattenMap:^(FileSystemDirectory *directory) {
+		return [directory create];
+	}] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];

@@ -10,7 +10,7 @@
 #import "UIImage+AppStyle.h"
 #import "ArtCodeTab.h"
 #import "NSString+PluralFormat.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "FileSystemItemCell.h"
 
 

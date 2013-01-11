@@ -20,7 +20,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 
 #import <Connection/CKConnectionRegistry.h>
 #import "BezelAlert.h"
@@ -162,7 +162,7 @@ static void _init(RemoteNavigationController *self) {
     self.localFileListController = (LocalFileListController *)viewController;
     // RAC setting the initial location for the local file browser
     if ([(LocalFileListController *)viewController locationDirectory] == nil) {
-      [[FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *x) {
+      [[FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *x) {
         [(LocalFileListController *)viewController setLocationDirectory:x];
       }];
     }

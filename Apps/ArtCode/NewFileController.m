@@ -8,7 +8,7 @@
 
 #import "NewFileController.h"
 #import "UIViewController+Utilities.h"
-#import "FileSystemItem.h"
+#import "FileSystemFile.h"
 
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
@@ -86,9 +86,10 @@
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   }
   
-  [[FileSystemFile createFileWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] subscribeNext:^(id x) {
+  [[[FileSystemFile itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] flattenMap:^(FileSystemFile *file) {
+		return [file create];
+	}] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-  } completed:^{
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }

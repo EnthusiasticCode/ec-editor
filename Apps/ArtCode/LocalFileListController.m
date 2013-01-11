@@ -7,7 +7,7 @@
 //
 
 #import "LocalFileListController.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "FileSystemItemCell.h"
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"

@@ -9,7 +9,7 @@
 #import "ArtCodeProjectSet.h"
 #import "ArtCodeDatastore.h"
 #import "NSURL+Utilities.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "ArtCodeProject.h"
 
 
@@ -74,7 +74,9 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [[FileSystemDirectory createDirectoryWithURL:[[self fileURL] URLByAppendingPathComponent:name]] subscribeNext:^(FileSystemDirectory *directory) {
+  [[[FileSystemDirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name]] flattenMap:^(FileSystemDirectory *directory) {
+		return [directory create];
+	}] subscribeNext:^(FileSystemDirectory *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:name];
     [project setLabelColor:labelColor];
@@ -87,7 +89,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [[[[FileSystemDirectory directoryWithURL:project.fileURL] map:^RACSignal *(FileSystemDirectory *directory) {
+  [[[[FileSystemDirectory itemWithURL:project.fileURL] map:^RACSignal *(FileSystemDirectory *directory) {
     return [directory delete];
   }] switchToLatest] subscribeError:^(NSError *error) {
     completionHandler(error);

@@ -15,6 +15,7 @@
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "UIColor+AppStyle.h"
@@ -134,7 +135,7 @@
         if (temporaryDirectoryURL) {
           // Get the extracted directories
           [[[[RACSignal combineLatest:@[
-            [[[FileSystemDirectory directoryWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(FileSystemDirectory *temporaryDirectory) {
+            [[[FileSystemDirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(FileSystemDirectory *temporaryDirectory) {
               return [[temporaryDirectory children] take:1];
             }] flattenMap:^RACSignal *(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
@@ -142,14 +143,13 @@
                 return [RACSignal return:children];
               }
               FileSystemItem *onlyChild = [children lastObject];
-              return [[onlyChild.type take:1] flattenMap:^RACSignal *(NSString *x) {
-                if (x == NSURLFileResourceTypeDirectory) {
-                  return [[(FileSystemDirectory *)onlyChild children] take:1];
-                }
+							if ([onlyChild isKindOfClass:FileSystemDirectory.class]) {
+								return [[(FileSystemDirectory *)onlyChild children] take:1];
+							} else {
                 return [RACSignal return:children];
-              }];
+							}
             }],
-            [FileSystemDirectory directoryWithURL:createdProject.fileURL]
+            [FileSystemDirectory itemWithURL:createdProject.fileURL]
           ]]
           flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;

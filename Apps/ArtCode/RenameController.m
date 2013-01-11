@@ -8,7 +8,7 @@
 
 #import "RenameController.h"
 #import "UIImage+AppStyle.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "FileSystemItemCell.h"
 
 

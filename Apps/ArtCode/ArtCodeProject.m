@@ -15,7 +15,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProjectSet.h"
 
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 
 
 @interface ArtCodeProjectBookmark ()
@@ -70,9 +70,9 @@
     @strongify(self);
     if (project) {
       // The project has been successfuly created, copying files
-			[[[RACSignal zip:@[ [[FileSystemDirectory directoryWithURL:self.fileURL] flattenMap:^(FileSystemDirectory *x) {
+			[[[RACSignal zip:@[ [[FileSystemDirectory itemWithURL:self.fileURL] flattenMap:^(FileSystemDirectory *x) {
         return [[x children] take:1];
-      }], [FileSystemDirectory directoryWithURL:project.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
+      }], [FileSystemDirectory itemWithURL:project.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
         return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
           return [y copyTo:x2];
         }]];

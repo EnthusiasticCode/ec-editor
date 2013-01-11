@@ -36,6 +36,7 @@
 
 #import "UIViewController+Utilities.h"
 #import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 
 #import "CodeFileController.h"
 
@@ -89,7 +90,7 @@
 	__block FileSystemItem *scrollToItem = nil;
 
 	[[[RACAble(self.artCodeTab.currentLocation) flattenMap:^id(ArtCodeLocation *location) {
-		RACSignal *directorySignal = [FileSystemDirectory directoryWithURL:location.url];
+		RACSignal *directorySignal = [FileSystemDirectory itemWithURL:location.url];
 		NSString *revealFileName = [location.dataDictionary objectForKey:@"reveal"];
 		if (revealFileName.length == 0) return directorySignal;
 		// Return the directorySignal by setting the scrollToItem in case the revealItem is valid
@@ -293,7 +294,7 @@
     if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+      directoryBrowser.currentFolderSignal = [FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
 			directoryBrowser.excludeDirectory = self.currentDirectory;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
@@ -334,7 +335,7 @@
       case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderSignal = [FileSystemDirectory directoryWithURL:self.artCodeTab.currentLocation.project.fileURL];
+        directoryBrowser.currentFolderSignal = [FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
 				directoryBrowser.excludeDirectory = self.currentDirectory;
         [self modalNavigationControllerPresentViewController:directoryBrowser];
         break;

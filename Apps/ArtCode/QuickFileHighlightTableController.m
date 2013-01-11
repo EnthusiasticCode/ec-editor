@@ -11,7 +11,7 @@
 #import "CodeFileController.h"
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
-#import "FileSystemItem+TextFile.h"
+#import "FileSystemFile+TextFile.h"
 
 @interface QuickFileHighlightTableController ()
 
@@ -46,7 +46,7 @@
     // Set syntaxes to nil to clear out the table while the explicit syntax identifier is being retrieved
     self.syntaxes = nil;
     self.currentSyntax = nil;
-    sourceDisposable = [[[x.explicitSyntaxIdentifierSource doNext:^(id _) {
+    sourceDisposable = [[[x.explicitSyntaxIdentifier doNext:^(id _) {
       @strongify(self);
       // If this is the first time the explicit syntax identifier is sent, the syntaxes will still be nil, in that case set the syntaxes back
       if (!self.syntaxes) {
@@ -57,7 +57,7 @@
     }] toProperty:@keypath(self.currentSyntax) onObject:self];
     sinkDisposable = [[RACAble(self.currentSyntax) map:^NSString *(TMSyntaxNode *x) {
       return x.identifier;
-    }] subscribe:x.explicitSyntaxIdentifierSink];
+    }] subscribe:x.explicitSyntaxIdentifier];
   }];
   
   // Reload the table when the current syntax or the syntaxes change
