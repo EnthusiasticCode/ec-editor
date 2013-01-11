@@ -20,15 +20,11 @@
 + (RACSignal *)createDirectoryWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
+		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
 		
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			NSError *error = nil;
 			if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
 				[subscriber sendError:error];
@@ -53,7 +49,7 @@
 		}
 		
 		return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-			DISPOSED_FLAG_DISPOSABLE(disposable);
+			CANCELLATION_DISPOSABLE(disposable);
 			
 			[RACScheduler.scheduler schedule:^{
 				ASSERT_NOT_MAIN_QUEUE();
@@ -61,20 +57,20 @@
 				[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
 					return item.url;
 				}]] take:1] subscribeNext:^(RACTuple *urls) {
-					if (wasDisposed) return;
+					IF_CANCELLED_RETURN();
 					NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
 						RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
-						if (wasDisposed) return [RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil];
+						IF_CANCELLED_RETURN([RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil]);
 						NSIndexSet *hitMask = nil;
 						float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
 						return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
 					}] filter:^BOOL(RACTuple *item) {
-						if (wasDisposed) return NO;
+						IF_CANCELLED_RETURN(NO);
 						return [item.third floatValue] > 0;
 					}].array;
-					if (wasDisposed) return;
+					IF_CANCELLED_RETURN();
 					NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-						if (wasDisposed) return NSOrderedSame;
+						IF_CANCELLED_RETURN(NSOrderedSame);
 						NSNumber *score1 = tuple1.third;
 						NSNumber *score2 = tuple2.third;
 						if (score1.floatValue > score2.floatValue) {
@@ -85,7 +81,7 @@
 							return NSOrderedSame;
 						}
 					}];
-					if (wasDisposed) return;
+					IF_CANCELLED_RETURN();
 					[subscriber sendNext:sortedContent];
 					[subscriber sendCompleted];
 				} error:^(NSError *error) {
@@ -108,16 +104,12 @@
 	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
 	@weakify(self);
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
+		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
 		
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			RACReplaySubject *childrenBacking = self.childrenBacking;
 			if (!childrenBacking) {
 				childrenBacking = [RACReplaySubject replaySubjectWithCapacity:1];
@@ -129,22 +121,22 @@
 			// Filter out hidden files if needed
 			if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
 				result = [[result map:^RACSignal *(NSArray *x) {
-					if (wasDisposed) return [RACSignal return:@[]];
+					IF_CANCELLED_RETURN([RACSignal return:@[]]);
 					if (!x.count) {
 						return [RACSignal return:x];
 					}
 					NSMutableArray *namedItems = [[NSMutableArray alloc] init];
 					for (FileSystemItem *item in x) {
-						if (wasDisposed) break;
+						IF_CANCELLED_BREAK();
 						[namedItems addObject:[item.name map:^RACTuple *(NSString *x) {
 							return [RACTuple tupleWithObjectsFromArray:@[item, x ? : [RACTupleNil tupleNil]]];
 						}]];
 					}
 					return [[RACSignal combineLatest:namedItems] map:^NSArray *(RACTuple *xs) {
-						if (wasDisposed) return @[];
+						IF_CANCELLED_RETURN(@[]);
 						NSMutableArray *nonHiddenItems = [[NSMutableArray alloc] init];
 						for (RACTuple *namedItem in xs) {
-							if (wasDisposed) break;
+							IF_CANCELLED_BREAK();
 							FileSystemItem *item = namedItem.first;
 							NSString *name = namedItem.second;
 							if (name && [name characterAtIndex:0] != L'.') {
@@ -159,31 +151,31 @@
 			// Merge in descendants if needed
 			if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
 				result = [[result map:^RACSignal *(NSArray *x) {
-					if (wasDisposed) return [RACSignal return:@[]];
+					IF_CANCELLED_RETURN([RACSignal return:@[]]);
 					if (!x.count) {
 						return [RACSignal return:x];
 					}
 					NSMutableArray *descendantSignals = [[NSMutableArray alloc] init];
 					for (FileSystemItem *item in x) {
-						if (wasDisposed) break;
+						IF_CANCELLED_BREAK();
 						[descendantSignals addObject:[[item.type map:^(NSString *type) {
-							if (wasDisposed) return RACSignal.empty;
+							IF_CANCELLED_RETURN(RACSignal.empty);
 							if (type != NSURLFileResourceTypeDirectory) {
 								return [RACSignal return:@[ item ]];
 							} else {
 								FileSystemDirectory *directory = (FileSystemDirectory *)item;
 								return [[directory childrenWithOptions:options] map:^NSArray *(NSArray *x) {
-									if (wasDisposed) return @[];
+									IF_CANCELLED_RETURN(@[]);
 									return [@[ item ] arrayByAddingObjectsFromArray:x];
 								}];
 							}
 						}] switchToLatest]];
 					}
 					return [[RACSignal combineLatest:descendantSignals] map:^NSArray *(RACTuple *xs) {
-						if (wasDisposed) return @[];
+						IF_CANCELLED_RETURN(@[]);
 						NSMutableArray *mergedDescendants = [[NSMutableArray alloc] init];
 						for (NSArray *children in xs) {
-							if (wasDisposed) break;
+							IF_CANCELLED_BREAK();
 							[mergedDescendants addObjectsFromArray:children];
 						}
 						return mergedDescendants;

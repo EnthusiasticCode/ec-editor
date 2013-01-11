@@ -23,22 +23,18 @@
 + (RACSignal *)createFileWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
-		
+		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
+
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			NSError *error = nil;
 			if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
 				[subscriber sendError:error];
 				return;
 			}
 			[self didCreate:url];
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			[disposable addDisposable:[[self fileWithURL:url] subscribe:subscriber]];
 		}];
 		
@@ -98,15 +94,12 @@
 - (RACSignal *)save {
 	@weakify(self);
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACDisposable *disposable = [RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}];
+		CANCELLATION_DISPOSABLE(disposable);
 		
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			NSURL *url = self.urlBacking.first;
 			if (!url) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
@@ -118,7 +111,7 @@
 			if (!self.content) {
 				self.content = @"";
 			}
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			NSError *error = nil;
 			// Don't save atomically so we don't lose extended attributes
 			if (![self.content writeToURL:url atomically:NO encoding:self.encoding error:&error]) {

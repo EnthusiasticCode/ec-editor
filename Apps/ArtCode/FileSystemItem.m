@@ -55,15 +55,11 @@ NSMutableDictionary *fileSystemItemCache() {
 + (RACSignal *)itemWithURL:(NSURL *)url {
 	if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		__block BOOL wasDisposed = NO;
-		RACCompoundDisposable *disposable = [RACCompoundDisposable compoundDisposable];
-		[disposable addDisposable:[RACDisposable disposableWithBlock:^{
-			wasDisposed = YES;
-		}]];
+		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
 		
 		[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			FileSystemItem *item = fileSystemItemCache()[url];
 			if (item) {
 				RACDisposable *itemDisposable = [[[item.type take:1] flattenMap:^(NSString *value) {
@@ -73,13 +69,13 @@ NSMutableDictionary *fileSystemItemCache() {
 				[disposable addDisposable:itemDisposable];
 				return;
 			}
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			NSString *detectedType = nil;
 			if (![url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL] || !detectedType || (type && ![detectedType isEqual:type])) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			Class finalClass = nil;
 			if (detectedType == NSURLFileResourceTypeRegular) {
 				finalClass = [FileSystemFile class];
@@ -88,13 +84,13 @@ NSMutableDictionary *fileSystemItemCache() {
 			} else {
 				finalClass = [FileSystemItem class];
 			}
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			item = [[finalClass alloc] initWithURL:url type:detectedType];
 			if (!item) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
-			if (wasDisposed) return;
+			IF_CANCELLED_RETURN();
 			fileSystemItemCache()[url] = item;
 			[subscriber sendNext:item];
 			[subscriber sendCompleted];
