@@ -7,21 +7,18 @@
 //
 
 #import "FileSystemFile.h"
+#import "FileSystemItem+Private.h"
 
 @interface FileSystemFile ()
 
-@property (nonatomic) NSStringEncoding encoding;
-@property (nonatomic, strong) NSString *content;
+@property (nonatomic) NSStringEncoding encodingBacking;
+@property (nonatomic, strong) NSString *contentBacking;
 
 - (void)internalLoadFileIfNeeded;
 
 @end
 
 @implementation FileSystemFile
-
-+ (RACSignal *)fileWithURL:(NSURL *)url {
-  return [self itemWithURL:url type:NSURLFileResourceTypeRegular];
-}
 
 + (RACSignal *)createFileWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
@@ -46,7 +43,7 @@
 		}];
 		
 		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
+	}] deliverOn:RACScheduler.currentScheduler];
 }
 
 - (RACSignal *)encodingSignal {
@@ -133,7 +130,7 @@
 		}];
 		
 		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
+	}] deliverOn:RACScheduler.currentScheduler];
 }
 
 - (void)internalLoadFileIfNeeded {

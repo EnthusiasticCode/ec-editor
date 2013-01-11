@@ -12,6 +12,7 @@
 
 // Called after `item` has been added to the receiver.
 - (void)didAddItem:(FileSystemItem *)item;
+
 // Called after `item` has been removed from the receiver.
 - (void)didRemoveItem:(FileSystemItem *)item;
 

@@ -8,6 +8,23 @@
 
 #import "FileSystemItem.h"
 
+@class RACScheduler;
+
+#if DEBUG
+#define ASSERT_FILE_SYSTEM_SCHEDULER() ASSERT(currentScheduler() == fileSystemScheduler())
+#else
+#define ASSERT_FILE_SYSTEM_SCHEDULER()
+#endif
+
+// All filesystem accesses must be on this scheduler.
+RACScheduler *fileSystemScheduler();
+
+// All values sent by returned signals must be sent on the calling scheduler.
+RACScheduler *currentScheduler();
+
+// Accesses to the cache must be on `fileSystemScheduler()`.
+NSMutableDictionary *fileSystemItemCache();
+
 @interface FileSystemItem ()
 
 // Designated initializer.
@@ -17,10 +34,10 @@
 - (instancetype)initWithURL:(NSURL *)url;
 
 // Called after the receiver has been moved.
-- (void)didMoveFromURL:(NSURL *)url;
+- (void)didMoveToURL:(NSURL *)url;
 
 // Called after the receiver has been copied.
-- (void)didCopyFromURL:(NSURL *)url;
+- (void)didCopyToURL:(NSURL *)url;
 
 // Called after the receiver has been deleted.
 - (void)didDelete;

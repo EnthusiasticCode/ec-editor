@@ -31,6 +31,11 @@
 
 @interface FileSystemItem (FileManagement)
 
+// Creates the receiver if it doesn't exist on it's persistence mechanism.
+//
+// Returns a signal that sends the newly created item and completes.
+- (RACSignal *)create;
+
 // Moves the receiver to the given directory.
 //
 // destination   - An optional FileSystemDirectory to which the receiver is

@@ -7,6 +7,7 @@
 //
 
 #import "FileSystemDirectory+Private.h"
+#import "FileSystemItem+Private.h"
 
 @interface FileSystemDirectory ()
 
@@ -15,10 +16,6 @@
 @end
 
 @implementation FileSystemDirectory
-
-+ (RACSignal *)directoryWithURL:(NSURL *)url {
-  return [self itemWithURL:url type:NSURLFileResourceTypeDirectory];
-}
 
 + (RACSignal *)createDirectoryWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
@@ -42,7 +39,7 @@
 		}];
 		
 		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
+	}] deliverOn:RACScheduler.currentScheduler];
 }
 
 + (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal {
@@ -198,7 +195,7 @@
 		}];
 		
 		return disposable;
-	}] deliverOnCurrentSchedulerIfNotFileSystemScheduler];
+	}] deliverOn:RACScheduler.currentScheduler];
 }
 
 - (void)didChangeChildren {
