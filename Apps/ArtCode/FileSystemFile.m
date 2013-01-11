@@ -23,9 +23,9 @@
 + (RACSignal *)createFileWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
+		CANCELLATION_DISPOSABLE(disposable);
 
-		[fileSystemScheduler() schedule:^{
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			IF_CANCELLED_RETURN();
 			NSError *error = nil;
@@ -36,7 +36,7 @@
 			[self didCreate:url];
 			IF_CANCELLED_RETURN();
 			[disposable addDisposable:[[self fileWithURL:url] subscribe:subscriber]];
-		}];
+		}]];
 		
 		return disposable;
 	}] deliverOn:RACScheduler.currentScheduler];
@@ -96,7 +96,7 @@
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		CANCELLATION_DISPOSABLE(disposable);
 		
-		[fileSystemScheduler() schedule:^{
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			IF_CANCELLED_RETURN();
@@ -120,7 +120,7 @@
 				[subscriber sendNext:self];
 				[subscriber sendCompleted];
 			}
-		}];
+		}]];
 		
 		return disposable;
 	}] deliverOn:RACScheduler.currentScheduler];

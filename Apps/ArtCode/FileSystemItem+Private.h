@@ -8,6 +8,8 @@
 
 #import "FileSystemItem.h"
 
+#import <libkern/OSAtomic.h>
+
 @class RACScheduler;
 
 #if DEBUG
@@ -18,19 +20,15 @@
 
 #define CANCELLATION_DISPOSABLE(NAME) \
 _CANCELLATION_FLAG; \
-RACDisposable *NAME = _CANCELLATION_DISPOSABLE
-
-#define CANCELLATION_COMPOUND_DISPOSABLE(NAME) \
-_CANCELLATION_FLAG; \
-RACCompoundDisposable *NAME = [RACCompound compoundDisposable]; \
+RACCompoundDisposable *NAME = [RACCompoundDisposable compoundDisposable]; \
 [NAME addDisposable:_CANCELLATION_DISPOSABLE]
 
 #define _CANCELLATION_FLAG \
-__block uint32 __isCancelled = 0
+__block uint32_t __isCancelled = 0
 
 #define _CANCELLATION_DISPOSABLE \
 [RACDisposable disposableWithBlock:^{ \
-OSAtomicOrBarrier(1, &__isCancelled); \
+OSAtomicOr32Barrier(1, &__isCancelled); \
 }]
 
 #define IF_CANCELLED_RETURN(VALUE) \

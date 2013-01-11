@@ -20,9 +20,9 @@
 + (RACSignal *)createDirectoryWithURL:(NSURL *)url {
   if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
+		CANCELLATION_DISPOSABLE(disposable);
 		
-		[fileSystemScheduler() schedule:^{
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			IF_CANCELLED_RETURN();
 			NSError *error = nil;
@@ -32,7 +32,7 @@
 			}
 			[self didCreate:url];
 			[disposable addDisposable:[[self directoryWithURL:url] subscribe:subscriber]];
-		}];
+		}]];
 		
 		return disposable;
 	}] deliverOn:RACScheduler.currentScheduler];
@@ -51,7 +51,7 @@
 		return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 			CANCELLATION_DISPOSABLE(disposable);
 			
-			[RACScheduler.scheduler schedule:^{
+			[disposable addDisposable:[RACScheduler.scheduler schedule:^{
 				ASSERT_NOT_MAIN_QUEUE();
 				// Filter the content
 				[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
@@ -89,7 +89,7 @@
 				} completed:^{
 					[subscriber sendCompleted];
 				}];
-			}];
+			}]];
 			
 			return disposable;
 		}];
@@ -104,9 +104,9 @@
 	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
 	@weakify(self);
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
+		CANCELLATION_DISPOSABLE(disposable);
 		
-		[fileSystemScheduler() schedule:^{
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			IF_CANCELLED_RETURN();
@@ -184,7 +184,7 @@
 			}
 			
 			[disposable addDisposable:[result subscribe:subscriber]];
-		}];
+		}]];
 		
 		return disposable;
 	}] deliverOn:RACScheduler.currentScheduler];

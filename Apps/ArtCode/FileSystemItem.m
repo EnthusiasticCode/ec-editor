@@ -8,13 +8,13 @@
 
 #import "FileSystemItem+Private.h"
 
-#import <libkern/OSAtomic.h>
 #import <sys/xattr.h>
 
 #import "FileSystemDirectory+Private.h"
 #import "FileSystemFile.h"
 #import "NSString+ScoreForAbbreviation.h"
 
+// Scheduler for serializing accesses to the file system
 RACScheduler *fileSystemScheduler() {
   static RACScheduler *fileSystemScheduler = nil;
   static dispatch_once_t onceToken;
@@ -24,6 +24,7 @@ RACScheduler *fileSystemScheduler() {
   return fileSystemScheduler;
 }
 
+// Returns the current scheduler
 RACScheduler *currentScheduler() {
 	ASSERT(RACScheduler.currentScheduler);
   return RACScheduler.currentScheduler;
@@ -42,8 +43,6 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @interface FileSystemItem ()
 
-+ (RACSignal *)itemWithURL:(NSURL *)url type:(NSString *)type;
-
 @property (nonatomic, strong) NSURL *urlBacking;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
@@ -55,49 +54,42 @@ NSMutableDictionary *fileSystemItemCache() {
 + (RACSignal *)itemWithURL:(NSURL *)url {
 	if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_COMPOUND_DISPOSABLE(disposable);
+		CANCELLATION_DISPOSABLE(disposable);
 		
-		[fileSystemScheduler() schedule:^{
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			IF_CANCELLED_RETURN();
+			
 			FileSystemItem *item = fileSystemItemCache()[url];
 			if (item) {
-				RACDisposable *itemDisposable = [[[item.type take:1] flattenMap:^(NSString *value) {
-					if (type && ![value isEqual:type]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-					return [RACSignal return:item];
-				}] subscribe:subscriber];
-				[disposable addDisposable:itemDisposable];
+				if ([item isKindOfClass:self]) {
+					[subscriber sendNext:item];
+					[subscriber sendCompleted];
+				} else {
+					[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+				}
 				return;
 			}
+			
 			IF_CANCELLED_RETURN();
-			NSString *detectedType = nil;
-			if (![url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL] || !detectedType || (type && ![detectedType isEqual:type])) {
+			
+			item = [[self alloc] initWithURL:url];
+			
+			if (item == nil) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
+			
 			IF_CANCELLED_RETURN();
-			Class finalClass = nil;
-			if (detectedType == NSURLFileResourceTypeRegular) {
-				finalClass = [FileSystemFile class];
-			} else if (detectedType == NSURLFileResourceTypeDirectory) {
-				finalClass = [FileSystemDirectory class];
-			} else {
-				finalClass = [FileSystemItem class];
-			}
-			IF_CANCELLED_RETURN();
-			item = [[finalClass alloc] initWithURL:url type:detectedType];
-			if (!item) {
-				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-				return;
-			}
-			IF_CANCELLED_RETURN();
+			
 			fileSystemItemCache()[url] = item;
 			[subscriber sendNext:item];
 			[subscriber sendCompleted];
-		}];
+		}]];
 		
 		return disposable;
-	}] deliverOn:currentScheduler()];}
+	}] deliverOn:currentScheduler()];
+}
 
 - (instancetype)initWithURL:(NSURL *)url {
   ASSERT_FILE_SYSTEM_SCHEDULER();
@@ -111,7 +103,7 @@ NSMutableDictionary *fileSystemItemCache() {
 }
 
 - (RACSignal *)url {
-  return [self.urlBacking deliverOn:currentScheduler()];
+  return [RACAble(self.urlBacking) deliverOn:currentScheduler()];
 }
 
 - (RACSignal *)name {
@@ -122,102 +114,103 @@ NSMutableDictionary *fileSystemItemCache() {
 
 - (RACSignal *)parent {
 	return [[self.url map:^(NSURL *value) {
-		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent type:NSURLFileResourceTypeDirectory];
+		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent];
 	}] switchToLatest];
 }
 
 - (void)didMoveToURL:(NSURL *)url {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	FileSystemItem *item = fileSystemItemCache()[source];
-	if (item != nil) {
-		[item.urlBacking sendNext:destination];
-		[fileSystemItemCache() removeObjectForKey:source];
-		fileSystemItemCache()[destination] = item;
-	}
-	NSURL *sourceParent = source.URLByDeletingLastPathComponent;
-	NSURL *destinationParent = destination.URLByDeletingLastPathComponent;
-	if (![sourceParent isEqual:destinationParent]) {
-		[fileSystemItemCache()[sourceParent] didChangeChildren];
-		[fileSystemItemCache()[destinationParent] didChangeChildren];
-	}
+	NSURL *fromURL = self.urlBacking;
+	
+	FileSystemDirectory *fromParent = fileSystemItemCache()[fromURL.URLByDeletingLastPathComponent];
+	if ([fromParent isKindOfClass:FileSystemDirectory.class]) [fromParent didRemoveItem:self];
+	
+	[fileSystemItemCache() removeObjectForKey:fromURL];
+	self.urlBacking = url;
+	fileSystemItemCache()[url] = self;
+	
+	FileSystemDirectory *toParent = fileSystemItemCache()[url.URLByDeletingLastPathComponent];
+	if ([toParent isKindOfClass:FileSystemDirectory.class]) [toParent didAddItem:self];
 }
 
 - (void)didCopyToURL:(NSURL *)url {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
-	[fileSystemItemCache()[destination.URLByDeletingLastPathComponent] didChangeChildren];
+	
+	fileSystemItemCache()[url] = self;
+	
+	FileSystemDirectory *toParent = fileSystemItemCache()[url.URLByDeletingLastPathComponent];
+	if ([toParent isKindOfClass:FileSystemDirectory.class]) [toParent didAddItem:self];
 }
 
 - (void)didDelete {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
-	FileSystemItem *item = fileSystemItemCache()[target];
-	[fileSystemItemCache() removeObjectForKey:target];
-	[item didDelete];
-	[item.urlBacking sendNext:nil];
-	[item.typeBacking sendNext:nil];
+	NSURL *fromURL = self.urlBacking;
 	
-	NSString *itemType = item.typeBacking.first;
-	if (itemType == NSURLFileResourceTypeRegular) {
-		((FileSystemFile *)item).content = nil;
-	} else if (itemType == NSURLFileResourceTypeDirectory) {
-		[((FileSystemDirectory *)item).childrenBacking sendNext:nil];
-		NSString *targetString = target.standardizedURL.absoluteString;
-		NSArray *keys = fileSystemItemCache().allKeys.copy;
-		for (NSURL *key in keys) {
-			if ([key.standardizedURL.absoluteString hasPrefix:targetString]) {
-				[self didDelete:key];
-			}
-		}
-	}
-}
-[fileSystemItemCache()[[target URLByDeletingLastPathComponent]] didChangeChildren];
+	FileSystemDirectory *fromParent = fileSystemItemCache()[fromURL.URLByDeletingLastPathComponent];
+	if ([fromParent isKindOfClass:FileSystemDirectory.class]) [fromParent didRemoveItem:self];
+	
+	[fileSystemItemCache() removeObjectForKey:fromURL];
+	self.urlBacking = nil;
 }
 
 @end
 
 @implementation FileSystemItem (FileManagement)
 
+- (RACSignal *)create {
+	return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+}
+
 - (RACSignal *)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
-	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fileSystemScheduler() schedule:^{
-		@strongify(self);
-		NSURL *url = self.urlBacking.first;
-		NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
-		NSError *error = nil;
-		if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
-			[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
-		}
-		if (![NSFileManager.defaultManager moveItemAtURL:url toURL:destinationURL error:&error]) {
-			[result sendError:error];
-		} else {
-			[self didMoveToURL:destinationURL];
-			[result sendNext:self];
-			[result sendCompleted];
-		}
-	}];
-	return [result deliverOn:currentScheduler()];
+	
+	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+		return [fileSystemScheduler() schedule:^{
+			ASSERT_FILE_SYSTEM_SCHEDULER();
+			@strongify(self);
+			
+			NSURL *url = self.urlBacking;
+			NSURL *destinationURL = [destination.urlBacking URLByAppendingPathComponent:newName ?: url.lastPathComponent];
+			NSError *error = nil;
+			
+			if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
+				[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
+			}
+			if (![NSFileManager.defaultManager moveItemAtURL:url toURL:destinationURL error:&error]) {
+				[subscriber sendError:error];
+			} else {
+				[self didMoveToURL:destinationURL];
+				[subscriber sendNext:self];
+				[subscriber sendCompleted];
+			}
+		}];
+	}] deliverOn:currentScheduler()];
 }
 
 - (RACSignal *)copyTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
-	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fileSystemScheduler() schedule:^{
-		@strongify(self);
-		NSURL *url = self.urlBacking.first;
-		NSURL *destinationURL = [destination.urlBacking.first URLByAppendingPathComponent:newName ?: url.lastPathComponent];
-		NSError *error = nil;
-		if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
-			[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
-		}
-		if (![NSFileManager.defaultManager copyItemAtURL:url toURL:destinationURL error:&error]) {
-			[result sendError:error];
-		} else {
-			[self didCopyToURL:destinationURL];
-			[result sendNext:[[self class] itemWithURL:destinationURL type:nil]];
-			[result sendCompleted];
-		}
-	}];
-	return [result deliverOn:currentScheduler()];
+	
+	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+		return [fileSystemScheduler() schedule:^{
+			ASSERT_FILE_SYSTEM_SCHEDULER();
+			@strongify(self);
+			
+			NSURL *url = self.urlBacking;
+			NSURL *destinationURL = [destination.urlBacking URLByAppendingPathComponent:newName ?: url.lastPathComponent];
+			NSError *error = nil;
+			
+			if (shouldReplace && [NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) {
+				[NSFileManager.defaultManager removeItemAtURL:destinationURL error:&error];
+			}
+			if (![NSFileManager.defaultManager copyItemAtURL:url toURL:destinationURL error:&error]) {
+				[subscriber sendError:error];
+			} else {
+				FileSystemItem *copy = [[self.class alloc] initWithURL:destinationURL];
+				[copy didCopyToURL:destinationURL];
+				[subscriber sendNext:copy];
+				[subscriber sendCompleted];
+			}
+		}];
+	}] deliverOn:currentScheduler()];
 }
 
 - (RACSignal *)moveTo:(FileSystemDirectory *)destination {
@@ -233,48 +226,55 @@ NSMutableDictionary *fileSystemItemCache() {
 }
 
 - (RACSignal *)duplicate {
-	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fileSystemScheduler() schedule:^{
-		@strongify(self);
-		NSURL *url = self.urlBacking.first;
-		NSUInteger duplicateCount = 1;
-		NSURL *destinationURL = nil;
-		for (;;) {
-			destinationURL = [url.URLByDeletingLastPathComponent URLByAppendingPathComponent:(url.pathExtension.length == 0 ? [NSString stringWithFormat:@"%@ (%d)", url.lastPathComponent, duplicateCount] : [NSString stringWithFormat:@"%@ (%d).%@", url.lastPathComponent.stringByDeletingPathExtension, duplicateCount, url.pathExtension])];
-			if (![[NSFileManager defaultManager] fileExistsAtPath:destinationURL.path]) {
-				break;
+	
+	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+		return [fileSystemScheduler() schedule:^{
+			ASSERT_FILE_SYSTEM_SCHEDULER();
+			@strongify(self);
+			
+			NSURL *url = self.urlBacking;
+			NSUInteger duplicateCount = 1;
+			NSURL *destinationURL = nil;
+			NSError *error = nil;
+			
+			for (;;) {
+				destinationURL = [url.URLByDeletingLastPathComponent URLByAppendingPathComponent:(url.pathExtension.length == 0 ? [NSString stringWithFormat:@"%@ (%d)", url.lastPathComponent, duplicateCount] : [NSString stringWithFormat:@"%@ (%d).%@", url.lastPathComponent.stringByDeletingPathExtension, duplicateCount, url.pathExtension])];
+				if (![[NSFileManager defaultManager] fileExistsAtPath:destinationURL.path]) break;
+				++duplicateCount;
 			}
-			++duplicateCount;
-		}
-		NSError *error = nil;
-		if (![[NSFileManager defaultManager] copyItemAtURL:url toURL:destinationURL error:&error]) {
-			[result sendError:error];
-		} else {
-			[self didCopyToURL:destinationURL];
-			[result sendNext:[[self class] itemWithURL:destinationURL type:nil]];
-			[result sendCompleted];
-		}
-	}];
-	return [result deliverOn:currentScheduler()];
+			if (![NSFileManager.defaultManager copyItemAtURL:url toURL:destinationURL error:&error]) {
+				[subscriber sendError:error];
+			} else {
+				FileSystemItem *duplicate = [[self.class alloc] initWithURL:destinationURL];
+				[duplicate didCopyToURL:destinationURL];
+				[subscriber sendNext:duplicate];
+				[subscriber sendCompleted];
+			}
+		}];
+	}] deliverOn:currentScheduler()];
 }
 
 - (RACSignal *)delete {
-	RACReplaySubject *result = [RACReplaySubject replaySubjectWithCapacity:1];
 	@weakify(self);
-	[fileSystemScheduler() schedule:^{
-		@strongify(self);
-		NSURL *url = self.urlBacking.first;
-		NSError *error = nil;
-		if (![[NSFileManager defaultManager] removeItemAtURL:url error:&error]) {
-			[result sendError:error];
-		} else {
-			[self didDelete];
-			[result sendNext:self];
-			[result sendCompleted];
-		}
-	}];
-	return [result deliverOn:currentScheduler()];
+	
+	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
+		return [fileSystemScheduler() schedule:^{
+			ASSERT_FILE_SYSTEM_SCHEDULER();
+			@strongify(self);
+			
+			NSURL *url = self.urlBacking;
+			NSError *error = nil;
+			
+			if (![NSFileManager.defaultManager removeItemAtURL:url error:&error]) {
+				[subscriber sendError:error];
+			} else {
+				[self didDelete];
+				[subscriber sendNext:self];
+				[subscriber sendCompleted];
+			}
+		}];
+	}] deliverOn:currentScheduler()];
 }
 
 @end
@@ -291,7 +291,7 @@ NSMutableDictionary *fileSystemItemCache() {
 		
 		// Load the initial value from the filesystem
 		void *xattrBytes = malloc(_xattrMaxSize);
-		ssize_t xattrBytesCount = getxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
+		ssize_t xattrBytesCount = getxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
 		if (xattrBytesCount != -1) {
 			NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
 			id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
@@ -306,9 +306,9 @@ NSMutableDictionary *fileSystemItemCache() {
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			if (x) {
 				NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
-				setxattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
+				setxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
 			} else {
-				removexattr(((NSURL *)self.urlBacking.first).path.fileSystemRepresentation, key.UTF8String, 0);
+				removexattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, 0);
 			}
 		}];
 		
