@@ -49,11 +49,16 @@ NSMutableDictionary *fileSystemItemCache();
 
 @interface FileSystemItem ()
 
+@property (nonatomic, strong) NSURL *urlBacking;
+
 // Designated initializer.
 //
 // There shouldn't necessarily be something to load from `url`, nor should the
 // item write anything to it at first.
 - (instancetype)initWithURL:(NSURL *)url;
+
+// Called after the receiver has been created.
+- (void)didCreate;
 
 // Called after the receiver has been moved.
 - (void)didMoveToURL:(NSURL *)url;

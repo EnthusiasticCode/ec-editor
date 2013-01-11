@@ -43,8 +43,6 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @interface FileSystemItem ()
 
-@property (nonatomic, strong) NSURL *urlBacking;
-
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
 
 @end
@@ -116,6 +114,18 @@ NSMutableDictionary *fileSystemItemCache() {
 	return [[self.url map:^(NSURL *value) {
 		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent];
 	}] switchToLatest];
+}
+
+- (void)didCreate {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+	ASSERT(self.urlBacking != nil);
+	ASSERT(fileSystemItemCache()[self.urlBacking] == nil);
+	
+	NSURL *url = self.urlBacking;
+	fileSystemItemCache()[url] = self;
+	
+	FileSystemDirectory *parent = fileSystemItemCache()[url.URLByDeletingLastPathComponent];
+	[parent didAddItem:self];
 }
 
 - (void)didMoveToURL:(NSURL *)url {

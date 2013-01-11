@@ -20,27 +20,36 @@
 
 @implementation FileSystemFile
 
-+ (RACSignal *)createFileWithURL:(NSURL *)url {
-  if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+#pragma mark FileSystemItem
+
+- (RACSignal *)create {
+	@weakify(self);
+	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		CANCELLATION_DISPOSABLE(disposable);
-
+		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			IF_CANCELLED_RETURN();
+			
+			@strongify(self);
+			NSURL *url = self.urlBacking;
 			NSError *error = nil;
-			if (![[[NSData alloc] init] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
+			
+			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![[NSData data] writeToURL:url options:NSDataWritingWithoutOverwriting error:&error]) {
 				[subscriber sendError:error];
-				return;
+			} else {
+				[self didCreate];
+				[subscriber sendNext:self];
+				[subscriber sendCompleted];
 			}
-			[self didCreate:url];
-			IF_CANCELLED_RETURN();
-			[disposable addDisposable:[[self fileWithURL:url] subscribe:subscriber]];
 		}]];
 		
 		return disposable;
-	}] deliverOn:RACScheduler.currentScheduler];
+	}] deliverOn:currentScheduler()];
 }
+
+#pragma mark FileSystemFile
 
 - (RACSignal *)encodingSignal {
 	return [[[RACSignal defer:^RACSignal *{
