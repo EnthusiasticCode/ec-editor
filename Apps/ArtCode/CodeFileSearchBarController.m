@@ -57,12 +57,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	
 	// RAC
 	@weakify(self);
-	RACSignal *regExpOptionsSignal = RACAbleWithStart(self.regExpOptions);
 	
 	// Raw search string signal
-	RACSignal *searchStringSignal = [[[[RACAble(self.findTextField) map:^(UITextField *field) {
+	RACSignal *searchStringSignal = [[[[[RACAble(self.findTextField) map:^(UITextField *field) {
 		return field.rac_textSignal;
-	}] switchToLatest] throttle:0.3] distinctUntilChanged];
+	}] switchToLatest] throttle:0.3] distinctUntilChanged] replayLast];
 	
 	// Reaction to show/hide findResultLabel
 	[[searchStringSignal map:^(NSString *string) {
@@ -70,7 +69,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	}] toProperty:@keypath(self.findResultLabel.hidden) onObject:self];
 	
 	// Reaction to generate the search regular expression
-	RACSignal *searchRegExpSignal = [RACSignal combineLatest:@[ searchStringSignal, regExpOptionsSignal, RACAbleWithStart(self.hitMustOption) ] reduce:^(NSString *filterString, NSNumber *regExpOptionsNumber, NSNumber *hitMustOptionNumber) {
+	RACSignal *regExpOptionsSignal = [RACAbleWithStart(self.regExpOptions) replayLast];
+	RACSignal *searchRegExpSignal = [[RACSignal combineLatest:@[ searchStringSignal, regExpOptionsSignal, RACAbleWithStart(self.hitMustOption) ] reduce:^(NSString *filterString, NSNumber *regExpOptionsNumber, NSNumber *hitMustOptionNumber) {
 		if (filterString.length == 0) return (NSRegularExpression *)nil;
 		
 		NSRegularExpressionOptions regExpOptions = (NSRegularExpressionOptions)regExpOptionsNumber.unsignedIntegerValue;
@@ -81,7 +81,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 			NSMutableString *modifiedFilterString = nil;
 			if (regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
 				regExpOptions &= ~NSRegularExpressionIgnoreMetacharacters;
-				// TODO: URI use OnigRegExp instead
 				modifiedFilterString = [[NSRegularExpression escapedPatternForString:filterString] mutableCopy];
 			} else {
 				modifiedFilterString = [filterString mutableCopy];
@@ -96,9 +95,8 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 		}
 		
 		// Returning the regular expression to use to search
-		// TODO: create here? manage error and convert NSRegularExpression options to OnigRegexp options
 		return [NSRegularExpression regularExpressionWithPattern:filterString options:regExpOptions error:NULL];
-	}];
+	}] replayLast];
 	
 	// Reaction to setup the codeview and get it's text when changed
 	RACSignal *targetCodeViewTextSignal = [[[RACAble(self.targetCodeFileController) mapPreviousWithStart:nil combine:^(CodeFileController *previous, CodeFileController *next) {
@@ -121,7 +119,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	}] toProperty:@keypath(self.searchFilterMatches) onObject:self];
 	
 	// searchFilterMatches related reactions
-	RACSignal *searchFilterMatchesSignal = RACAble(self.searchFilterMatches);
+	RACSignal *searchFilterMatchesSignal = [RACAble(self.searchFilterMatches) replayLast];
 	
 	// Reaction to update target CodeView so that the added layer pass will use searchFilterMatches to highlight
 	[[searchFilterMatchesSignal map:^(NSArray *matches) {
@@ -142,7 +140,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	}] toProperty:@keypath(self.searchFilterHighlightedMatchIndex) onObject:self];
 	
 	// Reaction to flash an highlighted match
-	RACSignal *searchFilterHighlightedMatchIndexSignal = RACAble(self.searchFilterHighlightedMatchIndex);
+	RACSignal *searchFilterHighlightedMatchIndexSignal = [RACAble(self.searchFilterHighlightedMatchIndex) replayLast];
 	[searchFilterHighlightedMatchIndexSignal subscribeNext:^(NSNumber *indexNumber) {
 		@strongify(self);
 		NSUInteger index = indexNumber.unsignedIntegerValue;
@@ -176,12 +174,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 		return replaceString;
 	}];
 	
-	RACSignal *replaceInfoSignal = [RACSignal combineLatest:@[ searchRegExpSignal, replaceStringSignal, searchFilterMatchesSignal, searchFilterHighlightedMatchIndexSignal ]];
+	RACSignal *replaceInfoSignal = [[RACSignal combineLatest:@[ searchRegExpSignal, replaceStringSignal, searchFilterMatchesSignal, searchFilterHighlightedMatchIndexSignal ]] replayLast];
 	
-	RACSignal *canReplaceSignal = [replaceInfoSignal map:^(RACTuple *replaceInfo) {
+	RACSignal *canReplaceSignal = [[replaceInfoSignal map:^(RACTuple *replaceInfo) {
 		// Check if there is both a search regexp, a replacement string and the index to replace is contained in the matches
 		return @(replaceInfo.first && [replaceInfo.second length] && [replaceInfo.third count] > [replaceInfo.fourth unsignedIntegerValue]);
-	}];
+	}] replayLast];
 	[canReplaceSignal toProperty:@keypath(self.replaceOnceButton.enabled) onObject:self];
 	[canReplaceSignal toProperty:@keypath(self.replaceAllButton.enabled) onObject:self];
 	
@@ -232,11 +230,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 #pragma mark - View Lifecycle
 
-- (void)didReceiveMemoryWarning  {
-  [self setSearchFilterMatches:nil];
-  [super didReceiveMemoryWarning];
-}
-
 - (void)viewDidDisappear:(BOOL)animated {
 	// Save find options as defaults
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -261,10 +254,6 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 }
 
 #pragma mark - Text Field Delegate Methods
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField {
-  return YES;
-}
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
   [textField resignFirstResponder];
@@ -316,39 +305,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 }
 
 - (IBAction)replaceAllAction:(id)sender {
-  if ([self.searchFilterMatches count] == 0) {
+  if (self.searchFilterMatches.count == 0) {
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
     return;
   }
 	
 	[self.replaceAllCommand execute:sender];
-//
-//  _isReplacing = YES;
-//  
-//  [self.targetCodeFileController.codeView.undoManager beginUndoGrouping];
-//  [self.targetCodeFileController.codeView.undoManager setActionName:@"Replace All"];
-//  
-//  NSString *templateString = self.replaceTextField.text;
-//  if (self.regExpOptions & NSRegularExpressionIgnoreMetacharacters) {
-//    templateString = [NSRegularExpression escapedTemplateForString:templateString];
-//  }
-//  
-//  NSArray *matches = self.searchFilterMatches;
-//  NSString *replacementString = nil;
-//  NSInteger offset = 0;
-//  for (NSTextCheckingResult *match in matches)
-//  {
-//    replacementString = [self.searchFilter replacementStringForResult:match inString:self.targetCodeFileController.codeView.text offset:offset template:templateString];
-//    [self.targetCodeFileController.codeView replaceRange:[TextRange textRangeWithRange:NSMakeRange(match.range.location + offset, match.range.length)] withText:replacementString];
-//    offset += replacementString.length - match.range.length;
-//  }
-//  
-//  [self.targetCodeFileController.codeView.undoManager endUndoGrouping];
-//  
-//  [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", matches.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-//  
-//  _isReplacing = NO;
-//  [self _applyFindFilterAndFlash:NO];
 }
 
 #pragma mark - Private Methods
@@ -357,11 +319,12 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
   // TODO: retrieve from theme
   UIColor *decorationColor = [UIColor colorWithRed:249.0/255.0 green:254.0/255.0 blue:192.0/255.0 alpha:1];
   UIColor *decorationSecondaryColor = [UIColor colorWithRed:224.0/255.0 green:233.0/255.0 blue:128.0/255.0 alpha:1];
-  
-  __block NSMutableIndexSet *searchSectionIndexes = nil;
-  __block NSUInteger lastLine = NSUIntegerMax;
-  [codeView addPassLayerBlock:^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
+	
+	static void (^passBlock)(CGContextRef, TextRendererLine *, CGRect, NSRange, NSUInteger) = nil;
+	if (passBlock == nil) passBlock = ^(CGContextRef context, TextRendererLine *line, CGRect lineBounds, NSRange stringRange, NSUInteger lineNumber) {
     NSArray *searchSection = self.searchFilterMatches;
+		NSMutableIndexSet *searchSectionIndexes = nil;
+		NSUInteger lastLine = NSUIntegerMax;
     NSUInteger searchSectionCount = [searchSection count];
     if (searchSectionCount == 0) {
       return;
@@ -401,9 +364,11 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
       
       rect.size.height = 2;
       CGContextSetFillColorWithColor(context, decorationSecondaryColor.CGColor);
-      CGContextFillRect(context, rect);            
+      CGContextFillRect(context, rect);
     }];
-  } underText:YES forKey:findFilterPassBlockKey];
+  };
+  
+  [codeView addPassLayerBlock:passBlock underText:YES forKey:findFilterPassBlockKey];
 }
 
 @end
