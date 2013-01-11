@@ -9,204 +9,204 @@
 #import "FileSystemDirectory+Private.h"
 #import "FileSystemItem+Private.h"
 
+#import "NSString+ScoreForAbbreviation.h"
+
 @interface FileSystemDirectory ()
 
-@property (nonatomic, weak) RACReplaySubject *childrenBacking;
+@property (nonatomic, strong) NSMutableArray *childrenBacking;
 
 @end
 
 @implementation FileSystemDirectory
 
-+ (RACSignal *)createDirectoryWithURL:(NSURL *)url {
-  if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+#pragma mark FileSystemItem
+
+- (RACSignal *)create {
+	@weakify(self);
+	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			IF_CANCELLED_RETURN();
+			
+			@strongify(self);
+			NSURL *url = self.urlBacking;
 			NSError *error = nil;
-			if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
+			
+			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![NSFileManager.defaultManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
 				[subscriber sendError:error];
-				return;
+			} else {
+				[self didCreate];
+				[subscriber sendNext:self];
+				[subscriber sendCompleted];
 			}
-			[self didCreate:url];
-			[disposable addDisposable:[[self directoryWithURL:url] subscribe:subscriber]];
 		}]];
 		
 		return disposable;
-	}] deliverOn:RACScheduler.currentScheduler];
+	}] deliverOn:currentScheduler()];
 }
 
-+ (RACSignal *)filterChildren:(RACSignal *)childrenSignal byAbbreviation:(RACSignal *)abbreviationSignal {
-	NSParameterAssert(abbreviationSignal != nil);
-	return [[RACSignal combineLatest:@[ childrenSignal, abbreviationSignal ] reduce:^(NSArray *content, NSString *abbreviation) {
-		// No abbreviation, no need to filter
-		if (![abbreviation length]) {
-			return [RACSignal return:[content.rac_sequence.eagerSequence map:^id(id value) {
-				return [RACTuple tupleWithObjects:value, nil];
-			}].array];
+#pragma mark FileSystemDirectory
+
+static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEnumerationOptions options, NSString *abbreviation, volatile uint32_t *cancel) {
+	for (FileSystemItem *item in input) {
+		// Break out if cancelled
+		if (*cancel != 0) break;
+		
+		// Skip deleted files
+		if (item.urlBacking == nil) continue;
+		
+		// Skip hidden files
+		if ((options & NSDirectoryEnumerationSkipsHiddenFiles) && ([item.urlBacking.lastPathComponent characterAtIndex:0] == L'.')) continue;
+		
+		// Calculate current item's score and hitmask
+		if (abbreviation == nil) {
+			[output addObject:[RACTuple tupleWithObjects:item, nil]];
+		} else {
+			NSIndexSet *hitMask = nil;
+			float score = [item.urlBacking.lastPathComponent scoreForAbbreviation:abbreviation hitMask:&hitMask];
+			if (score > 0.0) [output addObject:[RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil]];
 		}
 		
-		return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-			CANCELLATION_DISPOSABLE(disposable);
-			
-			[disposable addDisposable:[RACScheduler.scheduler schedule:^{
-				ASSERT_NOT_MAIN_QUEUE();
-				// Filter the content
-				[[[RACSignal zip:[content.rac_sequence.eagerSequence map:^(FileSystemItem *item) {
-					return item.url;
-				}]] take:1] subscribeNext:^(RACTuple *urls) {
-					IF_CANCELLED_RETURN();
-					NSArray *filteredContent = [[[RACSequence zip:@[ content.rac_sequence.eagerSequence, urls.rac_sequence.eagerSequence ]] map:^id(RACTuple *value) {
-						RACTupleUnpack(FileSystemItem *item, NSURL *url) = value;
-						IF_CANCELLED_RETURN([RACTuple tupleWithObjects:item, RACTupleNil.tupleNil, @0, nil]);
-						NSIndexSet *hitMask = nil;
-						float score = [[url lastPathComponent] scoreForAbbreviation:abbreviation hitMask:&hitMask];
-						return [RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil];
-					}] filter:^BOOL(RACTuple *item) {
-						IF_CANCELLED_RETURN(NO);
-						return [item.third floatValue] > 0;
-					}].array;
-					IF_CANCELLED_RETURN();
-					NSArray *sortedContent = [filteredContent sortedArrayUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-						IF_CANCELLED_RETURN(NSOrderedSame);
-						NSNumber *score1 = tuple1.third;
-						NSNumber *score2 = tuple2.third;
-						if (score1.floatValue > score2.floatValue) {
-							return NSOrderedAscending;
-						} else if (score1.floatValue < score2.floatValue) {
-							return NSOrderedDescending;
-						} else {
-							return NSOrderedSame;
-						}
-					}];
-					IF_CANCELLED_RETURN();
-					[subscriber sendNext:sortedContent];
-					[subscriber sendCompleted];
-				} error:^(NSError *error) {
-					[subscriber sendError:error];
-				} completed:^{
-					[subscriber sendCompleted];
-				}];
-			}]];
-			
-			return disposable;
-		}];
-	}] switch];
+		// Merge in descendants
+		if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants) && [item isKindOfClass:FileSystemDirectory.class]) processContent(((FileSystemDirectory *)item).childrenBacking, output, options, abbreviation, cancel);
+	}
 }
 
-- (RACSignal *)children {
-	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
-}
-
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
+- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
 	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
 	@weakify(self);
+	
+	if (abbreviationSignal == nil) {
+		abbreviationSignal = abbreviationSignal = [RACSignal return:nil];
+	} else {
+		abbreviationSignal = [[abbreviationSignal subscribeOn:currentScheduler()] deliverOn:fileSystemScheduler()];
+	}
+	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
+			
 			IF_CANCELLED_RETURN();
-			RACReplaySubject *childrenBacking = self.childrenBacking;
-			if (!childrenBacking) {
-				childrenBacking = [RACReplaySubject replaySubjectWithCapacity:1];
-				self.childrenBacking = childrenBacking;
-				[self didChangeChildren];
-			}
-			RACSignal *result = childrenBacking;
 			
-			// Filter out hidden files if needed
-			if (options & NSDirectoryEnumerationSkipsHiddenFiles) {
-				result = [[result map:^RACSignal *(NSArray *x) {
-					IF_CANCELLED_RETURN([RACSignal return:@[]]);
-					if (!x.count) {
-						return [RACSignal return:x];
+			[disposable addDisposable:[[RACSignal combineLatest:@[RACAbleWithStart(self.childrenBacking), abbreviationSignal ] reduce:^ NSArray * (NSArray *content, NSString *abbreviation) {
+				IF_CANCELLED_RETURN(@[]);
+				
+				NSMutableArray *processedContent = [NSMutableArray arrayWithCapacity:content.count];
+				
+				processContent(content, processedContent, options, abbreviation, CANCELLATION_FLAG);
+				
+				if (abbreviation != nil) [processedContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
+					IF_CANCELLED_RETURN(NSOrderedSame);
+					
+					NSNumber *score1 = tuple1.third;
+					NSNumber *score2 = tuple2.third;
+					if (score1.floatValue > score2.floatValue) {
+						return NSOrderedAscending;
+					} else if (score1.floatValue < score2.floatValue) {
+						return NSOrderedDescending;
+					} else {
+						return NSOrderedSame;
 					}
-					NSMutableArray *namedItems = [[NSMutableArray alloc] init];
-					for (FileSystemItem *item in x) {
-						IF_CANCELLED_BREAK();
-						[namedItems addObject:[item.name map:^RACTuple *(NSString *x) {
-							return [RACTuple tupleWithObjectsFromArray:@[item, x ? : [RACTupleNil tupleNil]]];
-						}]];
-					}
-					return [[RACSignal combineLatest:namedItems] map:^NSArray *(RACTuple *xs) {
-						IF_CANCELLED_RETURN(@[]);
-						NSMutableArray *nonHiddenItems = [[NSMutableArray alloc] init];
-						for (RACTuple *namedItem in xs) {
-							IF_CANCELLED_BREAK();
-							FileSystemItem *item = namedItem.first;
-							NSString *name = namedItem.second;
-							if (name && [name characterAtIndex:0] != L'.') {
-								[nonHiddenItems addObject:item];
-							}
-						}
-						return nonHiddenItems;
-					}];
-				}] switchToLatest];
-			}
-			
-			// Merge in descendants if needed
-			if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants)) {
-				result = [[result map:^RACSignal *(NSArray *x) {
-					IF_CANCELLED_RETURN([RACSignal return:@[]]);
-					if (!x.count) {
-						return [RACSignal return:x];
-					}
-					NSMutableArray *descendantSignals = [[NSMutableArray alloc] init];
-					for (FileSystemItem *item in x) {
-						IF_CANCELLED_BREAK();
-						[descendantSignals addObject:[[item.type map:^(NSString *type) {
-							IF_CANCELLED_RETURN(RACSignal.empty);
-							if (type != NSURLFileResourceTypeDirectory) {
-								return [RACSignal return:@[ item ]];
-							} else {
-								FileSystemDirectory *directory = (FileSystemDirectory *)item;
-								return [[directory childrenWithOptions:options] map:^NSArray *(NSArray *x) {
-									IF_CANCELLED_RETURN(@[]);
-									return [@[ item ] arrayByAddingObjectsFromArray:x];
-								}];
-							}
-						}] switchToLatest]];
-					}
-					return [[RACSignal combineLatest:descendantSignals] map:^NSArray *(RACTuple *xs) {
-						IF_CANCELLED_RETURN(@[]);
-						NSMutableArray *mergedDescendants = [[NSMutableArray alloc] init];
-						for (NSArray *children in xs) {
-							IF_CANCELLED_BREAK();
-							[mergedDescendants addObjectsFromArray:children];
-						}
-						return mergedDescendants;
-					}];
-				}] switchToLatest];
-			}
-			
-			[disposable addDisposable:[result subscribe:subscriber]];
+				}];
+				
+				return processedContent;
+			}] subscribe:subscriber]];
 		}]];
 		
 		return disposable;
-	}] deliverOn:RACScheduler.currentScheduler];
+	}] deliverOn:currentScheduler()];
 }
 
-- (void)didChangeChildren {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
-	RACSubject *childrenBacking = self.childrenBacking;
-	if (!childrenBacking) return;
-	NSURL *url = self.urlBacking.first;
-	if (!url) {
-		[childrenBacking sendNext:nil];
-	}
-	NSMutableArray *childrenURLs = [NSMutableArray array];
-	for (NSURL *childURL in [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
-		[childrenURLs addObject:childURL];
-	}
-	[[RACSignal zip:[childrenURLs.rac_sequence.eagerSequence map:^id(NSURL *childURL) {
-		return [FileSystemItem itemWithURL:childURL type:nil];
-	}]] subscribeNext:^(RACTuple *children) {
-		[childrenBacking sendNext:children.allObjects];
+- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
+	return [self childrenWithOptions:options filteredByAbbreviation:nil];
+}
+
+- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
+	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants filteredByAbbreviation:abbreviationSignal];
+}
+
+- (RACSignal *)children {
+	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+}
+
+- (void)didAddItem:(FileSystemItem *)item {
+	NSParameterAssert(item != nil && ![self.childrenBacking containsObject:item]);
+	NSUInteger index = [self.childrenBacking indexOfObject:self inSortedRange:NSMakeRange(0, self.childrenBacking.count) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(FileSystemItem *item1, FileSystemItem *item2) {
+		return [item1.urlBacking.lastPathComponent compare:item2.urlBacking.lastPathComponent];
 	}];
+	[[self mutableArrayValueForKey:@keypath(self.childrenBacking)] insertObject:self atIndex:index];
+}
+
+- (void)didRemoveItem:(FileSystemItem *)item {
+	NSParameterAssert(item != nil && [self.childrenBacking containsObject:item]);
+	[[self mutableArrayValueForKey:@keypath(self.childrenBacking)] removeObject:item];
+}
+
+#pragma mark Private Methods
+
+- (NSMutableArray *)childrenBacking {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+	
+	if (_childrenBacking == nil) {
+		NSURL *url = self.urlBacking;
+		if (url == nil) {
+			return nil;
+		}
+		
+		_childrenBacking = [NSMutableArray array];
+		for (NSURL *childURL in [NSFileManager.defaultManager enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
+			FileSystemItem *child = [[FileSystemItem alloc] initWithURL:childURL];
+			if (child != nil) [_childrenBacking addObject:child];
+		}
+	}
+	
+	return _childrenBacking;
+}
+
+- (NSUInteger)countOfChildrenBacking {
+	return _childrenBacking.count;
+}
+
+- (FileSystemItem *)objectInChildrenBackingAtIndex:(NSUInteger)index {
+	return [_childrenBacking objectAtIndex:index];
+}
+
+- (NSArray *)childrenBackingAtIndexes:(NSIndexSet *)indexes {
+	return [_childrenBacking objectsAtIndexes:indexes];
+}
+
+- (void)getChildrenBacking:(FileSystemItem * __unsafe_unretained *)buffer range:(NSRange)inRange {
+	[_childrenBacking getObjects:buffer range:inRange];
+}
+
+- (void)insertObject:(FileSystemItem *)object inChildrenBackingAtIndex:(NSUInteger)index {
+	[_childrenBacking insertObject:object atIndex:index];
+}
+
+- (void)insertChildrenBacking:(NSArray *)array atIndexes:(NSIndexSet *)indexes {
+	[_childrenBacking insertObjects:array atIndexes:indexes];
+}
+
+- (void)removeObjectFromChildrenBackingAtIndex:(NSUInteger)index {
+	[_childrenBacking removeObjectAtIndex:index];
+}
+
+- (void)removeChildrenBackingAtIndexes:(NSIndexSet *)indexes {
+	[_childrenBacking removeObjectsAtIndexes:indexes];
+}
+
+- (void)replaceObjectInChildrenBackingAtIndex:(NSUInteger)index withObject:(FileSystemItem *)object {
+	[_childrenBacking replaceObjectAtIndex:index withObject:object];
+}
+
+- (void)replaceChildrenBackingAtIndexes:(NSIndexSet *)indexes withChildrenBacking:(NSArray *)array {
+	[_childrenBacking replaceObjectsAtIndexes:indexes withObjects:array];
 }
 
 @end

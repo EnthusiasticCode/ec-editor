@@ -12,7 +12,6 @@
 
 #import "FileSystemDirectory+Private.h"
 #import "FileSystemFile.h"
-#import "NSString+ScoreForAbbreviation.h"
 
 // Scheduler for serializing accesses to the file system
 RACScheduler *fileSystemScheduler() {

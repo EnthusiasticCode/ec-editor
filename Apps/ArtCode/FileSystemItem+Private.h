@@ -23,20 +23,22 @@ _CANCELLATION_FLAG; \
 RACCompoundDisposable *NAME = [RACCompoundDisposable compoundDisposable]; \
 [NAME addDisposable:_CANCELLATION_DISPOSABLE]
 
-#define _CANCELLATION_FLAG \
-__block uint32_t __isCancelled = 0
-
-#define _CANCELLATION_DISPOSABLE \
-[RACDisposable disposableWithBlock:^{ \
-OSAtomicOr32Barrier(1, &__isCancelled); \
-}]
-
 #define IF_CANCELLED_RETURN(VALUE) \
 if (__isCancelled != 0) return VALUE
 
 #define IF_CANCELLED_BREAK() \
 if (__isCancelled != 0) break
 
+#define CANCELLATION_FLAG \
+&__isCancelled
+
+#define _CANCELLATION_FLAG \
+__block volatile uint32_t __isCancelled = 0
+
+#define _CANCELLATION_DISPOSABLE \
+[RACDisposable disposableWithBlock:^{ \
+OSAtomicOr32Barrier(1, &__isCancelled); \
+}]
 
 // All filesystem accesses must be on this scheduler.
 RACScheduler *fileSystemScheduler();

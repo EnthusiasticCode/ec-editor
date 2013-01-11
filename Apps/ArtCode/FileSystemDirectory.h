@@ -18,7 +18,8 @@
 // abbreviationSignal - An optional signal that sends strings with which to sort
 //                      and filter the children sent by the signal.
 //
-// Returns a signal that sends the children of the receiver as they change.
+// Returns a signal that sends arrays of tuples each containing one child and
+// it's filter hitmask.
 - (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal;
 
 // Equivalent to -childrenWithOptions:options filteredByAbbreviation:nil
