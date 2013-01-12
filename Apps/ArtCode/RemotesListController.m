@@ -60,6 +60,10 @@
     {
       _filteredRemotes = self.artCodeTab.currentLocation.project.remotes.array;
       _filteredRemotesHitMasks = nil;
+			
+			if (_filteredRemotes.count == 0) {
+				self.infoLabel.text = L(@"The project has no remotes. Use the + button to add a new one.");
+			}
     }
     else
     {
@@ -68,7 +72,15 @@
         return element.name;
       }];
       _filteredRemotesHitMasks = hitMasks;
+			
+			if (_filteredRemotes.count == 0) {
+				self.infoLabel.text = L(@"No remotes found.");
+			}
     }
+		
+		if (_filteredRemotes.count != 0) {
+			self.infoLabel.text = @"";
+		}
   }
   return _filteredRemotes;
 }
@@ -84,8 +96,7 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-	self.hintLabel.text = L(@"Start by adding a remote");
-  
+	
 	self.toolNormalItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"tabBar_TabAddButton"] style:UIBarButtonItemStylePlain target:self action:@selector(_toolAddAction:)]];
   
   self.toolEditItems = [NSArray arrayWithObject:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)]];

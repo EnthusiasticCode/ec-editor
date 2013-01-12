@@ -53,7 +53,7 @@
         _filteredItemsHitMask = hitMasks;
         
         if ([_filteredItems count] == 0) {
-          self.infoLabel.text = @"No bookmarks found.";
+          self.infoLabel.text = L(@"No bookmarks found.");
         }
       } else {
         // Sort bookmarks
@@ -63,7 +63,7 @@
         _filteredItemsHitMask = nil;
         
         if ([_filteredItems count] == 0) {
-          self.infoLabel.text = @"The project has no bookmarks.";
+          self.infoLabel.text = L(@"The project has no bookmarks. Add bookmarks by tapping on a line number in a file.");
         }
       }
       
@@ -87,15 +87,13 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-	[self.hintView removeFromSuperview];
-	self.hintView = nil;
   
   if ([self isMemberOfClass:[BookmarkBrowserController class]]) {
 		// Tool edit items
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
 		
     // Customize subviews
-    self.searchBar.placeholder = @"Filter bookmarks";
+    self.searchBar.placeholder = L(@"Filter bookmarks");
   }
 }
 
