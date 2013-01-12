@@ -7,75 +7,60 @@
 //
 
 #import "FileSystemItemCell.h"
-#import "FileSystemItem.h"
-#import "UIImage+AppStyle.h"
-#import "NSString+Utilities.h"
+
 #import "ArtCodeProjectSet.h"
+#import "FileSystemFile.h"
+#import "FileSystemDirectory.h"
+#import "NSString+Utilities.h"
+#import "UIImage+AppStyle.h"
 
 @implementation FileSystemItemCell
 
+#pragma mark UITableViewCell
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-  if (!self) {
-    return nil;
-  }
-  @weakify(self);
-  [[RACSignal combineLatest:@[[[RACAble(item) map:^RACSignal *(FileSystemItem *x) {
-    return [RACSignal combineLatest:@[x.name, x.type, x.url]];
-  }] switchToLatest], RACAbleWithStart(hitMask)]] subscribeNext:^(RACTuple *xs) {
-    ASSERT_MAIN_QUEUE();
+  if (self == nil) return nil;
+	
+	@weakify(self);
+	[[[RACAble(self.item) map:^(FileSystemItem *item) {
+		return item.url;
+	}] switchToLatest] subscribeNext:^(NSURL *url) {
+		ASSERT_MAIN_QUEUE();
     @strongify(self);
-    RACTuple *ys = xs.first;
-    NSString *itemName = ys.first;
-    NSString *type = ys.second;
-		NSURL *url = ys.third;
-    NSIndexSet *hitMask = xs.second;
-    UITableViewCellAccessoryType accessoryType = self.accessoryType;
-    UITableViewCellAccessoryType editingAccessoryType = self.editingAccessoryType;
-    self.textLabel.text = itemName;
-    self.textLabelHighlightedCharacters = hitMask;
+		
+    self.textLabel.text = url.lastPathComponent;
 		if (style == UITableViewCellStyleSubtitle) {
 			self.detailTextLabel.text = [[[ArtCodeProjectSet defaultSet] relativePathForFileURL:url] prettyPath];
 		}
-    // Crazy hack because UITableViewCell doesn't redraw properly if you change certain properties after it was inserted in a table view, unless you change it's accessoryType
-    if (type == NSURLFileResourceTypeDirectory) {
-      self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-      if (accessoryType != UITableViewCellAccessoryNone) {
-        self.accessoryType = UITableViewCellAccessoryNone;
-        self.accessoryType = accessoryType;
-      } else {
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-      }
-      if (editingAccessoryType != UITableViewCellAccessoryNone) {
-        self.editingAccessoryType = UITableViewCellAccessoryNone;
-        self.editingAccessoryType = editingAccessoryType;
-      } else {
-        self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-      }
-    } else {
-      self.imageView.image = [UIImage styleDocumentImageWithFileExtension:itemName.pathExtension];
-      if (accessoryType != UITableViewCellAccessoryNone) {
-        self.accessoryType = UITableViewCellAccessoryNone;
-        self.accessoryType = accessoryType;
-      } else {
-        self.accessoryType = UITableViewCellAccessoryCheckmark;
-        self.accessoryType = UITableViewCellAccessoryNone;
-      }
-      if (editingAccessoryType != UITableViewCellAccessoryNone) {
-        self.editingAccessoryType = UITableViewCellAccessoryNone;
-        self.editingAccessoryType = editingAccessoryType;
-      } else {
-        self.editingAccessoryType = UITableViewCellAccessoryCheckmark;
-        self.editingAccessoryType = UITableViewCellAccessoryNone;
-      }
-    }
-  }];
+		
+		if ([self.item isKindOfClass:FileSystemFile.class]) {
+			self.imageView.image = [UIImage styleDocumentImageWithFileExtension:url.pathExtension];
+		}
+	}];
+
   return self;
 }
 
 - (void)prepareForReuse {
-  self.accessoryType = UITableViewCellAccessoryNone;
-  self.editingAccessoryType = UITableViewCellAccessoryNone;
+	self.item = nil;
+}
+
+#pragma mark FileSystemItemCell
+
+- (void)setItem:(FileSystemItem *)item {
+	if (item == _item) return;
+	_item = item;
+	
+	if ([item isKindOfClass:FileSystemDirectory.class]) {
+		self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+	} else {
+		self.imageView.image = [UIImage styleDocumentImageWithFileExtension:@""];
+		self.accessoryType = UITableViewCellAccessoryNone;
+		self.editingAccessoryType = UITableViewCellAccessoryNone;
+	}
 }
 
 @end

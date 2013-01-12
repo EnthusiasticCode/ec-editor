@@ -103,18 +103,6 @@ NSMutableDictionary *fileSystemItemCache() {
   return [RACAble(self.urlBacking) deliverOn:currentScheduler()];
 }
 
-- (RACSignal *)name {
-  return [self.url map:^NSString *(NSURL *url) {
-    return url.lastPathComponent;
-  }];
-}
-
-- (RACSignal *)parent {
-	return [[self.url map:^(NSURL *value) {
-		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent];
-	}] switchToLatest];
-}
-
 - (void)didCreate {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
 	ASSERT(self.urlBacking != nil);

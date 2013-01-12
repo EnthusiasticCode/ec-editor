@@ -7,11 +7,11 @@
 //
 
 #import "HighlightTableViewCell.h"
+
 @class FileSystemItem;
 
 @interface FileSystemItemCell : HighlightTableViewCell
 
 @property (nonatomic, strong) FileSystemItem *item;
-@property (nonatomic, strong) NSIndexSet *hitMask;
 
 @end

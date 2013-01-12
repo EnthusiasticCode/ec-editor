@@ -21,12 +21,6 @@
 // Returns a signal that sends the URL of the receiver.
 @property (nonatomic, strong, readonly) RACSignal *url;
 
-// Returns a signal that sends the name of the receiver.
-@property (nonatomic, strong, readonly) RACSignal *name;
-
-// Returns a signal that sends the parent directory of the receiver.
-@property (nonatomic, strong, readonly) RACSignal *parent;
-
 @end
 
 @interface FileSystemItem (FileManagement)
