@@ -213,7 +213,7 @@
   FileSystemItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
-  cell.hitMask = hitMask;
+  cell.textLabelHighlightedCharacters = hitMask;
   
   // Side effect. Select this row if present in the selected urls array to keep selection persistent while filtering
   if ([_selectedItems containsObject:item])

@@ -119,7 +119,7 @@
   FileSystemItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
-  cell.hitMask = hitMask;
+  cell.textLabelHighlightedCharacters = hitMask;
   
   return cell;
 }

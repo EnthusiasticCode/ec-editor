@@ -197,11 +197,10 @@
     return nil;
   }
   
-  [[[RACSignal combineLatest:@[[[RACAble(item) map:^RACSignal *(FileSystemItem *x) {
-    return x.name;
-  }] switchToLatest], RACAble(renameString)]] map:^NSString *(RACTuple *xs) {
-    NSString *itemName = xs.first;
-    NSString *renameString = xs.second;
+  [[[RACSignal combineLatest:@[[[RACAble(item) map:^(FileSystemItem *item) {
+    return item.name;
+  }] switchToLatest], RACAble(renameString)]] map:^NSString *(RACTuple *tuple) {
+		RACTupleUnpack(NSString *itemName, NSString *renameString) = tuple;
     return [NSString stringWithFormat:L(@"Rename to: %@"), [renameString.stringByDeletingPathExtension stringByAppendingPathExtension:itemName.pathExtension]];
   }] toProperty:@keypath(self.detailTextLabel.text) onObject:self];
   
