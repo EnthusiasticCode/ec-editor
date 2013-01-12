@@ -40,9 +40,6 @@
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			IF_CANCELLED_RETURN();
-			
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -112,9 +109,6 @@
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			IF_CANCELLED_RETURN();
-			
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -123,8 +117,6 @@
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
-
-			IF_CANCELLED_RETURN();
 			
 			// Don't save atomically so we don't lose extended attributes
 			if (![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {

@@ -42,6 +42,10 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @interface FileSystemItem ()
 
+// A dictionary of `RACPropertySubject`s mapped to their extended attribute
+// names.
+//
+// Must be accessed while synchronized on self.
 @property (nonatomic, strong, readonly) NSMutableDictionary *extendedAttributesBacking;
 
 @end
@@ -54,9 +58,6 @@ NSMutableDictionary *fileSystemItemCache() {
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			IF_CANCELLED_RETURN();
-			
 			FileSystemItem *item = fileSystemItemCache()[url];
 			if (item) {
 				if ([item isKindOfClass:self]) {
@@ -68,16 +69,27 @@ NSMutableDictionary *fileSystemItemCache() {
 				return;
 			}
 			
-			IF_CANCELLED_RETURN();
+			Class class = self;
+			if (self == FileSystemItem.class) {
+				NSString *detectedType = nil;
+				[url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
+				
+				if (detectedType == NSURLFileResourceTypeRegular) {
+					class = [FileSystemFile class];
+				} else if (detectedType == NSURLFileResourceTypeDirectory) {
+					class = [FileSystemDirectory class];
+				} else {
+					class = [FileSystemItem class];
+				}
+			}
+			item = [[class alloc] initWithURL:url];
 			
-			item = [[self alloc] initWithURL:url];
+			IF_CANCELLED_RETURN();
 			
 			if (item == nil) {
 				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				return;
 			}
-			
-			IF_CANCELLED_RETURN();
 			
 			fileSystemItemCache()[url] = item;
 			[subscriber sendNext:item];
@@ -152,6 +164,7 @@ NSMutableDictionary *fileSystemItemCache() {
 }
 
 - (void)didDelete {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
 	NSURL *fromURL = self.urlBacking;
 	
 	FileSystemDirectory *fromParent = fileSystemItemCache()[fromURL.URLByDeletingLastPathComponent];
@@ -166,6 +179,7 @@ NSMutableDictionary *fileSystemItemCache() {
 @implementation FileSystemItem (FileManagement)
 
 - (RACSignal *)create {
+#warning TODO: this should save the extended attributes since they could have been changed before the item was persisted to disk
 	return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 }
 
@@ -174,7 +188,6 @@ NSMutableDictionary *fileSystemItemCache() {
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		return [fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			
 			NSURL *url = self.urlBacking;
@@ -200,7 +213,6 @@ NSMutableDictionary *fileSystemItemCache() {
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		return [fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			
 			NSURL *url = self.urlBacking;
@@ -239,7 +251,6 @@ NSMutableDictionary *fileSystemItemCache() {
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		return [fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			
 			NSURL *url = self.urlBacking;
@@ -269,7 +280,6 @@ NSMutableDictionary *fileSystemItemCache() {
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		return [fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
 			
 			NSURL *url = self.urlBacking;
@@ -290,40 +300,42 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @implementation FileSystemItem (ExtendedAttributes)
 
+static size_t _xattrMaxSize = 4 * 1024; // 4 kB
+
 - (RACPropertySubject *)extendedAttributeForKey:(NSString *)key {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
-	static size_t _xattrMaxSize = 4 * 1024; // 4 kB
-	
-	RACReplaySubject *backing = (self.extendedAttributesBacking)[key];
-	if (!backing) {
-		backing = [RACReplaySubject replaySubjectWithCapacity:1];
+	@synchronized (self) {
+		RACPropertySubject *backing = self.extendedAttributesBacking[key];
+		if (backing != nil) return backing;
 		
+		backing = [RACPropertySubject property];
+			
 		// Load the initial value from the filesystem
-		void *xattrBytes = malloc(_xattrMaxSize);
-		ssize_t xattrBytesCount = getxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
-		if (xattrBytesCount != -1) {
-			NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
-			id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
-			[backing sendNext:xattrValue];
-		} else {
-			[backing sendNext:nil];
-		}
-		free(xattrBytes);
+		[fileSystemScheduler() schedule:^{
+			void *xattrBytes = malloc(_xattrMaxSize);
+			ssize_t xattrBytesCount = getxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
+			if (xattrBytesCount != -1) {
+				NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
+				id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
+				[backing sendNext:xattrValue];
+			}
+			free(xattrBytes);
+		}];
 		
 		// Save the value to disk every time it changes
-		[[backing deliverOn:fileSystemScheduler()] subscribeNext:^(id x) {
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			if (x) {
-				NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:x];
+		[[backing deliverOn:fileSystemScheduler()] subscribeNext:^(id value) {
+			if (self.urlBacking == nil) return;
+			
+			if (value) {
+				NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:value];
 				setxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
 			} else {
 				removexattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, 0);
 			}
 		}];
 		
-		(self.extendedAttributesBacking)[key] = backing;
+		self.extendedAttributesBacking[key] = backing;
+		return backing;
 	}
-	return backing;
 }
 
 @end

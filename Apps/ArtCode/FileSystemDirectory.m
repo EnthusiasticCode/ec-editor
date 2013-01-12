@@ -28,9 +28,6 @@
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
-			IF_CANCELLED_RETURN();
-			
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -89,10 +86,7 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		CANCELLATION_DISPOSABLE(disposable);
 		
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
-			ASSERT_FILE_SYSTEM_SCHEDULER();
 			@strongify(self);
-			
-			IF_CANCELLED_RETURN();
 			
 			[disposable addDisposable:[[RACSignal combineLatest:@[RACAbleWithStart(self.childrenBacking), abbreviationSignal ] reduce:^ NSArray * (NSArray *content, NSString *abbreviation) {
 				IF_CANCELLED_RETURN(@[]);
