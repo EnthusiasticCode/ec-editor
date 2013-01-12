@@ -94,6 +94,7 @@
 {
   [super viewDidLoad];
   self.searchBar.placeholder = L(@"Search for file");
+	self.infoLabel.text = L(@"Type a file name to open.");
 }
 
 - (void)viewDidAppear:(BOOL)animated

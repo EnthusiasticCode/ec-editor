@@ -13,11 +13,13 @@
 
 @interface FileSystemDirectory ()
 
-@property (nonatomic, strong) NSMutableArray *childrenBacking;
+@property (nonatomic, strong, readonly) NSArray *childrenBacking;
 
 @end
 
-@implementation FileSystemDirectory
+@implementation FileSystemDirectory {
+	NSMutableArray *_childrenBacking;
+}
 
 #pragma mark FileSystemItem
 
@@ -43,7 +45,7 @@
 
 #pragma mark FileSystemDirectory
 
-static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEnumerationOptions options, NSString *abbreviation, volatile uint32_t *cancel) {
+static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEnumerationOptions options, volatile uint32_t *cancel) {
 	for (FileSystemItem *item in input) {
 		// Break out if cancelled
 		if (*cancel != 0) break;
@@ -54,29 +56,16 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		// Skip hidden files
 		if ((options & NSDirectoryEnumerationSkipsHiddenFiles) && ([item.urlBacking.lastPathComponent characterAtIndex:0] == L'.')) continue;
 		
-		// Calculate current item's score and hitmask
-		if (abbreviation == nil) {
-			[output addObject:[RACTuple tupleWithObjects:item, nil]];
-		} else {
-			NSIndexSet *hitMask = nil;
-			float score = [item.urlBacking.lastPathComponent scoreForAbbreviation:abbreviation hitMask:&hitMask];
-			if (score > 0.0) [output addObject:[RACTuple tupleWithObjects:item, hitMask ? : RACTupleNil.tupleNil, @(score), nil]];
-		}
+		[output addObject:item];
 		
 		// Merge in descendants
-		if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants) && [item isKindOfClass:FileSystemDirectory.class]) processContent(((FileSystemDirectory *)item).childrenBacking, output, options, abbreviation, cancel);
+		if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants) && [item isKindOfClass:FileSystemDirectory.class]) processContent(((FileSystemDirectory *)item).childrenBacking, output, options, cancel);
 	}
 }
 
-- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
+- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options {
 	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
 	@weakify(self);
-	
-	if (abbreviationSignal == nil) {
-		abbreviationSignal = abbreviationSignal = [RACSignal return:nil];
-	} else {
-		abbreviationSignal = [[abbreviationSignal subscribeOn:currentScheduler()] deliverOn:fileSystemScheduler()];
-	}
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
 		CANCELLATION_DISPOSABLE(disposable);
@@ -84,26 +73,11 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			@strongify(self);
 			
-			[disposable addDisposable:[[RACSignal combineLatest:@[RACAbleWithStart(self.childrenBacking), abbreviationSignal ] reduce:^ NSArray * (NSArray *content, NSString *abbreviation) {
+			[disposable addDisposable:[[RACAbleWithStart(self.childrenBacking) map:^ NSArray * (NSArray *content) {
 				IF_CANCELLED_RETURN(@[]);
-				
 				NSMutableArray *processedContent = [NSMutableArray arrayWithCapacity:content.count];
 				
-				processContent(content, processedContent, options, abbreviation, CANCELLATION_FLAG);
-				
-				if (abbreviation != nil) [processedContent sortUsingComparator:^NSComparisonResult(RACTuple *tuple1, RACTuple *tuple2) {
-					IF_CANCELLED_RETURN(NSOrderedSame);
-					
-					NSNumber *score1 = tuple1.third;
-					NSNumber *score2 = tuple2.third;
-					if (score1.floatValue > score2.floatValue) {
-						return NSOrderedAscending;
-					} else if (score1.floatValue < score2.floatValue) {
-						return NSOrderedDescending;
-					} else {
-						return NSOrderedSame;
-					}
-				}];
+				processContent(content, processedContent, options, CANCELLATION_FLAG);
 				
 				return processedContent;
 			}] subscribe:subscriber]];
@@ -111,14 +85,6 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		
 		return disposable;
 	}] deliverOn:currentScheduler()];
-}
-
-- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options {
-	return [self childrenSignalWithOptions:options filteredByAbbreviation:nil];
-}
-
-- (RACSignal *)childrenSignalFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [self childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants filteredByAbbreviation:abbreviationSignal];
 }
 
 - (RACSignal *)childrenSignal {
@@ -140,7 +106,7 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 
 #pragma mark Private Methods
 
-- (NSMutableArray *)childrenBacking {
+- (NSArray *)childrenBacking {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
 	
 	if (_childrenBacking == nil) {

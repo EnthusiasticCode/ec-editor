@@ -48,6 +48,7 @@
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
 		5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */; };
+		5FB0A6F016A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -649,6 +650,8 @@
 		5F7047DF15D1D7D5005EF62D /* magic.mgc */ = {isa = PBXFileReference; lastKnownFileType = file; name = magic.mgc; path = "../../../ThirdParty/file/Supporting Files/magic.mgc"; sourceTree = "<group>"; };
 		5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItemCell.h; sourceTree = "<group>"; };
 		5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItemCell.m; sourceTree = "<group>"; };
+		5FB0A6EE16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RACSignal+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
+		5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RACSignal+ScoreForAbbreviation.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -1692,6 +1695,8 @@
 				B7FB799714D602C60080A714 /* NSArray+ScoreForAbbreviation.m */,
 				B7FB799A14D602C60080A714 /* NSString+ScoreForAbbreviation.h */,
 				B7FB799B14D602C60080A714 /* NSString+ScoreForAbbreviation.m */,
+				5FB0A6EE16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.h */,
+				5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */,
 				B7072BBA15111A3000580855 /* NSString+UUID.h */,
 				B7072BBB15111A3000580855 /* NSString+UUID.m */,
 				B7072BD01511443E00580855 /* NSString+CStringCaching.h */,
@@ -3184,6 +3189,7 @@
 				5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */,
 				5F4B2A31169F6A1100CBB85D /* FileSystemFile.m in Sources */,
 				5F4B2A34169F6A2100CBB85D /* FileSystemDirectory.m in Sources */,
+				5FB0A6F016A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,12 +10,14 @@
 
 @interface NSArray (ScoreForAbbreviation)
 
-/// Returns a sorted version of the array using score for abbreviation algorithm.
-/// The returned array may be shorter than the original.
-/// Hit masks for the abbreviations found are returned in a one to one array if the 
-/// resultHitMasks parameter is not nil.
-/// targetStringBlock is a block that will map an element of the original array to
-/// a string that is than used by the algorithm; use nil for the identity map.
-- (NSArray *)sortedArrayUsingScoreForAbbreviation:(NSString *)abbreviation resultHitMasks:(NSArray **)resultHitMasks extrapolateTargetStringBlock:(NSString *(^)(id element))targetStringBlock;
+// Filters and sorts an array by abbreviation score.
+//
+// abbreviation      - The string with which to score the objects in the array.
+// targetStringBlock - An optional block used to calculate strings used for
+//                     scoring the objects in the array.
+//
+// Returns a sorted array of tripes of object, hit mask and score for every
+// object that scores higher than 0.0.
+- (NSArray *)sortedArrayUsingScoreForAbbreviation:(NSString *)abbreviation extrapolateTargetStringBlock:(NSString *(^)(id element))targetStringBlock;
 
 @end
