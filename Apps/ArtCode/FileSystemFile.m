@@ -60,10 +60,10 @@
 
 #pragma mark FileSystemFile
 
-- (RACPropertySubject *)encoding {
+- (RACPropertySubject *)encodingSubject {
 	@weakify(self);
-	RACPropertySubject *encoding = [RACPropertySubject property];
-	RACBinding *encodingBinding = encoding.binding;
+	RACPropertySubject *subject = [RACPropertySubject property];
+	RACBinding *encodingBinding = subject.binding;
 	RACScheduler *callingScheduler = currentScheduler();
 	
 	[fileSystemScheduler() schedule:^{
@@ -79,13 +79,13 @@
 		}];
 	}];
 	
-	return encoding;
+	return subject;
 }
 
-- (RACPropertySubject *)content {
+- (RACPropertySubject *)contentSubject {
 	@weakify(self);
-	RACPropertySubject *content = [RACPropertySubject property];
-	RACBinding *contentBinding = content.binding;
+	RACPropertySubject *subject = [RACPropertySubject property];
+	RACBinding *contentBinding = subject.binding;
 	RACScheduler *callingScheduler = currentScheduler();
 	
 	[fileSystemScheduler() schedule:^{
@@ -100,7 +100,7 @@
 		}];
 	}];
 	
-	return content;
+	return subject;
 }
 
 - (RACSignal *)save {

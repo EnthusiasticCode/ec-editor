@@ -188,7 +188,9 @@ NSMutableDictionary *fileSystemItemCache() {
 
 #ifdef DEBUG
 - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context {
-	ASSERT_FILE_SYSTEM_SCHEDULER();
+	if ([keyPath isEqualToString:@keypath(self.url)] || [keyPath isEqualToString:@keypath(self.name)]) {
+		ASSERT_FILE_SYSTEM_SCHEDULER();
+	}
 	[super addObserver:observer forKeyPath:keyPath options:options context:context];
 }
 #endif
