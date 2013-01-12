@@ -76,44 +76,28 @@
   };
   RACReplaySubject *moveSubject = [RACReplaySubject replaySubjectWithCapacity:1];
   _moveSubject = moveSubject;
+	items = items.copy;
   @weakify(self);
   
-#warning TODO URI: this should be changed to react to changes instead of using take:1 everywhere
-	[[RACSignal zip:@[ [RACSignal zip:[items.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-		return [[x.nameSignal take:1] map:^(NSString *y) {
-			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];
-		}];
-  }]], [[destinationFolder.childrenSignal take:1] flattenMap:^(NSArray *x) {
-		return [RACSignal zip:[x.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
-			return [y.nameSignal take:1];
-		}]];
-	}] ]] subscribeNext:^(RACTuple *x) {
+	[[destinationFolder.childrenSignal take:1] subscribeNext:^(NSArray *destinationChildren) {
 		@strongify(self);
-		if (!self) {
-			return;
-		}
+		if (!self) return;
 		
-		RACTuple *namedItems = x.first;
-		RACTuple *destinationChildrenNames = x.second;
-		
-		NSMutableArray *conflictItems = [[NSMutableArray alloc] init];
-		NSMutableArray *resolvedItems = [[NSMutableArray alloc] initWithCapacity:[namedItems count]];
-		for (RACTuple *tuple in namedItems) {
-			[resolvedItems addObject:tuple.first];
+		NSMutableArray *conflictItems = [NSMutableArray arrayWithCapacity:MIN(items.count, destinationChildren.count)];
+		NSMutableArray *resolvedItems = [NSMutableArray arrayWithCapacity:items.count];
+		for (FileSystemItem *item in items) {
+			[resolvedItems addObject:item];
 		}
 		
 		// Compare the names to find conflicts
-		for (NSString *destinationChildName in destinationChildrenNames) {
-			FileSystemItem *conflict = nil;
-			for (RACTuple *namedItem in namedItems) {
-				if ([namedItem.second isEqualToString:destinationChildName]) {
-					conflict = namedItem.first;
+		for (FileSystemItem *child in destinationChildren) {
+			NSString *childName = child.name;
+			for (FileSystemItem *item in items) {
+				if ([item.name isEqualToString:childName]) {
+					[resolvedItems removeObject:item];
+					[conflictItems addObject:item];
 					break;
 				}
-			}
-			if (conflict) {
-				[resolvedItems removeObject:conflict];
-				[conflictItems addObject:conflict];
 			}
 		}
 		
@@ -132,11 +116,10 @@
 		self.progressView.hidden = YES;
 		[self.conflictTableView reloadData];
 		[self.conflictTableView setEditing:YES animated:NO];
-		self.navigationItem.title = @"Select files to replace";
-	} error:^(NSError *error) {
+		self.navigationItem.title = @"Select files to replace";	} error:^(NSError *error) {
 		[moveSubject sendError:error];
 	}];
-  
+	
   return _moveSubject;
 }
 

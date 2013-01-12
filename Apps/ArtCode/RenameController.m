@@ -72,27 +72,18 @@
   // Update the alsoRenameItems when the item's name or siblings change
   [[[[RACSignal combineLatest:@[ [[item.parentSignal map:^RACSignal *(FileSystemDirectory *parent) {
     return parent.childrenSignal;
-  }] switchToLatest], item.nameSignal ]] map:^RACSignal *(RACTuple *xs) {
-    return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-      NSArray *children = xs.first;
-      NSString *fullName = xs.second;
-      NSString *name = [fullName stringByDeletingPathExtension];
-      NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-#warning TODO URI: this should react to renames of children instead of using take:1
-      return [[RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-        return [[[x.nameSignal take:1] filter:^BOOL(NSString *y) {
-          return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
-        }] doNext:^(id y) {
-          [alsoRenameItems addObject:y];
-        }];
-      }]] subscribeError:^(NSError *error) {
-        [subscriber sendError:error];
-      } completed:^{
-        [subscriber sendNext:alsoRenameItems];
-        [subscriber sendCompleted];
-      }];
-    }];
-  }] switchToLatest] toProperty:@keypath(self.alsoRenameItems) onObject:self];
+  }] switchToLatest], item.nameSignal ]] map:^(RACTuple *tuple) {
+		RACTupleUnpack(NSArray *children, NSString *fullName) = tuple;
+		NSString *name = [fullName stringByDeletingPathExtension];
+		NSMutableArray *alsoRenameItems = [NSMutableArray array];
+		
+		for (FileSystemItem *child in children) {
+			NSString *childFullName = child.name;
+			if (![childFullName isEqualToString:fullName] && [childFullName.stringByDeletingPathExtension isEqualToString:name]) [alsoRenameItems addObject:child];
+		}
+		
+		return alsoRenameItems;
+  }] catchTo:RACSignal.empty] toProperty:@keypath(self.alsoRenameItems) onObject:self];
   
   // Reset the selectedAlsoRenameItems when alsoRenameItems change
   [[RACAble(self.alsoRenameItems) map:^NSMutableSet *(NSArray *alsoRenameItems) {
