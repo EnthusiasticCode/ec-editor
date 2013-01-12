@@ -78,7 +78,7 @@
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
-#warning TODO: this should react to renames of children instead of using take:1
+#warning TODO URI: this should react to renames of children instead of using take:1
       return [[RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
         return [[[x.nameSignal take:1] filter:^BOOL(NSString *y) {
           return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];

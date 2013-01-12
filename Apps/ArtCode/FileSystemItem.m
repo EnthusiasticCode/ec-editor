@@ -198,7 +198,7 @@ NSMutableDictionary *fileSystemItemCache() {
 @implementation FileSystemItem (FileManagement)
 
 - (RACSignal *)create {
-#warning TODO: this should save the extended attributes since they could have been changed before the item was persisted to disk
+#warning TODO URI: this should save the extended attributes since they could have been changed before the item was persisted to disk
 	return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 }
 

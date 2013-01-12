@@ -99,24 +99,25 @@
 			return directorySignal;
 		}];
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
-  
-	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
-		return [directory childrenSignal];
-	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
-		// If at least one item has been added to children, will scroll to one of them
-		if (scrollToItem == nil && previous.count < next.count) {
-			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
-				if (prevItem != next[idx]) {
-					scrollToItem = next[idx];
-					*stop = YES;
-				}
-			}];
-			if (scrollToItem == nil) scrollToItem = next.lastObject;
-		}
-		return next;
-	}];
+
+#warning TODO URI: add back this logic
+//	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
+//		return [directory childrenSignal];
+//	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
+//		// If at least one item has been added to children, will scroll to one of them
+//		if (scrollToItem == nil && previous.count < next.count) {
+//			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
+//				if (prevItem != next[idx]) {
+//					scrollToItem = next[idx];
+//					*stop = YES;
+//				}
+//			}];
+//			if (scrollToItem == nil) scrollToItem = next.lastObject;
+//		}
+//		return next;
+//	}];
 	
-	[[FileSystemDirectory filterChildren:itemsSignal byAbbreviation:self.searchBarTextSubject] toProperty:@keypath(self.filteredItems) onObject:self];
+	[[self.currentDirectory childrenSignalFilteredByAbbreviation:self.searchBarTextSubject] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);
@@ -232,22 +233,17 @@
       _selectedItems = [[NSMutableArray alloc] init];
     [_selectedItems addObject:item];
   } else {
-    @weakify(self);
-    [[[RACSignal combineLatest:@[item.urlSignal, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
-      @strongify(self);
-      NSURL *fileURL = xs.first;
-      NSString *type = xs.second;
-      if (type == NSURLFileResourceTypeDirectory) {
-        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-      } else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
-        [self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-      } else {
-        FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
-        if ([QLPreviewController canPreviewItem:item]) {
-          [self _previewFile:fileURL];
-        }
-      }
-    }];
+		NSURL *fileURL = item.url;
+		if ([item isKindOfClass:FileSystemDirectory.class]) {
+			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+		} else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
+			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+		} else {
+			FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
+			if ([QLPreviewController canPreviewItem:item]) {
+				[self _previewFile:fileURL];
+			}
+		}
   }
 }
 

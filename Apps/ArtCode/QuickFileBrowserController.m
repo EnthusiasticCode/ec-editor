@@ -58,7 +58,7 @@
   }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
-		return [[FileSystemDirectory filterChildren:[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
+		return [[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
 			@strongify(self);
 			if (self.searchBar.text.length == 0) return @[];
 			return items;

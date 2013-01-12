@@ -72,7 +72,7 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 	}
 }
 
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
+- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal {
 	ASSERT(!(options & NSDirectoryEnumerationSkipsPackageDescendants) && "FileSystemDirectory doesn't support NSDirectoryEnumerationSkipsPackageDescendants");
 	@weakify(self);
 	
@@ -117,16 +117,16 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 	}] deliverOn:currentScheduler()];
 }
 
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options {
-	return [self childrenWithOptions:options filteredByAbbreviation:nil];
+- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options {
+	return [self childrenSignalWithOptions:options filteredByAbbreviation:nil];
 }
 
-- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
-	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants filteredByAbbreviation:abbreviationSignal];
+- (RACSignal *)childrenSignalFilteredByAbbreviation:(RACSignal *)abbreviationSignal {
+	return [self childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants filteredByAbbreviation:abbreviationSignal];
 }
 
-- (RACSignal *)children {
-	return [self childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
+- (RACSignal *)childrenSignal {
+	return [self childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants];
 }
 
 - (void)didAddItem:(FileSystemItem *)item {
