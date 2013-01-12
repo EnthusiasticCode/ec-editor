@@ -18,8 +18,14 @@
 // to create it with the item returned from this call.
 + (RACSignal *)itemWithURL:(NSURL *)url;
 
+// The url of the receiver.
+- (NSURL *)url;
+
 // Returns a signal that sends the URL of the receiver.
 @property (nonatomic, strong, readonly) RACSignal *urlSignal;
+
+// The name of the receiver.
+- (NSString *)name;
 
 // Returns a signal that sends the name of the receiver.
 @property (nonatomic, strong, readonly) RACSignal *nameSignal;

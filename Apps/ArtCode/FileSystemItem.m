@@ -52,6 +52,8 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @implementation FileSystemItem
 
+#pragma mark FileSystemItem
+
 + (RACSignal *)itemWithURL:(NSURL *)url {
 	if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
@@ -111,18 +113,26 @@ NSMutableDictionary *fileSystemItemCache() {
   return self;
 }
 
-- (RACSignal *)url {
+- (NSURL *)url {
+	return self.urlBacking;
+}
+
+- (RACSignal *)urlSignal {
   return [RACAble(self.urlBacking) deliverOn:currentScheduler()];
 }
 
-- (RACSignal *)name {
-  return [self.url map:^NSString *(NSURL *url) {
+- (NSString *)name {
+	return self.urlBacking.lastPathComponent;
+}
+
+- (RACSignal *)nameSignal {
+  return [self.urlSignal map:^NSString *(NSURL *url) {
     return url.lastPathComponent;
   }];
 }
 
 - (RACSignal *)parent {
-	return [[self.url map:^(NSURL *value) {
+	return [[self.urlSignal map:^(NSURL *value) {
 		return [FileSystemItem itemWithURL:value.URLByDeletingLastPathComponent];
 	}] switchToLatest];
 }
@@ -173,6 +183,15 @@ NSMutableDictionary *fileSystemItemCache() {
 	[fileSystemItemCache() removeObjectForKey:fromURL];
 	self.urlBacking = nil;
 }
+
+#pragma mark NSObject
+
+#ifdef DEBUG
+- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+	[super addObserver:observer forKeyPath:keyPath options:options context:context];
+}
+#endif
 
 @end
 

@@ -51,7 +51,7 @@ NSMutableDictionary *fileSystemItemCache();
 
 @interface FileSystemItem ()
 
-@property (nonatomic, strong) NSURL *urlBacking;
+@property (atomic, strong) NSURL *urlBacking;
 
 // Designated initializer.
 //
