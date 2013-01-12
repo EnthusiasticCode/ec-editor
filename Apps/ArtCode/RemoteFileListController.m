@@ -164,25 +164,16 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSArray *contentsArray = [(_directoryContent ?: [[NSArray alloc] init]) arrayByAddingObjectsFromArray:self.progressItems];
   
   // Filtering
-  if ([self.searchBar.text length] != 0) {
-    NSArray *hitsMask = nil;
-    _filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitsMask extrapolateTargetStringBlock:^NSString *(NSDictionary *element) {
-      return element[cxFilenameKey];
-    }];
-    _filteredItemsHitMasks = hitsMask;
-  }
-  else
-  {
-    if (self.progressItems.count == 0) {
-      _filteredItems = _directoryContent;
-    } else {
-      _filteredItems = [contentsArray sortedArrayUsingComparator:^NSComparisonResult(NSDictionary *obj1, NSDictionary *obj2){
-        // Both elements are in any case NSDictionaries with a cxFilenameKey
-        return [(NSString *)obj1[cxFilenameKey] compare:(NSString *)obj2[cxFilenameKey]];
-      }];
-    }
-    _filteredItemsHitMasks = nil;
-  }
+	_filteredItems = [NSMutableArray arrayWithCapacity:contentsArray.count];
+	_filteredItemsHitMasks = [NSMutableArray arrayWithCapacity:contentsArray.count];
+	for (RACTuple *tuple in [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
+		return item[cxFilenameKey];
+	}]) {
+		RACTupleUnpack(NSDictionary *item, NSIndexSet *hitMask) = tuple;
+		[(NSMutableArray *)_filteredItems addObject:item];
+		if (hitMask != nil) [(NSMutableArray *)_filteredItemsHitMasks addObject:hitMask];
+	}
+
   return _filteredItems;
 }
 

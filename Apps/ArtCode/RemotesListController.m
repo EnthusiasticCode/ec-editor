@@ -52,23 +52,18 @@
 
 #pragma mark - Properties
 
-- (NSArray *)filteredItems
-{ 
-  if (!_filteredRemotes)
-  {
-    if ([self.searchBar.text length] == 0)
-    {
-      _filteredRemotes = self.artCodeTab.currentLocation.project.remotes.array;
-      _filteredRemotesHitMasks = nil;
-    }
-    else
-    {
-      NSArray *hitMasks = nil;
-      _filteredRemotes = [self.artCodeTab.currentLocation.project.remotes.array sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
-        return element.name;
-      }];
-      _filteredRemotesHitMasks = hitMasks;
-    }
+- (NSArray *)filteredItems {
+  if (!_filteredRemotes) {
+		NSArray *remotes = self.artCodeTab.currentLocation.project.remotes.array;
+		_filteredRemotes = [NSMutableArray arrayWithCapacity:remotes.count];
+		_filteredRemotesHitMasks = [NSMutableArray arrayWithCapacity:remotes.count];
+		for (RACTuple *tuple in [remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *remote) {
+			return remote.name;
+		}]) {
+			RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = tuple;
+			[(NSMutableArray *)_filteredRemotes addObject:remote];
+			if (hitMask != nil) [(NSMutableArray *)_filteredRemotesHitMasks addObject:hitMask];
+		}
   }
   return _filteredRemotes;
 }

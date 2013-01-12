@@ -28,23 +28,18 @@
 
 #pragma mark - Properties
 
-- (NSArray *)filteredItems
-{
-  if (!_filteredSymbolList)
-  {
-    if ([self.searchBar.text length])
-    {
-      NSArray *hitMask = nil;
-      _filteredSymbolList = [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMask extrapolateTargetStringBlock:^NSString *(TMSymbol *element) {
-        return element.title;
-      }];
-      _filteredSymbolListHitMask = hitMask;
-    }
-    else
-    {
-      _filteredSymbolList = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList;
-      _filteredSymbolListHitMask = nil;
-    }
+- (NSArray *)filteredItems {
+  if (!_filteredSymbolList) {
+		NSArray *symbols = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList;
+		_filteredSymbolList = [NSMutableArray arrayWithCapacity:symbols.count];
+		_filteredSymbolListHitMask = [NSMutableArray arrayWithCapacity:symbols.count];
+		for (RACTuple *tuple in [symbols sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(TMSymbol *symbol) {
+			return symbol.title;
+		}]) {
+			RACTupleUnpack(TMSymbol *symbol, NSIndexSet *hitMask) = tuple;
+			[(NSMutableArray *)_filteredSymbolList addObject:symbol];
+			if (hitMask != nil) [(NSMutableArray *)_filteredSymbolListHitMask addObject:hitMask];
+		}
   }
   return _filteredSymbolList;
 }
