@@ -105,7 +105,7 @@
 		return directory.childrenSignal;
 	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
 		// If at least one item has been added to children, will scroll to one of them
-		if (scrollToItem == nil && previous.count < next.count) {
+		if (scrollToItem == nil && previous != nil && previous.count < next.count) {
 			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
 				if (prevItem != next[idx]) {
 					scrollToItem = next[idx];
