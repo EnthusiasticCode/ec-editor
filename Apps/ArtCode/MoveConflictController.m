@@ -78,6 +78,7 @@
   _moveSubject = moveSubject;
   @weakify(self);
   
+#warning TODO: this should be changed to react to changes instead of using take:1 everywhere
 	[[RACSignal zip:@[ [RACSignal zip:[items.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
 		return [[x.nameSignal take:1] map:^(NSString *y) {
 			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];

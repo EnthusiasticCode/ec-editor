@@ -230,16 +230,15 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-    return [[x.urlSignal take:1] map:^RACSignal *(NSURL *itemURL) {
-      // Start upload
-      RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
-      
-      // Start progress indicator in the remote file list
-      [remoteController addProgressItemWithURL:itemURL progressSignal:progressSignal];
-      
-      return progressSignal;
-    }];
+  [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *item) {
+		NSURL *itemURL = item.url;
+		// Start upload
+		RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
+		
+		// Start progress indicator in the remote file list
+		[remoteController addProgressItemWithURL:itemURL progressSignal:progressSignal];
+		
+		return progressSignal;
   }]] finally:^{
     @strongify(self);
     self.transfersInProgressCount--;

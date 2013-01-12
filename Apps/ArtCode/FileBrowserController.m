@@ -341,20 +341,23 @@
         break;
       }
       case 2: { // iTunes
-        NSUInteger selectedItemsCount = [_selectedItems count];
+				NSArray *selectedItems = _selectedItems.copy;
         self.loading = YES;
-        [[[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-					return [x.urlSignal map:^id(NSURL *url) {
-						return [x exportTo:[NSURL.applicationDocumentsDirectory URLByAppendingPathComponent:url.lastPathComponent] copy:YES];
-					}];
-        }]] finally:^{
+				
+        [[[[FileSystemDirectory itemWithURL:NSURL.applicationDocumentsDirectory] flattenMap:^RACStream *(FileSystemDirectory *documentsDirectory) {
+					NSMutableArray *copySignals = [NSMutableArray arrayWithCapacity:selectedItems.count];
+					for (FileSystemItem *item in selectedItems) {
+						[copySignals addObject:[item copyTo:documentsDirectory withName:nil replaceExisting:YES]];
+					}
+					return [RACSignal zip:copySignals];
+				}] finally:^{
           self.loading = NO;
 				}] subscribeError:^(NSError *error) {
 					ASSERT_MAIN_QUEUE();
-					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Error exporting file") plural:L(@"Error exporting files") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Error exporting file") plural:L(@"Error exporting files") count:selectedItems.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
 				} completed:^{
           ASSERT_MAIN_QUEUE();
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItems.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
         break;
@@ -363,35 +366,36 @@
         // Compressing files to export
         self.loading = YES;
         
-        [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-          return [x.urlSignal take:1];
-        }]] subscribeNext:^(RACTuple *x) {
-          [ArchiveUtilities compressFileAtURLs:x.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
-            ASSERT_MAIN_QUEUE();
-            if (temporaryDirectoryURL) {
-              NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
-              [[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
-              // Create mail composer
-              MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
-              mailComposer.mailComposeDelegate = self;
-              mailComposer.navigationBar.barStyle = UIBarStyleDefault;
-              mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
-              
-              // Add attachement
-              [mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
-              
-              // Add precompiled mail fields
-              [mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
-              [mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
-              
-              // Present mail composer
-              [self presentViewController:mailComposer animated:YES completion:nil];
-              [mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-              [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
-            }
-            self.loading = NO;
-          }];
-        }];
+				NSMutableArray *urls = [NSMutableArray arrayWithCapacity:_selectedItems.count];
+				for (FileSystemItem *item in _selectedItems) {
+					[urls addObject:item.url];
+				}
+
+				[ArchiveUtilities compressFileAtURLs:urls completionHandler:^(NSURL *temporaryDirectoryURL) {
+					ASSERT_MAIN_QUEUE();
+					if (temporaryDirectoryURL) {
+						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
+						[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
+						// Create mail composer
+						MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
+						mailComposer.mailComposeDelegate = self;
+						mailComposer.navigationBar.barStyle = UIBarStyleDefault;
+						mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+						
+						// Add attachement
+						[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
+						
+						// Add precompiled mail fields
+						[mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
+						[mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
+						
+						// Present mail composer
+						[self presentViewController:mailComposer animated:YES completion:nil];
+						[mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+						[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+					}
+					self.loading = NO;
+				}];
         
         [self setEditing:NO animated:YES];
         break;
@@ -517,24 +521,21 @@
 }
 
 - (void)_previewFile:(NSURL *)fileURL {
-	[[[RACSignal zip:[self.filteredItems.rac_sequence.eagerSequence map:^id(RACTuple *value) {
-		return [(FileSystemItem *)value.first urlSignal];
-	}]] take:1] subscribeNext:^(RACTuple *x) {
-		NSMutableArray *previewItems = [NSMutableArray arrayWithCapacity:x.count];
-		for (NSURL *itemURL in x) {
-			FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
-			if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
-				[previewItems addObject:previewItem];
-			}
+	NSMutableArray *previewItems = [NSMutableArray arrayWithCapacity:self.filteredItems.count];
+	for (FileSystemItem *item in self.filteredItems) {
+		NSURL *itemURL = item.url;
+		FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
+		if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {
+			[previewItems addObject:previewItem];
 		}
-		self.previewItems = previewItems;
-		QLPreviewController *previewer = [[QLPreviewController alloc] init];
-		[previewer setDataSource:self];
-		[previewer setCurrentPreviewItemIndex:[self.previewItems indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
-			return [item.previewItemURL isEqual:fileURL];
-		}]];
-		[self presentViewController:previewer animated:YES completion:nil];
-	}];
+	}
+	self.previewItems = previewItems;
+	QLPreviewController *previewer = [[QLPreviewController alloc] init];
+	[previewer setDataSource:self];
+	[previewer setCurrentPreviewItemIndex:[self.previewItems indexOfObjectPassingTest:^BOOL(FilePreviewItem *item, NSUInteger idx, BOOL *stop) {
+		return [item.previewItemURL isEqual:fileURL];
+	}]];
+	[self presentViewController:previewer animated:YES completion:nil];
 }
 
 @end

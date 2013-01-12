@@ -131,9 +131,7 @@
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
   FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
-  [[[item urlSignal] take:1] subscribeNext:^(NSURL *x) {
-    [self.artCodeTab pushFileURL:x withProject:self.artCodeTab.currentLocation.project];
-  }];
+	[self.artCodeTab pushFileURL:item.url withProject:self.artCodeTab.currentLocation.project];
 }
 
 #pragma mark - Private methods

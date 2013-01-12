@@ -78,6 +78,7 @@
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
+#warning TODO: this should react to renames of children instead of using take:1
       return [[RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
         return [[[x.nameSignal take:1] filter:^BOOL(NSString *y) {
           return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
@@ -161,26 +162,17 @@
   // TODO: checks on new name?
   NSString *newFullName = self.renameTextField.text;
   NSString *newName = newFullName.stringByDeletingPathExtension;
+	NSString *oldFullName = _item.name;
+	NSString *oldName = oldFullName.stringByDeletingPathExtension;
   NSArray *alsoRenameItems = self.alsoRenameItems;
   
-  @weakify(self);
-  [[[[_item.nameSignal take:1] flattenMap:^RACSignal *(NSString *x) {
-    @strongify(self);
-    if (!self) {
-      return nil;
-    }
-    return [RACSignal combineLatest:@[[RACSignal return:x], [self->_item renameTo:newFullName]]];
-  }] flattenMap:^RACSignal *(RACTuple *xs) {
-    @strongify(self);
-    NSString *oldFullName = xs.first;
-    NSString *oldName = [oldFullName stringByDeletingPathExtension];
-    return [RACSignal zip:[self.selectedAlsoRenameItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-      return [[x.nameSignal take:1] flattenMap:^RACSignal *(NSString *y) {
-        NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
-        return [x renameTo:newFullName];
-      }];
-    }]];
-  }] subscribeError:^(NSError *error) {
+	NSMutableArray *renameSignals = [NSMutableArray arrayWithCapacity:alsoRenameItems.count];
+	[renameSignals addObject:[_item renameTo:newFullName]];
+	for (FileSystemItem *item in alsoRenameItems) {
+		[renameSignals addObject:[item renameTo:[newName stringByAppendingString:[item.name substringFromIndex:oldName.length]]]];
+	}
+	
+  [[RACSignal zip:renameSignals] subscribeError:^(NSError *error) {
     _completionHandler(0, error);
   } completed:^{
     _completionHandler(alsoRenameItems.count + 1, nil);

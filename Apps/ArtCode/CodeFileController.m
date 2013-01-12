@@ -780,11 +780,11 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
     @weakify(self);
-    [[self.textFile.urlSignal take:1] subscribeNext:^(NSURL *x) {
+		[self.textFile.save subscribeNext:^(FileSystemItem *item) {
       @strongify(self);
-      [self.webView loadRequest:[NSURLRequest requestWithURL:x]];
+      [self.webView loadRequest:[NSURLRequest requestWithURL:item.url]];
       self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-    }];
+		}];
   } else {
     self.title = nil;
   }
