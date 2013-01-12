@@ -7,12 +7,12 @@
 //
 
 #import "FolderBrowserController.h"
-#import "UIImage+AppStyle.h"
+
 #import "ArtCodeTab.h"
-#import "NSString+PluralFormat.h"
 #import "FileSystemDirectory.h"
 #import "FileSystemItemCell.h"
-
+#import "NSString+PluralFormat.h"
+#import "UIImage+AppStyle.h"
 
 @interface FolderBrowserController ()
 
@@ -33,26 +33,26 @@
   }
   
   // RAC
-	RACSignal * tableView = RACAbleWithStart(self.tableView);
-	RACSignal * currentFolder = [RACAble(self.currentFolderSignal) switchToLatest];
+	RACSignal *tableView = RACAbleWithStart(self.tableView);
+	RACSignal *currentFolder = [RACAble(self.currentFolderSignal) switchToLatest];
 	
 	// Excluded folder state
-	RACSignal * shouldEnableSignal = [RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
+	RACSignal *shouldEnableSignal = [[RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
 		return @(s ? s != e : c != e);
-	}];
+	}] replayLast];
 	[shouldEnableSignal toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 	[shouldEnableSignal toProperty:@keypath(self.hideExcludeMessage) onObject:self];
 	
   // Update table content
-  [[[[[currentFolder flattenMap:^(FileSystemDirectory *x) {
+  [[[[[currentFolder map:^(FileSystemDirectory *x) {
     return x.children;
-  }] map:^(NSArray *x) {
-		return [[RACSignal merge:[x.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
-			return [[[y.type take:1] filter:^ BOOL (NSString *z) {
-				return z == NSURLFileResourceTypeDirectory;
-			}] mapReplace:y];
-		}]] collect];
-  }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
+  }] switchToLatest] map:^(NSArray *children) {
+		NSMutableArray *subfolders = [NSMutableArray arrayWithCapacity:children.count];
+		for (FileSystemItem *item in children) {
+			if ([item isKindOfClass:FileSystemDirectory.class]) [subfolders addObject:item];
+		}
+		return subfolders;
+	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
   [[[[RACAble(self.currentFolderSignal) switchToLatest] flattenMap:^(FileSystemDirectory *x) {
