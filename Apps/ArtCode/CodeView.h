@@ -35,16 +35,7 @@ typedef CodeViewAutoIndentResult (^CodeViewAutoIndentationForLineBlock)(NSString
 
 /// Returns if the codeview should show its keyboard accessory view in the given view with the given frame.
 /// The provided frame is relative to the given view. The implementer can return a different view and frame. The frame will be automatically adjusted after this method if the accessovy view 'flipped' property will be set to YES.
-- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView **)view withFrame:(CGRect *)frame;
-
-/// Informs the delegate that the accessory view has been displayed in the given view with the given frame.
-- (void)codeView:(CodeView *)codeView didShowKeyboardAccessoryViewInView:(UIView *)view withFrame:(CGRect)frame;
-
-/// Returns if the codeview should hide its keyboard accessory view.
-- (BOOL)codeViewShouldHideKeyboardAccessoryView:(CodeView *)codeView;
-
-/// Informs the delegate that the accessory view has been hidden.
-- (void)codeViewDidHideKeyboardAccessoryView:(CodeView *)codeView;
+- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewOnNotification:(NSNotification *)note inView:(UIView **)view withFrame:(CGRect *)frame;
 
 #pragma mark Insersion modificators
 
@@ -141,6 +132,9 @@ typedef CodeViewAutoIndentResult (^CodeViewAutoIndentationForLineBlock)(NSString
 
 /// Gets the receiver's accessory view.
 @property (nonatomic, strong) KeyboardAccessoryView *keyboardAccessoryView;
+
+/// Indicates if the keyboard accessory view is visible.
+@property (nonatomic, readonly) BOOL keyboardAccessoryViewVisible;
 
 /// Presents the keyboard accessory view in the given view and position it considering the keyboard frame
 - (void)presentKeyboardAccessoryViewWithKeyboardFrame:(CGRect)keyboardFrame inView:(UIView *)targetView animated:(BOOL)animated;

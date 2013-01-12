@@ -417,17 +417,23 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Handle keyboard display changes
-	[[RACSignal merge:@[ [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil] ]] subscribeNext:^(NSNotification *note) {
+	[[RACSignal combineLatest:@[ [RACSignal merge:@[ [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil] ]], RACAble(self.codeView.keyboardAccessoryViewVisible) ] reduce:^(NSNotification *keyboardNotification, NSNumber *accessoryViewVisible) {
 		@strongify(self);
-		if (note.name == UIKeyboardWillHideNotification) {
-			self.wrapperView.frame = self.view.bounds;
+		if (keyboardNotification.name == UIKeyboardWillHideNotification) {
+			return @(self.view.bounds.size.height);
 		} else {
-			// Adjust frame height to free space for docket keyboard
-			CGRect keyboardFrame = [self.view convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
-			CGRect viewFrame = self.view.bounds;
-			viewFrame.size.height = keyboardFrame.origin.y - 45;
-			self.wrapperView.frame = viewFrame;
+			CGRect keyboardFrame = [self.view convertRect:[keyboardNotification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+			if (accessoryViewVisible.boolValue) {
+				return @(keyboardFrame.origin.y - 45);
+			} else {
+				return @(keyboardFrame.origin.y);
+			}
 		}
+	}] subscribeNext:^(NSNumber *frameHeight) {
+		@strongify(self);
+		CGRect frame = self.view.bounds;
+		frame.size.height = frameHeight.floatValue;
+		self.wrapperView.frame = frame;
 	}];
   
   return self;
@@ -603,7 +609,10 @@ static void drawStencilStar(CGContextRef myContext)
   [_minimapView setNeedsDisplay];
 }
 
-- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewInView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame {
+- (BOOL)codeView:(CodeView *)codeView shouldShowKeyboardAccessoryViewOnNotification:(NSNotification *)note inView:(UIView *__autoreleasing *)view withFrame:(CGRect *)frame {
+	*view = self.view;
+	*frame = [self.view convertRect:[note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue] fromView:nil];
+	
 	// Set keyboard position specific accessory popover properties
 	if (self.codeView.keyboardAccessoryView.isSplit) {
 		self._keyboardAccessoryView.itemPopoverView.positioningInsets = UIEdgeInsetsMake(4, 3, 4, 3);
