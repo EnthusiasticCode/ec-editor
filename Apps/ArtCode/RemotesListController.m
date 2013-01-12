@@ -52,33 +52,26 @@
 
 #pragma mark - Properties
 
-- (NSArray *)filteredItems
-{ 
-  if (!_filteredRemotes)
-  {
-    if ([self.searchBar.text length] == 0)
-    {
-      _filteredRemotes = self.artCodeTab.currentLocation.project.remotes.array;
-      _filteredRemotesHitMasks = nil;
-			
-			if (_filteredRemotes.count == 0) {
+- (NSArray *)filteredItems {
+  if (!_filteredRemotes) {
+		NSArray *remotes = self.artCodeTab.currentLocation.project.remotes.array;
+		_filteredRemotes = [NSMutableArray arrayWithCapacity:remotes.count];
+		_filteredRemotesHitMasks = [NSMutableArray arrayWithCapacity:remotes.count];
+		for (RACTuple *tuple in [remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *remote) {
+			return remote.name;
+		}]) {
+			RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = tuple;
+			[(NSMutableArray *)_filteredRemotes addObject:remote];
+			if (hitMask != nil) [(NSMutableArray *)_filteredRemotesHitMasks addObject:hitMask];
+		}
+		
+		if (_filteredRemotes.count == 0) {
+			if (self.searchBar.text.length == 0) {
 				self.infoLabel.text = L(@"The project has no remotes. Use the + button to add a new one.");
-			}
-    }
-    else
-    {
-      NSArray *hitMasks = nil;
-      _filteredRemotes = [self.artCodeTab.currentLocation.project.remotes.array sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *element) {
-        return element.name;
-      }];
-      _filteredRemotesHitMasks = hitMasks;
-			
-			if (_filteredRemotes.count == 0) {
+			} else {
 				self.infoLabel.text = L(@"No remotes found.");
 			}
-    }
-		
-		if (_filteredRemotes.count != 0) {
+		} else {
 			self.infoLabel.text = @"";
 		}
   }

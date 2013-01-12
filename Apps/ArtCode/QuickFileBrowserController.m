@@ -12,6 +12,7 @@
 #import "FileSystemDirectory.h"
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 #import "NSURL+Utilities.h"
 
 #import "ArtCodeLocation.h"
@@ -58,7 +59,9 @@
   }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
-		return [[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles filteredByAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
+		return [[[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+			return item.url.lastPathComponent;
+		}] map:^(NSArray *items) {
 			@strongify(self);
 			if (self.searchBar.text.length == 0) return @[];
 			return items;
@@ -94,6 +97,7 @@
 {
   [super viewDidLoad];
   self.searchBar.placeholder = L(@"Search for file");
+	self.infoLabel.text = L(@"Type a file name to open.");
 }
 
 - (void)viewDidAppear:(BOOL)animated

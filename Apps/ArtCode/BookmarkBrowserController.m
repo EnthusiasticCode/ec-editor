@@ -44,32 +44,26 @@
   if (!_filteredItemsAreValid) {
     // Get the new bookmarks
     [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
-      if ([self.searchBar.text length]) {
-        // Filter bookmarks
-        NSArray *hitMasks = nil;
-        _filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text resultHitMasks:&hitMasks extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
-          return bookmark.name;
-        }];
-        _filteredItemsHitMask = hitMasks;
-        
-        if ([_filteredItems count] == 0) {
-          self.infoLabel.text = L(@"No bookmarks found.");
-        }
-      } else {
-        // Sort bookmarks
-        _filteredItems = [bookmarks sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-          return [[obj1 name] compare:[obj2 name]];
-        }];
-        _filteredItemsHitMask = nil;
-        
-        if ([_filteredItems count] == 0) {
-          self.infoLabel.text = L(@"The project has no bookmarks. Add bookmarks by tapping on a line number in a file.");
-        }
-      }
-      
-      if ([_filteredItems count] != 0) {
-        self.infoLabel.text = @"";
-      }
+			// Filter bookmarks
+			_filteredItems = [NSMutableArray arrayWithCapacity:bookmarks.count];
+			_filteredItemsHitMask = [NSMutableArray arrayWithCapacity:bookmarks.count];
+			for (RACTuple *tuple in [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
+				return bookmark.name;
+			}]) {
+				RACTupleUnpack(ArtCodeProjectBookmark *bookmark, NSIndexSet *hitMask) = tuple;
+				[(NSMutableArray *)_filteredItems addObject:bookmark];
+				if (hitMask != nil) [(NSMutableArray *)_filteredItemsHitMask addObject:hitMask];
+			}
+			
+			if ([_filteredItems count] == 0) {
+				if ([self.searchBar.text length]) {
+					self.infoLabel.text = @"No bookmarks found.";
+				} else {
+					self.infoLabel.text = @"The project has no bookmarks. Add bookmarks by tapping on a line number in a file.";
+				}
+			} else {
+				self.infoLabel.text = @"";
+			}
       
       [self.tableView reloadData];
     }];

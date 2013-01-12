@@ -22,6 +22,7 @@
 #import "RemoteTransferController.h"
 
 #import "NSString+PluralFormat.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 #import "NSURL+Utilities.h"
 #import "BezelAlert.h"
 
@@ -100,26 +101,25 @@
 		}];
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
 
-#warning TODO URI: add back this logic
-//	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
-//		return [directory childrenSignal];
-//	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
-//		// If at least one item has been added to children, will scroll to one of them
-//		if (scrollToItem == nil && previous.count < next.count) {
-//			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
-//				if (prevItem != next[idx]) {
-//					scrollToItem = next[idx];
-//					*stop = YES;
-//				}
-//			}];
-//			if (scrollToItem == nil) scrollToItem = next.lastObject;
-//		}
-//		return next;
-//	}];
+	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
+		return directory.childrenSignal;
+	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
+		// If at least one item has been added to children, will scroll to one of them
+		if (scrollToItem == nil && previous.count < next.count) {
+			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
+				if (prevItem != next[idx]) {
+					scrollToItem = next[idx];
+					*stop = YES;
+				}
+			}];
+			if (scrollToItem == nil) scrollToItem = next.lastObject;
+		}
+		return next;
+	}];
 	
-	[[[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
-		return [directory childrenSignalFilteredByAbbreviation:self.searchBarTextSubject];
-	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
+	[[[itemsSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+		return item.url.lastPathComponent;
+	}] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);

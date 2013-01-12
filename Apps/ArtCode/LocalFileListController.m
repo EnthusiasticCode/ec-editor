@@ -12,6 +12,7 @@
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 
 
 @interface LocalFileListController ()
@@ -32,7 +33,9 @@ static void _init(LocalFileListController *self) {
                               [[RACAble(self.locationDirectory)
                                 map:^id(FileSystemDirectory *directory) {
                                   @strongify(self);
-																	return [directory childrenSignalFilteredByAbbreviation:self.searchBarTextSubject];
+																	return [directory.childrenSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+																		return item.url.lastPathComponent;
+																	}];
                                 }] switchToLatest],
                               // Signal with progress items
                               RACAbleWithStart(self.progressItems)]]
