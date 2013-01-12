@@ -37,7 +37,9 @@
 	@weakify(self);
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		return [fileSystemScheduler() schedule:^{
+		CANCELLATION_DISPOSABLE(disposable);
+		
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -46,11 +48,11 @@
 				[subscriber sendError:error];
 			} else {
 				self.loaded = YES;
-				[self didCreate];
-				[subscriber sendNext:self];
-				[subscriber sendCompleted];
+				[disposable addDisposable:[super.create subscribe:subscriber]];
 			}
-		}];
+		}]];
+		
+		return disposable;
 	}] deliverOn:currentScheduler()];
 }
 

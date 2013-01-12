@@ -50,6 +50,13 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @end
 
+@interface FileSystemItem (ExtendedAttributes_Private)
+
+- (id)loadXattrValueForKey:(NSString *)key;
+- (void)saveXattrValue:(id)value forKey:(NSString *)key;
+
+@end
+
 @implementation FileSystemItem
 
 #pragma mark FileSystemItem
@@ -189,8 +196,28 @@ NSMutableDictionary *fileSystemItemCache() {
 @implementation FileSystemItem (FileManagement)
 
 - (RACSignal *)create {
-#warning TODO URI: this should save the extended attributes since they could have been changed before the item was persisted to disk
-	return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+	@weakify(self);
+	
+	NSMutableArray *signals = [NSMutableArray array];
+	@synchronized (self) {
+		[self.extendedAttributesBacking enumerateKeysAndObjectsUsingBlock:^(NSString *key, RACPropertySubject *extendedAttribute, BOOL *stop) {
+			[signals addObject:[[extendedAttribute take:1] map:^(id value) {
+				return [RACTuple tupleWithObjects:key, value, nil];
+			}]];
+		}];
+	}
+	return [[RACSignal zip:signals] map:^(RACTuple *tuples) {
+		@strongify(self);
+		
+		for (RACTuple *tuple in tuples) {
+			RACTupleUnpack(NSString *key, id value) = tuple;
+			[self saveXattrValue:value forKey:key];
+		}
+		
+		[self didCreate];
+		return self;
+	}];
 }
 
 - (RACSignal *)moveTo:(FileSystemDirectory *)destination withName:(NSString *)newName replaceExisting:(BOOL)shouldReplace {
@@ -310,9 +337,9 @@ NSMutableDictionary *fileSystemItemCache() {
 
 @implementation FileSystemItem (ExtendedAttributes)
 
-static size_t _xattrMaxSize = 4 * 1024; // 4 kB
-
 - (RACPropertySubject *)extendedAttributeSubjectForKey:(NSString *)key {
+	@weakify(self);
+	
 	@synchronized (self) {
 		RACPropertySubject *subject = self.extendedAttributesBacking[key];
 		if (subject != nil) return subject;
@@ -321,30 +348,52 @@ static size_t _xattrMaxSize = 4 * 1024; // 4 kB
 			
 		// Load the initial value from the filesystem
 		[fileSystemScheduler() schedule:^{
-			void *xattrBytes = malloc(_xattrMaxSize);
-			ssize_t xattrBytesCount = getxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
-			if (xattrBytesCount != -1) {
-				NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
-				id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
-				[subject sendNext:xattrValue];
-			}
-			free(xattrBytes);
+			@strongify(self);
+			id value = [self loadXattrValueForKey:key];
+			if (value)[subject sendNext:value];
 		}];
 		
 		// Save the value to disk every time it changes
 		[[subject deliverOn:fileSystemScheduler()] subscribeNext:^(id value) {
-			if (self.urlBacking == nil) return;
-			
-			if (value) {
-				NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:value];
-				setxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
-			} else {
-				removexattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, 0);
-			}
+			@strongify(self);
+			[self saveXattrValue:value forKey:key];
 		}];
 		
 		self.extendedAttributesBacking[key] = subject;
 		return subject;
+	}
+}
+
+@end
+
+@implementation FileSystemItem (ExtendedAttributes_Private)
+
+static size_t _xattrMaxSize = 4 * 1024; // 4 kB
+
+- (id)loadXattrValueForKey:(NSString *)key {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+
+	id xattrValue = nil;
+	void *xattrBytes = malloc(_xattrMaxSize);
+	ssize_t xattrBytesCount = getxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, xattrBytes, _xattrMaxSize, 0, 0);
+	if (xattrBytesCount != -1) {
+		NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
+		xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
+	}
+	free(xattrBytes);
+	return xattrValue;
+}
+
+- (void)saveXattrValue:(id)value forKey:(NSString *)key {
+	ASSERT_FILE_SYSTEM_SCHEDULER();
+	
+	if (self.urlBacking == nil) return;
+	
+	if (value) {
+		NSData *xattrData = [NSKeyedArchiver archivedDataWithRootObject:value];
+		setxattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, [xattrData bytes], [xattrData length], 0, 0);
+	} else {
+		removexattr(self.urlBacking.path.fileSystemRepresentation, key.UTF8String, 0);
 	}
 }
 

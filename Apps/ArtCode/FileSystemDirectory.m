@@ -27,7 +27,9 @@
 	@weakify(self);
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		return [fileSystemScheduler() schedule:^{
+		CANCELLATION_DISPOSABLE(disposable);
+		
+		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -35,11 +37,11 @@
 			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![NSFileManager.defaultManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
 				[subscriber sendError:error];
 			} else {
-				[self didCreate];
-				[subscriber sendNext:self];
-				[subscriber sendCompleted];
+				[disposable addDisposable:[super.create subscribe:subscriber]];
 			}
-		}];
+		}]];
+		
+		return disposable;
 	}] deliverOn:currentScheduler()];
 }
 
