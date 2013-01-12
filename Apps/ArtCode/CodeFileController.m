@@ -325,11 +325,11 @@ static void drawStencilStar(CGContextRef myContext)
     FileSystemFile *textFile = tuple.second;
     [fileContentDisposable dispose];
     if (!codeView || !textFile) return;
-		fileContentDisposable = [RACBind(codeView, text) bindTo:textFile.content.binding];
+		fileContentDisposable = [RACBind(codeView, text) bindTo:textFile.contentSubject.binding];
   }];
 
   // When the text file changes, moves or selects another syntax, reload the code unit
-  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.url) switchToLatest], [RACAble(self.textFile.explicitSyntaxIdentifier) switchToLatest], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
+  [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.urlSignal) switchToLatest], [RACAble(self.textFile.explicitSyntaxIdentifierSubject) switchToLatest], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
     FileSystemFile *textFile = tuple.third;
@@ -342,7 +342,7 @@ static void drawStencilStar(CGContextRef myContext)
     if (explicitSyntaxIdentifier) {
       return [RACSignal return:[RACTuple tupleWithObjectsFromArray:@[fileURL, [TMSyntaxNode syntaxWithScopeIdentifier:explicitSyntaxIdentifier]]]];
     }
-    return [[textFile.content take:1] map:^RACTuple *(NSString *x) {
+    return [[textFile.contentSubject take:1] map:^RACTuple *(NSString *x) {
       TMSyntaxNode *syntax = [TMSyntaxNode syntaxForFirstLine:[x substringWithRange:[x lineRangeForRange:NSMakeRange(0, 0)]]];
       if (!syntax) {
         syntax = [TMSyntaxNode syntaxForFileName:fileURL.lastPathComponent];
@@ -371,7 +371,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // subscribe to the text file's content to reparse
-  [[[RACSignal combineLatest:@[[RACAble(self.textFile.content) switchToLatest], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[[RACAble(self.textFile.contentSubject) switchToLatest], RACAble(self.codeUnit), RACAble(self.codeView)]] deliverOn:self.codeScheduler] subscribeNext:^(RACTuple *tuple) {
     ASSERT_NOT_MAIN_QUEUE();
     NSString *changedContent = tuple.first;
     TMUnit *codeUnit = tuple.second;
@@ -379,7 +379,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Update title with current symbol and keyboard accessory based on current scope
-  [[[RACSignal combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.content) switchToLatest]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
+  [[[RACSignal combineLatest:@[RACAble(self.codeView.selectionRange), [RACAble(self.textFile.contentSubject) switchToLatest]]] throttle:0.3] subscribeNext:^(RACTuple *tuple) {
     @strongify(self);
     if (!self) {
       return;
@@ -780,7 +780,7 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
     @weakify(self);
-    [[self.textFile.url take:1] subscribeNext:^(NSURL *x) {
+    [[self.textFile.urlSignal take:1] subscribeNext:^(NSURL *x) {
       @strongify(self);
       [self.webView loadRequest:[NSURLRequest requestWithURL:x]];
       self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];

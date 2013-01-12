@@ -20,17 +20,17 @@
 //
 // Returns a signal that sends arrays of tuples each containing one child and
 // it's filter hitmask.
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal;
+- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options filteredByAbbreviation:(RACSignal *)abbreviationSignal;
 
-// Equivalent to -childrenWithOptions:options filteredByAbbreviation:nil
-- (RACSignal *)childrenWithOptions:(NSDirectoryEnumerationOptions)options;
+// Equivalent to -childrenSignalWithOptions:options filteredByAbbreviation:nil
+- (RACSignal *)childrenSignalWithOptions:(NSDirectoryEnumerationOptions)options;
 
-// Equivalent to -childrenWithOptions:
+// Equivalent to -childrenSignalWithOptions:
 // NSDirectoryEnumerationSkipsSubdirectoryDescendants |
 // NSDirectoryEnumerationSkipsHiddenFiles.
-- (RACSignal *)childrenFilteredByAbbreviation:(RACSignal *)abbreviationSignal;
+- (RACSignal *)childrenSignalFilteredByAbbreviation:(RACSignal *)abbreviationSignal;
 
-// Equivalent to -childrenFilteredByAbbreviation:nil
-- (RACSignal *)children;
+// Equivalent to -childrenSignalFilteredByAbbreviation:nil
+- (RACSignal *)childrenSignal;
 
 @end

@@ -58,7 +58,7 @@
   }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
-		return [[FileSystemDirectory filterChildren:[directory childrenWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
+		return [[FileSystemDirectory filterChildren:[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] byAbbreviation:self.searchBarTextSubject] map:^(NSArray *items) {
 			@strongify(self);
 			if (self.searchBar.text.length == 0) return @[];
 			return items;
@@ -131,7 +131,7 @@
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
   FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
-  [[[item url] take:1] subscribeNext:^(NSURL *x) {
+  [[[item urlSignal] take:1] subscribeNext:^(NSURL *x) {
     [self.artCodeTab pushFileURL:x withProject:self.artCodeTab.currentLocation.project];
   }];
 }

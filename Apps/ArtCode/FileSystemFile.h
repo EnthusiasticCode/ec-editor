@@ -13,10 +13,10 @@
 @interface FileSystemFile : FileSystemItem
 
 // Returns a property subject for the receiver's encoding.
-@property (nonatomic, strong, readonly) RACPropertySubject *encoding;
+@property (nonatomic, strong, readonly) RACPropertySubject *encodingSubject;
 
 // Returns a property subject for the receiver's content.
-@property (nonatomic, strong, readonly) RACPropertySubject *content;
+@property (nonatomic, strong, readonly) RACPropertySubject *contentSubject;
 
 // Saves the receiver to it's persistence mechanism.
 //

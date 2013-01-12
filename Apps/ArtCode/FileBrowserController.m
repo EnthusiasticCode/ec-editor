@@ -101,7 +101,7 @@
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
   
 	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
-		return [directory children];
+		return [directory childrenSignal];
 	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
 		// If at least one item has been added to children, will scroll to one of them
 		if (scrollToItem == nil && previous.count < next.count) {
@@ -233,7 +233,7 @@
     [_selectedItems addObject:item];
   } else {
     @weakify(self);
-    [[[RACSignal combineLatest:@[item.url, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
+    [[[RACSignal combineLatest:@[item.urlSignal, item.type]] take:1] subscribeNext:^(RACTuple *xs) {
       @strongify(self);
       NSURL *fileURL = xs.first;
       NSString *type = xs.second;
@@ -344,7 +344,7 @@
         NSUInteger selectedItemsCount = [_selectedItems count];
         self.loading = YES;
         [[[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-					return [x.url map:^id(NSURL *url) {
+					return [x.urlSignal map:^id(NSURL *url) {
 						return [x exportTo:[NSURL.applicationDocumentsDirectory URLByAppendingPathComponent:url.lastPathComponent] copy:YES];
 					}];
         }]] finally:^{
@@ -364,7 +364,7 @@
         self.loading = YES;
         
         [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-          return [x.url take:1];
+          return [x.urlSignal take:1];
         }]] subscribeNext:^(RACTuple *x) {
           [ArchiveUtilities compressFileAtURLs:x.allObjects completionHandler:^(NSURL *temporaryDirectoryURL) {
             ASSERT_MAIN_QUEUE();
@@ -518,7 +518,7 @@
 
 - (void)_previewFile:(NSURL *)fileURL {
 	[[[RACSignal zip:[self.filteredItems.rac_sequence.eagerSequence map:^id(RACTuple *value) {
-		return [(FileSystemItem *)value.first url];
+		return [(FileSystemItem *)value.first urlSignal];
 	}]] take:1] subscribeNext:^(RACTuple *x) {
 		NSMutableArray *previewItems = [NSMutableArray arrayWithCapacity:x.count];
 		for (NSURL *itemURL in x) {

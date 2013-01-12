@@ -46,7 +46,7 @@
     // Set syntaxes to nil to clear out the table while the explicit syntax identifier is being retrieved
     self.syntaxes = nil;
     self.currentSyntax = nil;
-    sourceDisposable = [[[x.explicitSyntaxIdentifier doNext:^(id _) {
+    sourceDisposable = [[[x.explicitSyntaxIdentifierSubject doNext:^(id _) {
       @strongify(self);
       // If this is the first time the explicit syntax identifier is sent, the syntaxes will still be nil, in that case set the syntaxes back
       if (!self.syntaxes) {
@@ -57,7 +57,7 @@
     }] toProperty:@keypath(self.currentSyntax) onObject:self];
     sinkDisposable = [[RACAble(self.currentSyntax) map:^NSString *(TMSyntaxNode *x) {
       return x.identifier;
-    }] subscribe:x.explicitSyntaxIdentifier];
+    }] subscribe:x.explicitSyntaxIdentifierSubject];
   }];
   
   // Reload the table when the current syntax or the syntaxes change

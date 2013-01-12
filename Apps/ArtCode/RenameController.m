@@ -62,7 +62,7 @@
   }];
   
   // Update the text field when the file is renamed from somewhere else
-  [[RACSignal combineLatest:@[RACAble(self.renameTextField), [item name]]] subscribeNext:^(RACTuple *xs) {
+  [[RACSignal combineLatest:@[ RACAble(self.renameTextField), item.nameSignal ]] subscribeNext:^(RACTuple *xs) {
     UITextField *renameTextField = xs.first;
     NSString *name = xs.second;
     renameTextField.text = name;
@@ -70,16 +70,16 @@
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
-  [[[[RACSignal combineLatest:@[[[[item parent] map:^RACSignal *(FileSystemDirectory *parent) {
-    return [parent children];
-  }] switchToLatest], [item name]]] map:^RACSignal *(RACTuple *xs) {
+  [[[[RACSignal combineLatest:@[ [[item.parentSignal map:^RACSignal *(FileSystemDirectory *parent) {
+    return parent.childrenSignal;
+  }] switchToLatest], item.nameSignal ]] map:^RACSignal *(RACTuple *xs) {
     return [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
       NSArray *children = xs.first;
       NSString *fullName = xs.second;
       NSString *name = [fullName stringByDeletingPathExtension];
       NSMutableArray *alsoRenameItems = [[NSMutableArray alloc] init];
       return [[RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-        return [[[x.name take:1] filter:^BOOL(NSString *y) {
+        return [[[x.nameSignal take:1] filter:^BOOL(NSString *y) {
           return ![y isEqualToString:fullName] && [[y stringByDeletingPathExtension] isEqual:name];
         }] doNext:^(id y) {
           [alsoRenameItems addObject:y];
@@ -164,7 +164,7 @@
   NSArray *alsoRenameItems = self.alsoRenameItems;
   
   @weakify(self);
-  [[[[_item.name take:1] flattenMap:^RACSignal *(NSString *x) {
+  [[[[_item.nameSignal take:1] flattenMap:^RACSignal *(NSString *x) {
     @strongify(self);
     if (!self) {
       return nil;
@@ -175,7 +175,7 @@
     NSString *oldFullName = xs.first;
     NSString *oldName = [oldFullName stringByDeletingPathExtension];
     return [RACSignal zip:[self.selectedAlsoRenameItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-      return [[x.name take:1] flattenMap:^RACSignal *(NSString *y) {
+      return [[x.nameSignal take:1] flattenMap:^RACSignal *(NSString *y) {
         NSString *newFullName = [newName stringByAppendingString:[y substringFromIndex:oldName.length]];
         return [x renameTo:newFullName];
       }];
@@ -198,7 +198,7 @@
   }
   
   [[[RACSignal combineLatest:@[[[RACAble(item) map:^(FileSystemItem *item) {
-    return item.name;
+    return item.nameSignal;
   }] switchToLatest], RACAble(renameString)]] map:^NSString *(RACTuple *tuple) {
 		RACTupleUnpack(NSString *itemName, NSString *renameString) = tuple;
     return [NSString stringWithFormat:L(@"Rename to: %@"), [renameString.stringByDeletingPathExtension stringByAppendingPathExtension:itemName.pathExtension]];

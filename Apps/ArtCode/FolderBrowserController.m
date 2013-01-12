@@ -45,7 +45,7 @@
 	
   // Update table content
   [[[[[currentFolder map:^(FileSystemDirectory *x) {
-    return x.children;
+    return x.childrenSignal;
   }] switchToLatest] map:^(NSArray *children) {
 		NSMutableArray *subfolders = [NSMutableArray arrayWithCapacity:children.count];
 		for (FileSystemItem *item in children) {
@@ -56,7 +56,7 @@
   
   // Update title
   [[[[RACAble(self.currentFolderSignal) switchToLatest] flattenMap:^(FileSystemDirectory *x) {
-    return x.name;
+    return x.nameSignal;
   }] catchTo:RACSignal.empty] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
   // reload table

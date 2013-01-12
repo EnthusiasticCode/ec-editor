@@ -12,10 +12,10 @@
 
 @interface FileSystemFile (TextFile)
 
-- (RACPropertySubject *)explicitSyntaxIdentifier;
+- (RACPropertySubject *)explicitSyntaxIdentifierSubject;
 
-- (RACPropertySubject *)explicitEncoding;
+- (RACPropertySubject *)explicitEncodingSubject;
 
-- (RACPropertySubject *)bookmarks;
+- (RACPropertySubject *)bookmarksSubject;
 
 @end

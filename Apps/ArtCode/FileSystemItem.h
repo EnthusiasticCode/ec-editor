@@ -19,13 +19,13 @@
 + (RACSignal *)itemWithURL:(NSURL *)url;
 
 // Returns a signal that sends the URL of the receiver.
-@property (nonatomic, strong, readonly) RACSignal *url;
+@property (nonatomic, strong, readonly) RACSignal *urlSignal;
 
 // Returns a signal that sends the name of the receiver.
-@property (nonatomic, strong, readonly) RACSignal *name;
+@property (nonatomic, strong, readonly) RACSignal *nameSignal;
 
 // Returns a signal that sends the parent directory of the receiver.
-@property (nonatomic, strong, readonly) RACSignal *parent;
+@property (nonatomic, strong, readonly) RACSignal *parentSignal;
 
 @end
 
@@ -81,6 +81,6 @@
 
 // Returns a property subject for the receiver's extended attribute identified
 // by `key`.
-- (RACPropertySubject *)extendedAttributeForKey:(NSString *)key;
+- (RACPropertySubject *)extendedAttributeSubjectForKey:(NSString *)key;
 
 @end

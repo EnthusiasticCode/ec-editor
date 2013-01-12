@@ -111,7 +111,7 @@ static void _init(RemoteNavigationController *self) {
   }];
   
   // React on local file location to change label name
-  RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.name) switchToLatest];
+  RAC(self.toolbarController.localTitleLabel.text) = [RACAble(self.localFileListController.locationDirectory.nameSignal) switchToLatest];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -231,7 +231,7 @@ static void _init(RemoteNavigationController *self) {
   // RAC
   ReactiveConnection *connection = self.connection;
   [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
-    return [[x.url take:1] map:^RACSignal *(NSURL *itemURL) {
+    return [[x.urlSignal take:1] map:^RACSignal *(NSURL *itemURL) {
       // Start upload
       RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];
       

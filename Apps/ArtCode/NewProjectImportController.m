@@ -136,7 +136,7 @@
           // Get the extracted directories
           [[[[RACSignal combineLatest:@[
             [[[FileSystemDirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(FileSystemDirectory *temporaryDirectory) {
-              return [[temporaryDirectory children] take:1];
+              return [[temporaryDirectory childrenSignal] take:1];
             }] flattenMap:^RACSignal *(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
               if (children.count != 1) {
@@ -144,7 +144,7 @@
               }
               FileSystemItem *onlyChild = [children lastObject];
 							if ([onlyChild isKindOfClass:FileSystemDirectory.class]) {
-								return [[(FileSystemDirectory *)onlyChild children] take:1];
+								return [[(FileSystemDirectory *)onlyChild childrenSignal] take:1];
 							} else {
                 return [RACSignal return:children];
 							}

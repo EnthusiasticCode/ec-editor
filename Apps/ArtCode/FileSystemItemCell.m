@@ -24,7 +24,7 @@
 	
 	@weakify(self);
 	[[[RACAble(self.item) map:^(FileSystemItem *item) {
-		return item.url;
+		return item.urlSignal;
 	}] switchToLatest] subscribeNext:^(NSURL *url) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);

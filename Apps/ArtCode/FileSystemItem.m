@@ -302,12 +302,12 @@ NSMutableDictionary *fileSystemItemCache() {
 
 static size_t _xattrMaxSize = 4 * 1024; // 4 kB
 
-- (RACPropertySubject *)extendedAttributeForKey:(NSString *)key {
+- (RACPropertySubject *)extendedAttributeSubjectForKey:(NSString *)key {
 	@synchronized (self) {
-		RACPropertySubject *backing = self.extendedAttributesBacking[key];
-		if (backing != nil) return backing;
+		RACPropertySubject *subject = self.extendedAttributesBacking[key];
+		if (subject != nil) return subject;
 		
-		backing = [RACPropertySubject property];
+		subject = [RACPropertySubject property];
 			
 		// Load the initial value from the filesystem
 		[fileSystemScheduler() schedule:^{
@@ -316,13 +316,13 @@ static size_t _xattrMaxSize = 4 * 1024; // 4 kB
 			if (xattrBytesCount != -1) {
 				NSData *xattrData = [NSData dataWithBytes:xattrBytes length:xattrBytesCount];
 				id xattrValue = [NSKeyedUnarchiver unarchiveObjectWithData:xattrData];
-				[backing sendNext:xattrValue];
+				[subject sendNext:xattrValue];
 			}
 			free(xattrBytes);
 		}];
 		
 		// Save the value to disk every time it changes
-		[[backing deliverOn:fileSystemScheduler()] subscribeNext:^(id value) {
+		[[subject deliverOn:fileSystemScheduler()] subscribeNext:^(id value) {
 			if (self.urlBacking == nil) return;
 			
 			if (value) {
@@ -333,8 +333,8 @@ static size_t _xattrMaxSize = 4 * 1024; // 4 kB
 			}
 		}];
 		
-		self.extendedAttributesBacking[key] = backing;
-		return backing;
+		self.extendedAttributesBacking[key] = subject;
+		return subject;
 	}
 }
 

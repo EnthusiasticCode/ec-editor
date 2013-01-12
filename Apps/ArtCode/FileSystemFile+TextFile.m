@@ -14,16 +14,16 @@ static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.
 
 @implementation FileSystemFile (TextFile)
 
-- (RACPropertySubject *)explicitSyntaxIdentifier {
-  return [self extendedAttributeForKey:_explicitSyntaxIdentifierKey];
+- (RACPropertySubject *)explicitSyntaxIdentifierSubject {
+  return [self extendedAttributeSubjectForKey:_explicitSyntaxIdentifierKey];
 }
 
-- (RACPropertySubject *)explicitEncoding {
-  return [self extendedAttributeForKey:_explicitEncodingKey];
+- (RACPropertySubject *)explicitEncodingSubject {
+  return [self extendedAttributeSubjectForKey:_explicitEncodingKey];
 }
 
-- (RACPropertySubject *)bookmarks {
-  return [self extendedAttributeForKey:_bookmarksKey];
+- (RACPropertySubject *)bookmarksSubject {
+  return [self extendedAttributeSubjectForKey:_bookmarksKey];
 }
 
 @end

@@ -79,12 +79,12 @@
   @weakify(self);
   
 	[[RACSignal zip:@[ [RACSignal zip:[items.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
-		return [[x.name take:1] map:^(NSString *y) {
+		return [[x.nameSignal take:1] map:^(NSString *y) {
 			return [RACTuple tupleWithObjectsFromArray:@[ x, y ]];
 		}];
-  }]], [[destinationFolder.children take:1] flattenMap:^(NSArray *x) {
+  }]], [[destinationFolder.childrenSignal take:1] flattenMap:^(NSArray *x) {
 		return [RACSignal zip:[x.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
-			return [y.name take:1];
+			return [y.nameSignal take:1];
 		}]];
 	}] ]] subscribeNext:^(RACTuple *x) {
 		@strongify(self);
