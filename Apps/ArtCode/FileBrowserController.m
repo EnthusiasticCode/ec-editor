@@ -117,7 +117,9 @@
 //		return next;
 //	}];
 	
-	[[self.currentDirectory childrenSignalFilteredByAbbreviation:self.searchBarTextSubject] toProperty:@keypath(self.filteredItems) onObject:self];
+	[[[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
+		return [directory childrenSignalFilteredByAbbreviation:self.searchBarTextSubject];
+	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   [RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     @strongify(self);

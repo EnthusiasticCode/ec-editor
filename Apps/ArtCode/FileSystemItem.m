@@ -57,49 +57,38 @@ NSMutableDictionary *fileSystemItemCache() {
 + (RACSignal *)itemWithURL:(NSURL *)url {
 	if (![url isFileURL]) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_DISPOSABLE(disposable);
-		
-		[disposable addDisposable:[fileSystemScheduler() schedule:^{
+		return [fileSystemScheduler() schedule:^{
 			FileSystemItem *item = fileSystemItemCache()[url];
-			if (item) {
+			if (item == nil) {
+				item = [self loadItemFromURL:url];
+				if (item == nil && self != FileSystemItem.class) item = [[self alloc] initWithURL:url];
+				if (item != nil) fileSystemItemCache()[url] = item;
+			}
+			
+			if (item != nil) {
 				if ([item isKindOfClass:self]) {
 					[subscriber sendNext:item];
 					[subscriber sendCompleted];
 				} else {
 					[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 				}
-				return;
 			}
-			
-			Class class = self;
-			if (self == FileSystemItem.class) {
-				NSString *detectedType = nil;
-				[url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
-				
-				if (detectedType == NSURLFileResourceTypeRegular) {
-					class = [FileSystemFile class];
-				} else if (detectedType == NSURLFileResourceTypeDirectory) {
-					class = [FileSystemDirectory class];
-				} else {
-					class = [FileSystemItem class];
-				}
-			}
-			item = [[class alloc] initWithURL:url];
-			
-			IF_CANCELLED_RETURN();
-			
-			if (item == nil) {
-				[subscriber sendError:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
-				return;
-			}
-			
-			fileSystemItemCache()[url] = item;
-			[subscriber sendNext:item];
-			[subscriber sendCompleted];
-		}]];
-		
-		return disposable;
+		}];
 	}] deliverOn:currentScheduler()];
+}
+
++ (instancetype)loadItemFromURL:(NSURL *)url {
+	Class class = Nil;
+	NSString *detectedType = nil;
+	
+	[url getResourceValue:&detectedType forKey:NSURLFileResourceTypeKey error:NULL];
+	if (detectedType == NSURLFileResourceTypeRegular) {
+		class = [FileSystemFile class];
+	} else if (detectedType == NSURLFileResourceTypeDirectory) {
+		class = [FileSystemDirectory class];
+	}
+	
+	return [[class alloc] initWithURL:url];
 }
 
 - (instancetype)initWithURL:(NSURL *)url {
@@ -118,7 +107,7 @@ NSMutableDictionary *fileSystemItemCache() {
 }
 
 - (RACSignal *)urlSignal {
-  return [RACAble(self.urlBacking) deliverOn:currentScheduler()];
+  return [RACAbleWithStart(self.urlBacking) deliverOn:currentScheduler()];
 }
 
 - (NSString *)name {

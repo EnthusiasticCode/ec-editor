@@ -23,19 +23,24 @@
   if (self == nil) return nil;
 	
 	@weakify(self);
-	[[[RACAble(self.item) map:^(FileSystemItem *item) {
-		return item.urlSignal;
-	}] switchToLatest] subscribeNext:^(NSURL *url) {
-		ASSERT_MAIN_QUEUE();
+	[RACAble(self.item) subscribeNext:^(FileSystemItem *item) {
     @strongify(self);
 		
-    self.textLabel.text = url.lastPathComponent;
+		NSURL *url = item.url;
+		
+		self.textLabel.text = url.lastPathComponent;
 		if (style == UITableViewCellStyleSubtitle) {
 			self.detailTextLabel.text = [[[ArtCodeProjectSet defaultSet] relativePathForFileURL:url] prettyPath];
 		}
-		
-		if ([self.item isKindOfClass:FileSystemFile.class]) {
+
+		if ([item isKindOfClass:FileSystemDirectory.class]) {
+			self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
+			self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+		} else {
 			self.imageView.image = [UIImage styleDocumentImageWithFileExtension:url.pathExtension];
+			self.accessoryType = UITableViewCellAccessoryNone;
+			self.editingAccessoryType = UITableViewCellAccessoryNone;
 		}
 	}];
 
@@ -44,23 +49,6 @@
 
 - (void)prepareForReuse {
 	self.item = nil;
-}
-
-#pragma mark FileSystemItemCell
-
-- (void)setItem:(FileSystemItem *)item {
-	if (item == _item) return;
-	_item = item;
-	
-	if ([item isKindOfClass:FileSystemDirectory.class]) {
-		self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
-		self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-		self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-	} else {
-		self.imageView.image = [UIImage styleDocumentImageWithFileExtension:@""];
-		self.accessoryType = UITableViewCellAccessoryNone;
-		self.editingAccessoryType = UITableViewCellAccessoryNone;
-	}
 }
 
 @end

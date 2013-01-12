@@ -63,6 +63,7 @@
 
 - (NSAttributedString *)_attributedTitleText
 {
+	if (self.textLabel.text == nil) return [[NSAttributedString alloc] init];
   CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.textLabel.font.fontName, self.textLabel.font.pointSize, NULL);
   NSAttributedString *result = [[NSAttributedString alloc] 
                                 initWithString:self.textLabel.text 

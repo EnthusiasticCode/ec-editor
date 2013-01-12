@@ -37,9 +37,7 @@
 	@weakify(self);
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_DISPOSABLE(disposable);
-		
-		[disposable addDisposable:[fileSystemScheduler() schedule:^{
+		return [fileSystemScheduler() schedule:^{
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -52,9 +50,7 @@
 				[subscriber sendNext:self];
 				[subscriber sendCompleted];
 			}
-		}]];
-		
-		return disposable;
+		}];
 	}] deliverOn:currentScheduler()];
 }
 
@@ -105,10 +101,9 @@
 
 - (RACSignal *)save {
 	@weakify(self);
+
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_DISPOSABLE(disposable);
-		
-		[disposable addDisposable:[fileSystemScheduler() schedule:^{
+		return [fileSystemScheduler() schedule:^{
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -125,9 +120,7 @@
 				[subscriber sendNext:self];
 				[subscriber sendCompleted];
 			}
-		}]];
-		
-		return disposable;
+		}];
 	}] deliverOn:RACScheduler.currentScheduler];
 }
 

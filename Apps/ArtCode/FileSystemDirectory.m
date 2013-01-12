@@ -25,9 +25,7 @@
 	@weakify(self);
 	
 	return [[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) {
-		CANCELLATION_DISPOSABLE(disposable);
-		
-		[disposable addDisposable:[fileSystemScheduler() schedule:^{
+		return [fileSystemScheduler() schedule:^{
 			@strongify(self);
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
@@ -39,9 +37,7 @@
 				[subscriber sendNext:self];
 				[subscriber sendCompleted];
 			}
-		}]];
-		
-		return disposable;
+		}];
 	}] deliverOn:currentScheduler()];
 }
 
@@ -155,7 +151,7 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		
 		_childrenBacking = [NSMutableArray array];
 		for (NSURL *childURL in [NSFileManager.defaultManager enumeratorAtURL:url includingPropertiesForKeys:@[NSURLFileResourceTypeKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil]) {
-			FileSystemItem *child = [[FileSystemItem alloc] initWithURL:childURL];
+			FileSystemItem *child = [self.class loadItemFromURL:childURL];
 			if (child != nil) [_childrenBacking addObject:child];
 		}
 	}
