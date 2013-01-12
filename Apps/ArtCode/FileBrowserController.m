@@ -372,7 +372,7 @@
 					ASSERT_MAIN_QUEUE();
 					if (temporaryDirectoryURL) {
 						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
-						[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
+						[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
 						// Create mail composer
 						MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
 						mailComposer.mailComposeDelegate = self;
@@ -389,7 +389,7 @@
 						// Present mail composer
 						[self presentViewController:mailComposer animated:YES completion:nil];
 						[mailComposer.navigationBar.topItem.leftBarButtonItem setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateNormal] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-						[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+						[NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
 					}
 					self.loading = NO;
 				}];

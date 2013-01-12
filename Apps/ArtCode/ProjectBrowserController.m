@@ -369,8 +369,8 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 						NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
 						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
 							if (temporaryDirectoryURL) {
-								[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
-								[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+								[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+								[NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
 							}
 							progressBlock();
 						}];
@@ -427,9 +427,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 						if (temporaryDirectoryURL) {
 							// Add attachment
 							NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-							[[NSFileManager defaultManager] moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
+							[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
 							[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:zipURL] mimeType:@"application/zip" fileName:[zipURL lastPathComponent]];
-							[[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+							[NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
 							progressCompletion();
 						}
 					}];

@@ -24,7 +24,7 @@
   NSUInteger fileCount = 0;
   NSUInteger folderCount = 0;
   NSNumber *isDirectory = nil;
-  for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:self.artCodeTab.currentLocation.url includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:0 errorHandler:NULL]) {
+  for (NSURL *url in [NSFileManager.defaultManager enumeratorAtURL:self.artCodeTab.currentLocation.url includingPropertiesForKeys:@[ NSURLIsDirectoryKey ] options:0 errorHandler:NULL]) {
     [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
     if ([isDirectory boolValue]) {
       folderCount++;

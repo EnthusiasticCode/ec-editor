@@ -270,7 +270,7 @@ NSMutableDictionary *fileSystemItemCache() {
 			
 			for (;;) {
 				destinationURL = [url.URLByDeletingLastPathComponent URLByAppendingPathComponent:(url.pathExtension.length == 0 ? [NSString stringWithFormat:@"%@ (%d)", url.lastPathComponent, duplicateCount] : [NSString stringWithFormat:@"%@ (%d).%@", url.lastPathComponent.stringByDeletingPathExtension, duplicateCount, url.pathExtension])];
-				if (![[NSFileManager defaultManager] fileExistsAtPath:destinationURL.path]) break;
+				if (![NSFileManager.defaultManager fileExistsAtPath:destinationURL.path]) break;
 				++duplicateCount;
 			}
 			if (![NSFileManager.defaultManager copyItemAtURL:url toURL:destinationURL error:&error]) {

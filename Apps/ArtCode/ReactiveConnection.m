@@ -105,8 +105,8 @@
     [subject sendError:cancelError];
   }];
   [_deleteProgressSignals removeAllObjects];
-  for (NSURL *tempURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] includingPropertiesForKeys:nil options:0 error:NULL]) {
-    [[NSFileManager defaultManager] removeItemAtURL:tempURL error:NULL];
+  for (NSURL *tempURL in [NSFileManager.defaultManager contentsOfDirectoryAtURL:[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] includingPropertiesForKeys:nil options:0 error:NULL]) {
+    [NSFileManager.defaultManager removeItemAtURL:tempURL error:NULL];
   }
   [_connectionStatusSubject sendNext:@(ReactiveConnectionStatusIdle)];
 }
@@ -161,7 +161,7 @@
               [subscriber sendNext:x];
             } error:^(NSError *error) {
               // Remove temporary file
-              [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
+              [NSFileManager.defaultManager removeItemAtURL:localURL error:&error];
               [subscriber sendError:error];
             } completed:^{
               // Send temporary download URL uppon completion
@@ -176,7 +176,7 @@
   return [[[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
     @strongify(self);
     // Create destination directory
-    [[NSFileManager defaultManager] createDirectoryAtURL:localURL withIntermediateDirectories:YES attributes:nil error:NULL];
+    [NSFileManager.defaultManager createDirectoryAtURL:localURL withIntermediateDirectories:YES attributes:nil error:NULL];
     // Returning a signal that 'endWith:localURL'
     __block NSUInteger totalExpected = 0;
     __block NSUInteger totalAccumulator = 0;
@@ -204,7 +204,7 @@
       }];
     }] subscribeError:^(NSError *error) {
       // Remove temporary file
-      [[NSFileManager defaultManager] removeItemAtURL:localURL error:&error];
+      [NSFileManager.defaultManager removeItemAtURL:localURL error:&error];
       [subscriber sendError:error];
     } completed:^{
       // Send temporary download URL uppon completion
@@ -240,7 +240,7 @@
     // Create remote directory
     [self->_connection createDirectoryAtPath:[remotePath stringByAppendingPathComponent:localURL.lastPathComponent] posixPermissions:nil];
     // Recursevly upload
-    NSArray *localContent = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
+    NSArray *localContent = [NSFileManager.defaultManager contentsOfDirectoryAtURL:localURL includingPropertiesForKeys:@[NSURLIsDirectoryKey] options:0 error:NULL];
     NSUInteger totalExpected = localContent.count;
     __block NSUInteger totalAccumulator = 0;
     return [[RACSignal zip:[[localContent.rac_sequence.eagerSequence map:^RACSignal *(NSURL *x) {

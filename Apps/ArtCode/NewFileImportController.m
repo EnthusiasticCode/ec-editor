@@ -87,7 +87,7 @@ static void _init(NewFileImportController *self) {
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
-    [[NSFileManager defaultManager] removeItemAtURL:self.importableFileItems[indexPath.row] error:NULL];
+    [NSFileManager.defaultManager removeItemAtURL:self.importableFileItems[indexPath.row] error:NULL];
     _importableFileItems = [self _importableFileURLsInDocuments];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
@@ -154,7 +154,7 @@ static void _init(NewFileImportController *self) {
 
 - (NSArray *)_importableFileURLsInDocuments {
   NSMutableArray *result = [[NSMutableArray alloc] init];
-  for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
+  for (NSURL *url in [NSFileManager.defaultManager enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
     if (![url isArchiveURL]) {
       [result addObject:url];
     }

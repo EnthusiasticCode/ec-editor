@@ -17,7 +17,7 @@
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     __block NSURL *temporaryDirectory = [NSURL temporaryDirectory];
     if (![self extractArchiveAtURL:archiveURL toDirectory:temporaryDirectory error:NULL]) {
-      [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
+      [NSFileManager.defaultManager removeItemAtURL:temporaryDirectory error:NULL];
       temporaryDirectory = nil;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -31,7 +31,7 @@
     __block NSURL *temporaryDirectory = [NSURL temporaryDirectory];
     NSURL *archiveURL = [temporaryDirectory URLByAppendingPathComponent:@"Archive.zip"];
     if (![self compressFileAtURLs:urls toArchiveURL:archiveURL error:NULL]) {
-      [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectory error:NULL];
+      [NSFileManager.defaultManager removeItemAtURL:temporaryDirectory error:NULL];
       temporaryDirectory = nil;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -58,9 +58,9 @@
     return strstr(str, prefix) == str;
   };
   
-  NSString *previousWorkingDirectory = [[NSFileManager defaultManager] currentDirectoryPath];
-  [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:NULL];
-  if (![[NSFileManager defaultManager] changeCurrentDirectoryPath:[directoryURL path]]) {
+  NSString *previousWorkingDirectory = [NSFileManager.defaultManager currentDirectoryPath];
+  [NSFileManager.defaultManager createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:NULL];
+  if (![NSFileManager.defaultManager changeCurrentDirectoryPath:[directoryURL path]]) {
     return NO;
   }
   
@@ -121,7 +121,7 @@
   archive_read_close(archive);
   archive_read_free(archive);
   
-  [[NSFileManager defaultManager] changeCurrentDirectoryPath:previousWorkingDirectory];
+  [NSFileManager.defaultManager changeCurrentDirectoryPath:previousWorkingDirectory];
   
   return returnCode < ARCHIVE_OK ? NO : YES;
 }
@@ -137,12 +137,12 @@
     return NO; // no success
   }
   // Support variables
-  NSString *previousWorkingDirectory = [[NSFileManager defaultManager] currentDirectoryPath];
+  NSString *previousWorkingDirectory = [NSFileManager.defaultManager currentDirectoryPath];
   NSString *relativeFilePath = nil;
   // Cycle for every requested file to compress
   for (NSURL *fileURL in urls) {
     // Change directory to the current file's one
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:fileURL.path.stringByDeletingLastPathComponent];
+    [NSFileManager.defaultManager changeCurrentDirectoryPath:fileURL.path.stringByDeletingLastPathComponent];
     relativeFilePath = fileURL.lastPathComponent;
     // Actuall compress
     struct archive *disk = archive_read_disk_new();
@@ -188,7 +188,7 @@
   archive_write_free(archive);
   
   // Restore previous directory
-  [[NSFileManager defaultManager] changeCurrentDirectoryPath:previousWorkingDirectory];
+  [NSFileManager.defaultManager changeCurrentDirectoryPath:previousWorkingDirectory];
   
   return returnCode != ARCHIVE_FATAL;
 }

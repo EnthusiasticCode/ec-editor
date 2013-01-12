@@ -61,7 +61,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   description = aDescription;
   if (anImagePath)
   {
-    if (![[NSFileManager defaultManager] fileExistsAtPath:anImagePath])
+    if (![NSFileManager.defaultManager fileExistsAtPath:anImagePath])
       imagePath = [[NSBundle mainBundle] pathForResource:anImagePath ofType:nil];
     else
       imagePath = anImagePath;
@@ -152,7 +152,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 + (NSDictionary *)allKeyboardActions {
   if (!systemKeyboardActions) {
     for (NSURL *bundleURL in [TMBundle bundleURLs]) {
-      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardActionsPath isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
+      for (NSURL *keyboardActionURL in [NSFileManager.defaultManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardActionsPath isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
         [self _loadKeyboardActionsFromFileURL:keyboardActionURL];
       }
     }
@@ -173,7 +173,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   if (!systemKeyboardActionsConfigurations) {
     NSNumber *isRegularFile = nil;
     for (NSURL *bundleURL in [TMBundle bundleURLs]) {
-      for (NSURL *keyboardActionURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardConfigurationsPath isDirectory:YES] includingPropertiesForKeys:@[NSURLIsRegularFileKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
+      for (NSURL *keyboardActionURL in [NSFileManager.defaultManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:keyboardConfigurationsPath isDirectory:YES] includingPropertiesForKeys:@[NSURLIsRegularFileKey] options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants error:NULL]) {
         if ([keyboardActionURL getResourceValue:&isRegularFile forKey:NSURLIsRegularFileKey error:NULL] && [isRegularFile boolValue]) {
           [self _loadKeyboardActionsConfigurationsFromFileURL:keyboardActionURL];
         }

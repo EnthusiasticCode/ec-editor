@@ -135,7 +135,7 @@
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
   [projectImportController createProjectFromZipAtURL:url completionHandler:^(ArtCodeProject *project) {
     if (project) {
-      [[NSFileManager defaultManager] removeItemAtURL:url error:NULL];
+      [NSFileManager.defaultManager removeItemAtURL:url error:NULL];
       ArtCodeTab *tab = [[ArtCodeTabSet defaultSet] addNewTabWithLocationType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
       [_tabPageController.tabBar setSelectedTabIndex:[tab.tabSet.tabs indexOfObject:tab]];
     }

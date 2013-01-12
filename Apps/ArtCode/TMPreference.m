@@ -87,7 +87,7 @@ static NSMutableDictionary *symbolIconsCache;
   NSMutableDictionary *preferences = [[NSMutableDictionary alloc] init];
   for (NSURL *bundleURL in [TMBundle bundleURLs])
   {
-    for (NSURL *preferenceURL in [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
+    for (NSURL *preferenceURL in [NSFileManager.defaultManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
     {
       NSDictionary *plist = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:preferenceURL options:NSDataReadingUncached error:NULL] options:NSPropertyListImmutable format:NULL error:NULL];
       ASSERT(plist != nil && "Couldn't load plist");

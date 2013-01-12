@@ -36,7 +36,7 @@
 - (NSArray *)documentsArchiveURLs {
   if (_documentsArchiveURLs == nil) {
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    for (NSURL *url in [[NSFileManager defaultManager] enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
+    for (NSURL *url in [NSFileManager.defaultManager enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
       if ([url isArchiveURL]) {
         [result addObject:url];
       }
@@ -90,7 +90,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (editingStyle == UITableViewCellEditingStyleDelete) {
-    [[NSFileManager defaultManager] removeItemAtURL:(self.documentsArchiveURLs)[indexPath.row] error:NULL];
+    [NSFileManager.defaultManager removeItemAtURL:(self.documentsArchiveURLs)[indexPath.row] error:NULL];
     _documentsArchiveURLs = nil;
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
   }
@@ -160,7 +160,7 @@
           }] finally:^{
             [self stopRightBarButtonItemActivityIndicator];
             self.tableView.userInteractionEnabled = YES;
-            [[NSFileManager defaultManager] removeItemAtURL:temporaryDirectoryURL error:NULL];
+            [NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
           }] subscribeError:^(NSError *error) {
             // TODO: error handling moving of extracted objects in place failure
             ASSERT(NO);

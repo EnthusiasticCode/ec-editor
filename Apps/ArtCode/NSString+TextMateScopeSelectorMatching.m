@@ -28,12 +28,15 @@
 
 - (float)scoreForScopeSelector:(NSString *)scopeSelector
 {
-  /// Caches a scope identifier to a dictionary of scope selector references to scores.
-  static NSMutableDictionary *systemScopesScoreCache = nil;
+  // Caches a scope identifier to a dictionary of scope selector references to scores.
+	
+	// Analyzer will complain if you synchronize on a nil object, so initialize it to something non-nil
+  static NSMutableDictionary *systemScopesScoreCache = (NSMutableDictionary *)@"";
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    systemScopesScoreCache = [[NSMutableDictionary alloc] init];
+    systemScopesScoreCache = [NSMutableDictionary dictionary];
   });
+	
   @synchronized(systemScopesScoreCache) {
     NSMutableDictionary *scopeToScore = systemScopesScoreCache[scopeSelector];
     NSNumber *cachedScore = scopeToScore[self];
@@ -49,25 +52,19 @@
   });
   
   float score = 0;
-  for (NSString *searchScope in [scopeSelector componentsSeparatedByString:@","])
-  {
+  for (NSString *searchScope in [scopeSelector componentsSeparatedByString:@","]) {
     NSArray *searchScopeComponents = [[searchScope stringByTrimmingCharactersInSet:spaceCharacterSet] componentsSeparatedByString:@" - "];
-    if ([searchScopeComponents count] == 1)
-    {
+    if ([searchScopeComponents count] == 1) {
       score = MAX(score, [self _scoreForSearchScope:searchScopeComponents[0]]);
-    }
-    else
-    {
+    } else {
       __block BOOL exclude = NO;
       [searchScopeComponents enumerateObjectsUsingBlock:^(NSString *excludeScope, NSUInteger idx, BOOL *stop) {
-        if (idx && [self _scoreForSearchScope:excludeScope] > 0)
-        {
+        if (idx && [self _scoreForSearchScope:excludeScope] > 0) {
           exclude = YES;
           *stop = YES;
         }
       }];
-      if (exclude)
-        continue;
+      if (exclude) continue;
       score = MAX(score, [self _scoreForSearchScope:searchScopeComponents[0]]);
     }
   }
@@ -75,8 +72,7 @@
   @synchronized(systemScopesScoreCache) {
     // Store in cache
     NSMutableDictionary *scopeToScore = systemScopesScoreCache[scopeSelector];
-    if (!scopeToScore)
-    {
+    if (!scopeToScore) {
       scopeToScore = [[NSMutableDictionary alloc] init];
       systemScopesScoreCache[scopeSelector] = scopeToScore;
     }
@@ -89,12 +85,10 @@
 
 @implementation NSString (TextMateScopeSelectorMatchingInternal)
 
-- (float)_scoreForSearchScope:(NSString *)search
-{
+- (float)_scoreForSearchScope:(NSString *)search {
   static NSCharacterSet *trimCharacterSet = nil; if (!trimCharacterSet) trimCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" ()"];
   float score = 0;
-  for (NSString *singleSearch in [search componentsSeparatedByString:@"|"])
-  {
+  for (NSString *singleSearch in [search componentsSeparatedByString:@"|"]) {
     score = MAX(score, [self _scoreQueryScopeArray:[self componentsSeparatedByString:@" "] forSearchScopeArray:[[singleSearch stringByTrimmingCharactersInSet:trimCharacterSet] componentsSeparatedByString:@" "]]);
   }
   return score;
@@ -104,8 +98,7 @@
 #define NESTING_DEPTH  30.0f
 #define BASE           16.0f
 
-- (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search
-{
+- (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search {
   static float start_value = 0; if (!start_value) start_value = powf(2, (POINT_DEPTH * NESTING_DEPTH));
   static NSRegularExpression *dotRegExp = nil; if (!dotRegExp) dotRegExp = [NSRegularExpression regularExpressionWithPattern:@"." options:NSRegularExpressionIgnoreMetacharacters error:NULL];
   
@@ -114,13 +107,10 @@
   // The scopes will be enumerated from the most specific up.
   NSEnumerator *searchEnumerator = [search reverseObjectEnumerator];
   NSString *currentSearch = [searchEnumerator nextObject];
-  for (NSString *currentQuery in [query reverseObjectEnumerator])
-  {
-    if (!currentSearch)
-      break;
+  for (NSString *currentQuery in [query reverseObjectEnumerator]) {
+    if (!currentSearch) break;
     // In case the current query scope starts with the search scope a score can be computed
-    if ([currentQuery hasPrefix:currentSearch])
-    {
+    if ([currentQuery hasPrefix:currentSearch]) {
       result += (BASE - [dotRegExp numberOfMatchesInString:currentQuery options:0 range:NSMakeRange(0, [currentQuery length])] + [dotRegExp numberOfMatchesInString:currentSearch options:0 range:NSMakeRange(0, [currentSearch length])]) * multiplier;
       currentSearch = [searchEnumerator nextObject];
     }

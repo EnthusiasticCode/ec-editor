@@ -36,7 +36,7 @@
 		if (x.length == 0) {
 			return @"";
 		}
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
+    if (![NSFileManager.defaultManager fileExistsAtPath:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:x].path]) {
       return x;
     } else {
       return nil;

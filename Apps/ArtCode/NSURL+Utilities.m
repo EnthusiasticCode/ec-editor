@@ -27,49 +27,42 @@
 }
 
 + (NSURL *)temporaryDirectory {
-  NSString *tempDirectoryTemplate =
-  [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpdir.XXXXXX"];
-  const char *tempDirectoryTemplateCString =
-  [tempDirectoryTemplate fileSystemRepresentation];
-  char *tempDirectoryNameCString =
-  (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
-  strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
+  NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpdir.XXXXXX"];
+  const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
+	unsigned templateLength = strlen(tempDirectoryTemplateCString);
+  char *tempDirectoryNameCString = (char *)malloc(templateLength + 1);
+  strlcpy(tempDirectoryNameCString, tempDirectoryTemplateCString, templateLength + 1);
   
   char *result = mkdtemp(tempDirectoryNameCString);
-  if (!result)
-  {
+  if (!result) {
     // handle directory creation failure
+		NSAssert(NO, @"Failed to create temporary directory.");
+		return nil;
   }
   
-  NSString *tempDirectoryPath =
-  [[NSFileManager defaultManager]
-   stringWithFileSystemRepresentation:tempDirectoryNameCString
-   length:strlen(result)];
+  NSString *tempDirectoryPath = [NSFileManager.defaultManager stringWithFileSystemRepresentation:tempDirectoryNameCString length:strlen(result)];
   free(tempDirectoryNameCString);
   
   return [NSURL fileURLWithPath:tempDirectoryPath isDirectory:YES];
 }
 
 + (NSURL *)temporaryFileURL {
-  NSString *tempFileTemplate =
-  [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpfile.XXXXXX"];
-  const char *tempFileTemplateCString =
-  [tempFileTemplate fileSystemRepresentation];
-  char *tempFileNameCString = (char *)malloc(strlen(tempFileTemplateCString) + 1);
-  strcpy(tempFileNameCString, tempFileTemplateCString);
+  NSString *tempFileTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"actmpfile.XXXXXX"];
+  const char *tempFileTemplateCString = [tempFileTemplate fileSystemRepresentation];
+	unsigned templateLength = strlen(tempFileTemplateCString);
+  char *tempFileNameCString = (char *)malloc(templateLength + 1);
+  strlcpy(tempFileNameCString, tempFileTemplateCString, templateLength + 1);
   int fileDescriptor = mkstemp(tempFileNameCString);
   
-  if (fileDescriptor == -1)
-  {
+  if (fileDescriptor == -1) {
     // handle file creation failure
+		NSAssert(NO, @"Failed to create temporary file.");
+		return nil;
   }
   
   // This is the file name if you need to access the file by name, otherwise you can remove
   // this line.
-  NSString *tempFileName =
-  [[NSFileManager defaultManager]
-   stringWithFileSystemRepresentation:tempFileNameCString
-   length:strlen(tempFileNameCString)];
+  NSString *tempFileName = [NSFileManager.defaultManager stringWithFileSystemRepresentation:tempFileNameCString length:strlen(tempFileNameCString)];
   
   free(tempFileNameCString);
   
@@ -121,7 +114,7 @@
   }
   // Backup by looking with the defaul file manager
   BOOL isDirectoryBool = NO;
-  [[NSFileManager defaultManager] fileExistsAtPath:self.path isDirectory:&isDirectoryBool];
+  [NSFileManager.defaultManager fileExistsAtPath:self.path isDirectory:&isDirectoryBool];
   return isDirectoryBool;
 }
 

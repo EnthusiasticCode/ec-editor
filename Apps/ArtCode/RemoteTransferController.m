@@ -116,7 +116,7 @@ typedef enum {
   _transferError = nil;
   // Remove temp dir contents
   if (_localTemporaryDirectoryURL) {
-    [[NSFileManager defaultManager] removeItemAtURL:_localTemporaryDirectoryURL error:NULL];
+    [NSFileManager.defaultManager removeItemAtURL:_localTemporaryDirectoryURL error:NULL];
     _localTemporaryDirectoryURL = nil;
   }
   [super viewDidDisappear:animated];
@@ -191,7 +191,7 @@ typedef enum {
       // This codepath is reached if the download procedure recursed in a remote folder
       // Create the local temporary folder
       NSURL *localTemporaryURL = [[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:[dirPath substringFromIndex:[_connectionPath length]]];
-      [[NSFileManager defaultManager] createDirectoryAtURL:localTemporaryURL withIntermediateDirectories:YES attributes:nil error:NULL];
+      [NSFileManager.defaultManager createDirectoryAtURL:localTemporaryURL withIntermediateDirectories:YES attributes:nil error:NULL];
       // Append item to download queue
       for (NSDictionary *item in contents) {
         if (item[NSFileType] != NSFileTypeDirectory) {
@@ -451,7 +451,7 @@ typedef enum {
     NSString *itemName = item[cxFilenameKey];
     
     // Check for conflicts in downloading location
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[localDirectoryURL URLByAppendingPathComponent:itemName].path]) {
+    if ([NSFileManager.defaultManager fileExistsAtPath:[localDirectoryURL URLByAppendingPathComponent:itemName].path]) {
       [_itemsConflicts addObject:item];
       continue;
     }
@@ -611,7 +611,7 @@ typedef enum {
           ASSERT([remotePath hasPrefix:_connectionPath]);
           // localItem could be a string indicating the local path that should be created
           if ([itemOrlocalFolderPath isKindOfClass:[NSString class]]) {
-            [[NSFileManager defaultManager] createDirectoryAtURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:(NSString *)itemOrlocalFolderPath isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:NULL];
+            [NSFileManager.defaultManager createDirectoryAtURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:(NSString *)itemOrlocalFolderPath isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:NULL];
             return;
           }
           // Rebuild the already existing temporary directory in which the item should be downloaded
@@ -702,7 +702,7 @@ typedef enum {
 //  ASSERT(_transfers);
 //  NSString *remoteItemPath = nil;
 //  NSNumber isDirectory;
-//  for (NSURL *localItemURL in [[NSFileManager defaultManager] enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
+//  for (NSURL *localItemURL in [NSFileManager.defaultManager enumeratorAtURL:directoryURL includingPropertiesForKeys:[NSArray arrayWithObject:NSURLIsDirectoryKey] options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:NULL]) {
 //    // Add to trasnfers as remote path to local project item
 //    remoteItemPath = [remotePath stringByAppendingPathComponent:localItemURL.lastPathComponent];
 //    [_transfers setObject:localItemURL forKey:remoteItemPath];
