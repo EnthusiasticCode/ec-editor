@@ -485,7 +485,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 {
   if (!_toolItemExportActionSheet)
   {
-    _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
+    _toolItemExportActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:L(@"Rename and Recolor"), L(@"Export to iTunes"), ([MFMailComposeViewController canSendMail] ? L(@"Send via E-Mail") : nil), nil];
     _toolItemExportActionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
   }
   [_toolItemExportActionSheet showFromRect:[sender frame] inView:[sender superview] animated:YES];
