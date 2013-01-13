@@ -16,7 +16,8 @@
 // abbreviationSignal - A signal that sends the strings with which to score the
 //                      objects in the arrays.
 // targetStringBlock  - An optional block used to calculate strings used for
-//                      scoring the objects in the array.
+//                      scoring the objects in the array. Will be called on a
+//                      background thread.
 //
 // Returns a signal of sorted arrays of triples of object, hit mask and score
 // for every object that scores higher than 0.0.
