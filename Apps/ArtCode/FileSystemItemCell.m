@@ -36,11 +36,9 @@
 		if ([item isKindOfClass:FileSystemDirectory.class]) {
 			self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
 			self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-			self.editingAccessoryType = UITableViewCellAccessoryDetailDisclosureButton;
 		} else {
 			self.imageView.image = [UIImage styleDocumentImageWithFileExtension:url.pathExtension];
 			self.accessoryType = UITableViewCellAccessoryNone;
-			self.editingAccessoryType = UITableViewCellAccessoryNone;
 		}
 	}];
 
