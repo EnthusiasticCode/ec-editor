@@ -531,14 +531,17 @@ static void init(CodeView *self)
 			keyboardFrame.origin.y += keyboardFrame.size.height;
 		}
 		
-		if (self->_flags.delegateHasShouldShowKeyboardAccessoryViewOnNotificationInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewOnNotification:note inView:&targetView withFrame:&keyboardFrame]) return;
-		
 		// Show or hide accessory
-		// NOTE: the additional condition is there to address an animation issue: the docked accessory shows when the keyboard is animating the split when selecting 'split' from docked
-		if (!shouldShow.boolValue || (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < KEYBOARD_DOCKED_MINIMUM_HEIGHT && keyboardFrame.origin.y > KEYBOARD_VISIBLE_MAXIMUM_Y && keyboardFrame.origin.y < 768)) {
-			[self dismissKeyboardAccessoryViewAnimated:NO];
-		} else {
+		if (shouldShow.boolValue) {
+			// This delegate call will ensure that we should indeed show the accessory view and allow the delegate to modify where it will be displayed.
+			if (self->_flags.delegateHasShouldShowKeyboardAccessoryViewOnNotificationInViewWithFrame && ![self.delegate codeView:self shouldShowKeyboardAccessoryViewOnNotification:note inView:&targetView withFrame:&keyboardFrame]) return;
+			
+			// This condition is here to address an animation issue: the docked accessory shows when the keyboard is animating the split when selecting 'split' from docked.
+			if (note && note.name == UIKeyboardDidChangeFrameNotification && keyboardFrame.size.height < KEYBOARD_DOCKED_MINIMUM_HEIGHT && keyboardFrame.origin.y > KEYBOARD_VISIBLE_MAXIMUM_Y && keyboardFrame.origin.y < 768) return;
+			
 			[self presentKeyboardAccessoryViewWithKeyboardFrame:keyboardFrame inView:targetView animated:YES];
+		} else {
+			[self dismissKeyboardAccessoryViewAnimated:NO];
 		}
 	}];
 }

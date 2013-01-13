@@ -15,7 +15,7 @@
 	NSMutableArray *sortedArray = [NSMutableArray arrayWithCapacity:self.count];
 	
 	for (id object in self) {
-		if (abbreviation == nil) {
+		if (abbreviation.length == 0) {
 			[sortedArray addObject:[RACTuple tupleWithObjects:object, nil]];
 		} else {
 			NSIndexSet *hitMask = nil;

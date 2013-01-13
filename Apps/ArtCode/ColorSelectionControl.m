@@ -63,7 +63,7 @@
 	
 	NSUInteger colorIndex = [self.colors indexOfObject:selectedColor];
 	if (colorIndex == NSNotFound)
-		return;
+		colorIndex = 0;
 	
 	_selectedColor = selectedColor;
 	[super setSelectedSegmentIndex:colorIndex];
