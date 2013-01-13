@@ -195,8 +195,10 @@
   }];
   
   // Invalidate the table data when the search bar text changes
-  [disposables addObject:[[[self.searchBarTextSubject throttle:0.3] distinctUntilChanged] subscribeNext:^(id x) {
+#warning TODO: this should be removed and subclasses should just send KVO change notification for filteredItems
+  [disposables addObject:[self.searchBarTextSubject subscribeNext:^(id x) {
     [this invalidateFilteredItems];
+		[this.tableView reloadData];
   }]];
   
   // Reload the table when the table data changes
