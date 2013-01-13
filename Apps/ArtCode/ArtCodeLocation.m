@@ -144,7 +144,11 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 	NSMutableDictionary *newDict = dict ? [dict mutableCopy] : [NSMutableDictionary dictionary];
 	newDict[ArtCodeLocationDataBookmarkDataKey] = bookmarkData;
   if ([url isDirectory]) {
-    [self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil dataDictionary:newDict];
+		if ([project.fileURL isEqual:url]) {
+			[self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil dataDictionary:newDict];
+		} else {
+			[self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil dataDictionary:newDict];
+		}
   } else {
     [self pushLocationWithType:ArtCodeLocationTypeTextFile project:project remote:nil dataDictionary:newDict];
   }
