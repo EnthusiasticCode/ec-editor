@@ -599,6 +599,7 @@ static void drawStencilStar(CGContextRef myContext)
 }
 
 - (void)codeView:(CodeView *)codeView selectedLineNumber:(NSUInteger)lineNumber {
+	if (self.bookmarks == nil) self.bookmarks = [NSIndexSet indexSet];
   if ([self.bookmarks containsIndex:lineNumber]) {
     self.bookmarks = [self.bookmarks indexSetByRemovingIndex:lineNumber];
   } else {
