@@ -16,7 +16,7 @@
 // targetStringBlock - An optional block used to calculate strings used for
 //                     scoring the objects in the array.
 //
-// Returns a sorted array of tripes of object, hit mask and score for every
+// Returns a sorted array of triples of object, hit mask and score for every
 // object that scores higher than 0.0.
 - (NSArray *)sortedArrayUsingScoreForAbbreviation:(NSString *)abbreviation extrapolateTargetStringBlock:(NSString *(^)(id element))targetStringBlock;
 

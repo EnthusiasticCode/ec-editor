@@ -41,7 +41,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSURLAuthenticationChallenge *_authenticationChallenge;
   
   NSArray *_filteredItems;
-  NSArray *_filteredItemsHitMasks;
 
   NSMutableArray *_selectedItems;
   NSMutableArray *_progressItems;
@@ -164,15 +163,9 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSArray *contentsArray = [(_directoryContent ?: [[NSArray alloc] init]) arrayByAddingObjectsFromArray:self.progressItems];
   
   // Filtering
-	_filteredItems = [NSMutableArray arrayWithCapacity:contentsArray.count];
-	_filteredItemsHitMasks = [NSMutableArray arrayWithCapacity:contentsArray.count];
-	for (RACTuple *tuple in [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
+	_filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
 		return item[cxFilenameKey];
-	}]) {
-		RACTupleUnpack(NSDictionary *item, NSIndexSet *hitMask) = tuple;
-		[(NSMutableArray *)_filteredItems addObject:item];
-		if (hitMask != nil) [(NSMutableArray *)_filteredItemsHitMasks addObject:hitMask];
-	}
+	}];
 
   return _filteredItems;
 }
@@ -180,7 +173,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 - (void)invalidateFilteredItems {
   [self willChangeValueForKey:@"filteredItems"];
   _filteredItems = nil;
-  _filteredItemsHitMasks = nil;
   [self didChangeValueForKey:@"filteredItems"];
 }
 
@@ -219,13 +211,14 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 #pragma mark - Table view data source
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+	RACTupleUnpack(NSDictionary *directoryItem, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
+
   UITableViewCell *cell = nil;
   
   if (directoryItem[progressSignalKey] == nil) {
     HighlightTableViewCell *highlightCell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
     cell = highlightCell;
-    highlightCell.textLabelHighlightedCharacters = _filteredItemsHitMasks ? _filteredItemsHitMasks[indexPath.row] : nil;
+    highlightCell.textLabelHighlightedCharacters = hitMask;
   } else {
     static NSString * const progressCellIdentifier = @"progressCell";
     ProgressTableViewCell *progressCell = [tableView dequeueReusableCellWithIdentifier:progressCellIdentifier];
@@ -258,14 +251,14 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+  NSDictionary *directoryItem = [self.filteredItems[indexPath.row] first];
   return directoryItem[progressSignalKey] == nil;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+  NSDictionary *directoryItem = [self.filteredItems[indexPath.row] first];
   RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
   [remoteFileListController setEditing:self.editing animated:NO];
   [self.navigationController pushViewController:remoteFileListController animated:YES];
@@ -273,7 +266,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    NSDictionary *directoryItem = (self.filteredItems)[indexPath.row];
+    NSDictionary *directoryItem = [self.filteredItems[indexPath.row] first];
     if (directoryItem[NSFileType] == NSFileTypeDirectory) {
       // Same action as accessory button
       [self tableView:tableView accessoryButtonTappedForRowWithIndexPath:indexPath];
@@ -282,7 +275,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
     }
   } else {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems addObject:(self.filteredItems)[indexPath.row]];
+    [_selectedItems addObject:[self.filteredItems[indexPath.row] first]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -291,7 +284,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (self.isEditing) {
     [self willChangeValueForKey:@"selectedItems"];
-    [_selectedItems removeObject:(self.filteredItems)[indexPath.row]];
+    [_selectedItems removeObject:[self.filteredItems[indexPath.row] first]];
     [self didChangeValueForKey:@"selectedItems"];
   }
   [super tableView:tableView didDeselectRowAtIndexPath:indexPath];

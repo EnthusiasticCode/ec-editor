@@ -26,11 +26,9 @@
 @protected
   BOOL _filteredItemsAreValid;
   NSArray *_filteredItems;
-  NSArray *_filteredItemsHitMask;
 }
 
-- (id)init
-{
+- (id)init {
   self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
   if (!self)
     return nil;
@@ -39,21 +37,14 @@
 
 #pragma mark - Properties
 
-- (NSArray *)filteredItems
-{
+- (NSArray *)filteredItems {
   if (!_filteredItemsAreValid) {
     // Get the new bookmarks
     [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
 			// Filter bookmarks
-			_filteredItems = [NSMutableArray arrayWithCapacity:bookmarks.count];
-			_filteredItemsHitMask = [NSMutableArray arrayWithCapacity:bookmarks.count];
-			for (RACTuple *tuple in [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
+			_filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
 				return bookmark.name;
-			}]) {
-				RACTupleUnpack(ArtCodeProjectBookmark *bookmark, NSIndexSet *hitMask) = tuple;
-				[(NSMutableArray *)_filteredItems addObject:bookmark];
-				if (hitMask != nil) [(NSMutableArray *)_filteredItemsHitMask addObject:hitMask];
-			}
+			}];
 			
 			if ([_filteredItems count] == 0) {
 				if ([self.searchBar.text length]) {
@@ -93,14 +84,13 @@
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-  ArtCodeLocation *bookmarkLocation = (self.filteredItems)[indexPath.row];
-  
-  cell.textLabel.text = bookmarkLocation.name;
-  cell.textLabelHighlightedCharacters = _filteredItemsHitMask ? _filteredItemsHitMask[indexPath.row] : nil;
+	RACTupleUnpack(ArtCodeProjectBookmark *bookmark, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
+	
+  cell.textLabel.text = bookmark.name;
+  cell.textLabelHighlightedCharacters = hitMask;
   cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   
   return cell;
@@ -109,10 +99,9 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    ArtCodeProjectBookmark *bookmark = (self.filteredItems)[indexPath.row];
+    ArtCodeProjectBookmark *bookmark = [self.filteredItems[indexPath.row] first];
     [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project dataDictionary:@{ @"lineNumber" : @(bookmark.lineNumber)}];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];

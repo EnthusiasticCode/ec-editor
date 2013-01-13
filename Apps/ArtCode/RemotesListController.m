@@ -55,15 +55,9 @@
 - (NSArray *)filteredItems {
   if (!_filteredRemotes) {
 		NSArray *remotes = self.artCodeTab.currentLocation.project.remotes.array;
-		_filteredRemotes = [NSMutableArray arrayWithCapacity:remotes.count];
-		_filteredRemotesHitMasks = [NSMutableArray arrayWithCapacity:remotes.count];
-		for (RACTuple *tuple in [remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *remote) {
+		_filteredRemotes = [remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *remote) {
 			return remote.name;
-		}]) {
-			RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = tuple;
-			[(NSMutableArray *)_filteredRemotes addObject:remote];
-			if (hitMask != nil) [(NSMutableArray *)_filteredRemotesHitMasks addObject:hitMask];
-		}
+		}];
 		
 		if (_filteredRemotes.count == 0) {
 			if (self.searchBar.text.length == 0) {
@@ -115,9 +109,9 @@
 {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
   
-  ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
+	RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
   cell.textLabel.text = remote.name;
-  cell.textLabelHighlightedCharacters = _filteredRemotesHitMasks ? _filteredRemotesHitMasks[indexPath.row] : nil;
+  cell.textLabelHighlightedCharacters = hitMask;
   cell.detailTextLabel.text = [[remote url] absoluteString];
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   
@@ -128,7 +122,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
+    ArtCodeRemote *remote = [self.filteredItems[indexPath.row] first];
     [self.artCodeTab pushRemotePath:remote.path ?: @"" withRemote:remote];
   }
   
@@ -148,7 +142,7 @@
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows) {
         NSMutableOrderedSet *remotes = [self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"];
-        ArtCodeRemote *remote = (self.filteredItems)[indexPath.row];
+        ArtCodeRemote *remote = [self.filteredItems[indexPath.row] first];
         [remotes removeObject:remote];
         [remote.managedObjectContext deleteObject:remote];
       }
