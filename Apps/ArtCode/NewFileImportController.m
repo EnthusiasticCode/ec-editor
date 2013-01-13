@@ -132,7 +132,9 @@ static void _init(NewFileImportController *self) {
     navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentViewController:navigationController animated:YES completion:^{
       // Start copy
+			__block NSUInteger importedCount = 0;
       [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^RACSignal *(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+				importedCount++;
         return [item copyTo:destinationFolder];
       }] finally:^{
         ASSERT_MAIN_QUEUE();
@@ -142,7 +144,7 @@ static void _init(NewFileImportController *self) {
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
       } completed:^{
         ASSERT_MAIN_QUEUE();
-        if (items.count) {
+        if (importedCount > 0) {
           [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
         }
       }];
