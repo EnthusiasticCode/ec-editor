@@ -308,15 +308,14 @@ static void drawStencilStar(CGContextRef myContext)
   [[[[RACAble(self.artCodeTab.currentLocation.url) map:^RACSignal *(NSURL *url) {
     return [FileSystemFile itemWithURL:url];
   }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.textFile) onObject:self];
-
-  // TODO: bind bookmarks again
-//  __block RACDisposable *bookmarksDisposable = nil;
-//  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
-//    @strongify(self);
-//    if (!self) { return; }
-//    [bookmarksDisposable dispose];
-//    bookmarksDisposable = [textFile.bookmarks syncProperty:@keypath(self.bookmarks) ofObject:self];
-//  }];
+	
+  __block RACDisposable *bookmarksDisposable = nil;
+  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
+    @strongify(self);
+    if (!self) { return; }
+    [bookmarksDisposable dispose];
+    bookmarksDisposable = [RACBind(self, bookmarks) bindTo:textFile.bookmarksSubject.binding];
+  }];
   
   // When the text file or the code view change, bind their texts together
 	__block RACDisposable *fileContentDisposable = nil;
