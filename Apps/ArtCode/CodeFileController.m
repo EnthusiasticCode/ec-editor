@@ -215,6 +215,8 @@ static void drawStencilStar(CGContextRef myContext)
   quickBrowserContainerController.openingButton = sender;
   
   [_quickBrowsersPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+	
+	[self.codeView resignFirstResponder];
 }
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl {
