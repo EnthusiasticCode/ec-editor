@@ -136,10 +136,8 @@ NSMutableDictionary *fileSystemItemCache() {
 - (void)didCreate {
 	ASSERT_FILE_SYSTEM_SCHEDULER();
 	ASSERT(self.urlBacking != nil);
-	ASSERT(fileSystemItemCache()[self.urlBacking] == nil);
 	
 	NSURL *url = self.urlBacking;
-	fileSystemItemCache()[url] = self;
 	
 	FileSystemDirectory *parent = fileSystemItemCache()[url.URLByDeletingLastPathComponent];
 	[parent didAddItem:self];
@@ -207,6 +205,11 @@ NSMutableDictionary *fileSystemItemCache() {
 			}]];
 		}];
 	}
+	
+	if (signals.count == 0) return [[RACSignal return:self] doNext:^(id x) {
+		[self didCreate];
+	}];
+	
 	return [[RACSignal zip:signals] map:^(RACTuple *tuples) {
 		@strongify(self);
 		

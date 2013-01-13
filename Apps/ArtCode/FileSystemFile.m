@@ -44,7 +44,7 @@
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
 			
-			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] || ![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {
+			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] && ![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {
 				[subscriber sendError:error];
 			} else {
 				self.loaded = YES;
