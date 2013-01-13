@@ -108,10 +108,14 @@
 
 @implementation UIViewController (QuickBrowsersContainerController)
 
-- (QuickBrowsersContainerController *)quickBrowsersContainerController
-{
+- (QuickBrowsersContainerController *)quickBrowsersContainerController {
+	if (!self.parentViewController) return nil;
   ASSERT([self.parentViewController isKindOfClass:[QuickBrowsersContainerController class]]);
   return (QuickBrowsersContainerController *)self.parentViewController;
+}
+
++ (NSSet *)keyPathsForValuesAffectingQuickBrowsersContainerController {
+	return [NSSet setWithObject:@"parentViewController"];
 }
 
 @end

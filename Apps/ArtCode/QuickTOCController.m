@@ -8,35 +8,15 @@
 
 #import "QuickTOCController.h"
 
-#import "AppStyle.h"
-#import "ArtCodeLocation.h"
-#import "ArtCodeTab.h"
 #import "CodeFileController.h"
-#import "CodeView.h"
 #import "HighlightTableViewCell.h"
-#import "NSArray+ScoreForAbbreviation.h"
 #import "QuickBrowsersContainerController.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 #import "TMSymbol.h"
-#import "TMUnit.h"
+
 
 @implementation QuickTOCController {
   NSArray *_filteredSymbolList;
-}
-
-#pragma mark - Properties
-
-- (NSArray *)filteredItems {
-  if (!_filteredSymbolList) {
-		NSArray *symbols = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].symbolList;
-		_filteredSymbolList = [symbols sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(TMSymbol *symbol) {
-			return symbol.title;
-		}];
-  }
-  return _filteredSymbolList;
-}
-
-- (void)invalidateFilteredItems {
-  _filteredSymbolList = nil;
 }
 
 #pragma mark - Controller lifecycle
@@ -46,6 +26,11 @@
   if (self == nil) return nil;
   self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:[UIImage imageNamed:@"UITabBar_symbol"] tag:0];
   self.navigationItem.title = @"Table of Content";
+	
+	[[[self rac_signalForKeyPath:@"quickBrowsersContainerController.contentController.codeUnit.symbolList" onObject:self] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(TMSymbol *symbol) {
+		return symbol.title;
+	}] toProperty:@keypath(self.filteredItems) onObject:self];
+	
   return self;
 }
 
@@ -90,7 +75,7 @@
 #warning TODO: push an url instead
   [table deselectRowAtIndexPath:indexPath animated:YES];
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  TMSymbol *selectedSymbol = [self filteredItems][indexPath.row];
+  TMSymbol *selectedSymbol = [self.filteredItems[indexPath.row] first];
   [[(CodeFileController *)self.quickBrowsersContainerController.contentController codeView] setSelectionRange:selectedSymbol.range];
 }
 
