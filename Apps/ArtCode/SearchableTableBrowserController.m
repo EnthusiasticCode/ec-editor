@@ -49,9 +49,6 @@
   return _searchBarTextSubject;
 }
 
-- (void)invalidateFilteredItems {
-}
-
 #pragma mark - Controller lifecycle
 
 - (id)initWithNibNamed:(NSString *)nibName title:(NSString *)title searchBarStaticOnTop:(BOOL)isSearchBarStaticOnTop
@@ -95,14 +92,8 @@
   [self didChangeValueForKey:@"editing"];
 }
 
-+ (BOOL)automaticallyNotifiesObserversOfEditing
-{
++ (BOOL)automaticallyNotifiesObserversOfEditing {
   return NO;
-}
-
-- (void)didReceiveMemoryWarning {
-	[self invalidateFilteredItems];
-  [super didReceiveMemoryWarning];
 }
 
 #pragma mark - View lifecycle
@@ -194,13 +185,6 @@
     }
   }];
   
-  // Invalidate the table data when the search bar text changes
-#warning TODO: this should be removed and subclasses should just send KVO change notification for filteredItems
-  [disposables addObject:[self.searchBarTextSubject subscribeNext:^(id x) {
-    [this invalidateFilteredItems];
-		[this.tableView reloadData];
-  }]];
-  
   // Reload the table when the table data changes
   [disposables addObject:[RACAble(self.filteredItems) subscribeNext:^(NSArray *items) {
     [this.tableView reloadData];
@@ -244,7 +228,6 @@
 - (void)viewDidDisappear:(BOOL)animated {
   [_racGlobalDisposable dispose];
   _racGlobalDisposable = nil;
-  [self invalidateFilteredItems];
   [super viewDidDisappear:animated];
 }
 

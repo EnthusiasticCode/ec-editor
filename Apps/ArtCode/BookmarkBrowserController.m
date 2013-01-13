@@ -38,6 +38,8 @@
 #pragma mark - Properties
 
 - (NSArray *)filteredItems {
+#warning TODO: make this in RAC style when bookmarksWithResultHandler: is re-implemented as .bookmarks
+	ASSERT(NO); // This should be
   if (!_filteredItemsAreValid) {
     // Get the new bookmarks
     [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
@@ -62,10 +64,6 @@
     _filteredItemsAreValid = YES;
   }
   return _filteredItems;
-}
-
-- (void)invalidateFilteredItems {
-  _filteredItemsAreValid = NO;
 }
 
 #pragma mark - View lifecycle

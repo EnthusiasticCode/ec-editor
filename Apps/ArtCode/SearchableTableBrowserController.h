@@ -19,9 +19,6 @@
 /// Override this property getter to provide filtered items.
 @property (nonatomic, copy) NSArray *filteredItems;
 
-/// Called when the filtered items should be invalidated.
-- (void)invalidateFilteredItems;
-
 #pragma mark Layout objects
 
 /// Indicate if the searchbar should be fixed on top instead of as the table header.
