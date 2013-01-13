@@ -28,26 +28,23 @@
 static void _init(LocalFileListController *self) {
   // RAC
   @weakify(self);
-  RAC(self.filteredItems) = [[RACSignal combineLatest:@[
-                              // Signal to get filtered files
-                              [[RACAble(self.locationDirectory)
-                                map:^id(FileSystemDirectory *directory) {
-                                  @strongify(self);
-																	return [directory.childrenSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
-																		return item.url.lastPathComponent;
-																	}];
-                                }] switchToLatest],
-                              // Signal with progress items
-                              RACAbleWithStart(self.progressItems)]]
-                             map:^id(RACTuple *itemsTuple) {
-                               if (itemsTuple.second == nil) {
-                                 // Just show the directory items
-                                 return itemsTuple.first;
-                               } else {
-                                 // Combine arrays with progress items on top
-                                 return [itemsTuple.second arrayByAddingObjectsFromArray:itemsTuple.first];
-                               }
-                             }];
+	
+	RACSignal *filteredFilesSignal = [[RACAble(self.locationDirectory) map:^id(FileSystemDirectory *directory) {
+		@strongify(self);
+		return [directory.childrenSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+			return item.url.lastPathComponent;
+		}];
+	}] switchToLatest];
+	
+  [[RACSignal combineLatest:@[ filteredFilesSignal, RACAbleWithStart(self.progressItems) ] reduce:^(NSArray *items, NSArray *progressItems) {
+		if (progressItems.count == 0) {
+			// Just show the directory items
+			return items;
+		} else {
+			// Combine arrays with progress items on top
+			return [items arrayByAddingObjectsFromArray:progressItems];
+		}
+	}] toProperty:@keypath(self.filteredItems) onObject:self];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -109,9 +106,8 @@ static void _init(LocalFileListController *self) {
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-  RACTuple *tuple = (self.filteredItems)[indexPath.row];
+- (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  RACTuple *tuple = self.filteredItems[indexPath.row];
   UITableViewCell *cell = nil;
   if ([tuple.second isKindOfClass:[RACSignal class]]) {
     static NSString * const progressCellIdentifier = @"progressCell";

@@ -7,59 +7,42 @@
 //
 
 #import "RemotesListController.h"
-#import "SingleTabController.h"
 
 #import "ArtCodeTab.h"
+#import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
-#import "ArtCodeLocation.h"
-
-#import "NSArray+ScoreForAbbreviation.h"
+#import "BezelAlert.h"
 #import "HighlightTableViewCell.h"
 #import "ImagePopoverBackgroundView.h"
 #import "NewRemoteViewController.h"
-#import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
-#import "BezelAlert.h"
+#import "SingleTabController.h"
+#import "UIViewController+Utilities.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 
-#import "RemoteNavigationController.h"
 
 @class SingleTabController, TopBarToolbar;
 
 @implementation RemotesListController {
-  NSArray *_filteredRemotes;
-  NSArray *_filteredRemotesHitMasks;
-  
   UIPopoverController *_toolAddPopover;
 }
 
-- (id)init
-{
+- (id)init {
   self = [super initWithNibNamed:@"SearchableTableBrowserController" title:L(@"Remotes") searchBarStaticOnTop:NO];
   if (!self)
     return nil;
   
   // RAC
-  __weak RemotesListController *this = self;
-  
-  [RACAble(self.artCodeTab.currentLocation.project.remotes) subscribeNext:^(NSOrderedSet *x) {
-    [this invalidateFilteredItems];
-    [this.tableView reloadData];
-  }];
-  
-  return self;
-}
-
-#pragma mark - Properties
-
-- (NSArray *)filteredItems {
-  if (!_filteredRemotes) {
-		NSArray *remotes = self.artCodeTab.currentLocation.project.remotes.array;
-		_filteredRemotes = [remotes sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeRemote *remote) {
-			return remote.name;
-		}];
-		
-		if (_filteredRemotes.count == 0) {
+	@weakify(self);
+	
+  [[[[RACAble(self.artCodeTab.currentLocation.project.remotes) map:^(NSOrderedSet *remoteSet) {
+		return remoteSet.array;
+	}] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(ArtCodeRemote *remote) {
+		return remote.name;
+	}] doNext:^(NSArray *filteredRemotes) {
+		@strongify(self);
+		if (filteredRemotes.count == 0) {
 			if (self.searchBar.text.length == 0) {
 				self.infoLabel.text = L(@"The project has no remotes. Use the + button to add a new one.");
 			} else {
@@ -68,15 +51,9 @@
 		} else {
 			self.infoLabel.text = @"";
 		}
-  }
-  return _filteredRemotes;
-}
-
-- (void)invalidateFilteredItems
-{
-  _filteredRemotes = nil;
-  _filteredRemotesHitMasks = nil;
-  [super invalidateFilteredItems];
+	}] toProperty:@keypath(self.filteredItems) onObject:self];
+  
+  return self;
 }
 
 #pragma mark - View lifecycle
@@ -91,22 +68,20 @@
   self.searchBar.placeholder = @"Filter remotes";
 }
 
-- (void)didReceiveMemoryWarning{
+- (void)didReceiveMemoryWarning {
   _toolAddPopover = nil;
   [super didReceiveMemoryWarning];
 }
 
 #pragma mark - Single tab content controller protocol methods
 
-- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar
-{
+- (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar {
   return NO;
 }
 
 #pragma mark - Table view datasource
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
   
 	RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
@@ -131,12 +106,9 @@
 
 #pragma mark - Action sheed delegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-  if ([self isToolEditDeleteActionSheet:actionSheet])
-  {
-    if (buttonIndex == actionSheet.destructiveButtonIndex)
-    {
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  if ([self isToolEditDeleteActionSheet:actionSheet]) {
+    if (buttonIndex == actionSheet.destructiveButtonIndex) {
       self.loading = YES;
       NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
@@ -156,10 +128,8 @@
 
 #pragma mark - Private methods
 
-- (void)_toolAddAction:(id)sender
-{
-  if (!_toolAddPopover)
-  {
+- (void)_toolAddAction:(id)sender {
+  if (!_toolAddPopover) {
     NewRemoteViewController *newRemote = [[NewRemoteViewController alloc] init];
     newRemote.artCodeTab = self.artCodeTab;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newRemote];
