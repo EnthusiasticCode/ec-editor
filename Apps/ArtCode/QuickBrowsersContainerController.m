@@ -26,15 +26,15 @@
   NSArray *quickBrowsers = nil;
   
   if (contentController.artCodeTab.currentLocation.type == ArtCodeLocationTypeBookmarksList) {
-    quickBrowsers = @[[[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+    quickBrowsers = @[ [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init] ];
   } else {
     switch (contentController.artCodeTab.currentLocation.type) {
       case ArtCodeLocationTypeProject:
       case ArtCodeLocationTypeDirectory:
-        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+        quickBrowsers = @[ [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFolderInfo"] ];
         break;
       case ArtCodeLocationTypeTextFile:
-        quickBrowsers = @[[[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"], [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init]];
+        quickBrowsers = @[ [[QuickTOCController alloc] init], [[QuickFileBrowserController alloc] init], [[QuickBookmarkBrowserController alloc] init], [[UIStoryboard storyboardWithName:@"QuickInfo" bundle:nil] instantiateViewControllerWithIdentifier:@"QuickFileInfo"] ];
         break;
       default:
         break;
