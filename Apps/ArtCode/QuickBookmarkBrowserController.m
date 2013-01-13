@@ -25,8 +25,12 @@
 
 - (void)loadView {
 	[super loadView];
-	
 	self.bottomToolBar = nil;
+}
+
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	self.searchBar.placeholder = L(@"Search for bookmarks");
 }
 
 #pragma mark - Table view delegate
