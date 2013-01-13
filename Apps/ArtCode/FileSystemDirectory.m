@@ -95,10 +95,10 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 
 - (void)didAddItem:(FileSystemItem *)item {
 	NSParameterAssert(item != nil && ![self.childrenBacking containsObject:item]);
-	NSUInteger index = [self.childrenBacking indexOfObject:self inSortedRange:NSMakeRange(0, self.childrenBacking.count) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(FileSystemItem *item1, FileSystemItem *item2) {
+	NSUInteger index = [self.childrenBacking indexOfObject:item inSortedRange:NSMakeRange(0, self.childrenBacking.count) options:NSBinarySearchingInsertionIndex usingComparator:^NSComparisonResult(FileSystemItem *item1, FileSystemItem *item2) {
 		return [item1.urlBacking.lastPathComponent compare:item2.urlBacking.lastPathComponent];
 	}];
-	[[self mutableArrayValueForKey:@keypath(self.childrenBacking)] insertObject:self atIndex:index];
+	[[self mutableArrayValueForKey:@keypath(self.childrenBacking)] insertObject:item atIndex:index];
 }
 
 - (void)didRemoveItem:(FileSystemItem *)item {
