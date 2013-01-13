@@ -675,7 +675,7 @@ static void init(CodeView *self)
   if (isUnderlay)
   {
     if (!underlayPasses)
-      underlayPasses = [[NSMutableDictionary alloc] init];
+      underlayPasses = [NSMutableDictionary dictionary];
     underlayPasses[passKey] = [block copy];
     
     self.renderer.underlayRenderingPasses = [underlayPasses allValues];
@@ -683,7 +683,7 @@ static void init(CodeView *self)
   else
   {
     if (!overlayPasses)
-      overlayPasses = [[NSMutableDictionary alloc] init];
+      overlayPasses = [NSMutableDictionary dictionary];
     overlayPasses[passKey] = [block copy];
     
     self.renderer.overlayRenderingPasses = [overlayPasses allValues];
@@ -692,14 +692,14 @@ static void init(CodeView *self)
   if (setupBlock)
   {
     if (!setupPasses)
-      setupPasses = [[NSMutableDictionary alloc] init];
+      setupPasses = [NSMutableDictionary dictionary];
     setupPasses[passKey] = [setupBlock copy];
   }
   
   if (cleanupBlock)
   {
     if (!cleanupPasses)
-      cleanupPasses = [[NSMutableDictionary alloc] init];
+      cleanupPasses = [NSMutableDictionary dictionary];
     cleanupPasses[passKey] = [cleanupBlock copy];
   }
 }

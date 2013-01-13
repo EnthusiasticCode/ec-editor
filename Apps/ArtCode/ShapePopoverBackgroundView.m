@@ -151,17 +151,17 @@ static void updatePath(ShapePopoverBackgroundView *self)
   switch (self.arrowDirection)
   {
     case UIPopoverArrowDirectionUp:
-      rect.origin.y += [[self class] arrowHeight];
+      rect.origin.y += [self.class arrowHeight];
       localArrowPosition += self->cornerRadius * 2;
     case UIPopoverArrowDirectionDown:
-      rect.size.height -= [[self class] arrowHeight];
+      rect.size.height -= [self.class arrowHeight];
       localArrowPosition += rect.size.width / 2.0 - self->cornerRadius;
       break;
       
     case UIPopoverArrowDirectionLeft:
-      rect.origin.x += [[self class] arrowHeight];
+      rect.origin.x += [self.class arrowHeight];
     case UIPopoverArrowDirectionRight:
-      rect.size.width -= [[self class] arrowHeight];
+      rect.size.width -= [self.class arrowHeight];
       localArrowPosition += rect.size.height / 2.0 - self->cornerRadius;
       break;
 			
@@ -176,9 +176,9 @@ static void updatePath(ShapePopoverBackgroundView *self)
   else if (self.arrowDirection == UIPopoverArrowDirectionLeft)
     localArrowPosition = (rect.size.height <= localArrowPosition) ? 0 : (rect.size.height - localArrowPosition);
   
-  CGFloat arrowSize = [[self class] arrowHeight];
+  CGFloat arrowSize = [self.class arrowHeight];
   CGFloat arrowNoCornerSize = arrowSize - self->arrowCornerRadius;
-  CGFloat arrowLength2 = [[self class] arrowBase];
+  CGFloat arrowLength2 = [self.class arrowBase];
   CGFloat arrowLength = arrowLength2 / 2.0;
   
   CGRect innerRect = CGRectInset(rect, self->cornerRadius, self->cornerRadius);

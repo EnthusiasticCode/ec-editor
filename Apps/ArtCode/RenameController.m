@@ -87,7 +87,7 @@
   
   // Reset the selectedAlsoRenameItems when alsoRenameItems change
   [[RACAble(self.alsoRenameItems) map:^NSMutableSet *(NSArray *alsoRenameItems) {
-    return [[NSMutableSet alloc] init];
+    return [NSMutableSet set];
   }] toProperty:@keypath(self.selectedAlsoRenameItems) onObject:self];
   
   // Hide or show the alsoRenameTableView when needed

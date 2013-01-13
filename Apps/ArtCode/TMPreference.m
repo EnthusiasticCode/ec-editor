@@ -84,7 +84,7 @@ static NSMutableDictionary *symbolIconsCache;
 #if ! TEST
 //  ASSERT(NSOperationQueue.currentQueue != NSOperationQueue.mainQueue);
 #endif
-  NSMutableDictionary *preferences = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *preferences = [NSMutableDictionary dictionary];
   for (NSURL *bundleURL in [TMBundle bundleURLs])
   {
     for (NSURL *preferenceURL in [NSFileManager.defaultManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:@"Preferences" isDirectory:YES] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles error:NULL])
@@ -132,7 +132,7 @@ static NSMutableDictionary *symbolIconsCache;
   }
   // Check per scope cache
   if (!scopeToPreferenceCache)
-    scopeToPreferenceCache = [[NSMutableDictionary alloc] init];
+    scopeToPreferenceCache = [NSMutableDictionary dictionary];
   NSMutableDictionary *cachedPreferences = scopeToPreferenceCache[qualifiedIdentifier];
   __block id value = cachedPreferences[preferenceKey];
   if (value)
@@ -155,7 +155,7 @@ static NSMutableDictionary *symbolIconsCache;
   
   // Cache resulting coalesed preferences per scope
   if (!cachedPreferences) {
-    cachedPreferences = [[NSMutableDictionary alloc] init];
+    cachedPreferences = [NSMutableDictionary dictionary];
     scopeToPreferenceCache[qualifiedIdentifier] = cachedPreferences;
   }
   cachedPreferences[preferenceKey] = value ?: [NSNull null];
@@ -183,7 +183,7 @@ static NSMutableDictionary *symbolIconsCache;
     icon = [UIImage styleSymbolImageWithSize:CGSizeMake(16, 16) color:color letter:letter];
     // Cache the result
     if (!symbolIconsCache) {
-      symbolIconsCache = [[NSMutableDictionary alloc] init];
+      symbolIconsCache = [NSMutableDictionary dictionary];
     }
     symbolIconsCache[symbolIdentifier] = icon;
   }
@@ -195,7 +195,7 @@ static NSMutableDictionary *symbolIconsCache;
 - (void)_addSettingsDictionary:(NSDictionary *)settingsDict
 {
   if (!_settings)
-    _settings = [[NSMutableDictionary alloc] init];
+    _settings = [NSMutableDictionary dictionary];
   [settingsDict enumerateKeysAndObjectsUsingBlock:^(NSString *settingName, id value, BOOL *stop) {
     
     // Symbol list
@@ -217,7 +217,7 @@ static NSMutableDictionary *symbolIconsCache;
       // Load or generate an image for the symbol
       UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"symbolIcon_%@", value]];
       if (!image) {
-        image = [[self class] symbolIconForIdentifier:value];
+        image = [self.class symbolIconForIdentifier:value];
       }
       _settings[TMPreferenceSymbolIconKey] = image;
       // TODO: also use symbolImagePath, symbolImageColor & Title
@@ -231,7 +231,7 @@ static NSMutableDictionary *symbolIconsCache;
     // Smart typing pairs
     else if ([settingName isEqualToString:TMPreferenceSmartTypingPairsKey]) {
       ASSERT([_settings objectForKey:TMPreferenceSmartTypingPairsKey] == nil); // In this case the array should get mutable
-      NSMutableDictionary *pairs = [[NSMutableDictionary alloc] init];
+      NSMutableDictionary *pairs = [NSMutableDictionary dictionary];
       for (NSArray *pairArray in value) {
         pairs[pairArray[0]] = pairArray[1];
       }
@@ -259,7 +259,7 @@ static NSMutableDictionary *symbolIconsCache;
     transformationSplitter = [NSRegularExpression regularExpressionWithPattern:@"s/(.*?[^\\\\])/(.*?[^\\\\]?)/(g?)" options:0 error:NULL];
   
   // Search transformations
-  NSMutableArray *transformations = [[NSMutableArray alloc] init];
+  NSMutableArray *transformations = [NSMutableArray array];
   [transformationSplitter enumerateMatchesInString:transformation options:0 range:NSMakeRange(0, [transformation length]) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
     ASSERT([result numberOfRanges] == 4);
     [transformations addObject:[[TMPreferenceSymbolTransformation alloc] initWithRegExp:[OnigRegexp compile:[transformation substringWithRange:[result rangeAtIndex:1]] options:OnigOptionCaptureGroup] template:[transformation substringWithRange:[result rangeAtIndex:2]] isGlobal:[[transformation substringWithRange:[result rangeAtIndex:3]] length]]];

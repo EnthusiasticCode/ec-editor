@@ -75,11 +75,11 @@ static NSMutableDictionary *_includedNodesCaches;
 //#endif
   
   _includedNodesCachesLock = dispatch_semaphore_create(1);
-  _includedNodesCaches = [[NSMutableDictionary alloc] init];
+  _includedNodesCaches = [NSMutableDictionary dictionary];
   
-  _syntaxesWithIdentifier = [[NSMutableDictionary alloc] init];
+  _syntaxesWithIdentifier = [NSMutableDictionary dictionary];
 // TODO: URI: figure out what the syntaxes without identifier are and possibly get rid of them or handle them differently
-  _syntaxesWithoutIdentifier = [[NSMutableArray alloc] init];
+  _syntaxesWithoutIdentifier = [NSMutableArray array];
   NSFileManager *fileManager = [[NSFileManager alloc] init];
   for (NSURL *bundleURL in [TMBundle bundleURLs]) {
     for (NSURL *syntaxURL in [fileManager contentsOfDirectoryAtURL:[bundleURL URLByAppendingPathComponent:_syntaxDirectory] includingPropertiesForKeys:nil options:0 error:NULL]) {
@@ -180,8 +180,8 @@ static NSMutableDictionary *_includedNodesCaches;
   if (!self.patterns)
     return nil;
   includedNodes = [NSMutableArray arrayWithArray:self.patterns];
-  NSMutableSet *dereferencedNodes = [[NSMutableSet alloc] init];
-  NSMutableIndexSet *containerNodesIndexes = [[NSMutableIndexSet alloc] init];
+  NSMutableSet *dereferencedNodes = [NSMutableSet set];
+  NSMutableIndexSet *containerNodesIndexes = [NSMutableIndexSet indexSet];
   do
   {
     [containerNodesIndexes removeAllIndexes];
@@ -232,7 +232,7 @@ static NSMutableDictionary *_includedNodesCaches;
   dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
   NSMutableDictionary *includedNodesCache = _includedNodesCaches[rootNode];
   if (!includedNodesCache) {
-    includedNodesCache = [[NSMutableDictionary alloc] init];
+    includedNodesCache = [NSMutableDictionary dictionary];
   }
   includedNodesCache[self] = includedNodes;
   _includedNodesCaches[rootNode] = includedNodesCache;
@@ -294,17 +294,17 @@ static NSMutableDictionary *_includedNodesCaches;
     }
     else if ([propertyKey isEqualToString:_patternsKey])
     {
-      NSMutableArray *patterns = [[NSMutableArray alloc] init];
+      NSMutableArray *patterns = [NSMutableArray array];
       for (NSDictionary *patternDictionary in propertyValue)
-        [patterns addObject:[[[self class] alloc] _initWithDictionary:patternDictionary syntax:syntax]];
+        [patterns addObject:[[self.class alloc] _initWithDictionary:patternDictionary syntax:syntax]];
       if ([patterns count])
         [self setValue:[patterns copy] forKey:propertyKey];
     }
     else if ([propertyKey isEqualToString:_repositoryKey])
     {
-      NSMutableDictionary *repository = [[NSMutableDictionary alloc] init];
+      NSMutableDictionary *repository = [NSMutableDictionary dictionary];
       [propertyValue enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *innerStop) {
-        repository[key] = [[[self class] alloc] _initWithDictionary:obj syntax:syntax];
+        repository[key] = [[self.class alloc] _initWithDictionary:obj syntax:syntax];
       }];
       if ([repository count])
         [self setValue:[repository copy] forKey:propertyKey];

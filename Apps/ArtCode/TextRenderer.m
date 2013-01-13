@@ -713,7 +713,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   if (!(self = [super init])) 
     return nil;
   
-  textSegments = [[NSMutableArray alloc] init];
+  textSegments = [NSMutableArray array];
   textSegmentsSemaphore = dispatch_semaphore_create(1);
   
   __weak TextRenderer *this = self;
@@ -966,7 +966,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
   {
     // Calculate segments to remove
-    NSMutableIndexSet *segmentsToRemove = [[NSMutableIndexSet alloc] init];
+    NSMutableIndexSet *segmentsToRemove = [NSMutableIndexSet indexSet];
     __block NSUInteger lastSegmentTextEnd = 0;
     __block NSUInteger currentSegmentTextEnd = 0;
     [textSegments enumerateObjectsUsingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stopSegments) {

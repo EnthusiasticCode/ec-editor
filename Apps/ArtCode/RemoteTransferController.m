@@ -674,7 +674,7 @@ typedef enum {
   _connectionPath = remotePath;
   
   _items = items;
-  _itemsConflicts = [[NSMutableArray alloc] init];
+  _itemsConflicts = [NSMutableArray array];
   _localFolderURL = localFolderURL;
   _completionHandler = [completionHandler copy];
   

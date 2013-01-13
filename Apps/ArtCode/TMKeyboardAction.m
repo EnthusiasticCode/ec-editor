@@ -100,7 +100,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 
 + (void)_loadKeyboardActionsFromFileURL:(NSURL *)fileURL {
   if (!systemKeyboardActions)
-    systemKeyboardActions = [[NSMutableDictionary alloc] init];
+    systemKeyboardActions = [NSMutableDictionary dictionary];
   
   NSDictionary *plist = [NSPropertyListSerialization propertyListFromData:[NSData dataWithContentsOfURL:fileURL options:NSDataReadingUncached error:NULL] mutabilityOption:NSPropertyListImmutable format:NULL errorDescription:NULL];
   ASSERT(plist != nil);
@@ -120,13 +120,13 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   ASSERT(plist != nil);
   
   // Load local actions
-  NSMutableDictionary *localActions = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *localActions = [NSMutableDictionary dictionary];
   for (NSDictionary *action in plist[@"keyboardActions"]) {
     localActions[action[@"uuid"]] = [[TMKeyboardAction alloc] initWithDictionary:action];
   }
   
   // Load configuration
-  NSMutableArray *configuration = [[NSMutableArray alloc] init];
+  NSMutableArray *configuration = [NSMutableArray array];
   for (NSString *actionUUID in plist[@"keyboardActionsConfiguration"])
   {
     if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"]) {
@@ -142,7 +142,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   
   // Add configuration to system list
   if (!systemKeyboardActionsConfigurations)
-    systemKeyboardActionsConfigurations = [[NSMutableDictionary alloc] init];
+    systemKeyboardActionsConfigurations = [NSMutableDictionary dictionary];
   for (NSString *scope in [plist[@"scope"] componentsSeparatedByString:@","])
   {
     systemKeyboardActionsConfigurations[scope] = [configuration copy];
@@ -188,7 +188,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
     return [self defaultKeyboardActionsConfiguration];
   
   // Get all the configurations that repond to the selector
-  NSMutableDictionary *configurationDictionary = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *configurationDictionary = [NSMutableDictionary dictionary];
   [[self allKeyboardActionsConfigurations] enumerateKeysAndObjectsUsingBlock:^(NSString *scopeSelector, NSArray *conf, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:scopeSelector];
     if (score > 0) {

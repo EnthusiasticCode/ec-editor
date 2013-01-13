@@ -37,6 +37,7 @@
   if (!result) {
     // handle directory creation failure
 		NSAssert(NO, @"Failed to create temporary directory.");
+		free(tempDirectoryNameCString);
 		return nil;
   }
   
@@ -57,6 +58,7 @@
   if (fileDescriptor == -1) {
     // handle file creation failure
 		NSAssert(NO, @"Failed to create temporary file.");
+		free(tempFileNameCString);
 		return nil;
   }
   
@@ -85,7 +87,7 @@
 }
 
 - (BOOL)isPackage {
-  for (NSString *packageExtension in [[self class] _packageExtensions]) {
+  for (NSString *packageExtension in [self.class _packageExtensions]) {
     if ([[self pathExtension] isEqualToString:packageExtension]) {
       return YES;
     }
@@ -98,7 +100,7 @@
   if ([absoluteString characterAtIndex:[absoluteString length] - 1] == L'/') {
     absoluteString = [absoluteString substringToIndex:[absoluteString length] - 1];
   }
-  for (NSString *packageExtension in [[self class] _packageExtensions]) {
+  for (NSString *packageExtension in [self.class _packageExtensions]) {
     NSRange rangeOfPackageExtension = [absoluteString rangeOfString:[packageExtension stringByAppendingString:@"/"]];
     if (rangeOfPackageExtension.location != NSNotFound) {
       return YES;

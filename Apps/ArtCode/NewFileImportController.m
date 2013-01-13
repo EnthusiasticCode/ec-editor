@@ -155,7 +155,7 @@ static void _init(NewFileImportController *self) {
 #pragma mark - Private Methods
 
 - (NSArray *)_importableFileURLsInDocuments {
-  NSMutableArray *result = [[NSMutableArray alloc] init];
+  NSMutableArray *result = [NSMutableArray array];
   for (NSURL *url in [NSFileManager.defaultManager enumeratorAtURL:[NSURL applicationDocumentsDirectory] includingPropertiesForKeys:nil options:NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants errorHandler:nil]) {
     if (![url isArchiveURL]) {
       [result addObject:url];

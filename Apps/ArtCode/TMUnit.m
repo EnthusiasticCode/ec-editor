@@ -254,7 +254,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   NSUInteger currentOffset = 0;
   Change *currentChange = [[Change alloc] init];
   currentChange->oldRange.location = NSNotFound;
-  NSMutableArray *changes = [[NSMutableArray alloc] init];
+  NSMutableArray *changes = [NSMutableArray array];
   for (Diff *diff in diffs) {
     switch (diff.operation) {
       case DIFF_EQUAL:
@@ -293,7 +293,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   }
   
   // Process the changes
-  NSMutableIndexSet *unparsedRanges = [[NSMutableIndexSet alloc] init];
+  NSMutableIndexSet *unparsedRanges = [NSMutableIndexSet indexSet];
   for (Change *change in changes) {
     NSRange oldRange = change->oldRange;
     NSRange newRange = change->newRange;
@@ -426,7 +426,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   }
   
   _syntax = syntax;
-  _symbolList = [[NSMutableArray alloc] init];
+  _symbolList = [NSMutableArray array];
   _previousContent = @"";
   _attributedContent = [[NSMutableAttributedString alloc] init];
   

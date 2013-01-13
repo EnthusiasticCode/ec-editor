@@ -26,7 +26,7 @@
 
 - (NSComparisonResult)compare:(id)other
 {
-  assert([other isKindOfClass:[self class]]);
+  assert([other isKindOfClass:self.class]);
   
   NSUInteger local = index;
   NSUInteger with = ((TextPosition*)other)->index;

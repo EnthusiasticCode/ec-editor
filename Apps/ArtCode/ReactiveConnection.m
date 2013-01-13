@@ -138,7 +138,7 @@
 
 - (RACSignal *)downloadFileWithRemotePath:(NSString *)remotePath isDirectory:(BOOL)isDirectory {
   if (!_downloadProgressSignals) {
-    _downloadProgressSignals = [[NSMutableDictionary alloc] init];
+    _downloadProgressSignals = [NSMutableDictionary dictionary];
   }
   if (isDirectory) {
     return [self _downloadDirectoryWithRemotePath:remotePath toLocalURL:[NSURL temporaryDirectory]];
@@ -217,7 +217,7 @@
 - (RACSignal *)uploadFileAtLocalURL:(NSURL *)localURL toRemotePath:(NSString *)remotePath {
   // TODO: recursive option
   if (!_uploadProgressSignals) {
-    _uploadProgressSignals = [[NSMutableDictionary alloc] init];
+    _uploadProgressSignals = [NSMutableDictionary dictionary];
   }
   if ([localURL isDirectory]) {
     return [self _uploadDirectoryAtURL:localURL toRemotePath:remotePath];
@@ -269,7 +269,7 @@
 
 - (RACSignal *)deleteFileWithRemotePath:(NSString *)remotePath {
   if (!_deleteProgressSignals) {
-    _deleteProgressSignals = [[NSMutableDictionary alloc] init];
+    _deleteProgressSignals = [NSMutableDictionary dictionary];
   }
   RACSubject *deleteSignal = [RACSubject subject];
   _deleteProgressSignals[remotePath] = deleteSignal;

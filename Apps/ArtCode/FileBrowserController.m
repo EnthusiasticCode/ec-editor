@@ -231,7 +231,7 @@
   FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
   if (self.isEditing) {
     if (!_selectedItems)
-      _selectedItems = [[NSMutableArray alloc] init];
+      _selectedItems = [NSMutableArray array];
     [_selectedItems addObject:item];
   } else {
 		NSURL *fileURL = item.url;

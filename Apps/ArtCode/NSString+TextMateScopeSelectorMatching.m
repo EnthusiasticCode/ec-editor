@@ -73,7 +73,7 @@
     // Store in cache
     NSMutableDictionary *scopeToScore = systemScopesScoreCache[scopeSelector];
     if (!scopeToScore) {
-      scopeToScore = [[NSMutableDictionary alloc] init];
+      scopeToScore = [NSMutableDictionary dictionary];
       systemScopesScoreCache[scopeSelector] = scopeToScore;
     }
     scopeToScore[self] = @(score);

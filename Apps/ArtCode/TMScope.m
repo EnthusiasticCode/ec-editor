@@ -106,11 +106,11 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
   ASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
-  TMScope *childScope = [[[self class] alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
+  TMScope *childScope = [[self.class alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
   childScope->_location = location;
   childScope->_parent = self;
   if (!_children)
-    _children = [[NSMutableArray alloc] init];
+    _children = [NSMutableArray array];
   NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:scopeComparator];
   if (childInsertionIndex == [_children count])
     [_children addObject:childScope];
@@ -270,7 +270,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     }
   };
   
-  NSMutableArray *childScopeIndexStack = [[NSMutableArray alloc] init];
+  NSMutableArray *childScopeIndexStack = [NSMutableArray array];
   TMScope *scope = self;
   NSUInteger rangeEnd = NSMaxRange(range);
   NSUInteger childScopeIndex = 0;

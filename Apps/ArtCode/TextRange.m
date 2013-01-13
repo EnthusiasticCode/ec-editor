@@ -74,9 +74,9 @@
 - (TextRange*)rangeIncludingPosition:(TextPosition*)p
 {
   if ([p compare:_start] == NSOrderedAscending)
-    return [[[self class] alloc] initWithStart:p end:_end];
+    return [[self.class alloc] initWithStart:p end:_end];
   if ([p compare:_end] == NSOrderedDescending)
-    return [[[self class] alloc] initWithStart:_start end:p];
+    return [[self.class alloc] initWithStart:_start end:p];
   
   return self;
 }
@@ -102,7 +102,7 @@
 
 - (BOOL)isEqual:(id)other
 {
-  if (![other isKindOfClass:[self class]])
+  if (![other isKindOfClass:self.class])
     return NO;
   
   TextRange *otherRange = (TextRange *)other;

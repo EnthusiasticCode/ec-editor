@@ -187,7 +187,7 @@
   
   // RAC
   __weak SearchableTableBrowserController *this = self;
-  NSMutableArray *disposables = [[NSMutableArray alloc] init];
+  NSMutableArray *disposables = [NSMutableArray array];
   _racGlobalDisposable = [RACDisposable disposableWithBlock:^{
     for (RACDisposable *d in disposables) {
       [d dispose];

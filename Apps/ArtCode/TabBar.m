@@ -338,7 +338,7 @@ static void init(TabBar *self)
     return;
   
   if (!tabControls)
-    tabControls = [[NSMutableArray alloc] init];
+    tabControls = [NSMutableArray array];
   
   // Creating new tab control
   [self willChangeValueForKey:@"tabsCount"];
@@ -611,7 +611,7 @@ static void init(TabBar *self)
   if (tabControl.reuseIdentifier)
   {
     if (!reusableTabControls)
-      reusableTabControls = [[NSMutableArray alloc] init];
+      reusableTabControls = [NSMutableArray array];
     [reusableTabControls addObject:tabControl];
   }
   

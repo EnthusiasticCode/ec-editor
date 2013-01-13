@@ -77,7 +77,7 @@ static void _init(LocalFileListController *self) {
   [super setEditing:editing animated:animated];
   [self willChangeValueForKey:@"selectedItems"];
   if (editing) {
-    _selectedItems = [[NSMutableArray alloc] init];
+    _selectedItems = [NSMutableArray array];
   } else {
     _selectedItems = nil;
   }
@@ -87,7 +87,7 @@ static void _init(LocalFileListController *self) {
 - (void)addProgressItemWithName:(NSString *)name progressSignal:(RACSignal *)progressSignal {
   [self willChangeValueForKey:@"progressItems"];
   if (!_progressItems) {
-    _progressItems = [[NSMutableArray alloc] init];
+    _progressItems = [NSMutableArray array];
   }
   RACTuple *progressItem = [RACTuple tupleWithObjects:name, progressSignal, nil];
   [_progressItems addObject:progressItem];

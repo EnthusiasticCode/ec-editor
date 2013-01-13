@@ -55,11 +55,11 @@ static NSDictionary *_sharedAttributes = nil;
 - (NSDictionary *)commonAttributes
 {
   if (_environmentAttributes[TMThemeForegroundColorEnvironmentAttributeKey] == nil)
-    return [[self class] sharedAttributes];
+    return [self.class sharedAttributes];
   // TODO: may need not to cache if shared font is changed
   if (!_commonAttributes)
   {
-    NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary:[[self class] sharedAttributes]];
+    NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary:[self.class sharedAttributes]];
     common[(__bridge id)kCTForegroundColorAttributeName] = (__bridge id)[_environmentAttributes[TMThemeForegroundColorEnvironmentAttributeKey] CGColor];
     _commonAttributes = common;
   }
@@ -71,7 +71,7 @@ static NSDictionary *_sharedAttributes = nil;
 - (id)initWithFileURL:(NSURL *)fileURL
 {
   // Initialize default attributes
-  [[self class] sharedAttributes];
+  [self.class sharedAttributes];
   
   if (!(self = [super init]))
     return nil;
@@ -90,7 +90,7 @@ static NSDictionary *_sharedAttributes = nil;
   
   // Preprocess settings
   NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plist[_themeSettingsKey] count]];
-  NSMutableDictionary *environmentAttributes = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *environmentAttributes = [NSMutableDictionary dictionary];
   for (NSDictionary *plistSetting in plist[_themeSettingsKey])
   {
     // TODO: manage default settings for background, caret
@@ -154,7 +154,7 @@ static NSDictionary *_sharedAttributes = nil;
   }
 
   // Get all relevant attributes dictionaries
-  NSMutableDictionary *scoreForAttributes = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *scoreForAttributes = [NSMutableDictionary dictionary];
   [_settings enumerateKeysAndObjectsUsingBlock:^(NSString *settingScope, NSDictionary *attributes, BOOL *stop) {
     float score = [qualifiedIdentifier scoreForScopeSelector:settingScope];
     if (score > 0) {
@@ -163,7 +163,7 @@ static NSDictionary *_sharedAttributes = nil;
   }];
   
   // Build result attributes
-  NSMutableDictionary *newResultAttributes = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *newResultAttributes = [NSMutableDictionary dictionary];
   if (self.commonAttributes) {
     [newResultAttributes addEntriesFromDictionary:self.commonAttributes];
   }

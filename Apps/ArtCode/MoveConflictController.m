@@ -134,7 +134,7 @@
   self.navigationItem.title = @"Replacing";
   
   // Adding selected items to list of resolved and removing from conflict table
-  NSMutableIndexSet *selectedIndexSet = [[NSMutableIndexSet alloc] init];
+  NSMutableIndexSet *selectedIndexSet = [NSMutableIndexSet indexSet];
   for (NSIndexPath *selectedIndexPath in [self.conflictTableView indexPathsForSelectedRows]) {
     [selectedIndexSet addIndex:selectedIndexPath.row];
   }

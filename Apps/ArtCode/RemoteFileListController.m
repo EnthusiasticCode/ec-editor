@@ -148,7 +148,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   [super setEditing:editing animated:animated];
   [self willChangeValueForKey:@"selectedItems"];
   if (editing) {
-    _selectedItems = [[NSMutableArray alloc] init];
+    _selectedItems = [NSMutableArray array];
   } else {
     _selectedItems = nil;
   }
@@ -160,7 +160,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
     return nil;
   }
   
-  NSArray *contentsArray = [(_directoryContent ?: [[NSArray alloc] init]) arrayByAddingObjectsFromArray:self.progressItems];
+  NSArray *contentsArray = [(_directoryContent ?: @[]) arrayByAddingObjectsFromArray:self.progressItems];
   
   // Filtering
 	_filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
@@ -181,7 +181,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 - (void)addProgressItemWithURL:(NSURL *)url progressSignal:(RACSignal *)progressSignal {
   [self willChangeValueForKey:@"progressItems"];
   if (!_progressItems) {
-    _progressItems = [[NSMutableArray alloc] init];
+    _progressItems = [NSMutableArray array];
   }
   NSDictionary *progressItem = @{
     cxFilenameKey : url.lastPathComponent,
