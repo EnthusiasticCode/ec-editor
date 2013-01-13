@@ -296,12 +296,10 @@
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
-      self.loading = YES;
       [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
         return [x duplicate];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
-        self.loading = NO;
         [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
@@ -473,7 +471,9 @@
 	if (items.count == 0) {
 		return;
 	}
+	__block NSUInteger copiedCount = 0;
   [[[conflictController moveItems:items toFolder:copyDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+		copiedCount++;
     return [item copyTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();
@@ -484,7 +484,9 @@
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error copying files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
-		[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+		if (copiedCount > 0) {
+			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+		}
   }];
 }
 
@@ -502,7 +504,9 @@
 	if (items.count == 0) {
 		return;
 	}
+	__block NSUInteger movedCount = 0;
   [[[conflictController moveItems:items toFolder:moveDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+		movedCount++;
     return [item moveTo:destinationFolder];
   }] finally:^{
     ASSERT_MAIN_QUEUE();
@@ -513,7 +517,9 @@
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error moving files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
-		[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+		if (movedCount > 0) {
+			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+		}
   }];
 }
 
