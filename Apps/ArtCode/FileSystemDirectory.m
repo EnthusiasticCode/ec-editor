@@ -75,7 +75,7 @@ static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEn
 		[disposable addDisposable:[fileSystemScheduler() schedule:^{
 			@strongify(self);
 			
-			[disposable addDisposable:[[RACAbleWithStart(self.childrenBacking) map:^ NSArray * (NSArray *content) {
+			[disposable addDisposable:[[RACBind(self.childrenBacking) map:^ NSArray * (NSArray *content) {
 				IF_CANCELLED_RETURN(@[]);
 				NSMutableArray *processedContent = [NSMutableArray arrayWithCapacity:content.count];
 				
