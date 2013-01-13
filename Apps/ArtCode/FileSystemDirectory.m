@@ -48,20 +48,22 @@
 #pragma mark FileSystemDirectory
 
 static void processContent(NSArray *input, NSMutableArray *output, NSDirectoryEnumerationOptions options, volatile uint32_t *cancel) {
-	for (FileSystemItem *item in input) {
-		// Break out if cancelled
-		if (*cancel != 0) break;
-		
-		// Skip deleted files
-		if (item.urlBacking == nil) continue;
-		
-		// Skip hidden files
-		if ((options & NSDirectoryEnumerationSkipsHiddenFiles) && ([item.urlBacking.lastPathComponent characterAtIndex:0] == L'.')) continue;
-		
-		[output addObject:item];
-		
-		// Merge in descendants
-		if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants) && [item isKindOfClass:FileSystemDirectory.class]) processContent(((FileSystemDirectory *)item).childrenBacking, output, options, cancel);
+	@autoreleasepool {
+		for (FileSystemItem *item in input) {
+			// Break out if cancelled
+			if (*cancel != 0) break;
+			
+			// Skip deleted files
+			if (item.urlBacking == nil) continue;
+			
+			// Skip hidden files
+			if ((options & NSDirectoryEnumerationSkipsHiddenFiles) && ([item.urlBacking.lastPathComponent characterAtIndex:0] == L'.')) continue;
+			
+			[output addObject:item];
+			
+			// Merge in descendants
+			if (!(options & NSDirectoryEnumerationSkipsSubdirectoryDescendants) && [item isKindOfClass:FileSystemDirectory.class]) processContent(((FileSystemDirectory *)item).childrenBacking, output, options, cancel);
+		}
 	}
 }
 
