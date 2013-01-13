@@ -115,6 +115,12 @@
 				return;
 			}
 			
+			if (!self.loaded) {
+				[subscriber sendNext:self];
+				[subscriber sendCompleted];
+				return;
+			}
+			
 			// Don't save atomically so we don't lose extended attributes
 			if (![self.contentBacking writeToURL:url atomically:NO encoding:self.encodingBacking error:&error]) {
 				[subscriber sendError:error];
