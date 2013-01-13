@@ -59,7 +59,7 @@
 				if ([self.searchBar.text length]) {
 					self.infoLabel.text = @"No bookmarks found.";
 				} else {
-					self.infoLabel.text = @"The project has no bookmarks. Add bookmarks by tapping on a line number in a file.";
+					self.infoLabel.text = @"The project has no bookmarks.\nAdd bookmarks by tapping on a line number in a file.";
 				}
 			} else {
 				self.infoLabel.text = @"";

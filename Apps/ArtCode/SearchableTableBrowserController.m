@@ -131,6 +131,8 @@
 	// Info Label
 	UILabel *infoLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
 	infoLabel.textAlignment = NSTextAlignmentCenter;
+	infoLabel.lineBreakMode = NSLineBreakByWordWrapping;
+	infoLabel.numberOfLines = 0;
 	infoLabel.backgroundColor = [UIColor clearColor];
 	infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
 	infoLabel.shadowColor = [UIColor whiteColor];
