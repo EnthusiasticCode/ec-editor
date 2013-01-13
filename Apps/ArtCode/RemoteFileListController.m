@@ -11,7 +11,7 @@
 #import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
 #import <Connection/CKConnectionRegistry.h>
-#import "NSArray+ScoreForAbbreviation.h"
+#import "RACSignal+ScoreForAbbreviation.h"
 #import "Keychain.h"
 
 #import "RemoteNavigationController.h"
@@ -46,13 +46,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSMutableArray *_progressItems;
 }
 
-- (id)initWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
-	self = [super initWithNibNamed:@"RemoteLogin" title:@"Remotes" searchBarStaticOnTop:NO];
-  if (!self) return nil;
-	[self prepareWithConnection:connection artCodeRemote:remote path:remotePath];
-	return self;
-}
-
 - (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
   ASSERT(!_connection); // This prepare can happen only once
   ASSERT(remote && connection); // Connection and remote need to be specified
@@ -65,27 +58,30 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismiss)];
   
   // RAC
-  __weak RemoteFileListController *this = self;
+  @weakify(self);
   
   // Directory content update reaction
-  RAC(self.directoryContent) = [[[self.connection directoryContents]
-                                 filter:^BOOL(RACTuple *pathAndContent) {
-                                   return [this.remotePath isEqualToString:pathAndContent.first];
-                                 }]
-                                map:^id(RACTuple *pathAndContent) {
-                                  return pathAndContent.second;
-                                }];
-  
-	[[RACSignal combineLatest:@[RACAble(self.directoryContent), RACAble(self.progressItems)]] subscribeNext:^(id x) {
-    [this invalidateFilteredItems];
-  }];
+  [[[[self.connection directoryContents] filter:^BOOL(RACTuple *pathAndContent) {
+		@strongify(self);
+		return [self.remotePath isEqualToString:pathAndContent.first];
+	}] map:^(RACTuple *pathAndContent) {
+		return pathAndContent.second;
+	}] toProperty:@keypath(self.directoryContent) onObject:self];
+
+	[[[RACSignal combineLatest:@[ RACAbleWithStart(self.directoryContent), RACAbleWithStart(self.progressItems) ] reduce:^(NSArray *directoryItems, NSArray *progressItems) {
+		if (directoryItems.count == 0 && progressItems.count == 0) return (NSArray *)nil;
+		return [(directoryItems ?: [[NSArray alloc] init]) arrayByAddingObjectsFromArray:progressItems];
+	}] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
+		return item[cxFilenameKey];
+	}] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   // Connected refresh reaction
   [RACAble(self.connection.connected) subscribeNext:^(id x) {
+		@strongify(self);
     if ([x boolValue]) {
-      [this refresh];
+      [self refresh];
     } else {
-      this.showLogin = YES;
+      self.showLogin = YES;
     }
   }];
   
@@ -111,19 +107,15 @@ static NSString * const progressSignalKey = @"progressSibscribable";
                                         }];
   
   // Login reaction
-  [[[RACAble(self.authenticationCredentials)
-   map:^id(NSURLCredential *credentials) {
-     this.showLoading = YES;
-     return [[this.connection connectWithCredentials:credentials] catchTo:[RACSignal return:@(NO)]];
-   }] switchToLatest] subscribeNext:^(NSNumber *x) {
-     this.showLoading = NO;
-     this.showLogin = ![x boolValue];
-   }];
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  _directoryContent = nil;
+  [[[RACAble(self.authenticationCredentials) map:^id(NSURLCredential *credentials) {
+		@strongify(self);
+		self.showLoading = YES;
+		return [[self.connection connectWithCredentials:credentials] catchTo:[RACSignal return:@(NO)]];
+	}] switchToLatest] subscribeNext:^(NSNumber *x) {
+		@strongify(self);
+		self.showLoading = NO;
+		self.showLogin = !x.boolValue;
+	}];
 }
 
 - (void)viewDidLoad {
@@ -153,27 +145,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
     _selectedItems = nil;
   }
   [self didChangeValueForKey:@"selectedItems"];
-}
-
-- (NSArray *)filteredItems {
-  if (!_directoryContent && self.progressItems.count == 0) {
-    return nil;
-  }
-  
-  NSArray *contentsArray = [(_directoryContent ?: @[]) arrayByAddingObjectsFromArray:self.progressItems];
-  
-  // Filtering
-	_filteredItems = [contentsArray sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(NSDictionary *item) {
-		return item[cxFilenameKey];
-	}];
-
-  return _filteredItems;
-}
-
-- (void)invalidateFilteredItems {
-  [self willChangeValueForKey:@"filteredItems"];
-  _filteredItems = nil;
-  [self didChangeValueForKey:@"filteredItems"];
 }
 
 #pragma mark - Public methods
@@ -259,7 +230,8 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *directoryItem = [self.filteredItems[indexPath.row] first];
-  RemoteFileListController *remoteFileListController = [[RemoteFileListController alloc] initWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
+  RemoteFileListController *remoteFileListController = [[UIStoryboard storyboardWithName:@"RemoteNavigator" bundle:nil] instantiateViewControllerWithIdentifier:@"RemoteFileListController"];
+	[remoteFileListController prepareWithConnection:self.connection artCodeRemote:_remote path:[self.remotePath stringByAppendingPathComponent:directoryItem[cxFilenameKey]]];
   [remoteFileListController setEditing:self.editing animated:NO];
   [self.navigationController pushViewController:remoteFileListController animated:YES];
 }
@@ -316,7 +288,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   if (showLogin) {
     ASSERT(self.loginView);
     [self.view addSubview:self.loginView];
-    self.loginView.frame = self.view.bounds;
     self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", _remote.host];
     if (_remote.user) {
       self.loginUser.text = _remote.user;
@@ -339,7 +310,6 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   if (loading) {
     ASSERT(self.loadingView);
     [self.view addSubview:self.loadingView];
-    self.loadingView.frame = self.view.bounds;
   } else {
     [self.loadingView removeFromSuperview];
   }

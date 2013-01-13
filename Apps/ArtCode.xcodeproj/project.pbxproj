@@ -432,7 +432,6 @@
 		CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */; };
 		CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */; };
 		CDA2EDB01580A64700E979E9 /* itemIcon_Bookmarks.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA2EDAF1580A64700E979E9 /* itemIcon_Bookmarks.png */; };
-		CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA36F1814F596940080CD91 /* RemoteLogin.xib */; };
 		CDA7630C146976260004FAC7 /* CodeFileKeyboardAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */; };
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
@@ -1126,7 +1125,6 @@
 		CDA23CB714EDC6920031B019 /* symbolIcon_Function.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Function.png; sourceTree = "<group>"; };
 		CDA23CB814EDC6920031B019 /* symbolIcon_Method.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = symbolIcon_Method.png; sourceTree = "<group>"; };
 		CDA2EDAF1580A64700E979E9 /* itemIcon_Bookmarks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = itemIcon_Bookmarks.png; sourceTree = "<group>"; };
-		CDA36F1814F596940080CD91 /* RemoteLogin.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RemoteLogin.xib; sourceTree = "<group>"; };
 		CDA7630A146976260004FAC7 /* CodeFileKeyboardAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryView.h; sourceTree = "<group>"; };
 		CDA7630B146976260004FAC7 /* CodeFileKeyboardAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryView.m; sourceTree = "<group>"; };
 		CDA9B66E1524A0620063D76F /* ipad_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ipad_icon.png; sourceTree = "<group>"; };
@@ -2222,7 +2220,6 @@
 				CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */,
 				CD217EB114D412F1001AEA41 /* QuickInfo.storyboard */,
 				CD7BC79314B7059000313CDB /* RemoteOptions.xib */,
-				CDA36F1814F596940080CD91 /* RemoteLogin.xib */,
 				CDBD3F72150003050050B10C /* SearchableTableBrowserController.xib */,
 				CD711AD1156B9D1F00F30964 /* ProjectsBrowserController.xib */,
 				CD42AAD115EFB36F00E9FC5B /* RenameModalView.xib */,
@@ -2958,7 +2955,6 @@
 				CDA23CB914EDC6920031B019 /* symbolIcon_Class.png in Resources */,
 				CDA23CBA14EDC6920031B019 /* symbolIcon_Function.png in Resources */,
 				CDA23CBB14EDC6920031B019 /* symbolIcon_Method.png in Resources */,
-				CDA36F1914F596940080CD91 /* RemoteLogin.xib in Resources */,
 				CDBD3F73150003050050B10C /* SearchableTableBrowserController.xib in Resources */,
 				CDBD3F7D150014CF0050B10C /* bottomToolBar_Background.png in Resources */,
 				CDBD3F7E150014CF0050B10C /* bottomToolBar_Button.png in Resources */,

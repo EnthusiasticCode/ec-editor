@@ -13,8 +13,6 @@
 
 @interface RemoteFileListController : SearchableTableBrowserController
 
-- (id)initWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath;
-
 /// Make the controller use the given connection to connect to the remote path.
 - (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath;
 
