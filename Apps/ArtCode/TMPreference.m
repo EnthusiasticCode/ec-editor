@@ -269,9 +269,9 @@ static NSMutableDictionary *symbolIconsCache;
   return [^NSString *(NSString *symbol) {
     for (TMPreferenceSymbolTransformation *t in transformations) {
       if (t->isGlobal) {
-				symbol = [symbol replaceAllByRegexp:t->regExp with:t->templateString];
+				symbol = [symbol replaceAllByRegexp:t->regExp withTemplate:t->templateString];
 			} else {
-				symbol = [symbol replaceByRegexp:t->regExp with:t->templateString];
+				symbol = [symbol replaceByRegexp:t->regExp withTemplate:t->templateString];
 			}
 		}
 		return symbol;
