@@ -205,6 +205,7 @@
       if (oldToolbarViewController.isViewLoaded)
         [oldToolbarViewController.view removeFromSuperview];
       [self.view addSubview:toolbarView];
+			toolbarView.alpha = 1;
       [self _layoutChildViewsAnimated:NO];
     }
   }
