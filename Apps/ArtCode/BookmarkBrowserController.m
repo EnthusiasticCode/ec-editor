@@ -42,24 +42,24 @@
 	ASSERT(NO); // This should be
   if (!_filteredItemsAreValid) {
     // Get the new bookmarks
-    [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
-			// Filter bookmarks
-			_filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
-				return bookmark.name;
-			}];
-			
-			if ([_filteredItems count] == 0) {
-				if ([self.searchBar.text length]) {
-					self.infoLabel.text = @"No bookmarks found.";
-				} else {
-					self.infoLabel.text = @"The project has no bookmarks.\nAdd bookmarks by tapping on a line number in a file.";
-				}
-			} else {
-				self.infoLabel.text = @"";
-			}
-      
-      [self.tableView reloadData];
-    }];
+//    [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
+//			// Filter bookmarks
+//			_filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
+//				return bookmark.name;
+//			}];
+//			
+//			if ([_filteredItems count] == 0) {
+//				if ([self.searchBar.text length]) {
+//					self.infoLabel.text = @"No bookmarks found.";
+//				} else {
+//					self.infoLabel.text = @"The project has no bookmarks.\nAdd bookmarks by tapping on a line number in a file.";
+//				}
+//			} else {
+//				self.infoLabel.text = @"";
+//			}
+//      
+//      [self.tableView reloadData];
+//    }];
     // Set valid even if not valid yet but calculating
     _filteredItemsAreValid = YES;
   }

@@ -24,7 +24,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
-#import "FileSystemItem.h"
+#import "FileSystemDirectory.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
@@ -299,9 +299,23 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 			[self setEditing:NO animated:YES];
 			
 			for (NSIndexPath *itemPath in cellsToDuplicate) {
-				[(ArtCodeProject *)self.gridElements[itemPath.item] duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-					if (++progress == cellsToDuplicateCount) {
-						self.loading = NO;
+				ArtCodeProject *project = self.gridElements[itemPath.item];
+				[project duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
+					if (duplicate) {
+						// The project has been successfuly created, copying files
+						[[[RACSignal zip:@[ [[FileSystemDirectory itemWithURL:project.fileURL] flattenMap:^(FileSystemDirectory *directory) {
+							return [directory.childrenSignal take:1];
+						}], [FileSystemDirectory itemWithURL:duplicate.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
+							return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
+								return [y copyTo:x2];
+							}]];
+						}] flatten] subscribeCompleted:^{
+							if (++progress == cellsToDuplicateCount) {
+								self.loading = NO;
+							}
+						}];
+					} else {
+						// TODO error handling
 					}
 				}];
 			}

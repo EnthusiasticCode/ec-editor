@@ -18,9 +18,6 @@
 /// A color that represents the project.
 @property (nonatomic, strong) UIColor *labelColor;
 
-/// Gets an array of ArtCodeProjectBookmark objects for all bookmarks found on all files in the project.
-- (void)bookmarksWithResultHandler:(void(^)(NSArray *bookmarks))resultHandler;
-
 #pragma mark Project-wide operations
 
 /// Duplicate the entire project.

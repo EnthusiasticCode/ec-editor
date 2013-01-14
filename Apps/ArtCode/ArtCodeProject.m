@@ -52,11 +52,6 @@
   [self setLabelColorString:[labelColor hexString]];
 }
 
-- (void)bookmarksWithResultHandler:(void (^)(NSArray *))resultHandler {
-  // TODO: port to rac_fs
-  resultHandler(@[]);
-}
-
 #pragma mark - Project-wide operations
 
 - (void)duplicateWithCompletionHandler:(void (^)(ArtCodeProject *))completionHandler {
@@ -69,18 +64,7 @@
   [self.projectSet addNewProjectWithName:[self.name stringByAppendingFormat:@" (%u)", duplicationNumber] labelColor:self.labelColor completionHandler:^(ArtCodeProject *project) {
     @strongify(self);
     if (project) {
-      // The project has been successfuly created, copying files
-			[[[RACSignal zip:@[ [[FileSystemDirectory itemWithURL:self.fileURL] flattenMap:^(FileSystemDirectory *x) {
-        return [[x childrenSignal] take:1];
-      }], [FileSystemDirectory itemWithURL:project.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
-        return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
-          return [y copyTo:x2];
-        }]];
-      }] flatten] subscribeCompleted:^{
-        if (completionHandler) {
-          completionHandler(project);
-        }
-      }];
+			completionHandler(project);
     } else {
       [self _duplicateWithDuplicationNumber:duplicationNumber + 1 completionHandler:completionHandler];
     }
