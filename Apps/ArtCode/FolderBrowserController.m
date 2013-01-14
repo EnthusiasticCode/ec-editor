@@ -9,14 +9,14 @@
 #import "FolderBrowserController.h"
 
 #import "ArtCodeTab.h"
-#import "FileSystemDirectory.h"
-#import "FileSystemItemCell.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
+#import "RCIOItemCell.h"
 #import "NSString+PluralFormat.h"
 #import "UIImage+AppStyle.h"
 
 @interface FolderBrowserController ()
 
-@property (nonatomic, strong) FileSystemDirectory *selectedFolder;
+@property (nonatomic, strong) RCIODirectory *selectedFolder;
 @property (nonatomic, strong) NSArray *currentFolderSubfolders;
 @property (nonatomic) BOOL hideExcludeMessage;
 
@@ -37,25 +37,25 @@
 	RACSignal *currentFolder = [RACAble(self.currentFolderSignal) switchToLatest];
 	
 	// Excluded folder state
-	RACSignal *shouldEnableSignal = [[RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(FileSystemDirectory *c, FileSystemDirectory *s, FileSystemDirectory *e, id _) {
+	RACSignal *shouldEnableSignal = [[RACSignal combineLatest:@[currentFolder, RACAble(self.selectedFolder), RACAble(self.excludeDirectory), tableView] reduce:^(RCIODirectory *c, RCIODirectory *s, RCIODirectory *e, id _) {
 		return @(s ? s != e : c != e);
 	}] replayLast];
 	[shouldEnableSignal toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
 	[shouldEnableSignal toProperty:@keypath(self.hideExcludeMessage) onObject:self];
 	
   // Update table content
-  [[[[[currentFolder map:^(FileSystemDirectory *x) {
+  [[[[[currentFolder map:^(RCIODirectory *x) {
     return x.childrenSignal;
   }] switchToLatest] map:^(NSArray *children) {
 		NSMutableArray *subfolders = [NSMutableArray arrayWithCapacity:children.count];
-		for (FileSystemItem *item in children) {
-			if ([item isKindOfClass:FileSystemDirectory.class]) [subfolders addObject:item];
+		for (RCIOItem *item in children) {
+			if ([item isKindOfClass:RCIODirectory.class]) [subfolders addObject:item];
 		}
 		return subfolders;
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentFolderSubfolders) onObject:self];
   
   // Update title
-  [[[[RACAble(self.currentFolderSignal) switchToLatest] flattenMap:^(FileSystemDirectory *x) {
+  [[[[RACAble(self.currentFolderSignal) switchToLatest] flattenMap:^(RCIODirectory *x) {
     return x.nameSignal;
   }] catchTo:RACSignal.empty] toProperty:@keypath(self.navigationItem.title) onObject:self];
   
@@ -102,9 +102,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *CellIdentifier = @"Cell";
   
-  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+  RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
   if (cell == nil) {
-    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    cell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
   }
   
   cell.item = (self.currentFolderSubfolders)[indexPath.row];

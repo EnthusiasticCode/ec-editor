@@ -10,14 +10,14 @@
 #import "NSURL+Utilities.h"
 #import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
-#import "FileSystemDirectory.h"
-#import "FileSystemItemCell.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
+#import "RCIOItemCell.h"
 
 
 @implementation MoveConflictController {
   NSMutableArray *_resolvedItems;
   NSMutableArray *_conflictItems;
-  RACSignal *(^_signalBlock)(FileSystemItem *);
+  RACSignal *(^_signalBlock)(RCIOItem *);
   RACSubject *_moveSubject;
 }
 
@@ -56,12 +56,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString * const cellIdentifier = @"Cell";
-  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (cell == nil) {
-    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
   }
   
-  FileSystemItem *item = _conflictItems[indexPath.row];
+  RCIOItem *item = _conflictItems[indexPath.row];
   cell.item = item;
   
   return cell;
@@ -69,9 +69,9 @@
 
 #pragma mark - Public Methods
 
-- (RACSignal *)moveItems:(NSArray *)items toFolder:(FileSystemDirectory *)destinationFolder usingSignalBlock:(RACSignal * (^)(FileSystemItem *, FileSystemDirectory *))signalBlock {
+- (RACSignal *)moveItems:(NSArray *)items toFolder:(RCIODirectory *)destinationFolder usingSignalBlock:(RACSignal * (^)(RCIOItem *, RCIODirectory *))signalBlock {
   ASSERT_MAIN_QUEUE();
-  _signalBlock = ^RACSignal *(FileSystemItem *item) {
+  _signalBlock = ^RACSignal *(RCIOItem *item) {
     return signalBlock(item, destinationFolder);
   };
   RACReplaySubject *moveSubject = [RACReplaySubject replaySubjectWithCapacity:1];
@@ -85,14 +85,14 @@
 		
 		NSMutableArray *conflictItems = [NSMutableArray arrayWithCapacity:MIN(items.count, destinationChildren.count)];
 		NSMutableArray *resolvedItems = [NSMutableArray arrayWithCapacity:items.count];
-		for (FileSystemItem *item in items) {
+		for (RCIOItem *item in items) {
 			[resolvedItems addObject:item];
 		}
 		
 		// Compare the names to find conflicts
-		for (FileSystemItem *child in destinationChildren) {
+		for (RCIOItem *child in destinationChildren) {
 			NSString *childName = child.name;
-			for (FileSystemItem *item in items) {
+			for (RCIOItem *item in items) {
 				if ([item.name isEqualToString:childName]) {
 					[resolvedItems removeObject:item];
 					[conflictItems addObject:item];
@@ -145,7 +145,7 @@
   // Processing
   ASSERT(_signalBlock);
   @weakify(self);
-  [[RACSignal zip:[_resolvedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
+  [[RACSignal zip:[_resolvedItems.rac_sequence.eagerSequence map:^RACSignal *(RCIOItem *x) {
     @strongify(self);
     if (!self) {
       return nil;

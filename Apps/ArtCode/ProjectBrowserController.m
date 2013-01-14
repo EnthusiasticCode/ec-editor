@@ -24,7 +24,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
@@ -303,10 +303,10 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				[project duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
 					if (duplicate) {
 						// The project has been successfuly created, copying files
-						[[[RACSignal zip:@[ [[FileSystemDirectory itemWithURL:project.fileURL] flattenMap:^(FileSystemDirectory *directory) {
+						[[[RACSignal zip:@[ [[RCIODirectory itemWithURL:project.fileURL] flattenMap:^(RCIODirectory *directory) {
 							return [directory.childrenSignal take:1];
-						}], [FileSystemDirectory itemWithURL:duplicate.fileURL] ] reduce:^(NSArray *x1, FileSystemDirectory *x2) {
-							return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(FileSystemItem *y) {
+						}], [RCIODirectory itemWithURL:duplicate.fileURL] ] reduce:^(NSArray *x1, RCIODirectory *x2) {
+							return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(RCIOItem *y) {
 								return [y copyTo:x2];
 							}]];
 						}] flatten] subscribeCompleted:^{

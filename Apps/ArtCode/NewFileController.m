@@ -8,7 +8,7 @@
 
 #import "NewFileController.h"
 #import "UIViewController+Utilities.h"
-#import "FileSystemFile.h"
+#import <ReactiveCocoaIO/RCIOFile.h>
 
 #import "ArtCodeTab.h"
 #import "ArtCodeProject.h"
@@ -80,7 +80,7 @@
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   }
   
-  [[[FileSystemFile itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] flattenMap:^(FileSystemFile *file) {
+  [[[RCIOFile itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName]] flattenMap:^(RCIOFile *file) {
 		return [file create];
 	}] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];

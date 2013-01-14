@@ -11,7 +11,7 @@
 #import "CodeFileMinimapView.h"
 #import "TMKeyboardAction.h"
 
-@class ArtCodeTab, TMTheme, TMUnit, FileSystemFile;
+@class ArtCodeTab, TMTheme, TMUnit, RCIOFile;
 
 @interface CodeFileController : UIViewController <CodeFileMinimapViewDelegate, CodeViewDelegate, UIActionSheetDelegate, UIWebViewDelegate, TMKeyboardActionTarget>
 
@@ -26,7 +26,7 @@
 /// The code view used to display code.
 @property (nonatomic, weak, readonly) CodeView *codeView;
 
-@property (nonatomic, strong) FileSystemFile *textFile;
+@property (nonatomic, strong) RCIOFile *textFile;
 
 @property (nonatomic, strong) TMUnit *codeUnit;
 

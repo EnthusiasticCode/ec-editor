@@ -20,7 +20,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProject.h"
 
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 
 #import <Connection/CKConnectionRegistry.h>
 #import "BezelAlert.h"
@@ -162,7 +162,7 @@ static void _init(RemoteNavigationController *self) {
     self.localFileListController = (LocalFileListController *)viewController;
     // RAC setting the initial location for the local file browser
     if ([(LocalFileListController *)viewController locationDirectory] == nil) {
-      [[FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(FileSystemDirectory *x) {
+      [[RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(RCIODirectory *x) {
         [(LocalFileListController *)viewController setLocationDirectory:x];
       }];
     }
@@ -204,15 +204,15 @@ static void _init(RemoteNavigationController *self) {
     // Side effect to start the progress indicator in the local file list
     [localController addProgressItemWithName:itemName progressSignal:progressSignal];
     
-    // Return a signal that yields the FileSystemItem of the downloaded file
+    // Return a signal that yields the RCIOItem of the downloaded file
     return [[[[[progressSignal filter:^BOOL(id x) {
       // Only return URLs
       return [x isKindOfClass:[NSURL class]];
     }] flattenMap:^RACSignal *(NSURL *tempURL) {
       // Convert to filesystem item
-      return [FileSystemItem itemWithURL:tempURL];
-    }] flattenMap:^RACSignal *(FileSystemItem *x) {
-      // Move to destination, the downloaded FileSystemItem is sent
+      return [RCIOItem itemWithURL:tempURL];
+    }] flattenMap:^RACSignal *(RCIOItem *x) {
+      // Move to destination, the downloaded RCIOItem is sent
       return [x moveTo:localController.locationDirectory withName:itemName replaceExisting:YES];
     }] catchTo:[RACSignal return:nil]] doNext:^(id x) {
       if (x == nil) {
@@ -230,7 +230,7 @@ static void _init(RemoteNavigationController *self) {
   self.transfersInProgressCount++;
   // RAC
   ReactiveConnection *connection = self.connection;
-  [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *item) {
+  [[[RACSignal zip:[localController.selectedItems.rac_sequence.eagerSequence map:^RACSignal *(RCIOItem *item) {
 		NSURL *itemURL = item.url;
 		// Start upload
 		RACSignal *progressSignal = [connection uploadFileAtLocalURL:itemURL toRemotePath:[remoteController.remotePath stringByAppendingPathComponent:itemURL.lastPathComponent]];

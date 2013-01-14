@@ -9,7 +9,7 @@
 #import "ArtCodeProjectSet.h"
 #import "ArtCodeDatastore.h"
 #import "NSURL+Utilities.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "ArtCodeProject.h"
 
 
@@ -74,9 +74,9 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [[[FileSystemDirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name]] flattenMap:^(FileSystemDirectory *directory) {
+  [[[RCIODirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name]] flattenMap:^(RCIODirectory *directory) {
 		return [directory create];
-	}] subscribeNext:^(FileSystemDirectory *directory) {
+	}] subscribeNext:^(RCIODirectory *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:name];
     [project setLabelColor:labelColor];
@@ -89,7 +89,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)removeProject:(ArtCodeProject *)project completionHandler:(void (^)(NSError *))completionHandler {
-  [[[[FileSystemDirectory itemWithURL:project.fileURL] map:^RACSignal *(FileSystemDirectory *directory) {
+  [[[[RCIODirectory itemWithURL:project.fileURL] map:^RACSignal *(RCIODirectory *directory) {
     return [directory delete];
   }] switchToLatest] subscribeError:^(NSError *error) {
     completionHandler(error);

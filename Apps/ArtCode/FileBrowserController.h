@@ -10,12 +10,12 @@
 #import <MessageUI/MessageUI.h>
 #import "SearchableTableBrowserController.h"
 
-@class FileSystemItem;
+@class RCIOItem;
 
 @interface FileBrowserController : SearchableTableBrowserController <MFMailComposeViewControllerDelegate>
 
 #pragma mark - Synchronization UI
 
-- (void)scrollToFileSystemItem:(FileSystemItem *)item highlight:(BOOL)shouldHighlight;
+- (void)scrollToFileSystemItem:(RCIOItem *)item highlight:(BOOL)shouldHighlight;
 
 @end

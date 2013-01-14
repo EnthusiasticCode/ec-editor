@@ -8,7 +8,7 @@
 
 #import "NewFileFolderController.h"
 #import "UIViewController+Utilities.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
@@ -74,7 +74,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [[[FileSystemDirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] flattenMap:^(FileSystemDirectory *directory) {
+  [[[RCIODirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] flattenMap:^(RCIODirectory *directory) {
 		return [directory create];
 	}] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];

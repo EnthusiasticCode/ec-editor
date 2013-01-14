@@ -9,7 +9,7 @@
 #import "NewFileImportController.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
 #import "UIImage+AppStyle.h"
@@ -113,12 +113,12 @@ static void _init(NewFileImportController *self) {
   [[RACSignal zip:@[
   [RACSignal zip:[self.tableView.indexPathsForSelectedRows.rac_sequence.eagerSequence map:^RACSignal *(NSIndexPath *x) {
     @strongify(self);
-    return [FileSystemItem itemWithURL:self.importableFileItems[x.row]];
+    return [RCIOItem itemWithURL:self.importableFileItems[x.row]];
   }]],
-  [FileSystemDirectory itemWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
+  [RCIODirectory itemWithURL:self.parentViewController.artCodeTab.currentLocation.url] ]] subscribeNext:^(RACTuple *x) {
     @strongify(self);
     NSArray *items = [x.first allObjects];
-    FileSystemDirectory *copyToDirectory = x.second;
+    RCIODirectory *copyToDirectory = x.second;
     
     // Dismiss popover
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
@@ -133,7 +133,7 @@ static void _init(NewFileImportController *self) {
     [self presentViewController:navigationController animated:YES completion:^{
       // Start copy
 			__block NSUInteger importedCount = 0;
-      [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^RACSignal *(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+      [[[conflictController moveItems:items toFolder:copyToDirectory usingSignalBlock:^RACSignal *(RCIOItem *item, RCIODirectory *destinationFolder) {
 				importedCount++;
         return [item copyTo:destinationFolder];
       }] finally:^{

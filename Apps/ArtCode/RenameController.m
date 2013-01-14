@@ -8,8 +8,8 @@
 
 #import "RenameController.h"
 #import "UIImage+AppStyle.h"
-#import "FileSystemDirectory.h"
-#import "FileSystemItemCell.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
+#import "RCIOItemCell.h"
 
 
 @interface RenameController ()
@@ -19,20 +19,20 @@
 
 @end
 
-@interface RenameCell : FileSystemItemCell
+@interface RenameCell : RCIOItemCell
 
 @property (nonatomic, strong) NSString *renameString;
 
 @end
 
 @implementation RenameController {
-  FileSystemItem *_item;
+  RCIOItem *_item;
   void (^_completionHandler)(NSUInteger renamedCount, NSError *err);
 }
 
 #pragma mark - Controller lifecycle
 
-- (instancetype)initWithRenameItem:(FileSystemItem *)item completionHandler:(void (^)(NSUInteger, NSError *))completionHandler {
+- (instancetype)initWithRenameItem:(RCIOItem *)item completionHandler:(void (^)(NSUInteger, NSError *))completionHandler {
   self = [super initWithNibName:@"RenameModalView" bundle:nil];
   if (!self) {
     return nil;
@@ -70,14 +70,14 @@
   }];
   
   // Update the alsoRenameItems when the item's name or siblings change
-  [[[[RACSignal combineLatest:@[ [[item.parentSignal map:^RACSignal *(FileSystemDirectory *parent) {
+  [[[[RACSignal combineLatest:@[ [[item.parentSignal map:^RACSignal *(RCIODirectory *parent) {
     return parent.childrenSignal;
   }] switchToLatest], item.nameSignal ]] map:^(RACTuple *tuple) {
 		RACTupleUnpack(NSArray *children, NSString *fullName) = tuple;
 		NSString *name = [fullName stringByDeletingPathExtension];
 		NSMutableArray *alsoRenameItems = [NSMutableArray array];
 		
-		for (FileSystemItem *child in children) {
+		for (RCIOItem *child in children) {
 			NSString *childFullName = child.name;
 			if (![childFullName isEqualToString:fullName] && [childFullName.stringByDeletingPathExtension isEqualToString:name]) [alsoRenameItems addObject:child];
 		}
@@ -159,7 +159,7 @@
   
 	NSMutableArray *renameSignals = [NSMutableArray arrayWithCapacity:alsoRenameItems.count];
 	[renameSignals addObject:[_item renameTo:newFullName]];
-	for (FileSystemItem *item in alsoRenameItems) {
+	for (RCIOItem *item in alsoRenameItems) {
 		[renameSignals addObject:[item renameTo:[newName stringByAppendingString:[item.name substringFromIndex:oldName.length]]]];
 	}
 	
@@ -180,7 +180,7 @@
     return nil;
   }
   
-  [[[RACSignal combineLatest:@[[[RACAble(item) map:^(FileSystemItem *item) {
+  [[[RACSignal combineLatest:@[[[RACAble(item) map:^(RCIOItem *item) {
     return item.nameSignal;
   }] switchToLatest], RACAble(renameString)]] map:^NSString *(RACTuple *tuple) {
 		RACTupleUnpack(NSString *itemName, NSString *renameString) = tuple;

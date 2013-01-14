@@ -1,20 +1,20 @@
 //
-//  FileSystemItemCell.m
+//  RCIOItemCell.m
 //  ArtCode
 //
 //  Created by Uri Baghin on 10/21/12.
 //
 //
 
-#import "FileSystemItemCell.h"
+#import "RCIOItemCell.h"
 
 #import "ArtCodeProjectSet.h"
-#import "FileSystemFile.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIOFile.h>
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "NSString+Utilities.h"
 #import "UIImage+AppStyle.h"
 
-@implementation FileSystemItemCell
+@implementation RCIOItemCell
 
 #pragma mark UITableViewCell
 
@@ -23,7 +23,7 @@
   if (self == nil) return nil;
 	
 	@weakify(self);
-	[RACAble(self.item) subscribeNext:^(FileSystemItem *item) {
+	[RACAble(self.item) subscribeNext:^(RCIOItem *item) {
     @strongify(self);
 		
 		NSURL *url = item.url;
@@ -33,7 +33,7 @@
 			self.detailTextLabel.text = [[ArtCodeProjectSet.defaultSet relativePathForFileURL:url] prettyPath];
 		}
 
-		if ([item isKindOfClass:FileSystemDirectory.class]) {
+		if ([item isKindOfClass:RCIODirectory.class]) {
 			self.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
 			self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		} else {

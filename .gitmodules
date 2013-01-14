@@ -13,3 +13,6 @@
 [submodule "ThirdParty/file"]
 	path = ThirdParty/file
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/file.git
+[submodule "Frameworks/ReactiveCocoaIO"]
+	path = Frameworks/ReactiveCocoaIO
+	url = git@github.com:EnthusiasticCode/ReactiveCocoaIO.git

@@ -9,7 +9,7 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "RACSignal+ScoreForAbbreviation.h"
@@ -22,7 +22,7 @@
 #import "ArtCodeProject.h"
 
 #import "AppStyle.h"
-#import "FileSystemItemCell.h"
+#import "RCIOItemCell.h"
 
 
 @interface QuickFileBrowserController ()
@@ -55,11 +55,11 @@
   // RAC
   @weakify(self);
   [[[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
-    return [FileSystemDirectory itemWithURL:projectURL];
-  }] switchToLatest] map:^RACSignal *(FileSystemDirectory *directory) {
+    return [RCIODirectory itemWithURL:projectURL];
+  }] switchToLatest] map:^RACSignal *(RCIODirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
-		return [[[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+		return [[[directory childrenSignalWithOptions:NSDirectoryEnumerationSkipsHiddenFiles] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(RCIOItem *item) {
 			return item.url.lastPathComponent;
 		}] map:^(NSArray *items) {
 			@strongify(self);
@@ -112,15 +112,15 @@
 {
   static NSString *cellIdentifier = @"Cell";
   
-  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (!cell) {
-    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
+    cell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
     cell.textLabel.backgroundColor = [UIColor clearColor];
   }
   
   // Configure the cell
   RACTuple *filteredItem = (self.filteredItems)[indexPath.row];
-  FileSystemItem *item = filteredItem.first;
+  RCIOItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
   cell.textLabelHighlightedCharacters = hitMask;
@@ -134,7 +134,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
+  RCIOItem *item = [(self.filteredItems)[indexPath.row] first];
 	[self.artCodeTab pushFileURL:item.url withProject:self.artCodeTab.currentLocation.project];
 }
 

@@ -8,14 +8,14 @@
 
 #import "SearchableTableBrowserController.h"
 
-@class FileSystemDirectory;
+@class RCIODirectory;
 
 @interface LocalFileListController : SearchableTableBrowserController
 
 /// The location shown by the browser
-@property (nonatomic, strong) FileSystemDirectory* locationDirectory;
+@property (nonatomic, strong) RCIODirectory* locationDirectory;
 
-/// An array with the selected items. Items are \c FileSystemItem.
+/// An array with the selected items. Items are \c RCIOItem.
 @property (nonatomic, readonly, copy) NSArray *selectedItems;
 
 /// Adds an item to the list that will be presented as non-selectable files with download progress.

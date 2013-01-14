@@ -7,8 +7,8 @@
 //
 
 #import "LocalFileListController.h"
-#import "FileSystemDirectory.h"
-#import "FileSystemItemCell.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
+#import "RCIOItemCell.h"
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
@@ -29,9 +29,9 @@ static void _init(LocalFileListController *self) {
   // RAC
   @weakify(self);
 	
-	RACSignal *filteredFilesSignal = [[RACAble(self.locationDirectory) map:^id(FileSystemDirectory *directory) {
+	RACSignal *filteredFilesSignal = [[RACAble(self.locationDirectory) map:^id(RCIODirectory *directory) {
 		@strongify(self);
-		return [directory.childrenSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+		return [directory.childrenSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(RCIOItem *item) {
 			return item.url.lastPathComponent;
 		}];
 	}] switchToLatest];
@@ -134,9 +134,9 @@ static void _init(LocalFileListController *self) {
     }
   } else {
     static NSString * const highlightCellIdentifier = @"cell";
-    FileSystemItemCell *highlightCell = (FileSystemItemCell *)[tView dequeueReusableCellWithIdentifier:highlightCellIdentifier];
+    RCIOItemCell *highlightCell = (RCIOItemCell *)[tView dequeueReusableCellWithIdentifier:highlightCellIdentifier];
     if (!highlightCell) {
-      highlightCell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:highlightCellIdentifier];
+      highlightCell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:highlightCellIdentifier];
     }
     cell = highlightCell;
     
@@ -162,9 +162,9 @@ static void _init(LocalFileListController *self) {
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
+  RCIOItem *item = [(self.filteredItems)[indexPath.row] first];
   LocalFileListController *nextFileBrowserController = [[LocalFileListController alloc] init];
-  nextFileBrowserController.locationDirectory = (FileSystemDirectory *)item;
+  nextFileBrowserController.locationDirectory = (RCIODirectory *)item;
   nextFileBrowserController.editing = self.editing;
   [self.navigationController pushViewController:nextFileBrowserController animated:YES];
 }

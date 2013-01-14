@@ -14,8 +14,8 @@
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
-#import "FileSystemItem.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIOItem.h>
+#import <ReactiveCocoaIO/RCIODirectory.h>
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "UIColor+AppStyle.h"
@@ -135,26 +135,26 @@
         if (temporaryDirectoryURL) {
           // Get the extracted directories
           [[[[RACSignal combineLatest:@[
-            [[[FileSystemDirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(FileSystemDirectory *temporaryDirectory) {
+            [[[RCIODirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(RCIODirectory *temporaryDirectory) {
               return [[temporaryDirectory childrenSignal] take:1];
             }] flattenMap:^RACSignal *(NSArray *children) {
               // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
               if (children.count != 1) {
                 return [RACSignal return:children];
               }
-              FileSystemItem *onlyChild = [children lastObject];
-							if ([onlyChild isKindOfClass:FileSystemDirectory.class]) {
-								return [[(FileSystemDirectory *)onlyChild childrenSignal] take:1];
+              RCIOItem *onlyChild = [children lastObject];
+							if ([onlyChild isKindOfClass:RCIODirectory.class]) {
+								return [[(RCIODirectory *)onlyChild childrenSignal] take:1];
 							} else {
                 return [RACSignal return:children];
 							}
             }],
-            [FileSystemDirectory itemWithURL:createdProject.fileURL]
+            [RCIODirectory itemWithURL:createdProject.fileURL]
           ]]
           flattenMap:^id(RACTuple *x) {
             NSArray *children = x.first;
-            FileSystemDirectory *projectDirectory = x.second;
-            return [RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(FileSystemItem *x) {
+            RCIODirectory *projectDirectory = x.second;
+            return [RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(RCIOItem *x) {
               return [x moveTo:projectDirectory];
             }]];
           }] finally:^{

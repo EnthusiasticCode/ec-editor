@@ -10,7 +10,7 @@
 #import "SingleTabController.h"
 
 #import "AppStyle.h"
-#import "FileSystemItemCell.h"
+#import "RCIOItemCell.h"
 #import "ArchiveUtilities.h"
 
 #import "NewFileController.h"
@@ -36,8 +36,8 @@
 #import "ArtCodeProject.h"
 
 #import "UIViewController+Utilities.h"
-#import "FileSystemItem.h"
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIOItem.h>
+#import <ReactiveCocoaIO/RCIODirectory.h>
 
 #import "CodeFileController.h"
 
@@ -45,7 +45,7 @@
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
-@property (nonatomic, strong) FileSystemDirectory *currentDirectory;
+@property (nonatomic, strong) RCIODirectory *currentDirectory;
 @property (nonatomic, strong) NSArray *previewItems;
 
 @property (nonatomic, strong) NSString *revealFileName;
@@ -88,25 +88,25 @@
   
   // RAC
   @weakify(self);
-	__block FileSystemItem *scrollToItem = nil;
+	__block RCIOItem *scrollToItem = nil;
 
 	[[[RACAble(self.artCodeTab.currentLocation) flattenMap:^id(ArtCodeLocation *location) {
-		RACSignal *directorySignal = [FileSystemDirectory itemWithURL:location.url];
+		RACSignal *directorySignal = [RCIODirectory itemWithURL:location.url];
 		NSString *revealFileName = [location.dataDictionary objectForKey:@"reveal"];
 		if (revealFileName.length == 0) return directorySignal;
 		// Return the directorySignal by setting the scrollToItem in case the revealItem is valid
-		return [[[FileSystemItem itemWithURL:[location.url URLByAppendingPathComponent:revealFileName]] catchTo:directorySignal] flattenMap:^(FileSystemItem *revealItem) {
+		return [[[RCIOItem itemWithURL:[location.url URLByAppendingPathComponent:revealFileName]] catchTo:directorySignal] flattenMap:^(RCIOItem *revealItem) {
 			scrollToItem = revealItem;
 			return directorySignal;
 		}];
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.currentDirectory) onObject:self];
 
-	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(FileSystemDirectory *directory) {
+	RACSignal *itemsSignal = [[[RACAble(self.currentDirectory) map:^(RCIODirectory *directory) {
 		return directory.childrenSignal;
 	}] switchToLatest] mapPreviousWithStart:nil combine:^(NSArray *previous, NSArray *next) {
 		// If at least one item has been added to children, will scroll to one of them
 		if (scrollToItem == nil && previous != nil && previous.count < next.count) {
-			[previous enumerateObjectsUsingBlock:^(FileSystemItem *prevItem, NSUInteger idx, BOOL *stop) {
+			[previous enumerateObjectsUsingBlock:^(RCIOItem *prevItem, NSUInteger idx, BOOL *stop) {
 				if (prevItem != next[idx]) {
 					scrollToItem = next[idx];
 					*stop = YES;
@@ -117,7 +117,7 @@
 		return next;
 	}];
 	
-	[[[itemsSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(FileSystemItem *item) {
+	[[[itemsSignal filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(RCIOItem *item) {
 		return item.url.lastPathComponent;
 	}] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
 	
@@ -204,15 +204,15 @@
 {
   static NSString *cellIdentifier = @"Cell";
   
-  FileSystemItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+  RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (!cell) {
-    cell = [[FileSystemItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    cell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     cell.textLabel.backgroundColor = [UIColor clearColor];
   }
   
   // Configure the cell
   RACTuple *filteredItem = (self.filteredItems)[indexPath.row];
-  FileSystemItem *item = filteredItem.first;
+  RCIOItem *item = filteredItem.first;
   NSIndexSet *hitMask = filteredItem.second;
   cell.item = item;
   cell.textLabelHighlightedCharacters = hitMask;
@@ -228,14 +228,14 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-  FileSystemItem *item = [(self.filteredItems)[indexPath.row] first];
+  RCIOItem *item = [(self.filteredItems)[indexPath.row] first];
   if (self.isEditing) {
     if (!_selectedItems)
       _selectedItems = [NSMutableArray array];
     [_selectedItems addObject:item];
   } else {
 		NSURL *fileURL = item.url;
-		if ([item isKindOfClass:FileSystemDirectory.class]) {
+		if ([item isKindOfClass:RCIODirectory.class]) {
 			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
 		} else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
 			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
@@ -278,7 +278,7 @@
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
       NSUInteger selectedItemsCount = [_selectedItems count];
       self.loading = YES;
-      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(RCIOItem *x) {
         return [x delete];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -291,12 +291,12 @@
     if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderSignal = [FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
+      directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
 			directoryBrowser.excludeDirectory = self.currentDirectory;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
       NSUInteger selectedItemsCount = [_selectedItems count];
-      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(FileSystemItem *x) {
+      [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(RCIOItem *x) {
         return [x duplicate];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
@@ -330,7 +330,7 @@
       case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderSignal = [FileSystemDirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
+        directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
 				directoryBrowser.excludeDirectory = self.currentDirectory;
         [self modalNavigationControllerPresentViewController:directoryBrowser];
         break;
@@ -339,9 +339,9 @@
 				NSArray *selectedItems = _selectedItems.copy;
         self.loading = YES;
 				
-        [[[[FileSystemDirectory itemWithURL:NSURL.applicationDocumentsDirectory] flattenMap:^RACStream *(FileSystemDirectory *documentsDirectory) {
+        [[[[RCIODirectory itemWithURL:NSURL.applicationDocumentsDirectory] flattenMap:^RACStream *(RCIODirectory *documentsDirectory) {
 					NSMutableArray *copySignals = [NSMutableArray arrayWithCapacity:selectedItems.count];
-					for (FileSystemItem *item in selectedItems) {
+					for (RCIOItem *item in selectedItems) {
 						[copySignals addObject:[item copyTo:documentsDirectory withName:nil replaceExisting:YES]];
 					}
 					return [RACSignal zip:copySignals];
@@ -362,7 +362,7 @@
         self.loading = YES;
         
 				NSMutableArray *urls = [NSMutableArray arrayWithCapacity:_selectedItems.count];
-				for (FileSystemItem *item in _selectedItems) {
+				for (RCIOItem *item in _selectedItems) {
 					[urls addObject:item.url];
 				}
 
@@ -410,7 +410,7 @@
 
 #pragma mark - Public methods
 
-- (void)scrollToFileSystemItem:(FileSystemItem *)item highlight:(BOOL)shouldHighlight {
+- (void)scrollToFileSystemItem:(RCIOItem *)item highlight:(BOOL)shouldHighlight {
 	
 }
 
@@ -460,7 +460,7 @@
 - (void)_directoryBrowserCopyAction:(id)sender {
   // Retrieve URL to copy to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)self.modalNavigationController.topViewController;
-  FileSystemDirectory *copyDestinationFolder = directoryBrowser.selectedFolder;
+  RCIODirectory *copyDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -472,7 +472,7 @@
 		return;
 	}
 	__block NSUInteger copiedCount = 0;
-  [[[conflictController moveItems:items toFolder:copyDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+  [[[conflictController moveItems:items toFolder:copyDestinationFolder usingSignalBlock:^(RCIOItem *item, RCIODirectory *destinationFolder) {
 		copiedCount++;
     return [item copyTo:destinationFolder];
   }] finally:^{
@@ -493,7 +493,7 @@
 - (void)_directoryBrowserMoveAction:(id)sender {
   // Retrieve URL to move to
   FolderBrowserController *directoryBrowser = (FolderBrowserController *)self.modalNavigationController.topViewController;
-  FileSystemDirectory *moveDestinationFolder = directoryBrowser.selectedFolder;
+  RCIODirectory *moveDestinationFolder = directoryBrowser.selectedFolder;
   
   // Initialize conflict controller
   MoveConflictController *conflictController = [[MoveConflictController alloc] init];
@@ -505,7 +505,7 @@
 		return;
 	}
 	__block NSUInteger movedCount = 0;
-  [[[conflictController moveItems:items toFolder:moveDestinationFolder usingSignalBlock:^(FileSystemItem *item, FileSystemDirectory *destinationFolder) {
+  [[[conflictController moveItems:items toFolder:moveDestinationFolder usingSignalBlock:^(RCIOItem *item, RCIODirectory *destinationFolder) {
 		movedCount++;
     return [item moveTo:destinationFolder];
   }] finally:^{
@@ -525,7 +525,7 @@
 
 - (void)_previewFile:(NSURL *)fileURL {
 	NSMutableArray *previewItems = [NSMutableArray arrayWithCapacity:self.filteredItems.count];
-	for (FileSystemItem *item in self.filteredItems) {
+	for (RCIOItem *item in self.filteredItems) {
 		NSURL *itemURL = item.url;
 		FilePreviewItem *previewItem = [FilePreviewItem filePreviewItemWithFileURL:itemURL];
 		if (![CodeFileController canDisplayFileInCodeView:itemURL] && [QLPreviewController canPreviewItem:previewItem]) {

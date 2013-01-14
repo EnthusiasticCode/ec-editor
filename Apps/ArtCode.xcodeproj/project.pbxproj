@@ -16,7 +16,6 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
-		5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F18F58E161271A5005D8A4F /* FileSystemItem.m */; };
 		5F1A2864169ACD86005A928E /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2851169ACD86005A928E /* Common.xcconfig */; };
 		5F1A2865169ACD86005A928E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2853169ACD86005A928E /* Debug.xcconfig */; };
 		5F1A2866169ACD86005A928E /* Profile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2854169ACD86005A928E /* Profile.xcconfig */; };
@@ -40,14 +39,13 @@
 		5F37AB04169E3B3700D91E56 /* libfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA47169E3A2400D91E56 /* libfile.a */; };
 		5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */; };
 		5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */; };
-		5F4B2A31169F6A1100CBB85D /* FileSystemFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */; };
-		5F4B2A34169F6A2100CBB85D /* FileSystemDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */; };
+		5F37CFDC16A4932900F3020A /* libReactiveCocoaIO-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37CFCF16A4930A00F3020A /* libReactiveCocoaIO-iOS.a */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
-		5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */; };
+		5FA5951B16348F7100ECCAA5 /* RCIOItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */; };
 		5FB0A6F016A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
@@ -118,7 +116,7 @@
 		B77100EF1506DAFF006AF1FB /* ArtCodeProject.m in Sources */ = {isa = PBXBuildFile; fileRef = B77100EE1506DAFF006AF1FB /* ArtCodeProject.m */; };
 		B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
-		B78D136F15AB4D5D0022C93B /* FileSystemFile+TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* FileSystemFile+TextFile.m */; };
+		B78D136F15AB4D5D0022C93B /* RCIOFile+TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -533,6 +531,27 @@
 			remoteGlobalIDString = 5F37A789169DEC0100D91E56;
 			remoteInfo = CocoaOniguruma;
 		};
+		5F37CFCC16A4930A00F3020A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F37CEE316A4830200F3020A;
+			remoteInfo = ReactiveCocoaIO;
+		};
+		5F37CFCE16A4930A00F3020A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F37CAA616A4726F00F3020A;
+			remoteInfo = "ReactiveCocoaIO-iOS";
+		};
+		5F37CFD016A4930A00F3020A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5F37CAB716A4726F00F3020A;
+			remoteInfo = ReactiveCocoaIOTests;
+		};
 		CD54BDBA160608530025B7CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
@@ -609,8 +628,6 @@
 		5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTab.m; sourceTree = "<group>"; };
 		5F16583715B6DA7100F0DEDC /* _ArtCodeTabSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _ArtCodeTabSet.h; sourceTree = "<group>"; };
 		5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _ArtCodeTabSet.m; sourceTree = "<group>"; };
-		5F18F58D161271A5005D8A4F /* FileSystemItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItem.h; sourceTree = "<group>"; };
-		5F18F58E161271A5005D8A4F /* FileSystemItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItem.m; sourceTree = "<group>"; };
 		5F1A2851169ACD86005A928E /* Common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Common.xcconfig; sourceTree = "<group>"; };
 		5F1A2853169ACD86005A928E /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		5F1A2854169ACD86005A928E /* Profile.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Profile.xcconfig; sourceTree = "<group>"; };
@@ -634,12 +651,7 @@
 		5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "CocoaOniguruma-for-iOS.xcodeproj"; path = "cocoaoniguruma/CocoaOniguruma-for-iOS.xcodeproj"; sourceTree = "<group>"; };
 		5F37AB64169E3EF000D91E56 /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
 		5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
-		5F4B2A2F169F6A1100CBB85D /* FileSystemFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemFile.h; sourceTree = "<group>"; };
-		5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemFile.m; sourceTree = "<group>"; };
-		5F4B2A32169F6A2100CBB85D /* FileSystemDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectory.h; sourceTree = "<group>"; };
-		5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemDirectory.m; sourceTree = "<group>"; };
-		5F4B2A35169F6D0F00CBB85D /* FileSystemItem+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileSystemItem+Private.h"; sourceTree = "<group>"; };
-		5F4B2A36169F6DF300CBB85D /* FileSystemDirectory+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileSystemDirectory+Private.h"; sourceTree = "<group>"; };
+		5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactiveCocoaIO.xcodeproj; path = ../Frameworks/ReactiveCocoaIO/ReactiveCocoaIO.xcodeproj; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -647,8 +659,8 @@
 		5F6539FD15B0B33500FFCFEE /* TabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabPageViewController.h; sourceTree = "<group>"; };
 		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
 		5F7047DF15D1D7D5005EF62D /* magic.mgc */ = {isa = PBXFileReference; lastKnownFileType = file; name = magic.mgc; path = "../../../ThirdParty/file/Supporting Files/magic.mgc"; sourceTree = "<group>"; };
-		5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemItemCell.h; sourceTree = "<group>"; };
-		5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSystemItemCell.m; sourceTree = "<group>"; };
+		5FA5951916348F7100ECCAA5 /* RCIOItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCIOItemCell.h; sourceTree = "<group>"; };
+		5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCIOItemCell.m; sourceTree = "<group>"; };
 		5FB0A6EE16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RACSignal+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
 		5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RACSignal+ScoreForAbbreviation.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
@@ -732,8 +744,8 @@
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
 		B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextMateScopeSelectorMatching.m"; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
-		B78D136D15AB4D5D0022C93B /* FileSystemFile+TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FileSystemFile+TextFile.h"; sourceTree = "<group>"; };
-		B78D136E15AB4D5D0022C93B /* FileSystemFile+TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "FileSystemFile+TextFile.m"; sourceTree = "<group>"; };
+		B78D136D15AB4D5D0022C93B /* RCIOFile+TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCIOFile+TextFile.h"; sourceTree = "<group>"; };
+		B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCIOFile+TextFile.m"; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1207,6 +1219,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F37CFDC16A4932900F3020A /* libReactiveCocoaIO-iOS.a in Frameworks */,
 				5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */,
 				5F37AB04169E3B3700D91E56 /* libfile.a in Frameworks */,
 				5F37AB03169E3B2900D91E56 /* libCocoaOniguruma.a in Frameworks */,
@@ -1441,12 +1454,37 @@
 			name = RACExtensions;
 			sourceTree = "<group>";
 		};
+		5F37CFAD16A4918200F3020A /* First Party */ = {
+			isa = PBXGroup;
+			children = (
+				5F37CFAE16A492F900F3020A /* ReactiveCocoaIO */,
+			);
+			name = "First Party";
+			sourceTree = "<group>";
+		};
+		5F37CFAE16A492F900F3020A /* ReactiveCocoaIO */ = {
+			isa = PBXGroup;
+			children = (
+				5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */,
+			);
+			name = ReactiveCocoaIO;
+			sourceTree = "<group>";
+		};
+		5F37CFB016A4930800F3020A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5F37CFCD16A4930A00F3020A /* ReactiveCocoaIO.framework */,
+				5F37CFCF16A4930A00F3020A /* libReactiveCocoaIO-iOS.a */,
+				5F37CFD116A4930A00F3020A /* ReactiveCocoaIOTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B732D00113DB2AD100637FBE /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				B77100EC1506DAE6006AF1FB /* ArtCode */,
 				B7FB79A514D602DB0080A714 /* TextMate */,
-				B7FB79CA14D605050080A714 /* Filesystem */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1679,6 +1717,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				B78D136D15AB4D5D0022C93B /* RCIOFile+TextFile.h */,
+				B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */,
 				CD149660167E3B7400223367 /* UIBarButtonItem+BlockAction.h */,
 				CD149661167E3B7400223367 /* UIBarButtonItem+BlockAction.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
@@ -1759,23 +1799,6 @@
 				B7FB79C614D604FA0080A714 /* RectSet.m */,
 			);
 			name = Utilities;
-			sourceTree = "<group>";
-		};
-		B7FB79CA14D605050080A714 /* Filesystem */ = {
-			isa = PBXGroup;
-			children = (
-				5F18F58D161271A5005D8A4F /* FileSystemItem.h */,
-				5F4B2A35169F6D0F00CBB85D /* FileSystemItem+Private.h */,
-				5F18F58E161271A5005D8A4F /* FileSystemItem.m */,
-				5F4B2A2F169F6A1100CBB85D /* FileSystemFile.h */,
-				5F4B2A30169F6A1100CBB85D /* FileSystemFile.m */,
-				5F4B2A32169F6A2100CBB85D /* FileSystemDirectory.h */,
-				5F4B2A36169F6DF300CBB85D /* FileSystemDirectory+Private.h */,
-				5F4B2A33169F6A2100CBB85D /* FileSystemDirectory.m */,
-				B78D136D15AB4D5D0022C93B /* FileSystemFile+TextFile.h */,
-				B78D136E15AB4D5D0022C93B /* FileSystemFile+TextFile.m */,
-			);
-			name = Filesystem;
 			sourceTree = "<group>";
 		};
 		B7FB79D114D605DB0080A714 /* Code View */ = {
@@ -2141,6 +2164,7 @@
 			isa = PBXGroup;
 			children = (
 				CD7D2B0613C0CE3200B889EE /* Apple */,
+				5F37CFAD16A4918200F3020A /* First Party */,
 				B7AC172714216C59009E9205 /* Third Party */,
 			);
 			name = Frameworks;
@@ -2334,8 +2358,8 @@
 				CD596E21162D668D00B95B49 /* ProgressTableViewCell.m */,
 				CDAE5EC9156E48AC007B9FDD /* PopoverButton.h */,
 				CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */,
-				5FA5951916348F7100ECCAA5 /* FileSystemItemCell.h */,
-				5FA5951A16348F7100ECCAA5 /* FileSystemItemCell.m */,
+				5FA5951916348F7100ECCAA5 /* RCIOItemCell.h */,
+				5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */,
 			);
 			name = "Views and Controls";
 			sourceTree = "<group>";
@@ -2624,6 +2648,10 @@
 					ProductGroup = 5F37AA37169E3A2400D91E56 /* Products */;
 					ProjectRef = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
 				},
+				{
+					ProductGroup = 5F37CFB016A4930800F3020A /* Products */;
+					ProjectRef = 5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -2673,6 +2701,27 @@
 			fileType = archive.ar;
 			path = libCocoaOniguruma.a;
 			remoteRef = 5F37AB01169E3B2000D91E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37CFCD16A4930A00F3020A /* ReactiveCocoaIO.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ReactiveCocoaIO.framework;
+			remoteRef = 5F37CFCC16A4930A00F3020A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37CFCF16A4930A00F3020A /* libReactiveCocoaIO-iOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libReactiveCocoaIO-iOS.a";
+			remoteRef = 5F37CFCE16A4930A00F3020A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5F37CFD116A4930A00F3020A /* ReactiveCocoaIOTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ReactiveCocoaIOTests.octest;
+			remoteRef = 5F37CFD016A4930A00F3020A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CD54BDBB160608530025B7CA /* ReactiveCocoa.framework */ = {
@@ -3152,7 +3201,7 @@
 				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D136F15AB4D5D0022C93B /* FileSystemFile+TextFile.m in Sources */,
+				B78D136F15AB4D5D0022C93B /* RCIOFile+TextFile.m in Sources */,
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
@@ -3170,7 +3219,6 @@
 				CDFAAA5515D6950200835D86 /* ImagePopoverBackgroundView.m in Sources */,
 				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
 				CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */,
-				5F18F58F161271A5005D8A4F /* FileSystemItem.m in Sources */,
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
 				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
 				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
@@ -3179,12 +3227,10 @@
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
 				CD596E22162D668D00B95B49 /* ProgressTableViewCell.m in Sources */,
-				5FA5951B16348F7100ECCAA5 /* FileSystemItemCell.m in Sources */,
+				5FA5951B16348F7100ECCAA5 /* RCIOItemCell.m in Sources */,
 				CDE96825166650540097AAF1 /* NewFileImportController.m in Sources */,
 				CD149662167E3B7400223367 /* UIBarButtonItem+BlockAction.m in Sources */,
 				5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */,
-				5F4B2A31169F6A1100CBB85D /* FileSystemFile.m in Sources */,
-				5F4B2A34169F6A2100CBB85D /* FileSystemDirectory.m in Sources */,
 				5FB0A6F016A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

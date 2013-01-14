@@ -15,7 +15,7 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeProjectSet.h"
 
-#import "FileSystemDirectory.h"
+#import <ReactiveCocoaIO/RCIODirectory.h>
 
 
 @interface ArtCodeProjectBookmark ()

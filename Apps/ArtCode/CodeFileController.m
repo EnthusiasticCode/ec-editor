@@ -36,7 +36,7 @@
 #import "ArtCodeProject.h"
 
 #import "NSIndexSet+PersistentDataStructure.h"
-#import "FileSystemFile+TextFile.h"
+#import "RCIOFile+TextFile.h"
 #import <file/FileMagic.h>
 
 
@@ -308,11 +308,11 @@ static void drawStencilStar(CGContextRef myContext)
   
   // When the currentLocation's url changes, bind the text file and the bookmarks
   [[[[RACAble(self.artCodeTab.currentLocation.url) map:^RACSignal *(NSURL *url) {
-    return [FileSystemFile itemWithURL:url];
+    return [RCIOFile itemWithURL:url];
   }] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.textFile) onObject:self];
 	
   __block RACDisposable *bookmarksDisposable = nil;
-  [RACAble(self.textFile) subscribeNext:^(FileSystemFile *textFile) {
+  [RACAble(self.textFile) subscribeNext:^(RCIOFile *textFile) {
     @strongify(self);
     if (!self) { return; }
     [bookmarksDisposable dispose];
@@ -323,7 +323,7 @@ static void drawStencilStar(CGContextRef myContext)
 	__block RACDisposable *fileContentDisposable = nil;
   [[RACSignal combineLatest:@[RACAble(self.codeView), RACAble(self.textFile)]] subscribeNext:^(RACTuple *tuple) {
     CodeView *codeView = tuple.first;
-    FileSystemFile *textFile = tuple.second;
+    RCIOFile *textFile = tuple.second;
     [fileContentDisposable dispose];
     if (!codeView || !textFile) return;
 		fileContentDisposable = [RACBind(codeView, text) bindTo:textFile.contentSubject.binding];
@@ -333,7 +333,7 @@ static void drawStencilStar(CGContextRef myContext)
   [[[[[[[RACSignal combineLatest:@[[RACAble(self.textFile.urlSignal) switchToLatest], [RACAble(self.textFile.explicitSyntaxIdentifierSubject) switchToLatest], RACAble(self.textFile)]] deliverOn:self.codeScheduler] map:^RACSignal *(RACTuple *tuple) {
     NSURL *fileURL = tuple.first;
     NSString *explicitSyntaxIdentifier = tuple.second;
-    FileSystemFile *textFile = tuple.third;
+    RCIOFile *textFile = tuple.third;
     ASSERT_NOT_MAIN_QUEUE();
     @strongify(self);
     if (!self || !fileURL) {
@@ -791,7 +791,7 @@ static void drawStencilStar(CGContextRef myContext)
 - (void)_loadWebPreviewContentAndTitle {
   if ([self _isWebPreview] && self.textFile) {
     @weakify(self);
-		[self.textFile.save subscribeNext:^(FileSystemItem *item) {
+		[self.textFile.save subscribeNext:^(RCIOItem *item) {
       @strongify(self);
       [self.webView loadRequest:[NSURLRequest requestWithURL:item.url]];
       self.title = [self.webView stringByEvaluatingJavaScriptFromString:@"document.title"];

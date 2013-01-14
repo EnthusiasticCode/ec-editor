@@ -6,13 +6,13 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileSystemFile+TextFile.h"
+#import "RCIOFile+TextFile.h"
 
 static NSString * const _explicitSyntaxIdentifierKey = @"com.enthusiasticcode.artcode.TextFile.ExplicitSyntaxIdentifier";
 static NSString * const _explicitEncodingKey = @"com.enthusiasticcode.artcode.TextFile.ExplicitEncoding";
 static NSString * const _bookmarksKey = @"com.enthusiasticcode.artcode.TextFile.Bookmarks";
 
-@implementation FileSystemFile (TextFile)
+@implementation RCIOFile (TextFile)
 
 - (RACPropertySubject *)explicitSyntaxIdentifierSubject {
   return [self extendedAttributeSubjectForKey:_explicitSyntaxIdentifierKey];

@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "FileSystemFile.h"
+#import <ReactiveCocoaIO/RCIOFile.h>
 
 @class RACPropertySubject;
 
-@interface FileSystemFile (TextFile)
+@interface RCIOFile (TextFile)
 
 - (RACPropertySubject *)explicitSyntaxIdentifierSubject;
 

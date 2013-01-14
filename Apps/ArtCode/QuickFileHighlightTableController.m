@@ -11,7 +11,7 @@
 #import "CodeFileController.h"
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
-#import "FileSystemFile+TextFile.h"
+#import "RCIOFile+TextFile.h"
 
 @interface QuickFileHighlightTableController ()
 
@@ -39,7 +39,7 @@
   // Setup the syntax list and the bindings with the explicit syntax identifier every time the file changes
   __block RACDisposable *sourceDisposable = nil;
   __block RACDisposable *sinkDisposable = nil;
-  [RACAble(self.codeFileController.textFile) subscribeNext:^(FileSystemFile *x) {
+  [RACAble(self.codeFileController.textFile) subscribeNext:^(RCIOFile *x) {
     @strongify(self);
     [sourceDisposable dispose];
     [sinkDisposable dispose];
