@@ -34,7 +34,7 @@
 			NSURL *url = self.urlBacking;
 			NSError *error = nil;
 			
-			if (![NSFileManager.defaultManager fileExistsAtPath:url.path] && ![NSFileManager.defaultManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
+			if ([NSFileManager.defaultManager fileExistsAtPath:url.path] || ![NSFileManager.defaultManager createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:&error]) {
 				[subscriber sendError:error];
 			} else {
 				[disposable addDisposable:[super.create subscribe:subscriber]];
