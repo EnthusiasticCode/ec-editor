@@ -19,10 +19,6 @@
 
 @implementation NewFileController
 
-@synthesize fileNameTextField;
-@synthesize infoLabel;
-@synthesize templateDirectoryURL;
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad {
@@ -66,7 +62,6 @@
   self.fileNameTextField.text = @"";
   [self.fileNameTextField becomeFirstResponder];
   self.infoLabel.text = @"A new blank file will be created. If no extension is specified, txt will be used.";
-  // TODO: if template is specified, set leftview for text field to template icon
 }
 
 #pragma mark Text Field delegate
@@ -81,7 +76,6 @@
 
 - (IBAction)createAction:(id)sender {
   NSString *fileName = self.fileNameTextField.text;
-  // TODO: use ArtCodeTemplate here
   if ([[fileName pathExtension] length] == 0) {
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   }

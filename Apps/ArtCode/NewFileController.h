@@ -18,10 +18,4 @@
 
 - (IBAction)createAction:(id)sender;
 
-#pragma mark Customizable actions
-
-/// URL pointing to a directory containing an ArtCode template.
-/// TODO: define ArtCode template.
-@property (strong, nonatomic) NSURL *templateDirectoryURL;
-
 @end

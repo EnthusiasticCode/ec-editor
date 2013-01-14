@@ -20,8 +20,6 @@
 
 @end
 
-// TODO: add api to change ArtCodeTab order so that it get persisted and can be accessed directly by the tab bar indexed
-
 /// Controller to manage a tab bar that shows a controller provided by the datasource when its selection change.
 /// Use tabBar methods to add, move or remove tabs.
 @interface TabPageViewController : UIViewController
