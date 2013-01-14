@@ -30,7 +30,7 @@
 		
 		self.textLabel.text = url.lastPathComponent;
 		if (style == UITableViewCellStyleSubtitle) {
-			self.detailTextLabel.text = [[[ArtCodeProjectSet defaultSet] relativePathForFileURL:url] prettyPath];
+			self.detailTextLabel.text = [[ArtCodeProjectSet.defaultSet relativePathForFileURL:url] prettyPath];
 		}
 
 		if ([item isKindOfClass:FileSystemDirectory.class]) {

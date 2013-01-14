@@ -502,11 +502,11 @@ static void init(CodeView *self)
 	
 	// Handle keyboard display changes
 	NSArray *accessoryViewNotificationSignals = @[
-	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
-	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
-	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
-	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
-	[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
+	[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil],
+	[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil],
+	[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardWillHideNotification object:nil],
+	[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardDidShowNotification object:nil],
+	[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardWillShowNotification object:nil],
 	RACAble(self.isFirstResponder) ];
   [[[[RACSignal merge:accessoryViewNotificationSignals] map:^id(id value) {
 		@strongify(self);

@@ -36,7 +36,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
 - (NSString *)imagePath
 {
   if (imagePath == nil)
-    imagePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"keyboardAction_%@", self.uuid] ofType:nil];
+    imagePath = [NSBundle.mainBundle pathForResource:[NSString stringWithFormat:@"keyboardAction_%@", self.uuid] ofType:nil];
   return imagePath;
 }
 
@@ -62,7 +62,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   if (anImagePath)
   {
     if (![NSFileManager.defaultManager fileExistsAtPath:anImagePath])
-      imagePath = [[NSBundle mainBundle] pathForResource:anImagePath ofType:nil];
+      imagePath = [NSBundle.mainBundle pathForResource:anImagePath ofType:nil];
     else
       imagePath = anImagePath;
   }

@@ -193,7 +193,7 @@
   // TODO: this property is not the correct one to use for enabling the keyboard resize, there should be a dedicated one
   if (!self.isSearchBarStaticOnTop) {
     // Account for keyboard and resize table accordingly
-    [disposables addObject:[[RACSignal merge:@[[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil]]] subscribeNext:^(NSNotification *note) {
+    [disposables addObject:[[RACSignal merge:@[[NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardWillHideNotification object:nil]]] subscribeNext:^(NSNotification *note) {
       CGPoint tableViewOffset = this.tableView.contentOffset;
       SearchableTableBrowserController *strongSelf = this;
       if (note.name == UIKeyboardDidShowNotification) {

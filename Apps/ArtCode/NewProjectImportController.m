@@ -115,7 +115,7 @@
   BOOL attemptAgain = NO;
   do {
     attemptAgain = NO;
-    for (ArtCodeProject *p in [ArtCodeProjectSet defaultSet].projects) {
+    for (ArtCodeProject *p in ArtCodeProjectSet.defaultSet.projects) {
       if ([p.name isEqualToString:projectName]) {
         projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
         attemptAgain = YES;
@@ -127,7 +127,7 @@
   // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [[ArtCodeProjectSet defaultSet] addNewProjectWithName:projectName labelColor:[UIColor styleForegroundColor] completionHandler:^(ArtCodeProject *createdProject) {
+  [ArtCodeProjectSet.defaultSet addNewProjectWithName:projectName labelColor:[UIColor styleForegroundColor] completionHandler:^(ArtCodeProject *createdProject) {
     if (createdProject) {
       // Import the zip file
       // Extract files if needed

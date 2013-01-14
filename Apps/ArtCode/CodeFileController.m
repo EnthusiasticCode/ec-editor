@@ -418,7 +418,7 @@ static void drawStencilStar(CGContextRef myContext)
   }];
   
   // Handle keyboard display changes
-	[[RACSignal combineLatest:@[ [RACSignal merge:@[ [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillHideNotification object:nil] ]], RACAble(self.codeView.keyboardAccessoryViewVisible) ] reduce:^(NSNotification *keyboardNotification, NSNumber *accessoryViewVisible) {
+	[[RACSignal combineLatest:@[ [RACSignal merge:@[ [NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardDidShowNotification object:nil], [NSNotificationCenter.defaultCenter rac_addObserverForName:UIKeyboardWillHideNotification object:nil] ]], RACAble(self.codeView.keyboardAccessoryViewVisible) ] reduce:^(NSNotification *keyboardNotification, NSNumber *accessoryViewVisible) {
 		@strongify(self);
 		if (keyboardNotification.name == UIKeyboardWillHideNotification) {
 			return @(self.view.bounds.size.height);

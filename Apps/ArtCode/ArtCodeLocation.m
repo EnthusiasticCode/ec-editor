@@ -84,7 +84,7 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {
-      path = [[ArtCodeProjectSet defaultSet] relativePathForFileURL:self.url];
+      path = [ArtCodeProjectSet.defaultSet relativePathForFileURL:self.url];
     }
       
     default:

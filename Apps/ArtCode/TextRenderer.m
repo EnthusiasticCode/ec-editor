@@ -717,7 +717,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   textSegmentsSemaphore = dispatch_semaphore_create(1);
   
   __weak TextRenderer *this = self;
-  _notificationCenterMemoryWarningObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+  _notificationCenterMemoryWarningObserver = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidReceiveMemoryWarningNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
     if (dispatch_semaphore_wait(textSegmentsSemaphore, dispatch_time(DISPATCH_TIME_NOW, 5 * 1000 * 1000)) != 0)
       return;
     
@@ -739,7 +739,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 - (void)dealloc
 {
-  [[NSNotificationCenter defaultCenter] removeObserver:_notificationCenterMemoryWarningObserver];
+  [NSNotificationCenter.defaultCenter removeObserver:_notificationCenterMemoryWarningObserver];
 }
 
 #pragma mark Private Methods

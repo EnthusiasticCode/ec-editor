@@ -48,7 +48,7 @@
 
 - (void)setUp {
   ASSERT(!_autosaveDisposable);
-  _autosaveDisposable = [[[[NSNotificationCenter defaultCenter] rac_addObserverForName:NSManagedObjectContextObjectsDidChangeNotification object:[self managedObjectContext]] throttle:2.0] subscribeNext:^(id x) {
+  _autosaveDisposable = [[[NSNotificationCenter.defaultCenter rac_addObserverForName:NSManagedObjectContextObjectsDidChangeNotification object:[self managedObjectContext]] throttle:2.0] subscribeNext:^(id x) {
     [self _saveContext];
   }];
 }
@@ -64,7 +64,7 @@
 
 - (NSManagedObjectModel *)managedObjectModel {
   if (!_managedObjectModel) {
-    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:@[[NSBundle mainBundle]]];
+    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:@[NSBundle.mainBundle]];
   }
   return _managedObjectModel;
 }

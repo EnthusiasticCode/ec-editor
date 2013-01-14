@@ -66,7 +66,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 
 - (NSArray *)gridElements {
   if (!_gridElements) {
-    NSArray *elements = [[ArtCodeProjectSet defaultSet] projects].array;
+    NSArray *elements = [ArtCodeProjectSet.defaultSet projects].array;
     _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(ArtCodeProject *obj1, ArtCodeProject *obj2) {
       return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
     }];
@@ -99,7 +99,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 	RAC(self.projectsSet) = RACAble(ArtCodeProjectSet.defaultSet, projects);
   
   // Update grid view
-  [[ArtCodeProjectSet defaultSet].objectsAdded subscribeNext:^(ArtCodeProject *proj) {
+  [ArtCodeProjectSet.defaultSet.objectsAdded subscribeNext:^(ArtCodeProject *proj) {
     @strongify(self);
     NSString *projectName = [proj name];
     __block NSUInteger index = self.gridElements.count;
@@ -114,7 +114,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 		[self.collectionView insertItemsAtIndexPaths:@[ [NSIndexPath indexPathForItem:index inSection:0] ]];
   }];
   
-  [[ArtCodeProjectSet defaultSet].objectsRemoved subscribeNext:^(ArtCodeProject *proj) {
+  [ArtCodeProjectSet.defaultSet.objectsRemoved subscribeNext:^(ArtCodeProject *proj) {
     @strongify(self);
     NSString *projectName = [proj name];
     __block NSUInteger index = 0;
@@ -280,7 +280,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
       // Remove projects
       NSArray *oldElements = self.gridElements;
 			for (NSIndexPath *itemPath in cellsToRemove) {
-				[[ArtCodeProjectSet defaultSet] removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
+				[ArtCodeProjectSet.defaultSet removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
 					// Show bezel alert
 					if (error) {
 						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
