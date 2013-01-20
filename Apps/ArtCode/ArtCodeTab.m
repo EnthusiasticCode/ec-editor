@@ -81,13 +81,13 @@
     }
   }
   // Adding path to history and move forward
-  [[self historySet] addObject:location];
+  [self.historySet addObject:location];
   [self moveForwardInHistory];
 }
 
 - (void)replaceCurrentLocationWithLocation:(ArtCodeLocation *)location {
   ArtCodeLocation *oldLocation = self.currentLocation;
-  [self historySet][self.currentPositionValue] = location;
+  self.historySet[self.currentPositionValue] = location;
   [oldLocation.managedObjectContext deleteObject:oldLocation];
 }
 

@@ -55,11 +55,11 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", @"name", _defaultProjectSetName];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:[self entityName]];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
     [fetchRequest setPredicate:predicate];
-    NSManagedObjectContext *defaultContext = [[ArtCodeDatastore defaultDatastore] managedObjectContext];
+    NSManagedObjectContext *defaultContext = ArtCodeDatastore.defaultDatastore.managedObjectContext;
     NSArray *results = [defaultContext executeFetchRequest:fetchRequest error:NULL];
-    if ([results count]) {
+    if (results.count) {
       defaultSet = results[0];
     } else {
       defaultSet = [self insertInManagedObjectContext:defaultContext];
@@ -70,11 +70,11 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (NSURL *)fileURL {
-  return [[[NSURL applicationLibraryDirectory] URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:[self name]];
+  return [[NSURL.applicationLibraryDirectory URLByAppendingPathComponent:_localProjectsFolderName] URLByAppendingPathComponent:self.name];
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [[RCIODirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name] mode:RCIOItemModeExclusiveAccess] subscribeNext:^(RCIODirectory *directory) {
+  [[RCIODirectory itemWithURL:[self.fileURL URLByAppendingPathComponent:name] mode:RCIOItemModeExclusiveAccess] subscribeNext:^(RCIODirectory *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:name];
     [project setLabelColor:labelColor];

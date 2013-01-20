@@ -41,15 +41,15 @@
 #pragma mark - Public Methods
 
 - (NSURL *)fileURL {
-  return [[[self projectSet] fileURL] URLByAppendingPathComponent:[self name]];
+  return [self.projectSet.fileURL URLByAppendingPathComponent:self.name];
 }
 
 - (UIColor *)labelColor {
-  return [UIColor colorWithHexString:[self labelColorString]];
+  return [UIColor colorWithHexString:self.labelColorString];
 }
 
 - (void)setLabelColor:(UIColor *)labelColor {
-  [self setLabelColorString:[labelColor hexString]];
+  [self setLabelColorString:labelColor.hexString];
 }
 
 #pragma mark - Project-wide operations

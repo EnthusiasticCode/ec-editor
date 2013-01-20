@@ -34,15 +34,15 @@
 + (ArtCodeTabSet *)defaultSet {
   static NSString *defaultSetName = @"default";
 
-  NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[self entityName]];
+  NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:self.entityName];
   NSPredicate *searchPredicate = [NSPredicate predicateWithFormat:@"%K == %@", @"name", defaultSetName];
   [fetchRequest setPredicate:searchPredicate];
   
-  NSManagedObjectContext *context = [[ArtCodeDatastore defaultDatastore] managedObjectContext];
+  NSManagedObjectContext *context = ArtCodeDatastore.defaultDatastore.managedObjectContext;
   
   NSArray *results = [context executeFetchRequest:fetchRequest error:NULL];
-  if ([results count] > 0) {
-    ASSERT([results count] == 1); // if more than 1 they should be merged
+  if (results.count > 0) {
+    ASSERT(results.count == 1); // if more than 1 they should be merged
     return results[0];
   }
   
