@@ -74,9 +74,7 @@
 #pragma mark Public methods
 
 - (IBAction)createAction:(id)sender {
-  [[[RCIODirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text]] flattenMap:^(RCIODirectory *directory) {
-		return [directory create];
-	}] subscribeCompleted:^{
+  [[RCIODirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text] mode:RCIOItemModeExclusiveAccess] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];

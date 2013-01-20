@@ -27,7 +27,7 @@
   self.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Symbols" image:[UIImage imageNamed:@"UITabBar_symbol"] tag:0];
   self.navigationItem.title = @"Table of Content";
 	
-	[[[self rac_signalForKeyPath:@"quickBrowsersContainerController.contentController.codeUnit.symbolList" onObject:self] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(TMSymbol *symbol) {
+	[[[self rac_signalForKeyPath:@"quickBrowsersContainerController.contentController.codeUnit.symbolList" observer:self] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(TMSymbol *symbol) {
 		return symbol.title;
 	}] toProperty:@keypath(self.filteredItems) onObject:self];
 	

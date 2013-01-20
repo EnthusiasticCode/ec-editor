@@ -689,7 +689,7 @@ static void init(TabBar *self)
     // RAC
     // Adjust title inset and close button when the tab is selected
     @weakify(tabButton);
-    [[tabButton rac_signalForKeyPath:@keypath(tabButton, selected) onObject:tabButton] subscribeNext:^(NSNumber *selected) {
+    [[tabButton rac_signalForKeyPath:@keypath(tabButton, selected) observer:tabButton] subscribeNext:^(NSNumber *selected) {
       @strongify(tabButton);
       if ([selected boolValue]) {
         [tabButton addSubview:tabCloseButton];

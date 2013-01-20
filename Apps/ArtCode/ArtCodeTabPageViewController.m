@@ -90,7 +90,7 @@
   __weak ArtCodeTabPageViewController *this = self;
   // Attach controller's title to tab button
   @weakify(singleTabController);
-  [[[singleTabController rac_signalForKeyPath:@keypath(singleTabController, title) onObject:singleTabController] distinctUntilChanged] subscribeNext:^(NSString *title) {
+  [[[singleTabController rac_signalForKeyPath:@keypath(singleTabController, title) observer:singleTabController] distinctUntilChanged] subscribeNext:^(NSString *title) {
     @strongify(singleTabController);
     if (title && singleTabController && singleTabController.artCodeTab) {
       [this.tabBar setTitle:title forTabAtIndex:[singleTabController.artCodeTab.tabSet.tabs indexOfObject:singleTabController.artCodeTab]];

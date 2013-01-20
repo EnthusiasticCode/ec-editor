@@ -74,9 +74,7 @@ static NSString * const _localProjectsFolderName = @"LocalProjects";
 }
 
 - (void)addNewProjectWithName:(NSString *)name labelColor:(UIColor *)labelColor completionHandler:(void (^)(ArtCodeProject *))completionHandler {
-  [[[RCIODirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name]] flattenMap:^(RCIODirectory *directory) {
-		return [directory create];
-	}] subscribeNext:^(RCIODirectory *directory) {
+  [[RCIODirectory itemWithURL:[[self fileURL] URLByAppendingPathComponent:name] mode:RCIOItemModeExclusiveAccess] subscribeNext:^(RCIODirectory *directory) {
     ArtCodeProject *project = [ArtCodeProject insertInManagedObjectContext:self.managedObjectContext];
     [project setName:name];
     [project setLabelColor:labelColor];
