@@ -9,7 +9,7 @@
 #import "NewFileImportController.h"
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "NSURL+Utilities.h"
 #import "ArchiveUtilities.h"
 #import "UIImage+AppStyle.h"
@@ -141,11 +141,11 @@ static void _init(NewFileImportController *self) {
         [self dismissViewControllerAnimated:YES completion:nil];
       }] subscribeError:^(NSError *error) {
         ASSERT_MAIN_QUEUE();
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Error importing files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
       } completed:^{
         ASSERT_MAIN_QUEUE();
         if (importedCount > 0) {
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+          [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Files imported") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
         }
       }];
     }];

@@ -8,8 +8,8 @@
 
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
+#import "ArtCodeRemoteSet.h"
 #import "ArtCodeLocation.h"
 
 #import "UIViewController+Utilities.h"
@@ -42,7 +42,7 @@
 #pragma mark - Private methods
 
 - (void)_createAction:(id)sender {
-  ArtCodeRemote *remote = [ArtCodeRemote insertInManagedObjectContext:self.artCodeTab.currentLocation.project.managedObjectContext];
+  ArtCodeRemote *remote = [ArtCodeRemoteSet.defaultSet newRemote];
   
   switch (self.remoteType.selectedSegmentIndex) {
     case 0:
@@ -64,17 +64,15 @@
   }
   remote.name = self.remoteName.text;
   
-  [[self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"] addObject:remote];
-  
   if (remote)
   {
 //    if ([self.remotePassword.text length])
 //      remote.password = self.remotePassword.text;
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }
   else
   {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Error adding new remote" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Error adding new remote" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   }
   
   [self.presentingPopoverController dismissPopoverAnimated:YES];

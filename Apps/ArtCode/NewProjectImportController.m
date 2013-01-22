@@ -8,14 +8,11 @@
 
 #import "NewProjectImportController.h"
 
-#import "ArtCodeProject.h"
-#import "ArtCodeProjectSet.h"
 
 #import "NSURL+Utilities.h"
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
-#import <ReactiveCocoaIO/RCIOItem.h>
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "BezelAlert.h"
 #import "ArchiveUtilities.h"
 #import "UIColor+AppStyle.h"
@@ -99,17 +96,17 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  [self createProjectFromZipAtURL:(self.documentsArchiveURLs)[indexPath.row] completionHandler:^(ArtCodeProject *project) {
+  [self createProjectFromZipAtURL:(self.documentsArchiveURLs)[indexPath.row] completionHandler:^(RCIODirectory *projectDirectory) {
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Project imported") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }];
 }
 
 #pragma mark - Import method
 
-- (void)createProjectFromZipAtURL:(NSURL *)zipURL completionHandler:(void (^)(ArtCodeProject *))block {
+- (void)createProjectFromZipAtURL:(NSURL *)zipURL completionHandler:(void (^)(RCIODirectory *))block {
   // Generate a unique name for the project
-  NSString *zipFileName = [[zipURL lastPathComponent] stringByDeletingPathExtension];
+  NSString *zipFileName = zipURL.lastPathComponent.stringByDeletingPathExtension;
   NSString *projectName = zipFileName;
   NSUInteger attempt = 0;
   BOOL attemptAgain = NO;

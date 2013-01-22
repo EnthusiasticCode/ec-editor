@@ -18,13 +18,13 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
 
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 #import <Connection/CKConnectionRegistry.h>
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
+#import "NSURL+ArtCode.h"
 
 
 @interface RemoteNavigationController () <UINavigationControllerDelegate, UIActionSheetDelegate>
@@ -162,7 +162,7 @@ static void _init(RemoteNavigationController *self) {
     self.localFileListController = (LocalFileListController *)viewController;
     // RAC setting the initial location for the local file browser
     if ([(LocalFileListController *)viewController locationDirectory] == nil) {
-      [[RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL] subscribeNext:^(RCIODirectory *x) {
+      [[RCIODirectory itemWithURL:self.artCodeTab.currentLocation.url.projectRootDirectory] subscribeNext:^(RCIODirectory *x) {
         [(LocalFileListController *)viewController setLocationDirectory:x];
       }];
     }
@@ -216,7 +216,7 @@ static void _init(RemoteNavigationController *self) {
       return [x moveTo:localController.locationDirectory withName:itemName replaceExisting:YES];
     }] catchTo:[RACSignal return:nil]] doNext:^(id x) {
       if (x == nil) {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Error downloading file") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }
     }];
   }]] subscribeCompleted:^{
@@ -245,9 +245,9 @@ static void _init(RemoteNavigationController *self) {
     // Refresh remote list
     [remoteController refresh];
   }] subscribeError:^(NSError *error) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Errors uploading files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Errors uploading files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Upload completed") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Upload completed") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 
@@ -263,9 +263,9 @@ static void _init(RemoteNavigationController *self) {
     self.transfersInProgressCount--;
     [remoteController refresh];
   }] subscribeError:^(NSError *error) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Errors deleting files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Errors deleting files") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
   } completed:^{
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files deleted") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Files deleted") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 

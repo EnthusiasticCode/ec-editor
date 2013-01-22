@@ -8,10 +8,9 @@
 
 #import "NewFileController.h"
 #import "UIViewController+Utilities.h"
-#import <ReactiveCocoaIO/RCIOFile.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
 #import "BezelAlert.h"
 
 #import "ArtCodeLocation.h"
@@ -82,7 +81,7 @@
   
   [[RCIOFile itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName] mode:RCIOItemModeExclusiveAccess] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 

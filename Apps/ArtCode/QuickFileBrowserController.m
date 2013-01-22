@@ -9,17 +9,15 @@
 #import "QuickFileBrowserController.h"
 #import "QuickBrowsersContainerController.h"
 
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "NSTimer+BlockTimer.h"
 #import "NSString+Utilities.h"
 #import "RACSignal+ScoreForAbbreviation.h"
 #import "NSURL+Utilities.h"
+#import "NSURL+ArtCode.h"
 
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
-
-#import "ArtCodeProjectSet.h"
-#import "ArtCodeProject.h"
 
 #import "AppStyle.h"
 #import "RCIOItemCell.h"
@@ -54,7 +52,7 @@
   
   // RAC
   @weakify(self);
-  [[[[[[RACAble(self.artCodeTab.currentLocation.project.fileURL) map:^RACSignal *(NSURL *projectURL) {
+  [[[[[[RACAble(self.artCodeTab.currentLocation.url.projectRootDirectory) map:^RACSignal *(NSURL *projectURL) {
     return [RCIODirectory itemWithURL:projectURL];
   }] switchToLatest] map:^RACSignal *(RCIODirectory *directory) {
 		ASSERT_MAIN_QUEUE();
@@ -135,7 +133,7 @@
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
   RCIOItem *item = [(self.filteredItems)[indexPath.row] first];
-	[self.artCodeTab pushFileURL:item.url withProject:self.artCodeTab.currentLocation.project];
+	[self.artCodeTab pushFileURL:item.url];
 }
 
 #pragma mark - Private methods
@@ -143,13 +141,13 @@
 - (void)_showBrowserInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushProject:self.artCodeTab.currentLocation.project];
+  [self.artCodeTab pushFileURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
 }
 
 - (void)_showProjectsInTabAction:(id)sender
 {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushDefaultProjectSet];
+  [self.artCodeTab pushProjectsList];
 }
 
 @end

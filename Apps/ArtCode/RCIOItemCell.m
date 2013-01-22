@@ -8,11 +8,11 @@
 
 #import "RCIOItemCell.h"
 
-#import "ArtCodeProjectSet.h"
-#import <ReactiveCocoaIO/RCIOFile.h>
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "NSString+Utilities.h"
 #import "UIImage+AppStyle.h"
+#import "NSURL+Utilities.h"
+#import "NSURL+ArtCode.h"
 
 @implementation RCIOItemCell
 
@@ -30,7 +30,7 @@
 		
 		self.textLabel.text = url.lastPathComponent;
 		if (style == UITableViewCellStyleSubtitle) {
-			self.detailTextLabel.text = [[ArtCodeProjectSet.defaultSet relativePathForFileURL:url] prettyPath];
+			self.detailTextLabel.text = [url pathRelativeToURL:NSURL.projectsListDirectory].prettyPath;
 		}
 
 		if ([item isKindOfClass:RCIODirectory.class]) {

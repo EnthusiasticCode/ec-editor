@@ -12,7 +12,6 @@
 typedef enum {
   ArtCodeLocationTypeUnknown = 0,
   ArtCodeLocationTypeProjectsList,
-  ArtCodeLocationTypeProject,
   ArtCodeLocationTypeDirectory,
   ArtCodeLocationTypeTextFile,
   ArtCodeLocationTypeBookmarksList,
@@ -48,17 +47,15 @@ typedef enum {
 
 @interface ArtCodeTab (Location)
 
-- (void)pushDefaultProjectSet;
+- (void)pushProjectsList;
 
-- (void)pushProject:(ArtCodeProject *)project;
+- (void)pushFileURL:(NSURL *)url;
 
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project;
+- (void)pushFileURL:(NSURL *)url dataDictionary:(NSDictionary *)dict;
 
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project dataDictionary:(NSDictionary *)dict;
+- (void)pushBookmarksList;
 
-- (void)pushBookmarksListForProject:(ArtCodeProject *)project;
-
-- (void)pushRemotesListForProject:(ArtCodeProject *)project;
+- (void)pushRemotesList;
 
 - (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote;
 

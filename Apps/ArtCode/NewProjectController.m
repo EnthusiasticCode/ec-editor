@@ -16,8 +16,9 @@
 #import "UIViewController+Utilities.h"
 
 #import "ArtCodeTab.h"
-#import "ArtCodeProject.h"
-#import "ArtCodeProjectSet.h"
+#import "NSURL+ArtCode.h"
+
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 @implementation NewProjectController
 
@@ -55,18 +56,17 @@
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorSelection.enabled = NO;
   self.projectNameTextField.enabled = NO;
-  [ArtCodeProjectSet.defaultSet addNewProjectWithName:projectName labelColor:projectColor completionHandler:^(ArtCodeProject *project) {
+	[[[RCIODirectory itemWithURL:[NSURL.projectsListDirectory URLByAppendingPathComponent:projectName] mode:RCIOItemModeExclusiveAccess] finally:^{
     [self stopRightBarButtonItemActivityIndicator];
     self.projectColorSelection.enabled = YES;
     self.projectNameTextField.enabled = YES;
-    if (!project) {
-      [self.projectNameTextField selectAll:nil];
-      self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
-    } else {
-      [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
-    }
-  }];
+	}] subscribeError:^(NSError *error) {
+		[self.projectNameTextField selectAll:nil];
+		self.descriptionLabel.text = L(@"A project with this name already exists, use a different name.");
+	} completed:^{
+		[self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
+		[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"New project created") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+	}];
 }
 
 @end

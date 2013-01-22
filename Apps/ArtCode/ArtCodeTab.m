@@ -7,12 +7,9 @@
 //
 
 #import "ArtCodeTab.h"
-#import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
-#import "ArtCodeLocation.h"
 
 #import <objc/runtime.h>
-
+#import "ArtCodeLocation.h"
 
 @implementation ArtCodeTab
 

@@ -10,7 +10,6 @@ extern const struct ArtCodeLocationAttributes {
 } ArtCodeLocationAttributes;
 
 extern const struct ArtCodeLocationRelationships {
-	__unsafe_unretained NSString *project;
 	__unsafe_unretained NSString *remote;
 	__unsafe_unretained NSString *tab;
 } ArtCodeLocationRelationships;
@@ -18,7 +17,6 @@ extern const struct ArtCodeLocationRelationships {
 extern const struct ArtCodeLocationFetchedProperties {
 } ArtCodeLocationFetchedProperties;
 
-@class ArtCodeProject;
 @class ArtCodeRemote;
 @class ArtCodeTab;
 
@@ -37,7 +35,9 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSData* data;
+
 
 
 //- (BOOL)validateData:(id*)value_ error:(NSError**)error_;
@@ -45,7 +45,9 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSNumber* typeInt16;
+
 
 
 @property int16_t typeInt16Value;
@@ -58,21 +60,14 @@ extern const struct ArtCodeLocationFetchedProperties {
 
 
 
-@property (nonatomic, strong) ArtCodeProject* project;
-
-//- (BOOL)validateProject:(id*)value_ error:(NSError**)error_;
-
-
-
-
-@property (nonatomic, strong) ArtCodeRemote* remote;
+@property (nonatomic, strong) ArtCodeRemote *remote;
 
 //- (BOOL)validateRemote:(id*)value_ error:(NSError**)error_;
 
 
 
 
-@property (nonatomic, strong) ArtCodeTab* tab;
+@property (nonatomic, strong) ArtCodeTab *tab;
 
 //- (BOOL)validateTab:(id*)value_ error:(NSError**)error_;
 
@@ -102,11 +97,6 @@ extern const struct ArtCodeLocationFetchedProperties {
 - (void)setPrimitiveTypeInt16Value:(int16_t)value_;
 
 
-
-
-
-- (ArtCodeProject*)primitiveProject;
-- (void)setPrimitiveProject:(ArtCodeProject*)value;
 
 
 

@@ -7,8 +7,6 @@
 //
 
 #import "ArtCodeLocation.h"
-#import "ArtCodeProjectSet.h"
-#import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"

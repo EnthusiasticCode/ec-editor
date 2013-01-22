@@ -13,13 +13,13 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
-#import "ArtCodeProject.h"
 
 #import "HighlightTableViewCell.h"
 
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
 
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 
 @implementation BookmarkBrowserController {
@@ -85,9 +85,10 @@
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-	RACTupleUnpack(ArtCodeProjectBookmark *bookmark, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
+	RACTupleUnpack(RACTuple *bookmarkTuple, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
+	RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber) = bookmarkTuple;
 	
-  cell.textLabel.text = bookmark.name;
+  cell.textLabel.text = [NSString stringWithFormat:@"%@ - %@", file.name, lineNumber];
   cell.textLabelHighlightedCharacters = hitMask;
   cell.imageView.image = [UIImage imageNamed:@"bookmarkTable_Icon"];
   
@@ -99,8 +100,9 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    ArtCodeProjectBookmark *bookmark = [self.filteredItems[indexPath.row] first];
-    [self.artCodeTab pushFileURL:bookmark.fileURL withProject:self.artCodeTab.currentLocation.project dataDictionary:@{ @"lineNumber" : @(bookmark.lineNumber)}];
+    RACTuple *bookmarkTuple = [self.filteredItems[indexPath.row] first];
+		RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber) = bookmarkTuple;
+    [self.artCodeTab pushFileURL:file.url dataDictionary:@{ @"lineNumber" : lineNumber }];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

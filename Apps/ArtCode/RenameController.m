@@ -8,7 +8,7 @@
 
 #import "RenameController.h"
 #import "UIImage+AppStyle.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "RCIOItemCell.h"
 
 

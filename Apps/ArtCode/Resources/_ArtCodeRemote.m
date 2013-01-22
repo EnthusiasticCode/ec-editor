@@ -13,7 +13,7 @@ const struct ArtCodeRemoteAttributes ArtCodeRemoteAttributes = {
 };
 
 const struct ArtCodeRemoteRelationships ArtCodeRemoteRelationships = {
-	.project = @"project",
+	.remoteSet = @"remoteSet",
 	.visitedLocations = @"visitedLocations",
 };
 
@@ -43,12 +43,13 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 	return (ArtCodeRemoteID*)[super objectID];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
++ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
 	if ([key isEqualToString:@"portValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"port"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
 	}
 
 	return keyPaths;
@@ -118,7 +119,7 @@ const struct ArtCodeRemoteFetchedProperties ArtCodeRemoteFetchedProperties = {
 
 
 
-@dynamic project;
+@dynamic remoteSet;
 
 	
 

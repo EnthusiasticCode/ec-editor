@@ -72,23 +72,23 @@
 }
 
 - (BOOL)isSubdirectoryDescendantOfDirectoryAtURL:(NSURL *)directoryURL {
-  if (![[self absoluteString] hasPrefix:[directoryURL absoluteString]]) {
+  if (![self.absoluteString hasPrefix:directoryURL.absoluteString]) {
     return NO;
   }
-  return [[self pathComponents] count] != [[directoryURL pathComponents] count] + 1;
+  return self.pathComponents.count != directoryURL.pathComponents.count + 1;
 }
 
 - (BOOL)isHidden {
-  return [[self lastPathComponent] characterAtIndex:0] == L'.';
+  return [self.lastPathComponent characterAtIndex:0] == L'.';
 }
 
 - (BOOL)isHiddenDescendant {
-  return !([[[self absoluteString] stringByDeletingLastPathComponent] rangeOfString:@"/."].location == NSNotFound);
+  return !([self.absoluteString.stringByDeletingLastPathComponent rangeOfString:@"/."].location == NSNotFound);
 }
 
 - (BOOL)isPackage {
   for (NSString *packageExtension in [self.class _packageExtensions]) {
-    if ([[self pathExtension] isEqualToString:packageExtension]) {
+    if ([self.pathExtension isEqualToString:packageExtension]) {
       return YES;
     }
   }
@@ -96,7 +96,7 @@
 }
 
 - (BOOL)isPackageDescendant {
-  NSString *absoluteString = [self absoluteString];
+  NSString *absoluteString = self.absoluteString;
   if ([absoluteString characterAtIndex:[absoluteString length] - 1] == L'/') {
     absoluteString = [absoluteString substringToIndex:[absoluteString length] - 1];
   }
@@ -112,7 +112,7 @@
 - (BOOL)isDirectory {
   NSNumber *isDirectory;
   if ([self getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL]) {
-    return [isDirectory boolValue];
+    return isDirectory.boolValue;
   }
   // Backup by looking with the defaul file manager
   BOOL isDirectoryBool = NO;
@@ -124,8 +124,13 @@
   return [self.URLByDeletingLastPathComponent URLByAppendingPathComponent:[self.lastPathComponent stringByAddingDuplicateNumber:number]];
 }
 
+- (NSString *)pathRelativeToURL:(NSURL *)url {
+	if (![self.path hasPrefix:url.path]) return @"";
+	return [self.path substringFromIndex:url.path.length + 1];
+}
+
 - (NSString *)prettyPath {
-  return [[self path] prettyPath];
+  return self.path.prettyPath;
 }
 
 @end

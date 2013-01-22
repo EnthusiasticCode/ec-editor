@@ -7,7 +7,7 @@
 //
 
 #import "LocalFileListController.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "RCIOItemCell.h"
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"

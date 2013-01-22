@@ -1,34 +1,34 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to ArtCodeTabSet.h instead.
+// Make changes to ArtCodeRemoteSet.h instead.
 
 #import <CoreData/CoreData.h>
 
 
-extern const struct ArtCodeTabSetAttributes {
+extern const struct ArtCodeRemoteSetAttributes {
 	__unsafe_unretained NSString *activeTabIndex;
 	__unsafe_unretained NSString *name;
-} ArtCodeTabSetAttributes;
+} ArtCodeRemoteSetAttributes;
 
-extern const struct ArtCodeTabSetRelationships {
-	__unsafe_unretained NSString *tabs;
-} ArtCodeTabSetRelationships;
+extern const struct ArtCodeRemoteSetRelationships {
+	__unsafe_unretained NSString *remotes;
+} ArtCodeRemoteSetRelationships;
 
-extern const struct ArtCodeTabSetFetchedProperties {
-} ArtCodeTabSetFetchedProperties;
+extern const struct ArtCodeRemoteSetFetchedProperties {
+} ArtCodeRemoteSetFetchedProperties;
 
-@class ArtCodeTab;
-
-
+@class ArtCodeRemote;
 
 
-@interface ArtCodeTabSetID : NSManagedObjectID {}
+
+
+@interface ArtCodeRemoteSetID : NSManagedObjectID {}
 @end
 
-@interface _ArtCodeTabSet : NSManagedObject {}
+@interface _ArtCodeRemoteSet : NSManagedObject {}
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
-- (ArtCodeTabSetID*)objectID;
+- (ArtCodeRemoteSetID*)objectID;
 
 
 
@@ -58,26 +58,26 @@ extern const struct ArtCodeTabSetFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSOrderedSet *tabs;
+@property (nonatomic, strong) NSOrderedSet *remotes;
 
-- (NSMutableOrderedSet*)tabsSet;
-
-
+- (NSMutableOrderedSet*)remotesSet;
 
 
 
-@end
 
-@interface _ArtCodeTabSet (CoreDataGeneratedAccessors)
-
-- (void)addTabs:(NSOrderedSet*)value_;
-- (void)removeTabs:(NSOrderedSet*)value_;
-- (void)addTabsObject:(ArtCodeTab*)value_;
-- (void)removeTabsObject:(ArtCodeTab*)value_;
 
 @end
 
-@interface _ArtCodeTabSet (CoreDataGeneratedPrimitiveAccessors)
+@interface _ArtCodeRemoteSet (CoreDataGeneratedAccessors)
+
+- (void)addRemotes:(NSOrderedSet*)value_;
+- (void)removeRemotes:(NSOrderedSet*)value_;
+- (void)addRemotesObject:(ArtCodeRemote*)value_;
+- (void)removeRemotesObject:(ArtCodeRemote*)value_;
+
+@end
+
+@interface _ArtCodeRemoteSet (CoreDataGeneratedPrimitiveAccessors)
 
 
 - (NSNumber*)primitiveActiveTabIndex;
@@ -96,8 +96,8 @@ extern const struct ArtCodeTabSetFetchedProperties {
 
 
 
-- (NSMutableOrderedSet*)primitiveTabs;
-- (void)setPrimitiveTabs:(NSMutableOrderedSet*)value;
+- (NSMutableOrderedSet*)primitiveRemotes;
+- (void)setPrimitiveRemotes:(NSMutableOrderedSet*)value;
 
 
 @end

@@ -33,7 +33,9 @@ extern const struct ArtCodeTabFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSNumber* currentPosition;
+
 
 
 @property int16_t currentPositionValue;
@@ -46,14 +48,14 @@ extern const struct ArtCodeTabFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSOrderedSet* history;
+@property (nonatomic, strong) NSOrderedSet *history;
 
 - (NSMutableOrderedSet*)historySet;
 
 
 
 
-@property (nonatomic, strong) ArtCodeTabSet* tabSet;
+@property (nonatomic, strong) ArtCodeTabSet *tabSet;
 
 //- (BOOL)validateTabSet:(id*)value_ error:(NSError**)error_;
 

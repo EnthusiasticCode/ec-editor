@@ -14,14 +14,14 @@ extern const struct ArtCodeRemoteAttributes {
 } ArtCodeRemoteAttributes;
 
 extern const struct ArtCodeRemoteRelationships {
-	__unsafe_unretained NSString *project;
+	__unsafe_unretained NSString *remoteSet;
 	__unsafe_unretained NSString *visitedLocations;
 } ArtCodeRemoteRelationships;
 
 extern const struct ArtCodeRemoteFetchedProperties {
 } ArtCodeRemoteFetchedProperties;
 
-@class ArtCodeProject;
+@class ArtCodeRemoteSet;
 @class ArtCodeLocation;
 
 
@@ -43,7 +43,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSString* host;
+
 
 
 //- (BOOL)validateHost:(id*)value_ error:(NSError**)error_;
@@ -51,7 +53,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSString* name;
+
 
 
 //- (BOOL)validateName:(id*)value_ error:(NSError**)error_;
@@ -59,7 +63,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSString* path;
+
 
 
 //- (BOOL)validatePath:(id*)value_ error:(NSError**)error_;
@@ -67,7 +73,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSNumber* port;
+
 
 
 @property int16_t portValue;
@@ -79,7 +87,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSString* scheme;
+
 
 
 //- (BOOL)validateScheme:(id*)value_ error:(NSError**)error_;
@@ -87,7 +97,9 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
+
 @property (nonatomic, strong) NSString* user;
+
 
 
 //- (BOOL)validateUser:(id*)value_ error:(NSError**)error_;
@@ -96,14 +108,14 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
-@property (nonatomic, strong) ArtCodeProject* project;
+@property (nonatomic, strong) ArtCodeRemoteSet *remoteSet;
 
-//- (BOOL)validateProject:(id*)value_ error:(NSError**)error_;
-
-
+//- (BOOL)validateRemoteSet:(id*)value_ error:(NSError**)error_;
 
 
-@property (nonatomic, strong) NSSet* visitedLocations;
+
+
+@property (nonatomic, strong) NSSet *visitedLocations;
 
 - (NSMutableSet*)visitedLocationsSet;
 
@@ -165,8 +177,8 @@ extern const struct ArtCodeRemoteFetchedProperties {
 
 
 
-- (ArtCodeProject*)primitiveProject;
-- (void)setPrimitiveProject:(ArtCodeProject*)value;
+- (ArtCodeRemoteSet*)primitiveRemoteSet;
+- (void)setPrimitiveRemoteSet:(ArtCodeRemoteSet*)value;
 
 
 

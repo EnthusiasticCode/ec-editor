@@ -111,7 +111,7 @@
   // Creating main tab controllers
   _tabPageController = [[ArtCodeTabPageViewController alloc] init];
   _tabPageController.definesPresentationContext = YES;
-  _tabPageController.artCodeTabSet = [ArtCodeTabSet defaultSet];
+  _tabPageController.artCodeTabSet = ArtCodeTabSet.defaultSet;
   
   ////////////////////////////////////////////////////////////////////////////
   // Setup window
@@ -133,10 +133,11 @@
   // Handles open with... by creating a new project from the opened file and opening a new tab with that project.
   // TODO: account for opening a non-archive type
   NewProjectImportController *projectImportController = [[NewProjectImportController alloc] init];
-  [projectImportController createProjectFromZipAtURL:url completionHandler:^(ArtCodeProject *project) {
-    if (project) {
+  [projectImportController createProjectFromZipAtURL:url completionHandler:^(RCIODirectory *projectDirectory) {
+    if (projectDirectory) {
       [NSFileManager.defaultManager removeItemAtURL:url error:NULL];
-      ArtCodeTab *tab = [[ArtCodeTabSet defaultSet] addNewTabWithLocationType:ArtCodeLocationTypeProject project:project remote:nil data:nil];
+#warning TODO: should set the location to point to the newly added project
+      ArtCodeTab *tab = [ArtCodeTabSet.defaultSet addNewTabWithLocationType:ArtCodeLocationTypeDirectory remote:nil data:nil];
       [_tabPageController.tabBar setSelectedTabIndex:[tab.tabSet.tabs indexOfObject:tab]];
     }
   }];

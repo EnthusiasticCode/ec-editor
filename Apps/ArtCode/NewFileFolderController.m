@@ -8,11 +8,10 @@
 
 #import "NewFileFolderController.h"
 #import "UIViewController+Utilities.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
 #import "BezelAlert.h"
 
 
@@ -76,7 +75,7 @@
 - (IBAction)createAction:(id)sender {
   [[RCIODirectory itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:self.folderNameTextField.text] mode:RCIOItemModeExclusiveAccess] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"New folder created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];
 }
 @end

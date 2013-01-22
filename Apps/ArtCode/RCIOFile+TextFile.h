@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <ReactiveCocoaIO/RCIOFile.h>
-
-@class RACPropertySubject;
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 @interface RCIOFile (TextFile)
 
@@ -17,5 +15,11 @@
 - (RACPropertySubject *)explicitEncodingSubject;
 
 - (RACPropertySubject *)bookmarksSubject;
+
+@end
+
+@interface RCIODirectory (TextFile)
+
+- (RACSignal *)bookmarks;
 
 @end

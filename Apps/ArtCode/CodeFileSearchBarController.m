@@ -222,7 +222,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 		
 		[self.targetCodeFileController.codeView.undoManager endUndoGrouping];
 		
-		[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", matches.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+		[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormat:@"Replaced %u occurrences", matches.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
 	}];
 	
   return self;
@@ -268,14 +268,14 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	if ([sender tag] > 0) {
 		if (self.searchFilterHighlightedMatchIndex + 1 >= self.searchFilterMatches.count) {
 			self.searchFilterHighlightedMatchIndex = 0;
-			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleUpIcon"] displayImmediatly:YES];
+			[BezelAlert.defaultBezelAlert addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleUpIcon"] displayImmediatly:YES];
 		} else {
 			self.searchFilterHighlightedMatchIndex++;
 		}
 	} else {
 		if (self.searchFilterHighlightedMatchIndex == 0) {
 			self.searchFilterHighlightedMatchIndex = self.searchFilterMatches.count - 1;
-			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleDownIcon"] displayImmediatly:YES];
+			[BezelAlert.defaultBezelAlert addAlertMessageWithText:nil image:[UIImage imageNamed:@"bezelAlert_cycleDownIcon"] displayImmediatly:YES];
 		} else {
 			self.searchFilterHighlightedMatchIndex--;
 		}
@@ -297,7 +297,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (IBAction)replaceSingleAction:(id)sender {
   if (self.searchFilterMatches.count == 0) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
     return;
   }
 	
@@ -306,7 +306,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 
 - (IBAction)replaceAllAction:(id)sender {
   if (self.searchFilterMatches.count == 0) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Nothing to replace" imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
     return;
   }
 	

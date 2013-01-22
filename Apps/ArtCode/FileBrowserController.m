@@ -33,15 +33,15 @@
 #import "TopBarToolbar.h"
 #import "TopBarTitleControl.h"
 
-#import "ArtCodeProject.h"
 
 #import "UIViewController+Utilities.h"
-#import <ReactiveCocoaIO/RCIOItem.h>
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 #import "CodeFileController.h"
 
 #import <QuickLook/QuickLook.h>
+
+#import "NSURL+ArtCode.h"
 
 @interface FileBrowserController () <QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 
@@ -235,10 +235,8 @@
     [_selectedItems addObject:item];
   } else {
 		NSURL *fileURL = item.url;
-		if ([item isKindOfClass:RCIODirectory.class]) {
-			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
-		} else if ([CodeFileController canDisplayFileInCodeView:fileURL]) {
-			[self.artCodeTab pushFileURL:fileURL withProject:self.artCodeTab.currentLocation.project];
+		if ([item isKindOfClass:RCIODirectory.class] || [CodeFileController canDisplayFileInCodeView:fileURL]) {
+			[self.artCodeTab pushFileURL:fileURL];
 		} else {
 			FilePreviewItem *item = [FilePreviewItem filePreviewItemWithFileURL:fileURL];
 			if ([QLPreviewController canPreviewItem:item]) {
@@ -283,7 +281,7 @@
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
         self.loading = NO;
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File deleted") plural:L(@"%u files deleted") count:selectedItemsCount] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -291,7 +289,7 @@
     if (buttonIndex == 0) { // Copy
       FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
       directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Copy") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserCopyAction:)];
-      directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
+      directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
 			directoryBrowser.excludeDirectory = self.currentDirectory;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
@@ -300,7 +298,7 @@
         return [x duplicate];
       }]] subscribeCompleted:^{
         ASSERT_MAIN_QUEUE();
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File duplicated") plural:L(@"%u files duplicated") count:selectedItemsCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
       }];
       [self setEditing:NO animated:YES];
     }
@@ -308,19 +306,19 @@
     switch (buttonIndex) {
       case 0: { // Rename
         if (_selectedItems.count != 1) {
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+          [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Select a single file to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
         RenameController *renameController = [[RenameController alloc] initWithRenameItem:_selectedItems[0] completionHandler:^(NSUInteger renamedCount, NSError *err) {
           [self modalNavigationControllerDismissAction:nil];
           if (err || renamedCount == 0) {
-            [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+            [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Can not rename") imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
           } else {
             // Show alert to inform of successful rename
             if (renamedCount == 1) {
-              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Item renamed") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+              [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Item renamed") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             } else {
-              [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:L(@"%u items renamed"), renamedCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+              [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormat:L(@"%u items renamed"), renamedCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
             }
           }
         }];
@@ -330,7 +328,7 @@
       case 1: { // Move
         FolderBrowserController *directoryBrowser = [[FolderBrowserController alloc] init];
         directoryBrowser.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:L(@"Move") style:UIBarButtonItemStylePlain target:self action:@selector(_directoryBrowserMoveAction:)];
-        directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.project.fileURL];
+        directoryBrowser.currentFolderSignal = [RCIODirectory itemWithURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
 				directoryBrowser.excludeDirectory = self.currentDirectory;
         [self modalNavigationControllerPresentViewController:directoryBrowser];
         break;
@@ -349,10 +347,10 @@
           self.loading = NO;
 				}] subscribeError:^(NSError *error) {
 					ASSERT_MAIN_QUEUE();
-					[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Error exporting file") plural:L(@"Error exporting files") count:selectedItems.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+					[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Error exporting file") plural:L(@"Error exporting files") count:selectedItems.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
 				} completed:^{
           ASSERT_MAIN_QUEUE();
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItems.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+          [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"File exported") plural:L(@"%u files exported") count:selectedItems.count] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
         }];
         [self setEditing:NO animated:YES];
         break;
@@ -369,7 +367,7 @@
 				[ArchiveUtilities compressFileAtURLs:urls completionHandler:^(NSURL *temporaryDirectoryURL) {
 					ASSERT_MAIN_QUEUE();
 					if (temporaryDirectoryURL) {
-						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.project.name]] URLByAppendingPathExtension:@"zip"];
+						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.url.projectRootDirectory.lastPathComponent]] URLByAppendingPathExtension:@"zip"];
 						[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
 						// Create mail composer
 						MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
@@ -381,7 +379,7 @@
 						[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
 						
 						// Add precompiled mail fields
-						[mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.project.name]];
+						[mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.url.projectRootDirectory.lastPathComponent]];
 						[mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
 						
 						// Present mail composer
@@ -403,7 +401,7 @@
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
   if (result == MFMailComposeResultSent) {
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Mail sent") imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   }
   [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -481,11 +479,11 @@
     [self modalNavigationControllerDismissAction:sender];
   }] subscribeError:^(NSError *error) {
     ASSERT_MAIN_QUEUE();
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error copying files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Error copying files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
 		if (copiedCount > 0) {
-			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+			[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Files copied") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
 		}
   }];
 }
@@ -514,11 +512,11 @@
     [self modalNavigationControllerDismissAction:sender];
   }] subscribeError:^(NSError *error) {
     ASSERT_MAIN_QUEUE();
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Error moving files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Error moving files") imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
   } completed:^{
     ASSERT_MAIN_QUEUE();
 		if (movedCount > 0) {
-			[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+			[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Files moved") imageNamed:BezelAlertOkIcon displayImmediatly:NO];
 		}
   }];
 }

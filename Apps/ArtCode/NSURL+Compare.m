@@ -10,9 +10,8 @@
 
 @implementation NSURL (Compare)
 
-- (NSComparisonResult)compare:(NSURL *)other
-{
-  return [[self path] compare:[other path]];
+- (NSComparisonResult)compare:(NSURL *)other {
+  return [self.path localizedStandardCompare:other.path];
 }
 
 @end

@@ -60,15 +60,14 @@
 }
 
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab {
-  return [self addNewTabWithLocationType:tab.currentLocation.type project:tab.currentLocation.project remote:tab.currentLocation.remote data:tab.currentLocation.data];
+  return [self addNewTabWithLocationType:tab.currentLocation.type remote:tab.currentLocation.remote data:tab.currentLocation.data];
 }
 
-- (ArtCodeTab *)addNewTabWithLocationType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote data:(NSData *)data {
+- (ArtCodeTab *)addNewTabWithLocationType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote data:(NSData *)data {
   ArtCodeTab *newTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
   newTab.tabSet = self;
   ArtCodeLocation *newLocation = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
   newLocation.type = type;
-  newLocation.project = project;
   newLocation.remote = remote;
   newLocation.data = data;
   [newTab replaceCurrentLocationWithLocation:newLocation];

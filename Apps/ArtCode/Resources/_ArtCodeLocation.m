@@ -9,7 +9,6 @@ const struct ArtCodeLocationAttributes ArtCodeLocationAttributes = {
 };
 
 const struct ArtCodeLocationRelationships ArtCodeLocationRelationships = {
-	.project = @"project",
 	.remote = @"remote",
 	.tab = @"tab",
 };
@@ -40,12 +39,13 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 	return (ArtCodeLocationID*)[super objectID];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
++ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
 	if ([key isEqualToString:@"typeInt16Value"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"typeInt16"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
 	}
 
 	return keyPaths;
@@ -86,10 +86,6 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 
 
 
-
-@dynamic project;
-
-	
 
 @dynamic remote;
 

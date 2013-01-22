@@ -1,33 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1810" systemVersion="12C54" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1811" systemVersion="12C60" minimumToolsVersion="Xcode 4.1" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Location" representedClassName="ArtCodeLocation" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
         <attribute name="typeInt16" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
-        <relationship name="project" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="visitedLocations" inverseEntity="Project" syncable="YES"/>
         <relationship name="remote" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Remote" inverseName="visitedLocations" inverseEntity="Remote" syncable="YES"/>
         <relationship name="tab" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Tab" inverseName="history" inverseEntity="Tab" syncable="YES"/>
     </entity>
-    <entity name="Project" representedClassName="ArtCodeProject" syncable="YES">
-        <attribute name="labelColorString" attributeType="String" minValueString="7" maxValueString="7" defaultValueString="#000000" syncable="YES"/>
-        <attribute name="name" attributeType="String" minValueString="1" indexed="YES" syncable="YES"/>
-        <attribute name="newlyCreated" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
-        <relationship name="projectSet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ProjectSet" inverseName="projects" inverseEntity="ProjectSet" syncable="YES"/>
-        <relationship name="remotes" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Remote" inverseName="project" inverseEntity="Remote" syncable="YES"/>
-        <relationship name="visitedLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="project" inverseEntity="Location" syncable="YES"/>
-    </entity>
-    <entity name="ProjectSet" representedClassName="ArtCodeProjectSet" syncable="YES">
-        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
-        <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Project" inverseName="projectSet" inverseEntity="Project" syncable="YES"/>
-    </entity>
     <entity name="Remote" representedClassName="ArtCodeRemote" syncable="YES">
-        <attribute name="host" attributeType="String" syncable="YES"/>
-        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="host" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="path" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="port" optional="YES" attributeType="Integer 16" syncable="YES"/>
-        <attribute name="scheme" attributeType="String" defaultValueString="ftp" syncable="YES"/>
+        <attribute name="scheme" optional="YES" attributeType="String" defaultValueString="ftp" syncable="YES"/>
         <attribute name="user" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="project" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="remotes" inverseEntity="Project" syncable="YES"/>
+        <relationship name="remoteSet" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="RemoteSet" inverseName="remotes" inverseEntity="RemoteSet" syncable="YES"/>
         <relationship name="visitedLocations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Location" inverseName="remote" inverseEntity="Location" syncable="YES"/>
+    </entity>
+    <entity name="RemoteSet" representedClassName="ArtCodeRemoteSet" syncable="YES">
+        <attribute name="activeTabIndex" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
+        <relationship name="remotes" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Remote" inverseName="remoteSet" inverseEntity="Remote" syncable="YES"/>
     </entity>
     <entity name="Tab" representedClassName="ArtCodeTab" syncable="YES">
         <attribute name="currentPosition" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
@@ -40,11 +32,10 @@
         <relationship name="tabs" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Tab" inverseName="tabSet" inverseEntity="Tab" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Location" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Project" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ProjectSet" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Remote" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Tab" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="TabSet" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Location" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="Remote" positionX="0" positionY="0" width="128" height="165"/>
+        <element name="Tab" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="TabSet" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="RemoteSet" positionX="160" positionY="192" width="128" height="90"/>
     </elements>
 </model>

@@ -1,41 +1,41 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to ArtCodeTabSet.m instead.
+// Make changes to ArtCodeRemoteSet.m instead.
 
-#import "_ArtCodeTabSet.h"
+#import "_ArtCodeRemoteSet.h"
 
-const struct ArtCodeTabSetAttributes ArtCodeTabSetAttributes = {
+const struct ArtCodeRemoteSetAttributes ArtCodeRemoteSetAttributes = {
 	.activeTabIndex = @"activeTabIndex",
 	.name = @"name",
 };
 
-const struct ArtCodeTabSetRelationships ArtCodeTabSetRelationships = {
-	.tabs = @"tabs",
+const struct ArtCodeRemoteSetRelationships ArtCodeRemoteSetRelationships = {
+	.remotes = @"remotes",
 };
 
-const struct ArtCodeTabSetFetchedProperties ArtCodeTabSetFetchedProperties = {
+const struct ArtCodeRemoteSetFetchedProperties ArtCodeRemoteSetFetchedProperties = {
 };
 
-@implementation ArtCodeTabSetID
+@implementation ArtCodeRemoteSetID
 @end
 
-@implementation _ArtCodeTabSet
+@implementation _ArtCodeRemoteSet
 
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription insertNewObjectForEntityForName:@"TabSet" inManagedObjectContext:moc_];
+	return [NSEntityDescription insertNewObjectForEntityForName:@"RemoteSet" inManagedObjectContext:moc_];
 }
 
 + (NSString*)entityName {
-	return @"TabSet";
+	return @"RemoteSet";
 }
 
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription entityForName:@"TabSet" inManagedObjectContext:moc_];
+	return [NSEntityDescription entityForName:@"RemoteSet" inManagedObjectContext:moc_];
 }
 
-- (ArtCodeTabSetID*)objectID {
-	return (ArtCodeTabSetID*)[super objectID];
+- (ArtCodeRemoteSetID*)objectID {
+	return (ArtCodeRemoteSetID*)[super objectID];
 }
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
@@ -86,15 +86,15 @@ const struct ArtCodeTabSetFetchedProperties ArtCodeTabSetFetchedProperties = {
 
 
 
-@dynamic tabs;
+@dynamic remotes;
 
 	
-- (NSMutableOrderedSet*)tabsSet {
-	[self willAccessValueForKey:@"tabs"];
+- (NSMutableOrderedSet*)remotesSet {
+	[self willAccessValueForKey:@"remotes"];
   
-	NSMutableOrderedSet *result = (NSMutableOrderedSet*)[self mutableOrderedSetValueForKey:@"tabs"];
+	NSMutableOrderedSet *result = (NSMutableOrderedSet*)[self mutableOrderedSetValueForKey:@"remotes"];
   
-	[self didAccessValueForKey:@"tabs"];
+	[self didAccessValueForKey:@"remotes"];
 	return result;
 }
 	

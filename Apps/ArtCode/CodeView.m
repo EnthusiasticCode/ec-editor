@@ -1595,9 +1595,9 @@ static void init(CodeView *self)
       // Copy selected text if any
       if (self.selectionRange.length) {
         [self copy:nil];
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Text copyied") image:nil displayImmediatly:YES];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Text copyied") image:nil displayImmediatly:YES];
       } else {
-        [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"No selection to copy") image:nil displayImmediatly:YES];
+        [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"No selection to copy") image:nil displayImmediatly:YES];
       }
     }
     return;
@@ -2309,7 +2309,7 @@ static void init(CodeView *self)
     [self endUndoGrouping];
   
   if ([[self undoActionName] length] > 0)
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Undo %@", [self undoActionName]] image:nil displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormat:@"Undo %@", [self undoActionName]] image:nil displayImmediatly:YES];
   
   [super undo];
 }
@@ -2317,7 +2317,7 @@ static void init(CodeView *self)
 - (void)redo
 {
   if ([[self redoActionName] length] > 0)
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormat:@"Redo %@", [self redoActionName]] image:nil displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormat:@"Redo %@", [self redoActionName]] image:nil displayImmediatly:YES];
   
   [super redo];
 }

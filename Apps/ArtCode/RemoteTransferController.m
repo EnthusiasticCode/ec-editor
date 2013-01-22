@@ -9,7 +9,6 @@
 #import "RemoteTransferController.h"
 #import <Connection/CKConnectionRegistry.h>
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
 #import "UIImage+AppStyle.h"
 #import "NSURL+Utilities.h"
 

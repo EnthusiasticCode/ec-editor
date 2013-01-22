@@ -18,13 +18,11 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
-#import "ArtCodeProjectSet.h"
 
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
 #import "ArchiveUtilities.h"
@@ -283,9 +281,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				[ArtCodeProjectSet.defaultSet removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
 					// Show bezel alert
 					if (error) {
-						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+						[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
 					} else {
-						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+						[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
 					}
 				}];
 			}
@@ -325,7 +323,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 			case 0: // Rename
 			{
 				if (self.collectionView.indexPathsForSelectedItems.count != 1) {
-          [[BezelAlert defaultBezelAlert] addAlertMessageWithText:L(@"Select a single project to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
+          [BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Select a single project to rename") imageNamed:BezelAlertForbiddenIcon displayImmediatly:YES];
           break;
         }
 				//
@@ -375,7 +373,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 					// Block to advance the progress count and terminate loading phase when done
 					if (++progress == cellsToExportCount) {
 						self.loading = NO;
-						[[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+						[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Project exported") plural:L(@"%u projects exported") count:cellsToExportCount] imageNamed:BezelAlertOkIcon displayImmediatly:YES];
 					}
 				};
 				for (NSIndexPath *itemPath in cellsToExport) {
@@ -461,7 +459,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
   if (result == MFMailComposeResultSent)
-    [[BezelAlert defaultBezelAlert] addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
+    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Mail sent" imageNamed:BezelAlertOkIcon displayImmediatly:YES];
   [self dismissViewControllerAnimated:YES completion:nil];
 }
 

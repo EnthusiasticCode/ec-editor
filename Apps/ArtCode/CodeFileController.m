@@ -33,7 +33,6 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
-#import "ArtCodeProject.h"
 
 #import "NSIndexSet+PersistentDataStructure.h"
 #import "RCIOFile+TextFile.h"

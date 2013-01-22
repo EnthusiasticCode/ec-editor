@@ -40,6 +40,8 @@
 /// /url/to/file.ext become /url/to/file (number).ext
 - (NSURL *)URLByAddingDuplicateNumber:(NSUInteger)number;
 
+- (NSString *)pathRelativeToURL:(NSURL *)url;
+
 /// Substitute / with ▸
 - (NSString *)prettyPath;
 

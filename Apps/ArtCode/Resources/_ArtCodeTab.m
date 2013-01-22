@@ -38,12 +38,13 @@ const struct ArtCodeTabFetchedProperties ArtCodeTabFetchedProperties = {
 	return (ArtCodeTabID*)[super objectID];
 }
 
-+ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
++ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
 	if ([key isEqualToString:@"currentPositionValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"currentPosition"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
 	}
 
 	return keyPaths;

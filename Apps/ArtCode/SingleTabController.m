@@ -16,7 +16,6 @@
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
-#import "ArtCodeProject.h"
 
 #import "ProjectBrowserController.h"
 #import "FileBrowserController.h"
@@ -295,11 +294,6 @@
     [this _setupDefaultToolbarItemsAnimated:NO];
   }];
   
-  // Update tool bar title when project changes
-	[[RACSignal combineLatest:@[RACAble(self.artCodeTab.currentLocation.project.labelColor), RACAble(self.artCodeTab.currentLocation.project.name), RACAble(self.contentViewController.title)]] subscribeNext:^(id x) {
-    [this updateDefaultToolbarTitle];
-  }];
-  
   return self;
 }
 
@@ -357,11 +351,6 @@
       // Create title fragments from a location
       ArtCodeLocation *location = self.artCodeTab.currentLocation;
       if (location) switch (location.type) {
-        // For projects show the project name and label
-        case ArtCodeLocationTypeProject:
-          fragments = @[ [UIImage styleProjectLabelImageWithSize:CGSizeMake(12, 22) color:self.artCodeTab.currentLocation.project.labelColor], self.artCodeTab.currentLocation.project.name ];
-          break;
-          
         // Files show the location in the project
         case ArtCodeLocationTypeTextFile:
         case ArtCodeLocationTypeDirectory:
@@ -460,7 +449,6 @@
       result = [[CodeFileController alloc] init];
       break;
     }
-    case ArtCodeLocationTypeProject:
     case ArtCodeLocationTypeDirectory:
     {
       controllerClass = [FileBrowserController class];

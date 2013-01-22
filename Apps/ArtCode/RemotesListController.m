@@ -10,8 +10,8 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
 #import "ArtCodeRemote.h"
+#import "ArtCodeRemoteSet.h"
 #import "BezelAlert.h"
 #import "HighlightTableViewCell.h"
 #import "ImagePopoverBackgroundView.h"
@@ -36,7 +36,7 @@
   // RAC
 	@weakify(self);
 	
-  [[[[RACAble(self.artCodeTab.currentLocation.project.remotes) map:^(NSOrderedSet *remoteSet) {
+  [[[[RACAble(ArtCodeRemoteSet.defaultSet, remotes) map:^(NSOrderedSet *remoteSet) {
 		return remoteSet.array;
 	}] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(ArtCodeRemote *remote) {
 		return remote.name;
@@ -113,13 +113,13 @@
       NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
       for (NSIndexPath *indexPath in selectedRows) {
-        NSMutableOrderedSet *remotes = [self.artCodeTab.currentLocation.project mutableOrderedSetValueForKey:@"remotes"];
+        NSMutableOrderedSet *remotes = [ArtCodeRemoteSet.defaultSet mutableOrderedSetValueForKey:@"remotes"];
         ArtCodeRemote *remote = [self.filteredItems[indexPath.row] first];
         [remotes removeObject:remote];
         [remote.managedObjectContext deleteObject:remote];
       }
       self.loading = NO;
-      [[BezelAlert defaultBezelAlert] addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+      [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
     }
   }
 }

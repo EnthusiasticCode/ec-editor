@@ -9,7 +9,7 @@
 #import "FolderBrowserController.h"
 
 #import "ArtCodeTab.h"
-#import <ReactiveCocoaIO/RCIODirectory.h>
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "RCIOItemCell.h"
 #import "NSString+PluralFormat.h"
 #import "UIImage+AppStyle.h"

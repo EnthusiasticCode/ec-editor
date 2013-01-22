@@ -16,9 +16,9 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeProject.h"
 
 #import "NSNotificationCenter+RACSupport.h"
+#import "NSURL+ArtCode.h"
 
 @interface SearchableTableBrowserController ()
 
@@ -332,15 +332,15 @@
 {
   switch ([sender tag]) {
     case 1:
-      [self.artCodeTab pushBookmarksListForProject:self.artCodeTab.currentLocation.project];
+      [self.artCodeTab pushBookmarksList];
       break;
       
     case 2:
-      [self.artCodeTab pushRemotesListForProject:self.artCodeTab.currentLocation.project];
+      [self.artCodeTab pushRemotesList];
       break;
       
     default:
-      [self.artCodeTab pushProject:self.artCodeTab.currentLocation.project];
+      [self.artCodeTab pushFileURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
       break;
   }
 }
