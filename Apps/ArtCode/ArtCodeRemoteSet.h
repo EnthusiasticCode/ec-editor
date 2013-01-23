@@ -16,9 +16,4 @@
 
 - (ArtCodeRemote *)newRemote;
 
-#pragma mark RAC Outlets
-
-// Sends each object after it has been added. It never completes or errors.
-@property (nonatomic, readonly) RACSignal *objectsAdded;
-
 @end
