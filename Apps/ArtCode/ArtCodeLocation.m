@@ -10,6 +10,7 @@
 #import "ArtCodeRemote.h"
 #import "NSString+Utilities.h"
 #import "NSURL+Utilities.h"
+#import "NSURL+ArtCode.h"
 
 static NSString * const ArtCodeLocationDataBookmarkDataKey = @"BookmarkData";
 static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
@@ -19,7 +20,7 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 @interface ArtCodeTab (ArtCodeLocation_Internal)
 
 /// Pushes the location built with the given parameters
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary;
+- (void)pushLocationWithType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary;
 
 @end
 
@@ -43,9 +44,6 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 
 - (NSURL *)url {
   switch (self.type) {
-    case ArtCodeLocationTypeProject:
-      return self.project.fileURL;
-      
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
     {
@@ -78,11 +76,10 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 - (NSString *)path {
   NSString *path = self.url.path;
   switch (self.type) {
-		case ArtCodeLocationTypeProject:
     case ArtCodeLocationTypeDirectory:
     case ArtCodeLocationTypeTextFile:
-    {
-      path = [ArtCodeProjectSet.defaultSet relativePathForFileURL:self.url];
+		{
+      path = [self.url pathRelativeToURL:NSURL.projectsListDirectory];
     }
       
     default:
@@ -123,48 +120,37 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 
 @implementation ArtCodeTab (Location)
 
-- (void)pushDefaultProjectSet {
-  [self pushLocationWithType:ArtCodeLocationTypeProjectsList project:nil remote:nil dataDictionary:nil];
+- (void)pushProjectsList {
+  [self pushLocationWithType:ArtCodeLocationTypeProjectsList remote:nil dataDictionary:nil];
 }
 
-- (void)pushProject:(ArtCodeProject *)project {
-  ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil dataDictionary:nil];
+- (void)pushFileURL:(NSURL *)url {
+  [self pushFileURL:url dataDictionary:nil];
 }
 
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project {
-  [self pushFileURL:url withProject:project dataDictionary:nil];
-}
-
-- (void)pushFileURL:(NSURL *)url withProject:(ArtCodeProject *)project dataDictionary:(NSDictionary *)dict {
-	ASSERT(project && url);
+- (void)pushFileURL:(NSURL *)url dataDictionary:(NSDictionary *)dict {
+	ASSERT(url);
 	NSData *bookmarkData = [url bookmarkDataWithOptions:NSURLBookmarkCreationMinimalBookmark | NSURLBookmarkCreationPreferFileIDResolution includingResourceValuesForKeys:nil relativeToURL:nil error:NULL];
 	NSMutableDictionary *newDict = dict ? [dict mutableCopy] : [NSMutableDictionary dictionary];
 	newDict[ArtCodeLocationDataBookmarkDataKey] = bookmarkData;
   if (url.isDirectory) {
-		if ([project.fileURL isEqual:url]) {
-			[self pushLocationWithType:ArtCodeLocationTypeProject project:project remote:nil dataDictionary:newDict];
-		} else {
-			[self pushLocationWithType:ArtCodeLocationTypeDirectory project:project remote:nil dataDictionary:newDict];
-		}
+		[self pushLocationWithType:ArtCodeLocationTypeDirectory remote:nil dataDictionary:newDict];
   } else {
-    [self pushLocationWithType:ArtCodeLocationTypeTextFile project:project remote:nil dataDictionary:newDict];
+    [self pushLocationWithType:ArtCodeLocationTypeTextFile remote:nil dataDictionary:newDict];
   }
 }
 
-- (void)pushBookmarksListForProject:(ArtCodeProject *)project {
-  ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeBookmarksList project:project remote:nil dataDictionary:nil];
+- (void)pushBookmarksList {
+  [self pushLocationWithType:ArtCodeLocationTypeBookmarksList remote:nil dataDictionary:nil];
 }
 
-- (void)pushRemotesListForProject:(ArtCodeProject *)project {
-  ASSERT(project);
-  [self pushLocationWithType:ArtCodeLocationTypeRemotesList project:project remote:nil dataDictionary:nil];
+- (void)pushRemotesList {
+  [self pushLocationWithType:ArtCodeLocationTypeRemotesList remote:nil dataDictionary:nil];
 }
 
 - (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote {
   ASSERT(path && remote);
-  [self pushLocationWithType:ArtCodeLocationTypeRemoteDirectory project:remote.project remote:remote dataDictionary:@{ ArtCodeLocationDataRemotePathKey : [path copy] }];
+  [self pushLocationWithType:ArtCodeLocationTypeRemoteDirectory remote:remote dataDictionary:@{ ArtCodeLocationDataRemotePathKey : [path copy] }];
 }
 
 @end
@@ -173,13 +159,10 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 
 @implementation ArtCodeTab (ArtCodeLocation_Internal)
 
-- (void)pushLocationWithType:(ArtCodeLocationType)type project:(ArtCodeProject *)project remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary {
+- (void)pushLocationWithType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary {
   ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
   if (type) {
     location.type = type;
-  }
-  if (project) {
-    location.project = project;
   }
   if (remote) {
     location.remote = remote;
