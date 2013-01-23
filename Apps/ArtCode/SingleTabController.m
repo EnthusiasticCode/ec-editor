@@ -294,6 +294,11 @@
     [this _setupDefaultToolbarItemsAnimated:NO];
   }];
   
+  // Update tool bar title when project changes
+	[RACAble(self.artCodeTab.currentLocation) subscribeNext:^(id x) {
+    [this updateDefaultToolbarTitle];
+  }];
+  
   return self;
 }
 
