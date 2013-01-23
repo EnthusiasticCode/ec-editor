@@ -22,6 +22,7 @@
 #import "SingleTabController.h"
 
 #import "NSURL+Utilities.h"
+#import "NSURL+ArtCode.h"
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 #import "UIViewController+Utilities.h"
 #import "NSString+PluralFormat.h"
@@ -59,27 +60,6 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
   UIImage *_cellSelectedBackground;
 }
 
-@synthesize gridElements=_gridElements;
-@synthesize projectsSet = _projectsSet;
-
-- (NSArray *)gridElements {
-  if (!_gridElements) {
-    NSArray *elements = [ArtCodeProjectSet.defaultSet projects].array;
-    _gridElements = [elements sortedArrayUsingComparator:^NSComparisonResult(ArtCodeProject *obj1, ArtCodeProject *obj2) {
-      return [[obj1 name] compare:[obj2 name] options:NSCaseInsensitiveSearch];
-    }];
-    
-    // Side effect to update hint view
-    if (_gridElements.count > 0) {
-      [self.hintView removeFromSuperview];
-    } else {
-      [self.view addSubview:self.hintView];
-			self.hintView.frame = self.view.bounds;
-    }
-  }
-  return _gridElements;
-}
-
 + (BOOL)automaticallyNotifiesObserversOfEditing
 {
   return NO;
@@ -94,38 +74,22 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
   
   // RAC
   @weakify(self);
-	RAC(self.projectsSet) = RACAble(ArtCodeProjectSet.defaultSet, projects);
-  
-  // Update grid view
-  [ArtCodeProjectSet.defaultSet.objectsAdded subscribeNext:^(ArtCodeProject *proj) {
-    @strongify(self);
-    NSString *projectName = [proj name];
-    __block NSUInteger index = self.gridElements.count;
-    [self.gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
-      if ([projectName compare:[obj name] options:NSCaseInsensitiveSearch] == NSOrderedAscending) {
-        index = idx;
-        *stop = YES;
-      }
-    }];
-    self.gridElements = nil;
-		
-		[self.collectionView insertItemsAtIndexPaths:@[ [NSIndexPath indexPathForItem:index inSection:0] ]];
-  }];
-  
-  [ArtCodeProjectSet.defaultSet.objectsRemoved subscribeNext:^(ArtCodeProject *proj) {
-    @strongify(self);
-    NSString *projectName = [proj name];
-    __block NSUInteger index = 0;
-    [self.gridElements enumerateObjectsUsingBlock:^(ArtCodeProject *obj, NSUInteger idx, BOOL *stop) {
-      if ([obj isKindOfClass:[ArtCodeProject class]] && [projectName isEqualToString:[obj name]]) {
-        index = idx;
-        *stop = YES;
-      }
-    }];
-    self.gridElements = nil;
-		[self.collectionView deleteItemsAtIndexPaths:@[ [NSIndexPath indexPathForItem:index inSection:0] ]];
-  }];
-  
+	
+	[[[RCIODirectory itemWithURL:NSURL.projectsListDirectory] flattenMap:^(RCIODirectory *projectsListDirectory) {
+		return projectsListDirectory.childrenSignal;
+	}] toProperty:@keypath(self.gridElements) onObject:self];
+	
+	[RACAbleWithStart(self.gridElements) subscribeNext:^(NSArray *gridElements) {
+		@strongify(self);
+		[self.collectionView reloadData];
+    if (gridElements.count > 0) {
+      [self.hintView removeFromSuperview];
+    } else {
+      [self.view addSubview:self.hintView];
+			self.hintView.frame = self.view.bounds;
+    }
+	}];
+    
   return self;
 }
 
@@ -227,11 +191,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 	ProjectCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProjectCellIdentifier forIndexPath:indexPath];
 	
-	ArtCodeProject *project = self.gridElements[indexPath.item];
-	cell.title.text = cell.accessibilityLabel = project.name;
+	RCIODirectory *projectDirectory = self.gridElements[indexPath.item];
+	cell.title.text = cell.accessibilityLabel = projectDirectory.name;
 	cell.label.text = @"";
-	cell.icon.image = [UIImage styleProjectImageWithSize:cell.icon.bounds.size labelColor:project.labelColor];
-	cell.newlyCreatedBadge.hidden = !project.newlyCreatedValue;
 
 	cell.accessibilityHint = L(@"Open the project");
 	cell.isAccessibilityElement = YES;
@@ -251,11 +213,8 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
       [(UIButton *)item.customView setEnabled:enable];
     }];
   } else {
-    id element = self.gridElements[indexPath.item];
-    if ([element isKindOfClass:[ArtCodeProject class]]) {
-      [(ArtCodeProject *)element setNewlyCreatedValue:NO];
-      [self.artCodeTab pushProject:element];
-    }
+    RCIODirectory *projectDirectory = self.gridElements[indexPath.item];
+		[self.artCodeTab pushFileURL:projectDirectory.url];
   }
 }
 
@@ -272,51 +231,40 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
   
   if (actionSheet == _toolItemDeleteActionSheet) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) {
+			self.loading = YES;
 			NSArray *cellsToRemove = self.collectionView.indexPathsForSelectedItems;
       [self setEditing:NO animated:YES];
       
       // Remove projects
-      NSArray *oldElements = self.gridElements;
+			NSMutableArray *deleteSignals = [NSMutableArray arrayWithCapacity:cellsToRemove.count];
 			for (NSIndexPath *itemPath in cellsToRemove) {
-				[ArtCodeProjectSet.defaultSet removeProject:oldElements[itemPath.item] completionHandler:^(NSError *error) {
-					// Show bezel alert
-					if (error) {
-						[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
-					} else {
-						[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:[cellsToRemove count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
-					}
-				}];
+				[deleteSignals addObject:[self.gridElements[itemPath.item] delete]];
 			}
+			[[[RACSignal zip:deleteSignals] finally:^{
+				self.loading = NO;
+			}] subscribeError:^(NSError *error) {
+				[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Can not remove") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+			} completed:^{
+				[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Item removed") plural:L(@"%u items removed") count:cellsToRemove.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+			}];
     }
   } else if (actionSheet == _toolItemDuplicateActionSheet) {
 		if (buttonIndex == 0) {
 			self.loading = YES;
 			NSArray *cellsToDuplicate = self.collectionView.indexPathsForSelectedItems;
-			NSInteger cellsToDuplicateCount = [cellsToDuplicate count];
-			__block NSInteger progress = 0;
 			[self setEditing:NO animated:YES];
 			
+			NSMutableArray *duplicateSignals = [NSMutableArray arrayWithCapacity:cellsToDuplicate.count];
 			for (NSIndexPath *itemPath in cellsToDuplicate) {
-				ArtCodeProject *project = self.gridElements[itemPath.item];
-				[project duplicateWithCompletionHandler:^(ArtCodeProject *duplicate) {
-					if (duplicate) {
-						// The project has been successfuly created, copying files
-						[[[RACSignal zip:@[ [[RCIODirectory itemWithURL:project.fileURL] flattenMap:^(RCIODirectory *directory) {
-							return [directory.childrenSignal take:1];
-						}], [RCIODirectory itemWithURL:duplicate.fileURL] ] reduce:^(NSArray *x1, RCIODirectory *x2) {
-							return [RACSignal zip:[x1.rac_sequence.eagerSequence map:^(RCIOItem *y) {
-								return [y copyTo:x2];
-							}]];
-						}] flatten] subscribeCompleted:^{
-							if (++progress == cellsToDuplicateCount) {
-								self.loading = NO;
-							}
-						}];
-					} else {
-						// TODO error handling
-					}
-				}];
+				[duplicateSignals addObject:[self.gridElements[itemPath.item] duplicate]];
 			}
+			[[[RACSignal zip:duplicateSignals] finally:^{
+				self.loading = NO;
+			}] subscribeError:^(NSError *error) {
+				[BezelAlert.defaultBezelAlert addAlertMessageWithText:L(@"Can not duplicate") imageNamed:BezelAlertCancelIcon displayImmediatly:NO];
+			} completed:^{
+				[BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:L(@"Items duplicated") plural:L(@"%u items duplicated") count:cellsToDuplicate.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+			}];
 		}
   } else if (actionSheet == _toolItemExportActionSheet) {
 		switch (buttonIndex) {
@@ -331,7 +279,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				NewProjectController *projectEditor = (NewProjectController *)[storyboard instantiateViewControllerWithIdentifier:@"ProjectEditor"];
 				//
 				NSIndexPath *indexPathOfProjectToEdit = self.collectionView.indexPathsForSelectedItems[0];
-				ArtCodeProject *projectToEdit = self.gridElements[indexPathOfProjectToEdit.item];
+				RCIODirectory *projectToEdit = self.gridElements[indexPathOfProjectToEdit.item];
 				// Prepare the editing view from a NewProjectController
 				projectEditor.navigationItem.title = L(@"Edit project");
 				[projectEditor.navigationItem.rightBarButtonItem setTitle:L(@"Done")];
@@ -339,10 +287,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 					if (projectEditor.projectNameTextField.text.length == 0) {
 						projectEditor.descriptionLabel.text = L(@"Invalid name for a project");
 					}
-					projectToEdit.name = projectEditor.projectNameTextField.text;
-					if (projectEditor.projectColorSelection.selectedColor != nil) {
-						projectToEdit.labelColor = projectEditor.projectColorSelection.selectedColor;
-					}
+					[projectToEdit moveTo:nil withName:projectEditor.projectNameTextField.text replaceExisting:NO];
 					[self dismissViewControllerAnimated:YES completion:nil];
 					[self setEditing:NO animated:YES];
 					[self.collectionView reloadItemsAtIndexPaths:@[ indexPathOfProjectToEdit ]];
@@ -356,7 +301,6 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
         [self presentViewController:navigationController animated:YES completion:^{
 					projectEditor.projectNameTextField.text = projectToEdit.name;
-					projectEditor.projectColorSelection.selectedColor = projectToEdit.labelColor;
 					projectEditor.descriptionLabel.text = @"";
 				}];
 			} break;
@@ -377,9 +321,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 					}
 				};
 				for (NSIndexPath *itemPath in cellsToExport) {
-						ArtCodeProject *project = self.gridElements[itemPath.item];
+						RCIODirectory *project = self.gridElements[itemPath.item];
 						NSURL *zipURL = [[NSURL applicationDocumentsDirectory] URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];
-						[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+						[ArchiveUtilities compressFileAtURLs:@[ project.url ] completionHandler:^(NSURL *temporaryDirectoryURL) {
 							if (temporaryDirectoryURL) {
 								[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:zipURL error:NULL];
 								[NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
@@ -429,13 +373,13 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				};
 				// Enumerate elements to export
 				for (NSIndexPath *itemPath in cellsToExport) {
-					ArtCodeProject *project = self.gridElements[itemPath.item];
+					RCIODirectory *project = self.gridElements[itemPath.item];
 					
 					// Generate mail subject
 					[subject appendFormat:@"%@, ", project.name];
 					
 					// Process project
-					[ArchiveUtilities compressFileAtURLs:@[project.fileURL] completionHandler:^(NSURL *temporaryDirectoryURL) {
+					[ArchiveUtilities compressFileAtURLs:@[ project.url ] completionHandler:^(NSURL *temporaryDirectoryURL) {
 						if (temporaryDirectoryURL) {
 							// Add attachment
 							NSURL *zipURL = [temporaryDirectoryURL URLByAppendingPathComponent:[project.name stringByAppendingPathExtension:@"zip"]];

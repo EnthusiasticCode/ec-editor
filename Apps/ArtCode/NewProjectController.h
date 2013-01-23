@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ColorSelectionControl, ArtCodeProject;
+@class ColorSelectionControl;
 
 @interface NewProjectController : UIViewController <UITextFieldDelegate>
 
