@@ -17,6 +17,7 @@
 #import "ArchiveUtilities.h"
 #import "UIColor+AppStyle.h"
 #import "UIImage+AppStyle.h"
+#import "NSURL+ArtCode.h"
 
 
 @interface NewProjectImportController ()
@@ -105,79 +106,70 @@
 #pragma mark - Import method
 
 - (void)createProjectFromZipAtURL:(NSURL *)zipURL completionHandler:(void (^)(RCIODirectory *))block {
-  // Generate a unique name for the project
-  NSString *zipFileName = zipURL.lastPathComponent.stringByDeletingPathExtension;
-  NSString *projectName = zipFileName;
-  NSUInteger attempt = 0;
-  BOOL attemptAgain = NO;
-  do {
-    attemptAgain = NO;
-    for (ArtCodeProject *p in ArtCodeProjectSet.defaultSet.projects) {
-      if ([p.name isEqualToString:projectName]) {
-        projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
-        attemptAgain = YES;
-        break;
-      }
-    }
-  } while (attemptAgain);
-  
-  // Import the project
   [self startRightBarButtonItemActivityIndicator];
   self.tableView.userInteractionEnabled = NO;
-  [ArtCodeProjectSet.defaultSet addNewProjectWithName:projectName labelColor:[UIColor styleForegroundColor] completionHandler:^(ArtCodeProject *createdProject) {
-    if (createdProject) {
-      // Import the zip file
-      // Extract files if needed
-      [ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
-        if (temporaryDirectoryURL) {
-          // Get the extracted directories
-          [[[[RACSignal combineLatest:@[
-            [[[RCIODirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(RCIODirectory *temporaryDirectory) {
-              return [[temporaryDirectory childrenSignal] take:1];
-            }] flattenMap:^RACSignal *(NSArray *children) {
-              // If there is only 1 extracted directory, return it's children, otherwise return all extracted items
-              if (children.count != 1) {
-                return [RACSignal return:children];
-              }
-              RCIOItem *onlyChild = [children lastObject];
-							if ([onlyChild isKindOfClass:RCIODirectory.class]) {
-								return [[(RCIODirectory *)onlyChild childrenSignal] take:1];
-							} else {
-                return [RACSignal return:children];
-							}
-            }],
-            [RCIODirectory itemWithURL:createdProject.fileURL]
-          ]]
-          flattenMap:^id(RACTuple *x) {
-            NSArray *children = x.first;
-            RCIODirectory *projectDirectory = x.second;
-            return [RACSignal zip:[children.rac_sequence.eagerSequence map:^RACSignal *(RCIOItem *x) {
-              return [x moveTo:projectDirectory];
-            }]];
-          }] finally:^{
-            [self stopRightBarButtonItemActivityIndicator];
-            self.tableView.userInteractionEnabled = YES;
-            [NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
-          }] subscribeError:^(NSError *error) {
-            // TODO: error handling moving of extracted objects in place failure
-            ASSERT(NO);
-            if (block) {
-              block(nil);
-            }
-          } completed:^{
-            if (block) {
-              block(createdProject);
-            }
-          }];
-        }
-        else {
-          ASSERT(NO); // TODO: error handling file failed to extract
-        }
-      }];
-    } else {
-      ASSERT(NO); // TODO: error handling project creation failure
-    }
-  }];
+	[ArchiveUtilities extractArchiveAtURL:zipURL completionHandler:^(NSURL *temporaryDirectoryURL) {
+		if (temporaryDirectoryURL == nil) {
+#warning TODO: error handling file failed to extract
+			return;
+		}
+		
+		// Get the extracted directories
+		RACSignal *extractedDirectories = [[[RCIODirectory itemWithURL:temporaryDirectoryURL] flattenMap:^RACSignal *(RCIODirectory *temporaryDirectory) {
+			return [[temporaryDirectory childrenSignal] take:1];
+		}] flattenMap:^RACSignal *(NSArray *children) {
+			// If there is only 1 extracted directory, return it's children, otherwise return all extracted items
+			if (children.count != 1) {
+				return [RACSignal return:children];
+			}
+			RCIOItem *onlyChild = [children lastObject];
+			if ([onlyChild isKindOfClass:RCIODirectory.class]) {
+				return [[(RCIODirectory *)onlyChild childrenSignal] take:1];
+			} else {
+				return [RACSignal return:children];
+			}
+		}];
+		
+		// Generate a unique name for the project
+		NSString *zipFileName = zipURL.lastPathComponent.stringByDeletingPathExtension;
+		__block NSUInteger attempt = 0;
+		NSUInteger maxAttempts = 20;
+		
+		__block RACSignal *(^newProjectDirectorySignalBlock)() = ^{
+			if (attempt > maxAttempts) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
+			NSString *projectName = zipFileName;
+			if (attempt > 0) {
+				projectName = [zipFileName stringByAppendingFormat:@" (%d)", ++attempt];
+			}
+			return [[RCIODirectory itemWithURL:[NSURL.projectsListDirectory URLByAppendingPathComponent:projectName] mode:RCIOItemModeExclusiveAccess] catch:newProjectDirectorySignalBlock];
+		};
+
+		[[[[RACSignal combineLatest:@[ extractedDirectories, newProjectDirectorySignalBlock() ]] flattenMap:^id(RACTuple *x) {
+			NSArray *children = x.first;
+			RCIODirectory *projectDirectory = x.second;
+			NSMutableArray *moveSignals = [NSMutableArray arrayWithCapacity:children.count];
+			
+			for (RCIOItem *child in children) {
+				[moveSignals addObject:[child moveTo:projectDirectory]];
+			}
+			
+			return [[RACSignal zip:moveSignals] mapReplace:projectDirectory];
+		}] finally:^{
+			[self stopRightBarButtonItemActivityIndicator];
+			self.tableView.userInteractionEnabled = YES;
+			[NSFileManager.defaultManager removeItemAtURL:temporaryDirectoryURL error:NULL];
+		}] subscribeNext:^(RCIODirectory *projectDirectory) {
+			if (block) {
+				block(projectDirectory);
+			}
+		} error:^(NSError *error) {
+#warning TODO: error handling failed to create project after maxAttempts attempts or failed to move extracted directories in place
+			ASSERT(NO);
+			if (block) {
+				block(nil);
+			}
+		}];
+	}];
 }
 
 @end
