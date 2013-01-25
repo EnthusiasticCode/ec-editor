@@ -47,6 +47,7 @@
 		5FDBDA1F16AEE39500AB947A /* _ArtCodeRemoteSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDBDA1E16AEE39500AB947A /* _ArtCodeRemoteSet.m */; };
 		5FDBDA2216AEE44F00AB947A /* ArtCodeRemoteSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDBDA2116AEE44D00AB947A /* ArtCodeRemoteSet.m */; };
 		5FDBDA2516AF0C6700AB947A /* NSURL+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDBDA2416AF0C6400AB947A /* NSURL+ArtCode.m */; };
+		5FDBDAF416B3021B00AB947A /* RCIODirectory+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDBDAF316B3021B00AB947A /* RCIODirectory+ArtCode.m */; };
 		5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */; };
 		B70231FA14345B5A006D23F7 /* ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = B70231F914345B5A006D23F7 /* ArtCodeTab.m */; };
 		B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = B7072BBB15111A3000580855 /* NSString+UUID.m */; };
@@ -115,7 +116,7 @@
 		B7656C8C144B54120084B050 /* Zenburnesque.tmTheme in Resources */ = {isa = PBXBuildFile; fileRef = B7656C79144B54120084B050 /* Zenburnesque.tmTheme */; };
 		B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */; };
 		B78077E114869702006C0C6B /* ProjectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B78077E014869701006C0C6B /* ProjectCell.xib */; };
-		B78D136F15AB4D5D0022C93B /* RCIOFile+TextFile.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */; };
+		B78D136F15AB4D5D0022C93B /* RCIOFile+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = B78D136E15AB4D5D0022C93B /* RCIOFile+ArtCode.m */; };
 		B7AC172F14216CD4009E9205 /* NewFilePopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */; };
 		B7AC173014216CD4009E9205 /* NewProjectPopover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */; };
 		B7AC174D14216D1C009E9205 /* NewProjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = B7AC174214216D1C009E9205 /* NewProjectController.m */; };
@@ -662,6 +663,8 @@
 		5FDBDA2116AEE44D00AB947A /* ArtCodeRemoteSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemoteSet.m; sourceTree = "<group>"; };
 		5FDBDA2316AF0C6100AB947A /* NSURL+ArtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ArtCode.h"; sourceTree = "<group>"; };
 		5FDBDA2416AF0C6400AB947A /* NSURL+ArtCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ArtCode.m"; sourceTree = "<group>"; };
+		5FDBDAF216B3021A00AB947A /* RCIODirectory+ArtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCIODirectory+ArtCode.h"; sourceTree = "<group>"; };
+		5FDBDAF316B3021B00AB947A /* RCIODirectory+ArtCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCIODirectory+ArtCode.m"; sourceTree = "<group>"; };
 		5FE8B05915B5D33D00AEEF1D /* ArtCodeDatastore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeDatastore.h; sourceTree = "<group>"; };
 		5FE8B05A15B5D33D00AEEF1D /* ArtCodeDatastore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeDatastore.m; sourceTree = "<group>"; };
 		B70231F814345B5A006D23F7 /* ArtCodeTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTab.h; sourceTree = "<group>"; };
@@ -741,8 +744,8 @@
 		B7728CC015289822005EA98A /* NSString+TextMateScopeSelectorMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextMateScopeSelectorMatching.h"; sourceTree = "<group>"; };
 		B7728CC115289822005EA98A /* NSString+TextMateScopeSelectorMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextMateScopeSelectorMatching.m"; sourceTree = "<group>"; };
 		B78077E014869701006C0C6B /* ProjectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCell.xib; sourceTree = "<group>"; };
-		B78D136D15AB4D5D0022C93B /* RCIOFile+TextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCIOFile+TextFile.h"; sourceTree = "<group>"; };
-		B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCIOFile+TextFile.m"; sourceTree = "<group>"; };
+		B78D136D15AB4D5D0022C93B /* RCIOFile+ArtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCIOFile+ArtCode.h"; sourceTree = "<group>"; };
+		B78D136E15AB4D5D0022C93B /* RCIOFile+ArtCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCIOFile+ArtCode.m"; sourceTree = "<group>"; };
 		B7AC172D14216CD4009E9205 /* NewFilePopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewFilePopover.storyboard; sourceTree = "<group>"; };
 		B7AC172E14216CD4009E9205 /* NewProjectPopover.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewProjectPopover.storyboard; sourceTree = "<group>"; };
 		B7AC174114216D1C009E9205 /* NewProjectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewProjectController.h; sourceTree = "<group>"; };
@@ -1710,8 +1713,10 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
-				B78D136D15AB4D5D0022C93B /* RCIOFile+TextFile.h */,
-				B78D136E15AB4D5D0022C93B /* RCIOFile+TextFile.m */,
+				B78D136D15AB4D5D0022C93B /* RCIOFile+ArtCode.h */,
+				B78D136E15AB4D5D0022C93B /* RCIOFile+ArtCode.m */,
+				5FDBDAF216B3021A00AB947A /* RCIODirectory+ArtCode.h */,
+				5FDBDAF316B3021B00AB947A /* RCIODirectory+ArtCode.m */,
 				CD149660167E3B7400223367 /* UIBarButtonItem+BlockAction.h */,
 				CD149661167E3B7400223367 /* UIBarButtonItem+BlockAction.m */,
 				CD8A048C14FC0A8D0054BF73 /* NSIndexSet+StringRanges.h */,
@@ -3195,7 +3200,7 @@
 				B7BEA446159B0BAE0095C9D1 /* NSString+UnicharUtilities.m in Sources */,
 				B7BEA449159B0BAE0095C9D1 /* NSString+UriCompatibility.m in Sources */,
 				B7BEA462159B1A7F0095C9D1 /* TMSymbol.m in Sources */,
-				B78D136F15AB4D5D0022C93B /* RCIOFile+TextFile.m in Sources */,
+				B78D136F15AB4D5D0022C93B /* RCIOFile+ArtCode.m in Sources */,
 				5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
@@ -3226,6 +3231,7 @@
 				5FDBDA1F16AEE39500AB947A /* _ArtCodeRemoteSet.m in Sources */,
 				5FDBDA2216AEE44F00AB947A /* ArtCodeRemoteSet.m in Sources */,
 				5FDBDA2516AF0C6700AB947A /* NSURL+ArtCode.m in Sources */,
+				5FDBDAF416B3021B00AB947A /* RCIODirectory+ArtCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,52 +18,25 @@
 
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
+#import "NSURL+ArtCode.h"
+#import "RCIODirectory+ArtCode.h"
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 
-@implementation BookmarkBrowserController {
-@protected
-  BOOL _filteredItemsAreValid;
-  NSArray *_filteredItems;
-}
+@implementation BookmarkBrowserController
 
 - (id)init {
-  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
-  if (!self)
-    return nil;
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:YES];
+  if (self == nil) return nil;
+	
+	[[[[[RACAble(self.artCodeTab.currentLocation.url.projectRootDirectory) map:^(NSURL *projectRootDirectoryURL) {
+		return [RCIODirectory itemWithURL:projectRootDirectoryURL];
+	}] switchToLatest] map:^(RCIODirectory *projectRootDirectory) {
+		return projectRootDirectory.bookmarksSignal;
+	}] switchToLatest] toProperty:@keypath(self.filteredItems) onObject:self];
+	
   return self;
-}
-
-#pragma mark - Properties
-
-- (NSArray *)filteredItems {
-#warning TODO: make this in RAC style when bookmarksWithResultHandler: is re-implemented as .bookmarks
-	ASSERT(NO); // This should be
-  if (!_filteredItemsAreValid) {
-    // Get the new bookmarks
-//    [self.artCodeTab.currentLocation.project bookmarksWithResultHandler:^(NSArray *bookmarks) {
-//			// Filter bookmarks
-//			_filteredItems = [bookmarks sortedArrayUsingScoreForAbbreviation:self.searchBar.text extrapolateTargetStringBlock:^NSString *(ArtCodeProjectBookmark *bookmark) {
-//				return bookmark.name;
-//			}];
-//			
-//			if ([_filteredItems count] == 0) {
-//				if ([self.searchBar.text length]) {
-//					self.infoLabel.text = @"No bookmarks found.";
-//				} else {
-//					self.infoLabel.text = @"The project has no bookmarks.\nAdd bookmarks by tapping on a line number in a file.";
-//				}
-//			} else {
-//				self.infoLabel.text = @"";
-//			}
-//      
-//      [self.tableView reloadData];
-//    }];
-    // Set valid even if not valid yet but calculating
-    _filteredItemsAreValid = YES;
-  }
-  return _filteredItems;
 }
 
 #pragma mark - View lifecycle

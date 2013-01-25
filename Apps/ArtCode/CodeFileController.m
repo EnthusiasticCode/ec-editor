@@ -35,7 +35,7 @@
 
 
 #import "NSIndexSet+PersistentDataStructure.h"
-#import "RCIOFile+TextFile.h"
+#import "RCIOFile+ArtCode.h"
 #import <file/FileMagic.h>
 
 

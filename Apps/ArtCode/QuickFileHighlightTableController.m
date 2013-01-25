@@ -11,7 +11,7 @@
 #import "CodeFileController.h"
 #import "TMUnit.h"
 #import "TMSyntaxNode.h"
-#import "RCIOFile+TextFile.h"
+#import "RCIOFile+ArtCode.h"
 
 @interface QuickFileHighlightTableController ()
 

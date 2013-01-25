@@ -8,18 +8,12 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
-@interface RCIOFile (TextFile)
+@interface RCIOFile (ArtCode)
 
 - (RACPropertySubject *)explicitSyntaxIdentifierSubject;
 
 - (RACPropertySubject *)explicitEncodingSubject;
 
 - (RACPropertySubject *)bookmarksSubject;
-
-@end
-
-@interface RCIODirectory (TextFile)
-
-- (RACSignal *)bookmarks;
 
 @end
