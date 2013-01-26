@@ -24,7 +24,7 @@ static NSString * const newlyCreatedKey = @"com.enthusiasticcode.artcode.NewlyCr
 }
 
 - (RACSignal *)bookmarksSignal {
-	return [[self.childrenSignal map:^(NSArray *children) {
+	return [[[[self.childrenSignal deliverOn:[RACScheduler scheduler]] map:^(NSArray *children) {
 		if (children.count == 0) return [RACSignal return:@[]];
 		
 		NSMutableArray *childrenBookmarkSignals = [NSMutableArray arrayWithCapacity:children.count];
@@ -49,7 +49,7 @@ static NSString * const newlyCreatedKey = @"com.enthusiasticcode.artcode.NewlyCr
 			}
 			return mergedBookmarks;
 		}];
-	}] switchToLatest];
+	}] switchToLatest] deliverOn:RACScheduler.currentScheduler];
 }
 
 @end

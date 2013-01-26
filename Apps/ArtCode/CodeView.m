@@ -825,6 +825,7 @@ static void init(CodeView *self)
     deleteRange = _selectionView.selection;
   } else {
     ASSERT(NO); // no selection to delete
+		return;
   }
   
   [self unmarkText];

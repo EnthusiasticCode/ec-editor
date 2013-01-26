@@ -84,7 +84,7 @@
         
       default:
         ASSERT(NO); // It should never reach this point
-        break;
+        return;
     }
     _arrowView.frame = arrowFrame;
   }
