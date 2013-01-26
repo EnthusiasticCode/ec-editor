@@ -27,14 +27,14 @@
 @implementation BookmarkBrowserController
 
 - (id)init {
-  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:YES];
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
   if (self == nil) return nil;
 	
-	[[[[[RACAble(self.artCodeTab.currentLocation.url.projectRootDirectory) map:^(NSURL *projectRootDirectoryURL) {
-		return [RCIODirectory itemWithURL:projectRootDirectoryURL];
+	[[[[[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
+		return [RCIODirectory itemWithURL:location.url.projectRootDirectory];
 	}] switchToLatest] map:^(RCIODirectory *projectRootDirectory) {
 		return projectRootDirectory.bookmarksSignal;
-	}] switchToLatest] toProperty:@keypath(self.filteredItems) onObject:self];
+	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   return self;
 }

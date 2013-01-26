@@ -52,8 +52,8 @@
   
   // RAC
   @weakify(self);
-  [[[[[[RACAble(self.artCodeTab.currentLocation.url.projectRootDirectory) map:^RACSignal *(NSURL *projectURL) {
-    return [RCIODirectory itemWithURL:projectURL];
+  [[[[[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
+    return [RCIODirectory itemWithURL:location.url.projectRootDirectory];
   }] switchToLatest] map:^RACSignal *(RCIODirectory *directory) {
 		ASSERT_MAIN_QUEUE();
     @strongify(self);
