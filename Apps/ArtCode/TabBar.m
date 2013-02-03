@@ -122,7 +122,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
   {
     additionalControlsContainerView = [[UIView alloc] init];
     additionalControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
-    additionalControlsContainerView.backgroundColor = [UIColor clearColor];
+    additionalControlsContainerView.backgroundColor = UIColor.clearColor;
     [self addSubview:additionalControlsContainerView];
   }
   else
@@ -196,7 +196,7 @@ static void init(TabBar *self)
   // Tab container
   self->tabControlsContainerView = [[TabBarScrollView alloc] init];
   self->tabControlsContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-  self->tabControlsContainerView.backgroundColor = [UIColor clearColor];
+  self->tabControlsContainerView.backgroundColor = UIColor.clearColor;
   self->tabControlsContainerView.contentInset = UIEdgeInsetsMake(0, 4, 0, 4);
   self->tabControlsContainerView.alwaysBounceHorizontal = YES;
   [self->tabControlsContainerView setShowsVerticalScrollIndicator:NO];

@@ -1868,7 +1868,7 @@ static void init(CodeView *self)
   if ((self = [super initWithFrame:frame])) 
   {
     knobDiameter = 10;
-    self.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = UIColor.clearColor;
   }
   return self;
 }

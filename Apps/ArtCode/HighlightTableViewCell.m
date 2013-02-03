@@ -47,7 +47,7 @@
     }
     _highlightView.highlightedCharacters = value;
     [self.contentView insertSubview:_highlightView belowSubview:self.textLabel];
-    self.textLabel.backgroundColor = [UIColor clearColor];
+    self.textLabel.backgroundColor = UIColor.clearColor;
   }
   [self setNeedsLayout];
 }
@@ -105,7 +105,7 @@
   if (!(self = [super initWithFrame:frame]))
     return nil;
   self.contentMode = UIViewContentModeRedraw;
-  self.backgroundColor = [UIColor clearColor];
+  self.backgroundColor = UIColor.clearColor;
   return self;
 }
 

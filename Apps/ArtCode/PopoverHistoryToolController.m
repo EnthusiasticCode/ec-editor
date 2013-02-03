@@ -63,8 +63,8 @@ static void * PopoverHistoryToolControllerTabHistoryItemsObserving;
 {
   [super viewDidLoad];
   
-  self.tableView.backgroundColor = [UIColor styleBackgroundColor];
-  self.tableView.separatorColor = [UIColor styleForegroundColor];
+  self.tableView.backgroundColor = UIColor.styleBackgroundColor;
+  self.tableView.separatorColor = UIColor.styleForegroundColor;
   // TODO: make this a button to go back to projects?
   self.tableView.tableFooterView = [[UIView alloc] init];
 }

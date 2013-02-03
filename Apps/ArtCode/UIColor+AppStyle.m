@@ -25,7 +25,7 @@ return _##nam
 + (UIColor *)styleBackgroundShadowColor
 {
   RETURN_CACHED_COLOR(styleBackgroundShadowColor, 
-                      [UIColor whiteColor]);
+                      UIColor.whiteColor);
 }
 
 + (UIColor *)styleHighlightColor

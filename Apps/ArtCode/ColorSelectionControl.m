@@ -19,7 +19,7 @@
 - (id)initWithCoder:(NSCoder *)coder {
 	self = [super initWithCoder:coder];
   if (!self) return nil;
-  self.colors = @[[UIColor styleForegroundColor],
+  self.colors = @[UIColor.styleForegroundColor,
 		[UIColor colorWithRed:255./255. green:106./255. blue:89./255. alpha:1],
 		[UIColor colorWithRed:255./255. green:184./255. blue:62./255. alpha:1],
 		[UIColor colorWithRed:237./255. green:233./255. blue:68./255. alpha:1],

@@ -289,8 +289,8 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
   {
     label = [[UILabel alloc] init];
     label.font = [UIFont boldSystemFontOfSize:16];
-    label.backgroundColor = [UIColor clearColor];
-    label.textColor = [UIColor whiteColor];
+    label.backgroundColor = UIColor.clearColor;
+    label.textColor = UIColor.whiteColor;
     label.textAlignment = NSTextAlignmentCenter;
     label.text = text;
     label.numberOfLines = 0;

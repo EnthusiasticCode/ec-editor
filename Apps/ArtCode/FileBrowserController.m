@@ -207,7 +207,7 @@
   RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
   if (!cell) {
     cell = [[RCIOItemCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.backgroundColor = UIColor.clearColor;
   }
   
   // Configure the cell

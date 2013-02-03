@@ -167,7 +167,7 @@ static NSMutableDictionary *symbolIconsCache;
   UIImage *icon = symbolIconsCache[symbolIdentifier];
   if (!icon) {
     NSString *letter = [symbolIdentifier substringToIndex:1];
-    UIColor *color = [UIColor lightGrayColor];
+    UIColor *color = UIColor.lightGrayColor;
     if ([symbolIdentifier isEqualToString:@"Class"]) {
       color = [UIColor colorWithRed:.62 green:.54 blue:.73 alpha:1];
     } else if ([symbolIdentifier isEqualToString:@"Method"]) {

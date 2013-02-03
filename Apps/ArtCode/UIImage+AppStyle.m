@@ -140,7 +140,7 @@
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor
 {
   if (!labelColor)
-    labelColor = [UIColor styleForegroundColor];
+    labelColor = UIColor.styleForegroundColor;
   return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Removing one pixel to add shadow
     rect.size.height -= scale;
@@ -208,7 +208,7 @@
     CGPathCloseSubpath(bookmarkPath);
     
     // Draw shadow
-    CGContextSetFillColorWithColor(ctx, [UIColor styleForegroundShadowColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, UIColor.styleForegroundShadowColor.CGColor);
     CGContextSaveGState(ctx);
     {
       CGContextTranslateCTM(ctx, 0, scale);
@@ -219,12 +219,12 @@
     CGContextRestoreGState(ctx);
     
     // Draw document
-    CGContextSetFillColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
     CGContextAddPath(ctx, docPath);
     CGContextFillPath(ctx);
     
     // Draw bookmark
-    CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+    CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
     CGContextSetFillColorWithColor(ctx, labelColor.CGColor);
     CGContextSetLineWidth(ctx, scale);
     
@@ -241,7 +241,7 @@
 
 + (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color {
   if (!color)
-    color = [UIColor styleForegroundColor];
+    color = UIColor.styleForegroundColor;
   return [UIImage imageWithSize:size block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
     // Removing one point to add shadow
     rect.size.height -= scale;
@@ -260,8 +260,8 @@
     CGPathCloseSubpath(bookmarkPath);
     
     // Draw bookmark
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -scale), 0, [UIColor styleForegroundShadowColor].CGColor);
-    CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -scale), 0, UIColor.styleForegroundShadowColor.CGColor);
+    CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
     CGContextSetFillColorWithColor(ctx, color.CGColor);
     CGContextSetLineWidth(ctx, scale);
     
@@ -304,9 +304,9 @@
     // Draw
     CGContextSaveGState(ctx);
     {
-      CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+      CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, UIColor.whiteColor.CGColor);
       CGContextAddPath(ctx, path);
-      CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+      CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
       CGContextSetLineWidth(ctx, strokeWidth);
       CGContextStrokePath(ctx);
     }
@@ -323,7 +323,7 @@
     // Label
     if (text)
     {
-      CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+      CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, UIColor.whiteColor.CGColor);
       
       CGFloat fontSize = (rect.size.width - strokeWidth);
       if ([text length] > 1)
@@ -411,9 +411,9 @@
     CGPathCloseSubpath(path);
     
     // Draw
-    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, [UIColor whiteColor].CGColor);
+    CGContextSetShadowWithColor(ctx, CGSizeMake(0, -1), 0, UIColor.whiteColor.CGColor);
     CGContextAddPath(ctx, path);
-    CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+    CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
     CGContextSetLineWidth(ctx, strokeWidth);
     CGContextStrokePath(ctx);
     
@@ -570,7 +570,7 @@
     rect = CGRectInset(rect, .5, .5);
     CGPathRef path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:2].CGPath;
     
-    CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, UIColor.whiteColor.CGColor);
     CGContextAddPath(ctx, path);
     CGContextFillPath(ctx);
     
@@ -582,7 +582,7 @@
     CGContextAddPath(ctx, path);
     CGContextStrokePath(ctx);
     
-    CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
+    CGContextSetFillColorWithColor(ctx, UIColor.whiteColor.CGColor);
     
     CGContextSetLineWidth(ctx, 0.4);
     CGContextSetTextDrawingMode(ctx, kCGTextFillStroke);
@@ -629,7 +629,7 @@
   if (!_styleCheckMarkImage)
   {
     _styleCheckMarkImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
-      CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+      CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
       
       CGContextAddArc(ctx, 29. / 2., 29. / 2., 10, -M_PI, M_PI, 0);
       CGContextSetLineWidth(ctx, 2);
@@ -651,9 +651,9 @@
   if (!_styleReorderControlImage)
   {
     _styleReorderControlImage = [UIImage imageWithSize:CGSizeMake(19, 17) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
-      CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 0, [UIColor whiteColor].CGColor);
+      CGContextSetShadowWithColor(ctx, CGSizeMake(0, 1), 0, UIColor.whiteColor.CGColor);
       
-      CGContextSetStrokeColorWithColor(ctx, [UIColor styleForegroundColor].CGColor);
+      CGContextSetStrokeColorWithColor(ctx, UIColor.styleForegroundColor.CGColor);
       CGContextSetLineWidth(ctx, 4);
       
       CGFloat y = 2;
@@ -676,7 +676,7 @@
   if (!_styleDeleteActivationImage)
   {
     _styleDeleteActivationImage = [UIImage imageWithSize:CGSizeMake(29, 29) block:^(CGContextRef ctx, CGRect rect, CGFloat scale) {
-      CGContextSetStrokeColorWithColor(ctx, [UIColor whiteColor].CGColor);
+      CGContextSetStrokeColorWithColor(ctx, UIColor.whiteColor.CGColor);
       CGContextSetFillColorWithColor(ctx, [UIColor colorWithRed:200./255. green:8./255. blue:21./255. alpha:1].CGColor);
       
       CGContextAddArc(ctx, 29. / 2., 29. / 2., 11, -M_PI, M_PI, 0);

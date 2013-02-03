@@ -179,9 +179,9 @@ static void const * parentSearchBarControllerContext;
     {
       // Create gradiend
       CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      NSArray *gradientColors = @[(__bridge id)[UIColor clearColor].CGColor,
-                                 (__bridge id)[UIColor whiteColor].CGColor,
-                                 (__bridge id)[UIColor clearColor].CGColor];
+      NSArray *gradientColors = @[(__bridge id)UIColor.clearColor.CGColor,
+                                 (__bridge id)UIColor.whiteColor.CGColor,
+                                 (__bridge id)UIColor.clearColor.CGColor];
       CGFloat gradientLocations[] = {0, 0.5, 1};
       CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradientColors, gradientLocations);
       

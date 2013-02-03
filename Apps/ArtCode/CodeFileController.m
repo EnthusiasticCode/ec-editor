@@ -161,7 +161,7 @@ static void drawStencilStar(CGContextRef myContext)
     minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
     minimapView.lineShadowColor = self.codeView.backgroundColor;
     minimapView.lineDecorationInset = 10;
-    minimapView.lineDefaultColor = [UIColor blackColor];
+    minimapView.lineDefaultColor = UIColor.blackColor;
 		
     [self.wrapperView addSubview:minimapView];
 		self.minimapView = minimapView;
@@ -533,7 +533,7 @@ static void drawStencilStar(CGContextRef myContext)
   // Set bookmark decoration
   if (!line.isTruncation && [self.bookmarks containsIndex:lineNumber + 1]) {
     *decoration = CodeFileMinimapLineDecorationDisc;
-    *decorationColor = [UIColor whiteColor];
+    *decorationColor = UIColor.whiteColor;
   }
   
   // Don't draw if line is too small
@@ -767,7 +767,7 @@ static void drawStencilStar(CGContextRef myContext)
 		accessoryView.itemPopoverView.arrowInsets = UIEdgeInsetsMake(12, 12, 12, 12);
 		
 		UIView *accessoryPopoverContentView = [[UIView alloc] init];
-		accessoryPopoverContentView.backgroundColor = [UIColor whiteColor];
+		accessoryPopoverContentView.backgroundColor = UIColor.whiteColor;
 		accessoryView.itemPopoverView.contentView = accessoryPopoverContentView;
 		
 		codeView.defaultTextAttributes = [[TMTheme currentTheme] commonAttributes];
@@ -965,7 +965,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   };
   
   // placeholder body style
-  [attributedString addAttributes:@{TextRendererRunUnderlayBlockAttributeName: placeHolderBodyBlock, (id)kCTForegroundColorAttributeName: (id)([UIColor blackColor].CGColor)} range:NSMakeRange(range.location + 2, range.length - 4)];
+  [attributedString addAttributes:@{TextRendererRunUnderlayBlockAttributeName: placeHolderBodyBlock, (id)kCTForegroundColorAttributeName: (id)(UIColor.blackColor.CGColor)} range:NSMakeRange(range.location + 2, range.length - 4)];
   
   // Opening and Closing style
   
@@ -1006,13 +1006,13 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
 - (void)_setCodeViewAttributesForTheme:(TMTheme *)theme {
   UIColor *color = nil;
   color = (theme.environmentAttributes)[TMThemeBackgroundColorEnvironmentAttributeKey];
-  self.codeView.backgroundColor = color ? color : [UIColor whiteColor];
+  self.codeView.backgroundColor = color ? color : UIColor.whiteColor;
   self.codeView.lineNumbersColor = color ? [color colorByIncreasingContrast:.38] : [UIColor colorWithWhite:0.62 alpha:1];
   self.codeView.lineNumbersBackgroundColor = color ? [color colorByIncreasingContrast:.09] : [UIColor colorWithWhite:0.91 alpha:1];
   color = (theme.environmentAttributes)[TMThemeCaretColorEnvironmentAttributeKey];
-  self.codeView.caretColor = color ? color : [UIColor blackColor];
+  self.codeView.caretColor = color ? color : UIColor.blackColor;
   color = (theme.environmentAttributes)[TMThemeSelectionColorEnvironmentAttributeKey];
-  self.codeView.selectionColor = color ? color : [[UIColor blueColor] colorWithAlphaComponent:0.3];
+  self.codeView.selectionColor = color ? color : [UIColor.blueColor colorWithAlphaComponent:0.3];
   
   _minimapView.backgroundColor = self.codeView.lineNumbersBackgroundColor;
   _minimapView.lineShadowColor = self.codeView.backgroundColor;

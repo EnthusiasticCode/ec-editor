@@ -128,7 +128,7 @@ static const void *rendererContext;
     return nil;
   
   _contentView = [[CodeFileMinimapViewContent alloc] initWithFrame:(CGRect){ CGPointZero, frame.size }];
-  _contentView.backgroundColor = [UIColor clearColor];
+  _contentView.backgroundColor = UIColor.clearColor;
   __weak CodeFileMinimapView *this = self;
   _contentView.customDrawRectBlock = ^(CGRect rect) {
     CodeFileMinimapView *strongSelf = this;

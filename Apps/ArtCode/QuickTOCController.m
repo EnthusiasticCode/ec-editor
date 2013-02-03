@@ -55,7 +55,7 @@
   cell.textLabelHighlightedCharacters = hitMask;
   if (symbol.isSeparator) {
     if (!cell.backgroundView) cell.backgroundView = [[UIView alloc] init];
-    cell.backgroundView.backgroundColor = [UIColor lightGrayColor];
+    cell.backgroundView.backgroundColor = UIColor.lightGrayColor;
   } else {
     cell.backgroundView = nil;
   }

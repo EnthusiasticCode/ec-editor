@@ -71,7 +71,7 @@
 - (UIColor *)secondaryTitleFragmentsTint
 {
   if (!secondaryTitleFragmentsTint)
-    secondaryTitleFragmentsTint = [UIColor grayColor];
+    secondaryTitleFragmentsTint = UIColor.grayColor;
   return secondaryTitleFragmentsTint;
 }
 
@@ -314,7 +314,7 @@
     {
       UILabel *label = [[UILabel alloc] init];
       label.lineBreakMode = NSLineBreakByTruncatingMiddle;
-      label.backgroundColor = [UIColor clearColor];
+      label.backgroundColor = UIColor.clearColor;
       
       label.textColor = isPrimary ? self.selectedTitleFragmentsTint : self.secondaryTitleFragmentsTint;
       label.font = isPrimary ? self.selectedFragmentFont : self.secondaryFragmentFont;

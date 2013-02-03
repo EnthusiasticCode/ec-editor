@@ -124,9 +124,9 @@
 	infoLabel.textAlignment = NSTextAlignmentCenter;
 	infoLabel.lineBreakMode = NSLineBreakByWordWrapping;
 	infoLabel.numberOfLines = 0;
-	infoLabel.backgroundColor = [UIColor clearColor];
+	infoLabel.backgroundColor = UIColor.clearColor;
 	infoLabel.textColor = [UIColor colorWithWhite:0.5 alpha:1];
-	infoLabel.shadowColor = [UIColor whiteColor];
+	infoLabel.shadowColor = UIColor.whiteColor;
 	infoLabel.shadowOffset = CGSizeMake(0, 1);
 	self.infoLabel = infoLabel;
   self.tableView.tableFooterView = self.infoLabel;
@@ -278,7 +278,7 @@
   HighlightTableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
   if (cell == nil) {
     cell = [[HighlightTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.backgroundColor = UIColor.clearColor;
   }
   
   // Override to configure cell

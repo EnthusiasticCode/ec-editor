@@ -51,7 +51,7 @@
   }
 	
 	UIColor *projectColor = self.projectColorSelection.selectedColor;
-	if (!projectColor) projectColor = [UIColor styleForegroundColor];
+	if (!projectColor) projectColor = UIColor.styleForegroundColor;
   
   [self startRightBarButtonItemActivityIndicator];
   self.projectColorSelection.enabled = NO;

@@ -39,7 +39,7 @@
   ////////////////////////////////////////////////////////////////////////////
   // Generic text field
   id textFieldAppearance = [UITextField appearance];
-  [textFieldAppearance setTextColor:[UIColor styleForegroundColor]];
+  [textFieldAppearance setTextColor:UIColor.styleForegroundColor];
   [(UITextField *)textFieldAppearance setFont:defaultFont];
   
   ////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@
   ////////////////////////////////////////////////////////////////////////////
   // UI Bars
   [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
-  [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeTextColor: [UIColor whiteColor], UITextAttributeTextShadowColor: [UIColor blackColor], UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]}];
+  [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeTextColor: UIColor.whiteColor, UITextAttributeTextShadowColor: UIColor.blackColor, UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]}];
   
   [[UIToolbar appearance] setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
   
@@ -72,7 +72,7 @@
   [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
   [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Selected"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateSelected];
   [buttonInTabBarAppearance setTitleColor:[UIColor colorWithWhite:0.3 alpha:1] forState:UIControlStateNormal];
-  [buttonInTabBarAppearance setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+  [buttonInTabBarAppearance setTitleColor:UIColor.whiteColor forState:UIControlStateSelected];
   [buttonInTabBarAppearance setTitleShadowColor:[UIColor colorWithWhite:0.1 alpha:1] forState:UIControlStateNormal];
   
   [[TabBarButtonCloseButton appearance] setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
@@ -87,7 +87,7 @@
   [TopBarTitleControlAppearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forState:UIControlStateDisabled];
   [TopBarTitleControlAppearance setGapBetweenFragments:3];
   [TopBarTitleControlAppearance setContentInsets:UIEdgeInsetsMake(3, 10, 3, 10)];
-  [TopBarTitleControlAppearance setSelectedTitleFragmentsTint:[UIColor whiteColor]];
+  [TopBarTitleControlAppearance setSelectedTitleFragmentsTint:UIColor.whiteColor];
   [TopBarTitleControlAppearance setSecondaryTitleFragmentsTint:[UIColor colorWithWhite:0.7 alpha:1]];
   [TopBarTitleControlAppearance setSelectedFragmentFont:[UIFont boldSystemFontOfSize:20]];
   [TopBarTitleControlAppearance setSecondaryFragmentFont:[UIFont systemFontOfSize:14]];
@@ -102,7 +102,7 @@
   
   ////////////////////////////////////////////////////////////////////////////
   // Code view elements
-  [(CodeFlashView *)[CodeFlashView appearance] setBackgroundColor:[UIColor yellowColor]];
+  [(CodeFlashView *)[CodeFlashView appearance] setBackgroundColor:UIColor.yellowColor];
   
   // Setup data store
   [[ArtCodeDatastore defaultDatastore] setUp];
