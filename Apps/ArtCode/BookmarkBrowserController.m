@@ -41,7 +41,18 @@
 		return projectRootDirectory.bookmarksSignal;
 	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.bookmarks) onObject:self];
 	
-	[RACSignal combineLatest:@[ RACBind(self.bookmarks), self.searchBarTextSubject ] reduce:^(NSArray *bookmarks, NSString *filter) {
+	[[[[RACSignal combineLatest:@[ RACBind(self.bookmarks), [self.searchBarTextSubject startWith:nil] ] reduce:^(NSArray *bookmarks, NSString *filter) {
+		if (filter.length == 0) {
+			NSMutableArray *filteredItems = [NSMutableArray array];
+			for (RACTuple *bookmarkTuple in bookmarks) {
+				RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines) = bookmarkTuple;
+				[bookmarkedLines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+					[filteredItems addObject:[RACTuple tupleWithObjects:file, @(idx), RACTupleNil.tupleNil, nil]];
+				}];
+			}
+			return [RACSignal return:filteredItems];
+		}
+		
 		NSMutableArray *scoredBookmarksSignals = [NSMutableArray arrayWithCapacity:bookmarks.count];
 		for (RACTuple *bookmarkTuple in bookmarks) {
 			RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines) = bookmarkTuple;
@@ -51,7 +62,7 @@
 				return [RACTuple tupleWithObjects:file, bookmarkedLines ?: RACTupleNil.tupleNil, @(score), hitMask ?: RACTupleNil.tupleNil,  nil];
 			}]];
 		}
-		return [[[[RACSignal combineLatest:scoredBookmarksSignals] map:^(RACTuple *scoredBookmarks) {
+		return [[RACSignal combineLatest:scoredBookmarksSignals] map:^(RACTuple *scoredBookmarks) {
 			NSMutableArray *scoredBookmarksArray = [NSMutableArray arrayWithCapacity:scoredBookmarks.count];
 			for (RACTuple *scoredBookmark in scoredBookmarks) {
 				RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines, NSNumber *score, NSIndexSet *hitMask __attribute__((unused))) = scoredBookmark;
@@ -69,8 +80,8 @@
 				}];
 			}
 			return filteredItems;
-		}] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
-	}];
+		}];
+	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
 	
   return self;
 }
