@@ -27,7 +27,7 @@
 @implementation CStringCachingString
 
 + (BOOL)resolveClassMethod:(SEL)sel {
-  Method method = class_getClassMethod([NSString class], sel);
+  Method method = class_getClassMethod(NSString.class, sel);
   if (!method) {
     return NO;
   }

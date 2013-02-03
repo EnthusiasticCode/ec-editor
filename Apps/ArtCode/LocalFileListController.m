@@ -109,7 +109,7 @@ static void _init(LocalFileListController *self) {
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   RACTuple *tuple = self.filteredItems[indexPath.row];
   UITableViewCell *cell = nil;
-  if ([tuple.second isKindOfClass:[RACSignal class]]) {
+  if ([tuple.second isKindOfClass:RACSignal.class]) {
     static NSString * const progressCellIdentifier = @"progressCell";
     ProgressTableViewCell *progressCell = (ProgressTableViewCell *)[tView dequeueReusableCellWithIdentifier:progressCellIdentifier];
     if (!progressCell) {
@@ -156,7 +156,7 @@ static void _init(LocalFileListController *self) {
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
   RACTuple *item = (self.filteredItems)[indexPath.row];
-  return ![item.second isKindOfClass:[RACSignal class]];
+  return ![item.second isKindOfClass:RACSignal.class];
 }
 
 #pragma mark - Table view delegate

@@ -193,7 +193,7 @@
 @implementation UIViewController (TabPageViewController)
 
 - (TabPageViewController *)tabPageViewController {
-  ASSERT([self.parentViewController isKindOfClass:[TabPageViewController class]]);
+  ASSERT([self.parentViewController isKindOfClass:TabPageViewController.class]);
   return (TabPageViewController *)self.parentViewController;
 }
 

@@ -207,7 +207,7 @@ static void _init(RemoteNavigationController *self) {
     // Return a signal that yields the RCIOItem of the downloaded file
     return [[[[[progressSignal filter:^BOOL(id x) {
       // Only return URLs
-      return [x isKindOfClass:[NSURL class]];
+      return [x isKindOfClass:NSURL.class];
     }] flattenMap:^RACSignal *(NSURL *tempURL) {
       // Convert to filesystem item
       return [RCIOItem itemWithURL:tempURL];

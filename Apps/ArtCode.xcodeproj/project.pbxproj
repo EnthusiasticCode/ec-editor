@@ -13,20 +13,6 @@
 		5F16583C15B6DA7100F0DEDC /* _ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583415B6DA7100F0DEDC /* _ArtCodeRemote.m */; };
 		5F16583D15B6DA7100F0DEDC /* _ArtCodeTab.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583615B6DA7100F0DEDC /* _ArtCodeTab.m */; };
 		5F16583E15B6DA7100F0DEDC /* _ArtCodeTabSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F16583815B6DA7100F0DEDC /* _ArtCodeTabSet.m */; };
-		5F1A2864169ACD86005A928E /* Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2851169ACD86005A928E /* Common.xcconfig */; };
-		5F1A2865169ACD86005A928E /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2853169ACD86005A928E /* Debug.xcconfig */; };
-		5F1A2866169ACD86005A928E /* Profile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2854169ACD86005A928E /* Profile.xcconfig */; };
-		5F1A2867169ACD86005A928E /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2855169ACD86005A928E /* Release.xcconfig */; };
-		5F1A2868169ACD86005A928E /* Application.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2857169ACD86005A928E /* Application.xcconfig */; };
-		5F1A2869169ACD86005A928E /* StaticLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2858169ACD86005A928E /* StaticLibrary.xcconfig */; };
-		5F1A286A169ACD86005A928E /* iOS-Application.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A285A169ACD86005A928E /* iOS-Application.xcconfig */; };
-		5F1A286B169ACD86005A928E /* iOS-Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A285B169ACD86005A928E /* iOS-Base.xcconfig */; };
-		5F1A286C169ACD86005A928E /* iOS-StaticLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A285C169ACD86005A928E /* iOS-StaticLibrary.xcconfig */; };
-		5F1A286D169ACD86005A928E /* Mac-Application.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A285E169ACD86005A928E /* Mac-Application.xcconfig */; };
-		5F1A286E169ACD86005A928E /* Mac-Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A285F169ACD86005A928E /* Mac-Base.xcconfig */; };
-		5F1A286F169ACD86005A928E /* Mac-DynamicLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2860169ACD86005A928E /* Mac-DynamicLibrary.xcconfig */; };
-		5F1A2870169ACD86005A928E /* Mac-Framework.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2861169ACD86005A928E /* Mac-Framework.xcconfig */; };
-		5F1A2871169ACD86005A928E /* Mac-StaticLibrary.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2862169ACD86005A928E /* Mac-StaticLibrary.xcconfig */; };
 		5F1A2872169ACD86005A928E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5F1A2863169ACD86005A928E /* README.md */; };
 		5F2345AA15EE4B0E000220C5 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2345A915EE4B0E000220C5 /* QuickLook.framework */; };
 		5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F24A84C161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m */; };
@@ -904,7 +890,7 @@
 		B7FB79DC14D605FA0080A714 /* TextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRenderer.h; sourceTree = "<group>"; };
 		B7FB79DD14D605FA0080A714 /* TextRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextRenderer.m; sourceTree = "<group>"; };
 		B7FB79E514D6064C0080A714 /* BezelAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BezelAlert.h; sourceTree = "<group>"; };
-		B7FB79E614D6064C0080A714 /* BezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BezelAlert.m; sourceTree = "<group>"; };
+		B7FB79E614D6064C0080A714 /* BezelAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BezelAlert.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B7FB79E714D6064C0080A714 /* TabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBar.h; sourceTree = "<group>"; };
 		B7FB79E814D6064C0080A714 /* TabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBar.m; sourceTree = "<group>"; };
 		B7FB79F314D608590080A714 /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_entry.h; path = ../ThirdParty/libarchive/libarchive/libarchive/archive_entry.h; sourceTree = "<group>"; };
@@ -1090,7 +1076,7 @@
 		CD7D2AFF13C0CD9700B889EE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CD7D2B0113C0CD9D00B889EE /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CD7D2B0F13C0D18500B889EE /* ArtCodeAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeAppDelegate.h; sourceTree = "<group>"; };
-		CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeAppDelegate.m; sourceTree = "<group>"; };
+		CD7D2B1013C0D18500B889EE /* ArtCodeAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ArtCodeAppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD7D2B1913C0D47C00B889EE /* AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AppStyle.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CD7D2B1A13C0D47C00B889EE /* UIColor+AppStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+AppStyle.h"; sourceTree = "<group>"; };
 		CD7D2B1B13C0D47C00B889EE /* UIColor+AppStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "UIColor+AppStyle.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -1120,7 +1106,7 @@
 		CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Normal.png; sourceTree = "<group>"; };
 		CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tabBar_TabBackground_Selected.png; sourceTree = "<group>"; };
 		CD9CD96E13DC22AF007964D3 /* CodeFileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileController.h; sourceTree = "<group>"; };
-		CD9CD96F13DC22AF007964D3 /* CodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileController.m; sourceTree = "<group>"; };
+		CD9CD96F13DC22AF007964D3 /* CodeFileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CodeFileController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CD9ED8DD1466BE7700A517A5 /* accessoryView_popoverArrowLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverArrowLeft.png; sourceTree = "<group>"; };
 		CD9ED8DE1466BE7700A517A5 /* accessoryView_popoverArrowMiddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverArrowMiddle.png; sourceTree = "<group>"; };
 		CD9ED8DF1466BE7700A517A5 /* accessoryView_popoverArrowRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accessoryView_popoverArrowRight.png; sourceTree = "<group>"; };
@@ -1164,7 +1150,7 @@
 		CDBD3F7B150014CF0050B10C /* bottomToolBar_Icon_Remotes_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Normal.png; sourceTree = "<group>"; };
 		CDBD3F7C150014CF0050B10C /* bottomToolBar_Icon_Remotes_Selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bottomToolBar_Icon_Remotes_Selected.png; sourceTree = "<group>"; };
 		CDC0056914D96B8900BB6867 /* BookmarkBrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BookmarkBrowserController.h; sourceTree = "<group>"; };
-		CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BookmarkBrowserController.m; sourceTree = "<group>"; };
+		CDC0056A14D96B8900BB6867 /* BookmarkBrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = BookmarkBrowserController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		CDC1332E145FFE390028423F /* CodeFileSearchOptionsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileSearchOptionsController.h; sourceTree = "<group>"; };
 		CDC1332F145FFE390028423F /* CodeFileSearchOptionsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileSearchOptionsController.m; sourceTree = "<group>"; };
 		CDC1333214602F5E0028423F /* searchBar_Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBar_Background.png; sourceTree = "<group>"; };
@@ -2615,7 +2601,7 @@
 		CD7D2AD613C0CD2600B889EE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = CD7D2AD913C0CD2600B889EE /* Build configuration list for PBXProject "ArtCode" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -3090,20 +3076,6 @@
 				CD3DFC07164331ED00833D76 /* itemIcon_Download.png in Resources */,
 				CD3DFC08164331ED00833D76 /* itemIcon_Upload.png in Resources */,
 				CDC96177164C08B60069E74A /* RemotesListHintsView.xib in Resources */,
-				5F1A2864169ACD86005A928E /* Common.xcconfig in Resources */,
-				5F1A2865169ACD86005A928E /* Debug.xcconfig in Resources */,
-				5F1A2866169ACD86005A928E /* Profile.xcconfig in Resources */,
-				5F1A2867169ACD86005A928E /* Release.xcconfig in Resources */,
-				5F1A2868169ACD86005A928E /* Application.xcconfig in Resources */,
-				5F1A2869169ACD86005A928E /* StaticLibrary.xcconfig in Resources */,
-				5F1A286A169ACD86005A928E /* iOS-Application.xcconfig in Resources */,
-				5F1A286B169ACD86005A928E /* iOS-Base.xcconfig in Resources */,
-				5F1A286C169ACD86005A928E /* iOS-StaticLibrary.xcconfig in Resources */,
-				5F1A286D169ACD86005A928E /* Mac-Application.xcconfig in Resources */,
-				5F1A286E169ACD86005A928E /* Mac-Base.xcconfig in Resources */,
-				5F1A286F169ACD86005A928E /* Mac-DynamicLibrary.xcconfig in Resources */,
-				5F1A2870169ACD86005A928E /* Mac-Framework.xcconfig in Resources */,
-				5F1A2871169ACD86005A928E /* Mac-StaticLibrary.xcconfig in Resources */,
 				5F1A2872169ACD86005A928E /* README.md in Resources */,
 				5F37A990169E380900D91E56 /* ReactiveCocoa.xcodeproj in Resources */,
 				5F37A994169E386500D91E56 /* file.xcodeproj in Resources */,

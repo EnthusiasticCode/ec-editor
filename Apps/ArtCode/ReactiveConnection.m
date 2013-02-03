@@ -196,7 +196,7 @@
       }] map:^RACSignal *(RACSignal * x) {
         return [x doNext:^(id y) {
           // Ignore progress nexts, only consider completed files
-          if ([y isKindOfClass:[NSURL class]]) {
+          if ([y isKindOfClass:NSURL.class]) {
             totalAccumulator++;
             [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
           }
@@ -253,7 +253,7 @@
       }
     }] map:^RACSignal *(RACSignal * x) {
       return [x doNext:^(id y) {
-        if ([x isKindOfClass:[NSString class]]) {
+        if ([x isKindOfClass:NSString.class]) {
           totalAccumulator++;
           [subscriber sendNext:@(totalAccumulator * 100 / totalExpected)];
         }

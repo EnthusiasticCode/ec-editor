@@ -134,8 +134,10 @@
 		NSString *zipFileName = zipURL.lastPathComponent.stringByDeletingPathExtension;
 		__block NSUInteger attempt = 0;
 		NSUInteger maxAttempts = 20;
-		
-		__block RACSignal *(^newProjectDirectorySignalBlock)() = ^{
+		__block RACSignal *(^newProjectDirectorySignalBlock)() = nil;
+		@weakify(newProjectDirectorySignalBlock);
+		newProjectDirectorySignalBlock = ^{
+			@strongify(newProjectDirectorySignalBlock);
 			if (attempt > maxAttempts) return [RACSignal error:[NSError errorWithDomain:@"ArtCodeErrorDomain" code:-1 userInfo:nil]];
 			NSString *projectName = zipFileName;
 			if (attempt > 0) {

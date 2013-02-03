@@ -166,7 +166,7 @@
       selectedTag = 2;
     for (UIView *subview in self.bottomToolBar.subviews)
     {
-      if ([subview isKindOfClass:[BottomToolBarButton class]] 
+      if ([subview isKindOfClass:BottomToolBarButton.class] 
           && [(BottomToolBarButton *)subview tag] == selectedTag)
         [(BottomToolBarButton *)subview setSelected:YES];
     }
@@ -246,7 +246,7 @@
   if (!self.quickBrowsersPopover)
   {
     self.quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    self.quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+    self.quickBrowsersPopover.popoverBackgroundViewClass = ImagePopoverBackgroundView.class;
   }
   else
   {

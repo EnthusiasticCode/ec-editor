@@ -66,7 +66,7 @@ static NSMutableDictionary *_includedNodesCaches;
 #pragma mark - NSObject
 
 + (void)initialize {
-  if (self != [TMSyntaxNode class]) {
+  if (self != TMSyntaxNode.class) {
     return;
   }
   // This class takes a long time to initialize, we have to make sure it doesn't do so on the main queue

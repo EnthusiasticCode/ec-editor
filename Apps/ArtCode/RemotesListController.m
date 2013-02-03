@@ -133,7 +133,7 @@
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newRemote];
     [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     _toolAddPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-    _toolAddPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+    _toolAddPopover.popoverBackgroundViewClass = ImagePopoverBackgroundView.class;
     newRemote.presentingPopoverController = _toolAddPopover;
   }
   [_toolAddPopover presentPopoverFromRect:[sender frame] inView:[sender superview] permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];

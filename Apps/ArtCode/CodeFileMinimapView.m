@@ -298,7 +298,7 @@ static const void *rendererContext;
 
 + (Class)layerClass
 {
-  return [CATiledLayer class];
+  return CATiledLayer.class;
 }
 
 - (void)drawRect:(CGRect)rect

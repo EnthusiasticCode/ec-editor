@@ -40,8 +40,8 @@
 
 - (id)initWithStart:(TextPosition*)aStart end:(TextPosition*)aEnd
 {
-  //    assert([aStart isKindOfClass:[TextPosition class]]);
-  //    assert([aEnd isKindOfClass:[TextPosition class]]);
+  //    assert([aStart isKindOfClass:TextPosition.class]);
+  //    assert([aEnd isKindOfClass:TextPosition.class]);
   if((self = [super init]))
   {
     _start = aStart;

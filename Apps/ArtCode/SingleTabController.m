@@ -436,17 +436,17 @@
   switch (currentLocation.type) {
     case ArtCodeLocationTypeProjectsList:
     {
-      controllerClass = [ProjectBrowserController class];
+      controllerClass = ProjectBrowserController.class;
       break;
     }
     case ArtCodeLocationTypeBookmarksList:
     {
-      controllerClass = [BookmarkBrowserController class];
+      controllerClass = BookmarkBrowserController.class;
       break;
     }
     case ArtCodeLocationTypeRemotesList:
     {
-      controllerClass = [RemotesListController class];
+      controllerClass = RemotesListController.class;
       break;
     }
     case ArtCodeLocationTypeTextFile:
@@ -456,7 +456,7 @@
     }
     case ArtCodeLocationTypeDirectory:
     {
-      controllerClass = [FileBrowserController class];
+      controllerClass = FileBrowserController.class;
       break;
     }
     case ArtCodeLocationTypeRemoteDirectory:
@@ -520,7 +520,7 @@ static const char *UIViewControllerLoadingKey = "UIViewControllerLoading";
 
 - (SingleTabController *)singleTabController
 {
-  ASSERT([self.parentViewController isKindOfClass:[SingleTabController class]]);
+  ASSERT([self.parentViewController isKindOfClass:SingleTabController.class]);
   return (SingleTabController *)self.parentViewController;
 }
 

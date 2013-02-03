@@ -139,7 +139,7 @@ static const void *editItemContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-  if (context == &editItemContext && [self.editItem.customView isMemberOfClass:[TopBarEditButton class]])
+  if (context == &editItemContext && [self.editItem.customView isMemberOfClass:TopBarEditButton.class])
   {
     if ([keyPath isEqualToString:@"title"])
       [(UIButton *)self.editItem.customView setTitle:change[NSKeyValueChangeNewKey] forState:UIControlStateNormal];

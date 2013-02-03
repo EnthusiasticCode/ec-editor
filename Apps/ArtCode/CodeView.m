@@ -510,7 +510,7 @@ static void init(CodeView *self)
 	RACAble(self.isFirstResponder) ];
   [[[[RACSignal merge:accessoryViewNotificationSignals] map:^id(id value) {
 		@strongify(self);
-		NSNotification *note = [value isKindOfClass:[NSNotification class]] ? (NSNotification *)value : nil;
+		NSNotification *note = [value isKindOfClass:NSNotification.class] ? (NSNotification *)value : nil;
 		BOOL shouldShow = (self.isFirstResponder
 											 && ((note && ((note.name == UIKeyboardDidChangeFrameNotification) || note.name == UIKeyboardDidShowNotification))));
 		if (!shouldShow) {
@@ -900,7 +900,7 @@ static void init(CodeView *self)
 
 - (NSString *)textInRange:(UITextRange *)range
 {
-  if(!range || ![range isKindOfClass:[TextRange class]])
+  if(!range || ![range isKindOfClass:TextRange.class])
     return nil;
   
   NSUInteger s = ((TextPosition *)range.start).index;
@@ -918,7 +918,7 @@ static void init(CodeView *self)
 - (void)replaceRange:(UITextRange *)range withText:(NSString *)string
 {
   // Adjust replacing range
-  if(!range || ![range isKindOfClass:[TextRange class]])
+  if(!range || ![range isKindOfClass:TextRange.class])
     return;
   
   NSUInteger s = ((TextPosition *)range.start).index;
@@ -1713,7 +1713,7 @@ static void init(CodeView *self)
 
 + (Class)layerClass
 {
-  return [CATiledLayer class];
+  return CATiledLayer.class;
 }
 
 - (void)drawRect:(CGRect)rect

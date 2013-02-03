@@ -105,7 +105,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMScope *)newChildScopeWithIdentifier:(NSString *)identifier syntaxNode:(TMSyntaxNode *)syntaxNode location:(NSUInteger)location type:(TMScopeType)type
 {
-  ASSERT(!identifier || [identifier isKindOfClass:[NSString class]]);
+  ASSERT(!identifier || [identifier isKindOfClass:NSString.class]);
   TMScope *childScope = [[self.class alloc] _initWithParent:self identifier:identifier syntaxNode:syntaxNode type:type];
   childScope->_location = location;
   childScope->_parent = self;

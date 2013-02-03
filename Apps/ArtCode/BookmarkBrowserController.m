@@ -8,7 +8,7 @@
 
 #import "BookmarkBrowserController.h"
 #import "SingleTabController.h"
-#import "NSArray+ScoreForAbbreviation.h"
+#import "NSString+ScoreForAbbreviation.h"
 
 #import "ArtCodeLocation.h"
 #import "ArtCodeTab.h"
@@ -23,18 +23,54 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
+@interface BookmarkBrowserController ()
+
+@property (nonatomic, strong) NSArray *bookmarks;
+
+@end
 
 @implementation BookmarkBrowserController
 
 - (id)init {
-  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:[BookmarkBrowserController class]]];
+  self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:BookmarkBrowserController.class]];
   if (self == nil) return nil;
 	
 	[[[[[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
 		return [RCIODirectory itemWithURL:location.url.projectRootDirectory];
 	}] switchToLatest] map:^(RCIODirectory *projectRootDirectory) {
 		return projectRootDirectory.bookmarksSignal;
-	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
+	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.bookmarks) onObject:self];
+	
+	[RACSignal combineLatest:@[ RACBind(self.bookmarks), self.searchBarTextSubject ] reduce:^(NSArray *bookmarks, NSString *filter) {
+		NSMutableArray *scoredBookmarksSignals = [NSMutableArray arrayWithCapacity:bookmarks.count];
+		for (RACTuple *bookmarkTuple in bookmarks) {
+			RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines) = bookmarkTuple;
+			[scoredBookmarksSignals addObject:[file.nameSignal map:^(NSString *name) {
+				NSIndexSet *hitMask = nil;
+				float score = [name scoreForAbbreviation:filter hitMask:&hitMask];
+				return [RACTuple tupleWithObjects:file, bookmarkedLines ?: RACTupleNil.tupleNil, @(score), hitMask ?: RACTupleNil.tupleNil,  nil];
+			}]];
+		}
+		return [[[[RACSignal combineLatest:scoredBookmarksSignals] map:^(RACTuple *scoredBookmarks) {
+			NSMutableArray *scoredBookmarksArray = [NSMutableArray arrayWithCapacity:scoredBookmarks.count];
+			for (RACTuple *scoredBookmark in scoredBookmarks) {
+				RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines, NSNumber *score, NSIndexSet *hitMask __attribute__((unused))) = scoredBookmark;
+				if (file.url == nil || bookmarkedLines.count == 0 || score.floatValue == 0.0) continue;
+				[scoredBookmarksArray addObject:scoredBookmark];
+			}
+			[scoredBookmarksArray sortUsingComparator:^NSComparisonResult(RACTuple *scoredBookmark1, RACTuple *scoredBookmark2) {
+				return [scoredBookmark1.third compare:scoredBookmark2.third];
+			}];
+			NSMutableArray *filteredItems = [NSMutableArray array];
+			for (RACTuple *scoredBookmark in scoredBookmarksArray) {
+				RACTupleUnpack(RCIOFile *file, NSIndexSet *bookmarkedLines, NSNumber *score __attribute__((unused)), NSIndexSet *hitMask) = scoredBookmark;
+				[bookmarkedLines enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+					[filteredItems addObject:[RACTuple tupleWithObjects:file, @(idx), hitMask ?: RACTupleNil.tupleNil, nil]];
+				}];
+			}
+			return filteredItems;
+		}] catchTo:RACSignal.empty] toProperty:@keypath(self.filteredItems) onObject:self];
+	}];
 	
   return self;
 }
@@ -44,7 +80,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
-  if ([self isMemberOfClass:[BookmarkBrowserController class]]) {
+  if ([self isMemberOfClass:BookmarkBrowserController.class]) {
 		// Tool edit items
     self.toolEditItems = [NSArray arrayWithObjects:[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"itemIcon_Delete"] style:UIBarButtonItemStylePlain target:self action:@selector(toolEditDeleteAction:)], nil];
 		
@@ -58,8 +94,7 @@
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:table cellForRowAtIndexPath:indexPath];
   
-	RACTupleUnpack(RACTuple *bookmarkTuple, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
-	RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber) = bookmarkTuple;
+	RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
 	
   cell.textLabel.text = [NSString stringWithFormat:@"%@ - %@", file.name, lineNumber];
   cell.textLabelHighlightedCharacters = hitMask;
@@ -73,8 +108,7 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    RACTuple *bookmarkTuple = [self.filteredItems[indexPath.row] first];
-		RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber) = bookmarkTuple;
+    RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber, NSIndexSet *hitMask __attribute__((unused))) = self.filteredItems[indexPath.row];
     [self.artCodeTab pushFileURL:file.url dataDictionary:@{ @"lineNumber" : lineNumber }];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];

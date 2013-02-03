@@ -23,7 +23,7 @@ NSString * const BezelAlertForbiddenIcon = @"bezelAlert_nothingIcon";
 }
 
 + (void)initialize {
-  if (self != [BezelAlert class])
+  if (self != BezelAlert.class)
     return;
   
   UIKeyboardFrame = CGRectNull;

@@ -208,7 +208,7 @@ static void drawStencilStar(CGContextRef myContext)
   [navigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
   
   _quickBrowsersPopover = [[UIPopoverController alloc] initWithContentViewController:navigationController];
-  _quickBrowsersPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+  _quickBrowsersPopover.popoverBackgroundViewClass = ImagePopoverBackgroundView.class;
   
   quickBrowserContainerController.presentingPopoverController = _quickBrowsersPopover;
   quickBrowserContainerController.openingButton = sender;
@@ -494,7 +494,7 @@ static void drawStencilStar(CGContextRef myContext)
   self.editButtonItem.title = @"";
   
   UIView *currentContentView = [self _contentView];
-  if ([currentContentView isKindOfClass:[CodeView class]]) {
+  if ([currentContentView isKindOfClass:CodeView.class]) {
     [(CodeView *)currentContentView setEditing:editing];
   }
 	
@@ -669,7 +669,7 @@ static void drawStencilStar(CGContextRef myContext)
 		UIWebView *webView = self.webView;
     if (webView) return webView;
 		
-		if ([self.hiddenView isKindOfClass:[UIWebView class]]) return self.hiddenView;
+		if ([self.hiddenView isKindOfClass:UIWebView.class]) return self.hiddenView;
 		
 		webView = [[UIWebView alloc] init];
 		webView.delegate = self;
@@ -680,14 +680,14 @@ static void drawStencilStar(CGContextRef myContext)
 		CodeView *codeView = self.codeView;
 		if (codeView) return codeView;
 		
-		if ([self.hiddenView isKindOfClass:[CodeView class]]) return self.hiddenView;
+		if ([self.hiddenView isKindOfClass:CodeView.class]) return self.hiddenView;
 		
 		// Load the codeview
 		__weak CodeFileController *this = self;
 		
 		codeView = [[CodeView alloc] init];
 		codeView.delegate = self;
-		codeView.magnificationPopoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+		codeView.magnificationPopoverBackgroundViewClass = ImagePopoverBackgroundView.class;
 		
 		codeView.textInsets = UIEdgeInsetsMake(0, 10, 0, 10);
 		codeView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);

@@ -421,7 +421,7 @@
     [popoverViewController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     
     _toolNormalAddPopover = [[UIPopoverController alloc] initWithContentViewController:popoverViewController];
-    _toolNormalAddPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+    _toolNormalAddPopover.popoverBackgroundViewClass = ImagePopoverBackgroundView.class;
     popoverViewController.presentingPopoverController = _toolNormalAddPopover;
   }
   [(UINavigationController *)_toolNormalAddPopover.contentViewController popToRootViewControllerAnimated:NO];
@@ -447,7 +447,7 @@
 #pragma mark Modal actions
 
 - (void)modalNavigationControllerDismissAction:(id)sender {
-  if ([self.modalNavigationController.visibleViewController isKindOfClass:[RemoteTransferController class]] && ![(RemoteTransferController *)self.modalNavigationController.visibleViewController isTransferFinished]) {
+  if ([self.modalNavigationController.visibleViewController isKindOfClass:RemoteTransferController.class] && ![(RemoteTransferController *)self.modalNavigationController.visibleViewController isTransferFinished]) {
     [(RemoteTransferController *)self.modalNavigationController.visibleViewController cancelCurrentTransfer];
   } else {
     [self setEditing:NO animated:YES];

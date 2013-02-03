@@ -129,7 +129,7 @@ static void init(ShapePopoverBackgroundView *self)
 
 + (Class)layerClass
 {
-  return [CAShapeLayer class];
+  return CAShapeLayer.class;
 }
 
 - (void)layoutSubviews
@@ -415,7 +415,7 @@ static void updatePath(ShapePopoverBackgroundView *self)
 {
   if (!(self = [super initWithContentViewController:viewController]))
     return nil;
-  self.popoverBackgroundViewClass = [ShapePopoverBackgroundView class];
+  self.popoverBackgroundViewClass = ShapePopoverBackgroundView.class;
   return self;
 }
 

@@ -128,7 +128,7 @@ static const void *itemContext;
     // Items
     __block CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, [self itemDefaultWidthForAccessoryPosition:currentPosition], bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
     [self.items enumerateObjectsUsingBlock:^(UIBarButtonItem *item, NSUInteger itemIndex, BOOL *stop) {
-      if ([item isKindOfClass:[CodeFileKeyboardAccessoryItem class]] 
+      if ([item isKindOfClass:CodeFileKeyboardAccessoryItem.class] 
           && [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition])
         itemFrame.size.width = [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition];
       else
@@ -147,7 +147,7 @@ static const void *itemContext;
         *stop = YES;
         return;
       }
-      if ([item isKindOfClass:[CodeFileKeyboardAccessoryItem class]] 
+      if ([item isKindOfClass:CodeFileKeyboardAccessoryItem.class] 
           && [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition])
         itemFrame.size.width = [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition];
       else
@@ -165,7 +165,7 @@ static const void *itemContext;
     CGRect itemFrame = CGRectMake(contentInsets.left + itemInsets.left, contentInsets.top + itemInsets.top, 0, bounds.size.height - contentInsets.top - contentInsets.bottom - itemInsets.top - itemInsets.bottom);
     for (UIBarButtonItem *item in self.items)
     {
-      if ([item isKindOfClass:[CodeFileKeyboardAccessoryItem class]] 
+      if ([item isKindOfClass:CodeFileKeyboardAccessoryItem.class] 
           && [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition])
         itemFrame.size.width = [(CodeFileKeyboardAccessoryItem *)item widthForAccessoryPosition:currentPosition];
       else

@@ -243,9 +243,9 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([segue.destinationViewController isKindOfClass:[CodeFileSearchOptionsController class]]) {
+  if ([segue.destinationViewController isKindOfClass:CodeFileSearchOptionsController.class]) {
     [(CodeFileSearchOptionsController *)segue.destinationViewController setParentSearchBarController:self];
-    if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
+    if ([segue isKindOfClass:UIStoryboardPopoverSegue.class]) {
       [(CodeFileSearchOptionsController *)segue.destinationViewController setParentPopoverController:[(UIStoryboardPopoverSegue *)segue popoverController]];
     }
   } else {

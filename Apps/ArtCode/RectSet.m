@@ -90,7 +90,7 @@
 
 - (id)copy
 {
-  if (self.class == [RectSet class]) {
+  if (self.class == RectSet.class) {
     return self;
   } else {
     return [[RectSet alloc] initWithRects:self];

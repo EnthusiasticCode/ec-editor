@@ -113,7 +113,7 @@ static NSDictionary *_sharedAttributes = nil;
     
     // Pre-map settings with Core Text attributes
     [plistSetting[_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
-      ASSERT([value isKindOfClass:[NSString class]]);
+      ASSERT([value isKindOfClass:NSString.class]);
       
       if ([key isEqualToString:@"fontStyle"]) { // italic, bold, underline
         if ([value isEqualToString:@"italic"] && _sharedItalicFont) {

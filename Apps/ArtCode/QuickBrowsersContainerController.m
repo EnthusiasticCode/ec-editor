@@ -108,7 +108,7 @@
 
 - (QuickBrowsersContainerController *)quickBrowsersContainerController {
 	if (!self.parentViewController) return nil;
-  ASSERT([self.parentViewController isKindOfClass:[QuickBrowsersContainerController class]]);
+  ASSERT([self.parentViewController isKindOfClass:QuickBrowsersContainerController.class]);
   return (QuickBrowsersContainerController *)self.parentViewController;
 }
 

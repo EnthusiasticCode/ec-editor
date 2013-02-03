@@ -28,7 +28,7 @@
   @weakify(self);
   [progressSignal subscribeNext:^(id x) {
     @strongify(self);
-    if ([x isKindOfClass:[NSNumber class]]) {
+    if ([x isKindOfClass:NSNumber.class]) {
       [self.progressView setProgress:(float)[x intValue] / 100.0 animated:YES];
     }
   }];

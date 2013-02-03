@@ -393,7 +393,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
 #pragma mark - NSObject
 
 + (void)initialize {
-  if (self != [TMUnit class]) {
+  if (self != TMUnit.class) {
     return;
   }
   _numberedCapturesRegexp = [OnigRegexp compile:@"\\\\([1-9])" options:OnigOptionCaptureGroup];

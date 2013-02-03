@@ -283,7 +283,9 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				// Prepare the editing view from a NewProjectController
 				projectEditor.navigationItem.title = L(@"Edit project");
 				[projectEditor.navigationItem.rightBarButtonItem setTitle:L(@"Done")];
+				@weakify(projectEditor);
 				[projectEditor.navigationItem.rightBarButtonItem setActionBlock:^(id sender) {
+					@strongify(projectEditor);
 					if (projectEditor.projectNameTextField.text.length == 0) {
 						projectEditor.descriptionLabel.text = L(@"Invalid name for a project");
 					}
@@ -420,7 +422,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
     [newProjectNavigationController.navigationBar setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     newProjectNavigationController.artCodeTab = self.artCodeTab;
     _toolItemPopover = [[UIPopoverController alloc] initWithContentViewController:newProjectNavigationController];
-    _toolItemPopover.popoverBackgroundViewClass = [ImagePopoverBackgroundView class];
+    _toolItemPopover.popoverBackgroundViewClass = ImagePopoverBackgroundView.class;
     newProjectNavigationController.presentingPopoverController = _toolItemPopover;
   }
   [(UINavigationController *)_toolItemPopover.contentViewController popToRootViewControllerAnimated:NO];

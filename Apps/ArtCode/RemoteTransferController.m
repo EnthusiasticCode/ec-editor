@@ -135,7 +135,7 @@ typedef enum {
   }
   
   id item = _itemsConflicts[indexPath.row];
-  if ([item isKindOfClass:[NSDictionary class]]) {
+  if ([item isKindOfClass:NSDictionary.class]) {
     cell.textLabel.text = ((NSDictionary *)item)[cxFilenameKey];
     cell.detailTextLabel.text = nil;
     if (((NSDictionary *)item)[NSFileType] == NSFileTypeDirectory) {
@@ -143,13 +143,13 @@ typedef enum {
     } else {
       cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[((NSDictionary *)item)[cxFilenameKey] pathExtension]];
     }
-  } else if ([item isKindOfClass:[NSString class]]) {
+  } else if ([item isKindOfClass:NSString.class]) {
     cell.textLabel.text = [item lastPathComponent];
     cell.detailTextLabel.text = [item prettyPath];
     cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[item pathExtension]];
   } else {
 // TODO: port
-//    ASSERT([item isKindOfClass:[ACProjectFileSystemItem class]]);
+//    ASSERT([item isKindOfClass:ACProjectFileSystemItem.class]);
 //    cell.textLabel.text = [item name];
 //    cell.detailTextLabel.text = [[item pathInProject] prettyPath];
 //    if ([(ACProjectFileSystemItem *)item type] == ACPFolder) {
@@ -609,7 +609,7 @@ typedef enum {
         [_transfers enumerateKeysAndObjectsUsingBlock:^(NSString *remotePath, id itemOrlocalFolderPath, BOOL *stop) {
           ASSERT([remotePath hasPrefix:_connectionPath]);
           // localItem could be a string indicating the local path that should be created
-          if ([itemOrlocalFolderPath isKindOfClass:[NSString class]]) {
+          if ([itemOrlocalFolderPath isKindOfClass:NSString.class]) {
             [NSFileManager.defaultManager createDirectoryAtURL:[[self _localTemporaryDirectoryURL] URLByAppendingPathComponent:(NSString *)itemOrlocalFolderPath isDirectory:YES] withIntermediateDirectories:YES attributes:nil error:NULL];
             return;
           }

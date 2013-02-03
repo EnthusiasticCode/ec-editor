@@ -151,9 +151,9 @@
   NSIndexSet *selected = selectedTitleFragments ?: [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
   NSMutableString *result = [[NSMutableString alloc] init];
   [self.titleFragments enumerateObjectsAtIndexes:selected options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-    if ([obj isKindOfClass:[NSString class]]) {
+    if ([obj isKindOfClass:NSString.class]) {
       [result appendFormat:@"%@ ", obj];
-    } else if ([obj isKindOfClass:[UILabel class]]) {
+    } else if ([obj isKindOfClass:UILabel.class]) {
       [result appendFormat:@"%@ ", [(UILabel *)obj text]];
     }
   }];
@@ -310,7 +310,7 @@
   
   NSMutableArray *result = [NSMutableArray arrayWithCapacity:[fragmentIndexes count]];
   [titleFragments enumerateObjectsAtIndexes:fragmentIndexes options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-    if ([obj isKindOfClass:[NSString class]])
+    if ([obj isKindOfClass:NSString.class])
     {
       UILabel *label = [[UILabel alloc] init];
       label.lineBreakMode = NSLineBreakByTruncatingMiddle;
@@ -325,11 +325,11 @@
       label.isAccessibilityElement = NO;
       [result addObject:label];
     }
-    else if ([obj isKindOfClass:[UIImage class]])
+    else if ([obj isKindOfClass:UIImage.class])
     {
       [result addObject:[[UIImageView alloc] initWithImage:(UIImage *)obj]];
     }
-    else if ([obj isKindOfClass:[UIView class]])
+    else if ([obj isKindOfClass:UIView.class])
     {
       [(UIView *)obj setIsAccessibilityElement:NO];
       [result addObject:obj];

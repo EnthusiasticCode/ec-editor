@@ -33,13 +33,13 @@
   [super viewWillAppear:animated];
   self.fileNameLabel.text = [self.artCodeTab.currentLocation name];
   self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f KB", (double)[[NSFileManager.defaultManager attributesOfItemAtPath:self.artCodeTab.currentLocation.url.path error:NULL][NSFileSize] unsignedIntValue] / 1024.0];
-  ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);
+  ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:CodeFileController.class]);
   self.fileHighlightTypeLabel.text = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].syntax.name;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-  if ([segue.destinationViewController isKindOfClass:[QuickFileHighlightTableController class]]) {
-    ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:[CodeFileController class]]);
+  if ([segue.destinationViewController isKindOfClass:QuickFileHighlightTableController.class]) {
+    ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:CodeFileController.class]);
     [(QuickFileHighlightTableController *)segue.destinationViewController setCodeFileController:(CodeFileController *)self.quickBrowsersContainerController.contentController];
   }
 }
