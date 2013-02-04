@@ -8,7 +8,7 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
-@interface RCIOFile (ArtCode)
+@interface RCIOFile (ArtCodeExtendedAttributes)
 
 - (RACPropertySubject *)explicitSyntaxIdentifierSubject;
 

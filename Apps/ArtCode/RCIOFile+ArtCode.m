@@ -12,7 +12,7 @@ static NSString * const explicitSyntaxIdentifierKey = @"com.enthusiasticcode.art
 static NSString * const explicitEncodingKey = @"com.enthusiasticcode.artcode.ExplicitEncoding";
 static NSString * const bookmarksKey = @"com.enthusiasticcode.artcode.Bookmarks";
 
-@implementation RCIOFile (ArtCode)
+@implementation RCIOFile (ArtCodeExtendedAttributes)
 
 - (RACPropertySubject *)explicitSyntaxIdentifierSubject {
   return [self extendedAttributeSubjectForKey:explicitSyntaxIdentifierKey];

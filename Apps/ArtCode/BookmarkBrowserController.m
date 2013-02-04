@@ -19,7 +19,7 @@
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
 #import "NSURL+ArtCode.h"
-#import "RCIODirectory+ArtCode.h"
+#import "RCIOItem+ArtCode.h"
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 

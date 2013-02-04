@@ -23,6 +23,7 @@
 		5F37AB05169E3B4900D91E56 /* libReactiveCocoa-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37AA3F169E3A2400D91E56 /* libReactiveCocoa-iOS.a */; };
 		5F37AB66169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */; };
 		5F37CFDC16A4932900F3020A /* libReactiveCocoaIO-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F37CFCF16A4930A00F3020A /* libReactiveCocoaIO-iOS.a */; };
+		5F5435C516C017540030296C /* RCIOItem+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5435C416C017540030296C /* RCIOItem+ArtCode.m */; };
 		5F6539F015B0AF8400FFCFEE /* ArtCodeRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
@@ -632,6 +633,8 @@
 		5F37AB64169E3EF000D91E56 /* NSNotificationCenter+RACSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+RACSupport.h"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.h"; sourceTree = "<group>"; };
 		5F37AB65169E3EF000D91E56 /* NSNotificationCenter+RACSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNotificationCenter+RACSupport.m"; path = "ReactiveCocoa/RACExtensions/NSNotificationCenter+RACSupport.m"; sourceTree = "<group>"; };
 		5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactiveCocoaIO.xcodeproj; path = ../Frameworks/ReactiveCocoaIO/ReactiveCocoaIO.xcodeproj; sourceTree = "<group>"; };
+		5F5435C316C017540030296C /* RCIOItem+ArtCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCIOItem+ArtCode.h"; sourceTree = "<group>"; };
+		5F5435C416C017540030296C /* RCIOItem+ArtCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCIOItem+ArtCode.m"; sourceTree = "<group>"; };
 		5F6539EE15B0AF8400FFCFEE /* ArtCodeRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeRemote.h; sourceTree = "<group>"; };
 		5F6539EF15B0AF8400FFCFEE /* ArtCodeRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArtCodeRemote.m; sourceTree = "<group>"; };
 		5F6539F815B0B31A00FFCFEE /* ArtCodeTabPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArtCodeTabPageViewController.h; sourceTree = "<group>"; };
@@ -1699,6 +1702,8 @@
 		B7FB799214D5FE680080A714 /* Additions */ = {
 			isa = PBXGroup;
 			children = (
+				5F5435C316C017540030296C /* RCIOItem+ArtCode.h */,
+				5F5435C416C017540030296C /* RCIOItem+ArtCode.m */,
 				B78D136D15AB4D5D0022C93B /* RCIOFile+ArtCode.h */,
 				B78D136E15AB4D5D0022C93B /* RCIOFile+ArtCode.m */,
 				5FDBDAF216B3021A00AB947A /* RCIODirectory+ArtCode.h */,
@@ -3204,6 +3209,7 @@
 				5FDBDA2216AEE44F00AB947A /* ArtCodeRemoteSet.m in Sources */,
 				5FDBDA2516AF0C6700AB947A /* NSURL+ArtCode.m in Sources */,
 				5FDBDAF416B3021B00AB947A /* RCIODirectory+ArtCode.m in Sources */,
+				5F5435C516C017540030296C /* RCIOItem+ArtCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

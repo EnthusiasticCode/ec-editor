@@ -8,12 +8,10 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
-@interface RCIODirectory (ArtCode)
+@interface RCIODirectory (ArtCodeExtendedAttributes)
 
 - (RACPropertySubject *)labelColorSubject;
 
 - (RACPropertySubject *)newlyCreatedSubject;
-
-- (RACSignal *)bookmarksSignal;
 
 @end
