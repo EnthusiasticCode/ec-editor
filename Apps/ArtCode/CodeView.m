@@ -78,26 +78,26 @@ NSString * const CodeViewPlaceholderAttributeName = @"codeViewPlaceholder";
 @property (nonatomic, readonly) BOOL ownsRenderer;
 @property (nonatomic, readwrite) BOOL keyboardAccessoryViewVisible;
 
-/// Set the renderer text inserts adjusting them for line numbers
+// Set the renderer text inserts adjusting them for line numbers
 - (void)_forwardTextInsetsToRenderer;
 
-/// Method to be used before any text modification occurs.
+// Method to be used before any text modification occurs.
 - (void)_replaceTextInRange:(NSRange)range withString:(NSString *)string newSelectionRange:(NSRange)selection;
 
-/// Shourtcut that will automatically set the selection after the inserted text.
+// Shourtcut that will automatically set the selection after the inserted text.
 - (void)_replaceTextInRange:(NSRange)range withString:(NSString *)string;
 
-/// Support method to set the selection and notify the input delefate.
+// Support method to set the selection and notify the input delefate.
 - (void)_setSelectedTextRange:(NSRange)newSelection notifyDelegate:(BOOL)shouldNotify;
 
-/// Convinience method to set the selection to an index location.
+// Convinience method to set the selection to an index location.
 - (void)_setSelectedIndex:(NSUInteger)index;
 
-/// Helper method to set the selection starting from two points.
+// Helper method to set the selection starting from two points.
 - (void)_setSelectedTextFromPoint:(CGPoint)fromPoint toPoint:(CGPoint)toPoint;
 
-/// Given a touch point on the top or bottom of the codeview, this method
-/// scroll the content faster as the point approaches the receiver's bounds.
+// Given a touch point on the top or bottom of the codeview, this method
+// scroll the content faster as the point approaches the receiver's bounds.
 - (void)_autoScrollForTouchAtPoint:(CGPoint)point eventBlock:(void(^)(BOOL isScrolling))block;
 - (void)_stopAutoScroll;
 

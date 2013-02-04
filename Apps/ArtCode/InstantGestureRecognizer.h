@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-/// Trivial gesture recognizer that recognize any touch immediatly without 
-/// canceling it.
+// Trivial gesture recognizer that recognize any touch immediatly without 
+// canceling it.
 @interface InstantGestureRecognizer : UIGestureRecognizer
 
 @property (nonatomic, copy) NSArray *passTroughViews;

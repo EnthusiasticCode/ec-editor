@@ -16,7 +16,7 @@
 
 typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 
-/// Custom scroll view to manage it's layout with a block
+// Custom scroll view to manage it's layout with a block
 @interface TabBarScrollView : UIScrollView
 @property (nonatomic, copy) ScrollViewBlock customLayoutSubviews;
 @end
@@ -54,7 +54,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 - (void)_setSelectedTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 - (void)_removeTabControl:(UIControl *)tabControl animated:(BOOL)animated;
 - (void)_moveTabAction:(UILongPressGestureRecognizer *)recognizer;
-/// Action attached to close button that willk remove the tab button
+// Action attached to close button that willk remove the tab button
 - (void)_closeTabAction:(id)sender;
 
 - (UIControl *)_dequeueReusableTabControlWithIdentifier:(NSString *)reuseIdentifier;

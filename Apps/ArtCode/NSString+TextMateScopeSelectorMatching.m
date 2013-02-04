@@ -11,13 +11,13 @@
 
 @interface NSString (TextMateScopeSelectorMatchingInternal)
 
-/// Return a number indicating how much a scope selector array matches the search.
-/// A scope selector array is an array of strings defining a context of scopes where
-/// a scope must be child of the previous scope in the array.
+// Return a number indicating how much a scope selector array matches the search.
+// A scope selector array is an array of strings defining a context of scopes where
+// a scope must be child of the previous scope in the array.
 - (float)_scoreQueryScopeArray:(NSArray *)query forSearchScopeArray:(NSArray *)search;
 
-/// Returns a number indicating how much the receiver matches the search scope selector.
-/// A scope selector reference is a string containing a single scope context (ie: scopes divided by spaces).
+// Returns a number indicating how much the receiver matches the search scope selector.
+// A scope selector reference is a string containing a single scope context (ie: scopes divided by spaces).
 - (float)_scoreForSearchScope:(NSString *)search;
 
 @end

@@ -10,9 +10,9 @@
 
 @interface UIImage (AppStyle)
 
-/// Create a resizable image with a rounded rectangle of corner radius 3, a border
-/// of 1 pixel insetted as specified. The arrow size can make the image have an
-/// arrow either on the right if positive or left if negative.
+// Create a resizable image with a rounded rectangle of corner radius 3, a border
+// of 1 pixel insetted as specified. The arrow size can make the image have an
+// arrow either on the right if positive or left if negative.
 + (UIImage *)styleBackgroundImageWithColor:(UIColor *)color 
                                borderColor:(UIColor *)borderColor 
                                     insets:(UIEdgeInsets)borderInsets 
@@ -21,58 +21,58 @@
 
 + (UIImage *)styleBackgroundImageWithColor:(UIColor *)color borderColor:(UIColor *)borderColor;
 
-/// Icon of a document with a bookmark label used to represent projects with style 
-/// foreground color and shadow.
+// Icon of a document with a bookmark label used to represent projects with style 
+// foreground color and shadow.
 + (UIImage *)styleProjectImageWithSize:(CGSize)size labelColor:(UIColor *)labelColor;
 
-/// Icon of a label similar to the one on the project image.
+// Icon of a label similar to the one on the project image.
 + (UIImage *)styleProjectLabelImageWithSize:(CGSize)size color:(UIColor *)color;
 
-/// Icon of a document with 1 pixel outline and colored inside.
-/// A label may also be applied to indicate document extension.
+// Icon of a document with 1 pixel outline and colored inside.
+// A label may also be applied to indicate document extension.
 + (UIImage *)styleDocumentImageWithSize:(CGSize)size color:(UIColor *)color text:(NSString *)text;
 
-/// Icon for a document based on extension. The images are 32x32 points in size.
+// Icon for a document based on extension. The images are 32x32 points in size.
 + (UIImage *)styleDocumentImageWithFileExtension:(NSString *)extension;
 
-/// Icon of a group.
+// Icon of a group.
 + (UIImage *)styleGroupImageWithSize:(CGSize)size;
 
-/// Table disclosure arrow.
+// Table disclosure arrow.
 + (UIImage *)styleTableDisclosureImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
 
-/// Image of a triangle poinging in the direction of its orientation.
+// Image of a triangle poinging in the direction of its orientation.
 + (UIImage *)styleDisclosureArrowImageWithOrientation:(UIImageOrientation)orientation color:(UIColor *)color;
 
-/// Image of a + with style foreground color and shadow.
+// Image of a + with style foreground color and shadow.
 + (UIImage *)styleAddImageWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
 
-/// Image of an X. This image can have a required background and outline color. 
-/// The outline will look like a border.
+// Image of an X. This image can have a required background and outline color. 
+// The outline will look like a border.
 + (UIImage *)styleCloseImageWithColor:(UIColor *)color outlineColor:(UIColor *)outlineColor shadowColor:(UIColor *)shadowColor;
 
-/// Produce a rounded rect image with the given color and white letter over it.
+// Produce a rounded rect image with the given color and white letter over it.
 + (UIImage *)styleSymbolImageWithSize:(CGSize)size color:(UIColor *)color letter:(NSString *)letter;
 
-/// Icon 16x16+shadow of a magnifying glass.
+// Icon 16x16+shadow of a magnifying glass.
 + (UIImage *)styleSearchIconWithColor:(UIColor *)color shadowColor:(UIColor *)shadowColor;
 
-/// An image to be used in a table view cell check mark. Cached.
+// An image to be used in a table view cell check mark. Cached.
 + (UIImage *)styleCheckMarkImage;
 
-/// An image to be used as a table reorder control. Cached.
+// An image to be used as a table reorder control. Cached.
 + (UIImage *)styleReorderControlImage;
 
-/// An image to be used as a table delete activation control. Cached.
+// An image to be used as a table delete activation control. Cached.
 + (UIImage *)styleDeleteActivationImage;
 
-/// Image for a normal button in the application for the given state.
+// Image for a normal button in the application for the given state.
 + (UIImage *)styleNormalButtonBackgroundImageForControlState:(UIControlState)state;
 
-/// Image for a back button.
+// Image for a back button.
 + (UIImage *)styleBackButtonBackgroundImage;
 
-/// Image for the background of a button in a popover
+// Image for the background of a button in a popover
 + (UIImage *)stylePopoverButtonBackgroundImage;
 
 @end

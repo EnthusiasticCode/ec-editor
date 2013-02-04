@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-/// A category to assist in using NSIndexSet to track subranges in a string
+// A category to assist in using NSIndexSet to track subranges in a string
 @interface NSIndexSet (StringRanges)
 
 - (NSRange)firstRange;

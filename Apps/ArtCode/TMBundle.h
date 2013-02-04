@@ -10,7 +10,7 @@
 
 @interface TMBundle : NSObject
 
-/// An array containing URLs for all bundles in the set bundle directory
+// An array containing URLs for all bundles in the set bundle directory
 + (NSArray *)bundleURLs;
 
 @end

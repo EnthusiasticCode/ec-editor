@@ -22,7 +22,7 @@ NSString * const TMPreferenceIncreaseIndentKey = @"increaseIndentPattern";
 NSString * const TMPreferenceDecreaseIndentKey = @"decreaseIndentPattern";
 NSString * const TMPreferenceIndentNextLineKey = @"indentNextLinePattern";
 
-/// Dictionary of scope selector to TMPreference
+// Dictionary of scope selector to TMPreference
 static NSDictionary * systemTMPreferencesDictionary;
 static TMPreference *systemGlobalPreferences;
 static NSMutableDictionary *scopeToPreferenceCache;

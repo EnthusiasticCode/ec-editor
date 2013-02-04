@@ -23,24 +23,24 @@
 
 #pragma mark - Code viewing and editing
 
-/// The code view used to display code.
+// The code view used to display code.
 @property (nonatomic, weak, readonly) CodeView *codeView;
 
 @property (nonatomic, strong) RCIOFile *textFile;
 
 @property (nonatomic, strong) TMUnit *codeUnit;
 
-/// The web view used for preview webpages.
+// The web view used for preview webpages.
 @property (nonatomic, weak, readonly) UIWebView *webView;
 
-/// The code minimap view.
+// The code minimap view.
 @property (nonatomic, weak, readonly) CodeFileMinimapView *minimapView;
 
-/// Indicates if the minimap is visible.
+// Indicates if the minimap is visible.
 @property (nonatomic, getter = isMinimapVisible) BOOL minimapVisible;
 - (void)setMinimapVisible:(BOOL)minimapVisible animated:(BOOL)animated;
 
-/// Indicates the width of the minimap.
+// Indicates the width of the minimap.
 @property (nonatomic) CGFloat minimapWidth;
 
 @end

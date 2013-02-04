@@ -14,7 +14,7 @@
 
 + (ArtCodeTabSet *)defaultSet;
 
-/// Adds a new tab at the end of the set. The new tab will have a single location in its history equal to the given tab current location.
+// Adds a new tab at the end of the set. The new tab will have a single location in its history equal to the given tab current location.
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab;
 
 - (ArtCodeTab *)addNewTabWithLocationType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote data:(NSData *)data;

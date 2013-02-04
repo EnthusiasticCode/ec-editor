@@ -10,10 +10,10 @@
 
 @interface NSString (TextMateScopeSelectorMatching)
 
-/// Returns a value indicating how well the receiver is represented by the given scope selector.
-/// A scope selector is a string containing dot separated scopes that can be separated by a space
-/// to specify relationships. Scopes can be grouped when separated by comma.
-/// For a complete specification see http://manual.macromates.com/en/scope_selectors
+// Returns a value indicating how well the receiver is represented by the given scope selector.
+// A scope selector is a string containing dot separated scopes that can be separated by a space
+// to specify relationships. Scopes can be grouped when separated by comma.
+// For a complete specification see http://manual.macromates.com/en/scope_selectors
 - (float)scoreForScopeSelector:(NSString *)scopeSelector;
 
 @end

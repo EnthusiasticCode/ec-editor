@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-/// An immutable collection of CGRect
+// An immutable collection of CGRect
 @interface RectSet : NSObject {
 @protected
   CGRect *buffer;
@@ -27,29 +27,29 @@
 
 #pragma mark Getting Set Informations
 
-/// Return the union of all the CGRect in the set.
+// Return the union of all the CGRect in the set.
 @property (nonatomic, readonly) CGRect bounds;
 
-/// Get the number of CGRect in the set.
+// Get the number of CGRect in the set.
 @property (nonatomic, readonly) NSUInteger count;
 
 #pragma mark Utility Methods on RectSet
 
-/// Enumerate all the CGRect in the set with the provided block.
+// Enumerate all the CGRect in the set with the provided block.
 - (void)enumerateRectsUsingBlock:(void (^)(CGRect rect, BOOL *stop))block;
 
-/// Convinience function to add all the CGRect to a graphic context's path.
+// Convinience function to add all the CGRect to a graphic context's path.
 - (void)addRectsToContext:(CGContextRef)context;
 
-/// Get, if presemt, the rect in the set that is at the top left.
+// Get, if presemt, the rect in the set that is at the top left.
 - (CGRect)topLeftRect;
 
-/// Get, if present, the rect in the set that is at the bottom right.
+// Get, if present, the rect in the set that is at the bottom right.
 - (CGRect)bottomRightRect;
 
 @end
 
-/// Mutable version of \c RectSet
+// Mutable version of \c RectSet
 @interface MutableRectSet : RectSet
 
 #pragma mark Create Mutable RectSet

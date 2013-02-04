@@ -16,7 +16,7 @@
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 
-/// An hint view that will be displayed if there are no projects
+// An hint view that will be displayed if there are no projects
 @property (nonatomic, strong) IBOutlet UIView *hintView;
 
 @end

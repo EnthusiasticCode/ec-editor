@@ -10,15 +10,15 @@
 
 @class ArtCodeRemote;
 
-/// A controller that can be used to display a list of remotes.
-/// The controller is supposed to be used inside a modal navigation controller.
-/// For convinience, it defines a block callback called when a remote is selected.
+// A controller that can be used to display a list of remotes.
+// The controller is supposed to be used inside a modal navigation controller.
+// For convinience, it defines a block callback called when a remote is selected.
 @interface ExportRemotesListController : UITableViewController
 
-/// The list of remotes to show on this controller.
+// The list of remotes to show on this controller.
 @property (nonatomic, strong) NSOrderedSet *remotes;
 
-/// A block that will be called when the user select a remote from the list.
+// A block that will be called when the user select a remote from the list.
 @property (nonatomic, copy) void (^remoteSelectedBlock)(ExportRemotesListController *sender, ArtCodeRemote *remote);
 
 @end

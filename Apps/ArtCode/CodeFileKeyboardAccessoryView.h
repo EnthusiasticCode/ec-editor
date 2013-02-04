@@ -12,28 +12,28 @@
 
 @interface CodeFileKeyboardAccessoryView : KeyboardAccessoryView
 
-/// Array of UIBarButtonItem presented on the accessory view from left to right.
+// Array of UIBarButtonItem presented on the accessory view from left to right.
 @property (nonatomic, copy) NSArray *items;
 
-/// Set the image used for button items.
+// Set the image used for button items.
 @property (nonatomic, strong) UIImage *itemBackgroundImage;
 
-/// Insets applyed to the content view.
+// Insets applyed to the content view.
 - (void)setContentInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position;
 - (UIEdgeInsets)contentInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position;
 
-/// Insets applyed to every item.
+// Insets applyed to every item.
 - (void)setItemInsets:(UIEdgeInsets)insets forAccessoryPosition:(KeyboardAccessoryPosition)position;
 - (UIEdgeInsets)itemInsetsForAccessoryPosition:(KeyboardAccessoryPosition)position;
 
-/// Width used for item of given position. If an item declare a width greater than 0, that with will be used instead.
+// Width used for item of given position. If an item declare a width greater than 0, that with will be used instead.
 - (void)setItemDefaultWidth:(CGFloat)width forAccessoryPosition:(KeyboardAccessoryPosition)position;
 - (CGFloat)itemDefaultWidthForAccessoryPosition:(KeyboardAccessoryPosition)position;
 
 #pragma mark - Managing popover view for items
 
-/// The popover view. The view will be displayed as touching the item with the 
-/// arrow directly under it.
+// The popover view. The view will be displayed as touching the item with the 
+// arrow directly under it.
 @property (nonatomic, readonly, strong) CodeFileKeyboardAccessoryPopoverView *itemPopoverView;
 - (void)presentPopoverForItemAtIndex:(NSUInteger)index permittedArrowDirection:(UIPopoverArrowDirection)direction animated:(BOOL)animated;
 - (void)dismissPopoverForItemAnimated:(BOOL)animated;

@@ -10,7 +10,7 @@
 
 @class CodeFileController;
 
-/// Options used to choose how to match the search phrase
+// Options used to choose how to match the search phrase
 enum {
   CodeFileSearchHitMustContain,
   CodeFileSearchHitMustStartWith,

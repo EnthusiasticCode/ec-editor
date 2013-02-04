@@ -29,7 +29,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 @property (nonatomic) BOOL showLogin;
 @property (nonatomic) BOOL showLoading;
 @property (nonatomic, readwrite, copy) NSArray *selectedItems;
-/// An array of NSDictionaries with keys: cxFilenameKey, progressSignalKey
+// An array of NSDictionaries with keys: cxFilenameKey, progressSignalKey
 @property (nonatomic, strong) NSArray *progressItems;
 @end
 

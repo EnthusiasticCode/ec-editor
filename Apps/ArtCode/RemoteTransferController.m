@@ -24,21 +24,21 @@ typedef enum {
 
 @interface RemoteTransferController ()
 
-/// Gets a temporary directory URL and creates the directory if it doesn't exists.
-/// This directory will be removed with all its content in viewDidDisappear:
+// Gets a temporary directory URL and creates the directory if it doesn't exists.
+// This directory will be removed with all its content in viewDidDisappear:
 - (NSURL *)_localTemporaryDirectoryURL;
 
-/// Sets up the internal state to handle a new operation
+// Sets up the internal state to handle a new operation
 - (void)_setupInternalStateForOperation:(RemoteTransferOperation)operation localFolderURL:(NSURL *)localFolderURL connection:(id<CKConnection>)connection path:(NSString *)remotePath items:(NSArray *)items completion:(RemoteTransferCompletionBlock)completionHandler;
 
-/// Method used by synchronizeLocalProjectFolder:... to recursevly append files to upload in a syncronization
+// Method used by synchronizeLocalProjectFolder:... to recursevly append files to upload in a syncronization
 - (void)_syncLocalDirectoryURL:(NSURL *)directoryURL toRemotePath:(NSString *)remotePath;
 
-/// Calls the completion handler with the given error, if error is nil, _transferError will be sent.
-/// This method restores the connection's original delegate before calling the completion handler.
+// Calls the completion handler with the given error, if error is nil, _transferError will be sent.
+// This method restores the connection's original delegate before calling the completion handler.
 - (void)_callCompletionHandlerWithError:(NSError *)error;
 
-/// Recursivelly queue uploads requests for the given item and subitems.
+// Recursivelly queue uploads requests for the given item and subitems.
 - (void)_uploadItemURL:(NSURL *)item toConnection:(id<CKConnection>)connection path:(NSString *)remotePath;
 
 @end
@@ -51,26 +51,26 @@ typedef enum {
   __weak NSObject *_connectionOriginalDelegate;
   NSString *_connectionPath;
   
-  /// Working related variables
+  // Working related variables
   NSArray *_items;
   NSMutableArray *_itemsConflicts;
   NSURL *_localFolderURL;
   RemoteTransferCompletionBlock _completionHandler;
   NSURL *_localTemporaryDirectoryURL;
   
-  /// Indicates the operation that is being performed by the controller.
+  // Indicates the operation that is being performed by the controller.
   RemoteTransferOperation _transferOperation;
-  /// Dictionary of remote paths to the local project item to be handled according to _transferOperation
+  // Dictionary of remote paths to the local project item to be handled according to _transferOperation
   NSMutableDictionary *_transfers;
-  /// Dictionary of remote items to an NSNumber indicating the progress percent
+  // Dictionary of remote items to an NSNumber indicating the progress percent
   NSMutableDictionary *_transfersProgress;
-  /// Number of trasfers started and completed, used to indicate completion percentage
+  // Number of trasfers started and completed, used to indicate completion percentage
   NSInteger _transfersStarted;
   NSInteger _transfersCompleted;
   NSError *_transferError;
   BOOL _transferCanceled;
   
-  /// Synchronization specific flags
+  // Synchronization specific flags
   BOOL _syncIsFromRemote;
   BOOL _syncUseFileSize;
 }

@@ -19,7 +19,7 @@ static NSString * const ArtCodeLocationDataRemotePathKey = @"RemotePath";
 
 @interface ArtCodeTab (ArtCodeLocation_Internal)
 
-/// Pushes the location built with the given parameters
+// Pushes the location built with the given parameters
 - (void)pushLocationWithType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote dataDictionary:(NSDictionary *)dataDictionary;
 
 @end

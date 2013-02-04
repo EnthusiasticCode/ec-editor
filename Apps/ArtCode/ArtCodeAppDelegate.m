@@ -36,13 +36,11 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   UIFont *defaultFont = [UIFont styleFontWithSize:14];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Generic text field
   id textFieldAppearance = UITextField.appearance;
   [textFieldAppearance setTextColor:UIColor.styleForegroundColor];
   [(UITextField *)textFieldAppearance setFont:defaultFont];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Generic popover
   [ImagePopoverBackgroundView.appearance setBackgroundImage:[[UIImage imageNamed:@"popover_background"] resizableImageWithCapInsets:UIEdgeInsetsMake(15, 15, 15, 15)]];
   [ImagePopoverBackgroundView.appearance setBackgroundInsets:UIEdgeInsetsMake(-9, -9, -9, -9)];
@@ -50,11 +48,9 @@
   [ImagePopoverBackgroundView.appearance setArrowInsets:UIEdgeInsetsMake(1, 1, 1, 1)];
   [ImagePopoverBackgroundView.appearance setArrowLimitsInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Button in generic navigation controller
   [PopoverButton.appearance setBackgroundImage:[UIImage stylePopoverButtonBackgroundImage] forState:UIControlStateNormal];
   
-  ////////////////////////////////////////////////////////////////////////////
   // UI Bars
   [UINavigationBar.appearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
   [UINavigationBar.appearance setTitleTextAttributes:@{UITextAttributeTextColor: UIColor.whiteColor, UITextAttributeTextShadowColor: UIColor.blackColor, UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]}];
@@ -66,7 +62,6 @@
   [UIBarButtonItem.appearance setBackButtonBackgroundImage:[UIImage styleBackButtonBackgroundImage] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   [UIBarButtonItem.appearance setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Tab Bar    
   id buttonInTabBarAppearance = TabBarButton.appearance;
   [buttonInTabBarAppearance setBackgroundImage:[[UIImage imageNamed:@"tabBar_TabBackground_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 10)] forState:UIControlStateNormal];
@@ -77,7 +72,6 @@
   
   [TabBarButtonCloseButton.appearance setImage:[UIImage imageNamed:@"tabBar_TabCloseButton"] forState:UIControlStateNormal];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Top bar
   [TopBarToolbar.appearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"]];
   
@@ -96,24 +90,20 @@
   [TopBarToolButton.appearance setBackgroundImage:[UIImage styleNormalButtonBackgroundImageForControlState:UIControlStateSelected] forState:UIControlStateSelected];
   [[TopBarToolButton appearanceWhenContainedIn:CodeFileSearchBarView.class, nil] setBackgroundImage:[[UIImage imageNamed:@"searchBar_Button_Normal"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)] forState:UIControlStateNormal];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Browsers bottom tool bar
   [BottomToolBarButton.appearance setBackgroundImage:[[UIImage imageNamed:@"bottomToolBar_Button"] resizableImageWithCapInsets:UIEdgeInsetsMake(7, 7, 7, 7)] forState:UIControlStateNormal];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Code view elements
   [(CodeFlashView *)CodeFlashView.appearance setBackgroundColor:UIColor.yellowColor];
   
   // Setup data store
   [[ArtCodeDatastore defaultDatastore] setUp];
   
-  ////////////////////////////////////////////////////////////////////////////
   // Creating main tab controllers
   _tabPageController = [[ArtCodeTabPageViewController alloc] init];
   _tabPageController.definesPresentationContext = YES;
   _tabPageController.artCodeTabSet = ArtCodeTabSet.defaultSet;
   
-  ////////////////////////////////////////////////////////////////////////////
   // Setup window
   self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
   self.window.rootViewController = _tabPageController;

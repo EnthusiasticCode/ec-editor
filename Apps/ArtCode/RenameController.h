@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 @class RCIOItem;
 
-/// A controller to manage a controller to rename a file.
+// A controller to manage a controller to rename a file.
 @interface RenameController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 - (instancetype)initWithRenameItem:(RCIOItem *)item completionHandler:(void(^)(NSUInteger renamedCount, NSError *err))completionHandler;

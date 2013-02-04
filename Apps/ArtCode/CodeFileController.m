@@ -41,7 +41,7 @@
 
 @interface CodeFileController ()
 
-/// View that wraps all the content and that will be adjusted to avoid keyboard overlaps
+// View that wraps all the content and that will be adjusted to avoid keyboard overlaps
 @property (nonatomic, weak) UIView *wrapperView;
 
 @property (nonatomic, weak) CodeView *codeView;
@@ -62,14 +62,14 @@
 @property (nonatomic, copy) bool(^preferenceIncreaseIndentBlock)(NSString *);
 @property (nonatomic, copy) bool(^preferenceDecreaseIndentBlock)(NSString *);
 
-/// Returns the content view used to display the content in the given editing state.
-/// This method evaluate if using the codeView or the webView based on the current fileURL.
+// Returns the content view used to display the content in the given editing state.
+// This method evaluate if using the codeView or the webView based on the current fileURL.
 - (UIView *)_contentViewForEditingState:(BOOL)editingState;
 - (UIView *)_contentView;
 
 - (void)_setCodeViewAttributesForTheme:(TMTheme *)theme;
 
-/// Indicates if the current content view is the web preview.
+// Indicates if the current content view is the web preview.
 - (BOOL)_isWebPreview;
 - (void)_loadWebPreviewContentAndTitle;
 
@@ -119,14 +119,14 @@ static void drawStencilStar(CGContextRef myContext)
   UIColor *_minimapCommentColor;
   UIColor *_minimapPreprocessorColor;
   
-  /// Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
-  /// This button is supposed to have the same appearance of the underlying button and the same tag.
+  // Button inside keyboard accessory popover that look like the underneat button that presented the popover from the accessory.
+  // This button is supposed to have the same appearance of the underlying button and the same tag.
   UIButton *_keyboardAccessoryItemPopoverButton;
   
-  /// Actions associated to items in the accessory view.
+  // Actions associated to items in the accessory view.
   NSArray *_keyboardAccessoryItemActions;
   
-  /// The index of the accessory item action currently being performed.
+  // The index of the accessory item action currently being performed.
   NSInteger _keyboardAccessoryItemCurrentActionIndex;
 }
 

@@ -36,27 +36,27 @@
 
 - (SingleTabController *)singleTabController;
 
-/// Indicates if the controller is in a loading state.
+// Indicates if the controller is in a loading state.
 @property (nonatomic, getter = isLoading) BOOL loading;
 
 @end
 
 
-/// Protocol that can be implemented by a cotnent controller of a single tab controller 
-/// to allow manipulation of the title bar.
+// Protocol that can be implemented by a cotnent controller of a single tab controller 
+// to allow manipulation of the title bar.
 @protocol SingleTabContentController <NSObject>
 @optional
 
-/// If overriden, this function indicates if the title control of the default toolbar
-/// of the given single tab controller should be enabled. By default this method 
-/// returns NO.
+// If overriden, this function indicates if the title control of the default toolbar
+// of the given single tab controller should be enabled. By default this method 
+// returns NO.
 - (BOOL)singleTabController:(SingleTabController *)singleTabController shouldEnableTitleControlForDefaultToolbar:(TopBarToolbar *)toolbar;
 
-/// Called when the defailt toolbar title control has been tapped by the user.
+// Called when the defailt toolbar title control has been tapped by the user.
 - (void)singleTabController:(SingleTabController *)singleTabController titleControlAction:(id)sender;
 
-/// When implemented, setup a title to the given title control. It returns YES
-/// if the title control has been setup, NO otherwise.
+// When implemented, setup a title to the given title control. It returns YES
+// if the title control has been setup, NO otherwise.
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl;
 
 @end

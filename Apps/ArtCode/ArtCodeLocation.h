@@ -19,28 +19,28 @@ typedef enum {
   ArtCodeLocationTypeRemoteDirectory,
 } ArtCodeLocationType;
 
-/// Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.
+// Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.
 @interface ArtCodeLocation : _ArtCodeLocation
 
-/// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
+// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
 @property (nonatomic) ArtCodeLocationType type;
 
 #pragma mark URL specific
 
-/// Returns a file:// URL from either an artcode or a file URL.
+// Returns a file:// URL from either an artcode or a file URL.
 - (NSURL *)url;
 
-/// Returns a useful name for the location. Usually the file name if present.
+// Returns a useful name for the location. Usually the file name if present.
 - (NSString *)name;
 
 - (NSString *)fileExtension;
 
-/// The path from the project containing the file name included.
+// The path from the project containing the file name included.
 - (NSString *)path;
 
 - (NSString *)prettyPath;
 
-/// If the data is a dictionary, this method returns it.
+// If the data is a dictionary, this method returns it.
 @property (nonatomic, copy) NSDictionary *dataDictionary;
 
 @end

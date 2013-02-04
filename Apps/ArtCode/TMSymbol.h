@@ -10,7 +10,7 @@
 @class UIImage, TMScope;
 
 
-/// Represent a symbol returned by the symbolList method in TMUnit.
+// Represent a symbol returned by the symbolList method in TMUnit.
 @interface TMSymbol : NSObject
 
 @property (nonatomic, strong, readonly) NSString *qualifiedIdentifier;

@@ -16,7 +16,7 @@
 
 
 @interface LocalFileListController ()
-/// An array of RACTuples (itemURL, progressSignal)
+// An array of RACTuples (itemURL, progressSignal)
 @property (nonatomic, strong) NSArray *progressItems;
 @end
 

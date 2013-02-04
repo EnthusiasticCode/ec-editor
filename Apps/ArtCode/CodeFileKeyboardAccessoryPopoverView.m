@@ -11,10 +11,10 @@
 
 @implementation CodeFileKeyboardAccessoryPopoverView {
 @private
-  /// Arrow sizes for meta position: far left, middle, far right.
+  // Arrow sizes for meta position: far left, middle, far right.
   CGSize _arrowSizes[3];
   
-  /// Array of array filled with NSNull with indexes corresponding to directions: up, down, left, right. Sub arrays has 3 elements: far left, middle, far right.
+  // Array of array filled with NSNull with indexes corresponding to directions: up, down, left, right. Sub arrays has 3 elements: far left, middle, far right.
   NSMutableArray *_arrowDirectionImages;
   BOOL _needsImageAndTransformForArrowView;
 }

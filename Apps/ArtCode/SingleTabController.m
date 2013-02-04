@@ -31,20 +31,20 @@
 
 - (BOOL)_isViewVisible;
 
-/// Position the bar and content.
+// Position the bar and content.
 - (void)_layoutChildViewsAnimated:(BOOL)animated;
 
-/// Will setup the toolbar items.
+// Will setup the toolbar items.
 - (void)_setupDefaultToolbarItemsAnimated:(BOOL)animated;
 
-/// Routing method that resolve the ArtCodeTab current location to the view controller that can handle it.
+// Routing method that resolve the ArtCodeTab current location to the view controller that can handle it.
 - (UIViewController *)_routeViewControllerForTab:(ArtCodeTab *)tab;
 
 - (void)_defaultToolbarTitleButtonAction:(id)sender;
 - (void)_historyBackAction:(id)sender;
 - (void)_historyForwardAction:(id)sender;
 
-/// Handle the gestures to hide and show the tab bar
+// Handle the gestures to hide and show the tab bar
 - (void)_handleTabBarToggleRecognizer:(UISwipeGestureRecognizer *)recognizer;
 
 @end

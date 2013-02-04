@@ -19,7 +19,7 @@
 
 #pragma mark UI related properties
 
-/// The toolbar that will be set in place of the default navigation toolbar in the \c SingleTabController
+// The toolbar that will be set in place of the default navigation toolbar in the \c SingleTabController
 @property (nonatomic, strong) IBOutlet RemoteNavigationToolbarController *toolbarController;
 
 @end

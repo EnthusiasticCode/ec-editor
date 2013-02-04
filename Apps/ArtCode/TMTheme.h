@@ -19,39 +19,39 @@ extern NSString * const TMThemeSelectionColorEnvironmentAttributeKey;
 
 @interface TMTheme : NSObject
 
-/// Initialize a theme with the URL of it's .tmbundle file.
+// Initialize a theme with the URL of it's .tmbundle file.
 - (id)initWithFileURL:(NSURL *)url;
 
-/// The name of the theme
+// The name of the theme
 @property (nonatomic, strong, readonly) NSString *name;
 
-/// Gets an attribute dictinary with settings of the environment for the theme.
-/// See TMThemeEnvironmentAttribute keys. Values are UIKit objects like UIColor.
+// Gets an attribute dictinary with settings of the environment for the theme.
+// See TMThemeEnvironmentAttribute keys. Values are UIKit objects like UIColor.
 - (NSDictionary *)environmentAttributes;
 
-/// A dictionary containing the font and foreground color for the theme.
-/// This methods uses the shared font attributes.
+// A dictionary containing the font and foreground color for the theme.
+// This methods uses the shared font attributes.
 - (NSDictionary *)commonAttributes;
 
-/// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope.
+// Returns an array of Core Text attributes applicable to an NSAttributedString for the given scope.
 - (NSDictionary *)attributesForQualifiedIdentifier:(NSString *)qualifiedIdentifier;
 
 #pragma mark Default styles
 
-/// Creates a theme from a name and bundle.
+// Creates a theme from a name and bundle.
 + (TMTheme *)themeWithName:(NSString *)name bundle:(NSBundle *)bundle;
 
-/// The default theme
+// The default theme
 + (TMTheme *)defaultTheme;
 
-/// Currently selected theme
+// Currently selected theme
 + (TMTheme *)currentTheme;
 + (void)setCurrentTheme:(TMTheme *)theme;
 
-/// Returns a dictionary containing the default attributes of a string, common to every theme item.
+// Returns a dictionary containing the default attributes of a string, common to every theme item.
 + (NSDictionary *)sharedAttributes;
 
-/// Sets the font that shared attributes will return as a text attribute.
+// Sets the font that shared attributes will return as a text attribute.
 + (void)setSharedFontName:(NSString *)fontName size:(CGFloat)pointSize;
 
 @end

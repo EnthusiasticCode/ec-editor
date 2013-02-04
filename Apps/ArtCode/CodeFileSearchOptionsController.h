@@ -12,10 +12,10 @@
 
 @interface CodeFileSearchOptionsController : UITableViewController
 
-/// The parent search bar controller that will display this options.
+// The parent search bar controller that will display this options.
 @property (weak, nonatomic) CodeFileSearchBarController *parentSearchBarController;
 
-/// The popover controller displaying this controller if any.
+// The popover controller displaying this controller if any.
 @property (weak, nonatomic) UIPopoverController *parentPopoverController;
 
 - (IBAction)changeRegExpOptionAction:(UISwitch *)sender;

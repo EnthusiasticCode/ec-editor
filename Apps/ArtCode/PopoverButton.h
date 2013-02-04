@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-/// Used to style popover buttons
+// Used to style popover buttons
 @interface PopoverButton : UIButton
 
 @end

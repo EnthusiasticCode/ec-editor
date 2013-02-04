@@ -18,30 +18,30 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 @interface TextRenderer ()
 
-/// Redefined to accept private changes.
+// Redefined to accept private changes.
 @property (nonatomic) CGFloat renderHeight;
 
-/// Gets the render width for the text considering the text insets
+// Gets the render width for the text considering the text insets
 - (CGFloat)_wrapWidth;
 
-/// Retrieve the string for the given text segment. 
-/// lineCount is an output parameter, pass NULL if not interested.
-/// isFinalPart, if provided, will contain a value indicating if the input string has been exausted with the call. 
-/// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
-/// The function can return nil if the source string has no text for the given segment.
+// Retrieve the string for the given text segment. 
+// lineCount is an output parameter, pass NULL if not interested.
+// isFinalPart, if provided, will contain a value indicating if the input string has been exausted with the call. 
+// This function is supposed to be used by a text segment to generate it's typesetter if not present in cache.
+// The function can return nil if the source string has no text for the given segment.
 - (NSAttributedString *)_stringForTextSegment:(TextSegment *)segment lineCount:(NSUInteger *)lines finalPart:(BOOL *)isFinalPart;
 
-/// Enumerate throught text segments creating them if not yet present. This function
-/// guarantee to enumerate throught all the text segments that cover the entire
-/// source text.
+// Enumerate throught text segments creating them if not yet present. This function
+// guarantee to enumerate throught all the text segments that cover the entire
+// source text.
 - (void)_generateTextSegmentsAndEnumerateUsingBlock:(void(^)(TextSegment *segment, NSUInteger idx, NSUInteger lineOffset, NSUInteger stringOffset, CGFloat positionOffset, BOOL *stop))block;
 
-/// Returns the line number of a given position in the text. Optionally returns
-/// the X offset of the position in the returned line.
+// Returns the line number of a given position in the text. Optionally returns
+// the X offset of the position in the returned line.
 - (NSUInteger)_renderedLineIndexFromPosition:(NSUInteger)position graphicalOffset:(CGFloat *)outXOffset;
 
-/// Returns the text position of the given line and, withing that line, the character
-/// at the specified X offset.
+// Returns the text position of the given line and, withing that line, the character
+// at the specified X offset.
 - (NSUInteger)_positionFromRenderedLineAtIndex:(NSUInteger)requestLine graphicalOffset:(CGFloat)offsetX;
 
 @end
@@ -68,8 +68,8 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 #define HEIGHT_CACHE_SIZE (3)
 
-/// A Text Segment represent a part of the text rendered. The segment represented
-/// text is limited by the number of lines in \c preferredLineCountPerSegment.
+// A Text Segment represent a part of the text rendered. The segment represented
+// text is limited by the number of lines in \c preferredLineCountPerSegment.
 @interface TextSegment : NSObject <NSDiscardableContent> {
 @private
   NSInteger _discardableContentCount;
@@ -80,7 +80,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   CTTypesetterRef _typesetter;
   NSMutableArray *_renderedLines;
   
-  /// Cache of heights for wrap widths
+  // Cache of heights for wrap widths
   struct { CGFloat wrapWidth; CGFloat height; } heightCache[HEIGHT_CACHE_SIZE];
 }
 
@@ -88,52 +88,52 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
 
 #pragma mark Content
 
-/// The string rendered with this text segment.
+// The string rendered with this text segment.
 @property (nonatomic, strong) NSAttributedString *string;
 
-/// The length of the receiver's string. Use this method instead of [string length]
-/// to avoid calling on a deallocated cache.
+// The length of the receiver's string. Use this method instead of [string length]
+// to avoid calling on a deallocated cache.
 @property (nonatomic) NSUInteger stringLength;
 
-/// The typesetter generated from the text segment string.
+// The typesetter generated from the text segment string.
 @property (nonatomic) CTTypesetterRef typesetter;
 
-/// Removes the content.
+// Removes the content.
 - (void)discardContent;
 
 #pragma mark Derived Data
 
-/// An array of rendered wrapped lines ready to be drawn on a context.
+// An array of rendered wrapped lines ready to be drawn on a context.
 @property (nonatomic, strong) NSArray *renderedLines;
 
-/// Count of elements in renderedLines. Reading this property does not generate the rendered lines if not needed.
+// Count of elements in renderedLines. Reading this property does not generate the rendered lines if not needed.
 @property (nonatomic, readonly) NSUInteger renderedLineCount;
 
-/// Count of string lines used to generate the segment's framesetter.
+// Count of string lines used to generate the segment's framesetter.
 @property (nonatomic) NSUInteger lineCount;
 
-/// Indicates if the text segment is valid.
+// Indicates if the text segment is valid.
 @property (nonatomic, readonly, getter = isValid) BOOL valid;
 
-/// Indicates if this segment is the last one.
+// Indicates if this segment is the last one.
 @property (nonatomic, readonly, getter = isLastSegment) BOOL lastSegment;
 
-/// The current render width. Changing this property will make the segment to
-/// generate a new frame if no one with this width is present in cache.
+// The current render width. Changing this property will make the segment to
+// generate a new frame if no one with this width is present in cache.
 @property (nonatomic) CGFloat renderWrapWidth;
 
-/// The actual render height of the whole string in the segment at the current
-/// wrap width.
+// The actual render height of the whole string in the segment at the current
+// wrap width.
 @property (nonatomic, readonly) CGFloat renderSegmentHeight;
 
-/// Enumerate all the rendered lines in the text segment that intersect the given rect. 
-/// The rect should be relative to this segment coordinates.
-/// The block to apply will receive the line and its index as well as it's number
-/// (that may differ from the index if line wraps occurred) and the Y offset of the line.
+// Enumerate all the rendered lines in the text segment that intersect the given rect. 
+// The rect should be relative to this segment coordinates.
+// The block to apply will receive the line and its index as well as it's number
+// (that may differ from the index if line wraps occurred) and the Y offset of the line.
 - (void)enumerateLinesIntersectingRect:(CGRect)rect usingBlock:(void(^)(TextRendererLine *line, NSUInteger lineIndex, NSUInteger lineNumber, CGFloat lineOffset, BOOL *stop))block;
 
-/// Enumerate all the lines in the text segment within the given segment-relative 
-/// string range. The block will also receive the relative line string range.
+// Enumerate all the lines in the text segment within the given segment-relative 
+// string range. The block will also receive the relative line string range.
 - (void)enumerateLinesInStringRange:(NSRange)range usingBlock:(void(^)(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;
 
 - (void)enumerateLinesInRenderedLineIndexRange:(NSRange)range usingBlock:(void(^)(TextRendererLine *line, NSUInteger lineNumber, CGRect lineBounds, NSRange lineStringRange, BOOL *stop))block;

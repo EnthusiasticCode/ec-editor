@@ -11,10 +11,10 @@
 
 @interface HighlightTableViewCell : UITableViewCell
 
-/// Index in the label text characters to which highlight the background.
+// Index in the label text characters to which highlight the background.
 @property (nonatomic, strong) NSIndexSet *textLabelHighlightedCharacters;
 
-/// Indicate the color to be used for background highlighting.
+// Indicate the color to be used for background highlighting.
 @property (nonatomic, strong) UIColor *textLabelHighlightedCharactersBackgroundColor UI_APPEARANCE_SELECTOR;
 
 @end

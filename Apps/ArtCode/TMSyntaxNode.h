@@ -19,7 +19,7 @@
 
 + (TMSyntaxNode *)defaultSyntax;
 
-/// A dictionary containing all the loaded syntaxes as values for syntax identifier as key.
+// A dictionary containing all the loaded syntaxes as values for syntax identifier as key.
 + (NSDictionary *)allSyntaxes;
 
 @property (nonatomic, weak, readonly) TMSyntaxNode *rootSyntax;

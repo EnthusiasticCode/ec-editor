@@ -242,7 +242,7 @@ static void init(TopBarToolbar *self)
 
 @implementation TopBarToolButton
 
-/// Method called by UIPopoverController if presenting from toolbar item.
+// Method called by UIPopoverController if presenting from toolbar item.
 - (UIView *)view 
 {
   return self;

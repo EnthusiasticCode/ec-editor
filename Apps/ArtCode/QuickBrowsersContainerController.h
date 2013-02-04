@@ -16,10 +16,10 @@
 
 + (id)defaultQuickBrowsersContainerControllerForContentController:(UIViewController *)contentController;
 
-/// The controller that requested the presentation of this quick browser.
+// The controller that requested the presentation of this quick browser.
 @property (nonatomic, weak) UIViewController *contentController;
 
-/// The button from which the quick browser was presented.
+// The button from which the quick browser was presented.
 @property (nonatomic, weak) UIButton *openingButton;
 
 @end
