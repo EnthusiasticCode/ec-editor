@@ -30,7 +30,7 @@
     return nil;
   }
   
-  NSArray *allSyntaxes = [@[[NSNull null]] arrayByAddingObjectsFromArray:[TMSyntaxNode.allSyntaxes.allValues sortedArrayUsingComparator:^NSComparisonResult(TMSyntaxNode *obj1, TMSyntaxNode *obj2) {
+  NSArray *allSyntaxes = [@[NSNull.null] arrayByAddingObjectsFromArray:[TMSyntaxNode.allSyntaxes.allValues sortedArrayUsingComparator:^NSComparisonResult(TMSyntaxNode *obj1, TMSyntaxNode *obj2) {
     return [obj1.name compare:obj2.name];
   }]];
   
@@ -81,7 +81,7 @@
   if (indexPath.row == 0) {
     cell.textLabel.text = @"Automatic";
   } else {
-    cell.textLabel.text = [(TMSyntaxNode *)(self.syntaxes)[indexPath.row] name];
+    cell.textLabel.text = [(self.syntaxes)[indexPath.row] name];
   }
   if ((indexPath.row == 0 && self.currentSyntax == nil) || [cell.textLabel.text isEqualToString:self.currentSyntax.name]) {
     cell.accessoryType = UITableViewCellAccessoryCheckmark;

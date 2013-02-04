@@ -119,7 +119,7 @@
         [remote.managedObjectContext deleteObject:remote];
       }
       self.loading = NO;
-      [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:[selectedRows count]] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
+      [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:selectedRows.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
     }
   }
 }

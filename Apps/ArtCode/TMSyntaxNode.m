@@ -228,7 +228,7 @@ static NSMutableDictionary *_includedNodesCaches;
       [dereferencedNodes addObject:containerNode];
     }];
   }
-  while ([containerNodesIndexes count]);
+  while (containerNodesIndexes.count);
   dispatch_semaphore_wait(_includedNodesCachesLock, DISPATCH_TIME_FOREVER);
   NSMutableDictionary *includedNodesCache = _includedNodesCaches[rootNode];
   if (!includedNodesCache) {
@@ -297,7 +297,7 @@ static NSMutableDictionary *_includedNodesCaches;
       NSMutableArray *patterns = [NSMutableArray array];
       for (NSDictionary *patternDictionary in propertyValue)
         [patterns addObject:[[self.class alloc] _initWithDictionary:patternDictionary syntax:syntax]];
-      if ([patterns count])
+      if (patterns.count)
         [self setValue:[patterns copy] forKey:propertyKey];
     }
     else if ([propertyKey isEqualToString:_repositoryKey])
@@ -306,7 +306,7 @@ static NSMutableDictionary *_includedNodesCaches;
       [propertyValue enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *innerStop) {
         repository[key] = [[self.class alloc] _initWithDictionary:obj syntax:syntax];
       }];
-      if ([repository count])
+      if (repository.count)
         [self setValue:[repository copy] forKey:propertyKey];
     }
   }];

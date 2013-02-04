@@ -414,7 +414,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     }];
     
     // Cache result
-    renderedLineCount = [_renderedLines count];
+    renderedLineCount = _renderedLines.count;
   }
   return _renderedLines;
 }
@@ -808,7 +808,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
   if (requestSegment.lineCount > 0 && lineCount != requestSegment.lineCount)
   {
     NSUInteger requestSegmentIndex = [textSegments indexOfObject:requestSegment];
-    [textSegments enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(requestSegmentIndex, [textSegments count] - requestSegmentIndex)] options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
+    [textSegments enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(requestSegmentIndex, textSegments.count - requestSegmentIndex)] options:0 usingBlock:^(TextSegment *segment, NSUInteger idx, BOOL *stop) {
       [segment discardContent];
     }];
   }
@@ -832,7 +832,7 @@ NSString * const TextRendererRunDrawBlockAttributeName = @"runDrawBlock";
     dispatch_semaphore_wait(textSegmentsSemaphore, DISPATCH_TIME_FOREVER);
     
     // Generate segment if needed
-    if ([textSegments count] <= currentIndex) 
+    if (textSegments.count <= currentIndex) 
     {
       segment = [[TextSegment alloc] initWithTextRenderer:self];
       segment.renderWrapWidth = [self _wrapWidth];

@@ -79,7 +79,7 @@
     fileName = [fileName stringByAppendingPathExtension:@"txt"];
   }
   
-  [[RCIOFile itemWithURL:[self.artCodeTab.currentLocation.url URLByAppendingPathComponent:fileName] mode:RCIOItemModeExclusiveAccess] subscribeCompleted:^{
+  [[RCIOFile itemWithURL:[self.artCodeTab.currentLocation[ArtCodeLocationAttributeKeys.url] URLByAppendingPathComponent:fileName] mode:RCIOItemModeExclusiveAccess] subscribeCompleted:^{
     [self.navigationController.presentingPopoverController dismissPopoverAnimated:YES];
     [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"New file created" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
   }];

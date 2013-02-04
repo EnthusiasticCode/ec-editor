@@ -111,8 +111,8 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   childScope->_parent = self;
   if (!_children)
     _children = [NSMutableArray array];
-  NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, [_children count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:scopeComparator];
-  if (childInsertionIndex == [_children count])
+  NSUInteger childInsertionIndex = [_children indexOfObject:childScope inSortedRange:NSMakeRange(0, _children.count) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:scopeComparator];
+  if (childInsertionIndex == _children.count)
     [_children addObject:childScope];
   else
     [_children insertObject:childScope atIndex:childInsertionIndex];
@@ -212,7 +212,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
   NSUInteger oldRangeEnd = NSMaxRange(oldRange);
   NSInteger offset = newRange.length - oldRange.length;
   // Enumerate all the scopes and adjust them for the change
-  while ([scopeEnumeratorStack count])
+  while (scopeEnumeratorStack.count)
   {
     TMScope *scope = nil;
     while (scope = [[scopeEnumeratorStack lastObject] nextObject])
@@ -258,7 +258,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
     calledBlock(scope);
     if ([scope->_children count]){
       NSMutableArray *scopeEnumeratorStack = [NSMutableArray arrayWithObject:[scope->_children objectEnumerator]];
-      while ([scopeEnumeratorStack count]) {
+      while (scopeEnumeratorStack.count) {
         while (scope = [[scopeEnumeratorStack lastObject] nextObject]) {
           calledBlock(scope);
           if (scope->_children.count) {
@@ -473,7 +473,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
 
 - (TMSymbol *)symbol {
   if (!_symbol) {
-    _symbol = (id)[NSNull null];
+    _symbol = (id)NSNull.null;
     if ([TMPreference preferenceValueForKey:TMPreferenceShowInSymbolListKey qualifiedIdentifier:self.qualifiedIdentifier]) {
       BOOL ancestorHasSymbol = NO;
       TMScope *ancestor = self.parent;
@@ -489,7 +489,7 @@ static NSComparisonResult(^scopeComparator)(TMScope *, TMScope *) = ^NSCompariso
       }
     }
   }
-  return _symbol != (id)[NSNull null] ? _symbol : nil;
+  return _symbol != (id)NSNull.null ? _symbol : nil;
 }
 
 #pragma mark - Debug Methods

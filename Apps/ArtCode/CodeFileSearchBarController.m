@@ -325,14 +325,14 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
     NSArray *searchSection = self.searchFilterMatches;
 		NSMutableIndexSet *searchSectionIndexes = nil;
 		NSUInteger lastLine = NSUIntegerMax;
-    NSUInteger searchSectionCount = [searchSection count];
+    NSUInteger searchSectionCount = searchSection.count;
     if (searchSectionCount == 0) {
       return;
     }
     
     // Get indexes to search into
     if (searchSectionIndexes == nil || lineNumber < lastLine) {
-      searchSectionIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [searchSection count])];
+      searchSectionIndexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(0, searchSection.count)];
     }
     
     NSUInteger endStringRange = NSMaxRange(stringRange);

@@ -31,7 +31,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
-  self.fileNameLabel.text = [self.artCodeTab.currentLocation name];
+  self.fileNameLabel.text = self.artCodeTab.currentLocation.name;
   self.fileSizeLabel.text = [NSString stringWithFormat:@"%.2f KB", (double)[[NSFileManager.defaultManager attributesOfItemAtPath:self.artCodeTab.currentLocation.url.path error:NULL][NSFileSize] unsignedIntValue] / 1024.0];
   ASSERT([self.quickBrowsersContainerController.contentController isKindOfClass:CodeFileController.class]);
   self.fileHighlightTypeLabel.text = [(CodeFileController *)self.quickBrowsersContainerController.contentController codeUnit].syntax.name;

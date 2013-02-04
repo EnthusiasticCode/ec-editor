@@ -130,7 +130,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   for (NSString *actionUUID in plist[@"keyboardActionsConfiguration"])
   {
     if ([actionUUID length] == 0 || [actionUUID isEqualToString:@"inherit"]) {
-      [configuration addObject:[NSNull null]];
+      [configuration addObject:NSNull.null];
     } else {
       // Get action from local or global action dictionaries
       id action = localActions[actionUUID];
@@ -203,7 +203,7 @@ static NSString * const keyboardActionsPath = @"KeyboardConfigurations/KeyboardA
   if (configurationDictionary.count) {
     for (NSNumber *n in [[configurationDictionary allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
       [(NSArray *)configurationDictionary[n] enumerateObjectsUsingBlock:^(id action, NSUInteger idx, BOOL *stop) {
-        if (action != [NSNull null]) {
+        if (action != NSNull.null) {
           // If action is not inherit, substitute to result configuration
           [configuration removeObjectAtIndex:idx];
           [configuration insertObject:action atIndex:idx];

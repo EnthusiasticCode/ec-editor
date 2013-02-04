@@ -313,7 +313,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				[self setEditing:NO animated:YES];
 				
 				self.loading = YES;
-				NSInteger cellsToExportCount = [cellsToExport count];
+				NSInteger cellsToExportCount = cellsToExport.count;
 				__block NSInteger progress = 0;
 				void (^progressBlock)() = ^{
 					// Block to advance the progress count and terminate loading phase when done
@@ -348,7 +348,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
 				[self setEditing:NO animated:YES];
 				
 				NSMutableString *subject = [[NSMutableString alloc] init];
-				NSInteger cellsToExportCount = [cellsToExport count];
+				NSInteger cellsToExportCount = cellsToExport.count;
 				__block NSInteger progress = 0;
 				// Complete process block
 				void (^progressCompletion)() = ^ {

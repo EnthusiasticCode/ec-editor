@@ -124,7 +124,7 @@ typedef enum {
 #pragma mark - UITableView Data Source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [_itemsConflicts count];
+  return _itemsConflicts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -150,12 +150,12 @@ typedef enum {
   } else {
 // TODO: port
 //    ASSERT([item isKindOfClass:ACProjectFileSystemItem.class]);
-//    cell.textLabel.text = [item name];
+//    cell.textLabel.text = item.name;
 //    cell.detailTextLabel.text = [[item pathInProject] prettyPath];
 //    if ([(ACProjectFileSystemItem *)item type] == ACPFolder) {
 //      cell.imageView.image = [UIImage styleGroupImageWithSize:CGSizeMake(32, 32)];
 //    } else {
-//      cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:[[item name] pathExtension]];
+//      cell.imageView.image = [UIImage styleDocumentImageWithFileExtension:item.name.pathExtension];
 //    }
   }
   
@@ -258,7 +258,7 @@ typedef enum {
       // When all the remote items have been checked, we can complete a transfer
       _transfersCompleted++;
       if (_transfersCompleted == _transfersStarted) {
-        if ([_transfers count] == 0) {
+        if (_transfers.count == 0) {
           // If no _transfers remain it means there is nothing to sync
           [self cancelCurrentTransfer];
         } else {
@@ -360,7 +360,7 @@ typedef enum {
     [_transfersProgress enumerateKeysAndObjectsUsingBlock:^(id key, NSNumber *progress, BOOL *stop) {
       totalProgress += [progress floatValue];
     }];
-    [self.progressView setProgress:(float)(totalProgress + _transfersCompleted * 100.0) / (float)(([_transfersProgress count] + _transfersCompleted) * 100.0) animated:YES];
+    [self.progressView setProgress:(float)(totalProgress + _transfersCompleted * 100.0) / (float)((_transfersProgress.count + _transfersCompleted) * 100.0) animated:YES];
   }
 }
 
@@ -460,12 +460,12 @@ typedef enum {
     if (item[NSFileType] != NSFileTypeDirectory) {
       _transfers[itemPath] = [self _localTemporaryDirectoryURL];
     } else {
-      _transfers[itemPath] = [NSNull null];
+      _transfers[itemPath] = NSNull.null;
     }
   }
   
   // Show conflict resolution table if neccessary
-  if ([_itemsConflicts count]) {
+  if (_itemsConflicts.count) {
     self.conflictTableView.hidden = NO;
     self.toolbar.hidden = NO;
     self.progressView.hidden = YES;
@@ -505,7 +505,7 @@ typedef enum {
 
 - (void)deleteConnectionItems:(NSArray *)items fromConnection:(id<CKConnection>)connection path:(NSString *)remotePath completion:(RemoteTransferCompletionBlock)completionHandler {
   // Terminate immediatly if no items needs to be removed
-  if ([items count] == 0) {
+  if (items.count == 0) {
     if (completionHandler)
       completionHandler(connection, nil);
     return;
@@ -534,7 +534,7 @@ typedef enum {
 
 - (BOOL)isTransferFinished
 {
-  return _transferCanceled || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0 && [_itemsConflicts count] == 0);
+  return _transferCanceled || (_transfersCompleted >= _transfersStarted && _transfersProgress.count == 0 && _itemsConflicts.count == 0);
 }
 
 - (void)cancelCurrentTransfer
@@ -543,7 +543,7 @@ typedef enum {
     return;
   _transferCanceled = YES;
   [_connection cancelAll];
-  if (_transferError || (_transfersCompleted >= _transfersStarted && [_transfersProgress count] == 0))
+  if (_transferError || (_transfersCompleted >= _transfersStarted && _transfersProgress.count == 0))
     [self _callCompletionHandlerWithError:_transferError];
 }
 
@@ -580,7 +580,7 @@ typedef enum {
         if (item[NSFileType] != NSFileTypeDirectory) {
           _transfers[itemPath] = [self _localTemporaryDirectoryURL];
         } else {
-          _transfers[itemPath] = [NSNull null];
+          _transfers[itemPath] = NSNull.null;
         }
       }
       // Start transfers
@@ -647,14 +647,14 @@ typedef enum {
 }
 
 - (IBAction)selectAllAction:(id)sender {
-  NSInteger count = [_itemsConflicts count];
+  NSInteger count = _itemsConflicts.count;
   for (NSInteger i = 0; i < count; ++i) {
     [self.conflictTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
   }
 }
 
 - (IBAction)selectNoneAction:(id)sender {
-  NSInteger count = [_itemsConflicts count];
+  NSInteger count = _itemsConflicts.count;
   for (NSInteger i = 0; i < count; ++i) {
     [self.conflictTableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES];
   }
@@ -677,8 +677,8 @@ typedef enum {
   _localFolderURL = localFolderURL;
   _completionHandler = [completionHandler copy];
   
-  _transfers = [NSMutableDictionary dictionaryWithCapacity:[items count]];
-  _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:[items count]];
+  _transfers = [NSMutableDictionary dictionaryWithCapacity:items.count];
+  _transfersProgress = [NSMutableDictionary dictionaryWithCapacity:items.count];
   _transfersStarted = 0;
   _transfersCompleted = 0;
   _transferCanceled = NO;

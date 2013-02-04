@@ -15,10 +15,9 @@
 
 #pragma mark - View lifecycle
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  self.folderNameLabel.text = [self.artCodeTab.currentLocation name];
+  self.folderNameLabel.text = self.artCodeTab.currentLocation.name;
   
   // Calculate file and folders count in current folder
   NSUInteger fileCount = 0;

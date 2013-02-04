@@ -50,7 +50,7 @@
 #pragma mark - Table View Data Source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return [_conflictItems count];
+  return _conflictItems.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -154,14 +154,14 @@
 }
 
 - (IBAction)selectAllAction:(id)sender {
-  NSInteger count = [_conflictItems count];
+  NSInteger count = _conflictItems.count;
   for (NSInteger i = 0; i < count; ++i) {
     [self.conflictTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
   }
 }
 
 - (IBAction)selectNoneAction:(id)sender {
-  NSInteger count = [_conflictItems count];
+  NSInteger count = _conflictItems.count;
   for (NSInteger i = 0; i < count; ++i) {
     [self.conflictTableView deselectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES];
   }

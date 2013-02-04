@@ -274,7 +274,7 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
   if ([self isToolEditDeleteActionSheet:actionSheet]) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) { // Delete
-      NSUInteger selectedItemsCount = [_selectedItems count];
+      NSUInteger selectedItemsCount = _selectedItems.count;
       self.loading = YES;
       [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(RCIOItem *x) {
         return [x delete];
@@ -293,7 +293,7 @@
 			directoryBrowser.excludeDirectory = self.currentDirectory;
       [self modalNavigationControllerPresentViewController:directoryBrowser];
     } else if (buttonIndex == 1) { // Duplicate
-      NSUInteger selectedItemsCount = [_selectedItems count];
+      NSUInteger selectedItemsCount = _selectedItems.count;
       [[RACSignal zip:[_selectedItems.rac_sequence.eagerSequence map:^(RCIOItem *x) {
         return [x duplicate];
       }]] subscribeCompleted:^{
@@ -367,7 +367,7 @@
 				[ArchiveUtilities compressFileAtURLs:urls completionHandler:^(NSURL *temporaryDirectoryURL) {
 					ASSERT_MAIN_QUEUE();
 					if (temporaryDirectoryURL) {
-						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), self.artCodeTab.currentLocation.url.projectRootDirectory.lastPathComponent]] URLByAppendingPathExtension:@"zip"];
+						NSURL *archiveURL = [[temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:L(@"%@ Files"), [self.artCodeTab.currentLocation[ArtCodeLocationAttributeKeys.url] projectRootDirectory].lastPathComponent]] URLByAppendingPathExtension:@"zip"];
 						[NSFileManager.defaultManager moveItemAtURL:[temporaryDirectoryURL URLByAppendingPathComponent:@"Archive.zip"] toURL:archiveURL error:NULL];
 						// Create mail composer
 						MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
@@ -379,7 +379,7 @@
 						[mailComposer addAttachmentData:[NSData dataWithContentsOfURL:archiveURL] mimeType:@"application/zip" fileName:[archiveURL lastPathComponent]];
 						
 						// Add precompiled mail fields
-						[mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), self.artCodeTab.currentLocation.url.projectRootDirectory.lastPathComponent]];
+						[mailComposer setSubject:[NSString stringWithFormat:L(@"%@ exported files"), [self.artCodeTab.currentLocation[ArtCodeLocationAttributeKeys.url] projectRootDirectory].lastPathComponent]];
 						[mailComposer setMessageBody:L(@"<br/><p>Open this file with <a href=\"http://www.artcodeapp.com/\">ArtCode</a> to view the contained project.</p>") isHTML:YES];
 						
 						// Present mail composer

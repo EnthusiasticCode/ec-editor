@@ -52,7 +52,7 @@ static NSMutableDictionary *symbolIconsCache;
 
 - (id)initWithScopeSelector:(NSString *)scope settingsDictionary:(NSDictionary *)settingsDict
 {
-  ASSERT([settingsDict count] != 0);
+  ASSERT(settingsDict.count != 0);
   self = [super init];
   if (!self)
     return nil;
@@ -104,7 +104,7 @@ static NSMutableDictionary *symbolIconsCache;
           [pref _addSettingsDictionary:settings];
         }
         // Add preferences to global dictionary if any is present
-        if ([pref count] != 0) {
+        if (pref.count != 0) {
           preferences[scopeSelector] = pref;
         }
       } else {
@@ -136,7 +136,7 @@ static NSMutableDictionary *symbolIconsCache;
   NSMutableDictionary *cachedPreferences = scopeToPreferenceCache[qualifiedIdentifier];
   __block id value = cachedPreferences[preferenceKey];
   if (value)
-    return value == [NSNull null] ? nil : value;
+    return value == NSNull.null ? nil : value;
   
   
   // Get required preference value
@@ -158,7 +158,7 @@ static NSMutableDictionary *symbolIconsCache;
     cachedPreferences = [NSMutableDictionary dictionary];
     scopeToPreferenceCache[qualifiedIdentifier] = cachedPreferences;
   }
-  cachedPreferences[preferenceKey] = value ?: [NSNull null];
+  cachedPreferences[preferenceKey] = value ?: NSNull.null;
   
   return value;
 }

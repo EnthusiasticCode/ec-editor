@@ -148,7 +148,7 @@
 }
 
 - (NSString *)title {
-  NSIndexSet *selected = selectedTitleFragments ?: [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
+  NSIndexSet *selected = selectedTitleFragments ?: [NSIndexSet indexSetWithIndex:titleFragments.count - 1];
   NSMutableString *result = [[NSMutableString alloc] init];
   [self.titleFragments enumerateObjectsAtIndexes:selected options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
     if ([obj isKindOfClass:NSString.class]) {
@@ -288,27 +288,27 @@
 
 - (void)_setupTitle
 {
-  if (![titleFragments count])
+  if (!titleFragments.count)
     return;
   
-  NSIndexSet *selected = selectedTitleFragments ? selectedTitleFragments : [NSIndexSet indexSetWithIndex:[titleFragments count] - 1];
+  NSIndexSet *selected = selectedTitleFragments ? selectedTitleFragments : [NSIndexSet indexSetWithIndex:titleFragments.count - 1];
   
   [_preViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
   _preViews = ([selected firstIndex] > 0) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [selected firstIndex])] isPrimary:NO] : nil;
   
   [_postViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-  _postViews = ([selected lastIndex] + 1 < [titleFragments count]) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex] + 1, [titleFragments count] - [selected lastIndex] - 1) ] isPrimary:NO] : nil;
+  _postViews = ([selected lastIndex] + 1 < titleFragments.count) ? [self _setupViewArrayFromTitleFragmentIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange([selected lastIndex] + 1, titleFragments.count - [selected lastIndex] - 1) ] isPrimary:NO] : nil;
   
   [_currentViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
-  _currentViews = [selected count] ? [self _setupViewArrayFromTitleFragmentIndexes:selected isPrimary:YES] : nil;
+  _currentViews = selected.count ? [self _setupViewArrayFromTitleFragmentIndexes:selected isPrimary:YES] : nil;
 }
 
 - (NSArray *)_setupViewArrayFromTitleFragmentIndexes:(NSIndexSet *)fragmentIndexes isPrimary:(BOOL)isPrimary
 {
-  if ([fragmentIndexes count] == 0)
+  if (fragmentIndexes.count == 0)
     return nil;
   
-  NSMutableArray *result = [NSMutableArray arrayWithCapacity:[fragmentIndexes count]];
+  NSMutableArray *result = [NSMutableArray arrayWithCapacity:fragmentIndexes.count];
   [titleFragments enumerateObjectsAtIndexes:fragmentIndexes options:0 usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
     if ([obj isKindOfClass:NSString.class])
     {

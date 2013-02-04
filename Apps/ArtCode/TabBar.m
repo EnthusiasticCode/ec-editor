@@ -111,7 +111,7 @@ typedef void (^ScrollViewBlock)(UIScrollView *scrollView);
 {
   additionalControls = array;
   
-  if (!additionalControls || [additionalControls count] == 0)
+  if (!additionalControls || additionalControls.count == 0)
   {
     [additionalControlsContainerView removeFromSuperview];
     additionalControlsContainerView = nil;
@@ -162,7 +162,7 @@ static void updateFadeViews(TabBar *self)
     self->leftFadeLayer = [CAGradientLayer layer];
     self->leftFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->leftFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->leftFadeLayer.actions = @{@"position": [NSNull null]};
+    self->leftFadeLayer.actions = @{@"position": NSNull.null};
     self->leftFadeLayer.startPoint = CGPointMake(0, .5);
     self->leftFadeLayer.endPoint = CGPointMake(1, .5);
     self->leftFadeLayer.opacity = 0;
@@ -175,7 +175,7 @@ static void updateFadeViews(TabBar *self)
     self->rightFadeLayer = [CAGradientLayer layer];
     self->rightFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->rightFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->rightFadeLayer.actions = @{@"position": [NSNull null]};
+    self->rightFadeLayer.actions = @{@"position": NSNull.null};
     self->rightFadeLayer.startPoint = CGPointMake(0, .5);
     self->rightFadeLayer.endPoint = CGPointMake(1, .5);
     self->rightFadeLayer.opacity = 0;
@@ -325,14 +325,14 @@ static void init(TabBar *self)
   if (index == NSNotFound)
     [self _setSelectedTabControl:nil animated:animated];
   
-  ASSERT(index < [tabControls count]);
+  ASSERT(index < tabControls.count);
   UIControl *tabControl = tabControls[index];
   [self _setSelectedTabControl:tabControl animated:animated];
 }
 
 - (void)addTabWithTitle:(NSString *)title animated:(BOOL)animated
 {
-  NSUInteger newTabControlIndex = [tabControls count];
+  NSUInteger newTabControlIndex = tabControls.count;
   if (delegateFlags.hasWillAddTabAtIndex
       && ![delegate tabBar:self willAddTabAtIndex:newTabControlIndex])
     return;
@@ -371,15 +371,15 @@ static void init(TabBar *self)
 
 - (void)removeTabAtIndex:(NSUInteger)tabIndex animated:(BOOL)animated
 {
-  ASSERT(tabIndex < [tabControls count]);
+  ASSERT(tabIndex < tabControls.count);
   UIControl *tabControl = tabControls[tabIndex];
   [self _removeTabControl:tabControl animated:animated];
 }
 
 - (void)moveTabAtIndex:(NSUInteger)fromIndex toIndex:(NSUInteger)toIndex animated:(BOOL)animated
 {
-  ASSERT(fromIndex < [tabControls count]);
-  ASSERT(toIndex < [tabControls count]);
+  ASSERT(fromIndex < tabControls.count);
+  ASSERT(toIndex < tabControls.count);
   
   id obj = tabControls[fromIndex];
   [tabControls removeObjectAtIndex:fromIndex];
@@ -399,7 +399,7 @@ static void init(TabBar *self)
 
 - (void)setTitle:(NSString *)title forTabAtIndex:(NSUInteger)tabIndex
 {
-  ASSERT(tabIndex < [tabControls count]);
+  ASSERT(tabIndex < tabControls.count);
   
   UIButton *tabButton = (UIButton *)tabControls[tabIndex];
   [tabButton setTitle:title forState:UIControlStateNormal];
@@ -446,8 +446,8 @@ static void init(TabBar *self)
         
         // Select final destination
         movedTabDestinationIndex = (NSUInteger)(locationInView.x / tabControlSize.width);
-        if (movedTabDestinationIndex >= [tabControls count])
-          movedTabDestinationIndex = [tabControls count] - 1;
+        if (movedTabDestinationIndex >= tabControls.count)
+          movedTabDestinationIndex = tabControls.count - 1;
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^(void) {
           [tabControlsContainerView layoutSubviews];                    
         } completion:nil];
@@ -627,7 +627,7 @@ static void init(TabBar *self)
       } completion:^(BOOL innerFinished) {
         tabControl.alpha = 1;
         [tabControl removeFromSuperview];
-        tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
+        tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * tabControls.count, 1);
         
         if (delegateFlags.hasDidRemoveTabControlAtIndex)
           [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];
@@ -638,7 +638,7 @@ static void init(TabBar *self)
   {
     [tabControl removeFromSuperview];
     
-    tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * [tabControls count], 1);
+    tabControlsContainerView.contentSize = CGSizeMake(tabControlSize.width * tabControls.count, 1);
     
     if (delegateFlags.hasDidRemoveTabControlAtIndex)
       [delegate tabBar:self didRemoveTabControl:tabControl atIndex:tabIndex];

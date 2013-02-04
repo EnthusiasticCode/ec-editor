@@ -54,7 +54,7 @@
   float score = 0;
   for (NSString *searchScope in [scopeSelector componentsSeparatedByString:@","]) {
     NSArray *searchScopeComponents = [[searchScope stringByTrimmingCharactersInSet:spaceCharacterSet] componentsSeparatedByString:@" - "];
-    if ([searchScopeComponents count] == 1) {
+    if (searchScopeComponents.count == 1) {
       score = MAX(score, [self _scoreForSearchScope:searchScopeComponents[0]]);
     } else {
       __block BOOL exclude = NO;

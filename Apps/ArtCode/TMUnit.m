@@ -59,7 +59,7 @@ void _generateScopesWithCaptures(NSDictionary *dictionary, OnigResult *result, T
     capturesScope.length = [result bodyRange].length;
   }
   NSMutableArray *capturesScopesStack = [NSMutableArray arrayWithObject:capturesScope];
-  NSUInteger numMatchRanges = [result count];
+  NSUInteger numMatchRanges = result.count;
   for (NSUInteger currentMatchRangeIndex = 1; currentMatchRangeIndex < numMatchRanges; ++currentMatchRangeIndex) {
     NSRange currentMatchRange = [result rangeAt:currentMatchRangeIndex];
     // If the capture group wasn't found it's going to have location 0, length 0
@@ -73,7 +73,7 @@ void _generateScopesWithCaptures(NSDictionary *dictionary, OnigResult *result, T
       continue;
     }
     while (currentMatchRange.location < capturesScope.location || NSMaxRange(currentMatchRange) > capturesScope.location + capturesScope.length) {
-      ASSERT([capturesScopesStack count]);
+      ASSERT(capturesScopesStack.count);
       scopeEndHandler(capturesScope);
       [capturesScopesStack removeLastObject];
       capturesScope = [capturesScopesStack lastObject];
@@ -87,7 +87,7 @@ void _generateScopesWithCaptures(NSDictionary *dictionary, OnigResult *result, T
   TMScope *remainingScope = nil;
   while ((remainingScope = [capturesScopesStack lastObject])) {
     // If this is the last scope on the stack and it's a match scope, don't end it, it's going to be ended by the caller
-    if ([capturesScopesStack count] == 1 && type == TMScopeTypeMatch) {
+    if (capturesScopesStack.count == 1 && type == TMScopeTypeMatch) {
       break;
     }
     scopeEndHandler(remainingScope);
@@ -165,7 +165,7 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
         return childScope.location > resultRange.location;
       }] array] makeObjectsPerformSelector:@selector(removeFromParent)];
       scopeEndHandler(scope);
-      ASSERT([scopeStack count]);
+      ASSERT(scopeStack.count);
       [scopeStack removeLastObject];
       // We don't need to make sure position advances since we changed the stack
       // This could bite us if there's a begin and end regexp that match in the same position
@@ -196,7 +196,7 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
       NSMutableString *end = [NSMutableString stringWithString:firstSyntaxNode.end];
 			end = [end replaceAllByRegexp:_numberedCapturesRegexp withBlock:^NSString *(OnigResult *result) {
         int captureNumber = [[result stringAt:1] intValue];
-        if (captureNumber >= 0 && (int)[firstResult count] > captureNumber) {
+        if (captureNumber >= 0 && (int)firstResult.count > captureNumber) {
           return [firstResult stringAt:captureNumber];
         } else {
           return nil;
@@ -205,7 +205,7 @@ void _generateScopesWithLine(NSString *line, NSRange lineRange, TMSyntaxNode *ro
 			end = [end replaceAllByRegexp:_namedCapturesRegexp withBlock:^NSString *(OnigResult *result) {
         NSString *captureName = [result stringAt:1];
         int captureNumber = [firstResult indexForName:captureName];
-        if (captureNumber >= 0 && (int)[firstResult count] > captureNumber) {
+        if (captureNumber >= 0 && (int)firstResult.count > captureNumber) {
           return [firstResult stringAt:captureNumber];
         } else {
           return nil;
@@ -333,7 +333,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     // Setup the scope stack
     if (!scopeStack) {
       scopeStack = [rootScope scopeStackAtOffset:linesRange.location options:TMScopeQueryLeft | TMScopeQueryOpenOnly];
-      ASSERT(scopeStack && [scopeStack count]);
+      ASSERT(scopeStack && scopeStack.count);
     }
     parseStartHandler(scopeStack.copy, linesRange.location);
     
@@ -511,7 +511,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
   
   _rootScope = _generateRootScopeWithContent(content, _syntax, diffs, _rootScope, ^(TMScope *scope) {
     // Handle tokens
-    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
+    ASSERT(lastScopeStack.count && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, scope.location - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
     lastTokenEnd = scope.location;
     [lastScopeStack addObject:scope];
@@ -519,7 +519,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     // Add the symbol to the symbol list if needed
     TMSymbol *symbol = scope.symbol;
     if (symbol) {
-      NSUInteger insertionIndex = [_symbolList indexOfObject:symbol inSortedRange:NSMakeRange(0, [_symbolList count]) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:^NSComparisonResult(TMSymbol *symbol1, TMSymbol *symbol2) {
+      NSUInteger insertionIndex = [_symbolList indexOfObject:symbol inSortedRange:NSMakeRange(0, _symbolList.count) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:^NSComparisonResult(TMSymbol *symbol1, TMSymbol *symbol2) {
         if (symbol1.range.location < symbol2.range.location) {
           return NSOrderedAscending;
         } else if (symbol1.range.location > symbol2.range.location) {
@@ -538,7 +538,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     }
   }, ^(TMScope *scope) {
     // Handle tokens
-    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
+    ASSERT(lastScopeStack.count && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, scope.location + scope.length - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
     lastTokenEnd = scope.location + scope.length;
     [lastScopeStack removeLastObject];
@@ -553,7 +553,7 @@ TMScope *_generateRootScopeWithContent(NSString *content, TMSyntaxNode *rootSynt
     lastTokenEnd = position;
     lastScopeStack = [NSMutableArray arrayWithArray:scopeStack];
   }, ^(NSArray *scopeStack, NSUInteger position) {
-    ASSERT([lastScopeStack count] && lastTokenEnd != NSUIntegerMax);
+    ASSERT(lastScopeStack.count && lastTokenEnd != NSUIntegerMax);
     handleTokenWithRangeAndQualifiedIdentifier(NSMakeRange(lastTokenEnd, position - lastTokenEnd), [(TMScope *)[lastScopeStack lastObject] qualifiedIdentifier]);
     lastTokenEnd = NSUIntegerMax;
     lastScopeStack = nil;

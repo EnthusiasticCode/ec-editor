@@ -838,7 +838,7 @@ static void drawStencilStar(CGContextRef myContext)
   }
   
   _keyboardAccessoryItemActions = configuration;
-  ASSERT([_keyboardAccessoryItemActions count] == 11);
+  ASSERT(_keyboardAccessoryItemActions.count == 11);
   
   CodeFileKeyboardAccessoryView *accessoryView = (CodeFileKeyboardAccessoryView *)self.codeView.keyboardAccessoryView;
   
@@ -864,7 +864,7 @@ static void drawStencilStar(CGContextRef myContext)
       
       action = _keyboardAccessoryItemActions[i];
       item.title = action.title;
-      item.image = [action image];
+      item.image = action.image;
       item.tag = i;
       [items addObject:item];
     }
@@ -875,7 +875,7 @@ static void drawStencilStar(CGContextRef myContext)
     [items enumerateObjectsUsingBlock:^(CodeFileKeyboardAccessoryItem *item, NSUInteger itemIndex, BOOL *stop) {
       TMKeyboardAction *action = _keyboardAccessoryItemActions[itemIndex];
       item.title = action.title;
-      item.image = [action image];
+      item.image = action.image;
     }];
     accessoryView.items = items;
   }

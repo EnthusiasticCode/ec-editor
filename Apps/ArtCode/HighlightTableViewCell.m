@@ -34,7 +34,7 @@
 {
   if (value == _highlightView.highlightedCharacters)
     return;
-  if ([value count] == 0)
+  if (value.count == 0)
   {
     [_highlightView removeFromSuperview];
   }
@@ -111,7 +111,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-  if ([highlightedCharacters count] == 0)
+  if (highlightedCharacters.count == 0)
     return;
   
   CGContextRef context = UIGraphicsGetCurrentContext();

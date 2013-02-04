@@ -87,7 +87,7 @@ static void const * parentSearchBarControllerContext;
       return 3;
       
     case PREVIEW_SECTION:
-      return MAX([_searchFilterMatches count], 1U);
+      return MAX(_searchFilterMatches.count, 1U);
       
     default:
       return 0;
@@ -145,7 +145,7 @@ static void const * parentSearchBarControllerContext;
     }
     ASSERT(cell != nil && "Cell not defined in storyboard");
   }
-  else if ([_searchFilterMatches count] == 0)
+  else if (_searchFilterMatches.count == 0)
   {
     static NSString *NoMatchesCellIdentifier = @"NoMatchesCell";
     
@@ -163,7 +163,7 @@ static void const * parentSearchBarControllerContext;
       cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:PreviewCellIdentifier];
     }
     
-    ASSERT([_searchFilterMatches count] > index);
+    ASSERT(_searchFilterMatches.count > index);
     ASSERT([[_searchFilterMatches objectAtIndex:index] respondsToSelector:@selector(rangeAtIndex:)]);
     
     // Retrieve the match bounding box in the code view rendered text.
