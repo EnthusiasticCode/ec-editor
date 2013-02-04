@@ -35,10 +35,12 @@
   self = [super initWithNibNamed:@"SearchableTableBrowserController" title:@"Bookmarks" searchBarStaticOnTop:![self isMemberOfClass:BookmarkBrowserController.class]];
   if (self == nil) return nil;
 	
-	[[[[[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
-		return [RCIODirectory itemWithURL:location.url.projectRootDirectory];
-	}] switchToLatest] map:^(RCIODirectory *projectRootDirectory) {
-		return projectRootDirectory.bookmarksSignal;
+	[[[[[[[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
+		return [RCIOItem itemWithURL:location.url];
+	}] switchToLatest] map:^id(RCIOItem *item) {
+		return [item isKindOfClass:RCIODirectory.class] ? [RCIODirectory itemWithURL:item.url.projectRootDirectory] : [RACSignal return:item];
+	}] switchToLatest] map:^(RCIOItem *item) {
+		return item.bookmarksSignal;
 	}] switchToLatest] catchTo:RACSignal.empty] toProperty:@keypath(self.bookmarks) onObject:self];
 	
 	[[[[RACSignal combineLatest:@[ RACBind(self.bookmarks), [self.searchBarTextSubject startWith:nil] ] reduce:^(NSArray *bookmarks, NSString *filter) {
