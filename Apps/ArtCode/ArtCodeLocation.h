@@ -27,6 +27,7 @@ typedef enum : NSUInteger {
   ArtCodeLocationTypeTextFile,
   ArtCodeLocationTypeBookmarksList,
   ArtCodeLocationTypeRemotesList,
+	ArtCodeLocationTypeRemote,
 } ArtCodeLocationType;
 
 // Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.

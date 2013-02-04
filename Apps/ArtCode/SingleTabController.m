@@ -459,7 +459,7 @@
       controllerClass = FileBrowserController.class;
       break;
     }
-    case ArtCodeLocationTypeRemoteDirectory:
+    case ArtCodeLocationTypeRemote:
     {
       result = [[UIStoryboard storyboardWithName:@"RemoteNavigator" bundle:nil] instantiateInitialViewController];
       break;
