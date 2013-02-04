@@ -5,11 +5,9 @@
 
 const struct ArtCodeLocationAttributes ArtCodeLocationAttributes = {
 	.data = @"data",
-	.typeInt16 = @"typeInt16",
 };
 
 const struct ArtCodeLocationRelationships ArtCodeLocationRelationships = {
-	.remote = @"remote",
 	.tab = @"tab",
 };
 
@@ -42,11 +40,6 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 	
-	if ([key isEqualToString:@"typeInt16Value"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"typeInt16"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
 
 	return keyPaths;
 }
@@ -60,36 +53,6 @@ const struct ArtCodeLocationFetchedProperties ArtCodeLocationFetchedProperties =
 
 
 
-
-@dynamic typeInt16;
-
-
-
-- (int16_t)typeInt16Value {
-	NSNumber *result = [self typeInt16];
-	return [result shortValue];
-}
-
-- (void)setTypeInt16Value:(int16_t)value_ {
-	[self setTypeInt16:[NSNumber numberWithShort:value_]];
-}
-
-- (int16_t)primitiveTypeInt16Value {
-	NSNumber *result = [self primitiveTypeInt16];
-	return [result shortValue];
-}
-
-- (void)setPrimitiveTypeInt16Value:(int16_t)value_ {
-	[self setPrimitiveTypeInt16:[NSNumber numberWithShort:value_]];
-}
-
-
-
-
-
-@dynamic remote;
-
-	
 
 @dynamic tab;
 

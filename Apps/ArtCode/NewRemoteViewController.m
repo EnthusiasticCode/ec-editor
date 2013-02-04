@@ -8,8 +8,6 @@
 
 #import "NewRemoteViewController.h"
 #import "ArtCodeTab.h"
-#import "ArtCodeRemote.h"
-#import "ArtCodeRemoteSet.h"
 #import "ArtCodeLocation.h"
 
 #import "UIViewController+Utilities.h"

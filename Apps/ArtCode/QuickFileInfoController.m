@@ -50,7 +50,7 @@
 	[self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
 	
 	NSURL *url = self.artCodeTab.currentLocation.url;
-	[self.artCodeTab pushFileURL:url.URLByDeletingLastPathComponent dataDictionary:@{@"reveal" : url.lastPathComponent}];
+	[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeDirectory), ArtCodeLocationAttributeKeys.url: url.URLByDeletingLastPathComponent, @"reveal": url.lastPathComponent}];
 }
 
 @end

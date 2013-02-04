@@ -360,7 +360,7 @@
         case ArtCodeLocationTypeTextFile:
         case ArtCodeLocationTypeDirectory:
           if (location.url) {
-            fragments = @[ [location.path stringByDeletingLastPathComponent], location.name ];
+            fragments = @[ location.url.path.stringByDeletingLastPathComponent, location.name ];
           }
           break;
           

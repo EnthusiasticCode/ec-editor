@@ -220,7 +220,7 @@ static void drawStencilStar(CGContextRef myContext)
 
 - (BOOL)singleTabController:(SingleTabController *)singleTabController setupDefaultToolbarTitleControl:(TopBarTitleControl *)titleControl {
   if (self.currentSymbol) {
-    NSString *path = self.artCodeTab.currentLocation.path;
+    NSString *path = self.artCodeTab.currentLocation.url.path;
     if (self.currentSymbol.icon) {
       [titleControl setTitleFragments:@[[path stringByDeletingLastPathComponent], [path lastPathComponent], self.currentSymbol.icon, self.currentSymbol.title] selectedIndexes:[NSIndexSet indexSetWithIndex:1]];
     } else {

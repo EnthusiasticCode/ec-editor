@@ -9,54 +9,47 @@
 #import "_ArtCodeLocation.h"
 #import "ArtCodeTab.h"
 
-typedef enum {
-  ArtCodeLocationTypeUnknown = 0,
+// Indicates the type of the location. See ArtCodeLocationType enum for more informations.
+const struct {
+	__unsafe_unretained NSString *type;
+	__unsafe_unretained NSString *name;
+	__unsafe_unretained NSString *url;
+} ArtCodeLocationAttributeKeys = {
+	.type = @"type",
+	.name = @"name",
+	.url = @"url",
+};
+
+typedef enum : NSUInteger {
+  ArtCodeLocationTypeUndefined = 0,
   ArtCodeLocationTypeProjectsList,
   ArtCodeLocationTypeDirectory,
   ArtCodeLocationTypeTextFile,
   ArtCodeLocationTypeBookmarksList,
   ArtCodeLocationTypeRemotesList,
-  ArtCodeLocationTypeRemoteDirectory,
 } ArtCodeLocationType;
 
 // Being a CoreData object, a location should be created using the methods in it's parent ArtCodeTab.
 @interface ArtCodeLocation : _ArtCodeLocation
 
 // Indicates the type of the location. See ArtCodeLocationType enum for more informations.
-@property (nonatomic) ArtCodeLocationType type;
-
-#pragma mark URL specific
-
-// Returns a file:// URL from either an artcode or a file URL.
-- (NSURL *)url;
+- (ArtCodeLocationType)type;
 
 // Returns a useful name for the location. Usually the file name if present.
 - (NSString *)name;
 
-- (NSString *)fileExtension;
+- (NSURL *)url;
 
-// The path from the project containing the file name included.
-- (NSString *)path;
+// Returns the attribute of the location for the given key. See ArtCodeLocationAttributeKeys for keys.
+- (id)objectForKeyedSubscript:(id)key;
 
-- (NSString *)prettyPath;
-
-// If the data is a dictionary, this method returns it.
-@property (nonatomic, copy) NSDictionary *dataDictionary;
+- (NSDictionary *)dictionary;
 
 @end
 
 @interface ArtCodeTab (Location)
 
-- (void)pushProjectsList;
-
-- (void)pushFileURL:(NSURL *)url;
-
-- (void)pushFileURL:(NSURL *)url dataDictionary:(NSDictionary *)dict;
-
-- (void)pushBookmarksList;
-
-- (void)pushRemotesList;
-
-- (void)pushRemotePath:(NSString *)path withRemote:(ArtCodeRemote *)remote;
+// Push a new location with the given attributes. See ArtCodeLocationAttributeKeys for keys.
+- (void)pushLocationWithDictionary:(NSDictionary *)dictionary;
 
 @end

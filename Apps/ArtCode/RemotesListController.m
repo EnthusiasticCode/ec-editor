@@ -10,8 +10,6 @@
 
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
-#import "ArtCodeRemote.h"
-#import "ArtCodeRemoteSet.h"
 #import "BezelAlert.h"
 #import "HighlightTableViewCell.h"
 #import "ImagePopoverBackgroundView.h"

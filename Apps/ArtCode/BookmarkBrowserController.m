@@ -122,7 +122,7 @@
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
     RACTupleUnpack(RCIOFile *file, NSNumber *lineNumber, NSIndexSet *hitMask __attribute__((unused))) = self.filteredItems[indexPath.row];
-    [self.artCodeTab pushFileURL:file.url dataDictionary:@{ @"lineNumber" : lineNumber }];
+		[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeTextFile), ArtCodeLocationAttributeKeys.url:file.url, @"lineNumber": lineNumber }];
   }
   [super tableView:table didSelectRowAtIndexPath:indexPath];
 }

@@ -10,7 +10,6 @@
 #import "RemoteNavigationToolbarController.h"
 #import "SingleTabController.h"
 
-#import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
 
 #import "LocalFileListController.h"

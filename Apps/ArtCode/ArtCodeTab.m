@@ -14,9 +14,7 @@
 @implementation ArtCodeTab
 
 - (ArtCodeLocation *)currentLocation {
-  if (self.currentPositionValue + 1 > (int16_t)self.history.count) {
-    return nil;
-  }
+  if (self.currentPositionValue + 1 > (int16_t)self.history.count) return nil;
   return (self.history)[self.currentPositionValue];
 }
 
@@ -41,31 +39,23 @@
 }
 
 - (void)moveBackInHistory {
-  if (!self.canMoveBackInHistory) {
-    return;
-  }
+  if (!self.canMoveBackInHistory) return;
   self.currentPositionValue = self.currentPositionValue - 1;
 }
 
-- (void)moveForwardInHistory
-{
-  if (!self.canMoveForwardInHistory) {
-    return;
-  }
+- (void)moveForwardInHistory {
+  if (!self.canMoveForwardInHistory) return;
   self.currentPositionValue = self.currentPositionValue + 1;
 }
 
 - (void)awakeFromInsert {
   [super awakeFromInsert];
-  ArtCodeLocation *location = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
-  location.type = ArtCodeLocationTypeProjectsList;
-  location.tab = self;
+	[self pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeProjectsList) }];
 }
 
 #pragma mark - ArtCodeLocation
 
-- (void)pushLocation:(ArtCodeLocation *)location
-{
+- (void)pushLocation:(ArtCodeLocation *)location {
   ASSERT(location && self.history.count); // Cannot be called on empty tab
   // Remove locations between the current position and the end of the history
   int16_t lastPosition = self.history.count - 1;

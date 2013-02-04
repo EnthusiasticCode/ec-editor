@@ -214,7 +214,7 @@ static NSString * const ProjectCellIdentifier = @"ProjectCell";
     }];
   } else {
     RCIODirectory *projectDirectory = self.gridElements[indexPath.item];
-		[self.artCodeTab pushFileURL:projectDirectory.url];
+		[self.artCodeTab pushLocationWithDictionary:@{ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeDirectory), ArtCodeLocationAttributeKeys.url: projectDirectory.url}];
   }
 }
 

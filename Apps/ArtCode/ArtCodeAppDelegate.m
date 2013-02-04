@@ -22,10 +22,13 @@
 #import "PopoverButton.h"
 #import "NewProjectImportController.h"
 
+#import "ArtCodeLocation.h"
 #import "ArtCodeTabSet.h"
 #import "ArtCodeTabPageViewController.h"
 
 #import "ArtCodeDatastore.h"
+
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
 
 @implementation ArtCodeAppDelegate {
@@ -126,8 +129,7 @@
   [projectImportController createProjectFromZipAtURL:url completionHandler:^(RCIODirectory *projectDirectory) {
     if (projectDirectory) {
       [NSFileManager.defaultManager removeItemAtURL:url error:NULL];
-#warning TODO: should set the location to point to the newly added project
-      ArtCodeTab *tab = [ArtCodeTabSet.defaultSet addNewTabWithLocationType:ArtCodeLocationTypeDirectory remote:nil data:nil];
+			ArtCodeTab *tab = [ArtCodeTabSet.defaultSet addNewTabWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeDirectory), ArtCodeLocationAttributeKeys.url: projectDirectory.url }];
       [_tabPageController.tabBar setSelectedTabIndex:[tab.tabSet.tabs indexOfObject:tab]];
     }
   }];

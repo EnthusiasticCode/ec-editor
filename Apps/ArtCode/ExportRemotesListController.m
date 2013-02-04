@@ -7,7 +7,6 @@
 //
 
 #import "ExportRemotesListController.h"
-#import "ArtCodeRemote.h"
 
 @implementation ExportRemotesListController
 

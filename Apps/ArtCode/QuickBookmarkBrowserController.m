@@ -44,7 +44,7 @@
 
 - (void)_showBrowserInTabAction:(id)sender {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushBookmarksList];
+	[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeBookmarksList) }];
 }
 
 @end

@@ -60,18 +60,13 @@
 }
 
 - (ArtCodeTab *)addNewTabByDuplicatingTab:(ArtCodeTab *)tab {
-  return [self addNewTabWithLocationType:tab.currentLocation.type remote:tab.currentLocation.remote data:tab.currentLocation.data];
+  return [self addNewTabWithDictionary:tab.currentLocation.dictionary];
 }
 
-- (ArtCodeTab *)addNewTabWithLocationType:(ArtCodeLocationType)type remote:(ArtCodeRemote *)remote data:(NSData *)data {
+- (ArtCodeTab *)addNewTabWithDictionary:(NSDictionary *)dictionary {
   ArtCodeTab *newTab = [ArtCodeTab insertInManagedObjectContext:self.managedObjectContext];
+	[newTab pushLocationWithDictionary:dictionary];
   newTab.tabSet = self;
-  ArtCodeLocation *newLocation = [ArtCodeLocation insertInManagedObjectContext:self.managedObjectContext];
-  newLocation.type = type;
-  newLocation.remote = remote;
-  newLocation.data = data;
-  [newTab replaceCurrentLocationWithLocation:newLocation];
-  // inform rag
   [_objectsAddedSubject sendNext:newTab];
   return newTab;
 }

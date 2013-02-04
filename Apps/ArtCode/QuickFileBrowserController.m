@@ -37,8 +37,7 @@
 
 #pragma mark - Controller lifecycle
 
-- (id)init
-{
+- (id)init {
   self = [super initWithNibNamed:nil title:L(@"Open quickly") searchBarStaticOnTop:YES];
   if (!self)
     return nil;
@@ -84,30 +83,26 @@
   return self;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
   return [self init];
 }
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
   [super viewDidLoad];
   self.searchBar.placeholder = L(@"Search for file");
 	self.infoLabel.text = L(@"Type a file name to open.");
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
   [self.searchBar becomeFirstResponder];
 }
 
 #pragma mark - Table view data source
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   static NSString *cellIdentifier = @"Cell";
   
   RCIOItemCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -129,25 +124,22 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
   RCIOItem *item = [(self.filteredItems)[indexPath.row] first];
-	[self.artCodeTab pushFileURL:item.url];
+	[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: ([item isKindOfClass:RCIODirectory.class] ? @(ArtCodeLocationTypeDirectory) : @(ArtCodeLocationTypeTextFile)), ArtCodeLocationAttributeKeys.url: item.url }];
 }
 
 #pragma mark - Private methods
 
-- (void)_showBrowserInTabAction:(id)sender
-{
+- (void)_showBrowserInTabAction:(id)sender {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushFileURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
+	[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeDirectory), ArtCodeLocationAttributeKeys.url: self.artCodeTab.currentLocation.url.projectRootDirectory }];
 }
 
-- (void)_showProjectsInTabAction:(id)sender
-{
+- (void)_showProjectsInTabAction:(id)sender {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-  [self.artCodeTab pushProjectsList];
+	[self.artCodeTab pushLocationWithDictionary:@{ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeProjectsList)}];
 }
 
 @end

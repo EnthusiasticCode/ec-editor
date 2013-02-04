@@ -332,15 +332,15 @@
 {
   switch ([sender tag]) {
     case 1:
-      [self.artCodeTab pushBookmarksList];
+			[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeBookmarksList) }];
       break;
       
     case 2:
-      [self.artCodeTab pushRemotesList];
+			[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeRemotesList) }];
       break;
       
     default:
-      [self.artCodeTab pushFileURL:self.artCodeTab.currentLocation.url.projectRootDirectory];
+			[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeDirectory), ArtCodeLocationAttributeKeys.url: self.artCodeTab.currentLocation.url.projectRootDirectory }];
       break;
   }
 }

@@ -8,7 +8,6 @@
 
 #import "RemoteFileListController.h"
 
-#import "ArtCodeRemote.h"
 #import "ReactiveConnection.h"
 #import <Connection/CKConnectionRegistry.h>
 #import "RACSignal+ScoreForAbbreviation.h"

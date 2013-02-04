@@ -89,7 +89,7 @@ static NSDictionary *_sharedAttributes = nil;
   _name = name;
   
   // Preprocess settings
-  NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plist_themeSettingsKey].count];
+  NSMutableDictionary *themeSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plist[_themeSettingsKey] count]];
   NSMutableDictionary *environmentAttributes = [NSMutableDictionary dictionary];
   for (NSDictionary *plistSetting in plist[_themeSettingsKey])
   {
@@ -109,7 +109,7 @@ static NSDictionary *_sharedAttributes = nil;
       continue;
     }
     
-    NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plistSetting_themeSettingsKey].count];
+    NSMutableDictionary *styleSettings = [[NSMutableDictionary alloc] initWithCapacity:[(NSDictionary *)plistSetting[_themeSettingsKey] count]];
     
     // Pre-map settings with Core Text attributes
     [plistSetting[_themeSettingsKey] enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *stop) {
