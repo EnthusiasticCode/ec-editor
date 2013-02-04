@@ -9,17 +9,10 @@
 #import <QuartzCore/QuartzCore.h>
 
 // An immutable collection of CGRect
-@interface RectSet : NSObject {
-@protected
-  CGRect *buffer;
-  CGRect bounds;
-  NSUInteger count;
-  NSUInteger capacity;
-}
+@interface RectSet : NSObject <NSCopying, NSMutableCopying>
 
 #pragma mark Create RectSets
 
-- (id)init;
 - (id)initWithRect:(CGRect)rect;
 - (id)initWithRects:(RectSet *)rects;
 + (id)rectSet;
@@ -28,10 +21,10 @@
 #pragma mark Getting Set Informations
 
 // Return the union of all the CGRect in the set.
-@property (nonatomic, readonly) CGRect bounds;
+- (CGRect)bounds;
 
 // Get the number of CGRect in the set.
-@property (nonatomic, readonly) NSUInteger count;
+- (NSUInteger)count;
 
 #pragma mark Utility Methods on RectSet
 

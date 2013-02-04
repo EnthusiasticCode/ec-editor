@@ -8,108 +8,97 @@
 
 #import "RectSet.h"
 
-
-@implementation RectSet
-
-@synthesize count;
-
-- (CGRect)bounds
-{
-  if (CGRectIsNull(bounds))
-  {
-    for (NSUInteger i = 0; i < count; ++i)
-    {
-      bounds = CGRectUnion(bounds, buffer[i]);
-    }
-  }
-  return bounds;
+@implementation RectSet {
+@protected
+	CGRect *_buffer;
+	CGRect _bounds;
+	NSUInteger _count;
+	NSUInteger _capacity;
 }
 
-- (id)init
-{
-  if ((self = [super init]))
-  {
-    bounds = CGRectNull;
-  }
-  return self;
+- (CGRect)bounds {
+	if (CGRectIsNull(_bounds)) {
+		for (NSUInteger i = 0; i < _count; ++i) {
+			_bounds = CGRectUnion(_bounds, _buffer[i]);
+		}
+	}
+	return _bounds;
 }
 
-- (id)initWithRect:(CGRect)rect
-{
-  if ((self = [self init]))
-  {
-    buffer = (CGRect *)malloc(sizeof(CGRect));
-    *buffer = rect;
-    count = capacity = 1;
-  }
-  return self;
+- (NSUInteger)count {
+	return _count;
 }
 
-- (id)initWithRects:(RectSet *)rects
-{
-  if ((self = [self init]))
-  {
-    count = capacity = rects.count;
-    buffer = (CGRect *)malloc(count * sizeof(CGRect));
-    memcpy(buffer, rects->buffer, count * sizeof(CGRect));
-  }
-  return self;
+- (id)init {
+	self = [super init];
+	if (self == nil) return nil;
+	
+	_bounds = CGRectNull;
+	
+	return self;
 }
 
-- (void)dealloc
-{
-  free(buffer);
+- (id)initWithRect:(CGRect)rect {
+	self = [self init];
+	if (self == nil) return nil;
+	
+	_buffer = (CGRect *)malloc(sizeof(CGRect));
+	*_buffer = rect;
+	_count = _capacity = 1;
+	
+	return self;
 }
 
-- (void)enumerateRectsUsingBlock:(void (^)(CGRect, BOOL *))block
-{
-  BOOL stop = NO;
-  for (NSUInteger i = 0; i < count; ++i)
-  {
-    block(buffer[i], &stop);
-    if (stop)
-      break;
-  }
+- (id)initWithRects:(RectSet *)rects {
+	self = [self init];
+	if (self == nil) return nil;
+	
+	_count = _capacity = rects.count;
+	_buffer = (CGRect *)malloc(_count * sizeof(CGRect));
+	memcpy(_buffer, rects->_buffer, _count * sizeof(CGRect));
+	
+	return self;
 }
 
-- (CGRect)topLeftRect
-{
-  // TODO: check for proper return
-  return count ? buffer[0] : CGRectNull;
+- (void)dealloc {
+	free(_buffer);
 }
 
-- (CGRect)bottomRightRect
-{
-  return count ? buffer[count - 1] : CGRectNull;
+- (void)enumerateRectsUsingBlock:(void (^)(CGRect, BOOL *))block {
+	BOOL stop = NO;
+	for (NSUInteger i = 0; i < _count; ++i) {
+		block(_buffer[i], &stop);
+		if (stop) break;
+	}
 }
 
-- (void)addRectsToContext:(CGContextRef)context
-{
-  CGContextAddRects(context, buffer, count);
+- (CGRect)topLeftRect {
+	// TODO: check for proper return
+	return _count ? _buffer[0] : CGRectNull;
 }
 
-- (id)copy
-{
-  if (self.class == RectSet.class) {
-    return self;
-  } else {
-    return [[RectSet alloc] initWithRects:self];
-  }
+- (CGRect)bottomRightRect {
+	return _count ? _buffer[_count - 1] : CGRectNull;
 }
 
-- (id)mutableCopy
-{
-  return [[MutableRectSet alloc] initWithRects:self];
+- (void)addRectsToContext:(CGContextRef)context {
+	CGContextAddRects(context, _buffer, _count);
 }
 
-+ (id)rectSet
-{
-  return [[self alloc] init];
+- (id)copyWithZone:(NSZone *)zone {
+	return self;
 }
 
-+ (id)rectSetWithRect:(CGRect)rect
-{
-  return [[self alloc] initWithRect:rect];
+- (id)mutableCopyWithZone:(NSZone *)zone {
+	return [[MutableRectSet alloc] initWithRects:self];
+}
+
++ (id)rectSet {
+	return [[self alloc] init];
+}
+
++ (id)rectSetWithRect:(CGRect)rect {
+	return [[self alloc] initWithRect:rect];
 }
 
 @end
@@ -117,68 +106,62 @@
 
 @implementation MutableRectSet
 
-- (id)initWithCapacity:(NSUInteger)cap
-{
-  if ((self = [super init]))
-  {
-    capacity = cap;
-    buffer = (CGRect *)malloc(cap * sizeof(CGRect));
-  }
-  return self;
+- (id)initWithCapacity:(NSUInteger)cap {
+	self = [super init];
+	if (self == nil) return nil;
+
+	_capacity = cap;
+	_buffer = (CGRect *)malloc(cap * sizeof(CGRect));
+	
+	return self;
 }
 
-- (void)addRect:(CGRect)rect
-{
-  // TODO: guarantee single rect
-  NSUInteger newCount = count + 1;
-  if (capacity <= count)
-  {
-    buffer = (CGRect *)realloc(buffer, newCount * sizeof(CGRect));
-    capacity = newCount;
-  }
-  buffer[count] = rect;
-  count = newCount;
+- (void)addRect:(CGRect)rect {
+	// TODO: guarantee single rect
+	NSUInteger newCount = _count + 1;
+	if (_capacity <= _count) {
+		_buffer = (CGRect *)realloc(_buffer, newCount * sizeof(CGRect));
+		_capacity = newCount;
+	}
+	_buffer[_count] = rect;
+	_count = newCount;
 }
 
-- (void)addRects:(RectSet *)rects
-{
-  if (!rects || !rects.count)
-    return;
-  
-  if (capacity - count < rects.count) 
-  {
-    capacity = count + rects.count;
-    buffer = (CGRect *)realloc(buffer, capacity * sizeof(CGRect));
-  }
-  
-  memcpy(&buffer[count], rects->buffer, rects.count * sizeof(CGRect));
-  count += rects.count;
-  
-  // TODO: calculate bounds?
+- (void)addRects:(RectSet *)rects {
+	if (!rects || !rects.count) return;
+	
+	if (_capacity - _count < rects.count) {
+		_capacity = _count + rects.count;
+		_buffer = (CGRect *)realloc(_buffer, _capacity * sizeof(CGRect));
+	}
+	
+	memcpy(&_buffer[_count], rects->_buffer, rects.count * sizeof(CGRect));
+	_count += rects.count;
+	
+	// TODO: calculate bounds?
 }
 
-- (void)removeRect:(CGRect)rect
-{
-  for (NSUInteger i = 0; i < count; ++i)
-  {
-    if (CGRectEqualToRect(buffer[i], rect))
-    {
-      memmove(&buffer[i], &buffer[i + 1], (count - i) * sizeof(CGRect));
-      --count;
-      bounds = CGRectNull;
-      return;
-    }
-  }
+- (void)removeRect:(CGRect)rect {
+	for (NSUInteger i = 0; i < _count; ++i) {
+		if (CGRectEqualToRect(_buffer[i], rect)) {
+			memmove(&_buffer[i], &_buffer[i + 1], (_count - i) * sizeof(CGRect));
+			--_count;
+			_bounds = CGRectNull;
+			return;
+		}
+	}
 }
 
-- (void)removeAllRects
-{
-  count = 0;
+- (void)removeAllRects {
+	_count = 0;
 }
 
-+ (id)rectSetWithCapacity:(NSUInteger)cap
-{
-  return [[self alloc] initWithCapacity:cap];
+- (id)copyWithZone:(NSZone *)zone {
+	return [[RectSet alloc] initWithRects:self];
+}
+
++ (id)rectSetWithCapacity:(NSUInteger)cap {
+	return [[self alloc] initWithCapacity:cap];
 }
 
 @end
