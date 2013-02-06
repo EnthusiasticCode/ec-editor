@@ -8,13 +8,10 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
-const struct {
+const struct ArtCodeRemoteAttributeKeys {
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *url;
-} ArtCodeRemoteAttributeKeys = {
-	.name = @"name",
-	.url = @"url",
-};
+} ArtCodeRemoteAttributeKeys;
 
 @interface RCIODirectory (ArtCodeExtendedAttributes)
 

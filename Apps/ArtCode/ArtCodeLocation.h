@@ -10,15 +10,11 @@
 #import "ArtCodeTab.h"
 
 // Indicates the type of the location. See ArtCodeLocationType enum for more informations.
-const struct {
+extern const struct ArtCodeLocationAttributeKeys {
 	__unsafe_unretained NSString *type;
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *url;
-} ArtCodeLocationAttributeKeys = {
-	.type = @"type",
-	.name = @"name",
-	.url = @"url",
-};
+} ArtCodeLocationAttributeKeys;
 
 typedef enum : NSUInteger {
   ArtCodeLocationTypeUndefined = 0,

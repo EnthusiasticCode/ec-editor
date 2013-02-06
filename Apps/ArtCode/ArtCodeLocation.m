@@ -11,6 +11,12 @@
 #import "NSURL+Utilities.h"
 #import "NSURL+ArtCode.h"
 
+const struct ArtCodeLocationAttributeKeys ArtCodeLocationAttributeKeys = {
+	.type = @"type",
+	.name = @"name",
+	.url = @"url",
+};
+
 @implementation ArtCodeLocation
 
 - (ArtCodeLocationType)type {

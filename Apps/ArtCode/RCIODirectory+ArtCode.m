@@ -14,6 +14,11 @@ static NSString * const labelColorKey = @"com.enthusiasticcode.artcode.LabelColo
 static NSString * const newlyCreatedKey = @"com.enthusiasticcode.artcode.NewlyCreated";
 static NSString * const remotesKey = @"com.enthusiasticcode.artcode.Remotes";
 
+const struct ArtCodeRemoteAttributeKeys ArtCodeRemoteAttributeKeys = {
+	.name = @"name",
+	.url = @"url",
+};
+
 @implementation RCIODirectory (ArtCodeExtendedAttributes)
 
 - (RACPropertySubject *)labelColorSubject {
