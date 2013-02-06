@@ -18,9 +18,15 @@
 #import "SingleTabController.h"
 #import "UIViewController+Utilities.h"
 #import "RACSignal+ScoreForAbbreviation.h"
+#import <ReactiveCocoaIO/ReactiveCocoaIO.h>
+#import "NSURL+ArtCode.h"
+#import "RCIODirectory+ArtCode.h"
 
+@interface RemotesListController ()
 
-@class SingleTabController, TopBarToolbar;
+@property (nonatomic, strong) NSArray *remotes;
+
+@end
 
 @implementation RemotesListController {
   UIPopoverController *_toolAddPopover;
@@ -34,10 +40,17 @@
   // RAC
 	@weakify(self);
 	
-  [[[[RACAble(ArtCodeRemoteSet.defaultSet, remotes) map:^(NSOrderedSet *remoteSet) {
-		return remoteSet.array;
-	}] filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(ArtCodeRemote *remote) {
-		return remote.name;
+	__block RACDisposable *bindingDisposable = nil;
+	[[RACAble(self.artCodeTab.currentLocation) map:^(ArtCodeLocation *location) {
+		return [RCIODirectory itemWithURL:location.url.projectRootDirectory];
+	}] subscribeNext:^(RCIODirectory *projectDirectory) {
+		@strongify(self);
+		[bindingDisposable dispose];
+		bindingDisposable = [RACBind(self.remotes) bindTo:projectDirectory.remotesSubject.binding];
+	}];
+	
+	[[[RACAble(self.remotes) filterArraySignalByAbbreviation:self.searchBarTextSubject extrapolateTargetStringBlock:^(NSDictionary *remote) {
+		return remote[ArtCodeRemoteAttributeKeys.name];
 	}] doNext:^(NSArray *filteredRemotes) {
 		@strongify(self);
 		if (filteredRemotes.count == 0) {
@@ -82,10 +95,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   HighlightTableViewCell *cell = (HighlightTableViewCell *)[super tableView:tableView cellForRowAtIndexPath:indexPath];
   
-	RACTupleUnpack(ArtCodeRemote *remote, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
-  cell.textLabel.text = remote.name;
+	RACTupleUnpack(NSDictionary *remote, NSIndexSet *hitMask) = self.filteredItems[indexPath.row];
+  cell.textLabel.text = remote[ArtCodeRemoteAttributeKeys.name];
   cell.textLabelHighlightedCharacters = hitMask;
-  cell.detailTextLabel.text = [[remote url] absoluteString];
+  cell.detailTextLabel.text = [remote[ArtCodeRemoteAttributeKeys.url] absoluteString];
   cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   
   return cell;
@@ -95,8 +108,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
-    ArtCodeRemote *remote = [self.filteredItems[indexPath.row] first];
-    [self.artCodeTab pushRemotePath:remote.path ?: @"" withRemote:remote];
+    NSDictionary *remote = [self.filteredItems[indexPath.row] first];
+		[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeRemote), ArtCodeLocationAttributeKeys.url: remote[ArtCodeRemoteAttributeKeys.url] }];
   }
   
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
@@ -107,16 +120,14 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
   if ([self isToolEditDeleteActionSheet:actionSheet]) {
     if (buttonIndex == actionSheet.destructiveButtonIndex) {
-      self.loading = YES;
-      NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
       [self setEditing:NO animated:YES];
+      NSArray *selectedRows = self.tableView.indexPathsForSelectedRows;
+			NSMutableArray *remotes = self.remotes.mutableCopy;
       for (NSIndexPath *indexPath in selectedRows) {
-        NSMutableOrderedSet *remotes = [ArtCodeRemoteSet.defaultSet mutableOrderedSetValueForKey:@"remotes"];
-        ArtCodeRemote *remote = [self.filteredItems[indexPath.row] first];
-        [remotes removeObject:remote];
-        [remote.managedObjectContext deleteObject:remote];
+        NSDictionary *remote = [self.filteredItems[indexPath.row] first];
+				[remotes removeObject:remote];
       }
-      self.loading = NO;
+			self.remotes = remotes;
       [BezelAlert.defaultBezelAlert addAlertMessageWithText:[NSString stringWithFormatForSingular:@"Remote deleted" plural:@"%u remotes deleted" count:selectedRows.count] imageNamed:BezelAlertCancelIcon displayImmediatly:YES];
     }
   }

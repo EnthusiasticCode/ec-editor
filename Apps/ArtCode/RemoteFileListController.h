@@ -9,12 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "SearchableTableBrowserController.h"
 
-@class ArtCodeRemote, ReactiveConnection;
+@class ReactiveConnection;
 
 @interface RemoteFileListController : SearchableTableBrowserController
 
 // Make the controller use the given connection to connect to the remote path.
-- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath;
+- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(NSDictionary *)remote path:(NSString *)remotePath;
 
 // Returns the full remote path that the controller is listing.
 @property (nonatomic, readonly, strong) NSString *remotePath;

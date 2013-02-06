@@ -40,7 +40,7 @@
 #pragma mark - Private methods
 
 - (void)_createAction:(id)sender {
-  ArtCodeRemote *remote = [ArtCodeRemoteSet.defaultSet newRemote];
+  NSDictionary *remote = [ArtCodeRemoteSet.defaultSet newRemote];
   
   switch (self.remoteType.selectedSegmentIndex) {
     case 0:

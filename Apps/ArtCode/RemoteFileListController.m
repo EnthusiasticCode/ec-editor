@@ -34,7 +34,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 
 
 @implementation RemoteFileListController {
-  ArtCodeRemote *_remote;
+  NSDictionary *_remote;
   
   BOOL _keychianAttemptUsed;
   NSURLAuthenticationChallenge *_authenticationChallenge;
@@ -45,7 +45,7 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   NSMutableArray *_progressItems;
 }
 
-- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(ArtCodeRemote *)remote path:(NSString *)remotePath {
+- (void)prepareWithConnection:(ReactiveConnection *)connection artCodeRemote:(NSDictionary *)remote path:(NSString *)remotePath {
   ASSERT(!_connection); // This prepare can happen only once
   ASSERT(remote && connection); // Connection and remote need to be specified
 	

@@ -318,7 +318,6 @@
 		CD6A8A6C14BF7C3100B78188 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6A8A6B14BF7C3100B78188 /* MessageUI.framework */; };
 		CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6C44F615EFB8BE00D561BF /* RenameController.m */; };
 		CD6CCAF9147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */; };
-		CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */; };
 		CD6D410615D71F79003EADC2 /* bezelAlert_cancelIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6D410115D71F79003EADC2 /* bezelAlert_cancelIcon@2x.png */; };
 		CD6D410715D71F79003EADC2 /* bezelAlert_cycleDownIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6D410215D71F79003EADC2 /* bezelAlert_cycleDownIcon@2x.png */; };
 		CD6D410815D71F79003EADC2 /* bezelAlert_cycleUpIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD6D410315D71F79003EADC2 /* bezelAlert_cycleUpIcon@2x.png */; };
@@ -996,8 +995,6 @@
 		CD6C44F615EFB8BE00D561BF /* RenameController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenameController.m; sourceTree = "<group>"; };
 		CD6CCAF7147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeFileKeyboardAccessoryPopoverView.h; sourceTree = "<group>"; };
 		CD6CCAF8147EB0C50084D797 /* CodeFileKeyboardAccessoryPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeFileKeyboardAccessoryPopoverView.m; sourceTree = "<group>"; };
-		CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportRemotesListController.h; sourceTree = "<group>"; };
-		CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExportRemotesListController.m; sourceTree = "<group>"; };
 		CD6D410115D71F79003EADC2 /* bezelAlert_cancelIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bezelAlert_cancelIcon@2x.png"; sourceTree = "<group>"; };
 		CD6D410215D71F79003EADC2 /* bezelAlert_cycleDownIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bezelAlert_cycleDownIcon@2x.png"; sourceTree = "<group>"; };
 		CD6D410315D71F79003EADC2 /* bezelAlert_cycleUpIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bezelAlert_cycleUpIcon@2x.png"; sourceTree = "<group>"; };
@@ -1967,8 +1964,6 @@
 				CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */,
 				CDB5DB6B14C8494E003DFD1F /* MoveConflictController.h */,
 				CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */,
-				CD6D25AC1523288900C2C6F0 /* ExportRemotesListController.h */,
-				CD6D25AD1523288900C2C6F0 /* ExportRemotesListController.m */,
 			);
 			name = "Export sheets";
 			sourceTree = "<group>";
@@ -3147,7 +3142,6 @@
 				B7072BBC15111A3000580855 /* NSString+UUID.m in Sources */,
 				B7072BD21511443E00580855 /* NSString+CStringCaching.m in Sources */,
 				B757C0A31519FEDF00AE6AC3 /* NSString+Utilities.m in Sources */,
-				CD6D25AE1523288900C2C6F0 /* ExportRemotesListController.m in Sources */,
 				B7728CC215289822005EA98A /* NSString+TextMateScopeSelectorMatching.m in Sources */,
 				CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */,
 				B7BEA43A159B0BAE0095C9D1 /* DiffMatchPatch.m in Sources */,

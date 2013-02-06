@@ -12,6 +12,7 @@
 
 static NSString * const labelColorKey = @"com.enthusiasticcode.artcode.LabelColor";
 static NSString * const newlyCreatedKey = @"com.enthusiasticcode.artcode.NewlyCreated";
+static NSString * const remotesKey = @"com.enthusiasticcode.artcode.Remotes";
 
 @implementation RCIODirectory (ArtCodeExtendedAttributes)
 
@@ -21,6 +22,10 @@ static NSString * const newlyCreatedKey = @"com.enthusiasticcode.artcode.NewlyCr
 
 - (RACPropertySubject *)newlyCreatedSubject {
 	return [self extendedAttributeSubjectForKey:newlyCreatedKey];
+}
+
+- (RACPropertySubject *)remotesSubject {
+	return [self extendedAttributeSubjectForKey:remotesKey];
 }
 
 @end

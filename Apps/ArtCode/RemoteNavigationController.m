@@ -27,7 +27,7 @@
 
 
 @interface RemoteNavigationController () <UINavigationControllerDelegate, UIActionSheetDelegate>
-@property (nonatomic, strong, readwrite) ArtCodeRemote *remote;
+@property (nonatomic, strong, readwrite) NSDictionary *remote;
 @property (nonatomic, strong, readwrite) ReactiveConnection *connection;
 
 @property (nonatomic, weak) UINavigationController *localBrowserNavigationController;
@@ -52,7 +52,7 @@ static void _init(RemoteNavigationController *self) {
   // RAC
   @weakify(self);
   
-  RAC(self.connection) = [RACAble(self.remote) map:^id(ArtCodeRemote *remote) {
+  RAC(self.connection) = [RACAble(self.remote) map:^id(NSDictionary *remote) {
     return [ReactiveConnection reactiveConnectionWithURL:remote.url];
   }];
   

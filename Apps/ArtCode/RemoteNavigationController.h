@@ -8,13 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@class ArtCodeRemote, ReactiveConnection, RemoteNavigationToolbarController;
+@class ReactiveConnection, RemoteNavigationToolbarController;
 
 @interface RemoteNavigationController : UIViewController
 
 #pragma mark Remote related properties
 
-@property (nonatomic, strong, readonly) ArtCodeRemote *remote;
+@property (nonatomic, strong, readonly) NSDictionary *remote;
 @property (nonatomic, strong, readonly) ReactiveConnection *connection;
 
 #pragma mark UI related properties

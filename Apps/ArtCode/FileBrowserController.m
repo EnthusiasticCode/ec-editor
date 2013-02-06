@@ -18,7 +18,6 @@
 #import "MoveConflictController.h"
 #import "RenameController.h"
 
-#import "ExportRemotesListController.h"
 #import "RemoteTransferController.h"
 
 #import "NSString+PluralFormat.h"
