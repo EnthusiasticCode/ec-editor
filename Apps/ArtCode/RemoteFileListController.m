@@ -17,6 +17,7 @@
 #import "HighlightTableViewCell.h"
 #import "ProgressTableViewCell.h"
 #import "UIImage+AppStyle.h"
+#import "RCIODirectory+ArtCode.h"
 
 static NSString * const progressSignalKey = @"progressSibscribable";
 
@@ -124,8 +125,9 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   // Connect immediatly if we have a stored keychain password for the remote
   if (!self.connection.isConnected) {
     NSString *password;
-    if (_remote.scheme && _remote.host && (password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:_remote.user])) {
-      self.authenticationCredentials = [NSURLCredential credentialWithUser:_remote.user password:password persistence:NSURLCredentialPersistenceForSession];
+		NSURL *remoteURL = _remote[ArtCodeRemoteAttributeKeys.url];
+    if (remoteURL.scheme && remoteURL.host && (password = [[Keychain sharedKeychain] passwordForServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:remoteURL.scheme host:remoteURL.host port:remoteURL.port.integerValue] account:remoteURL.user])) {
+      self.authenticationCredentials = [NSURLCredential credentialWithUser:remoteURL.user password:password persistence:NSURLCredentialPersistenceForSession];
     } else {
       self.showLogin = YES;
     }
@@ -269,7 +271,8 @@ static NSString * const progressSignalKey = @"progressSibscribable";
 
 - (IBAction)loginAction:(id)sender {
   if (!self.loginAlwaysAskPassword.isOn) {
-    [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:_remote.scheme host:_remote.host port:_remote.portValue] account:self.loginUser.text];
+		NSURL *remoteURL = _remote[ArtCodeRemoteAttributeKeys.url];
+    [[Keychain sharedKeychain] setPassword:self.loginPassword.text forServiceWithIdentifier:[Keychain sharedKeychainServiceIdentifierWithSheme:remoteURL.scheme host:remoteURL.host port:remoteURL.port.integerValue] account:self.loginUser.text];
   }
   // Create a temporary login credential and try to connect again
   self.authenticationCredentials = [NSURLCredential credentialWithUser:self.loginUser.text password:self.loginPassword.text persistence:NSURLCredentialPersistenceForSession];
@@ -287,9 +290,10 @@ static NSString * const progressSignalKey = @"progressSibscribable";
   if (showLogin) {
     ASSERT(self.loginView);
     [self.view addSubview:self.loginView];
-    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", _remote.host];
-    if (_remote.user) {
-      self.loginUser.text = _remote.user;
+		NSURL *remoteURL = _remote[ArtCodeRemoteAttributeKeys.url];
+    self.loginLabel.text = [NSString stringWithFormat:@"Login required for %@:", remoteURL.host];
+    if (remoteURL.user) {
+      self.loginUser.text = remoteURL.user;
       [self.loginPassword becomeFirstResponder];
     } else {
       [self.loginUser becomeFirstResponder];

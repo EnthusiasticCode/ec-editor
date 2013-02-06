@@ -12,6 +12,8 @@
 
 #import "UIViewController+Utilities.h"
 #import "BezelAlert.h"
+#import "NSURL+Utilities.h"
+#import "RCIODirectory+ArtCode.h"
 
 @interface NewRemoteViewController ()
 
@@ -40,39 +42,25 @@
 #pragma mark - Private methods
 
 - (void)_createAction:(id)sender {
-  NSDictionary *remote = [ArtCodeRemoteSet.defaultSet newRemote];
-  
+	NSString *scheme = nil;
   switch (self.remoteType.selectedSegmentIndex) {
     case 0:
-      remote.scheme = @"ftp";
+      scheme = @"ftp";
       break;
       
     case 1:
-      remote.scheme = @"sftp";
+      scheme = @"sftp";
       break;
       
     case 2:
-      remote.scheme = @"http";
+      scheme = @"http";
       break;
   }
-  remote.user = self.remoteUser.text;
-  remote.host = self.remoteHost.text;
-  if ([self.remotePort.text length]) {
-    remote.portValue = [self.remotePort.text intValue];
-  }
-  remote.name = self.remoteName.text;
+	NSURL *remoteURL = [NSURL URLWithScheme:scheme user:self.remoteUser.text host:self.remoteHost.text port:self.remotePort.text.intValue path:nil];
+	NSDictionary *remote = @{ ArtCodeRemoteAttributeKeys.name: self.remoteName.text, ArtCodeRemoteAttributeKeys.url: remoteURL };
   
-  if (remote)
-  {
-//    if ([self.remotePassword.text length])
-//      remote.password = self.remotePassword.text;
-    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
-  }
-  else
-  {
-    [BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Error adding new remote" imageNamed:BezelAlertForbiddenIcon displayImmediatly:NO];
-  }
-  
+	[BezelAlert.defaultBezelAlert addAlertMessageWithText:@"Remote added" imageNamed:BezelAlertOkIcon displayImmediatly:NO];
+
   [self.presentingPopoverController dismissPopoverAnimated:YES];
 }
 

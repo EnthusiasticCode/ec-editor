@@ -24,6 +24,7 @@
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
 #import "NSURL+ArtCode.h"
+#import "RCIODirectory+ArtCode.h"
 
 
 @interface RemoteNavigationController () <UINavigationControllerDelegate, UIActionSheetDelegate>
@@ -53,11 +54,11 @@ static void _init(RemoteNavigationController *self) {
   @weakify(self);
   
   RAC(self.connection) = [RACAble(self.remote) map:^id(NSDictionary *remote) {
-    return [ReactiveConnection reactiveConnectionWithURL:remote.url];
+    return [ReactiveConnection reactiveConnectionWithURL:remote[ArtCodeRemoteAttributeKeys.url]];
   }];
   
   RAC(self.remote) = [RACAble(self.artCodeTab) map:^id(ArtCodeTab *tab) {
-    return tab.currentLocation.remote;
+    return @{ ArtCodeRemoteAttributeKeys.name: tab.currentLocation.name, ArtCodeRemoteAttributeKeys.url: tab.currentLocation.url };
   }];
   
   [[[RACAble(self.toolbarController)
@@ -133,7 +134,7 @@ static void _init(RemoteNavigationController *self) {
     self.remoteBrowserNavigationController = (UINavigationController *)segue.destinationViewController;
     self.remoteBrowserNavigationController.editing = YES;
     self.remoteBrowserNavigationController.delegate = self;
-    [(RemoteFileListController *)[self.remoteBrowserNavigationController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:self.remote.path];
+    [(RemoteFileListController *)[self.remoteBrowserNavigationController topViewController] prepareWithConnection:self.connection artCodeRemote:self.remote path:[self.remote[ArtCodeRemoteAttributeKeys.url] path]];
   }
 }
 

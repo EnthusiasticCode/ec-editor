@@ -10,6 +10,8 @@
 
 @interface NSURL (Additions)
 
++ (NSURL*)URLWithScheme:(NSString*)scheme user:(NSString*)user host:(NSString*)host port:(UInt16)port path:(NSString*)path;
+
 // Returns the application's documents directory
 + (NSURL *)applicationDocumentsDirectory;
 

@@ -10,6 +10,19 @@
 #import "NSString+UUID.h"
 #import "NSString+Utilities.h"
 
+/* See http://www.faqs.org/rfcs/rfc1738.html */
+static NSString *escapeUserOrPassword(NSString *userOrPassword) {
+	return CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)userOrPassword, NULL, CFSTR(":@/?"), kCFStringEncodingUTF8));
+}
+
+static NSString *escapeString(NSString *string) {
+	return CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, NULL, kCFStringEncodingUTF8));
+}
+
+static NSString *unescapeString(NSString *string) {
+	return CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)string, CFSTR(""), kCFStringEncodingUTF8));
+}
+
 @interface NSURL (Additions_Internal)
 
 + (NSArray *)_packageExtensions;
@@ -17,6 +30,30 @@
 @end
 
 @implementation NSURL (Additions)
+
++ (NSURL *)URLWithScheme:(NSString *)scheme user:(NSString *)user host:(NSString *)host port:(UInt16)port path:(NSString *)path {
+	NSMutableString *string = [NSMutableString string];
+	
+	if (scheme.length == 0 || host.length == 0) return nil;
+	
+	[string appendFormat:@"%@://", scheme];
+	
+	if (user.length > 0) {
+		user = escapeUserOrPassword(user);
+		[string appendFormat:@"%@@", user];
+	}
+	
+	[string appendString:host];
+	
+	if (port != 0) [string appendFormat:@":%i", port];
+	
+	if (path.length > 0) {
+		if ([path characterAtIndex:0] != '/') [string appendString:@"/"];
+		[string appendString:escapeString(path)];
+	}
+	
+	return [[[self class] URLWithString:string] standardizedURL];
+}
 
 + (NSURL *)applicationDocumentsDirectory {
   return [NSURL fileURLWithPath:NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0]];

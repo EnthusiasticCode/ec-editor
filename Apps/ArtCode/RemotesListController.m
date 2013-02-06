@@ -109,7 +109,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   if (!self.isEditing) {
     NSDictionary *remote = [self.filteredItems[indexPath.row] first];
-		[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeRemote), ArtCodeLocationAttributeKeys.url: remote[ArtCodeRemoteAttributeKeys.url] }];
+		[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeRemote), ArtCodeLocationAttributeKeys.name: remote[ArtCodeRemoteAttributeKeys.name], ArtCodeLocationAttributeKeys.url: remote[ArtCodeRemoteAttributeKeys.url] }];
   }
   
   [super tableView:tableView didSelectRowAtIndexPath:indexPath];
