@@ -42,7 +42,7 @@ const struct ArtCodeLocationAttributeKeys ArtCodeLocationAttributeKeys = {
 		mutableDictionary[ArtCodeLocationAttributeKeys.url] = [NSURL URLByResolvingBookmarkData:dictionary[ArtCodeLocationAttributeKeys.url] options:NSURLBookmarkResolutionWithoutUI relativeToURL:nil bookmarkDataIsStale:NULL error:NULL];
 		dictionary = mutableDictionary.copy;
 	}
-	if (dictionary[ArtCodeLocationAttributeKeys.name] == nil) {
+	if (dictionary[ArtCodeLocationAttributeKeys.name] == nil && dictionary[ArtCodeLocationAttributeKeys.url] != nil) {
 		NSMutableDictionary *mutableDictionary = dictionary.mutableCopy;
 		mutableDictionary[ArtCodeLocationAttributeKeys.name] = [dictionary[ArtCodeLocationAttributeKeys.url] lastPathComponent];
 		dictionary = mutableDictionary.copy;

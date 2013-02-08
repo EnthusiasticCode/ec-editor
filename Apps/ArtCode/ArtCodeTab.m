@@ -56,7 +56,12 @@
 #pragma mark - ArtCodeLocation
 
 - (void)pushLocation:(ArtCodeLocation *)location {
-  ASSERT(location && self.history.count); // Cannot be called on empty tab
+  ASSERT(location);
+	// If the tab is empty just add the location, no need to do anything else
+	if (self.history.count == 0) {
+		[self.historySet addObject:location];
+		return;
+	}
   // Remove locations between the current position and the end of the history
   int16_t lastPosition = self.history.count - 1;
   if (self.currentPositionValue < lastPosition) {
