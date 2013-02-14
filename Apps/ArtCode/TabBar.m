@@ -162,7 +162,7 @@ static void updateFadeViews(TabBar *self)
     self->leftFadeLayer = [CAGradientLayer layer];
     self->leftFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->leftFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->leftFadeLayer.actions = @{@"position": NSNull.null};
+    self->leftFadeLayer.actions = @{ @"position": NSNull.null };
     self->leftFadeLayer.startPoint = CGPointMake(0, .5);
     self->leftFadeLayer.endPoint = CGPointMake(1, .5);
     self->leftFadeLayer.opacity = 0;
@@ -175,7 +175,7 @@ static void updateFadeViews(TabBar *self)
     self->rightFadeLayer = [CAGradientLayer layer];
     self->rightFadeLayer.anchorPoint = CGPointMake(0, 0);
     self->rightFadeLayer.bounds = CGRectMake(0, 0, 20, self.frame.size.height);
-    self->rightFadeLayer.actions = @{@"position": NSNull.null};
+    self->rightFadeLayer.actions = @{ @"position": NSNull.null };
     self->rightFadeLayer.startPoint = CGPointMake(0, .5);
     self->rightFadeLayer.endPoint = CGPointMake(1, .5);
     self->rightFadeLayer.opacity = 0;

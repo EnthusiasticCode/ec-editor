@@ -56,7 +56,7 @@
   
   // UI Bars
   [UINavigationBar.appearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forBarMetrics:UIBarMetricsDefault];
-  [UINavigationBar.appearance setTitleTextAttributes:@{UITextAttributeTextColor: UIColor.whiteColor, UITextAttributeTextShadowColor: UIColor.blackColor, UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]}];
+  [UINavigationBar.appearance setTitleTextAttributes:@{ UITextAttributeTextColor: UIColor.whiteColor, UITextAttributeTextShadowColor: UIColor.blackColor, UITextAttributeTextShadowOffset: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)] }];
   
   [UIToolbar.appearance setBackgroundImage:[UIImage imageNamed:@"topBar_Background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
   

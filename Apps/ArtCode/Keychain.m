@@ -16,10 +16,10 @@
 - (NSString *)passwordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier
 {
   CFTypeRef outDataRef = NULL;
-  if (SecItemCopyMatching((__bridge CFDictionaryRef)@{(__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
+  if (SecItemCopyMatching((__bridge CFDictionaryRef)@{ (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
                                                      (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword, 
                                                      (__bridge id)kSecAttrService: serviceIdentifier,
-                                                     (__bridge id)kSecAttrAccount: accountIdentifier}, &outDataRef) != noErr)
+                                                     (__bridge id)kSecAttrAccount: accountIdentifier }, &outDataRef) != noErr)
     return nil;
   
   NSString *password = [[NSString alloc] initWithData:(__bridge NSData *)outDataRef encoding:NSUTF8StringEncoding];
@@ -34,14 +34,14 @@
     return [self removePasswordForServiceWithIdentifier:serviceIdentifier account:accountIdentifier];
   }
   
-  NSDictionary *spec = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+  NSDictionary *spec = @{ (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
                         (__bridge id)kSecAttrService: serviceIdentifier,
-                        (__bridge id)kSecAttrAccount: accountIdentifier};
+                        (__bridge id)kSecAttrAccount: accountIdentifier };
   
   
   if([self passwordForServiceWithIdentifier:serviceIdentifier account:accountIdentifier] != nil)
   {
-    return !SecItemUpdate((__bridge CFDictionaryRef)spec, (__bridge CFDictionaryRef)@{(__bridge id)kSecValueData: [password dataUsingEncoding:NSUTF8StringEncoding]});
+    return !SecItemUpdate((__bridge CFDictionaryRef)spec, (__bridge CFDictionaryRef)@{ (__bridge id)kSecValueData: [password dataUsingEncoding:NSUTF8StringEncoding] });
   }
   else
   {
@@ -53,9 +53,9 @@
 
 - (BOOL)removePasswordForServiceWithIdentifier:(NSString *)serviceIdentifier account:(NSString *)accountIdentifier
 { 
-  return !SecItemDelete((__bridge CFDictionaryRef)@{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+  return !SecItemDelete((__bridge CFDictionaryRef)@{ (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
                                                    (__bridge id)kSecAttrService: serviceIdentifier,
-                                                   (__bridge id)kSecAttrAccount: accountIdentifier});
+                                                   (__bridge id)kSecAttrAccount: accountIdentifier });
 }
 
 #pragma mark Class methods

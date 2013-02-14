@@ -213,8 +213,8 @@ static NSDictionary *_sharedAttributes = nil;
   
   if (!_sharedAttributes)
   {
-    _sharedAttributes = @{(id)kCTFontAttributeName: (__bridge id)_sharedFont,
-                         (id)kCTLigatureAttributeName: @0};
+    _sharedAttributes = @{ (id)kCTFontAttributeName: (__bridge id)_sharedFont,
+                         (id)kCTLigatureAttributeName: @0 };
   }
   return _sharedAttributes;
 }

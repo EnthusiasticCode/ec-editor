@@ -67,8 +67,8 @@
   CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.textLabel.font.fontName, self.textLabel.font.pointSize, NULL);
   NSAttributedString *result = [[NSAttributedString alloc] 
                                 initWithString:self.textLabel.text 
-                                attributes:@{(__bridge id)kCTForegroundColorAttributeName: (__bridge id)self.textLabel.textColor.CGColor, 
-                                            (__bridge id)kCTFontAttributeName: (__bridge id)font}];
+                                attributes:@{ (__bridge id)kCTForegroundColorAttributeName: (__bridge id)self.textLabel.textColor.CGColor, 
+                                            (__bridge id)kCTFontAttributeName: (__bridge id)font }];
   CFRelease(font);
   return result;
 }

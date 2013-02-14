@@ -965,7 +965,7 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   };
   
   // placeholder body style
-  [attributedString addAttributes:@{TextRendererRunUnderlayBlockAttributeName: placeHolderBodyBlock, (id)kCTForegroundColorAttributeName: (id)(UIColor.blackColor.CGColor)} range:NSMakeRange(range.location + 2, range.length - 4)];
+  [attributedString addAttributes:@{ TextRendererRunUnderlayBlockAttributeName: placeHolderBodyBlock, (id)kCTForegroundColorAttributeName: (id)(UIColor.blackColor.CGColor) } range:NSMakeRange(range.location + 2, range.length - 4)];
   
   // Opening and Closing style
   
@@ -974,13 +974,13 @@ static CTRunDelegateCallbacks placeholderEndingsRunCallbacks = {
   ASSERT(font);
   CTRunDelegateRef delegateRef = CTRunDelegateCreate(&placeholderEndingsRunCallbacks, font);
   
-  [attributedString addAttributes:@{(id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderLeftBlock} range:NSMakeRange(range.location, 2)];
-  [attributedString addAttributes:@{(id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderRightBlock} range:NSMakeRange(NSMaxRange(range) - 2, 2)];
+  [attributedString addAttributes:@{ (id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderLeftBlock } range:NSMakeRange(range.location, 2)];
+  [attributedString addAttributes:@{ (id)kCTRunDelegateAttributeName: (__bridge id)delegateRef, TextRendererRunDrawBlockAttributeName: placeholderRightBlock } range:NSMakeRange(NSMaxRange(range) - 2, 2)];
   
   CFRelease(delegateRef);
   
   // Placeholder behaviour
-  [attributedString addAttributes:@{CodeViewPlaceholderAttributeName: name} range:range];
+  [attributedString addAttributes:@{ CodeViewPlaceholderAttributeName: name } range:range];
 }
 
 #pragma mark Keyboard Actions Target Methods

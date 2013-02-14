@@ -139,7 +139,7 @@
 
 - (void)_showProjectsInTabAction:(id)sender {
   [self.quickBrowsersContainerController.presentingPopoverController dismissPopoverAnimated:YES];
-	[self.artCodeTab pushLocationWithDictionary:@{ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeProjectsList)}];
+	[self.artCodeTab pushLocationWithDictionary:@{ ArtCodeLocationAttributeKeys.type: @(ArtCodeLocationTypeProjectsList) }];
 }
 
 @end
