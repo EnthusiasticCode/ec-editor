@@ -20,7 +20,7 @@
 
 #import <ReactiveCocoaIO/ReactiveCocoaIO.h>
 
-#import <Connection/CKConnectionRegistry.h>
+#import <Connection/Connection.h>
 #import "BezelAlert.h"
 #import "NSString+PluralFormat.h"
 #import "NSURL+ArtCode.h"

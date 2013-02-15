@@ -6,7 +6,7 @@
 	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/iOS-libarchive.git
 [submodule "ThirdParty/Connection"]
 	path = ThirdParty/Connection
-	url = ssh://git@coneko.no-ip.org/Users/Shared/Projects/ConnectionKit.git
+	url = https://github.com/EnthusiasticCode/ConnectionKit.git
 [submodule "ThirdParty/ReactiveCocoa"]
 	path = ThirdParty/ReactiveCocoa
 	url = https://github.com/ReactiveCocoa/ReactiveCocoa.git

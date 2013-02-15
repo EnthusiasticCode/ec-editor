@@ -534,6 +534,41 @@
 			remoteGlobalIDString = 5F37CAB716A4726F00F3020A;
 			remoteInfo = ReactiveCocoaIOTests;
 		};
+		5FEEF21C16CDBCB2002C1CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A98F169E380900D91E56 /* ReactiveCocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 88F440AA153DAC820097B4C3;
+			remoteInfo = "ReactiveCocoa-iOS";
+		};
+		5FEEF22D16CDBCB9002C1CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37CFAF16A4930800F3020A /* ReactiveCocoaIO.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F37CAA516A4726F00F3020A;
+			remoteInfo = "ReactiveCocoaIO-iOS";
+		};
+		5FEEF22F16CDBCBF002C1CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37AAFA169E3B1F00D91E56 /* CocoaOniguruma-for-iOS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F37A788169DEC0100D91E56;
+			remoteInfo = CocoaOniguruma;
+		};
+		5FEEF23116CDBCC3002C1CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5F37A993169E386500D91E56 /* file.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F02C8F515CC1BB9008D9B03;
+			remoteInfo = file;
+		};
+		5FEEF23316CDBCC8002C1CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CDDD232E16A07BD300693DE6;
+			remoteInfo = connectionkit;
+		};
 		CD54BDBA160608530025B7CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CD54BD73160607A40025B7CA /* ReactiveCocoa.xcodeproj */;
@@ -561,20 +596,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 79CFD12609F702BE00172CDD;
 			remoteInfo = Framework;
-		};
-		CD8F59A8161C53820080494E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 795FF4F10B0C013200EA9292;
-			remoteInfo = DropletHelper;
-		};
-		CD8F59AA161C53820080494E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CD8F5984161C53810080494E /* Connection-for-iOS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7983E6D20B0C4DF000F5078E;
-			remoteInfo = DropletLauncher;
 		};
 		CD8F59AC161C53820080494E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2334,8 +2355,6 @@
 			isa = PBXGroup;
 			children = (
 				CD8F59A7161C53820080494E /* Connection.framework */,
-				CD8F59A9161C53820080494E /* DropletHelper.app */,
-				CD8F59AB161C53820080494E /* DropletLauncher */,
 				CD8F59AD161C53820080494E /* UnitTests.octest */,
 				CD8F59AF161C53820080494E /* libconnectionkit.a */,
 			);
@@ -2569,6 +2588,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				5FEEF23416CDBCC8002C1CBF /* PBXTargetDependency */,
+				5FEEF23216CDBCC3002C1CBF /* PBXTargetDependency */,
+				5FEEF23016CDBCBF002C1CBF /* PBXTargetDependency */,
+				5FEEF22E16CDBCB9002C1CBF /* PBXTargetDependency */,
+				5FEEF21D16CDBCB2002C1CBF /* PBXTargetDependency */,
 			);
 			name = ArtCode;
 			productName = ArtCode;
@@ -2716,20 +2740,6 @@
 			fileType = wrapper.framework;
 			path = Connection.framework;
 			remoteRef = CD8F59A6161C53820080494E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CD8F59A9161C53820080494E /* DropletHelper.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DropletHelper.app;
-			remoteRef = CD8F59A8161C53820080494E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CD8F59AB161C53820080494E /* DropletLauncher */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = DropletLauncher;
-			remoteRef = CD8F59AA161C53820080494E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CD8F59AD161C53820080494E /* UnitTests.octest */ = {
@@ -3184,6 +3194,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5FEEF21D16CDBCB2002C1CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ReactiveCocoa-iOS";
+			targetProxy = 5FEEF21C16CDBCB2002C1CBF /* PBXContainerItemProxy */;
+		};
+		5FEEF22E16CDBCB9002C1CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "ReactiveCocoaIO-iOS";
+			targetProxy = 5FEEF22D16CDBCB9002C1CBF /* PBXContainerItemProxy */;
+		};
+		5FEEF23016CDBCBF002C1CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CocoaOniguruma;
+			targetProxy = 5FEEF22F16CDBCBF002C1CBF /* PBXContainerItemProxy */;
+		};
+		5FEEF23216CDBCC3002C1CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = file;
+			targetProxy = 5FEEF23116CDBCC3002C1CBF /* PBXContainerItemProxy */;
+		};
+		5FEEF23416CDBCC8002C1CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = connectionkit;
+			targetProxy = 5FEEF23316CDBCC8002C1CBF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CD7D2AEC13C0CD2600B889EE /* InfoPlist.strings */ = {

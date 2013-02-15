@@ -9,7 +9,7 @@
 #import "RemoteFileListController.h"
 
 #import "ReactiveConnection.h"
-#import <Connection/CKConnectionRegistry.h>
+#import <Connection/Connection.h>
 #import "RACSignal+ScoreForAbbreviation.h"
 #import "Keychain.h"
 

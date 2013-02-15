@@ -7,7 +7,7 @@
 //
 
 #import "ReactiveConnection.h"
-#import <Connection/CKConnectionRegistry.h>
+#import <Connection/Connection.h>
 #import "NSURL+Utilities.h"
 
 @interface ReactiveConnection ()
