@@ -24,7 +24,6 @@
 		5F5435C516C017540030296C /* RCIOItem+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F5435C416C017540030296C /* RCIOItem+ArtCode.m */; };
 		5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539F915B0B31A00FFCFEE /* ArtCodeTabPageViewController.m */; };
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
-		5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD05149914F7FB3A003CED2F /* RemoteTransferController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
 		5F7A49EF170070690000D203 /* libConnection-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A49E9170070570000D203 /* libConnection-iOS.a */; };
 		5FA5951B16348F7100ECCAA5 /* RCIOItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */; };
@@ -390,7 +389,6 @@
 		CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD870E4E16257CC20038EC7F /* RemoteNavigationToolbarController.m */; };
 		CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD870E8C16257D490038EC7F /* LocalFileListController.m */; };
 		CD8A048E14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m in Sources */ = {isa = PBXBuildFile; fileRef = CD8A048D14FC0A8D0054BF73 /* NSIndexSet+StringRanges.m */; };
-		CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CD9C811D162090500086D2F1 /* ReactiveConnection.m */; };
 		CD9CB5E71451902C00973204 /* tabBar_TabCloseButton.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E51451902C00973204 /* tabBar_TabCloseButton.png */; };
 		CD9CB5EA145191FC00973204 /* tabBar_TabBackground_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E8145191FC00973204 /* tabBar_TabBackground_Normal.png */; };
 		CD9CB5EB145191FC00973204 /* tabBar_TabBackground_Selected.png in Resources */ = {isa = PBXBuildFile; fileRef = CD9CB5E9145191FC00973204 /* tabBar_TabBackground_Selected.png */; };
@@ -415,8 +413,6 @@
 		CDA9B6701524A0620063D76F /* ipad_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66E1524A0620063D76F /* ipad_icon.png */; };
 		CDA9B6711524A0620063D76F /* ipad_icon@2.png in Resources */ = {isa = PBXBuildFile; fileRef = CDA9B66F1524A0620063D76F /* ipad_icon@2.png */; };
 		CDAE5ECB156E48AC007B9FDD /* PopoverButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CDAE5ECA156E48AC007B9FDD /* PopoverButton.m */; };
-		CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB2FFCB161F3635009F2FDB /* RemoteFileListController.m */; };
-		CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB2FFCD161F3635009F2FDB /* RemoteNavigationController.m */; };
 		CDB5DB6514C6F56A003DFD1F /* FolderBrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6414C6F56A003DFD1F /* FolderBrowserController.m */; };
 		CDB5DB6D14C8494E003DFD1F /* MoveConflictController.m in Sources */ = {isa = PBXBuildFile; fileRef = CDB5DB6C14C8494E003DFD1F /* MoveConflictController.m */; };
 		CDB5DB6F14C849EA003DFD1F /* MoveConflictController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDB5DB6E14C849EA003DFD1F /* MoveConflictController.xib */; };
@@ -3042,7 +3038,6 @@
 				B78D136F15AB4D5D0022C93B /* RCIOFile+ArtCode.m in Sources */,
 				5F6539FA15B0B31A00FFCFEE /* ArtCodeTabPageViewController.m in Sources */,
 				5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */,
-				5F653A0315B0B35F00FFCFEE /* RemoteTransferController.m in Sources */,
 				5F13322B15B462C000964FD4 /* Global.xcdatamodeld in Sources */,
 				5F13323E15B468FF00964FD4 /* ArtCodeTabSet.m in Sources */,
 				5FE8B05B15B5D33D00AEEF1D /* ArtCodeDatastore.m in Sources */,
@@ -3053,9 +3048,6 @@
 				CD3692FE15EE5D4200F40410 /* QuickFileHighlightTableController.m in Sources */,
 				CD6C44F715EFB8BE00D561BF /* RenameController.m in Sources */,
 				5F24A84D161879DB007FC6A9 /* NSIndexSet+PersistentDataStructure.m in Sources */,
-				CDB2FFCE161F3635009F2FDB /* RemoteFileListController.m in Sources */,
-				CDB2FFCF161F3635009F2FDB /* RemoteNavigationController.m in Sources */,
-				CD9C811E162090500086D2F1 /* ReactiveConnection.m in Sources */,
 				CD870E5016257CC20038EC7F /* RemoteNavigationToolbarController.m in Sources */,
 				CD870E8D16257D490038EC7F /* LocalFileListController.m in Sources */,
 				CD596CC51625808400B95B49 /* TextSelectionRect.m in Sources */,
