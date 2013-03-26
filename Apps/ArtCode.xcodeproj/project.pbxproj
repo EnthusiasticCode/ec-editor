@@ -26,6 +26,7 @@
 		5F6539FF15B0B33500FFCFEE /* TabPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */; };
 		5F7047E015D1D7D5005EF62D /* magic.mgc in Resources */ = {isa = PBXBuildFile; fileRef = 5F7047DF15D1D7D5005EF62D /* magic.mgc */; };
 		5F7A49EF170070690000D203 /* libConnection-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A49E9170070570000D203 /* libConnection-iOS.a */; };
+		5F7A4A951701C0200000D203 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F7A4A941701C0200000D203 /* MobileCoreServices.framework */; };
 		5FA5951B16348F7100ECCAA5 /* RCIOItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */; };
 		5FB0A6F016A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB0A6EF16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.m */; };
 		5FDBDA2516AF0C6700AB947A /* NSURL+ArtCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FDBDA2416AF0C6400AB947A /* NSURL+ArtCode.m */; };
@@ -594,6 +595,7 @@
 		5F6539FE15B0B33500FFCFEE /* TabPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabPageViewController.m; sourceTree = "<group>"; };
 		5F7047DF15D1D7D5005EF62D /* magic.mgc */ = {isa = PBXFileReference; lastKnownFileType = file; name = magic.mgc; path = "../../../ThirdParty/file/Supporting Files/magic.mgc"; sourceTree = "<group>"; };
 		5F7A49D5170070550000D203 /* Connection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Connection.xcodeproj; path = Connection/Connection.xcodeproj; sourceTree = "<group>"; };
+		5F7A4A941701C0200000D203 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/MobileCoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		5FA5951916348F7100ECCAA5 /* RCIOItemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCIOItemCell.h; sourceTree = "<group>"; };
 		5FA5951A16348F7100ECCAA5 /* RCIOItemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCIOItemCell.m; sourceTree = "<group>"; };
 		5FB0A6EE16A1D8F30073FABE /* RACSignal+ScoreForAbbreviation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RACSignal+ScoreForAbbreviation.h"; sourceTree = "<group>"; };
@@ -1153,6 +1155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F7A4A951701C0200000D203 /* MobileCoreServices.framework in Frameworks */,
 				5F7A49EF170070690000D203 /* libConnection-iOS.a in Frameworks */,
 				5F4AF73F16E0A32F004E19E5 /* libReactiveCocoaIO-iOS.a in Frameworks */,
 				5F4AF73D16E0A329004E19E5 /* libReactiveCocoa-iOS.a in Frameworks */,
@@ -1318,6 +1321,7 @@
 		5F37A996169E391E00D91E56 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F7A4A941701C0200000D203 /* MobileCoreServices.framework */,
 				5F2345A915EE4B0E000220C5 /* QuickLook.framework */,
 				CD2DB5FE1578C506009E4026 /* CoreData.framework */,
 				B77101451506E336006AF1FB /* SenTestingKit.framework */,
