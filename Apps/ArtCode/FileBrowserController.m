@@ -18,7 +18,7 @@
 #import "MoveConflictController.h"
 #import "RenameController.h"
 
-#import "RemoteTransferController.h"
+//#import "RemoteTransferController.h"
 
 #import "NSString+PluralFormat.h"
 #import "RACSignal+ScoreForAbbreviation.h"
@@ -445,12 +445,13 @@
 #pragma mark Modal actions
 
 - (void)modalNavigationControllerDismissAction:(id)sender {
-  if ([self.modalNavigationController.visibleViewController isKindOfClass:RemoteTransferController.class] && ![(RemoteTransferController *)self.modalNavigationController.visibleViewController isTransferFinished]) {
-    [(RemoteTransferController *)self.modalNavigationController.visibleViewController cancelCurrentTransfer];
-  } else {
-    [self setEditing:NO animated:YES];
-    [super modalNavigationControllerDismissAction:sender];
-  }
+#warning TODO restore remote controller
+//  if ([self.modalNavigationController.visibleViewController isKindOfClass:RemoteTransferController.class] && ![(RemoteTransferController *)self.modalNavigationController.visibleViewController isTransferFinished]) {
+//    [(RemoteTransferController *)self.modalNavigationController.visibleViewController cancelCurrentTransfer];
+//  } else {
+//    [self setEditing:NO animated:YES];
+//    [super modalNavigationControllerDismissAction:sender];
+//  }
 }
 
 - (void)_directoryBrowserCopyAction:(id)sender {
