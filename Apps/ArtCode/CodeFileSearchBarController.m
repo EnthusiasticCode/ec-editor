@@ -183,7 +183,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 	[canReplaceSignal toProperty:@keypath(self.replaceOnceButton.enabled) onObject:self];
 	[canReplaceSignal toProperty:@keypath(self.replaceAllButton.enabled) onObject:self];
 	
-	self.replaceOnceCommand = [RACCommand commandWithCanExecuteSignal:canReplaceSignal block:nil];
+	self.replaceOnceCommand = [RACCommand commandWithCanExecuteSignal:canReplaceSignal];
 	[[replaceInfoSignal sample:self.replaceOnceCommand] subscribeNext:^(RACTuple *replaceInfo) {
 		@strongify(self);
 		CodeView *codeView = self.targetCodeFileController.codeView;
@@ -201,7 +201,7 @@ static NSString * findFilterPassBlockKey = @"findFilterPass";
 		[codeView flashTextInRange:NSMakeRange(match.range.location, [replaceString length])];
 	}];
 	
-	self.replaceAllCommand = [RACCommand commandWithCanExecuteSignal:canReplaceSignal block:nil];
+	self.replaceAllCommand = [RACCommand commandWithCanExecuteSignal:canReplaceSignal];
 	[[replaceInfoSignal sample:self.replaceAllCommand] subscribeNext:^(RACTuple *replaceInfo) {
 		@strongify(self);
 		CodeView *codeView = self.targetCodeFileController.codeView;

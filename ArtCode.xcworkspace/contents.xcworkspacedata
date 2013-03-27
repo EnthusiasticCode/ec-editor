@@ -5,7 +5,7 @@
       location = "container:Apps/ArtCode.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ThirdParty/../ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj">
+      location = "group:ThirdParty/ReactiveCocoa/ReactiveCocoaFramework/ReactiveCocoa.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ThirdParty/ReactiveCocoaIO/ReactiveCocoaIO.xcodeproj">
