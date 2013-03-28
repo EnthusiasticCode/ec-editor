@@ -16,3 +16,6 @@
 [submodule "ThirdParty/ReactiveCocoaIO"]
 	path = ThirdParty/ReactiveCocoaIO
 	url = https://github.com/ReactiveCocoa/ReactiveCocoaIO.git
+[submodule "ThirdParty/xcconfigs"]
+	path = ThirdParty/xcconfigs
+	url = https://github.com/jspahrsummers/xcconfigs.git
