@@ -25,6 +25,9 @@
 
 #import "UIImage+AppStyle.h"
 
+#import "NSURL+Utilities.h"
+#import "NSURL+ArtCode.h"
+
 #define DEFAULT_TOOLBAR_HEIGHT 44
 
 @interface SingleTabController ()
@@ -360,7 +363,7 @@
         case ArtCodeLocationTypeTextFile:
         case ArtCodeLocationTypeDirectory:
           if (location.url) {
-            fragments = @[ location.url.path.stringByDeletingLastPathComponent, location.name ];
+						fragments = @[ [location.url.URLByDeletingLastPathComponent pathRelativeToURL:NSURL.projectsListDirectory], location.name ];
           }
           break;
           

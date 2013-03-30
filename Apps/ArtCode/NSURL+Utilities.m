@@ -162,7 +162,7 @@ static NSString *unescapeString(NSString *string) {
 }
 
 - (NSString *)pathRelativeToURL:(NSURL *)url {
-	if (![self.path hasPrefix:url.path]) return @"";
+	if (self.path.length <= url.path.length || ![self.path hasPrefix:url.path]) return @"";
 	return [self.path substringFromIndex:url.path.length + 1];
 }
 

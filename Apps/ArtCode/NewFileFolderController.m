@@ -13,6 +13,8 @@
 #import "ArtCodeTab.h"
 #import "ArtCodeLocation.h"
 #import "BezelAlert.h"
+#import "NSString+Utilities.h"
+#import "NSURL+ArtCode.h"
 #import "NSURL+Utilities.h"
 
 
@@ -43,7 +45,7 @@
     }
   }] doNext:^(id x) {
     @strongify(self);
-    self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", self.artCodeTab.currentLocation.url.prettyPath] : @"The speficied folder name already exists or is invalid.";
+    self.infoLabel.text = x ? [NSString stringWithFormat:@"A new empty folder will be created in: %@.", [self.artCodeTab.currentLocation.url pathRelativeToURL:NSURL.projectsListDirectory].prettyPath] : @"The speficied folder name already exists or is invalid.";
   }] map:^id(id x) {
 		return @([x length] != 0);
   }] toProperty:@keypath(self.navigationItem.rightBarButtonItem.enabled) onObject:self];
